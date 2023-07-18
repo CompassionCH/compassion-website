@@ -1,0 +1,111 @@
+<odoo>
+    <template id="children_page_template" name="Website childpool">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Sponsor a child</t>
+            <div id="wrap" name="childpool_page">
+                <div class="oe_structure"/>
+                <section class="s_cover parallax s_parallax_is_fixed bg-black-50 pt96 pb96 o_colored_level" data-scroll-background-ratio="1" data-snippet="s_cover" data-name="Cover">
+                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_cover_default_image'); background-position: 50% 0;"/>
+                    <div class="o_we_bg_filter bg-black-50"/>
+                    <div class="container s_allow_columns">
+                        <h1 style="text-align: center;">
+                            <font style="font-size: 62px; font-weight: bold;">You want to sponsor a child, thank you!</font>
+                        </h1>
+                        <p class="lead" style="text-align: center;">It's hard to escape extreme poverty when you're born into it. That's why we support children in all areas of their lives. With CHF 42.- per month, you can free a child from extreme poverty.</p>
+                    </div>
+                </section>
+                <div class="oe_structure"/>
+                <section class="s_numbers o_cc o_cc2 pt24 pb24 o_colored_level" data-snippet="s_numbers" data-name="Numbers" style="">
+                    <div class="container">
+                        <div class="row d-lg-none align-items-center">
+                            <div class="col-6 ml-auto"><h3 class="mb-0">Search children</h3></div>
+                            <div class="float-right mr-4">
+                                <button name="search_mobile" type="button" class="btn btn-primary rounded-circle"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                        <div class="row d-none d-lg-flex" name="search_inputs">
+                            <div class="text-center pt24 pb24 o_colored_level col-lg-3">
+                                <div class="form-group">
+                                    <select name="gender" class="form-control">
+                                        <option value="">Select a girl or a boy</option>
+                                        <option value="F">Girl</option>
+                                        <option value="M">Boy</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="text-center pt24 pb24 o_colored_level col-lg-3">
+                                <select name="age_group" class="form-control">
+                                    <option value="">Select an age range </option>
+                                    <option value="0-3">0-3 years old</option>
+                                    <option value="4-6">4-6 years old</option>
+                                    <option value="7-10">7-10 years old</option>
+                                    <option value="11-14">11-14 years old</option>
+                                    <option value="15-50">15+ years old</option>
+                                </select>
+                            </div>
+                            <div class="text-center pt24 pb24 o_colored_level col-lg-3">
+                                <select name="country" class="form-control">
+                                    <option value="">Select a country</option>
+                                    <t t-set="countries" t-value="[]"/>
+                                    <t t-foreach="field_offices" t-as="fo">
+                                        <t t-if="fo.country_name not in countries">
+                                            <t t-set="countries" t-value="countries + [fo.country_name]"/>
+                                            <option t-att-value="fo.field_office_id"><t t-esc="fo.country_name"/></option>
+                                        </t>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="text-center pt24 pb24 o_colored_level col-lg-3">
+                                <input type="date" name="birthday" class="form-control"/>
+                                <small id="passwordHelpBlock" class="form-text text-muted text-right">Search for children born on the same day</small>
+                            </div>
+                        </div>
+                        <div class="row d-none d-lg-flex" name="search_inputs">
+                            <div class="text-center pb24 o_colored_level offset-lg-3 col-lg-3">
+                                <a class="btn btn-primary w-100 text-white" name="random" href="random">Choose for me</a>
+                            </div>
+                            <div class="text-center pb24 o_colored_level col-lg-3">
+                                <a class="btn btn-primary w-100 text-white" name="reset" href="?">Reset filters</a>
+                            </div>
+                            <div class="text-center pb24 o_colored_level col-lg-3">
+                                <a class="btn btn-primary w-100 text-white font-weight-bold" name="search">Search</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <div class="oe_structure"/>
+                <section id="compassion_children_list" class="mt-5 mb-5">
+                    <div class="container">
+                        <div class="row">
+                            <t t-foreach="children" t-as="child">
+                                <div class="col-12 col-md-4 text-center mb-4">
+                                    <a t-att-href="child.website_url + '/sponsor?' + request.httprequest.query_string.decode()" class="o_no_style"><img t-att-src="child.website_image" class="figure-img rounded-circle" alt="child picture" loading="lazy" data-original-title="" title="" aria-describedby="tooltip156301"  /></a>
+                                    <a t-att-href="child.website_url + '/sponsor?' + request.httprequest.query_string.decode()" class="o_no_style"><h4 t-field="child.preferred_name"/></a>
+                                    <a t-att-href="child.website_url + '/sponsor?' + request.httprequest.query_string.decode()" class="o_no_style"><span t-field="child.website_legend"/></a>
+                                </div>
+                            </t>
+                        </div>
+                        <t t-call="website.pager"/>
+                    </div>
+                </section>
+                <div class="oe_structure"/>
+            </div>
+        </t>
+    </template>
+
+    <template id="load_child_page" name="Child loader page">
+        <t t-set="additional_title">Looking for a child...</t>
+        <t t-call="website.layout">
+            <div id="child_search" class="container">
+                <h1 t-esc="additional_title" class="mt-5"/>
+                <p>Please wait while we are looking for a child meeting your criterias...</p>
+                <div id="spinner" class="spinner-border text-primary text-center" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <div id="not_found" class="alert alert-danger mt-4" style="opacity: 0">
+                    <p>Sorry, no children were found at the moment.</p>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

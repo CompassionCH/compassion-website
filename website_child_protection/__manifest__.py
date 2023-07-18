@@ -17,10 +17,6 @@
         # compassion-switzerland
         "partner_compassion",
     ],
-    # this feature is only present for 11.0+
-    "excludes": [
-        "module_name",
-    ],
     "data": [
         "security/ir.model.access.csv",
         "templates/assets.xml",

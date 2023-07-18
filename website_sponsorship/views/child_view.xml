@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+   <record id="child_view_website" model="ir.ui.view">
+       <field name="name">child.view.website</field>
+       <field name="model">compassion.child</field>
+       <field name="inherit_id" ref="child_compassion.view_compassion_child_form"/>
+       <field name="arch" type="xml">
+           <xpath expr="//div[@name='buttons']">
+               <field name="is_published" widget="website_redirect_button"/>
+           </xpath>
+       </field>
+   </record>
+    <record id="child_view_tree_website" model="ir.ui.view">
+        <field name="name">child.view.tree.website</field>
+        <field name="model">compassion.child</field>
+        <field name="inherit_id" ref="child_compassion.view_compassion_child_tree"/>
+        <field name="arch" type="xml">
+            <field name="state" position="after">
+                <field name="is_published" optional="true"/>
+            </field>
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="child_publish_action">
+        <field name="model_id" ref="model_compassion_child"/>
+        <field name="name">Publish/Unpublish child</field>
+        <field name="state">code</field>
+        <field name="code">
+for child in records:
+    child.website_publish_button()</field>
+        <field name="binding_model_id" ref="model_compassion_child"/>
+    </record>
+</odoo>

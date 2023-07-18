@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="model_cms_form_sponsorship" model="ir.model">
+      <field name="website_form_key">child_sponsorship</field>
+      <field name="website_form_default_field_id" ref="field_cms_form_sponsorship__notes" />
+      <field name="website_form_access">True</field>
+      <field name="website_form_label">Make a sponsorship</field>
+    </record>
+    <function model="ir.model.fields" name="formbuilder_whitelist">
+      <value>cms.form.sponsorship</value>
+      <value eval="[
+        'child_id',
+        'sponsorship_type',
+        'sponsorship_amount',
+        'payment_mode_id',
+        'origin_id',
+        'contract_id',
+        'notes',
+        'partner_title',
+        'partner_lastname',
+        'partner_firstname',
+        'partner_street',
+        'partner_zip',
+        'partner_city',
+        'partner_email',
+        'partner_birthdate_date',
+        'partner_phone',
+        'partner_mobile',
+        'partner_function',
+        'partner_lang',
+        'partner_spoken_lang_ids',
+        'match_update',
+        ]"/>
+    </function>
+</odoo>

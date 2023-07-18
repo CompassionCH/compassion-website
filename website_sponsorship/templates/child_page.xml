@@ -1,0 +1,127 @@
+<odoo>
+    <template id="child_page_template" name="Compassion child page">
+        <t t-call="website.layout">
+            <t t-set="additional_title" t-value="main_object.preferred_name"/>
+            <div id="wrap">
+                <t t-call="website_sponsorship.child_page_header"/>
+                <div class="oe_structure"/>
+                <t t-call="website_sponsorship.child_description" t-if="not show_sponsorship_form"/>
+                <t t-if="show_sponsorship_form">
+                    <section class="s_text_block o_colored_level o_cc o_cc1 pt16 pb0" data-snippet="s_text_block" data-name="Text" style="">
+                        <div class="s_allow_columns o_container_small">
+                            <div class="row">
+                                <div class="o_colored_level col-lg-6" style="">
+                                    <p style="text-align: center; ">
+                                        <a t-att-href="main_object.website_url" class="btn btn-primary w-100" data-original-title="" title="" aria-describedby="tooltip760887">More information about <span t-esc="main_object.preferred_name"/></a>
+                                        <br/>
+                                    </p>
+                                </div>
+                                <div class="o_colored_level col-lg-6">
+                                    <p style="text-align: center; ">
+                                        <a t-attf-href="/children??#{request.httprequest.query_string.decode()}" class="btn btn-outline-primary w-100" data-original-title="" title="" aria-describedby="tooltip128007">Choose another child</a>
+                                        <br/>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="s_text_block o_colored_level pt24 pb24" data-snippet="s_text_block" data-name="Text" data-anchor="true">
+                        <div class="s_allow_columns container">
+                            <p style="text-align: center; ">With CHF <span id="sponsorship_amount">42</span>.- per month, you will release <span t-esc="main_object.preferred_name"/> from poverty!</p>
+                        </div>
+                    </section>
+                    <div class="oe_structure"/>
+                    <t t-call="website_sponsorship.child_sponsorship_form" t-if="show_sponsorship_form">
+                        <t t-set="step" t-value="1"/>
+                        <t t-set="partner" t-value="request.env.user.partner_id"/>
+                    </t>
+                </t>
+                <div class="oe_structure"/>
+            </div>
+        </t>
+    </template>
+
+    <template id="child_page_header">
+        <section class="s_picture pt48 o_colored_level undefined o_cc o_cc4 pb0" data-snippet="s_picture" data-name="Picture" style="">
+            <div class="container">
+                <div class="row s_nb_column_fixed">
+                    <div class="col-lg-10 offset-lg-1 o_colored_level pb0" style="text-align: center;">
+                        <a href="#sponsorship-form">
+                            <img t-att-src="main_object.website_image" class="figure-img rounded-circle" alt="child picture" loading="lazy" data-original-title="" title="" aria-describedby="tooltip156301"  />
+                        </a>
+                        <h1 style="text-align: center; " t-esc="main_object.preferred_name"/>
+                        <p style="text-align: center; ">Become a sponsor and change <span t-esc="main_object.get('his')"/> life today.</p>
+                        <t t-call="website_sponsorship.child_legend">
+                            <t t-set="child" t-value="main_object"/>
+                            <t t-set="default_text_class" t-value="'text-o-color-4'"/>
+                            <t t-set="default_layout" t-value="'horizontal'"/>
+                        </t>
+                    </div>
+                </div>
+                <div class="row d-sm-none">
+                    <div class="col-auto ml-auto">
+                        <a class="o_scroll_button mb-3 rounded-circle align-items-center justify-content-center bg-white o_not_editable" href="#" title="Scroll down to next section">
+                            <i class="fa fa-angle-down fa-3x"/>
+                        </a>
+                    </div>
+                    <div class="col-1"/>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <template id="child_description">
+        <section class="s_text_block o_colored_level o_cc o_cc1 pt16 pb0" data-snippet="s_text_block" data-name="Text" style="">
+            <div class="s_allow_columns o_container_small">
+                <div class="row">
+                    <div class="o_colored_level col-lg-6" style="">
+                        <p style="text-align: center; ">
+                            <a t-attf-href="sponsor?#{request.httprequest.query_string.decode()}" class="btn btn-primary w-100" data-original-title="" title="" aria-describedby="tooltip760887">Sponsor <span t-esc="main_object.preferred_name"/></a>
+                            <br/>
+                        </p>
+                    </div>
+                    <div class="o_colored_level col-lg-6">
+                        <p style="text-align: center; ">
+                            <a t-attf-href="/children?#{request.httprequest.query_string.decode()}" class="btn btn-outline-primary w-100" data-original-title="" title="" aria-describedby="tooltip128007">Choose another child</a>
+                            <br/>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="child_description" class="container">
+            <!-- T0433 THIS has to be improved. Beware that the description fields are used in childpacks as well. -->
+            <div class="row">
+                <div class="col-6 mb-4" t-field="main_object.description_left"/>
+                <div class="col-6 mb-4" t-field="main_object.project_id.description"/>
+            </div>
+        </section>
+    </template>
+
+    <template id="child_legend" name="Child legend">
+        <t t-set="text_class" t-value="default_text_class or ''"/>
+        <t t-set="layout" t-value="default_layout or 'vertical'"/>
+        <div>
+
+            <span class="fa fa-gift"/>
+            <figure class="figure">
+                <figcaption class="figure-caption">
+                    <font style="" t-att-class="text_class">&amp;nbsp;<span t-esc="child.age"/> y/o&amp;nbsp;</font>
+                </figcaption>
+            </figure>
+            <span class="fa fa-globe"/>
+            <figure class="figure">
+                <figcaption class="figure-caption">
+                    <font style="" t-att-class="text_class">&amp;nbsp;<span t-esc="child.field_office_id.country_id.name"/>&amp;nbsp;</font>
+                </figcaption>
+            </figure>
+            <span t-attf-class="fa fa-#{'mars' if child.gender == 'M' else 'venus'}" data-original-title="" title="" aria-describedby="tooltip778639"/>
+            <figure class="figure">
+                <figcaption class="figure-caption">
+                    <font style="" t-att-class="text_class"> <span t-esc="child.get('boy')"/></font>
+                </figcaption>
+            </figure>
+        </div>
+    </template>
+
+</odoo>

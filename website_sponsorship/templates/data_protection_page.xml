@@ -1,0 +1,10 @@
+<odoo>
+    <template id="data_protection_page" name="Data protection">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Compassion data protection policy</t>
+            <div id="wrap">
+                <div class="container" t-field="main_object.text"/>
+            </div>
+        </t>
+    </template>
+</odoo>

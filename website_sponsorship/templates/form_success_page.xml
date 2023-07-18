@@ -1,0 +1,54 @@
+<odoo>
+    <template id="sponsorship_done">
+        <t t-call="website.layout">
+            <t t-set="additional_title" t-value="main_object.preferred_name"/>
+            <div id="wrap">
+                <div class="container"/>
+                <section class="s_picture pt48 o_colored_level undefined o_cc o_cc4 pb48" data-snippet="s_picture" data-name="Picture" style="">
+                    <div class="container">
+                        <div class="row s_nb_column_fixed">
+                            <div class="col-lg-10 offset-lg-1 o_colored_level pb0" style="text-align: center;">
+                                <a href="#sponsorship-form">
+                                    <img t-attf-src="data:image/jpeg;base64,#{main_object.portrait}" class="figure-img rounded-circle" alt="child picture" loading="lazy" data-original-title="" title="" aria-describedby="tooltip156301"  />
+                                </a>
+                                <h1 style="text-align: center; ">Thank you for sponsoring <span t-esc="main_object.preferred_name"/>!</h1>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <div class="oe_structure"/>
+                <t t-if="not done">
+                    <section id="next-step-chooser" class="s_text_block pt32 pb32 o_colored_level" data-snippet="s_text_block" data-name="Text">
+                      <div class="container s_allow_columns">
+                        <p>This seems to be your first sponsorship with Compassion. Do you have 5 minutes in order to review your preferences? Don't worry, you will be contacted later if you don't have time right now.</p>
+                          <div class="row">
+                              <div class="o_colored_level col-lg-6" style="">
+                                  <p style="text-align: center; ">
+                                      <a id="step2-button" href="#" class="btn btn-primary w-100" data-original-title="" title="" aria-describedby="tooltip760887">Review my preferences now</a>
+                                      <br/>
+                                  </p>
+                              </div>
+                              <div class="o_colored_level col-lg-6">
+                                  <p style="text-align: center; ">
+                                      <a id="do_later" href="#" class="btn btn-outline-primary w-100" data-original-title="" title="" aria-describedby="tooltip128007">I'll do this later</a>
+                                      <br/>
+                                  </p>
+                              </div>
+                          </div>
+                      </div>
+                    </section>
+                    <div class="oe_structure"/>
+                </t>
+                <section id="thankyou_notice" t-attf-class="s_text_block pt32 pb32 o_colored_level #{'d-none' if not done else ''}" data-snippet="s_text_block" data-name="Text">
+                  <div class="container s_allow_columns">
+                    <p>You will soon receive all documentation needed to start the sponsorship in your mailbox.</p>
+                  </div>
+                </section>
+                <t t-call="website_sponsorship.child_sponsorship_form">
+                    <t t-set="step" t-value="2"/>
+                </t>
+                <div class="oe_structure"/>
+            </div>
+        </t>
+    </template>
+</odoo>

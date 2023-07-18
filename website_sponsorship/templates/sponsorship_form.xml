@@ -1,0 +1,345 @@
+<odoo>
+    <template id="child_sponsorship_form">
+        <span id="form_values" class="hidden" data-for="sponsorship-form" t-att-data-values="{
+                'partner_email': partner.email or '',
+                'partner_firstname': partner.firstname or '',
+                'partner_lastname': partner.lastname or '',
+                'partner_street': partner.street or '',
+                'partner_zip': partner.zip or '',
+                'partner_city': partner.city or '',
+                'partner_phone': partner.phone or '',
+                'partner_mobile': partner.mobile or '',
+                'Church': partner.church_id.name or '',
+                'partner_function': partner.function or '',
+                }"
+              t-att-data-partner_title="partner.title.id"
+              t-att-data-partner_lang="partner.env['res.lang'].sudo().search([('code','=',partner.lang)]).id"
+              t-att-data-payment_mode_id="contract.payment_mode_id.id if contract else ''"
+              t-att-data-origin_id="contract.origin_id.id if contract else ''"
+              t-att-data-origin_name="contract.origin_id.name if contract else ''"
+              t-att-data-partner_birthdate_date="str(partner.birthdate_date)"
+              t-att-data-partner_spoken_lang_ids="partner.spoken_lang_ids.ids"
+        />
+        <section id="sponsorship-form-section" t-attf-class="s_website_form pt16 pb16 o_colored_level mb-5 #{'d-none' if step==2 else ''}" data-vcss="001" data-snippet="s_website_form" data-name="sponsorship-form">
+            <div t-att-class="'o_container_small' if step == 1 else 'container'">
+                <form id="sponsorship-form" action="/website_form/" method="post" enctype="multipart/form-data" class="o_mark_required" data-mark="*" data-success-mode="redirect" t-attf-data-success-page="confirmation#{'?done=1' if step==2 else ''}" data-model_name="cms.form.sponsorship">
+                    <div class="s_website_form_rows row s_col_no_bgcolor">
+                        <h2 t-if="step == 2">My coordinates</h2>
+                        <div class="form-group s_website_form_field col-12 " t-if="step == 2" data-type="many2one" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label " style="width: 200px" for="o5l5ton80fmp">
+                                    <span class="s_website_form_label_content">Title</span>
+                                </label>
+                                <div class="col-sm">
+                                    <select class="form-control s_website_form_input" name="partner_title" id="o5l5ton80fmp" style="">
+                                        <option value="1">Madam</option>
+                                        <option value="2">Miss</option>
+                                        <option value="3">Mister</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group s_website_form_field col-12  s_website_form_model_required  " data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="owwzvkslrqr">
+                                    <span class="s_website_form_label_content">Firstname</span>
+                                    <span class="s_website_form_mark"> *</span>
+                                </label>
+                                <div class="col-sm">
+                                    <input type="text" class="form-control s_website_form_input" name="partner_firstname" required="true" id="owwzvkslrqr"/>
+                                    <div data-lastpass-icon-root="true" style="position: relative !important; height: 0px !important; width: 0px !important; float: left !important;"/>
+                                    <div data-lastpass-icon-root="true" style="position: relative !important; height: 0px !important; width: 0px !important; float: left !important;"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group s_website_form_field col-12  s_website_form_model_required  " data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label " style="width: 200px" for="o0a1omhp77g9">
+                                    <span class="s_website_form_label_content">Lastname</span>
+                                    <span class="s_website_form_mark"> *</span>
+                                </label>
+                                <div class="col-sm">
+                                    <input type="text" class="form-control s_website_form_input" name="partner_lastname" required="true" id="o0a1omhp77g9"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group s_website_form_field col-12 s_website_form_required" data-type="email" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label " style="width: 200px" for="odmgl2qe481">
+                                    <span class="s_website_form_label_content">Email</span>
+                                    <span class="s_website_form_mark"> *</span>
+                                </label>
+                                <div class="col-sm">
+                                    <input type="email" class="form-control s_website_form_input" name="partner_email" placeholder="" id="odmgl2qe481" required=""/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group s_website_form_field col-12    " t-if="step == 2" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label " style="width: 200px" for="o2jm17v2r9wh">
+                                    <span class="s_website_form_label_content">Street</span>
+                                </label>
+                                <div class="col-sm">
+                                    <input type="text" class="form-control s_website_form_input" name="partner_street" placeholder="" id="o2jm17v2r9wh"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group s_website_form_field col-12    " t-if="step == 2" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label " style="width: 200px" for="oh3y3na2rj7p">
+                                    <span class="s_website_form_label_content">Zip</span>
+                                </label>
+                                <div class="col-sm">
+                                    <input type="text" class="form-control s_website_form_input" name="partner_zip" placeholder="" id="oh3y3na2rj7p"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group s_website_form_field col-12    " t-if="step == 2" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label " style="width: 200px" for="oems0dta9tgp">
+                                    <span class="s_website_form_label_content">City</span>
+                                </label>
+                                <div class="col-sm">
+                                    <input type="text" class="form-control s_website_form_input" name="partner_city" placeholder="" id="oems0dta9tgp"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group s_website_form_field col-12    " t-if="step == 2" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label " style="width: 200px" for="o00xwrfwdt50ll">
+                                    <span class="s_website_form_label_content">Phone</span>
+                                </label>
+                                <div class="col-sm">
+                                    <input type="text" class="form-control s_website_form_input" name="partner_phone" placeholder="" id="o00xwrfwdt50ll"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group s_website_form_field col-12    " t-if="step == 2" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label " style="width: 200px" for="om6zut4spup">
+                                    <span class="s_website_form_label_content">Mobile</span>
+                                </label>
+                                <div class="col-sm">
+                                    <input type="text" class="form-control s_website_form_input" name="partner_mobile" placeholder="" id="om6zut4spup"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group s_website_form_field col-12    "  t-if="step == 2" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label " style="width: 200px" for="ol3ty8zwde1">
+                                    <span class="s_website_form_label_content">Job</span>
+                                </label>
+                                <div class="col-sm">
+                                    <input type="text" class="form-control s_website_form_input" name="partner_function" placeholder="" id="ol3ty8zwde1"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group s_website_form_field col-12    " t-if="step == 2" data-type="date" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label " style="width: 200px" for="onojdxplvvxr">
+                                    <span class="s_website_form_label_content">Birthdate</span>
+                                </label>
+                                <div class="col-sm">
+                                    <div class="s_website_form_date input-group date" id="datepicker5580749541956329" data-target-input="nearest">
+                                        <input type="text" class="form-control datetimepicker-input s_website_form_input" data-target="#datepicker5580749541956329" name="partner_birthdate_date" placeholder="" id="onojdxplvvxr"/>
+                                        <div class="input-group-append" data-target="#datepicker5580749541956329" data-toggle="datetimepicker">
+                                            <div class="input-group-text">
+                                                <i class="fa fa-calendar"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group s_website_form_field col-12 s_website_form_custom " t-if="step == 2" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label " style="width: 200px" for="o058z39lyzgg3">
+                                    <span class="s_website_form_label_content">Church</span>
+                                </label>
+                                <div class="col-sm">
+                                    <input type="text" class="form-control s_website_form_input" name="Church" placeholder="" id="o058z39lyzgg3"/>
+                                </div>
+                            </div>
+                        </div>
+                        <h2 t-if="step == 2" class="mt-5">Correspondence settings</h2>
+                        <div class="form-group s_website_form_field col-12    " data-type="many2one" data-name="Field" t-if="step == 2">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label " style="width: 200px" for="otiou05fp8s">
+                                    <span class="s_website_form_label_content">Main language</span>
+                                </label>
+                                <div class="col-sm">
+                                    <select class="form-control s_website_form_input" name="partner_lang" id="otiou05fp8s" style="">
+                                        <option value="15">Danish / Dansk</option>
+                                        <option value="1">English (US)</option>
+                                        <option value="23">Finnish / Suomi</option>
+                                        <option value="51">Norwegian Bokmål / Norsk bokmål</option>
+                                        <option value="78">Swedish / Svenska</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group s_website_form_field col-12    " t-if="spoken_lang and step == 2" data-type="many2many" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class=" col-sm-auto s_website_form_label " style="width: 200px">
+                                    <span class="s_website_form_label_content">Languages I can read</span>
+                                </label>
+                                <div class="col-sm">
+                                    <div class="row s_col_no_resize s_col_no_bgcolor s_website_form_multiple" data-name="partner_spoken_lang_ids" data-display="horizontal">
+                                        <t t-foreach="spoken_lang" t-as="lang">
+                                            <div class="checkbox col-12 col-lg-4 col-md-6">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="s_website_form_input form-check-input" t-attf-id="spoken-lang-#{lang.id}" name="partner_spoken_lang_ids" t-att-value="lang.id"/>
+                                                <label class="form-check-label s_website_form_check_label" t-attf="spoken-lang-#{lang.id}" t-esc="lang.name"/>
+                                            </div>
+                                        </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h2 t-if="step == 2" class="mt-5">Sponsorship settings</h2>
+                        <div class="form-group s_website_form_field col-12 s_website_form_required" data-type="selection" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class=" col-sm-auto s_website_form_label " style="width: 200px" for="o4rvp4ahg99e0">
+                                    <span class="s_website_form_label_content">Type of sponsorship</span>
+                                    <span class="s_website_form_mark"> *</span>
+                                </label>
+                                <div class="col-sm">
+                                    <div class="row s_col_no_resize s_col_no_bgcolor s_website_form_multiple" data-name="sponsorship_amount" data-display="horizontal">
+                                        <t t-set="sponsorship_plus" t-value="step == 2 and contract and len(contract.contract_line_ids) &gt; 1"/>
+                                        <div class="radio col-12 col-lg-4 col-md-6">
+                                            <div class="form-check">
+                                                <t t-if="sponsorshp_plus or step == 1">
+                                                    <input type="radio" class="s_website_form_input form-check-input" id="o4rvp4ahg99e0" name="sponsorship_amount" value="regular" required=""/>
+                                                </t>
+                                                <t t-else="">
+                                                    <input type="radio" class="s_website_form_input form-check-input" id="o4rvp4ahg99e0" name="sponsorship_amount" value="regular" required="" checked="checked"/>
+                                                </t>
+                                                <label class="form-check-label s_website_form_check_label" for="o4rvp4ahg99e0">
+                                                    Regular Sponsorship
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="radio col-12 col-lg-4 col-md-6">
+                                            <div class="form-check">
+                                                <t t-if="sponsorship_plus">
+                                                    <input type="radio" class="s_website_form_input form-check-input" id="o4rvp4ahg99e1" name="sponsorship_amount" value="plus" required="" checked="checked"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <input type="radio" class="s_website_form_input form-check-input" id="o4rvp4ahg99e1" name="sponsorship_amount" value="plus" required=""/>
+                                                </t>
+                                                <label class="form-check-label s_website_form_check_label" for="o4rvp4ahg99e1">
+                                                    PLUS Sponsorship
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto ml-auto">
+                            <a id="sponsorship_plus_info" class="o_more_info_button mb-4 rounded-circle bg-primary align-items-center justify-content-center o_not_editable text-white" href="#" title="More information">
+                                <i class="fa fa-question fa-1x"/>
+                            </a>
+                        </div>
+                        <div class="col-1"/>
+                        <t t-call="website_sponsorship.sponsorship_plus_help"/>
+                        <div t-if="payment_modes" t-attf-class="form-group s_website_form_field col-12 #{'s_website_form_field_hidden' if step == 1 else ''}" data-type="many2one" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label " style="width: 200px" for="o16asgaov89n">
+                                    <span class="s_website_form_label_content">Payment method</span>
+                                </label>
+                                <div class="col-sm">
+                                        <select class="form-control s_website_form_input" name="payment_mode_id" id="o16asgaov89n" style="" t-att-value="payment_modes[0].id">
+                                            <t t-foreach="payment_modes" t-as="payment_mode">
+                                                <option t-att-value="payment_mode.id" t-esc="payment_mode.name"/>
+                                            </t>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="origin_id" t-if="origins" t-attf-class="form-group s_website_form_field col-12 d-none #{'d-md-none s_website_form_field_hidden' if step == 1 else 'd-md-block'}" data-type="many2one" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label " style="width: 200px" for="o0g7drzfs931b">
+                                    <span class="s_website_form_label_content">Origin of my sponsorship</span>
+                                </label>
+                                <div class="col-sm">
+                                    <select class="form-control s_website_form_input" name="origin_id" id="o0g7drzfs931b" style="">
+                                        <option value=""></option>
+                                        <t t-foreach="origins" t-as="origin">
+                                            <option t-att-value="origin.id" t-esc="origin.name"/>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="origin_details" t-attf-class="form-group s_website_form_field col-12 s_website_form_custom d-none #{'d-md-none s_website_form_field_hidden' if step==1 else 'd-md-block'}" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label " style="width: 200px" for="ofpmjq14r9uw">
+                                    <span class="s_website_form_label_content">Details</span>
+                                </label>
+                                <div class="col-sm">
+                                    <input type="text" class="form-control s_website_form_input" name="Origin of my sponsorship" placeholder="Give details if the options above don't suit" id="ofpmjq14r9uw"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group s_website_form_field col-12 s_website_form_field_hidden   " data-type="boolean" data-name="Field">
+                          <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class=" col-sm-auto s_website_form_label " style="width: 200px" for="ol0fq3rfrlnn">
+                              <span class="s_website_form_label_content">Match Update</span>
+                            </label>
+                            <div class="col-sm">
+                                <t t-if="step == 2">
+                                    <input type="checkbox" value="Yes" class="s_website_form_input" name="match_update" id="ol0fq3rfrlnn" checked="checked"/>
+                                </t>
+                                <t t-else="">
+                                    <input type="checkbox" value="Yes" class="s_website_form_input" name="match_update" id="ol0fq3rfrlnn"/>
+                                </t>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group s_website_form_field col-12 s_website_form_field_hidden   " data-type="many2one" data-name="Field">
+                          <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class=" col-sm-auto s_website_form_label " style="width: 200px" for="ol0fq3rfrlnn">
+                              <span class="s_website_form_label_content">Child</span>
+                            </label>
+                            <div class="col-sm">
+                              <input type="number" t-att-value="main_object.id" class="s_website_form_input" name="child_id" id="c3209fjdv"/>
+                            </div>
+                          </div>
+                        </div>
+                         <div class="form-group col-12 s_website_form_field s_website_form_required_custom mt-4 mb-4">
+                            <div class="form-check">
+                                <input
+                                    type="checkbox"
+                                    value="accepted"
+                                    id="privacy_policy"
+                                    name="privacy_policy"
+                                    class="s_website_form_input form-check-input"
+                                    required="required"
+                                />
+                                <label class="form-check-label font-weight-normal" for="privacy_policy">
+                                    By submitting this form, I confirm the acceptance of the <a href="/data-protection" target="_blank">data protection policy</a>.
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                            <div style="width: 200px;" class="s_website_form_label"/>
+                            <a href="#" role="button" class="btn btn-primary btn-lg s_website_form_send" data-original-title="" title="" aria-describedby="tooltip17875">Submit</a>
+                            <span id="s_website_form_result"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </template>
+
+    <template id="sponsorship_plus_help">
+        <div id="sponsorship_plus_help" class="d-none s_alert s_alert_md alert-info w-100 clearfix" data-snippet="s_alert" data-name="Alert">
+            <i class="fa fa-2x fa-info-circle s_alert_icon"/>
+            <div class="s_alert_content">
+                <p>PLUS Sponsorship is an <b>additional donation of CHF 8.00 per month</b>: it enables Compassion to finance projects to change the children's environment. The funds received under the Sponsorship Plus program contribute to a common fund and enable Compassion to support several projects each year.</p>
+            </div>
+        </div>
+    </template>
+</odoo>
