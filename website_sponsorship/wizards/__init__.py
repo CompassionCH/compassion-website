@@ -6,5 +6,4 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from . import abstract_partner_form
-from . import sponsorship_form
+from . import abstract_partner_form, sponsorship_form

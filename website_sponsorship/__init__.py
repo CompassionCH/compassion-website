@@ -6,6 +6,4 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from . import wizards
-from . import models
-from . import controllers
+from . import controllers, models, wizards

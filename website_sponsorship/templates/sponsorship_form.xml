@@ -169,11 +169,9 @@
                                 </label>
                                 <div class="col-sm">
                                     <select class="form-control s_website_form_input" name="partner_lang" id="otiou05fp8s">
-                                        <option value="15">Danish / Dansk</option>
-                                        <option value="1">English (US)</option>
-                                        <option value="23">Finnish / Suomi</option>
-                                        <option value="51">Norwegian Bokmål / Norsk bokmål</option>
-                                        <option value="78">Swedish / Svenska</option>
+                                        <t t-foreach="main_languages" t-as="lang">
+                                            <option t-att-value="lang.id" t-esc="lang.name"/>
+                                        </t>
                                     </select>
                                 </div>
                             </div>

@@ -8,7 +8,7 @@
 ##############################################################################
 import logging
 
-from odoo import api, models, fields, _
+from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -30,11 +30,13 @@ class PartnerForm(models.AbstractModel):
     partner_function = fields.Char("Job")
     partner_lang = fields.Many2one("res.lang", "Main language")
     partner_spoken_lang_ids = fields.Many2many(
-        "res.lang.compassion", string="Languages I can read",
-        domain=[('translatable', '=', True)]
+        "res.lang.compassion",
+        string="Languages I can read",
+        domain=[("translatable", "=", True)],
     )
     partner_id = fields.Many2one(
-        "res.partner", "Partner", default=lambda s: s.env.user.partner_id)
+        "res.partner", "Partner", default=lambda s: s.env.user.partner_id
+    )
     match_update = fields.Boolean(default=False)
     match_create = fields.Boolean(default=True)
 
@@ -46,7 +48,8 @@ class PartnerForm(models.AbstractModel):
         @return: dict of res.partner fields
         """
         res = {
-            key.replace("partner_", ""): value for key, value in vals.items()
+            key.replace("partner_", ""): value
+            for key, value in vals.items()
             if key.startswith("partner_")
         }
         # Convert language record_id into its code (as stored in partner)
@@ -73,8 +76,9 @@ class PartnerForm(models.AbstractModel):
                 self.env["res.partner.match"].update_partner(partner, vals)
             if not vals.get("partner_id") and (match_update or match_create):
                 partner_vals = self._convert_vals_for_res_partner(vals)
-                vals["partner_id"] = self.env[
-                    "res.partner.match"
-                ].match_values_to_partner(
-                    partner_vals, match_update, match_create).id
+                vals["partner_id"] = (
+                    self.env["res.partner.match"]
+                    .match_values_to_partner(partner_vals, match_update, match_create)
+                    .id
+                )
         return super().create(vals_list)

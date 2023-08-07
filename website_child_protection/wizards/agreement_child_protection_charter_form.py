@@ -7,7 +7,7 @@
 #
 ##############################################################################
 
-from odoo import api, models, fields
+from odoo import api, fields, models
 
 
 class ChildProtectionForm(models.TransientModel):
@@ -22,8 +22,11 @@ class ChildProtectionForm(models.TransientModel):
         forms = super().create(vals_list)
         for form in forms.filtered("agreed"):
             if form.partner_uuid:
-                partner = self.env["res.partner"].sudo().search([
-                    ("uuid", "=", form.partner_uuid)])
+                partner = (
+                    self.env["res.partner"]
+                    .sudo()
+                    .search([("uuid", "=", form.partner_uuid)])
+                )
             else:
                 partner = self.env.user.partner_id
             partner.agree_to_child_protection_charter()

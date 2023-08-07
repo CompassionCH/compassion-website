@@ -7,8 +7,5 @@
 #
 ##############################################################################
 
-from . import compassion_child
-from . import recurring_contract_origin
-from . import res_partner_match
-from . import privacy_statement
-from . import ir_qweb_html
+from . import (compassion_child, ir_qweb_html, privacy_statement,
+               recurring_contract_origin, res_partner_match)

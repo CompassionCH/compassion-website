@@ -18,15 +18,21 @@ class PartnerMatch(models.AbstractModel):
         # Replace the rule with fuzzy search and using firstname and lastname
         email = vals["email"].strip()
         name = vals["firstname"] + " " + vals["lastname"]
-        return self.env["res.partner"].search([
-            ("name", "%", name),
-            ("email", "=ilike", email),
-        ], limit=1)
+        return self.env["res.partner"].search(
+            [
+                ("name", "%", name),
+                ("email", "=ilike", email),
+            ],
+            limit=1,
+        )
 
     def _match_name_and_zip(self, vals):
         # Replace the rule for using firstname and lastname
         name = vals["firstname"] + " " + vals["lastname"]
-        return self.env["res.partner"].search([
-            ("name", "ilike", name),
-            ("zip", "=", vals["zip"]),
-        ], limit=1)
+        return self.env["res.partner"].search(
+            [
+                ("name", "ilike", name),
+                ("zip", "=", vals["zip"]),
+            ],
+            limit=1,
+        )

@@ -9,7 +9,7 @@
 ##############################################################################
 import datetime
 
-from odoo import http, _
+from odoo import _, http
 from odoo.http import request
 
 
@@ -33,8 +33,9 @@ class ChildProtectionCharterController(http.Controller):
         """
         # Need sudo() to bypass domain restriction on res.partner for anonymous
         # users.
-        partner = request.env["res.partner"].sudo().search([
-            ("uuid", "=", partner_uuid)])
+        partner = (
+            request.env["res.partner"].sudo().search([("uuid", "=", partner_uuid)])
+        )
 
         if not partner:
             return request.redirect("/")
@@ -44,9 +45,7 @@ class ChildProtectionCharterController(http.Controller):
         if date_signed and (current_time - date_signed).days < 365:
             return self.child_protection_charter_agreed(**kwargs)
         else:
-            values = {
-                "partner_uuid": partner_uuid
-            }
+            values = {"partner_uuid": partner_uuid}
             return request.render(
                 "website_child_protection.child_protection_charter_page", values
             )

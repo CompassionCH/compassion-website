@@ -2,7 +2,7 @@ from odoo import api, models
 
 
 class HTMLConverter(models.AbstractModel):
-    _inherit = 'ir.qweb.field.html'
+    _inherit = "ir.qweb.field.html"
 
     @api.model
     def value_to_html(self, value, options):
