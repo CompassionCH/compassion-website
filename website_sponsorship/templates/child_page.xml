@@ -115,7 +115,7 @@
                     <font style="" t-att-class="text_class">&amp;nbsp;<span t-esc="child.field_office_id.country_id.name"/>&amp;nbsp;</font>
                 </figcaption>
             </figure>
-            <span t-attf-class="fa fa-#{'mars' if child.gender == 'M' else 'venus'}" data-original-title="" title="" aria-describedby="tooltip778639"/>
+            <span t-attf-class="fa fa-#{'mars' if child.gender == 'M' else 'venus'}"  aria-describedby="tooltip778639"/>
             <figure class="figure">
                 <figcaption class="figure-caption">
                     <font style="" t-att-class="text_class"> <span t-esc="child.get('boy')"/></font>

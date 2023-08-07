@@ -34,7 +34,7 @@ class CompassionChild(models.Model):
     def _compute_website_url(self):
         super()._compute_website_url()
         for child in self:
-            child.website_url = "/child/%s" % (slug(child))
+            child.website_url = f"/child/{slug(child)}"
 
     def _compute_legend(self):
         legend_template = self.env.ref("website_sponsorship.child_legend")
@@ -51,7 +51,7 @@ class CompassionChild(models.Model):
         default_meta = super()._default_website_meta()
         company = request.website.company_id.sudo()
         website_name = (request.website or company).name
-        title = '%s | %s' % (self.preferred_name, website_name)
+        title = f"{self.preferred_name} | {website_name}"
         default_meta["default_opengraph"].update({
             "og:title": title,
             "og:image": request.website.image_url(self, "portrait"),
