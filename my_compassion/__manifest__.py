@@ -28,10 +28,10 @@
 
 # pylint: disable=C8101
 {
-    "name": "Compassion Website",
-    "version": "12.0.1.0.1",
+    "name": "MyCompassion - Sponsor portal website",
+    "version": "14.0.1.0.0",
     "category": "Website",
-    "author": "Sebastien Toth",
+    "author": "Compassion CH",
     "license": "AGPL-3",
     "website": "http://www.compassion.ch",
     "data": [

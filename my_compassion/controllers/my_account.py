@@ -940,7 +940,7 @@ class MyAccountController(PaymentFormController):
             label_data = label_wizard.get_report_data()
             report_name = "label.report_label"
             report = (
-                request.env["ir.actions.report"]
+                request.env["ir.actions.report"].sudo()
                 ._get_report_from_name(report_name)
                 .with_context(report_context)
             )
