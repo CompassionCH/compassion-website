@@ -1,0 +1,14 @@
+<odoo>
+    <!-- Move all personal fields in the tab from OCA partner-birthdate -->
+    <record id="view_partner_form_compassion_birthdate" model="ir.ui.view">
+        <field name="name">res.partner.form.compassion.personal.info</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- Add user login info -->
+            <xpath expr="//field[@name='website'][1]" position="after">
+                <field name="user_login" attrs="{'invisible': [('user_login', '=', False)]}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

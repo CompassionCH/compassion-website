@@ -1,0 +1,12 @@
+<odoo>
+    <record id="view_partner_form_compassion_legal" model="ir.ui.view">
+        <field name="name">res.partner.form.compassion.legal</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="partner_personal_info.view_partner_form_compassion_birthdate"/>
+        <field name="arch" type="xml">
+            <field name="uuid" position="after">
+                <field name="legal_agreement_date"/>
+            </field>
+        </field>
+    </record>
+</odoo>

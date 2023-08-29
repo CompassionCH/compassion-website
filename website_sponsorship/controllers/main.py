@@ -1,9 +1,10 @@
 from datetime import datetime
 from random import randint
 
+from werkzeug.exceptions import BadRequest, Gone, NotFound
+
 from odoo import http
 from odoo.http import request
-from werkzeug.exceptions import BadRequest, Gone, NotFound
 
 
 class WebsiteChild(http.Controller):
@@ -33,22 +34,7 @@ class WebsiteChild(http.Controller):
             ("website_reservation_id", "!=", False),
         ]
         offset = (page - 1) * self._children_per_page
-        if kwargs.get("event_id"):
-            domain.append(("hold_event", "=", kwargs.get("event_id")))
-        if kwargs.get("age_min"):
-            domain.append(("age", ">=", kwargs.get("age_min")))
-        if kwargs.get("age_max"):
-            domain.append(("age", "<=", kwargs.get("age_max")))
-        if kwargs.get("country"):
-            country = kwargs.get("country")
-            # Special case for Indonesia with two field offices
-            if country == "ID":
-                country += ",IO"
-            domain.append(("field_office_id.field_office_id", "in", country.split(",")))
-        if kwargs.get("gender"):
-            domain.append(("gender", "=", kwargs.get("gender")))
-        if kwargs.get("birthday"):
-            domain.append(("birthdate", "like", kwargs.get("birthday")[4:]))
+        domain = self._extend_search_domain(domain, kwargs)
         children = child_obj.search(
             domain + website_domain, offset=offset, limit=self._children_per_page
         )
@@ -73,6 +59,29 @@ class WebsiteChild(http.Controller):
             "website_sponsorship.children_page_template",
             {"children": children, "field_offices": field_offices, "pager": pager},
         )
+
+    def _extend_search_domain(self, domain, kwargs):
+        """
+        Extend the search domain with the parameters given in the URL
+        @param domain: search domain of children
+        @param kwargs: request parameters dict
+        @return: the extended domain
+        """
+        if kwargs.get("age_min"):
+            domain.append(("age", ">=", kwargs.get("age_min")))
+        if kwargs.get("age_max"):
+            domain.append(("age", "<=", kwargs.get("age_max")))
+        if kwargs.get("country"):
+            country = kwargs.get("country")
+            # Special case for Indonesia with two field offices
+            if country == "ID":
+                country += ",IO"
+            domain.append(("field_office_id.field_office_id", "in", country.split(",")))
+        if kwargs.get("gender"):
+            domain.append(("gender", "=", kwargs.get("gender")))
+        if kwargs.get("birthday"):
+            domain.append(("birthdate", "like", kwargs.get("birthday")[4:]))
+        return domain
 
     def load_child(self, **kwargs):
         # Put a child on hold and display its page
@@ -163,28 +172,6 @@ class WebsiteChild(http.Controller):
                 "origins": origins,
                 "done": kwargs.get("done", not contract.is_first_sponsorship),
             },
-        )
-
-    @http.route(
-        [
-            "/data-protection",
-            "/data-protection/<string:version>",
-        ],
-        type="http",
-        auth="public",
-        website=True,
-    )
-    def data_protection_page(self, version=None):
-        search_args = [("website_published", "=", True)]
-        if version:
-            search_args.append(("version", "=", version))
-        statement = request.env["compassion.privacy.statement"].search(
-            search_args, limit=1
-        )
-        if not statement:
-            raise NotFound()
-        return request.render(
-            "website_sponsorship.data_protection_page", {"main_object": statement}
         )
 
     @http.route(["/hold_a_child"], type="json", auth="public")

@@ -28,35 +28,19 @@
 
 # pylint: disable=C8101
 {
-    "name": "MyCompassion - Sponsor portal website",
+    "name": "Website CRM Request",
     "version": "14.0.1.0.0",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
     "website": "https://www.compassion.ch",
-    "data": [
-        "security/access_rules.xml",
-        "security/ir.model.access.csv",
-        "templates/my_account_components.xml",
-        "templates/my_account_personal_info.xml",
-        "templates/my_account_donations.xml",
-        "templates/my_account_my_children.xml",
-        "templates/my_account_write_a_letter.xml",
-        "templates/login_template.xml",
-        "templates/signup.xml",
-        "views/correspondence_template_view.xml",
-        "views/partner_compassion_view.xml",
-    ],
+    "data": [],
     "depends": [
-        "partner_communication_compassion",
-        "wordpress_configuration",
-        "website_child_protection",
-        "website_sponsorship",
-        "auth_signup",
-        "website_crm_privacy_policy",  # OCA/website
+        "crm_request",
+        "website_form",
     ],
     "demo": [],
-    "installable": True,
+    # TODO : T0509 migrate this module
+    "installable": False,
     "auto_install": False,
-    "post_load": "post_load",
 }

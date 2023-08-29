@@ -7,7 +7,6 @@
 #
 ##############################################################################
 import logging
-from datetime import datetime
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
@@ -67,19 +66,7 @@ class WebsiteSponsorship(models.TransientModel):
                 form.contract_id = self.env["recurring.contract"].create(
                     form._get_sponsorship_vals()
                 )
-                privacy_statement = self.env["compassion.privacy.statement"].search(
-                    [], limit=1
-                )
-                if privacy_statement:
-                    self.env["privacy.statement.agreement"].create(
-                        {
-                            "partner_id": form.partner_id.id,
-                            "agreement_date": datetime.today(),
-                            "privacy_statement_id": privacy_statement.id,
-                            "version": privacy_statement.version,
-                            "origin_signature": "new_sponsorship",
-                        }
-                    )
+                form.partner_id.legal_agreement_date = fields.Datetime.now()
         return records
 
     def write(self, vals):

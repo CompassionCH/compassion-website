@@ -14,8 +14,7 @@
     "installable": True,
     "depends": [
         "website_form",
-        # compassion-switzerland
-        "partner_compassion",
+        "child_protection",
     ],
     "data": [
         "security/ir.model.access.csv",

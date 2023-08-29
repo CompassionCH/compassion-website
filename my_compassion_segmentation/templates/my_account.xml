@@ -1,0 +1,15 @@
+<odoo>
+    <template id="my_account_personal_section" inherit_id="my_compassion.my_information_page_template">
+        <xpath expr="//div[@class='container']/div[@class='row']" position="after">
+            <t t-if="partner.primary_segment_id.personalized_links">
+                <hr class="my-4"/>
+                <div class="row">
+                    <div class="col">
+                        <h3 class="mb-4">Useful resources</h3>
+                        <div t-field="partner.primary_segment_id.personalized_links" class="oe_structure"/>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+    </template>
+</odoo>

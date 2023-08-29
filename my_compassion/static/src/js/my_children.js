@@ -8,10 +8,7 @@ function selectChild(selected_child_id, reload) {
   let search_params = new URLSearchParams(window.location.search);
   search_params.set("child_id", selected_child_id);
   let url =
-    window.location.origin +
-    window.location.pathname +
-    "?" +
-    search_params.toString();
+    window.location.origin + window.location.pathname + "?" + search_params.toString();
   history.replaceState({}, document.title, url);
 
   // on some pages, its easier to reload the page with the right url
@@ -38,11 +35,9 @@ function selectChild(selected_child_id, reload) {
   selected_child_image.classList.add("border", "border-5", "border-primary");
   selected_child_image.style.opacity = 1;
 
-  document.getElementById("child-name-" + selected_child_id).style.fontWeight =
+  document.getElementById("child-name-" + selected_child_id).style.fontWeight = "bold";
+  document.getElementById("child-local_id-" + selected_child_id).style.fontWeight =
     "bold";
-  document.getElementById(
-    "child-local_id-" + selected_child_id
-  ).style.fontWeight = "bold";
 
   // Scroll smoothly to selected child
   let card = document.getElementById("child-card-" + selected_child_id);
@@ -55,3 +50,10 @@ function selectChild(selected_child_id, reload) {
 
 let params = new URLSearchParams(window.location.search);
 selectChild(params.get("child_id"), false);
+
+function displayAlert(id) {
+  $(`#${id}`).show("slow");
+  setTimeout(function () {
+    $(`#${id}`).hide("slow");
+  }, 7000);
+}

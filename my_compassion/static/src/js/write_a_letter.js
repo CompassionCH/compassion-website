@@ -25,22 +25,20 @@ file_selector.addEventListener("change", updateImageDisplay);
 const template_images = document.getElementsByClassName("template-image");
 const template_id = document.getElementById("template_id");
 
+let generator_id = sessionStorage.getItem("generator_id");
+
 function selectTemplate(selected_template_id) {
   // Change url to display selected template
   let search_params = new URLSearchParams(window.location.search);
   search_params.set("template_id", selected_template_id);
   let url =
-    window.location.origin +
-    window.location.pathname +
-    "?" +
-    search_params.toString();
+    window.location.origin + window.location.pathname + "?" + search_params.toString();
   history.replaceState({}, document.title, url);
 
   // unselect all
-  for (let i = 0; i < template_images.length; i++) {
-    let template_image = template_images[i];
+  template_images.forEach((template_image) => {
     template_image.classList.remove("border", "border-5", "border-primary");
-  }
+  });
 
   // select the one
   let selected_template_image = document.getElementById(
@@ -95,9 +93,7 @@ async function compressImage(image) {
   let ctx = canvas.getContext("2d");
   ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-  return await new Promise((resolve) =>
-    ctx.canvas.toBlob(resolve, "image/jpeg")
-  );
+  return await new Promise((resolve) => ctx.canvas.toBlob(resolve, "image/jpeg"));
 }
 
 /**
@@ -177,13 +173,22 @@ function displayImages() {
           original_image.type.valueOf() != "image/jpeg"
         ) {
           compressImage(image).then((blob) => {
-            blob.name = original_image.name;
-            blob.lastModified = Date.now();
-            blob.webkitRelativePath = "";
-            images_comp = images_comp.concat(blob);
+            const compressReader = new FileReader();
+            compressReader.onload = function (event) {
+              let final_data = {
+                name: original_image.name,
+                data: event.target.result.split(",")[1],
+              };
+              images_comp = images_comp.concat(final_data);
+            };
+            compressReader.readAsDataURL(blob);
           });
         } else {
-          images_comp = images_comp.concat(original_image);
+          let final_data = {
+            name: original_image.name,
+            data: image.src.split(",")[1],
+          };
+          images_comp = images_comp.concat(final_data);
         }
 
         image_display_table.innerHTML += `
@@ -209,36 +214,14 @@ function displayImages() {
 function updateImageDisplay(event) {
   let input_images = event.target.files;
 
-  // TODO CI-765: remove the following block to support multiple images
-  for (let i = 0; i < images_list.length; i++) {
-    const file = images_list[i];
-    removeImage(file.name, file.size, file.type);
-  }
-  // TODO CI-765: end of block
-
-  for (let i = 0; i < input_images.length; i++) {
-    const file = input_images[i];
-
+  input_images.forEach((file) => {
     const is_image = file.type.startsWith("image/");
 
-    if (
-      is_image &&
-      !images_list.containsFile(file.name, file.size, file.type)
-    ) {
+    if (is_image && !images_list.containsFile(file.name, file.size, file.type)) {
       new_images = new_images.concat(file);
       images_list = images_list.concat(file);
     }
-  }
-
-  // TODO CI-765: uncomment the following block to support multiple images
-  /*
-    if (new_images.length > 0) {
-        display_alert("letter_images_duplicated");
-        return;
-    }
-    */
-  // TODO CI-765: end of block
-
+  });
   displayImages();
 }
 
@@ -264,97 +247,56 @@ function startStopLoading(type) {
  * @param with_loading determines whether we want to have a loading or not
  * we can send a letter directly if the user pressed the corresponding button
  */
-async function createLetter(preview = false, with_loading = true) {
-  if (with_loading) {
-    startStopLoading("preview");
-  }
-
-  let params = new URLSearchParams(window.location.search);
-
-  json_data = {
-    "letter-copy": letter_content.value,
-    "selected-child": params.get("child_id"),
-    "selected-letter-id": params.get("template_id"),
-    source: "website",
-  };
-  if (images_comp.length > 0) {
-    json_data["file_upl"] = images_comp[0];
-  }
-
-  let form_data = new FormData();
-  for (let key in json_data) {
-    form_data.append(key, json_data[key]);
-  }
-
-  let init = {
-    method: "POST",
-    // Do not set the Content-Type, otherwise the form data can not set the multipart boundary
-    //headers: {"Content-Type": "multipart/form-data"},
-    body: form_data,
-  };
-  let request = new Request(
-    `${window.location.origin}/mobile-app-api/correspondence/get_preview`
-  );
-  let response = await fetch(request, init);
-  return response.text().then(function (text) {
-    if (with_loading) {
-      startStopLoading("preview");
-    }
-    if (!response.ok) {
-      displayAlert("preview_error");
-      return false;
-    }
-    if (preview) {
-      window.open(text.slice(1, -1), "_blank");
-    }
-    return true;
-  });
-}
-
-/**
- * This function takes care of sending a letter when the corresponding button
- * is clicked
- */
-async function sendLetter() {
-  startStopLoading("sending");
-  await createLetter((preview = false), (with_loading = false));
-
+async function createLetter(mode = "preview") {
+  startStopLoading(mode);
   let params = new URLSearchParams(window.location.search);
 
   let json_data = {
-    TemplateID: params.get("template_id"),
-    Need: params.get("child_id"),
+    body: letter_content.value,
+    template_id: params.get("template_id"),
+    source: "mycompassion",
+    generator_id: generator_id,
+    csrf_token: odoo.csrf_token,
   };
-
-  params.forEach(function (v, k, _) {
-    json_data[k] = v;
+  if (images_comp.length > 0) {
+    json_data["file_upl"] = images_comp;
+  }
+  // Send the json data to odoo using a post request
+  $.ajax({
+    url: `${window.location.origin}/my/letter/${params.get("child_id")}/${mode}`,
+    type: "POST",
+    contentType: "application/json",
+    data: JSON.stringify(json_data),
+    success: function (response, status) {
+      startStopLoading(mode);
+      if (status !== "success" || response["error"] !== undefined) {
+        displayAlert(`${mode}_error`);
+        return;
+      }
+      if (mode === "preview") {
+        sessionStorage.setItem("generator_id", response.result["generator_id"]);
+        window.open(response.result["preview_url"], "_blank");
+      } else if (mode === "send") {
+        // Empty images and text (to avoid duplicate)
+        letter_content.value = "";
+        images_list.forEach((image) => {
+          removeImage(image.name, image.size, image.type);
+        });
+        $("#letter_sent_correctly").modal("show");
+        $(".christmas_action").toggleClass("d-none");
+        sessionStorage.removeItem("generator_id");
+      }
+    },
+    error: function (error) {
+      startStopLoading(mode);
+      displayAlert(`${mode}_error`);
+    },
   });
+}
 
-  let init = {
-    method: "POST",
-    headers: new Headers({ "Content-Type": "application/json" }),
-    body: JSON.stringify(json_data),
-  };
-  let request = new Request(
-    `${window.location.origin}/mobile-app-api/correspondence/send_letter`
-  );
-  let response = await fetch(request, init);
-  console.log(response);
-  let answer = response.text().then(function (text) {
-    if (!response.ok) {
-      displayAlert("letter_error");
-      return false;
-    }
-
-    // Empty images and text (to avoid duplicate)
-    letter_content.value = "";
-    for (let i = 0; i < images_list.length; i++) {
-      let image = images_list[i];
-      removeImage(image.name, image.size, image.type);
-    }
-
-    $("#letter_sent_correctly").modal("show");
-    $(".christmas_action").toggleClass("d-none");
-  });
-  startStopLoading("sending");
+function displayAlert(id) {
+  $(`#${id}`).show("slow");
+  setTimeout(function () {
+    $(`#${id}`).hide("slow");
+  }, 7000);
 }

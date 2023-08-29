@@ -7,4 +7,5 @@
 #
 ##############################################################################
 
-from . import controllers, forms, models, tools
+from . import controllers, models
+from .hooks import post_load

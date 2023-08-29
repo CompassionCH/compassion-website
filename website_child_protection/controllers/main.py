@@ -9,7 +9,7 @@
 ##############################################################################
 import datetime
 
-from odoo import _, http
+from odoo import http
 from odoo.http import request
 
 
@@ -19,12 +19,15 @@ class ChildProtectionCharterController(http.Controller):
     """
 
     @http.route(
-        route="/partner/<string:partner_uuid>/child-protection-charter",
+        route=[
+            "/partner/<string:partner_uuid>/child-protection-charter",
+            "/partner/child-protection-charter",
+        ],
         auth="public",
         website=True,
         sitemap=False,
     )
-    def child_protection_charter(self, partner_uuid, **kwargs):
+    def child_protection_charter(self, partner_uuid=None, **kwargs):
         """
         This page allows a partner to sign the child protection charter.
         :param partner_uuid: The uuid associated with the partner.
@@ -33,9 +36,13 @@ class ChildProtectionCharterController(http.Controller):
         """
         # Need sudo() to bypass domain restriction on res.partner for anonymous
         # users.
-        partner = (
-            request.env["res.partner"].sudo().search([("uuid", "=", partner_uuid)])
-        )
+        if partner_uuid:
+            partner = (
+                request.env["res.partner"].sudo().search([("uuid", "=", partner_uuid)])
+            )
+        else:
+            partner = request.env.user.partner_id
+            partner_uuid = partner.uuid
 
         if not partner:
             return request.redirect("/")
@@ -64,3 +71,12 @@ class ChildProtectionCharterController(http.Controller):
             "website_child_protection.child_protection_charter_confirmation_page",
             values,
         )
+
+    @http.route(
+        route="/child-protection-charter",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def child_protection_text_page(self, **kwargs):
+        return request.render("website_child_protection.charter_only_page")

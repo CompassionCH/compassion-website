@@ -317,7 +317,7 @@
                                     required="required"
                                 />
                                 <label class="form-check-label font-weight-normal" for="privacy_policy">
-                                    By submitting this form, I confirm the acceptance of the <a href="/data-protection" target="_blank">data protection policy</a>.
+                                    <t t-call="website_legal_page.acceptance_full" />
                                 </label>
                             </div>
                         </div>
@@ -339,5 +339,14 @@
                 <p>PLUS Sponsorship is an <b>additional donation of CHF 8.00 per month</b>: it enables Compassion to finance projects to change the children's environment. The funds received under the Sponsorship Plus program contribute to a common fund and enable Compassion to support several projects each year.</p>
             </div>
         </div>
+    </template>
+
+    <template id="acceptance_full" inherit_id="website_legal_page.acceptance_full">
+        <xpath expr="//a" position="replace">
+            <a
+                href="/legal"
+                target="_blank"
+            >I accept the legal terms, the privacy policy &amp; conditions of Compassion.</a>
+        </xpath>
     </template>
 </odoo>

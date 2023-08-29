@@ -6,6 +6,12 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from . import (compassion_child_pictures, compassion_project,
-               correspondence_template, invoice_line, mail_activity,
-               password_security_home_requirements, res_user)
+from . import (
+    compassion_child_pictures,
+    compassion_project,
+    contract_group,
+    correspondence_template,
+    move,
+    res_partner,
+    res_user,
+)

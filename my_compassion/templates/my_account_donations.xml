@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <!-- Utility to create a row, given the key and its corresponding value. Gets the following arguments: -->
+        <!--     1. partner, the partner that is connected -->
+        <!--     2. sponsorships_by_group, Dict of groups mapped to their sponsorships, and total amount -->
+        <!--     3. invoices_per_day, the list of donations grouped by day of payment -->
+        <!--     4. due_invoices, the list of due sponsorships-->
+        <template id="my_donations_page_template" name="Donations / Invoicing">
+            <t t-set="selected">donation</t>
+            <t t-set="additional_title">My financials</t>
+            <t t-call="portal.frontend_layout">
+
+                <div class="container my-5" id="my_account_invoicing">
+                    <t t-call="my_compassion.my_donations_payment_options" t-if="sponsorships_by_group"/>
+                    <t t-call="my_compassion.my_sponsorship_donation" t-if="sponsorships_by_group"/>
+                    <t t-call="my_compassion.my_donations_gift_history"/>
+                </div>
+            </t>
+        </template>
+
+        <!-- Template that displays the single group for partners that have only one -->
+        <template id="my_donations_payment_options">
+            <h3>My payment options</h3>
+            <div class="row">
+                <t t-foreach="sponsorships_by_group" t-as="group">
+                    <div class="col col-md-6 mb-2">
+                        <t t-set="sponsorships" t-value="group_value[0]"/>
+                        <t t-set="total_amount" t-value="group_value[1]"/>
+                        <!-- Payment mode -->
+                        <t t-set="value" t-value="group.payment_mode_id.name"/>
+                        <t t-call="my_compassion.fill_key_value">Payment mode</t>
+
+                         <!-- Number of fully paid children -->
+                        <t t-set="value" t-value="len(sponsorships)"/>
+                        <t t-call="my_compassion.fill_key_value">Number of sponsorships</t>
+
+                        <!-- Payment frequency -->
+                        <t t-set="value" t-value="str(group.advance_billing_months) + ' ' + group.translate('recurring_unit')"/>
+                        <t t-call="my_compassion.fill_key_value">Payment frequency</t>
+
+                        <!-- Payment amount -->
+                        <t t-set="value" t-value="total_amount"/>
+                        <t t-call="my_compassion.fill_key_value">Total amount</t>
+                    </div>
+                </t>
+            </div>
+        </template>
+
+        <template id="my_sponsorship_donation">
+            <hr/>
+            <div class="mt-4">
+                <!-- Payments option -->
+                <h3>My sponsorships</h3>
+                <div class="row">
+                    <div class="col col-6">
+                        <label><b>Child</b></label>
+                    </div>
+                    <div class="col col-6">
+                        <label><b>Monthly contribution</b></label>
+                    </div>
+                </div>
+                <div t-foreach="sponsorships_by_group" t-as="group">
+                    <t t-foreach="group_value[0]" t-as="sponsorship">
+                        <div class="row">
+                            <div class="col col-6">
+                                <label>
+                                    <t t-esc="sponsorship.child_id.preferred_name"/>
+                                </label>
+                            </div>
+                            <div class="col col-6">
+                                <label>
+                                    <t t-raw="sponsorship.total_amount"/>
+                                    <t t-esc="sponsorship.invoice_line_ids[:1].currency_id.name"/>
+                                </label>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </template>
+
+        <!-- view to display all the paid gift history -->
+        <template id="my_donations_gift_history">
+            <hr t-if="due_invoices"/>
+            <div class="mt-4" t-if="due_invoices">
+                <h3>
+                    <span>Open contributions</span>
+                    <t t-set="tooltip_title">Your latest payments may not already be taken into account.</t>
+                    <i style="font-size: 1rem" class="fa fa-info-circle ml-1 d-inline" t-att-title="tooltip_title" data-toggle="tooltip" id="tax_toggle"></i>
+                </h3>
+                <div class="row">
+                    <div class="col-6">
+                        <label><b>Month</b></label>
+                    </div>
+                    <div class="col-3">
+                        <label><b>Child</b></label>
+                    </div>
+                    <div class="col-3">
+                        <label><b>Amount</b></label>
+                    </div>
+                </div>
+                <t t-foreach="due_invoices" t-as="invoice">
+                    <t t-set="children" t-value="invoice.invoice_line_ids.mapped('contract_id.child_id')"/>
+                    <div class="row">
+                        <div class="col-6">
+                            <label><t t-esc="invoice.get_date('invoice_date', 'MMMM yyyy').title()"/></label>
+                        </div>
+                        <div class="col-3">
+                            <label><t t-esc="children.get_list('preferred_name', 3, children.get_number())"/></label>
+                        </div>
+                        <div class="col-3">
+                            <label><t t-esc="int(invoice.amount_total)"/> <t t-esc="invoice.currency_id.name"/></label>
+                        </div>
+                    </div>
+                </t>
+            </div>
+            <hr t-if="invoices_per_day"/>
+            <div class="mt-4" t-if="invoices_per_day">
+                <h3>
+                    <span>Donations history</span>
+                    <t t-set="tooltip_title">Your latest payments may not already be taken into account.</t>
+                    <i style="font-size: 1rem" class="fa fa-info-circle ml-1 d-inline" data-toggle="tooltip" t-att-title="tooltip_title" id="tax_toggle"/>
+                </h3>
+                <div class="row">
+                    <div class="col-3">
+                        <label><b>Date</b></label>
+                    </div>
+                    <div class="col-6">
+                        <label><b>Details of donation</b></label>
+                    </div>
+                    <div class="col-3">
+                        <label><b>Amount</b></label>
+                    </div>
+                </div>
+                <t t-foreach="invoices_per_day" t-as="invoice_group" t-if="invoice_group['amount_total'] >= 1">
+                    <div class="row">
+                        <div class="col-3">
+                            <label><t t-esc="invoice_group['last_payment']"/></label>
+                        </div>
+                        <div class="col-6">
+                            <label t-esc="invoice_group['description']"/>
+                        </div>
+                        <div class="col-3">
+                            <label t-esc="invoice_group['amount']"/>
+                        </div>
+                    </div>
+                </t>
+                <div class="mb-4"/>
+                <t t-call="website.pager"/>
+            </div>
+        </template>
+    </data>
+</odoo>

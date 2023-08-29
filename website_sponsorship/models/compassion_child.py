@@ -8,11 +8,13 @@
 #
 ##############################################################################
 from dateutil.relativedelta import relativedelta
+
 from odoo import _, api, fields, models
-from odoo.addons.child_compassion.models.compassion_hold import HoldType
-from odoo.addons.http_routing.models.ir_http import slug
 from odoo.exceptions import UserError
 from odoo.http import request
+
+from odoo.addons.child_compassion.models.compassion_hold import HoldType
+from odoo.addons.http_routing.models.ir_http import slug
 
 
 class CompassionChild(models.Model):
@@ -180,7 +182,6 @@ class CompassionChild(models.Model):
             )
             .create(
                 {
-                    "event_id": search_params.get("event_id"),
                     "channel": "web",
                     "ambassador": partner.id,
                     "source_code": "website_hold_child",

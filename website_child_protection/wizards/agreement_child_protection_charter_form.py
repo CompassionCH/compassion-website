@@ -29,5 +29,7 @@ class ChildProtectionForm(models.TransientModel):
                 )
             else:
                 partner = self.env.user.partner_id
-            partner.agree_to_child_protection_charter()
+            partner.write(
+                {"date_agreed_child_protection_charter": fields.Datetime.now()}
+            )
         return forms

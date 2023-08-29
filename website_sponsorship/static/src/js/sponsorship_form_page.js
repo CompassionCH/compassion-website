@@ -31,9 +31,7 @@ odoo.define("website_sponsorship.form_page", function (require) {
       let origin = form_values["origin_id"];
       if (origin) {
         $("select[name='origin_id']").val(origin);
-        $("input[name='Origin of my sponsorship']").val(
-          form_values["origin_name"]
-        );
+        $("input[name='Origin of my sponsorship']").val(form_values["origin_name"]);
       } else {
         this.show_origin_field();
       }
@@ -62,9 +60,7 @@ odoo.define("website_sponsorship.form_page", function (require) {
     },
 
     show_origin_field: function () {
-      $("#origin_id,#origin_details").removeClass(
-        "s_website_form_field_hidden"
-      );
+      $("#origin_id,#origin_details").removeClass("s_website_form_field_hidden");
     },
   });
 });

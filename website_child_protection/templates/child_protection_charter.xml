@@ -122,4 +122,14 @@
             </div>
         </t>
     </template>
+
+    <template id="charter_only_page">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container my-5">
+                    <t t-call="website_child_protection.child_protection_charter_text"/>
+                </div>
+            </div>
+        </t>
+    </template>
 </odoo>

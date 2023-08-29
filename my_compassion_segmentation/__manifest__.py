@@ -8,7 +8,7 @@
 #                        /_/
 #                            in Jesus' name
 #
-#    Copyright (C) 2018-2023 Compassion CH (http://www.compassion.ch)
+#    Copyright (C) 2023 Compassion CH (http://www.compassion.ch)
 #    @author: Emanuel Cino <ecino@compassion.ch>
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -28,35 +28,23 @@
 
 # pylint: disable=C8101
 {
-    "name": "MyCompassion - Sponsor portal website",
+    "name": "MyCompassion - Segmentation",
+    "description": "Bridge module for inviting sponsors to fill the"
+    " segmentation survey",
     "version": "14.0.1.0.0",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
     "website": "https://www.compassion.ch",
     "data": [
-        "security/access_rules.xml",
-        "security/ir.model.access.csv",
-        "templates/my_account_components.xml",
-        "templates/my_account_personal_info.xml",
-        "templates/my_account_donations.xml",
-        "templates/my_account_my_children.xml",
-        "templates/my_account_write_a_letter.xml",
-        "templates/login_template.xml",
-        "templates/signup.xml",
-        "views/correspondence_template_view.xml",
-        "views/partner_compassion_view.xml",
+        "templates/survey_templates.xml",
+        "templates/my_account.xml",
     ],
     "depends": [
-        "partner_communication_compassion",
-        "wordpress_configuration",
-        "website_child_protection",
-        "website_sponsorship",
-        "auth_signup",
-        "website_crm_privacy_policy",  # OCA/website
+        "my_compassion",
+        "partner_segmentation",
     ],
     "demo": [],
     "installable": True,
-    "auto_install": False,
-    "post_load": "post_load",
+    "auto_install": True,
 }

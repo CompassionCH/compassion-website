@@ -7,4 +7,4 @@
 #
 ##############################################################################
 
-from . import auth_signup, auto_texts, my_account
+from . import my_account

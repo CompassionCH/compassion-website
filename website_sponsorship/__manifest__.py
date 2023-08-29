@@ -16,10 +16,11 @@
     "license": "AGPL-3",
     "website": "https://www.compassion.ch",
     "depends": [
-        "crm_compassion",
+        "sponsorship_compassion",
         "partner_auto_match",
         "partner_search_fuzzy",
         "website_form",
+        "website_legal_page",  # OCA/website
     ],
     "data": [
         "data/form_data.xml",
@@ -31,9 +32,8 @@
         "templates/children_page.xml",
         "templates/form_success_page.xml",
         "templates/sponsorship_form.xml",
-        "templates/data_protection_page.xml",
         "views/contract_origin_view.xml",
-        "views/data_protection_view.xml",
+        "views/partner_view.xml",
         "views/child_view.xml",
     ],
     "installable": True,
