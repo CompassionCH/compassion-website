@@ -9,7 +9,7 @@
 
 import logging
 
-from odoo import api, fields, models
+from odoo import fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -21,7 +21,6 @@ class PaymentTransaction(models.Model):
         "event.registration", "Registration", readonly=False
     )
 
-    @api.multi
     def cancel_transaction(self):
         """
         Called by ir_action_rule in order to cancel the transaction that
@@ -34,7 +33,6 @@ class PaymentTransaction(models.Model):
                 transaction.invoice_id.action_invoice_cancel()
         return super().cancel_transaction()
 
-    @api.multi
     def cancel_transaction_on_update(self):
         """
         Called by ir_action_rule in when transaction was cancelled by user.

@@ -11,7 +11,7 @@ from odoo import api, fields, models
 
 
 class AccountInvoiceLine(models.Model):
-    _inherit = "account.invoice.line"
+    _inherit = "account.move.line"
 
     registration_id = fields.Many2one(
         "event.registration",
@@ -20,7 +20,6 @@ class AccountInvoiceLine(models.Model):
         readonly=False,
     )
 
-    @api.multi
     @api.depends("user_id.registration_ids", "event_id")
     def _compute_registration(self):
         for line in self:

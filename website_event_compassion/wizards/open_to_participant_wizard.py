@@ -8,7 +8,7 @@
 #
 ##############################################################################
 
-from odoo import api, fields, models
+from odoo import fields, models
 
 
 class OpenEventToParticipant(models.TransientModel):
@@ -43,7 +43,6 @@ class OpenEventToParticipant(models.TransientModel):
         "Participant can set his fundraising objective"
     )
 
-    @api.multi
     def open_event(self):
         event = self.env["crm.event.compassion"].browse(
             self.env.context.get("active_id")
@@ -76,7 +75,6 @@ class OpenEventToParticipant(models.TransientModel):
         return {
             "name": "Event",
             "type": "ir.actions.act_window",
-            "view_type": "form",
             "view_mode": "form",
             "res_model": "event.event",
             "res_id": odoo_event.id,

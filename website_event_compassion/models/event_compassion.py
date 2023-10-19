@@ -48,22 +48,18 @@ class EventCompassion(models.Model):
     )
     registrations_ended = fields.Boolean(compute="_compute_registrations_ended")
 
-    @api.multi
     def _compute_registrations_ended(self):
         for event in self:
             event.registrations_ended = fields.Datetime.now() > event.end_date
 
-    @api.multi
     def _compute_website_url(self):
         for event in self:
             event.website_url = "/event/{}".format(slug(event))
 
-    @api.multi
     def _compute_filenames(self):
         for event in self:
             event.filename_1 = event.name + "-1.jpg"
 
-    @api.multi
     def _compute_event_type(self):
         sport = self.env.ref("website_event_compassion.event_type_sport")
         stand = self.env.ref("website_event_compassion.event_type_stand")
@@ -86,6 +82,8 @@ class EventCompassion(models.Model):
                 event.type = "meeting"
             elif event.event_type_id in group | youth | indiv:
                 event.type = "tour"
+            else:
+                event.type = False
 
     @api.model
     def create(self, vals):
@@ -94,7 +92,6 @@ class EventCompassion(models.Model):
             event._compute_event_type()
         return event
 
-    @api.multi
     def write(self, vals):
         super().write(vals)
         if "event_type_id" in vals:
@@ -116,7 +113,6 @@ class EventCompassion(models.Model):
             return {
                 "name": "Open event registrations",
                 "type": "ir.actions.act_window",
-                "view_type": "form",
                 "view_mode": "form",
                 "res_model": "crm.event.compassion.open.wizard",
                 "context": self.env.context,
@@ -127,7 +123,6 @@ class EventCompassion(models.Model):
         return {
             "name": "Manage participants",
             "type": "ir.actions.act_window",
-            "view_type": "form",
             "view_mode": "kanban,tree,form,calendar,graph",
             "res_model": "event.registration",
             "domain": [("event_id", "=", self.odoo_event_id.id)],

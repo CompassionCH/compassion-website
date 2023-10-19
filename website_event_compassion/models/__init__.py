@@ -9,8 +9,8 @@
 ##############################################################################
 
 from . import (
-    account_invoice,
-    account_invoice_line,
+    account_move,
+    account_move_line,
     event_compassion,
     event_email,
     event_event,
@@ -22,7 +22,6 @@ from . import (
     event_type,
     partner_communication_job,
     payment_transaction,
-    privacy_statement,
     res_country_vaccine,
     res_partner,
     survey_user_input,

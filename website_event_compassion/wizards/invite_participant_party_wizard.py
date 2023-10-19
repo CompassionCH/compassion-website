@@ -8,7 +8,7 @@
 #
 ##############################################################################
 
-from odoo import api, fields, models
+from odoo import fields, models
 
 
 class InviteParticipantsToPartyWizard(models.TransientModel):
@@ -32,11 +32,10 @@ class InviteParticipantsToPartyWizard(models.TransientModel):
     address_id = fields.Many2one(
         "res.partner",
         "Location",
-        default=lambda s: s.env.user.company_id.partner_id.id,
+        default=lambda s: s.env.company.partner_id.id,
         readonly=False,
     )
 
-    @api.multi
     def _default_registration_ids(self):
         return self.env["event.registration"].search(
             [
@@ -45,7 +44,6 @@ class InviteParticipantsToPartyWizard(models.TransientModel):
             ]
         )
 
-    @api.multi
     def open_event(self):
         event = self.env["event.event"].browse(self.env.context.get("active_id"))
         config = self.env.ref(
@@ -93,7 +91,6 @@ class InviteParticipantsToPartyWizard(models.TransientModel):
         return {
             "name": "Event",
             "type": "ir.actions.act_window",
-            "view_type": "form",
             "view_mode": "form",
             "res_model": "event.event",
             "res_id": party_event.id,

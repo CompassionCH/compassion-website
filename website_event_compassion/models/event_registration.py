@@ -43,13 +43,13 @@ class Event(models.Model):
         "res.users",
         "Responsible",
         domain=[("share", "=", False)],
-        track_visibility="onchange",
+        tracking=True,
         readonly=False,
     )
     stage_id = fields.Many2one(
         "event.registration.stage",
         "Stage",
-        track_visibility="onchange",
+        tracking=True,
         index=True,
         copy=False,
         domain="['|', ('event_type_ids', '=', False),"
@@ -108,7 +108,7 @@ class Event(models.Model):
     host_url = fields.Char(compute="_compute_host_url")
     sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
     survival_sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
-    event_name = fields.Char(related="event_id.name", track_visibility="onchange")
+    event_name = fields.Char(related="event_id.name", tracking=True)
     uuid = fields.Char(default=lambda self: self._get_uuid(), copy=False)
     include_flight = fields.Boolean()
     double_room_person = fields.Char("Double room with")
@@ -126,7 +126,7 @@ class Event(models.Model):
     partner_firstname = fields.Char(related="partner_id.firstname", readonly=True)
     partner_lastname = fields.Char(related="partner_id.lastname", readonly=True)
     partner_gender = fields.Selection(related="partner_id.title.gender", readonly=True)
-    comments = fields.Text(track_visibility="onchange")
+    comments = fields.Text(tracking=True)
 
     has_signed_travel_contract = fields.Boolean(compute="_compute_step2_tasks")
     has_signed_child_protection = fields.Boolean(compute="_compute_step2_tasks")
@@ -177,10 +177,10 @@ class Event(models.Model):
     # Payment fields
     ################
     down_payment_id = fields.Many2one(
-        "account.invoice", "Down payment", copy=False, readonly=False
+        "account.move", "Down payment", copy=False, readonly=False
     )
     group_visit_invoice_id = fields.Many2one(
-        "account.invoice", "Trip invoice", copy=False, readonly=False
+        "account.move", "Trip invoice", copy=False, readonly=False
     )
 
     survey_count = fields.Integer(compute="_compute_survey_count")
@@ -195,7 +195,6 @@ class Event(models.Model):
     def _get_uuid(self):
         return str(uuid.uuid4())
 
-    @api.multi
     def _compute_website_url(self):
         for registration in self:
             registration.website_url = "/event/{}/{}".format(
@@ -212,23 +211,25 @@ class Event(models.Model):
                 registration.amount_raised_percents = int(
                     registration.amount_raised * 100 // objective
                 )
+            else:
+                registration.amount_raised_percents = 0
 
     def _compute_amount_raised(self):
         for registration in self:
             partner = registration.partner_id
             compassion_event = registration.compassion_event_id
             invoice_lines = (
-                self.env["account.invoice.line"]
+                self.env["account.move.line"]
                 .sudo()
                 .search(
                     [
                         ("user_id", "=", partner.id),
-                        ("state", "=", "paid"),
+                        ("payment_state", "=", "paid"),
                         ("event_id", "=", compassion_event.id),
                     ]
                 )
             )
-            amount_raised = sum(invoice_lines.mapped("price_subtotal_signed"))
+            amount_raised = sum(invoice_lines.mapped("price_subtotal"))
             s_value = registration.event_id.sponsorship_donation_value
             if s_value:
                 nb_sponsorships = (
@@ -236,7 +237,7 @@ class Event(models.Model):
                     .sudo()
                     .search_count(
                         [
-                            ("user_id", "=", partner.id),
+                            ("ambassador_id", "=", partner.id),
                             ("origin_id.event_id", "=", compassion_event.id),
                             ("state", "!=", "cancelled"),
                         ]
@@ -261,7 +262,6 @@ class Event(models.Model):
                 wp_obj.host + wp_obj.survival_sponsorship_url
             )
 
-    @api.multi
     @api.depends("state", "event_id.state")
     def _compute_is_published(self):
         for registration in self:
@@ -270,7 +270,6 @@ class Event(models.Model):
                 and registration.event_id.state == "confirm"
             )
 
-    @api.multi
     def _compute_partner_display_name(self):
         for registration in self:
             registration.partner_display_name = (
@@ -279,7 +278,6 @@ class Event(models.Model):
                 + registration.partner_lastname
             )
 
-    @api.multi
     def _compute_step2_tasks(self):
         contract_task = self.env.ref("website_event_compassion.task_sign_travel")
         protection_task = self.env.ref(
@@ -345,7 +343,6 @@ class Event(models.Model):
             )
         return stage.id
 
-    @api.multi
     def _compute_kanban_color(self):
         today = date.today()
         for registration in self:
@@ -357,7 +354,6 @@ class Event(models.Model):
             else:
                 registration.color = GREEN
 
-    @api.multi
     def _compute_stage_tasks(self):
         for registration in self:
             registration.stage_task_ids = self.env["event.registration.task"].search(
@@ -386,9 +382,9 @@ class Event(models.Model):
     def _compute_invoice_count(self):
         for registration in self:
             event = registration.compassion_event_id
-            registration.invoice_count = self.env["account.invoice"].search_count(
+            registration.invoice_count = self.env["account.move"].search_count(
                 [
-                    ("origin", "like", f"[{event.name}]"),
+                    ("invoice_origin", "like", f"[{event.name}]"),
                     ("partner_id", "=", registration.partner_id.id),
                 ]
             )
@@ -461,7 +457,6 @@ class Event(models.Model):
     ##########################################################################
     #                              ORM METHODS                               #
     ##########################################################################
-    @api.multi
     def write(self, vals):
         if "stage_id" in vals:
             vals["stage_date"] = fields.Date.today()
@@ -506,7 +501,6 @@ class Event(models.Model):
     ##########################################################################
     #                             PUBLIC METHODS                             #
     ##########################################################################
-    @api.multi
     def do_draft(self):
         super().do_draft()
         return self.write(
@@ -517,7 +511,6 @@ class Event(models.Model):
             }
         )
 
-    @api.multi
     def button_send_reminder(self):
         """Create a communication job with a chosen communication config"""
 
@@ -536,14 +529,12 @@ class Event(models.Model):
             "context": ctx,
         }
 
-    @api.multi
     def button_reg_close(self):
         super().button_reg_close()
         return self.write(
             {"stage_id": self.env.ref("website_event_compassion.stage_all_attended").id}
         )
 
-    @api.multi
     def button_reg_cancel(self):
         super().button_reg_cancel()
         return self.write(
@@ -554,7 +545,6 @@ class Event(models.Model):
             }
         )
 
-    @api.multi
     def get_event_registration_survey(self):
         event = self.event_id
         surveys = event.medical_survey_id + event.feedback_survey_id
@@ -562,7 +552,6 @@ class Event(models.Model):
             "type": "ir.actions.act_window",
             "res_model": "survey.user_input",
             "name": _("Surveys"),
-            "view_type": "form",
             "view_mode": "tree,form",
             "domain": [
                 ("survey_id", "in", surveys.ids),
@@ -571,16 +560,13 @@ class Event(models.Model):
             "context": self.env.context,
         }
 
-    @api.multi
     def show_invoice(self):
         event_name = self.compassion_event_id.name
         return {
             "name": _("Income"),
             "type": "ir.actions.act_window",
             "view_mode": "tree,form",
-            "view_type": "form",
-            "res_model": "account.invoice",
-            "src_model": "event.registration",
+            "res_model": "account.move",
             "context": self.env.context,
             "domain": [
                 ("origin", "like", f"[{event_name}]"),
@@ -592,7 +578,6 @@ class Event(models.Model):
     #                       STAGE TRANSITION METHODS                         #
     ##########################################################################
 
-    @api.multi
     def next_stage(self):
         """Transition to next registration stage"""
         for registration in self:
@@ -631,9 +616,9 @@ class Event(models.Model):
         event = self.compassion_event_id
         product = self.event_ticket_id.product_id
         name = f"[{event.name}] Down payment"
-        self.down_payment_id = self.env["account.invoice"].create(
+        self.down_payment_id = self.env["account.move"].create(
             {
-                "origin": name,
+                "invoice_origin": name,
                 "partner_id": self.partner_id.id,
                 "invoice_line_ids": [
                     (
@@ -645,12 +630,12 @@ class Event(models.Model):
                             "account_id": product.property_account_income_id.id,
                             "name": name,
                             "product_id": product.id,
-                            "account_analytic_id": event.analytic_id.id,
+                            "analytic_account_id": event.analytic_id.id,
                         },
                     )
                 ],
-                "type": "out_invoice",
-                "reference": self.partner_id.generate_bvr_reference(product),
+                "move_type": "out_invoice",
+                "ref": self.partner_id.generate_bvr_reference(product),
                 "payment_mode_id": mode_pay_bvr.id,
             }
         )
@@ -718,13 +703,13 @@ class Event(models.Model):
             }
         )
         name = f"[{event.name}] Trip payment"
-        self.group_visit_invoice_id = self.env["account.invoice"].create(
+        self.group_visit_invoice_id = self.env["account.move"].create(
             {
-                "origin": name,
+                "invoice_origin": name,
                 "partner_id": self.partner_id.id,
                 "invoice_line_ids": [(0, 0, invl) for invl in invl_vals],
-                "type": "out_invoice",
-                "reference": self.partner_id.generate_bvr_reference(product),
+                "move_type": "out_invoice",
+                "ref": self.partner_id.generate_bvr_reference(product),
                 "payment_mode_id": mode_pay_bvr.id,
             }
         )
@@ -858,7 +843,6 @@ class Event(models.Model):
             return "website_event_compassion.mt_registration_create"
         return super()._track_subtype(init_values)
 
-    @api.multi
     def past_event_action(self):
         stage = self.env.ref("website_event_compassion.stage_all_attended")
         for reg in self:

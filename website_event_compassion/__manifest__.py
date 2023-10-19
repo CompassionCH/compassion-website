@@ -8,7 +8,7 @@
 #                        /_/
 #                            in Jesus' name
 #
-#    Copyright (C) 2018-2020 Compassion CH (http://www.compassion.ch)
+#    Copyright (C) 2018-2023 Compassion CH (http://www.compassion.ch)
 #    @author: Emanuel Cino <ecino@compassion.ch>
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -29,17 +29,19 @@
 # pylint: disable=C8101
 {
     "name": "Compassion Events Website",
-    "version": "12.0.1.0.3",
-    "category": "Other",
+    "summary": "Public website pages for Compassion Events with registration",
+    "version": "14.0.1.0.0",
+    "development_status": "Production/Stable",
+    "category": "Marketing/Events",
+    "website": "https://github.com/CompassionCH/compassion-website/",
     "author": "Compassion CH",
+    "maintainers": ["ecino"],
     "license": "AGPL-3",
-    "website": "https://github.com/CompassionCH/compassion-modules/tree/10.0",
     "depends": [
-        "website_compassion",  # compassion-switzerland
+        "my_compassion",  # compassion-switzerland
         "crm_compassion",  # compassion-modules
         "event_sale",  # source
-        "partner_communication_switzerland",  # compassion-switzerland
-        "survey_phone",  # compassion-modules
+        "survey",
     ],
     "external_dependencies": {
         "python": ["magic"],
@@ -86,7 +88,6 @@
         "data/website_page.xml",
     ],
     "demo": ["demo/crm_event_demo.xml"],
-    "development_status": "Beta",
     "installable": True,
     "auto_install": False,
 }

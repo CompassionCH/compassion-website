@@ -7,13 +7,12 @@
 #
 ##############################################################################
 
-from odoo import api, models
+from odoo import models
 
 
 class AccountInvoice(models.Model):
-    _inherit = "account.invoice"
+    _inherit = "account.move"
 
-    @api.multi
     def modify_open_invoice(self, vals):
         """
         Job for changing an open invoice with new values. It will put it back

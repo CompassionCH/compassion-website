@@ -26,13 +26,15 @@ class EventMail(models.Model):
     template_id = fields.Many2one(
         related="communication_id.email_template_id", readonly=False
     )
-    interval_type = fields.Selection(selection_add=[("after_stage", "After stage")])
+    interval_type = fields.Selection(
+        selection_add=[("after_stage", "After stage")],
+        ondelete={"after_stage": "set default"},
+    )
     stage_id = fields.Many2one("event.registration.stage", "Stage", readonly=False)
 
     event_type_id = fields.Many2one("event.type", readonly=False)
     event_id = fields.Many2one(required=False, readonly=False)
 
-    @api.multi
     @api.depends(
         "event_id.state",
         "event_id.date_begin",
@@ -48,7 +50,6 @@ class EventMail(models.Model):
             else:
                 super(EventMail, scheduler)._compute_scheduled_date()
 
-    @api.multi
     def execute(self):
         """
         Replace execute method to use after_stage interval_type and
@@ -93,7 +94,6 @@ class EventMailRegistration(models.Model):
         "scheduler_id.interval_unit",
         "scheduler_id.interval_type",
     )
-    @api.multi
     def _compute_scheduled_date(self):
         """
         Add computation of scheduled date if interval type is after stage
@@ -114,7 +114,6 @@ class EventMailRegistration(models.Model):
             else:
                 super(EventMailRegistration, mail)._compute_scheduled_date()
 
-    @api.multi
     def execute(self):
         """Replace execute method to send communication instead of using
         email template.

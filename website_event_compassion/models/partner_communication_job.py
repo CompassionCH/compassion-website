@@ -8,13 +8,12 @@
 ##############################################################################
 import base64
 
-from odoo import _, api, models
+from odoo import _, models
 
 
 class CommunicationJob(models.Model):
     _inherit = "partner.communication.job"
 
-    @api.multi
     def get_trip_down_payment_attachment(self):
         """
         :return: dict {attachment_name: [report_name, pdf_data]}
@@ -39,7 +38,6 @@ class CommunicationJob(models.Model):
 
         return {_("down_payment.pdf"): [report_name, pdf_data]}
 
-    @api.multi
     def get_trip_payment_attachment(self):
         """
         :return: dict {attachment_name: [report_name, pdf_data]}

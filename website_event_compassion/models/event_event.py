@@ -188,19 +188,16 @@ class Event(models.Model):
         """
         return True
 
-    @api.multi
     def button_info_party(self):
         return {
             "name": "Open event registrations",
             "type": "ir.actions.act_window",
-            "view_type": "form",
             "view_mode": "form",
             "res_model": "crm.event.invite.participant.party.wizard",
             "context": self.env.context,
             "target": "new",
         }
 
-    @api.multi
     def button_print_medical_surveys(self):
         medical_survey_ids = self.registration_ids.mapped("medical_survey_id").filtered(
             lambda p: p.state == "done"
@@ -212,7 +209,6 @@ class Event(models.Model):
         else:
             raise UserError(_("There is no medical survey to print"))
 
-    @api.multi
     def button_print_feedback_surveys(self):
         feedback_survey_ids = self.registration_ids.mapped(
             "feedback_survey_id"

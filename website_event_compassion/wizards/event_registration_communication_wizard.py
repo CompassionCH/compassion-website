@@ -8,7 +8,7 @@
 #
 ##############################################################################
 
-from odoo import api, fields, models
+from odoo import fields, models
 
 
 class EventRegistrationCommunicationWizard(models.TransientModel):
@@ -22,7 +22,6 @@ class EventRegistrationCommunicationWizard(models.TransientModel):
         readonly=False,
     )
 
-    @api.multi
     def button_open_mail_sender(self):
         communication = self.env["partner.communication.job"].create(
             {
