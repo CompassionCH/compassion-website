@@ -1,0 +1,21 @@
+##############################################################################
+#
+#    Copyright (C) 2019 Compassion CH (http://www.compassion.ch)
+#    @author: Emanuel Cino <ecino@compassion.ch>
+#
+#    The licence is in the file __manifest__.py
+#
+##############################################################################
+
+from odoo import fields, models
+
+
+class PrivacyStatementAgreement(models.Model):
+    _inherit = "privacy.statement.agreement"
+
+    origin_signature = fields.Selection(
+        selection_add=[
+            ("event_donation", "Event donation"),
+            ("group_visit", "Group visit"),
+        ]
+    )
