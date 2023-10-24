@@ -1,44 +1,48 @@
 ##############################################################################
 #
-#    Copyright (C) 2018 Compassion CH (http://www.compassion.ch)
+#    Copyright (C) 2018-2023 Compassion CH (http://www.compassion.ch)
 #    @author: Emanuel Cino <ecino@compassion.ch>
 #
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-import base64
 import logging
-import uuid
-from datetime import date
 
 from odoo import SUPERUSER_ID, _, api, fields, models
-from odoo.tools import file_open
+from odoo.http import request
+from odoo.tools import html2plaintext
+from odoo.tools.mimetypes import guess_mimetype
 
-from odoo.addons.partner_compassion.models.partner_compassion import get_file_type
 from odoo.addons.website.models.website import slugify as slug
 
 _logger = logging.getLogger(__name__)
 
-# kanban colors
-RED = 2
-GREEN = 5
 
-
-class Event(models.Model):
+class EventRegistration(models.Model):
     _inherit = [
         "website.published.mixin",
         "website.seo.metadata",
         "event.registration",
         "mail.activity.mixin",
         "website.multi.mixin",
+        "cms.form.partner",
+        "translatable.model",
     ]
     _name = "event.registration"
-    _description = "Event registration"
-    _order = "create_date desc"
 
     ##########################################################################
     #                                 FIELDS                                 #
     ##########################################################################
+    # Change readonly attribute so that form creation is possible
+    event_id = fields.Many2one(
+        readonly=False,
+        states={
+            "open": [("readonly", True)],
+            "cancel": [("readonly", True)],
+            "done": [("readonly", True)],
+        },
+    )
+    company_id = fields.Many2one(related="event_id.company_id")
     user_id = fields.Many2one(
         "res.users",
         "Responsible",
@@ -57,6 +61,9 @@ class Event(models.Model):
         group_expand="_read_group_stage_ids",
         default=lambda r: r._default_stage(),
         readonly=False,
+    )
+    state = fields.Selection(
+        related="stage_id.registration_state", readonly=True, store=True
     )
     stage_date = fields.Date(default=fields.Date.today, copy=False)
     stage_task_ids = fields.Many2many(
@@ -90,61 +97,31 @@ class Event(models.Model):
         "registration.",
         readonly=False,
     )
-    color = fields.Integer(compute="_compute_kanban_color")
     compassion_event_id = fields.Many2one(
         "crm.event.compassion", related="event_id.compassion_event_id", readonly=True
     )
-    advocate_details_id = fields.Many2one(
-        "advocate.details", related="partner_id.advocate_details_id", readonly=True
-    )
     fundraising = fields.Boolean(related="event_id.fundraising")
-    amount_objective = fields.Integer("Raise objective")
-    amount_raised = fields.Float(readonly=True, compute="_compute_amount_raised")
+    amount_objective = fields.Monetary("Raise objective")
+    amount_raised = fields.Monetary(readonly=True, compute="_compute_amount_raised")
     amount_raised_percents = fields.Integer(
         readonly=True, compute="_compute_amount_raised_percent"
     )
+    currency_id = fields.Many2one("res.currency", related="company_id.currency_id")
     is_published = fields.Boolean(compute="_compute_is_published", store=True)
-    website_url = fields.Char(compute="_compute_website_url")
     host_url = fields.Char(compute="_compute_host_url")
     sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
-    survival_sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
     event_name = fields.Char(related="event_id.name", tracking=True)
-    uuid = fields.Char(default=lambda self: self._get_uuid(), copy=False)
-    include_flight = fields.Boolean()
-    double_room_person = fields.Char("Double room with")
-
-    # The following fields avoid giving read access to the public on the
-    # res.partner participating in the event
-    partner_id_id = fields.Integer(related="partner_id.id", readonly=True)
-    partner_display_name = fields.Char(compute="_compute_partner_display_name")
-    partner_preferred_name = fields.Char(
-        related="partner_id.preferred_name", readonly=True
-    )
-    partner_name = fields.Char(related="partner_id.name", readonly=True)
-    ambassador_picture_1 = fields.Binary(related="partner_id.image")
-    ambassador_quote = fields.Text(related="partner_id.advocate_details_id.quote")
-    partner_firstname = fields.Char(related="partner_id.firstname", readonly=True)
-    partner_lastname = fields.Char(related="partner_id.lastname", readonly=True)
-    partner_gender = fields.Selection(related="partner_id.title.gender", readonly=True)
-    comments = fields.Text(tracking=True)
-
-    has_signed_travel_contract = fields.Boolean(compute="_compute_step2_tasks")
-    has_signed_child_protection = fields.Boolean(compute="_compute_step2_tasks")
-    passport_uploaded = fields.Boolean(compute="_compute_step2_tasks")
-    emergency_ok = fields.Boolean(compute="_compute_step2_tasks")
-    criminal_record_uploaded = fields.Boolean(compute="_compute_step2_tasks")
+    profile_picture = fields.Binary(readonly=False, string="Profile picture")
+    profile_name = fields.Char()
+    ambassador_quote = fields.Html()
     criminal_record = fields.Binary(
         related="partner_id.criminal_record", readonly=False
     )
-    medical_discharge = fields.Binary(attachment=True, copy=False)
     medical_survey_id = fields.Many2one(
-        "survey.user_input", "Medical survey", copy=False, readonly=False
+        "survey.user_input", "Medical survey", compute="_compute_surveys"
     )
     feedback_survey_id = fields.Many2one(
-        "survey.user_input", "Feedback survey", copy=False, readonly=False
-    )
-    requires_medical_discharge = fields.Boolean(
-        compute="_compute_requires_medical_discharge", store=True, copy=False
+        "survey.user_input", "Feedback survey", compute="_compute_surveys"
     )
 
     # Travel info
@@ -170,19 +147,6 @@ class Event(models.Model):
     passport = fields.Binary(compute="_compute_passport", inverse="_inverse_passport")
     passport_number = fields.Char()
     passport_expiration_date = fields.Date()
-    flight_ids = fields.One2many(
-        "event.flight", "registration_id", "Flights", readonly=False
-    )
-
-    # Payment fields
-    ################
-    down_payment_id = fields.Many2one(
-        "account.move", "Down payment", copy=False, readonly=False
-    )
-    group_visit_invoice_id = fields.Many2one(
-        "account.move", "Trip invoice", copy=False, readonly=False
-    )
-
     survey_count = fields.Integer(compute="_compute_survey_count")
     invoice_count = fields.Integer(compute="_compute_invoice_count")
     website_id = fields.Many2one(
@@ -192,9 +156,6 @@ class Event(models.Model):
     ##########################################################################
     #                             FIELDS METHODS                             #
     ##########################################################################
-    def _get_uuid(self):
-        return str(uuid.uuid4())
-
     def _compute_website_url(self):
         for registration in self:
             registration.website_url = "/event/{}/{}".format(
@@ -254,53 +215,50 @@ class Event(models.Model):
         for registration in self:
             registration.host_url = host
 
-    def _compute_sponsorship_url(self):
-        wp_obj = self.env["wordpress.configuration"].get_config()
-        for registration in self:
-            registration.sponsorship_url = wp_obj.host + wp_obj.sponsorship_url
-            registration.survival_sponsorship_url = (
-                wp_obj.host + wp_obj.survival_sponsorship_url
-            )
-
-    @api.depends("state", "event_id.state")
+    @api.depends("stage_id")
     def _compute_is_published(self):
+        confirmed_stage = self.env.ref("website_event_compassion.stage_all_confirmed")
         for registration in self:
-            registration.is_published = (
-                registration.state in ("open", "done")
-                and registration.event_id.state == "confirm"
-            )
+            registration.is_published = registration.stage_id == confirmed_stage
 
-    def _compute_partner_display_name(self):
-        for registration in self:
-            registration.partner_display_name = (
-                (registration.partner_firstname or "")
-                + " "
-                + registration.partner_lastname
-            )
-
-    def _compute_step2_tasks(self):
-        contract_task = self.env.ref("website_event_compassion.task_sign_travel")
-        protection_task = self.env.ref(
-            "website_event_compassion.task_sign_child_protection"
+    def _default_website_meta(self):
+        default_meta = super()._default_website_meta()
+        company = request.website.company_id.sudo()
+        website_name = (request.website or company).name
+        title = f"{self.profile_name} - {self.event_name} | {website_name}"
+        default_meta["default_opengraph"].update(
+            {
+                "og:title": title,
+                "og:image": request.website.image_url(self, "profile_picture"),
+            }
         )
-        passport_task = self.env.ref("website_event_compassion.task_passport")
-        criminal_task = self.env.ref("website_event_compassion.task_criminal")
-        emergency_task = self.env.ref("website_event_compassion.task_urgency_contact")
+        default_meta["default_twitter"].update(
+            {
+                "twitter:title": title,
+                "twitter:image": request.website.image_url(
+                    self, "profile_picture", size="300x300"
+                ),
+            }
+        )
+        default_meta.update(
+            {
+                "default_meta_description": self._get_default_meta_description(),
+            }
+        )
+        return default_meta
+
+    def _get_default_meta_description(self):
+        if self.ambassador_quote:
+            return html2plaintext(self.ambassador_quote)
+
+        return _(
+            "Join me in my efforts to release children from poverty in Jesus' name!"
+        )
+
+    def _compute_sponsorship_url(self):
         for registration in self:
-            registration.has_signed_travel_contract = (
-                contract_task in registration.completed_task_ids
-            )
-            registration.has_signed_child_protection = (
-                protection_task in registration.completed_task_ids
-            )
-            registration.passport_uploaded = (
-                passport_task in registration.completed_task_ids
-            )
-            registration.criminal_record_uploaded = (
-                criminal_task in registration.completed_task_ids
-            )
-            registration.emergency_ok = (
-                emergency_task in registration.completed_task_ids
+            registration.sponsorship_url = (
+                f"/children?registration_id={registration.id}"
             )
 
     @api.model
@@ -343,17 +301,6 @@ class Event(models.Model):
             )
         return stage.id
 
-    def _compute_kanban_color(self):
-        today = date.today()
-        for registration in self:
-            stage_date = registration.stage_date or today
-            stage_duration = (today - stage_date).days
-            max_duration = registration.stage_id.duration
-            if max_duration and stage_duration > max_duration:
-                registration.color = RED
-            else:
-                registration.color = GREEN
-
     def _compute_stage_tasks(self):
         for registration in self:
             registration.stage_task_ids = self.env["event.registration.task"].search(
@@ -364,7 +311,7 @@ class Event(models.Model):
             )
             registration.complete_stage_task_ids = (
                 registration.completed_task_ids.filtered(
-                    lambda t: t.stage_id == registration.stage_id
+                    lambda t, r=registration: t.stage_id == r.stage_id
                 )
             )
 
@@ -384,24 +331,10 @@ class Event(models.Model):
             event = registration.compassion_event_id
             registration.invoice_count = self.env["account.move"].search_count(
                 [
-                    ("invoice_origin", "like", f"[{event.name}]"),
-                    ("partner_id", "=", registration.partner_id.id),
+                    ("line_ids.event_id", "=", event.id),
+                    ("line_ids.user_id", "=", registration.partner_id.id),
                 ]
             )
-
-    @api.depends("medical_survey_id", "medical_survey_id.state")
-    def _compute_requires_medical_discharge(self):
-        for registration in self:
-            if registration.medical_survey_id.state == "done":
-                treatment = registration.medical_survey_id.user_input_line_ids.filtered(
-                    lambda l: l.question_id
-                    == self.env.ref("website_event_compassion.gpms_question_treatment")
-                )
-                registration.requires_medical_discharge = (
-                    treatment.value_free_text and not treatment.skipped
-                )
-            else:
-                registration.requires_medical_discharge = False
 
     def _compute_passport(self):
         for registration in self:
@@ -423,26 +356,14 @@ class Event(models.Model):
         for registration in self:
             passport = registration.passport
             if passport:
-                name = "Passport " + registration.name + get_file_type(passport)
+                f_type = guess_mimetype(passport, "/pdf").split("/")[1]
+                name = f"Passport {registration.name}.{f_type}"
                 attachment_obj.create(
                     {
-                        "datas_fname": name,
                         "res_model": self._name,
                         "res_id": registration.id,
                         "datas": passport,
                         "name": name,
-                    }
-                )
-                self.write(
-                    {
-                        "completed_task_ids": [
-                            (
-                                4,
-                                self.env.ref(
-                                    "website_event_compassion.task_passport"
-                                ).id,
-                            ),
-                        ]
                     }
                 )
             else:
@@ -454,6 +375,24 @@ class Event(models.Model):
                     ]
                 ).unlink()
 
+    def _compute_surveys(self):
+        user_input_obj = self.env["survey.user_input"]
+        for registration in self:
+            medical_survey = registration.event_id.medical_survey_id
+            feedback_survey = registration.event_id.feedback_survey_id
+            registration.medical_survey_id = user_input_obj.search(
+                [
+                    ("survey_id", "=", medical_survey.id),
+                    ("partner_id", "=", registration.partner_id.id),
+                ]
+            )
+            registration.feedback_survey_id = user_input_obj.search(
+                [
+                    ("survey_id", "=", feedback_survey.id),
+                    ("partner_id", "=", registration.partner_id.id),
+                ]
+            )
+
     ##########################################################################
     #                              ORM METHODS                               #
     ##########################################################################
@@ -461,13 +400,6 @@ class Event(models.Model):
         if "stage_id" in vals:
             vals["stage_date"] = fields.Date.today()
         res = super().write(vals)
-        for registration in self:
-            if (
-                registration.state == "done"
-                and registration.event_id.feedback_survey_id
-                and not registration.feedback_survey_id
-            ):
-                registration.prepare_feedback_survey()
         # Push registration to next stage if all tasks are complete
         if "completed_task_ids" in vals:
             for registration in self:
@@ -475,9 +407,14 @@ class Event(models.Model):
                     registration.next_stage()
         return res
 
-    @api.model
-    def create(self, values):
-        record = super().create(values)
+    @api.model_create_multi
+    def create(self, vals_list):
+        record = super().create(vals_list)
+        for registration in record:
+            if registration.profile_picture and not registration.partner_id.image_1920:
+                registration.partner_id.image_1920 = registration.profile_picture
+            if not registration.profile_name:
+                registration.profile_name = registration.partner_id.preferred_name
 
         # check the subtype note by default
         # for all the default follower of a new registration
@@ -490,13 +427,6 @@ class Event(models.Model):
         if not record.amount_objective and event.participants_amount_objective:
             record.amount_objective = event.participants_amount_objective
         return record
-
-    @api.model
-    def check_access_rights(self, operation, raise_exception=True):
-        """Restore default access rights to prevent security restrictions
-        on our website.
-        """
-        return self.env["ir.model.access"].check(self._name, operation, raise_exception)
 
     ##########################################################################
     #                             PUBLIC METHODS                             #
@@ -520,14 +450,38 @@ class Event(models.Model):
             "name": _("Choose a communication"),
             "type": "ir.actions.act_window",
             "res_model": "event.registration.communication.wizard",
-            "view_id": self.env.ref(
-                "website_event_compassion."
-                "event_registration_communication_wizard_form"
-            ).id,
             "view_mode": "form",
             "target": "new",
             "context": ctx,
         }
+
+    def send_communication(
+        self,
+        config_id,
+        force_send=False,
+        filter_func=lambda self: self.state != "cancel",
+    ):
+        """
+        Send a communication rule to all attendees of the event
+        @param config_id: communication config id
+        @param force_send: if True, send the communication immediately regardless
+                           of its send_mode
+        @param filter_func: filter function to apply on the registrations
+        @return: communication jobs
+        """
+        communications = self.env["partner.communication.job"].create(
+            [
+                {
+                    "config_id": config_id,
+                    "partner_id": registration.partner_id.id,
+                    "object_ids": [registration.id],
+                }
+                for registration in self.filtered(filter_func)
+            ]
+        )
+        if force_send:
+            communications.send()
+        return communications
 
     def button_reg_close(self):
         super().button_reg_close()
@@ -561,16 +515,15 @@ class Event(models.Model):
         }
 
     def show_invoice(self):
-        event_name = self.compassion_event_id.name
         return {
-            "name": _("Income"),
+            "name": _("Donations"),
             "type": "ir.actions.act_window",
             "view_mode": "tree,form",
             "res_model": "account.move",
             "context": self.env.context,
             "domain": [
-                ("origin", "like", f"[{event_name}]"),
-                ("partner_id", "=", self.partner_id.id),
+                ("line_ids.event_id", "=", self.compassion_event_id.id),
+                ("line_ids.user_id", "=", self.partner_id.id),
             ],
         }
 
@@ -591,250 +544,10 @@ class Event(models.Model):
                 limit=1,
             )
             if next_stage:
-                registration.write(
-                    {"stage_id": next_stage.id, "uuid": self._get_uuid()}
-                )
-            if next_stage == self.env.ref(
-                "website_event_compassion.stage_group_medical"
-            ):
-                registration.prepare_medical_survey()
+                registration.write({"stage_id": next_stage.id})
         # Send potential communications after stage transition
         self.env["event.mail"].with_delay().run()
         return True
-
-    def prepare_down_payment(self):
-        self.ensure_one()
-        if not self.event_ticket_id:
-            return
-
-        # Prepare invoice for down payment
-        mode_pay_bvr = (
-            self.env["account.payment.mode"]
-            .sudo()
-            .search([("name", "=", "BVR")], limit=1)
-        )
-        event = self.compassion_event_id
-        product = self.event_ticket_id.product_id
-        name = f"[{event.name}] Down payment"
-        self.down_payment_id = self.env["account.move"].create(
-            {
-                "invoice_origin": name,
-                "partner_id": self.partner_id.id,
-                "invoice_line_ids": [
-                    (
-                        0,
-                        0,
-                        {
-                            "quantity": 1.0,
-                            "price_unit": self.event_ticket_id.price,
-                            "account_id": product.property_account_income_id.id,
-                            "name": name,
-                            "product_id": product.id,
-                            "analytic_account_id": event.analytic_id.id,
-                        },
-                    )
-                ],
-                "move_type": "out_invoice",
-                "ref": self.partner_id.generate_bvr_reference(product),
-                "payment_mode_id": mode_pay_bvr.id,
-            }
-        )
-
-    def prepare_group_visit_payment(self):
-        self.ensure_one()
-        if not self.event_id.event_ticket_ids:
-            return
-
-        # Prepare invoice for group visit payment
-        mode_pay_bvr = (
-            self.env["account.payment.mode"]
-            .sudo()
-            .search([("name", "=", "BVR")], limit=1)
-        )
-        event = self.compassion_event_id
-        invl_vals = []
-        tickets = self.event_id.event_ticket_ids
-        if self.include_flight:
-            flight_ticket = tickets.filtered(
-                lambda t: t.product_id.product_tmpl_id
-                == self.env.ref("website_event_compassion.product_template_flight")
-            )
-            product = flight_ticket.product_id
-            invl_vals.append(
-                {
-                    "quantity": 1.0,
-                    "price_unit": flight_ticket.price,
-                    "account_id": product.property_account_income_id.id,
-                    "name": product.name,
-                    "product_id": product.id,
-                    "account_analytic_id": event.analytic_id.id,
-                }
-            )
-        if not self.double_room_person:
-            single_room_ticket = tickets.filtered(
-                lambda t: t.product_id.product_tmpl_id
-                == self.env.ref("website_event_compassion.product_template_single_room")
-            )
-            product = single_room_ticket.product_id
-            if product and single_room_ticket.price:
-                invl_vals.append(
-                    {
-                        "quantity": 1.0,
-                        "price_unit": single_room_ticket.price,
-                        "account_id": product.property_account_income_id.id,
-                        "name": product.name,
-                        "product_id": product.id,
-                        "account_analytic_id": event.analytic_id.id,
-                    }
-                )
-        standard_price = tickets.filtered(
-            lambda t: t.product_id.product_tmpl_id
-            == self.env.ref("website_event_compassion.product_template_trip_price")
-        )
-        product = standard_price.product_id
-        invl_vals.append(
-            {
-                "quantity": 1.0,
-                "price_unit": standard_price.price,
-                "account_id": product.property_account_income_id.id,
-                "name": product.name,
-                "product_id": product.id,
-                "account_analytic_id": event.analytic_id.id,
-            }
-        )
-        name = f"[{event.name}] Trip payment"
-        self.group_visit_invoice_id = self.env["account.move"].create(
-            {
-                "invoice_origin": name,
-                "partner_id": self.partner_id.id,
-                "invoice_line_ids": [(0, 0, invl) for invl in invl_vals],
-                "move_type": "out_invoice",
-                "ref": self.partner_id.generate_bvr_reference(product),
-                "payment_mode_id": mode_pay_bvr.id,
-            }
-        )
-
-    def prepare_medical_survey(self):
-        # Attach medical survey for user
-        self.ensure_one()
-        survey = self.event_id.medical_survey_id
-        if not survey:
-            return
-        local_context = survey.action_send_survey().get("context")
-        wizard = (
-            self.env["survey.mail.compose.message"]
-            .with_context(local_context)
-            .create(
-                {
-                    "public": "no_email",
-                    "phone_partner_ids": [(6, 0, self.partner_id.ids)],
-                }
-            )
-        )
-        wizard.onchange_template_id_wrapper()
-        wizard.add_new_answer()
-        self.medical_survey_id = self.env["survey.user_input"].search(
-            [("partner_id", "=", self.partner_id_id), ("survey_id", "=", survey.id)],
-            limit=1,
-        )
-
-    def prepare_feedback_survey(self):
-        # Attach feedback survey for user
-        self.ensure_one()
-        survey = self.event_id.feedback_survey_id
-        if not survey:
-            return
-        local_context = survey.action_send_survey().get("context")
-        wizard = (
-            self.env["survey.mail.compose.message"]
-            .with_context(local_context)
-            .create(
-                {
-                    "public": "no_email",
-                    "phone_partner_ids": [(6, 0, self.partner_id.ids)],
-                }
-            )
-        )
-        wizard.onchange_template_id_wrapper()
-        wizard.add_new_answer()
-        self.feedback_survey_id = self.env["survey.user_input"].search(
-            [("partner_id", "=", self.partner_id_id), ("survey_id", "=", survey.id)],
-            limit=1,
-        )
-
-    def send_medical_discharge(self):
-        discharge_config = self.env.ref(
-            "website_event_compassion.group_visit_medical_discharge_config"
-        )
-        for registration in self:
-            partner = registration.partner_id
-            communication = (
-                self.env["partner.communication.job"]
-                .with_context(no_print=True, lang=partner.lang)
-                .create(
-                    {
-                        "partner_id": partner.id,
-                        "object_ids": registration.ids,
-                        "config_id": discharge_config.id,
-                    }
-                )
-            )
-            file_data = file_open(
-                "website_event_compassion/static/src/"
-                "medical_discharge_" + partner.lang + ".docx",
-                mode="rb",
-            ).read()
-            communication.attachment_ids.create(
-                {
-                    "name": _("medical discharge.docx"),
-                    "report_name": "report_compassion.partner_communication",
-                    "data": base64.b64encode(file_data),
-                    "communication_id": communication.id,
-                }
-            )
-            communication.send()
-            user_feedback = self.medical_survey_id.user_input_line_ids.filtered(
-                lambda l: l.question_id
-                == self.env.ref("website_event_compassion.gpms_question_treatment")
-            ).value_free_text
-            registration.message_post(
-                body=(
-                    f"<ul><li>Event: {registration.event_name}</li>"
-                    f"<li>Partner: {partner.name}</li>"
-                    f"<li>Feedback: {user_feedback}</li>"
-                    f"</ul>Partner is under treatment, a medical discharge is required."
-                ),
-                subject=f"Medical discharge required for {partner.name}",
-                subtype="mt_comment",
-            )
-        return self.write(
-            {
-                "completed_task_ids": [
-                    (
-                        4,
-                        self.env.ref("website_event_compassion.task_medical_survey").id,
-                    ),
-                ]
-            }
-        )
-
-    def skip_medical_discharge(self):
-        return self.write(
-            {
-                "completed_task_ids": [
-                    (
-                        4,
-                        self.env.ref("website_event_compassion.task_medical_survey").id,
-                    ),
-                    (
-                        4,
-                        self.env.ref(
-                            "website_event_compassion.task_medical_discharge"
-                        ).id,
-                    ),
-                ]
-            }
-        )
 
     def _track_subtype(self, init_values):
         self.ensure_one()

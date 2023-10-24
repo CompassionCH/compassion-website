@@ -8,38 +8,52 @@
     </record>
 
     <template id="list" name="Events list page">
-        <t t-call="website_compassion.layout">
-            <t t-set="title">Events</t>
+        <t t-call="website.layout">
+            <t t-set="additional_title">Events</t>
             <div class="oe_structure"/>
-            <div class="oe_structure">
-                <div class="container" style="margin-top: 40px;">
-                    <h3 class="text-center" style="margin-bottom: 20px;">
-                        Events
-                    </h3>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <t t-foreach="events" t-as="event">
-                                <tr>
-                                    <td>
-                                        <t t-esc="event.start_date" t-options="{'widget':'date'}"/>
-                                    </td>
-                                    <td>
-                                        <a t-att-href="event.website_url">
-                                            <t t-esc="event.name"/>
-                                        </a>
-                                    </td>
-                                </tr>
-                            </t>
-                        </tbody>
-                    </table>
+            <section
+                    class="s_cover parallax s_parallax_is_fixed bg-black-50 pt-5 pb-5 o_colored_level"
+                    data-scroll-background-ratio="1" data-snippet="s_cover"
+                    data-name="Cover" style="">
+                <span class="s_parallax_bg oe_img_bg"
+                      style="background-image: url('/web/image/website.s_cover_default_image'); background-position: 50% 0;"/>
+                <div class="o_we_bg_filter bg-black-50"/>
+                <div class="container s_allow_columns">
+                    <h1 style="text-align: center;">
+                        <font style="font-size: 62px; font-weight: bold;">
+                            Events</font>
+                    </h1>
                 </div>
-            </div>
+            </section>
+            <div class="oe_structure"/>
+            <section class="mt-5 pb-5" id="events_compassion_list">
+                <div class="container">
+                    <div class="card-deck">
+                        <div t-foreach="events" t-as="event"
+                             class="card">
+                            <a t-att-href="event.website_url">
+                                <img
+                                        t-att-src="event.website_image"
+                                        alt="" class="card-img-top"
+                                        loading="lazy"
+                                        style="height: 30vh; object-fit: cover;"
+                                />
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title"
+                                    t-field="event.name"/>
+                                <h6 class="card-subtitle mb-2 text-muted"
+                                    t-field="event.start_date"
+                                    t-options="{'widget': 'date'}"/>
+
+                                <a t-att-href="event.website_url"
+                                   class="btn btn-primary o_default_snippet_text">
+                                    View event</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
             <div class="oe_structure"/>
         </t>
     </template>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="model_event_registration" model="ir.model">
+      <field name="website_form_key">event_registration</field>
+      <field name="website_form_access">True</field>
+      <field name="website_form_label">Event registration</field>
+    </record>
+    <function model="ir.model.fields" name="formbuilder_whitelist">
+      <value>event.registration</value>
+      <value eval="[
+        'partner_title',
+        'partner_lastname',
+        'partner_firstname',
+        'partner_street',
+        'partner_zip',
+        'partner_city',
+        'partner_email',
+        'partner_birthdate_date',
+        'partner_phone',
+        'partner_mobile',
+        'phone',
+        'mobile',
+        'partner_function',
+        'partner_lang',
+        'partner_spoken_lang_ids',
+        'match_update',
+        'event_id',
+        'amount_objective',
+        'profile_picture',
+        'profile_name',
+        'ambassador_quote',
+        'emergency_name',
+        'emergency_phone',
+        'emergency_relation_type',
+        'birth_name',
+        'passport',
+        'passport_number',
+        'passport_expiration_date',
+        ]"/>
+    </function>
+    <function model="ir.model.fields" name="formbuilder_whitelist">
+        <value>cms.form.sponsorship</value>
+        <value eval="['registration_id']"/>
+    </function>
+</odoo>

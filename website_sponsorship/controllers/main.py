@@ -105,11 +105,8 @@ class WebsiteChild(http.Controller):
                 "main_object": child,
                 "project": child.project_id,
                 "show_sponsorship_form": show_sponsorship_form,
-                "sponsorship_type": kwargs.get("sponsorship_type", "S"),
-                "utm_source": kwargs.get("utm_source"),
-                "utm_medium": kwargs.get("utm_medium"),
-                "utm_campaign": kwargs.get("utm_campaign"),
-                "origin_id": kwargs.get("origin_id"),
+                "sponsorship_type": kwargs.pop("sponsorship_type", "S"),
+                **kwargs,
             },
         )
 

@@ -77,12 +77,13 @@ class WebsiteSponsorship(models.TransientModel):
 
     def _get_sponsorship_vals(self):
         self.ensure_one()
+        group_search = [
+            ("partner_id", "=", self.partner_id.id),
+        ]
+        if self.payment_mode_id:
+            group_search.append(("payment_mode_id", "=", self.payment_mode_id.id))
         group = self.env["recurring.contract.group"].search(
-            [
-                ("payment_mode_id", "=", self.payment_mode_id.id),
-                ("partner_id", "=", self.partner_id.id),
-            ],
-            limit=1,
+            group_search, limit=1, order="id desc"
         )
         if not group:
             group = group.create(
@@ -101,6 +102,11 @@ class WebsiteSponsorship(models.TransientModel):
         if self.sponsorship_amount == "regular":
             # Remove the GEN Fund
             lines.pop()
+        pricelist = (
+            self.env["product.pricelist"]
+            .sudo()
+            .search([("company_id", "=", self.env.company.id)], limit=1)
+        )
         res = {
             "partner_id": self.partner_id.id,
             # We could later implement another correspondent selection
@@ -110,6 +116,7 @@ class WebsiteSponsorship(models.TransientModel):
             "group_id": group.id,
             "origin_id": self.origin_id.id,
             "contract_line_ids": lines,
+            "pricelist_id": pricelist.id,
         }
         res.update(self._get_utm_data())
         if self.contract_id:

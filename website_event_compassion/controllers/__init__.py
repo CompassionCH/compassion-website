@@ -8,4 +8,5 @@
 #
 ##############################################################################
 
-from . import events_controller, group_visit, survey_controller
+from . import events_controller
+from . import my_events

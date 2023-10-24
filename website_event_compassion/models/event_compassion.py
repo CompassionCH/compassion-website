@@ -6,7 +6,10 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+import json
+
 from odoo import api, fields, models
+from odoo.http import request
 
 from odoo.addons.website.models.website import slugify as slug
 
@@ -19,34 +22,36 @@ class EventCompassion(models.Model):
         "translatable.model",
         "website.seo.metadata",
         "website.multi.mixin",
+        "website.cover_properties.mixin",
     ]
 
     name = fields.Char(translate=True)
     website_description = fields.Html(translate=True, sanitize=False)
+    website_intro = fields.Html(translate=True, sanitize=False)
     website_id = fields.Many2one("website", default=1)
-    thank_you_text = fields.Html(translate=True)
-    picture_1 = fields.Binary("Banner image", attachment=True)
-    filename_1 = fields.Char(compute="_compute_filenames")
+    picture_1 = fields.Image("Banner image", attachment=True)
+    website_image = fields.Char(compute="_compute_website_image")
     website_side_info = fields.Html(string="Side info", translate=True, sanitize=False)
     event_type_id = fields.Many2one(
         "event.type",
-        "Type",
+        "Registration Template",
         # Avoids selecting generic events
         domain=[("id", ">", 1)],
         readonly=False,
     )
     type = fields.Selection(default="meeting")
-    odoo_event_id = fields.Many2one("event.event", readonly=False)
-    accepts_registrations = fields.Boolean(
-        related="event_type_id.accepts_registrations"
-    )
+    odoo_event_id = fields.Many2one("event.event", readonly=False, ondelete="cascade")
     seats_expected = fields.Integer(related="odoo_event_id.seats_expected")
-
-    registrations_closed = fields.Boolean("Close new registrations", default=True)
-    registrations_closed_text = fields.Char(
-        "Close Registrations Text", default="This event has ended", translate=True
-    )
     registrations_ended = fields.Boolean(compute="_compute_registrations_ended")
+    registration_ids = fields.One2many(
+        "event.registration",
+        "compassion_event_id",
+        "Event registrations",
+        readonly=False,
+    )
+    amount_objective = fields.Monetary(compute="_compute_amount_raised")
+    amount_raised = fields.Monetary(compute="_compute_amount_raised")
+    amount_raised_percents = fields.Monetary(compute="_compute_amount_raised")
 
     def _compute_registrations_ended(self):
         for event in self:
@@ -54,52 +59,42 @@ class EventCompassion(models.Model):
 
     def _compute_website_url(self):
         for event in self:
-            event.website_url = "/event/{}".format(slug(event))
+            event.website_url = f"/event/{slug(event)}"
 
-    def _compute_filenames(self):
+    def _compute_website_image(self):
         for event in self:
-            event.filename_1 = event.name + "-1.jpg"
+            event.website_image = request.website.image_url(
+                event, "picture_1", size=self.env.context.get("image_size")
+            )
 
-    def _compute_event_type(self):
-        sport = self.env.ref("website_event_compassion.event_type_sport")
-        stand = self.env.ref("website_event_compassion.event_type_stand")
-        concert = self.env.ref("website_event_compassion.event_type_concert")
-        pres = self.env.ref("website_event_compassion.event_type_presentation")
-        meeting = self.env.ref("website_event_compassion.event_type_meeting")
-        group = self.env.ref("website_event_compassion.event_type_group_visit")
-        youth = self.env.ref("website_event_compassion.event_type_youth_trip")
-        indiv = self.env.ref("website_event_compassion.event_type_individual_visit")
+    def _default_website_meta(self):
+        default_meta = super()._default_website_meta()
+        default_meta["default_opengraph"].update(
+            {
+                "og:image": self.website_image,
+            }
+        )
+        default_meta["default_twitter"].update(
+            {"twitter:image": self.with_context(image_size="300x300").website_image}
+        )
+        return default_meta
+
+    def _compute_amount_raised(self):
         for event in self:
-            if event.event_type_id == sport:
-                event.type = "sport"
-            elif event.event_type_id == stand:
-                event.type = "stand"
-            elif event.event_type_id == concert:
-                event.type = "concert"
-            elif event.event_type_id == pres:
-                event.type = "presentation"
-            elif event.event_type_id == meeting:
-                event.type = "meeting"
-            elif event.event_type_id in group | youth | indiv:
-                event.type = "tour"
-            else:
-                event.type = False
+            amount_raised = 0
+            amount_objective = 0
 
-    @api.model
-    def create(self, vals):
-        event = super().create(vals)
-        if "type" not in vals:
-            event._compute_event_type()
-        return event
+            for registration in event.sudo().registration_ids.filtered(
+                lambda r: r.state != "cancel"
+            ):
+                amount_raised += registration.amount_raised
+                amount_objective += registration.amount_objective
 
-    def write(self, vals):
-        super().write(vals)
-        if "event_type_id" in vals:
-            self._compute_event_type()
-        return True
-
-    def close_registrations(self):
-        self.registrations_closed = True
+            event.amount_raised = amount_raised
+            event.amount_objective = amount_objective
+            event.amount_raised_percents = int(
+                amount_raised * 100 / (amount_objective or 1)
+            )
 
     def open_registrations(self):
         """
@@ -108,7 +103,6 @@ class EventCompassion(models.Model):
         and participant list.
         :return: action opening the wizard
         """
-        self.registrations_closed = False
         if not self.odoo_event_id:
             return {
                 "name": "Open event registrations",
@@ -135,6 +129,15 @@ class EventCompassion(models.Model):
             "target": "current",
         }
 
+    def manage_event_registration(self):
+        return {
+            "name": "Manage event registration",
+            "type": "ir.actions.act_window",
+            "view_mode": "form",
+            "res_model": "event.event",
+            "res_id": self.odoo_event_id.id,
+        }
+
     @api.model
     def past_event_action(self):
         """Switch partners to "attended" after the event ended"""
@@ -144,3 +147,12 @@ class EventCompassion(models.Model):
                     [("event_id", "=", event.odoo_event_id.id)]
                 )
                 participants.past_event_action()
+
+    def write(self, vals):
+        if vals.get("picture_1"):
+            vals["cover_properties"] = json.dumps(
+                {
+                    "background_image": vals["picture_1"],
+                }
+            )
+        return super().write(vals)

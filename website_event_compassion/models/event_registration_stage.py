@@ -30,7 +30,7 @@ class EventStage(models.Model):
         "event.type",
         "event_registration_stage_to_type_rel",
         string="Event types",
-        ondelete="set null",
+        ondelete="cascade",
         help="Specific event types that use this stage. "
         "Other event types will not be able to see or use this stage.",
         readonly=False,
@@ -39,4 +39,14 @@ class EventStage(models.Model):
         "Folded in Pipeline",
         help="This stage is folded in the kanban view when there are no "
         "records in that stage to display.",
+    )
+    registration_state = fields.Selection(
+        [
+            ("draft", "Unconfirmed"),
+            ("open", "Confirmed"),
+            ("done", "Attended"),
+            ("cancel", "Cancelled"),
+        ],
+        help="If set, this will set automatically the registration to the chosen "
+        "state when it reaches this stage.",
     )

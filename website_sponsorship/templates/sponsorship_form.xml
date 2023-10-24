@@ -1,24 +1,28 @@
 <odoo>
     <template id="child_sponsorship_form">
+        <t t-set="public" t-value="env.user._is_public()"/>
+        <t t-if="public and contract">
+            <t t-set="partner" t-value="contract.partner_id"/>
+        </t>
         <span id="form_values" class="hidden" data-for="sponsorship-form" t-att-data-values="{
-                'partner_email': partner.email or '',
-                'partner_firstname': partner.firstname or '',
-                'partner_lastname': partner.lastname or '',
-                'partner_street': partner.street or '',
-                'partner_zip': partner.zip or '',
-                'partner_city': partner.city or '',
-                'partner_phone': partner.phone or '',
-                'partner_mobile': partner.mobile or '',
-                'Church': partner.church_id.name or '',
-                'partner_function': partner.function or '',
+                'partner_email': not public and partner.email or '',
+                'partner_firstname': not public and partner.firstname or '',
+                'partner_lastname': not public and partner.lastname or '',
+                'partner_street': not public and partner.street or '',
+                'partner_zip': not public and partner.zip or '',
+                'partner_city': not public and partner.city or '',
+                'partner_phone': not public and partner.phone or '',
+                'partner_mobile': not public and artner.mobile or '',
+                'Church': not public and partner.church_id.name or '',
+                'partner_function': not public and partner.function or '',
                 }"
-              t-att-data-partner_title="partner.title.id"
-              t-att-data-partner_lang="partner.env['res.lang'].sudo().search([('code','=',partner.lang)]).id"
+              t-att-data-partner_title="not public and partner.title.id"
+              t-att-data-partner_lang="not public and partner.env['res.lang'].sudo().search([('code','=',partner.lang)]).id"
               t-att-data-payment_mode_id="contract.payment_mode_id.id if contract else ''"
               t-att-data-origin_id="contract.origin_id.id if contract else ''"
               t-att-data-origin_name="contract.origin_id.name if contract else ''"
               t-att-data-partner_birthdate_date="str(partner.birthdate_date)"
-              t-att-data-partner_spoken_lang_ids="partner.spoken_lang_ids.ids"
+              t-att-data-partner_spoken_lang_ids="not public and partner.spoken_lang_ids.ids"
         />
         <section id="sponsorship-form-section" t-attf-class="s_website_form pt16 pb16 o_colored_level mb-5 #{'d-none' if step==2 else ''}" data-vcss="001" data-snippet="s_website_form" data-name="sponsorship-form">
             <div t-att-class="'o_container_small' if step == 1 else 'container'">

@@ -8,4 +8,4 @@
 #
 ##############################################################################
 
-from . import controllers, forms, models, wizards
+from . import controllers, models, wizards

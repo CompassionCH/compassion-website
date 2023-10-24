@@ -10,6 +10,6 @@
 
 from . import (
     event_registration_communication_wizard,
-    invite_participant_party_wizard,
     open_to_participant_wizard,
+    sponsorship_form,
 )

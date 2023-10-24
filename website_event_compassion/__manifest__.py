@@ -26,7 +26,6 @@
 #
 ##############################################################################
 
-# pylint: disable=C8101
 {
     "name": "Compassion Events Website",
     "summary": "Public website pages for Compassion Events with registration",
@@ -38,56 +37,38 @@
     "maintainers": ["ecino"],
     "license": "AGPL-3",
     "depends": [
-        "my_compassion",  # compassion-switzerland
+        "my_compassion",
         "crm_compassion",  # compassion-modules
-        "event_sale",  # source
+        "event_sale",
+        "website_sale",
+        "sale_automatic_workflow",  # OCA/sale-workflow
         "survey",
     ],
-    "external_dependencies": {
-        "python": ["magic"],
-    },
     "data": [
         "security/ir.model.access.csv",
         "security/access_rules.xml",
-        "data/event_type.xml",
         "data/event_registration_stage.xml",
-        "data/event_registration_task.xml",
-        "data/product.xml",
-        "data/group_visit_emails.xml",
-        "data/communication_config.xml",
-        "data/queue_job.xml",
-        "data/survey.xml",
         "data/action_rule_past_event.xml",
         "data/event_message_subtype.xml",
+        "data/form_data.xml",
         "views/event_compassion_open_wizard.xml",
         "views/event_compassion_view.xml",
         "views/event_event_view.xml",
         "views/event_registration_view.xml",
         "views/registration_stage_view.xml",
         "views/registration_task_view.xml",
-        "views/event_faq_view.xml",
-        "views/res_vaccine_view.xml",
-        "views/advocate_details.xml",
-        "views/event_info_party_wizard.xml",
-        "views/event_flight_view.xml",
         "views/event_type_view.xml",
+        "views/event_registration_communication_wizard.xml",
         "templates/assets.xml",
         "templates/event_page.xml",
         "templates/events_list.xml",
         "templates/event_registration.xml",
         "templates/participants_list.xml",
         "templates/participant_page.xml",
-        "templates/donation_result.xml",
-        "templates/event_faq.xml",
-        "templates/group_visit_step2.xml",
-        "templates/group_visit_medical_info.xml",
-        "templates/group_visit_practical_information.xml",
-        "templates/group_visit_party_invitation.xml",
-        "templates/robots.xml",
-        "wizards/event_registration_communication_wizard.xml",
+        "templates/event_donation.xml",
+        "templates/my_events.xml",
         "data/website_page.xml",
     ],
-    "demo": ["demo/crm_event_demo.xml"],
     "installable": True,
     "auto_install": False,
 }

@@ -1,12 +1,12 @@
 ##############################################################################
 #
-#    Copyright (C) 2018 Compassion CH (http://www.compassion.ch)
+#    Copyright (C) 2018-2023 Compassion CH (http://www.compassion.ch)
 #    @author: Emanuel Cino <ecino@compassion.ch>
 #
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from odoo import fields, models
+from odoo import models
 
 
 class EventType(models.Model):
@@ -14,12 +14,3 @@ class EventType(models.Model):
     # events of the type have changed.
     _inherit = ["event.type", "mail.thread"]
     _name = "event.type"
-
-    accepts_registrations = fields.Boolean(default=True)
-    travel_features = fields.Boolean(
-        help="Use this to activate the travel registration features"
-    )
-
-    event_mail_ids = fields.Many2many(
-        "event.mail", domain=[("event_id", "=", False)], readonly=False
-    )

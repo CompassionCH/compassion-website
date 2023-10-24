@@ -9,20 +9,14 @@
 ##############################################################################
 
 from . import (
-    account_move,
-    account_move_line,
     event_compassion,
     event_email,
     event_event,
-    event_faq,
-    event_flight,
     event_registration,
     event_registration_stage,
     event_registration_task,
     event_type,
-    partner_communication_job,
-    payment_transaction,
-    res_country_vaccine,
     res_partner,
-    survey_user_input,
+    sale_order,
+    sale_order_line,
 )

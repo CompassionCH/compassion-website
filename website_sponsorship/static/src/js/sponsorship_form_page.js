@@ -8,8 +8,6 @@ odoo.define("website_sponsorship.form_page", function (require) {
     selector: "#sponsorship-form",
 
     start: function () {
-      //$("#sponsorship_amount").text("50");
-      // let origin = $("select[name='origin_id']").val();
       this.setup_default_values();
 
       $("#sponsorship_plus_info").click(function () {

@@ -1,128 +1,506 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Page for the full screen registration form (in case it is not displayed in modal popup) -->
-    <template id="event_full_page_form" name="Event full page form">
-        <t t-call="website.publish_management">
-            <t t-set="object" t-value="event"/>
-            <t t-set="publish_edit" t-value="True"/>
-        </t>
-        <t t-call="website_compassion.layout">
-            <t t-set="head">
-                <meta name="robots" content="noindex"/>
-            </t>
-            <t t-set="title" t-value="form.form_title" />
-            <t t-set="closed" t-value="event.registrations_closed or event.registrations_ended" />
-            <div id="wrap" t-att-class="form.form_wrapper_css_klass">
-                <!-- Full width banner -->
-                <t t-set="background_color_class" t-value="'compassion_background_blue'"/>
-                <t t-call="website_event_compassion.event_header"/>
-                <div class="container">
-                    <t t-if="closed and event.registrations_closed_text">
-                        <br />
-                        <span class="form_closed_message" style="color:red" t-esc="event.registrations_closed_text"/>
-                    </t>
-                    <t t-if="form.form_title">
-                        <h2><span class="form_title" t-esc="form.form_title" /></h2>
-                    </t>
-
-                    <t t-if="form.form_description">
-                        <p class="form_description" t-raw="form.form_description" />
-                    </t>
-
-                    <t t-if="not closed">
-                        <t t-call="website_event_compassion.group_visit_event_stepper" t-if="event_step"/>
-                        <t t-raw="form.form_render()" />
-                        <p class="mb32" t-if="event_step == 1">
-                            If you wish to register several people (i.e. people of the same family), please register each person separately. During the process, you may use only one correspondence address.
-                        </p>
-                    </t>
-                </div>
+    <template id="event_registration_form" name="Event registration form">
+        <t t-set="public" t-value="env.user._is_public()"/>
+        <t t-set="partner" t-value="env.user.partner_id"/>
+        <t t-set="action_done">registration</t>
+        <span id="form_values" class="hidden" data-for="event_registration_form" t-att-data-values="{
+                'partner_email': not public and partner.email or '',
+                'partner_firstname': not public and partner.firstname or '',
+                'partner_lastname': not public and partner.lastname or '',
+                'partner_street': not public and partner.street or '',
+                'partner_zip': not public and partner.zip or '',
+                'partner_city': not public and partner.city or '',
+                'partner_phone': not public and partner.phone or '',
+                'phone': not public and partner.phone or '',
+                'partner_mobile': partner.mobile or '',
+                'profile_name': not public and partner.preferred_name or '',
+                'mobile': not public and partner.mobile or '',
+                'event_id': event.odoo_event_id.id,
+                }"
+              t-att-data-partner_title="not public and partner.title.id"
+              t-att-data-partner_birthdate_date="str(partner.birthdate_date)"
+        />
+        <t groups="website.group_website_publisher">
+            <div class="container-fluid px-lg-5">
+                <span t-translation="off" class="text-muted p-lg-5">You can translate here the thankyou message after registration:</span>
+                <span t-raw="action_done"/>
             </div>
         </t>
-    </template>
+        <section class="s_website_form pb16 o_colored_level" data-vcss="001"
+                 data-snippet="s_website_form" data-name="Form" style="">
+            <div class="container-fluid px-lg-5">
+                <form action="/website_form/" method="post"
+                      enctype="multipart/form-data" class="o_mark_required"
+                      data-mark="*" data-success-mode="redirect"
+                      t-attf-data-success-page="/form-thank-you?action_done=#{action_done}&amp;next_url=#{event.website_url}"
+                      data-model_name="event.registration"
+                      id="event_registration_form"
+                >
+                    <div class="s_website_form_rows s_col_no_bgcolor p-lg-5">
+                        <h3>Your coordinates</h3>
+                        <div class="row my-2">
+                            <div class="form-group s_website_form_field col-12 col-lg-6 "
+                                 data-type="many2one" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="o4ncri99nhhm">
+                                        <span class="s_website_form_label_content">
+                                            Title</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <select class="form-control s_website_form_input"
+                                                name="partner_title" id="o4ncri99nhhm"
+                                                style="">
+                                            <t t-foreach="titles" t-as="title">
+                                                <option t-att-value="title.id">
+                                                    <t t-esc="title.name"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row my-2">
 
-    <!-- Registration success page -->
-    <template id="event_registration_successful" name="Event registration success">
-        <t t-call="website_compassion.layout">
-            <t t-set="head">
-                <meta name="robots" content="noindex"/>
-            </t>
-            <div id="wrap">
-                <div class="container">
-                    <h3>We are glad to confirm your registration to
-                        <t t-esc="event.name"/>
-                    </h3>
-                    <t t-call="website_event_compassion.event_registration_summary"/>
-                </div>
-            </div>
-        </t>
-    </template>
+                            <div
+                                    class="form-group s_website_form_field col-12 col-lg-6 s_website_form_model_required"
+                                    data-type="char" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="ocdmg56xg7v5">
+                                        <span class="s_website_form_label_content">
+                                            Firstname</span>
+                                        <span class="s_website_form_mark"> *</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="text"
+                                               class="form-control s_website_form_input"
+                                               name="partner_firstname" required="true"
+                                               id="ocdmg56xg7v5"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                    class="form-group s_website_form_field col-12 col-lg-6  s_website_form_model_required  "
+                                    data-type="char" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="oz3xasz9xdxe">
+                                        <span class="s_website_form_label_content">
+                                            Lastname</span>
+                                        <span class="s_website_form_mark"> *</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="text"
+                                               class="form-control s_website_form_input"
+                                               name="partner_lastname" required="true"
+                                               id="oz3xasz9xdxe"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                    class="form-group s_website_form_field col-12 col-lg-6  s_website_form_model_required  "
+                                    data-type="email" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="odbz2si1dj1b">
+                                        <span class="s_website_form_label_content">
+                                            Email</span>
+                                        <span class="s_website_form_mark"> *</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="email"
+                                               class="form-control s_website_form_input"
+                                               name="partner_email" required="true"
+                                               id="odbz2si1dj1b"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                    class="form-group s_website_form_field col-12 col-lg-6  s_website_form_model_required  "
+                                    data-type="date" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="o6l9vjdjy14b">
+                                        <span class="s_website_form_label_content">
+                                            Birthdate</span>
+                                        <span class="s_website_form_mark"> *</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <div class="s_website_form_date input-group date"
+                                             id="datepicker34640469063923773"
+                                             data-target-input="nearest">
+                                            <input type="text"
+                                                   class="form-control datetimepicker-input s_website_form_input"
+                                                   data-target="#datepicker34640469063923773"
+                                                   name="partner_birthdate_date"
+                                                   required="true" id="o6l9vjdjy14b"/>
+                                            <div class="input-group-append"
+                                                 data-target="#datepicker34640469063923773"
+                                                 data-toggle="datetimepicker">
+                                                <div class="input-group-text">
+                                                    <i class="fa fa-calendar"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                    class="form-group s_website_form_field col-12 col-lg-6   "
+                                    data-type="tel" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="otnaqtuiw6b">
+                                        <span class="s_website_form_label_content">
+                                            Phone</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="tel"
+                                               class="form-control s_website_form_input"
+                                               name="partner_phone" id="otnaqtuiw6b"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                    class="form-group s_website_form_field s_website_form_dnone   "
+                                    data-type="tel" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="otnaqtuiw6b-2">
+                                        <span class="s_website_form_label_content">
+                                            Phone</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="hidden"
+                                               class="form-control s_website_form_input"
+                                               name="phone" id="otnaqtuiw6b-2"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group s_website_form_field col-12 col-lg-6   "
+                                 data-type="tel" data-name="Field" style="">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="oi22z92zr9uh">
+                                        <span class="s_website_form_label_content">
+                                            Mobile</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="tel"
+                                               class="form-control s_website_form_input"
+                                               name="partner_mobile" id="oi22z92zr9uh"/>
+                                        <div data-lastpass-icon-root="true"
+                                             style="position: relative !important; height: 0px !important; width: 0px !important; float: left !important;"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                    class="form-group s_website_form_field s_website_form_dnone   "
+                                    data-type="tel" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="oi22z92zr9uh-2">
+                                        <span class="s_website_form_label_content">
+                                            Mobile</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="hidden"
+                                               class="form-control s_website_form_input"
+                                               name="mobile" id="oi22z92zr9uh-2"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group s_website_form_field col-12 col-lg-6 s_website_form_model_required  "
+                                 data-type="char" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="ozf6k3okzcf">
+                                        <span class="s_website_form_label_content">
+                                            Street</span>
+                                        <span class="s_website_form_mark"> *</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="text"
+                                               class="form-control s_website_form_input"
+                                               name="partner_street" required="true"
+                                               id="ozf6k3okzcf"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group s_website_form_field col-12 col-lg-6 s_website_form_model_required  "
+                                 data-type="integer" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="on45ccle9vn">
+                                        <span class="s_website_form_label_content">Postal
+                                            code</span>
+                                        <span class="s_website_form_mark"> *</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="number"
+                                               class="form-control s_website_form_input"
+                                               name="partner_zip" step="1" required="true"
+                                               id="on45ccle9vn"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group s_website_form_field col-12 col-lg-6 s_website_form_model_required  "
+                                 data-type="char" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="ocj7dy08bm7v">
+                                        <span class="s_website_form_label_content">
+                                            City</span>
+                                        <span class="s_website_form_mark"> *</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="text"
+                                               class="form-control s_website_form_input"
+                                               name="partner_city" required="true"
+                                               id="ocj7dy08bm7v"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h3>Information for the trip</h3>
+                        <div class="row my-2">
 
-    <template id="event_registration_summary" name="Event registration summary">
-        <div class="row">
-            <div class="col-md-3 mt16">
-                <h4>Details</h4>
+                            <div class="form-group s_website_form_field col-12 col-lg-6 s_website_form_model_required  "
+                                 data-type="char" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="o2holh6va8aa">
+                                        <span class="s_website_form_label_content">Passport
+                                            name</span>
+                                        <span class="s_website_form_mark"> *</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="text"
+                                               class="form-control s_website_form_input"
+                                               name="birth_name" required="true"
+                                               id="o2holh6va8aa"/>
+                                        <div data-lastpass-icon-root="true"
+                                             style="position: relative !important; height: 0px !important; width: 0px !important; float: left !important;"/>
+                                        <div data-lastpass-icon-root="true"
+                                             style="position: relative !important; height: 0px !important; width: 0px !important; float: left !important;"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group s_website_form_field col-12 col-lg-6 s_website_form_model_required  "
+                                 data-type="char" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="og0dykf17xyo">
+                                        <span class="s_website_form_label_content">Passport
+                                            number</span>
+                                        <span class="s_website_form_mark"> *</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="text"
+                                               class="form-control s_website_form_input"
+                                               name="passport_number" required="true"
+                                               id="og0dykf17xyo"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group s_website_form_field col-12 col-lg-6 s_website_form_model_required  "
+                                 data-type="date" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="oilv651r2v6">
+                                        <span class="s_website_form_label_content">Passport
+                                            expiration date</span>
+                                        <span class="s_website_form_mark"> *</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <div class="s_website_form_date input-group date"
+                                             id="datepicker12397335945525279"
+                                             data-target-input="nearest">
+                                            <input type="text"
+                                                   class="form-control datetimepicker-input s_website_form_input"
+                                                   data-target="#datepicker12397335945525279"
+                                                   name="passport_expiration_date"
+                                                   required="true" id="oilv651r2v6"/>
+                                            <div class="input-group-append"
+                                                 data-target="#datepicker12397335945525279"
+                                                 data-toggle="datetimepicker">
+                                                <div class="input-group-text">
+                                                    <i class="fa fa-calendar"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group s_website_form_field col-12 col-lg-6 s_website_form_model_required  "
+                                 data-type="char" data-name="Field" style="">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="ounysy8olw6">
+                                        <span class="s_website_form_label_content">Emergency
+                                            contact name</span>
+                                        <span class="s_website_form_mark"> *</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="text"
+                                               class="form-control s_website_form_input"
+                                               name="emergency_name" required="true"
+                                               id="ounysy8olw6"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="" class="form-group s_website_form_field col-12 col-lg-6   "
+                                 data-type="many2one" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class=" col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="o6dgjpsk1jmd0">
+                                        <span class="s_website_form_label_content">Emergency
+                                            contact relation type</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <select class="form-control s_website_form_input"
+                                                name="emergency_relation_type"
+                                                id="o6dgjpsk1jmd0" style="">
+
+                                            <t t-foreach="relation_types" t-as="relation_type">
+                                                <option t-att-value="relation_type[0]">
+                                                    <t t-esc="relation_type[1]"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group s_website_form_field col-12 col-lg-6 s_website_form_model_required  "
+                                 data-type="tel" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="omg2unuzqrqr">
+                                        <span class="s_website_form_label_content">Emergency
+                                            contact phone</span>
+                                        <span class="s_website_form_mark"> *</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="tel"
+                                               class="form-control s_website_form_input"
+                                               name="emergency_phone" required="true"
+                                               id="omg2unuzqrqr"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h3>Your public profile</h3>
+                        <div class="row my-2">
+                            <div class="form-group s_website_form_field col-12  s_website_form_model_required  "
+                                 data-type="text" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="oua1qteetzao23">
+                                        <span class="s_website_form_label_content">Profile name</span>
+                                        <span class="s_website_form_mark"> *</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="text"
+                                               class="form-control s_website_form_input"
+                                               name="profile_name" required="true"
+                                               id="oua1qteetzao23" rows="3"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group s_website_form_field col-12    "
+                                 data-type="binary" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class=" col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="o14flcr1033kb">
+                                        <span class="s_website_form_label_content">Profile
+                                            picture</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="file"
+                                               class="form-control-file s_website_form_input"
+                                               name="profile_picture"
+                                               id="o14flcr1033kb"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group s_website_form_field col-12  s_website_form_model_required  "
+                                 data-type="text" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="oua1qteetzao">
+                                        <span class="s_website_form_label_content">My
+                                            motto</span>
+                                        <span class="s_website_form_mark"> *</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <textarea class="form-control s_website_form_input"
+                                                  name="ambassador_quote" required="true"
+                                                  id="oua1qteetzao" rows="3"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group s_website_form_field col-12  s_website_form_model_required s_website_form_dnone"
+                                 data-type="hidden" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="othmu7zrz8w">
+                                        <span class="s_website_form_label_content">
+                                            Event</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="hidden"
+                                               class="form-control s_website_form_input"
+                                               name="event_id" id="othmu7zrz8w"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group s_website_form_field col-12    s_website_form_dnone"
+                                 data-type="hidden" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="orfrvm1ur02a">
+                                        <span class="s_website_form_label_content">
+                                            Fundraising objective</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input type="hidden"
+                                               class="form-control s_website_form_input"
+                                               name="amount_objective" id="orfrvm1ur02a"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group s_website_form_field col-12    "
+                                 data-type="text" data-name="Field">
+                                <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label "
+                                           style="width: 200px" for="o3kilnyt9u3u">
+                                        <span class="s_website_form_label_content">
+                                            Comments</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <textarea class="form-control s_website_form_input"
+                                                  name="comments" id="o3kilnyt9u3u"
+                                                  rows="3"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-12 s_website_form_submit"
+                                 data-name="Submit Button">
+                                <div style="width: 200px;" class="s_website_form_label"/>
+                                <a href="#" role="button"
+                                   class="btn btn-primary btn-lg s_website_form_send o_default_snippet_text">
+                                    Register now</a>
+                                <span id="s_website_form_result"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="col-md-9 mt16">
-                <h4>
-                    <a t-attf-href="#{'/event/' + slug(event.compassion_event_id)}">
-                        <t t-esc="event.name"/>
-                    </a>
-                </h4>
-                <i class="fa fa-clock-o"/>
-                <span itemprop="startDate" t-esc="event.date_begin_located[:-3]"></span>
-                <i>to</i>
-                <span itemprop="endDate" t-esc="event.date_end_located[:-3]"></span>
-                <div itemprop="location" class="mt16 mb8" t-field="event.address_id" t-options='{
-                "widget": "contact",
-                "fields": ["name", "address", "phone", "mobile", "fax", "email"]
-                }'/>
-            </div>
-            <div class="col-md-3 mt16">
-                <h4>Your registration</h4>
-            </div>
-            <div class="col-md-9 mt16">
-                <table class='table table-bordered table-striped'>
-                    <thead>
-                        <tr>
-                            <th>Reference</th>
-                            <th>Name</th>
-                            <th>E-mail</th>
-                            <th>Phone</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <t t-foreach="attendees" t-as="attendee">
-                            <tr>
-                                <td>
-                                    <t t-esc="attendee.id"/>
-                                </td>
-                                <td>
-                                    <i class="fa fa-user"></i>
-                                    <t t-if='attendee.name'>
-                                        <t t-esc="attendee.name"/>
-                                    </t>
-                                    <t t-if='not attendee.name'>N/A</t>
-                                </td>
-                                <td>
-                                    <i class="fa fa-envelope"></i>
-                                    <t t-if='attendee.email'>
-                                        <t t-esc="attendee.email"/>
-                                    </t>
-                                    <t t-if='not attendee.email'>N/A</t>
-                                </td>
-                                <td>
-                                    <i class="fa fa-phone"></i>
-                                    <t t-if='attendee.phone'>
-                                        <t t-esc="attendee.phone"/>
-                                    </t>
-                                    <t t-if='not attendee.phone'>N/A</t>
-                                </td>
-                            </tr>
-                        </t>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        </section>
     </template>
 </odoo>

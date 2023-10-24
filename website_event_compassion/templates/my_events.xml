@@ -1,0 +1,107 @@
+<odoo>
+    <template id="my_events_menu" inherit_id="my_compassion.my_account_menu">
+        <xpath expr="//a[@href='/my/letter']" position="before">
+            <a href="/my/events" role="menuitem" class="dropdown-item"
+               t-if="user_id.partner_id.registration_ids">My
+                Events</a>
+        </xpath>
+    </template>
+    <template id="my_events_list">
+        <t t-call="portal.frontend_layout">
+            <t t-set="additional_title">My events</t>
+            <div class="container my-5">
+                <h2 t-raw="additional_title" class="text-uppercase"/>
+                <section class="mt-5 pb-5" id="events_compassion_list">
+                    <div class="container">
+                        <div class="card-deck">
+                            <div t-foreach="registrations" t-as="registration"
+                                 class="card">
+                                <t t-set="event"
+                                   t-value="registration.compassion_event_id"/>
+                                <a t-attf-href="slug(registration)">
+                                    <img
+                                            t-att-src="event.website_image"
+                                            alt="" class="card-img-top"
+                                            loading="lazy"
+                                            style="height: 30vh; object-fit: cover;"
+                                    />
+                                </a>
+                                <div class="card-body">
+                                    <h5 class="card-title"
+                                        t-field="event.name"/>
+                                    <h6 class="card-subtitle mb-2 text-muted"
+                                        t-field="event.start_date"
+                                        t-options="{'widget': 'date'}"/>
+                                    <div class="card-text mb-2" t-if="registration.amount_objective">
+                                        <t t-call="website_event_compassion.event_barometer">
+                                            <t t-set="barometer" t-value="registration"/>
+                                            <t t-set="amount_inside" t-value="False"/>
+                                            <t t-set="barometer_title_class" t-value="False"/>
+                                            <t t-set="barometer_amount_class">amount_raised</t>
+                                        </t>
+                                    </div>
+
+                                    <a t-att-href="slug(registration)"
+                                       class="btn btn-primary o_default_snippet_text">
+                                        View details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+    <template id="my_event_details">
+        <t t-call="portal.frontend_layout">
+            <t t-set="event" t-value="registration.event_id"/>
+            <t t-set="additional_title" t-value="event.name"/>
+            <t t-set="profile_picture"
+               t-value="'/web/image/event.registration/' + str(registration.id) + '/profile_picture'"/>
+            <div class="container my-5">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li
+                                class="breadcrumb-item"><a href="/my/events">My Events
+                        </a></li>
+                        <li class="breadcrumb-item active"
+                            aria-current="page"><t t-esc="additional_title"/></li>
+                    </ol>
+                </nav>
+                <h2 t-esc="additional_title" class="text-uppercase"/>
+                <h3 class="mt-4">My profile</h3>
+                <div id="profile_view">
+                    <img t-att-src="profile_picture"
+                         class="figure-img my-4" alt="" loading="lazy"
+                         data-original-id="140127" data-original-src="/theme_compassion/static/src/img/snippets/s_picture.jpg" data-mimetype="image/jpeg" data-original-title="" title="" aria-describedby="tooltip693698"/>
+                    <div class="row">
+                        <div class="col col-sm-6 col-md-4 col-lg-3">Profile name:</div>
+                        <div class="col col-sm-6 col-md-8 col-lg-9"
+                             t-esc="registration.profile_name"/>
+                    </div>
+                </div>
+                <h3 class="mt-4">Fundraising</h3>
+                <t t-call="website_event_compassion.event_barometer">
+                    <t t-set="barometer" t-value="registration"/>
+                    <t t-set="amount_inside" t-value="True"/>
+                    <t t-set="barometer_title_class" t-value="False"/>
+                    <t t-set="barometer_amount_class">w-100 m-auto text-center</t>
+                    <t t-set="barometer_bg_class">shadow-sm h-100</t>
+                </t>
+                <div class="row my-4" t-if="donations">
+                    <div class="col col-sm-4 col-md-3 font-weight-bold">Date</div>
+                    <div class="col col-sm-4 col-md-5 col-lg-7 font-weight-bold">Donor</div>
+                    <div class="col col-sm-4 col-md-3 col-lg-2 font-weight-bold">Amount</div>
+                    <t t-foreach="donations" t-as="donation">
+                        <div class="col col-sm-4 col-md-3"
+                             t-esc="donation['date_str']"/>
+                        <div class="col col-sm-4 col-md-5 col-lg-7"
+                             t-esc="donation['donor']"/>
+                        <div class="col col-sm-4 col-md-3 col-lg-2 text-right"
+                             t-esc="donation['amount'] + ' ' + donation['currency']"/>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

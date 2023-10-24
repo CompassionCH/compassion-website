@@ -1,6 +1,6 @@
 ##############################################################################
 #
-#    Copyright (C) 2018 Compassion CH (http://www.compassion.ch)
+#    Copyright (C) 2018-2023 Compassion CH (http://www.compassion.ch)
 #    @author: Emanuel Cino <ecino@compassion.ch>
 #
 #    The licence is in the file __manifest__.py
@@ -18,18 +18,3 @@ class ResPartner(models.Model):
         "Event registrations",
         readonly=False,
     )
-
-    ##########################################################################
-    #                             FIELDS METHODS                             #
-    ##########################################################################
-    def write(self, vals):
-        super().write(vals)
-        if vals.get("criminal_record"):
-            self.mapped("registration_ids").write(
-                {
-                    "completed_task_ids": [
-                        (4, self.env.ref("website_event_compassion.task_criminal").id)
-                    ]
-                }
-            )
-        return True
