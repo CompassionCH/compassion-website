@@ -155,12 +155,10 @@ function removeImage(name, size, type) {
  */
 function displayImages() {
   // We use the images stored in the new_images array
-  for (let i = 0; i < new_images.length; i++) {
-    const original_image = new_images[i];
-
+  new_images.forEach((original_image) => {
     if (original_image.size > hard_max_size_limit) {
       displayAlert("image_too_large");
-      continue;
+      return;
     }
 
     const reader = new FileReader();
@@ -202,7 +200,7 @@ function displayImages() {
       };
     };
     reader.readAsDataURL(original_image);
-  }
+  });
 
   new_images = [];
 }

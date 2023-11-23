@@ -1,20 +1,18 @@
-
 //------------------------------------------------------------------------------
 // Colors
 //------------------------------------------------------------------------------
 
 // Colors
 $o-color-palettes: (
-    (
-        'o-color-1': #0054a6,
-        'o-color-2': #79a0c6,
-        'o-color-3': #f5f5f5,
-        'o-color-4': #ffffff,
-        'o-color-5': #111111,
-
-        'footer': 4,
-        'copyright': 4,
-    ),
+  (
+    "o-color-1": #0054a6,
+    "o-color-2": #79a0c6,
+    "o-color-3": #f5f5f5,
+    "o-color-4": #ffffff,
+    "o-color-5": #111111,
+    "footer": 4,
+    "copyright": 4,
+  )
 );
 
 //------------------------------------------------------------------------------
@@ -29,10 +27,13 @@ $o-theme-h5-font-size-multiplier: 1;
 $o-theme-h6-font-size-multiplier: (12 / 14);
 
 $o-theme-font-configs: (
-    'Montserrat': (
-        'family': ('Montserrat', cursive),
-        'url': 'Montserrat:300,300i,400,400i,700,700i',
+  "Montserrat": (
+    "family": (
+      "Montserrat",
+      cursive,
     ),
+    "url": "Montserrat:300,300i,400,400i,700,700i",
+  ),
 );
 
 //------------------------------------------------------------------------------
@@ -40,25 +41,26 @@ $o-theme-font-configs: (
 //------------------------------------------------------------------------------
 
 $o-website-values-palettes: (
-    (
-        'header-font-size': (18 / 16) * 1rem,
-        'font': 'Roboto',
-        'headings-font': 'Montserrat',
-        'navbar-font': 'Montserrat',
-        'buttons-font': 'Montserrat',
-        'header-template': 'hamburger',
-        'hamburger-type': 'off-canvas',
-        'hamburger-position': 'left',
-        'footer-template': 'links',
-
-        'btn-border-radius': 0,
-        'btn-border-radius-sm': 0,
-        'btn-border-radius-lg': 0,
-        'btn-font-size': 1.2rem,
-        'btn-padding-y': .474rem,
-        'btn-padding-x': 1.25rem,
-        'btn-font-size-lg': 2rem,
-        'btn-padding-y-lg': .4rem,
-        'btn-padding-x-lg': 2rem,
-    ),
+  (
+    "header-font-size": (
+      18 / 16,
+    ) * 1rem,
+    "font": "Roboto",
+    "headings-font": "Montserrat",
+    "navbar-font": "Montserrat",
+    "buttons-font": "Montserrat",
+    "header-template": "hamburger",
+    "hamburger-type": "off-canvas",
+    "hamburger-position": "left",
+    "footer-template": "links",
+    "btn-border-radius": 0,
+    "btn-border-radius-sm": 0,
+    "btn-border-radius-lg": 0,
+    "btn-font-size": 1.2rem,
+    "btn-padding-y": 0.474rem,
+    "btn-padding-x": 1.25rem,
+    "btn-font-size-lg": 2rem,
+    "btn-padding-y-lg": 0.4rem,
+    "btn-padding-x-lg": 2rem,
+  )
 );

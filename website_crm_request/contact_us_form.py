@@ -68,7 +68,7 @@ class ContactUsForm(models.AbstractModel):
     @property
     def form_widgets(self):
         # Hide fields
-        res = super(ContactUsForm, self).form_widgets
+        res = super().form_widgets
         res.update(
             {
                 "partner_id": "cms_form_compassion.form.widget.hidden",
@@ -78,7 +78,6 @@ class ContactUsForm(models.AbstractModel):
         return res
 
     def form_before_create_or_update(self, values, extra_values):
-
         # Find the corresponding claim category
         subject = values.get("subject")
         category_ids = (

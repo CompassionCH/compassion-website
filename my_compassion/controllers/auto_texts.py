@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 CHRISTMAS_TEXTS = {
     "fra": """Bonjour %s,
 

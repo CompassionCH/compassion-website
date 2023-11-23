@@ -107,7 +107,7 @@ def _create_archive(images, archive_name):
     """
     base_url = request.httprequest.host_url
     with ZipFile(archive_name, "w") as archive:
-        for (img, full_path) in images:
+        for img, full_path in images:
             filename = path.basename(full_path)
 
             # Create file, write to archive and delete it from os
@@ -513,7 +513,7 @@ class MyAccountController(CustomerPortal):
         # {group: (<sponsorships recordset>, total_amount string), ...}
         sponsorships_by_group = {
             g: (
-                sponsorships.filtered(lambda s: s.group_id == g),
+                sponsorships.filtered(lambda s, g=g: s.group_id == g),
                 f"{int(g.total_amount):,d} {currency}",
             )
             for g in sponsorships.mapped("group_id")
