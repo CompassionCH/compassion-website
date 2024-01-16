@@ -1,6 +1,6 @@
 {
     "name": "Compassion Theme",
-    "category": "Theme/Services",
+    "category": "Theme/Compassion",
     "summary": "Compassion Blue Theme",
     "website": "https://github.com/CompassionCH/compassion-website",
     "sequence": 260,
