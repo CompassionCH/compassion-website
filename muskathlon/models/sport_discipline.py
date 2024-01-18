@@ -20,7 +20,6 @@ class SportDiscipline(models.Model):
     distance_km = fields.Integer(compute="_compute_distance_km")
     page_title = fields.Char(translate=True, default="I will go ... for Compassion")
 
-    @api.multi
     @api.depends("distance")
     def _compute_distance_km(self):
         for sport in self:

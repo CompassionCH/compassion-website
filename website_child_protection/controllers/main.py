@@ -52,7 +52,10 @@ class ChildProtectionCharterController(http.Controller):
         if date_signed and (current_time - date_signed).days < 365:
             return self.child_protection_charter_agreed(**kwargs)
         else:
-            values = {"partner_uuid": partner_uuid}
+            values = {
+                "partner_uuid": partner_uuid,
+                "redirect": kwargs.get("redirect"),
+            }
             return request.render(
                 "website_child_protection.child_protection_charter_page", values
             )

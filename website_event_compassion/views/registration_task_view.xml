@@ -10,6 +10,19 @@
                         <field name="name" />
                         <field name="sequence" />
                         <field name="stage_id" />
+                        <field name="website_published" />
+                        <field
+              name="default_task_url"
+              attrs="{'invisible': [('website_published', '=', False)]}"
+            />
+                        <field
+              name="open_new_tab"
+              attrs="{'invisible': [('website_published', '=', False)]}"
+            />
+                        <field
+              name="task_complete_on_click"
+              attrs="{'invisible': [('website_published', '=', False)]}"
+            />
                     </group>
                 </sheet>
             </form>

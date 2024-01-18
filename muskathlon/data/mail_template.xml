@@ -2,34 +2,50 @@
     <data noupdate="1">
         <record id="medical_survey_to_doctor_template" model="mail.template">
             <field name="name">Muskathlon Medical Survey To Doctor</field>
-            <field name="model_id" ref="model_survey_user_input"/>
-            <field name="email_from">"${object.partner_id.user_ids[:1].company_id.name}" &lt;compassion@compassion.ch&gt;</field>
-            <field name="email_to">"Muskathlon Doctor" &lt;medic@4m-switzerland.ch&gt;</field>
+            <field name="model_id" ref="model_survey_user_input" />
+            <field
+        name="email_from"
+      >"${object.partner_id.user_ids[:1].company_id.name}" &lt;compassion@compassion.ch&gt;</field>
+            <field
+        name="email_to"
+      >"Muskathlon Doctor" &lt;medic@4m-switzerland.ch&gt;</field>
             <field name="reply_to">${object.partner_id.email}</field>
-            <field name="use_default_to" eval="True"/>
-            <field name="subject">Muskathlon medical survey from ${object.partner_id.name}</field>
-            <field name="report_template" ref="survey_phone.report_survey_user_input"/>
-            <field name="report_name">${object.partner_id.name} medical survey</field>
+            <field name="use_default_to" eval="True" />
+            <field
+        name="subject"
+      >Muskathlon medical survey from ${object.partner_id.name}</field>
+            <field
+        name="report_name"
+      >${object.partner_id.name} medical survey</field>
             <field name="body_html" type="html">
                 <p>
                     Dear Doctor,
-                    <br/>
-                    <br/>
+                    <br />
+                    <br />
                     Please find attached the pdf containing the medical survey from participant ${object.partner_id.name}.
-                    <br/>
-                    <br/>
+                    <br />
+                    <br />
                     Yours sincerely.
                 </p>
             </field>
         </record>
 
         <!-- Ambassador receipt -->
-        <record id="ambassador_donation_confirmation_template" model="mail.template">
-            <field name="name">Ambassador Donation Confirmation</field>
-            <field name="model_id" ref="partner_communication.model_partner_communication_job"/>
-            <field name="email_from">"${object.user_id.company_id.name}" &lt;compassion@compassion.ch&gt;</field>
-            <field name="reply_to">info@compassion.ch</field>
-            <field name="use_default_to" eval="True"/>
+        <record
+      id="ambassador_donation_confirmation_template"
+      model="mail.template"
+    >
+            <field
+        name="name"
+      >Muskathlon: Muskathlete Donation Notification</field>
+            <field
+        name="model_id"
+        ref="partner_communication.model_partner_communication_job"
+      />
+            <field
+        name="email_from"
+      >${object.user_id.company_id.partner_id.email_formatted | safe}</field>
+            <field name="use_default_to" eval="True" />
             <field name="subject">You received a donation!</field>
             <field name="body_html" type="html">
                 <div>
@@ -41,45 +57,324 @@
                 </div>
                 <div>
                     ${partner.salutation},
-                    <br/>
-                    <br/>
-                    Compassion Switzerland is glad to inform you that you just received a donation of ${object.user_id.company_id.currency_id.symbol} ${donations[0]}.-
+                    <br />
+                    <br />
+                    Compassion is glad to inform you that you just received a donation of ${object.user_id.company_id.currency_id.symbol} ${donations[0]}.-
                     % if donations[1]:
                         for the ${donations[1]}.
                     % endif
-                    <br/>
-                    <br/>
+                    <br />
+                    <br />
                     % if len(donors) == 1:
                         Your donor is ${donors.preferred_name} from ${donors.city}.
                         % if donors.email and donors.thankyou_preference != 'none':
-                    You can personally thank ${donors.get('him')} if you wish by sending ${donors.get('him')} an e-mail at <a href="mailto:${donors.email}" style="color: skyblue; text-decoration: underline;">${donors.email}</a>. In any case, ${donors.get('he')} will receive a thank you letter from us.
+                    You can personally thank ${donors.get('him')} if you wish by sending ${donors.get('him')} an e-mail at <a
+            href="mailto:${donors.email}"
+          >${donors.email}</a>. In any case, ${donors.get('he')} will receive a thank you letter from us.
                         % endif
                     % else:
                         You received this from the following people. You may contact them by e-mail if you wish to thank them personally.
                         <ul>
                             % for donor in donors:
-                            <li>${donor.preferred_name} from ${donor.city} ${'(<a href="{}" style="color: skyblue; text-decoration: underline;">{}</a>)'.format(donor.email, donor.email) if donor.email and donor.thankyou_preference != 'none' else ''}</li>
+                            <li
+            >${donor.preferred_name} from ${donor.city} ${'(<a
+                href="{}"
+              >{}</a>)'.format(donor.email, donor.email) if donor.email and donor.thankyou_preference != 'none' else ''}</li>
                             % endfor
                         </ul>
                     % endif
                     % if muskathlon:
                         You currently have raised ${object.user_id.company_id.currency_id.symbol} ${muskathlon.amount_raised}.- You can check your barometer at anytime
-                        <a href="${muskathlon.website_url}" style="color: skyblue; text-decoration: underline;">on your sport profile page</a>.
+                        <a
+            href="${muskathlon.website_url}"
+          >on your sport profile page</a>.
                     % endif
-                    <br/>
-                    <br/>
+                    <br />
+                    <br />
                     Yours sincerely
                 </div>
             </field>
         </record>
-        <record id="ambassador_donation_confirmation_config" model="partner.communication.config">
-            <field name="name">Ambassador Donation Confirmation</field>
+        <record
+      id="ambassador_donation_confirmation_config"
+      model="partner.communication.config"
+    >
+            <field
+        name="name"
+      >Muskathlon: Muskathlete Donation Notification</field>
             <field name="send_mode">digital</field>
-            <field name="send_mode_pref_field">global_communication_delivery_preference</field>
-            <field name="email_template_id" ref="ambassador_donation_confirmation_template"/>
-            <field name="report_id" ref="report_compassion.report_partner_communication"/>
-            <field name="model_id" ref="model_account_invoice_line"/>
-            <field name="user_id" search="[('name', 'like', 'Maglo Rachel')]"/>
+            <field
+        name="send_mode_pref_field"
+      >global_communication_delivery_preference</field>
+            <field
+        name="email_template_id"
+        ref="ambassador_donation_confirmation_template"
+      />
+            <field name="model_id" ref="model_account_move_line" />
+        </record>
+
+        <!-- Registration confirmation -->
+        <record id="registration_confirmation_template" model="mail.template">
+            <field name="name">Muskathlon: Registration Confirmation</field>
+            <field
+        name="model_id"
+        ref="partner_communication.model_partner_communication_job"
+      />
+            <field
+        name="email_from"
+      >${object.user_id.company_id.partner_id.email_formatted | safe}</field>
+            <field name="use_default_to" eval="True" />
+            <field
+        name="subject"
+      >You are registered to ${object.get_objects().event_id.name}!</field>
+            <field name="body_html" type="html">
+   <div>
+                % set partner = object.partner_id
+% set registration = object.get_objects()
+% set user = partner.user_ids[:1]
+% set event = registration.event_id.compassion_event_id
+% set country = event.country_id
+   </div>
+  <p>
+   ${partner.salutation},
+    <br />
+    <br />
+   WELCOME to the ${event.name} from ${event.get_date('start_date', 'd')} until ${event.get_date('end_date', 'date_full')} - your extreme commitment against extreme poverty!
+    <br />
+    <br />
+   The Muskathlon is organized by 4M Switzerland and 4M Germany in cooperation with the Christian charity for children, Compassion, and offers you the extraordinary opportunity to take part in the fight against child poverty and its consequences and at the same time take part in a sporting challenge on another continent.
+    <br />
+    <br />
+   You will make the difference and experience that hope is stronger than poverty!
+    <br />
+    <br />
+   With your registration a very special and great adventure has begun for you. We want to give you the best possible support and give you all the information and tips you need for your muskathlon. Start with the preparation and read the "Information Letter" which is deposited on your profile. In the following months, we will provide you with more information material and remind you when to do what.
+    <br />
+    <br />
+   Soon you will receive mail from us with the invoice for the travel costs, various flyers and your training shirt.
+    <br />
+    <br />
+      % if user.signup_valid:
+   Please activate your account and setup your password by clicking on this button:
+  </p>
+
+                <div style="margin-top: 20px; margin-bottom: 20px">
+   <a
+            href="${user.signup_url + '&amp;redirect=/my/events'}"
+            style="text-transform:uppercase;text-decoration:none;background-color:#cd171e;padding: 12px 18px; color: #FFFFFF; display: inline-block; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; border: 1px solid #cd171e; border-radius:10px"
+          >
+    Activate my account
+   </a>
+
+  </div>
+  <p>
+                  % endif
+   Here is your access data:
+    <br />
+    <br />
+  </p>
+  <ul>
+   <li>
+    Username: ${user.login or ''}
+   </li>
+   <li>
+    Access link:
+    <a href="https://my.compassion.ch/my/muskathlon">
+     https://my.compassion.ch/my/muskathlon
+    </a>
+   </li>
+  </ul>
+  <p>
+   If any questions arise, please do not hesitate to contact us.
+    <br />
+    <br />
+   Cordially
+  </p>
+
+            </field>
+        </record>
+        <record
+      id="registration_confirmation_config"
+      model="partner.communication.config"
+    >
+            <field name="name">Muskathlon: Registration Confirmation</field>
+            <field name="send_mode">digital</field>
+            <field
+        name="send_mode_pref_field"
+      >global_communication_delivery_preference</field>
+            <field
+        name="email_template_id"
+        ref="registration_confirmation_template"
+      />
+            <field name="model_id" ref="model_event_registration" />
+        </record>
+
+        <!-- Sponsorship invitation -->
+        <record id="sponsorship_invitation_template" model="mail.template">
+            <field name="name">Muskathlon: invitation to sponsorship</field>
+            <field
+        name="model_id"
+        ref="partner_communication.model_partner_communication_job"
+      />
+            <field
+        name="email_from"
+      >${object.user_id.company_id.partner_id.email_formatted | safe}</field>
+            <field name="use_default_to" eval="True" />
+            <field
+        name="subject"
+      >${object.get_objects().event_id.name} - your sponsored child</field>
+        </record>
+        <record
+      id="sponsorship_invitation_config"
+      model="partner.communication.config"
+    >
+            <field name="name">Muskathlon: invitation to sponsorship</field>
+            <field name="send_mode">digital</field>
+            <field
+        name="send_mode_pref_field"
+      >global_communication_delivery_preference</field>
+            <field
+        name="email_template_id"
+        ref="sponsorship_invitation_template"
+      />
+            <field name="model_id" ref="model_event_registration" />
+        </record>
+
+        <!-- Passport and flight -->
+        <record id="passport_and_flight_template" model="mail.template">
+            <field name="name">Muskathlon: Passport and flight</field>
+            <field
+        name="model_id"
+        ref="partner_communication.model_partner_communication_job"
+      />
+            <field
+        name="email_from"
+      >${object.user_id.company_id.partner_id.email_formatted | safe}</field>
+            <field name="use_default_to" eval="True" />
+            <field
+        name="subject"
+      >${object.get_objects().event_id.name} - Passport and flight</field>
+        </record>
+        <record
+      id="passport_and_flight_config"
+      model="partner.communication.config"
+    >
+            <field name="name">Muskathlon: Passport and flight</field>
+            <field name="send_mode">digital</field>
+            <field
+        name="send_mode_pref_field"
+      >global_communication_delivery_preference</field>
+            <field
+        name="email_template_id"
+        ref="passport_and_flight_template"
+      />
+            <field name="model_id" ref="model_event_registration" />
+        </record>
+
+        <!-- Vaccinations -->
+        <record id="vaccinations_template" model="mail.template">
+            <field name="name">Muskathlon: Vaccinations</field>
+            <field
+        name="model_id"
+        ref="partner_communication.model_partner_communication_job"
+      />
+            <field
+        name="email_from"
+      >${object.user_id.company_id.partner_id.email_formatted | safe}</field>
+            <field name="use_default_to" eval="True" />
+            <field
+        name="subject"
+      >${object.get_objects().event_id.name} - Vaccinations</field>
+        </record>
+        <record id="vaccinations_config" model="partner.communication.config">
+            <field name="name">Muskathlon: Vaccinations</field>
+            <field name="send_mode">digital</field>
+            <field
+        name="send_mode_pref_field"
+      >global_communication_delivery_preference</field>
+            <field name="email_template_id" ref="vaccinations_template" />
+            <field name="model_id" ref="model_event_registration" />
+        </record>
+
+        <!-- Medical reminder -->
+        <record id="medical_reminder_template" model="mail.template">
+            <field name="name">Muskathlon: Medical reminder</field>
+            <field
+        name="model_id"
+        ref="partner_communication.model_partner_communication_job"
+      />
+            <field
+        name="email_from"
+      >${object.user_id.company_id.partner_id.email_formatted | safe}</field>
+            <field name="use_default_to" eval="True" />
+            <field
+        name="subject"
+      >${object.get_objects().event_id.name} - Medical reminder</field>
+        </record>
+        <record
+      id="medical_reminder_config"
+      model="partner.communication.config"
+    >
+            <field name="name">Muskathlon: Medical reminder</field>
+            <field name="send_mode">digital</field>
+            <field
+        name="send_mode_pref_field"
+      >global_communication_delivery_preference</field>
+            <field name="email_template_id" ref="medical_reminder_template" />
+            <field name="model_id" ref="model_event_registration" />
+        </record>
+
+        <!-- Visa reminder -->
+        <record id="visa_reminder_template" model="mail.template">
+            <field name="name">Muskathlon: Visa reminder</field>
+            <field
+        name="model_id"
+        ref="partner_communication.model_partner_communication_job"
+      />
+            <field
+        name="email_from"
+      >${object.user_id.company_id.partner_id.email_formatted | safe}</field>
+            <field name="use_default_to" eval="True" />
+            <field
+        name="subject"
+      >${object.get_objects().event_id.name} - Visa reminder</field>
+        </record>
+        <record id="visa_reminder_config" model="partner.communication.config">
+            <field name="name">Muskathlon: Visa reminder</field>
+            <field name="send_mode">digital</field>
+            <field
+        name="send_mode_pref_field"
+      >global_communication_delivery_preference</field>
+            <field name="email_template_id" ref="visa_reminder_template" />
+            <field name="model_id" ref="model_event_registration" />
+        </record>
+
+        <!-- Child protection -->
+        <record id="child_protection_template" model="mail.template">
+            <field name="name">Muskathlon: Child protection</field>
+            <field
+        name="model_id"
+        ref="partner_communication.model_partner_communication_job"
+      />
+            <field
+        name="email_from"
+      >${object.user_id.company_id.partner_id.email_formatted | safe}</field>
+            <field name="use_default_to" eval="True" />
+            <field
+        name="subject"
+      >${object.get_objects().event_id.name} - Child protection</field>
+        </record>
+        <record
+      id="child_protection_config"
+      model="partner.communication.config"
+    >
+            <field name="name">Muskathlon: Child protection</field>
+            <field name="send_mode">digital</field>
+            <field
+        name="send_mode_pref_field"
+      >global_communication_delivery_preference</field>
+            <field name="email_template_id" ref="child_protection_template" />
+            <field name="model_id" ref="model_event_registration" />
         </record>
     </data>
 </odoo>

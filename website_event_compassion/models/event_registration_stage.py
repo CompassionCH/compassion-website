@@ -20,12 +20,6 @@ class EventStage(models.Model):
         help="Set a maximum duration (in days) after which the registration "
         "will be shown in red in the kanban view."
     )
-    requirements = fields.Text(
-        "Requirements",
-        help="Enter here the internal requirements for this stage"
-        "(ex: Sign contract). It will appear as a tooltip over "
-        "the stage's name.",
-    )
     event_type_ids = fields.Many2many(
         "event.type",
         "event_registration_stage_to_type_rel",
@@ -35,6 +29,7 @@ class EventStage(models.Model):
         "Other event types will not be able to see or use this stage.",
         readonly=False,
     )
+    task_ids = fields.One2many("event.registration.task", "stage_id", "Tasks")
     fold = fields.Boolean(
         "Folded in Pipeline",
         help="This stage is folded in the kanban view when there are no "

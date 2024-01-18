@@ -92,6 +92,7 @@
                         <p
             >I acknowledge that I have read and fully understood the content of the Child Protection Charter. I agree with all the conditions mentioned above. If I do not comply with these conditions, Compassion reserves the right to deactivate my translator account and cancel my sponsorships.</p>
                     </div>
+                    <p t-esc="redirect" />
                 </section>
 
                 <!-- Form Section -->
@@ -115,7 +116,7 @@
               class="o_mark_required"
               data-mark="*"
               data-success-mode="redirect"
-              t-attf-data-success-page="/partner/#{partner_uuid}/child-protection-charter"
+              t-attf-data-success-page="/partner/#{partner_uuid}/child-protection-charter#{'?redirect=' + redirect if redirect else ''}"
               data-model_name="cms.form.partner.child.protection.charter"
             >
                       <div class="s_website_form_rows row s_col_no_bgcolor">

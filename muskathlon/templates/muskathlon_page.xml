@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data noupdate="1">
+        <template
+      id="muskathlon_details"
+      name="Muskathlon page"
+      inherit_id="website_event_compassion.event_page"
+    >
+            <xpath expr="//div[@name='dates_container']" position="after">
+                <div class="container">
+                    <p class="text-uppercase font-weight-bold">Sports</p>
+                    <table class="sports_icons">
+                        <t
+              t-foreach="event.sport_discipline_ids.with_context(lang='en_US')"
+              t-as="discipline"
+            >
+                            <t t-if="discipline_index % 3 == 0">
+                                <tr />
+                            </t>
+                            <span class="muskathlon_sport_icon">
+                                <t t-if="'Biking' == discipline.sport">
+                                    <td align="center">
+                                        <img
+                      class="sport_icon"
+                      src="/muskathlon/static/src/data/biking.png"
+                    />
+                                        <br /><span class="distance_km"><t
+                        t-esc="discipline.distance_km"
+                      />km</span>
+                                    </td>
+                                </t>
+                                <t t-if="'Climbing' == discipline.sport">
+                                    <td align="center">
+                                        <img
+                      class="sport_icon"
+                      src="/muskathlon/static/src/data/climbing.png"
+                    />
+                                        <br /><span class="distance_km"><t
+                        t-esc="discipline.distance_km"
+                      />km</span>
+                                    </td>
+                                </t>
+                                <t t-if="'Running' == discipline.sport">
+                                    <td align="center">
+                                        <img
+                      class="sport_icon"
+                      src="/muskathlon/static/src/data/running.png"
+                    />
+                                        <br /><span class="distance_km"><t
+                        t-esc="discipline.distance_km"
+                      />km</span>
+                                    </td>
+                                </t>
+                                <t t-if="'Walking' == discipline.sport">
+                                    <td align="center">
+                                        <img
+                      class="sport_icon walk"
+                      src="/muskathlon/static/src/data/walking.png"
+                    />
+                                        <br /><span class="distance_km"><t
+                        t-esc="discipline.distance_km"
+                      />km</span>
+                                    </td>
+                                </t>
+                            </span>
+                        </t>
+                    </table>
+                </div>
+            </xpath>
+        </template>
+    </data>
+</odoo>

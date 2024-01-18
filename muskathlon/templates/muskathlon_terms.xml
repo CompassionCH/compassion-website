@@ -1,0 +1,16 @@
+<odoo>
+    <template id="muskathlon_legal_page" name="Muskathlon Legal Page">
+    <t t-call="website.layout">
+        <t t-set="pageName" t-value="'Legal page'" />
+        <div id="wrap">
+            <div class="oe_structure" />
+        </div>
+    </t>
+    </template>
+
+    <!-- Add a page on the website -->
+    <record id="muskathlon_legal_page_page" model="website.page">
+        <field name="url">/muskathlon-legal</field>
+        <field name="view_id" ref="muskathlon_legal_page" />
+    </record>
+</odoo>

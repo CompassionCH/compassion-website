@@ -7,7 +7,7 @@
 #
 ##############################################################################
 
-from odoo import api, fields, models, tools
+from odoo import fields, models, tools
 
 
 class Muskathlon(models.Model):
@@ -22,7 +22,9 @@ class Muskathlon(models.Model):
     date_display = fields.Date(readonly=True)
     partner_id = fields.Many2one("res.partner", "Partner", readonly=True)
     partner_name = fields.Char(related="partner_id.display_name", readonly=True)
-    user_id = fields.Many2one("res.partner", "Ambassador", readonly=True, index=True)
+    ambassador_id = fields.Many2one(
+        "res.partner", "Ambassador", readonly=True, index=True
+    )
     amount = fields.Float("Amount", readonly=True)
     amount_cent = fields.Integer("Amount in currency (cents)", readonly=True)
     sent_to_4m = fields.Date("Date sent to 4M", readonly=True)
@@ -48,19 +50,17 @@ class Muskathlon(models.Model):
     # Fields for viewing related objects
     contract_id = fields.Many2one("recurring.contract", "Sponsorship", readonly=True)
     invoice_line_id = fields.Many2one(
-        "account.invoice.line", "Invoice line", readonly=True
+        "account.move.line", "Invoice line", readonly=True
     )
     donation_type = fields.Selection(
         [("sponsorship", "Sponsorship"), ("donation", "Donation")],
         compute="_compute_donation_type",
     )
 
-    @api.multi
     def _compute_donation_type(self):
         for line in self:
             line.donation_type = "donation" if line.invoice_line_id else "sponsorship"
 
-    @api.model_cr
     def init(self):
         # to prevent IDs duplication with UNION, recurring contracts IDs are
         # pair and account invoice IDs are impair.
@@ -74,7 +74,7 @@ class Muskathlon(models.Model):
                 rc.id AS contract_id,
                 NULL AS invoice_line_id,
                 rc.partner_id,
-                rc.user_id,
+                rc.ambassador_id,
                 CASE WHEN rc.type = 'S' THEN 1000
                      WHEN rc.type = 'CSP' THEN 500
                 END AS amount,
@@ -92,7 +92,7 @@ class Muskathlon(models.Model):
                 rc.type AS type,
                 'transfer' AS payment_method
               FROM recurring_contract AS rc
-              LEFT JOIN res_partner AS rp ON rp.id = rc.user_id
+              LEFT JOIN res_partner AS rp ON rp.id = rc.ambassador_id
               LEFT JOIN res_partner AS rp2 ON rp2.id = rc.partner_id
               LEFT JOIN recurring_contract_origin AS rco
                 ON rco.id = rc.origin_id
@@ -105,7 +105,7 @@ class Muskathlon(models.Model):
                 NULL AS contract_line_id,
                 ail.id AS invoice_line_id,
                 ail.partner_id,
-                ail.user_id,
+                ail.user_id AS ambassador_id,
                 COALESCE(aml.credit, ail.price_subtotal) AS amount,
                 COALESCE(aml.credit, ail.price_subtotal) * 100 AS amount_cent,
                 ail.sent_to_4m,
@@ -113,21 +113,19 @@ class Muskathlon(models.Model):
                 ail.event_id,
                 aml.journal_id AS journal_id,
                 rp2.name AS sponsorship_name,
-                ai.date_invoice AS date,
-                ai.date_invoice AS date_display,
+                ai.invoice_date AS date,
+                ai.invoice_date AS date_display,
                 'success' AS status,
                 rc.type AS type,
                 'transfer' AS payment_method
-              FROM account_invoice_line AS ail
-              LEFT JOIN account_invoice AS ai ON ail.invoice_id = ai.id
+              FROM account_move_line AS ail
+              LEFT JOIN account_move AS ai ON ail.move_id = ai.id
               LEFT JOIN recurring_contract as rc on ail.contract_id = rc.id
               left join product_product pp on pp.id=ail.product_id
-              FULL OUTER JOIN account_move AS am ON ai.move_id = am.id
-                AND ai.partner_id = am.partner_id
               LEFT JOIN LATERAL
                 (SELECT *
                 FROM account_move_line
-                WHERE move_id = am.id
+                WHERE move_id = ai.id
                 AND credit > 0
                 FETCH FIRST 1 ROW ONLY
                 ) aml ON TRUE
@@ -136,7 +134,7 @@ class Muskathlon(models.Model):
               LEFT JOIN crm_event_compassion AS cec ON ail.event_id = cec.id
               LEFT JOIN event_registration AS mr
                 ON mr.partner_id = rp.id AND mr.event_id = cec.odoo_event_id
-              WHERE ail.state = 'paid'
+              WHERE ail.payment_state = 'paid'
                 and pp.default_code = 'muskathlon'
                 AND ail.user_id IS NOT NULL
             )
@@ -144,7 +142,6 @@ class Muskathlon(models.Model):
             % self._table
         )
 
-    @api.multi
     def send_to_4m(self):
         self.mapped("contract_id").write({"sent_to_4m": fields.Date.today()})
         self.mapped("invoice_line_id").write({"sent_to_4m": fields.Date.today()})

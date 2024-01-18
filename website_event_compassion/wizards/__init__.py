@@ -11,5 +11,6 @@
 from . import (
     event_registration_communication_wizard,
     open_to_participant_wizard,
+    registration_form,
     sponsorship_form,
 )

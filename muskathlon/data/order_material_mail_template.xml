@@ -1,30 +1,34 @@
 <odoo>
     <record id="order_material_mail_template" model="mail.template">
         <field name="name">Order material: Muskathlon template</field>
-        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="model_id" ref="crm.model_crm_lead" />
         <field name="email_from">info@compassion.ch</field>
         <field name="email_to">${object.user_id|safe}</field>
-        <field name="subject">${object.partner_id.name} has made an order for ${object.event_ids.name}</field>
+        <field
+      name="subject"
+    >${object.partner_id.name} has made an order for ${object.event_ids.name}</field>
         <field name="body_html" type="html">
             <p>
                 Hello ${object.user_id.partner_id.preferred_name}
-                <br/>
-                <br/>
-                <a href="/web#id=${object.partner_id.id}&amp;model=res.partner&amp;view_type=form"
-                   style="text-decoration:none;background-color:transparent;color:rgb(124, 123, 173);">
+                <br />
+                <br />
+                <a
+          href="/web#id=${object.partner_id.id}&amp;model=res.partner&amp;view_type=form"
+          style="text-decoration:none;background-color:transparent;color:rgb(124, 123, 173);"
+        >
                     ${object.partner_id.name}
                 </a> &lt;${object.partner_id.email}&gt; ordered :
-                <br/>
+                <br />
                 ${object.description|safe}
-                <br/>
+                <br />
                 Adress :
-                <br/>
-                ${object.partner_id.street} <br/>
+                <br />
+                ${object.partner_id.street} <br />
                 ${object.partner_id.zip} ${object.partner_id.city}
                 ${object.partner_id.country_id.name}
                 The profile picture of the participant is in the attachment files, in case you need it.
-                <br/>
-                <br/>
+                <br />
+                <br />
                 Thank you
             </p>
         </field>

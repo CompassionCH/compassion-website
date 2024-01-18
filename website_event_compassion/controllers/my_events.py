@@ -1,5 +1,6 @@
-from odoo.http import request, route
+from odoo.http import redirect_with_hash, request, route
 
+from odoo.addons.http_routing.models.ir_http import slug
 from odoo.addons.portal.controllers.portal import CustomerPortal
 
 
@@ -16,14 +17,22 @@ class MyEventsController(CustomerPortal):
         return request.render("website_event_compassion.my_events_list", values)
 
     @route(
-        "/my/events/<model('event.registration'):registration>/",
+        [
+            "/my/events/<model('event.registration'):registration>/",
+            "/my/events/<model('event.registration'):registration>/<string:edit_mode>",
+        ],
         auth="user",
         website=True,
     )
-    def my_registration(self, registration, **kwargs):
+    def my_registration(self, registration, edit_mode=False, **kwargs):
         values = self._prepare_portal_layout_values()
-        values["registration"] = registration
-        values["donations"] = self.get_donations(registration)
+        values.update(
+            {
+                "registration": registration,
+                "donations": self.get_donations(registration),
+                "edit_mode": edit_mode,
+            }
+        )
         return request.render("website_event_compassion.my_event_details", values)
 
     def get_donations(self, registration):
@@ -74,3 +83,12 @@ class MyEventsController(CustomerPortal):
             )
         donations.sort(key=lambda x: x["date"], reverse=True)
         return donations
+
+    @route("/my/events/tasks/<model('event.registration.task.rel'):task>")
+    def task_click(self, task, **kwargs):
+        if task.task_id.task_complete_on_click:
+            task.done = True
+        if task.task_url:
+            return redirect_with_hash(task.task_url)
+        else:
+            return redirect_with_hash(f"/my/events/{slug(task.registration_id)}/")

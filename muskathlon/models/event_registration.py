@@ -12,28 +12,20 @@ import datetime
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
+from .event_compassion import EventCompassion
+
 
 class MuskathlonRegistration(models.Model):
     _name = "event.registration"
     _inherit = "event.registration"
 
-    lead_id = fields.Many2one("crm.lead", "Lead", readonly=False)
-    backup_id = fields.Integer(help="Old muskathlon registration id")
-    is_muskathlon = fields.Boolean(related="compassion_event_id.website_muskathlon")
+    is_muskathlon = fields.Boolean(related="compassion_event_id.is_muskathlon")
     sport_discipline_id = fields.Many2one(
         "sport.discipline", "Sport discipline", readonly=False
     )
-    sport_level = fields.Selection(
-        [("beginner", "Beginner"), ("average", "Average"), ("advanced", "Advanced")]
-    )
+    sport_level = fields.Selection(EventCompassion.get_sport_levels)
     sport_level_description = fields.Text("Describe your sport experience")
-    t_shirt_size = fields.Selection(
-        related="partner_id.advocate_details_id.t_shirt_size", store=True
-    )
-    t_shirt_type = fields.Selection(
-        related="partner_id.advocate_details_id.t_shirt_type", store=True
-    )
-
+    t_shirt_size = fields.Selection(EventCompassion.get_t_shirt_sizes)
     is_in_two_months = fields.Boolean(compute="_compute_is_in_two_months")
 
     _sql_constraints = [
@@ -46,64 +38,30 @@ class MuskathlonRegistration(models.Model):
 
     @api.model
     def create(self, values):
-        # Automatically complete the task sign_child_protection if the charter
-        # has already been signed.
-        partner = self.env["res.partner"].browse(values.get("partner_id"))
-        completed_tasks = values.setdefault("completed_task_ids", [])
-        if partner and partner.has_agreed_child_protection_charter:
-            task = self.env.ref("muskathlon.task_sign_child_protection")
-            completed_tasks.append((4, task.id))
-        if partner and partner.user_ids and any(partner.mapped("user_ids.login_date")):
-            task = self.env.ref("muskathlon.task_activate_account")
-            completed_tasks.append((4, task.id))
-        return super(MuskathlonRegistration, self).create(values)
-
-    @api.multi
-    def _compute_step2_tasks(self):
-        # Consider Muskathlon task for scan passport
-        super(MuskathlonRegistration, self)._compute_step2_tasks()
-        muskathlon_passport = self.env.ref("muskathlon.task_scan_passport")
-        for reg in self:
-            reg.passport_uploaded = muskathlon_passport in reg.completed_task_ids
-
-    def _compute_amount_raised(self):
-        # Use Muskathlon report to compute Muskathlon event donation
-        m_reg = self.filtered("compassion_event_id.website_muskathlon")
-
-        pids = m_reg.mapped("partner_id").ids
-        origins = m_reg.mapped("compassion_event_id.origin_id")
-        self.env.cr.execute(
-            """
-            SELECT sum(il.price_subtotal_signed) AS amount, il.user_id, il.event_id
-            FROM account_invoice_line il
-            left join product_product pp on pp.id=il.product_id
-            WHERE il.state = 'paid'
-            and pp.default_code  = 'muskathlon'
-            AND il.user_id = ANY(%s)
-            AND il.event_id = ANY(%s)
-            GROUP BY il.user_id, il.event_id
-            UNION ALL
-            SELECT sum(1000) AS amount, r.user_id, o.event_id
-            FROM recurring_contract r
-            JOIN recurring_contract_origin o ON r.origin_id = o.id
-            WHERE r.user_id = ANY(%s)
-            AND r.origin_id = ANY(%s)
-            GROUP BY r.user_id, o.event_id
-        """,
-            [pids, origins.mapped("event_id").ids, pids, origins.ids],
-        )
-        results = self.env.cr.dictfetchall()
-        for registration in m_reg:
-            registration.amount_raised = int(
-                sum(
-                    r["amount"]
-                    for r in results
-                    if r["user_id"] == registration.partner_id_id
-                    and r["event_id"] == registration.compassion_event_id.id
-                )
-            )
-
-        super(MuskathlonRegistration, (self - m_reg))._compute_amount_raised()
+        """Override to add specific behavior for Muskathlon registration.
+        - Set stage to unconfirmed for Muskathlon events
+        - Notify user for registration
+        - Check if the partner has signed the child protection charter
+        - Check if the partner has activated his account
+        """
+        event = self.env["event.event"].browse(values.get("event_id"))
+        if event.compassion_event_id.is_muskathlon:
+            values["stage_id"] = self.env.ref("muskathlon.stage_unconfirmed").id
+        registrations = super().create(values)
+        for registration in registrations.filtered("is_muskathlon"):
+            partner = registration.partner_id
+            if partner.date_agreed_child_protection_charter:
+                task = self.env.ref("muskathlon.task_sign_child_protection")
+                registration.task_ids.filtered(
+                    lambda t, m_task=task: t.task_id == m_task
+                ).write({"done": True})
+            if partner.user_ids and any(partner.mapped("user_ids.login_date")):
+                task = self.env.ref("muskathlon.task_activate_account")
+                registration.task_ids.filtered(
+                    lambda t, m_task=task: t.task_id == m_task
+                ).write({"done": True})
+            registration.notify_muskathlon_registration()
+        return registrations
 
     def _compute_is_in_two_months(self):
         """this function define is the bollean hide or not the survey"""
@@ -112,6 +70,14 @@ class MuskathlonRegistration(models.Model):
             start_day = registration.event_begin_date
             delta = start_day - today
             registration.is_in_two_months = delta.days < 60
+
+    def _inverse_passport(self):
+        super()._inverse_passport()
+        task_passport = self.env.ref("muskathlon.task_passport")
+        for registration in self.filtered("passport"):
+            registration.task_ids.filtered(lambda t: t.task_id == task_passport).write(
+                {"done": True}
+            )
 
     @api.onchange("event_id")
     def onchange_event_id(self):
@@ -138,7 +104,7 @@ class MuskathlonRegistration(models.Model):
                 }
             }
 
-    def notify_new_registration(self):
+    def notify_muskathlon_registration(self):
         """Notify user for registration"""
         partners = self.mapped("user_id.partner_id") | self.event_id.mapped(
             "message_partner_ids"
@@ -151,29 +117,24 @@ class MuskathlonRegistration(models.Model):
             body=body,
             subject=_("%s - New Muskathlon registration") % self.name,
             message_type="email",
-            subtype="website_event_compassion.mt_registration_create",
+            subtype_xmlid="website_event_compassion.mt_registration_create",
         )
         return True
 
     def muskathlon_medical_survey_done(self):
+        task_medical = self.env.ref("muskathlon.task_medical")
+        self.mapped("task_ids").filtered(lambda t: t.task_id == task_medical).write(
+            {"done": True}
+        )
         for registration in self:
             user_input = self.env["survey.user_input"].search(
                 [
-                    ("partner_id", "=", registration.partner_id_id),
+                    ("partner_id", "=", registration.partner_id.id),
                     ("survey_id", "=", registration.event_id.medical_survey_id.id),
                 ],
                 limit=1,
+                order="start_datetime desc",
             )
-
-            registration.write(
-                {
-                    "completed_task_ids": [
-                        (4, self.env.ref("muskathlon.task_medical").id)
-                    ],
-                    "medical_survey_id": user_input.id,
-                }
-            )
-
             template = self.env.ref(
                 "muskathlon.medical_survey_to_doctor_template"
             ).sudo()

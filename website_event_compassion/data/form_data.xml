@@ -44,4 +44,26 @@
         <value>cms.form.sponsorship</value>
         <value eval="['registration_id']" />
     </function>
+    <record id="model_event_registration_form" model="ir.model">
+      <field name="website_form_key">event_registration_edit</field>
+      <field name="website_form_access">True</field>
+      <field name="website_form_label">Edit ambassador profile</field>
+    </record>
+    <function model="ir.model.fields" name="formbuilder_whitelist">
+        <value>event.registration.form</value>
+        <value
+      eval="['registration_id', 'profile_picture', 'profile_name', 'ambassador_quote', 'receive_ambassador_receipts', 'comments', 'passport']"
+    />
+    </function>
+    <record id="model_event_flight" model="ir.model">
+      <field name="website_form_key">event_flight</field>
+      <field name="website_form_access">True</field>
+      <field name="website_form_label">Event flight</field>
+    </record>
+    <function model="ir.model.fields" name="formbuilder_whitelist">
+        <value>event.flight</value>
+        <value
+      eval="['registration_id', 'flight_type', 'flying_company', 'flight_number', 'departure', 'arrival']"
+    />
+    </function>
 </odoo>

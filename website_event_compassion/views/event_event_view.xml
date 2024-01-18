@@ -24,6 +24,14 @@
           attrs="{'invisible': [('feedback_survey_id', '=', False)]}"
         />
             </header>
+            <button
+        name="%(event.act_event_registration_from_event)d"
+        position="attributes"
+      >
+                <attribute
+          name="context"
+        >{'default_event_type_id': event_type_id, 'search_default_expected': 1}</attribute>
+            </button>
             <xpath
         expr="//div[@name='button_box']/button[2]"
         position="attributes"

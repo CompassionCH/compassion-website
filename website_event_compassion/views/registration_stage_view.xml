@@ -17,7 +17,12 @@
                         <field name="registration_state" />
                         <field name="duration" />
                         <field name="fold" />
-                        <field name="requirements" />
+                        <field name="task_ids">
+                            <tree>
+                                <field name="sequence" widget="handle" />
+                                <field name="name" />
+                            </tree>
+                        </field>
                     </group>
                 </sheet>
             </form>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <function model="ir.model.fields" name="formbuilder_whitelist">
+      <value>event.registration</value>
+      <value
+      eval="[
+        'sport_discipline_id',
+        'sport_level',
+        'sport_level_description',
+        't_shirt_size',
+        ]"
+    />
+    </function>
+    <function model="ir.model.fields" name="formbuilder_whitelist">
+      <value>crm.lead</value>
+      <value eval="[
+        'partner_id',
+        ]" />
+    </function>
+</odoo>

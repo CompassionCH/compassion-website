@@ -8,7 +8,7 @@
 ##############################################################################
 from datetime import datetime
 
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 
@@ -47,10 +47,18 @@ class Event(models.Model):
     )
     registration_full = fields.Boolean(compute="_compute_registration_full")
     medical_survey_id = fields.Many2one(
-        "survey.survey", "Medical Survey", readonly=False
+        "survey.survey",
+        "Medical Survey",
+        readonly=False,
+        compute="_compute_surveys",
+        store=True,
     )
     feedback_survey_id = fields.Many2one(
-        "survey.survey", "Feedback Survey", readonly=False
+        "survey.survey",
+        "Feedback Survey",
+        readonly=False,
+        compute="_compute_surveys",
+        store=True,
     )
 
     def _compute_registration_open(self):
@@ -83,6 +91,16 @@ class Event(models.Model):
                 and event.seats_available <= 0
                 and datetime.now() < event.date_begin
             )
+
+    @api.depends("event_type_id")
+    def _compute_surveys(self):
+        for event in self:
+            medical_survey = event.event_type_id.medical_survey_id
+            feedback_survey = event.event_type_id.feedback_survey_id
+            if medical_survey != event.medical_survey_id:
+                event.medical_survey_id = medical_survey
+            if feedback_survey != event.feedback_survey_id:
+                event.feedback_survey_id = feedback_survey
 
     def send_communication(
         self,

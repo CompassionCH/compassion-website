@@ -6,11 +6,11 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+import base64
 import logging
 
 from odoo import SUPERUSER_ID, _, api, fields, models
 from odoo.http import request
-from odoo.tools import html2plaintext
 from odoo.tools.mimetypes import guess_mimetype
 
 from odoo.addons.website.models.website import slugify as slug
@@ -66,37 +66,17 @@ class EventRegistration(models.Model):
         related="stage_id.registration_state", readonly=True, store=True
     )
     stage_date = fields.Date(default=fields.Date.today, copy=False)
-    stage_task_ids = fields.Many2many(
-        "event.registration.task",
-        "event_registration_stage_tasks",
-        compute="_compute_stage_tasks",
-        readonly=False,
-    )
-    incomplete_task_ids = fields.Many2many(
-        "event.registration.task",
-        "event_registration_incomplete_tasks",
-        string="Incomplete tasks",
-        compute="_compute_stage_tasks",
-        readonly=False,
-    )
-    complete_stage_task_ids = fields.Many2many(
-        "event.registration.task",
-        "event_registration_stage_complete_tasks",
-        string="Completed tasks",
-        compute="_compute_stage_tasks",
-        help="This shows all tasks that the participant completed for the "
-        "current stage of his registration.",
-        readonly=False,
-    )
-    completed_task_ids = fields.Many2many(
-        "event.registration.task",
-        "event_registration_completed_tasks",
-        string="Completed tasks",
+    task_ids = fields.One2many(
+        "event.registration.task.rel",
+        "registration_id",
         copy=False,
-        help="This shows all tasks that the participant completed for his "
-        "registration.",
         readonly=False,
     )
+    flight_ids = fields.One2many(
+        "event.flight", "registration_id", "Flights", readonly=False
+    )
+    incomplete_task_count = fields.Integer(compute="_compute_incomplete_task_count")
+    is_stage_complete = fields.Boolean(compute="_compute_is_stage_complete")
     compassion_event_id = fields.Many2one(
         "crm.event.compassion", related="event_id.compassion_event_id", readonly=True
     )
@@ -113,7 +93,7 @@ class EventRegistration(models.Model):
     event_name = fields.Char(related="event_id.name", tracking=True)
     profile_picture = fields.Binary(readonly=False, string="Profile picture")
     profile_name = fields.Char()
-    ambassador_quote = fields.Html()
+    ambassador_quote = fields.Text()
     criminal_record = fields.Binary(
         related="partner_id.criminal_record", readonly=False
     )
@@ -146,6 +126,7 @@ class EventRegistration(models.Model):
     birth_name = fields.Char()
     passport = fields.Binary(compute="_compute_passport", inverse="_inverse_passport")
     passport_number = fields.Char()
+    passport_filename = fields.Char(compute="_compute_passport")
     passport_expiration_date = fields.Date()
     survey_count = fields.Integer(compute="_compute_survey_count")
     invoice_count = fields.Integer(compute="_compute_invoice_count")
@@ -215,11 +196,10 @@ class EventRegistration(models.Model):
         for registration in self:
             registration.host_url = host
 
-    @api.depends("stage_id")
+    @api.depends("state")
     def _compute_is_published(self):
-        confirmed_stage = self.env.ref("website_event_compassion.stage_all_confirmed")
         for registration in self:
-            registration.is_published = registration.stage_id == confirmed_stage
+            registration.is_published = registration.state in ("open", "done")
 
     def _default_website_meta(self):
         default_meta = super()._default_website_meta()
@@ -248,10 +228,7 @@ class EventRegistration(models.Model):
         return default_meta
 
     def _get_default_meta_description(self):
-        if self.ambassador_quote:
-            return html2plaintext(self.ambassador_quote)
-
-        return _(
+        return self.ambassador_quote or _(
             "Join me in my efforts to release children from poverty in Jesus' name!"
         )
 
@@ -266,20 +243,11 @@ class EventRegistration(models.Model):
         # retrieve event type from the context and write the domain
         # - ('id', 'in', stages.ids): add columns that should be present
         type_id = self._context.get("default_event_type_id")
-        if type_id:
-            search_domain = [
-                "|",
-                ("id", "in", stages.ids),
-                "|",
-                ("event_type_ids", "=", False),
-                ("event_type_ids", "=", type_id),
-            ]
-        else:
-            search_domain = [
-                "|",
-                ("id", "in", stages.ids),
-                ("event_type_ids", "=", False),
-            ]
+        search_domain = [
+            ("event_type_ids", "=", type_id),
+        ]
+        if stages:
+            search_domain = ["|", ("id", "in", stages.ids)] + search_domain
 
         # perform search
         stage_ids = stages._search(
@@ -301,19 +269,34 @@ class EventRegistration(models.Model):
             )
         return stage.id
 
-    def _compute_stage_tasks(self):
+    def _compute_incomplete_task_count(self):
         for registration in self:
-            registration.stage_task_ids = self.env["event.registration.task"].search(
-                [("stage_id", "=", registration.stage_id.id)]
-            )
-            registration.incomplete_task_ids = (
-                registration.stage_task_ids - registration.completed_task_ids
-            )
-            registration.complete_stage_task_ids = (
-                registration.completed_task_ids.filtered(
-                    lambda t, r=registration: t.stage_id == r.stage_id
+            registration.incomplete_task_count = len(
+                registration.task_ids.filtered(
+                    lambda t: t.task_id.website_published and not t.done
                 )
             )
+
+    def _compute_is_stage_complete(self):
+        for registration in self:
+            incomplete_tasks = registration.task_ids.filtered(
+                lambda t, r=registration: t.stage_id == r.stage_id and not t.done
+            )
+            registration.is_stage_complete = not incomplete_tasks
+
+    def _compute_tasks(self):
+        # Add tasks for the current stage
+        for registration in self:
+            missing_tasks = registration.stage_id.task_ids - registration.mapped(
+                "task_ids.task_id"
+            )
+            if missing_tasks:
+                registration.task_ids += self.env["event.registration.task.rel"].create(
+                    [
+                        {"task_id": task.id, "registration_id": registration.id}
+                        for task in missing_tasks
+                    ]
+                )
 
     def _compute_survey_count(self):
         for registration in self:
@@ -338,25 +321,25 @@ class EventRegistration(models.Model):
 
     def _compute_passport(self):
         for registration in self:
-            registration.passport = (
-                self.env["ir.attachment"]
-                .search(
-                    [
-                        ("name", "like", "Passport"),
-                        ("res_id", "=", registration.id),
-                        ("res_model", "=", self._name),
-                    ],
-                    limit=1,
-                )
-                .datas
+            attachment = self.env["ir.attachment"].search(
+                [
+                    ("name", "like", "Passport"),
+                    ("res_id", "=", registration.id),
+                    ("res_model", "=", self._name),
+                ],
+                limit=1,
             )
+            registration.passport = attachment.datas
+            registration.passport_filename = attachment.name
 
     def _inverse_passport(self):
         attachment_obj = self.env["ir.attachment"].sudo()
         for registration in self:
             passport = registration.passport
             if passport:
-                f_type = guess_mimetype(passport, "/pdf").split("/")[1]
+                f_type = guess_mimetype(base64.decodebytes(passport), "/pdf").split(
+                    "/"
+                )[1]
                 name = f"Passport {registration.name}.{f_type}"
                 attachment_obj.create(
                     {
@@ -384,13 +367,17 @@ class EventRegistration(models.Model):
                 [
                     ("survey_id", "=", medical_survey.id),
                     ("partner_id", "=", registration.partner_id.id),
-                ]
+                ],
+                order="start_datetime desc",
+                limit=1,
             )
             registration.feedback_survey_id = user_input_obj.search(
                 [
                     ("survey_id", "=", feedback_survey.id),
                     ("partner_id", "=", registration.partner_id.id),
-                ]
+                ],
+                order="start_datetime desc",
+                limit=1,
             )
 
     ##########################################################################
@@ -399,13 +386,10 @@ class EventRegistration(models.Model):
     def write(self, vals):
         if "stage_id" in vals:
             vals["stage_date"] = fields.Date.today()
-        res = super().write(vals)
-        # Push registration to next stage if all tasks are complete
-        if "completed_task_ids" in vals:
-            for registration in self:
-                if not registration.incomplete_task_ids:
-                    registration.next_stage()
-        return res
+        super().write(vals)
+        if "stage_id" in vals:
+            self._compute_tasks()
+        return True
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -426,25 +410,19 @@ class EventRegistration(models.Model):
         event = record.event_id
         if not record.amount_objective and event.participants_amount_objective:
             record.amount_objective = event.participants_amount_objective
+
+        # Automatically compute tasks and change stage if tasks are good
+        record._compute_tasks()
+        record.next_stage()
         return record
 
     ##########################################################################
     #                             PUBLIC METHODS                             #
     ##########################################################################
-    def do_draft(self):
-        super().do_draft()
-        return self.write(
-            {
-                "stage_id": self.env.ref(
-                    "website_event_compassion.stage_all_unconfirmed"
-                ).id
-            }
-        )
-
     def button_send_reminder(self):
         """Create a communication job with a chosen communication config"""
 
-        ctx = {"partner_id": self.partner_id_id, "object_ids": self.ids}
+        ctx = {"partner_id": self.partner_id.id, "object_ids": self.ids}
 
         return {
             "name": _("Choose a communication"),
@@ -483,14 +461,14 @@ class EventRegistration(models.Model):
             communications.send()
         return communications
 
-    def button_reg_close(self):
-        super().button_reg_close()
+    def action_set_done(self):
+        super().action_set_done()
         return self.write(
             {"stage_id": self.env.ref("website_event_compassion.stage_all_attended").id}
         )
 
-    def button_reg_cancel(self):
-        super().button_reg_cancel()
+    def action_cancel(self):
+        super().action_cancel()
         return self.write(
             {
                 "stage_id": self.env.ref(
@@ -509,7 +487,7 @@ class EventRegistration(models.Model):
             "view_mode": "tree,form",
             "domain": [
                 ("survey_id", "in", surveys.ids),
-                ("partner_id", "=", self.partner_id_id),
+                ("partner_id", "=", self.partner_id.id),
             ],
             "context": self.env.context,
         }
@@ -533,7 +511,8 @@ class EventRegistration(models.Model):
 
     def next_stage(self):
         """Transition to next registration stage"""
-        for registration in self:
+        stage_complete = self.filtered("is_stage_complete")
+        for registration in stage_complete:
             next_stage = self.env["event.registration.stage"].search(
                 [
                     ("sequence", ">", registration.stage_id.sequence),
@@ -545,8 +524,10 @@ class EventRegistration(models.Model):
             )
             if next_stage:
                 registration.write({"stage_id": next_stage.id})
+
         # Send potential communications after stage transition
-        self.env["event.mail"].with_delay().run()
+        if stage_complete:
+            self.env["event.mail"].with_delay().run()
         return True
 
     def _track_subtype(self, init_values):

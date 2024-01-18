@@ -130,4 +130,82 @@ odoo.define("website_event_compassion.form_snippet", function (require) {
       },
     ],
   });
+  FormEditorRegistry.add("event_registration_edit", {
+    formFields: [
+      {
+        type: "binary",
+        modelRequired: false,
+        name: "profile_picture",
+        string: _t("Profile picture"),
+      },
+      {
+        type: "char",
+        modelRequired: true,
+        name: "profile_name",
+        string: _t("Profile name"),
+      },
+      {
+        type: "text",
+        modelRequired: true,
+        name: "ambassador_quote",
+        string: _t("My motto"),
+      },
+      {
+        type: "char",
+        modelRequired: true,
+        name: "registration_id",
+        string: _t("Registration"),
+      },
+      {
+        type: "text",
+        modelRequired: false,
+        name: "comments",
+        string: _t("Comments"),
+      },
+    ],
+  });
+  FormEditorRegistry.add("event_flight", {
+    formFields: [
+      {
+        type: "selection",
+        modelRequired: false,
+        name: "flight_type",
+        string: _t("Flight type"),
+        selection: [
+          ["outbound", _t("Outbound")],
+          ["return", _t("Return")],
+        ],
+      },
+      {
+        type: "char",
+        modelRequired: true,
+        name: "flying_company",
+        string: _t("Flying company"),
+      },
+      {
+        type: "char",
+        modelRequired: true,
+        name: "flight_number",
+        string: _t("Flight number"),
+      },
+      {
+        type: "char",
+        modelRequired: true,
+        name: "registration_id",
+        string: _t("Registration"),
+      },
+      {
+        type: "datetime",
+        modelRequired: false,
+        name: "departure",
+        string: _t("Departure"),
+      },
+      {
+        type: "datetime",
+        modelRequired: false,
+        name: "arrival",
+        string: _t("Arrival"),
+      },
+    ],
+  });
 });

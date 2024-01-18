@@ -51,10 +51,7 @@
           name="website_id"
           groups="website.group_website_publisher"
         />
-                <field
-          name="event_type_id"
-          attrs="{'invisible': [('odoo_event_id', '!=', False)]}"
-        />
+                <field name="event_type_id" />
             </field>
         </field>
     </record>

@@ -8,41 +8,19 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from datetime import datetime, timedelta
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 
 
 class EventCompassion(models.Model):
-    _name = "crm.event.compassion"
-    _inherit = [
-        "crm.event.compassion",
-        "website.published.mixin",
-        "translatable.model",
-        "website.seo.metadata",
-    ]
+    _inherit = "crm.event.compassion"
 
-    registration_ids = fields.One2many(
-        "event.registration",
-        "compassion_event_id",
-        "Event registrations",
-        readonly=False,
-    )
-
-    amount_objective = fields.Integer(compute="_compute_amount_raised")
-    amount_raised = fields.Integer(compute="_compute_amount_raised")
-    amount_raised_percents = fields.Integer(compute="_compute_amount_raised")
     sport_discipline_ids = fields.Many2many(
         "sport.discipline", string="Sport disciplines", readonly=False
     )
+    is_muskathlon = fields.Boolean(compute="_compute_is_muskathlon")
 
-    website_muskathlon = fields.Boolean(
-        "Activate Muskathlon template",
-        help="This will activate the 4M red template for the event on the"
-        "website and will also use the Muskathlon processes for the"
-        "registrations.",
-    )
-    # HTML fields for material order page
+    # HTML fields for Muskathlon material order page
     website_my_introduction = fields.Html(
         string="Video introduction", translate=True, sanitize=False
     )
@@ -59,63 +37,34 @@ class EventCompassion(models.Model):
         string="Sport material", translate=True, sanitize=False
     )
 
-    @api.multi
-    def _compute_amount_raised(self):
+    def _compute_is_muskathlon(self):
         for event in self:
-            amount_raised = 0
-            amount_objective = 0
-
-            for registration in event.sudo().registration_ids.filtered(
-                lambda r: r.state != "cancel"
-            ):
-                amount_raised += registration.amount_raised
-                amount_objective += registration.amount_objective
-
-            event.amount_raised = amount_raised
-            event.amount_objective = amount_objective
-            event.amount_raised_percents = int(
-                amount_raised * 100 / (amount_objective or 1)
+            event.is_muskathlon = event.odoo_event_id.event_type_id == self.env.ref(
+                "muskathlon.event_type_muskathlon"
             )
 
-    @api.multi
-    def _compute_event_type(self):
-        # Map Muskathlon event type
-        super()._compute_event_type()
-        muskathlon = self.env.ref("muskathlon.event_type_muskathlon")
-        for event in self.filtered(lambda e: e.event_type_id == muskathlon):
-            event.type = "sport"
-
-    @api.model
-    def get_muskathlon_participants(self, event_id):
-        participants = self.env["event.registration"].search(
-            [("event_id", "=", event_id)]
-        )
-
-        # Convert to json compatible
-        ret = []
-        for participant in participants:
-            ret.append(
-                {
-                    "id": participant.partner_id.id,
-                    "name": participant.partner_id.name,
-                    "gender": participant.partner_id.gender,
-                    "country": participant.partner_id.country_id.name,
-                }
+    @api.onchange("event_type_id")
+    def onchange_event_type_id(self):
+        super().onchange_event_type_id()
+        if self.event_type_id == self.env.ref("muskathlon.event_type_muskathlon"):
+            self.ambassador_config_id = self.env.ref(
+                "muskathlon.ambassador_donation_confirmation_config"
             )
-        return ret
 
     @api.model
-    def _cron_delete_medical_surveys(self):
-        for event in self.search(
-            [
-                (
-                    "end_date",
-                    "<",
-                    fields.Datetime.to_string(datetime.now() - timedelta(days=31)),
-                )
-            ]
-        ):
-            for registration in event.registration_ids:
-                # the deletion will cascade to the different
-                # user_input_line automatically (see postgres)
-                registration.medical_survey_id.unlink()
+    def get_sport_levels(self):
+        return [
+            ("beginner", _("Beginner")),
+            ("average", _("Average")),
+            ("advanced", _("Advanced")),
+        ]
+
+    @api.model
+    def get_t_shirt_sizes(self):
+        return [
+            ("S", _("S")),
+            ("M", _("M")),
+            ("L", _("L")),
+            ("XL", _("XL")),
+            ("XXL", _("XXL")),
+        ]

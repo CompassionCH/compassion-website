@@ -39,7 +39,6 @@ class EventCompassion(models.Model):
         domain=[("id", ">", 1)],
         readonly=False,
     )
-    type = fields.Selection(default="meeting")
     odoo_event_id = fields.Many2one("event.event", readonly=False, ondelete="cascade")
     seats_expected = fields.Integer(related="odoo_event_id.seats_expected")
     registrations_ended = fields.Boolean(compute="_compute_registrations_ended")
@@ -156,3 +155,8 @@ class EventCompassion(models.Model):
                 }
             )
         return super().write(vals)
+
+    @api.onchange("event_type_id")
+    def onchange_event_type_id(self):
+        if self.event_type_id.compassion_event_type:
+            self.type = self.event_type_id.compassion_event_type

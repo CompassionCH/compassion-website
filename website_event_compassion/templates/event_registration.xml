@@ -79,7 +79,7 @@
                       class="form-control s_website_form_input"
                       name="partner_title"
                       id="o4ncri99nhhm"
-                      style=""
+                      required="true"
                     >
                                             <t t-foreach="titles" t-as="title">
                                                 <option t-att-value="title.id">
@@ -319,10 +319,6 @@
                       name="partner_mobile"
                       id="oi22z92zr9uh"
                     />
-                                        <div
-                      data-lastpass-icon-root="true"
-                      style="position: relative !important; height: 0px !important; width: 0px !important; float: left !important;"
-                    />
                                     </div>
                                 </div>
                             </div>
@@ -452,8 +448,14 @@
                                 </div>
                             </div>
                         </div>
-                        <h3>Information for the trip</h3>
-                        <div class="row my-2">
+                        <h3
+              id="tripHeader"
+              t-if="main_object.type in ('sport', 'tour')"
+            >Information for the trip</h3>
+                        <div
+              class="row my-2"
+              t-if="main_object.type in ('sport', 'tour')"
+            >
 
                             <div
                 class="form-group s_website_form_field col-12 col-lg-6 s_website_form_model_required  "
@@ -484,14 +486,12 @@
                       required="true"
                       id="o2holh6va8aa"
                     />
-                                        <div
-                      data-lastpass-icon-root="true"
-                      style="position: relative !important; height: 0px !important; width: 0px !important; float: left !important;"
-                    />
-                                        <div
-                      data-lastpass-icon-root="true"
-                      style="position: relative !important; height: 0px !important; width: 0px !important; float: left !important;"
-                    />
+                                        <small
+                      id="passportHelpBlock"
+                      class="form-text text-muted"
+                    >
+Your name as it appears on your passport.
+</small>
                                     </div>
                                 </div>
                             </div>
@@ -605,6 +605,12 @@
                       required="true"
                       id="ounysy8olw6"
                     />
+                                        <small
+                      id="emergencyHelpBlock"
+                      class="form-text text-muted"
+                    >
+Please let us know who we can contact in case of an emergency during the trip.
+</small>
                                     </div>
                                 </div>
                             </div>
@@ -775,6 +781,12 @@
                       id="oua1qteetzao"
                       rows="3"
                     />
+                                        <small
+                      id="mottoHelpBlock"
+                      class="form-text text-muted"
+                    >
+What motivates you to take part in the project? Write a few sentences. They will be published on your profile and appear in the thank-you letters to your donors.
+</small>
                                     </div>
                                 </div>
                             </div>
@@ -860,6 +872,32 @@
                       rows="3"
                     />
                                     </div>
+                                </div>
+                            </div>
+                            <div
+                id="legal_terms"
+                class="form-group col-12 s_website_form_field s_website_form_required_custom mt-4 mb-4"
+              >
+                                <div class="form-check">
+                                    <input
+                    type="checkbox"
+                    value="accepted"
+                    id="privacy_policy"
+                    name="privacy_policy"
+                    class="s_website_form_input form-check-input"
+                    required="required"
+                  />
+                                    <label
+                    class="form-check-label font-weight-normal"
+                    for="privacy_policy"
+                  >
+                                        <t
+                      t-call="website_legal_page.acceptance_full"
+                    />
+                                        <span
+                      class="s_website_form_mark"
+                    > *</span>
+                                    </label>
                                 </div>
                             </div>
                         </div>

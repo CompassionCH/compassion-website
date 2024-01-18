@@ -1,90 +1,276 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <template id="my_muskathlon_order_material" name="Muskathlon order material">
-        <t t-call="website_compassion.layout">
-            <t t-set="event" t-value="registration.compassion_event_id"/>
+    <template
+    id="my_muskathlon_order_material"
+    name="Muskathlon order material"
+  >
+        <t t-call="portal.frontend_layout">
+            <t t-set="event" t-value="main_object.compassion_event_id" />
+            <t t-set="additional_title" t-value="event.name" />
 
-            <!-- Modal for image of flyer in fullscreen -->
-            <div id="modal_flyer" class="modal fade" role="dialog">
-                <div class="modal-dialog modal-lg">
-
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">X</button>
-                        </div>
-                        <div class="modal-body">
-                            <img t-att-src="flyer_image" style="width: 100%;"/>
-                        </div>
-                    </div>
-
+            <div class="container my-5">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a
+                href="/my/events"
+              >My Events
+                        </a></li>
+                        <li class="breadcrumb-item"><a
+                t-attf-href="/my/events/#{slug(main_object)}"
+              ><t t-esc="additional_title" /></a></li>
+                        <li
+              class="breadcrumb-item active"
+              aria-current="page"
+            >Fundraising</li>
+                    </ol>
+                </nav>
+                <p
+          class="css_non_editable_mode_hidden o_not_editable text-muted font-italic"
+          translate="no"
+        >Put a custom introduction block here. Video, images, etc... It will be displayed on every Muskathlon event</p>
+                <div class="oe_structure">
                 </div>
-            </div>
-
-            <div id="my_muskathlon">
-                <t t-set="background_color_class" t-value="'compassion_background_blue'"/>
-                <t t-call="website_event_compassion.event_header"/>
-                <div class="main_container">
-                    <div class="row">
-                        <div class="col-md-2"/>
-                        <div class="col-md-4">
-                            <!-- Possibility to add video to the left column -->
-                            <div t-field="event.website_my_introduction"/>
-                        </div>
-                        <div class="col-md-4">
-                            <h2>Welcome - We are so glad that you participate to the Muskathlon!</h2>
-                            <p>Through your participation, you help children to be freed from poverty in the name of Jesus.</p>
-                            <p>Below you will find information about your Muskathlon, a form to order personalized flyers and sponsorship files.</p>
-                            <p>Thank you for your commitment against extreme poverty.</p>
-                            <div class="my_donations">
-                                <h2>My donations</h2>
-                                <a t-attf-href="#{ registration.id }/donations" class="btn btn-primary">To my
-                                    donations
+                <section
+          class="s_text_image pt32 pb32 o_colored_level"
+          data-snippet="s_image_text"
+          data-name="Image - Text"
+        >
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-lg-6 pt16 pb16 o_colored_level">
+                                <a t-att-href="flyer_image" target="_blank">
+                                    <img
+                    t-att-src="flyer_image"
+                    class="img img-fluid mx-auto"
+                    loading="lazy"
+                  />
                                 </a>
                             </div>
-                        </div>
-                    </div>
-                    <div class="row blue-section">
-                        <div class="col-md-2"/>
-                        <div class="col-md-4">
-                            <h2>Order free personalized Muskathlon flyers</h2>
-                            <p>Hereby you can order personalized support flyers to distribute to your relatives (family, friends, colleagues...).
-                                Click on the image below to view an example of a custom flyer.</p>
-                            <a href="#" data-toggle="modal" data-target="#modal_flyer">
-                                <img t-att-src="flyer_image" class="flyer_preview"/>
-                            </a>
-                        </div>
-                        <div id="material_form" class="col-md-4 cms_form_wrapper">
-                            <!-- Order material form -->
-                            <h2/>
-                            <t t-raw="material_form.form_render()" />
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-2"/>
-                        <div class="col-md-4 col-md-push-4">
-                            <h2>Sponsorships - Order Childpacks</h2>
-                            <p>A warm thank you for committing yourself with Compassion to release children from poverty through sponsorship!</p>
-                            <p><b>The seven childpacks are reserved for you. When someone decides to sponsor one of the children who has been your delegate, and sends the completed form to our office, the sponsorship will be credited to you.</b></p>
-                            <p>Don't hesitate to order new childpacks.</p>
-                            <div class="cms_form_wrapper">
-                                <t t-raw="childpack_form.form_render()"/>
+                            <div class="col-lg-6 pt16 pb16 o_colored_level">
+                                <h2
+                >Order free personalized Muskathlon flyers</h2>
+                                <p
+                >Hereby you can order personalized support flyers to distribute to your relatives (family, friends, colleagues...).</p>
+                                <t t-call="muskathlon.order_material_form" />
                             </div>
                         </div>
-                        <div class="col-md-4 col-md-pull-4 resources">
-                            <h2>Resources</h2>
-                            <h3>Fundraising - tips and ideas</h3>
-                            <div t-field="event.website_my_fundraising"/>
-                            <h3>Information about Compassion</h3>
-                            <div t-field="event.website_my_information"/>
-                            <h3>Press material</h3>
-                            <div t-field="event.website_my_press_material"/>
-                            <h3>Sport</h3>
-                            <div t-field="event.website_my_sport_material"/>
+                    </div>
+                </section>
+                <section
+          class="s_text_image pt32 pb32 o_colored_level"
+          data-snippet="s_image_text"
+          data-name="Image - Text"
+        >
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-lg-6 pt16 pb16 o_colored_level">
+                                <h2>Sponsorships - Order Childpacks</h2>
+                                <p
+                >A warm thank you for committing yourself with Compassion to release children from poverty through sponsorship!</p>
+                                <p><b
+                  >The seven childpacks are reserved for you. When someone decides to sponsor one of the children who has been your delegate, and sends the completed form to our office, the sponsorship will be credited to you.</b></p>
+                                <p>Don't hesitate to order new childpacks.</p>
+                                <t t-call="muskathlon.order_childpack_form" />
+                            </div>
+                            <div class="col-lg-6 pt16 pb16 o_colored_level">
+                                <p
+                  class="css_non_editable_mode_hidden o_not_editable text-muted font-italic"
+                  translate="no"
+                >Put a custom resources block here. Video, images, documents, etc... It will be displayed on every Muskathlon event</p>
+                                <div class="oe_structure" />
+                            </div>
                         </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+    <template id="order_material_form">
+        <t t-call="muskathlon.muskathlon_order_generic_form">
+            <t t-set="form_type">material</t>
+        </t>
+    </template>
+    <template id="order_childpack_form">
+        <t t-call="muskathlon.muskathlon_order_generic_form">
+            <t t-set="form_type">childpack</t>
+        </t>
+    </template>
+
+    <template id="muskathlon_order_generic_form">
+        <section
+      class="s_website_form pt16 pb16 o_colored_level"
+      data-vcss="001"
+      data-snippet="s_website_form"
+      data-name="Form"
+      style=""
+    >
+            <div class="container">
+                <form
+          action="/website_form/"
+          method="post"
+          enctype="multipart/form-data"
+          class="o_mark_required"
+          data-mark="*"
+          data-success-mode="message"
+          data-success-page="/contactus-thank-you"
+          data-model_name="crm.lead"
+        >
+                    <div class="s_website_form_rows row s_col_no_bgcolor">
+                        <div
+              class="form-group s_website_form_field col-12  s_website_form_field_hidden  "
+              data-type="char"
+              data-name="Field"
+            >
+                            <input
+                type="text"
+                class="form-control s_website_form_input"
+                name="name"
+                required="true"
+                placeholder=""
+                t-attf-id="#{form_type}-ollunugvsva7"
+                t-attf-value="Muskathlon order #{form_type}"
+              />
+                        </div>
+                        <div
+              class="form-group s_website_form_field col-12  s_website_form_field_hidden  "
+              data-type="number"
+              data-name="Field"
+            >
+                            <input
+                type="text"
+                class="form-control s_website_form_input"
+                name="partner_id"
+                required="true"
+                placeholder=""
+                t-attf-id="#{form_type}-partner_id"
+                t-att-value="env.user.partner_id.id"
+              />
+                        </div>
+                        <div
+              class="form-group s_website_form_field col-12 s_website_form_custom   "
+              data-type="many2one"
+              data-name="Field"
+            >
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label
+                  class="col-form-label col-sm-auto s_website_form_label "
+                  style="width: 200px"
+                  t-attf-for="#{form_type}-okjktl3j71m"
+                >
+                                    <span
+                    class="s_website_form_label_content"
+                  >Number of German flyers</span>
+                                </label>
+                                <div class="col-sm">
+                                    <select
+                    class="form-control s_website_form_input"
+                    name="Number of German flyers"
+                    t-attf-id="#{form_type}-okjktl3j71m"
+                    style=""
+                  >
+                                        <option value="0">0</option>
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
+                                        <option value="30">30</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+              class="form-group s_website_form_field col-12 s_website_form_custom   "
+              data-type="many2one"
+              data-name="Field"
+            >
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label
+                  class="col-form-label col-sm-auto s_website_form_label "
+                  style="width: 200px"
+                  t-attf-for="#{form_type}-ozle1g2dwzte"
+                >
+                                    <span
+                    class="s_website_form_label_content"
+                  >Number of French flyers</span>
+                                </label>
+                                <div class="col-sm">
+                                    <select
+                    class="form-control s_website_form_input"
+                    name="Number of French flyers"
+                    t-attf-id="#{form_type}-ozle1g2dwzte"
+                    style=""
+                  >
+                                        <option value="0">0</option>
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
+                                        <option value="30">30</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+              class="form-group s_website_form_field col-12    s_website_form_dnone"
+              data-name="Field"
+            >
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label
+                  class="col-form-label col-sm-auto s_website_form_label "
+                  style="width: 200px"
+                >
+                                    <span
+                    class="s_website_form_label_content"
+                  />
+                                </label>
+                                <div class="col-sm">
+                                    <input
+                    type="hidden"
+                    class="form-control s_website_form_input"
+                    name="user_id"
+                    t-att-value="staff_id"
+                  />
+                                </div>
+                            </div>
+                        </div>
+                        <div
+              class="form-group col-12 s_website_form_submit"
+              data-name="Submit Button"
+            >
+                            <div
+                style="width: 200px;"
+                class="s_website_form_label"
+              />
+                            <a
+                href="#"
+                role="button"
+                class="btn btn-primary btn-lg s_website_form_send o_default_snippet_text"
+              >Submit</a>
+                            <span id="s_website_form_result" />
+                        </div>
+                    </div>
+                </form>
+                <div class="s_website_form_end_message d-none">
+                    <div class="oe_structure">
+                        <section
+              class="s_text_block pt64 pb64 o_colored_level o_cc o_cc2"
+              data-snippet="s_text_block"
+            >
+                            <div class="container">
+                                <h2 class="text-center"><span
+                    class="fa fa-check-circle"
+                  />
+                                    Thank You For Your Order</h2>
+                                <p
+                  class="text-center"
+                >Our team will prepare the material for you and it will be sent to you by postal mail wiithin the following days.<br
+                  />
+                                </p>
+                            </div>
+                        </section>
                     </div>
                 </div>
             </div>
-        </t>
+        </section>
     </template>
 </odoo>

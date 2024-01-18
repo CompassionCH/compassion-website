@@ -1,61 +1,179 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <template id="new_registration_successful" name="Muskathlon registration success">
-        <t t-call="website_compassion.layout">
-            <t t-set="head">
-                <meta name="robots" content="noindex" />
-            </t>
-            <t t-set="title" t-value="event.name"/>
-            <div class="oe_structure donation_success">
-                <div class="thank_you_container">
-                    <div class="thank_you_image_container">
-                        <img class="img-responsive" style="width: 100%" src="/website_event_compassion/static/src/img/compassion_thankyou_donation.jpg"/>
+    <template
+    id="muskathlon_registration_form"
+    inherit_id="website_event_compassion.event_registration_form"
+  >
+        <xpath expr="//h3[@id='tripHeader']" position="before">
+            <h3
+        id="muskathlonHeader"
+        t-if="main_object.is_muskathlon"
+      >Muskathlon</h3>
+            <div class="row my-2" t-if="main_object.is_muskathlon">
+
+                <div
+          class="form-group s_website_form_field col-12 col-lg-6 s_website_form_model_required  "
+          data-type="many2one"
+          data-name="Field"
+        >
+                    <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label
+              class="col-form-label col-sm-auto s_website_form_label "
+              style="width: 200px"
+              for="sport_discipline"
+            >
+                            <span
+                class="s_website_form_label_content"
+              >Sport discipline</span>
+                            <span class="s_website_form_mark"> *</span>
+                        </label>
+                        <div class="col-sm">
+                            <select
+                class="form-control s_website_form_input"
+                name="sport_discipline_id"
+                id="sport_discipline"
+                required="true"
+              >
+                                <t
+                  t-foreach="sport_disciplines"
+                  t-as="sport_discipline"
+                >
+                                    <option t-att-value="sport_discipline.id">
+                                        <t t-esc="sport_discipline.name" />
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
                     </div>
-                    <div class="thank_you_text_container">
-                        <h1>Registration successful !</h1>
-                        <p class="quote">
-                            Thank you for your interest for the <a t-att-href="event.website_url"><t t-esc="event.name"/></a>.
-                            <br/>
-                            You will receive a confirmation by e-mail very soon with instructions to complete your
-                            profile.
-                        </p>
+                </div>
+                <div
+          class="form-group s_website_form_field col-12 col-lg-6 s_website_form_model_required  "
+          data-type="char"
+          data-name="Field"
+        >
+                    <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label
+              class="col-form-label col-sm-auto s_website_form_label "
+              style="width: 200px"
+              for="sport_level"
+            >
+                            <span
+                class="s_website_form_label_content"
+              >Sport level</span>
+                            <span class="s_website_form_mark"> *</span>
+                        </label>
+                        <div class="col-sm">
+                            <select
+                class="form-control s_website_form_input"
+                name="sport_level"
+                id="sport_level"
+                required="true"
+              >
+                                <t
+                  t-foreach="main_object.get_sport_levels()"
+                  t-as="sport_level"
+                >
+                                    <option t-att-value="sport_level[0]">
+                                        <t t-esc="sport_level[1]" />
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div
+          class="form-group s_website_form_field col-12 col-lg-6 s_website_form_model_required  "
+          data-type="text"
+          data-name="Field"
+        >
+                    <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label
+              class="col-form-label col-sm-auto s_website_form_label "
+              style="width: 200px"
+              for="sport_level_description"
+            >
+                            <span
+                class="s_website_form_label_content"
+              >Describe your sport experience</span>
+                            <span class="s_website_form_mark"> *</span>
+                        </label>
+                        <div class="col-sm">
+                            <textarea
+                class="form-control s_website_form_input"
+                name="sport_level_description"
+                required="true"
+                id="sport_level_description"
+                rows="3"
+              />
+                        </div>
+                    </div>
+                </div>
+                <div
+          class="form-group s_website_form_field col-12 col-lg-6 s_website_form_model_required  "
+          data-type="char"
+          data-name="Field"
+          style=""
+        >
+                    <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label
+              class="col-form-label col-sm-auto s_website_form_label "
+              style="width: 200px"
+              for="t_shirt_size"
+            >
+                            <span
+                class="s_website_form_label_content"
+              >T-shirt size</span>
+                            <span class="s_website_form_mark"> *</span>
+                        </label>
+                        <div class="col-sm">
+                            <select
+                class="form-control s_website_form_input"
+                name="t_shirt_size"
+                id="t_shirt_size"
+                required="true"
+              >
+                                <t
+                  t-foreach="main_object.get_t_shirt_sizes()"
+                  t-as="size"
+                >
+                                    <option t-att-value="size[0]">
+                                        <t t-esc="size[1]" />
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
-            <t t-call="muskathlon.footer_muskathlon"/>
-        </t>
-    </template>
-    <template id="new_registration_successful_modal" name="Muskathlon registration success modal">
-        <div>
-            <h3>Registration Successful!</h3>
-            <p>Thank you for your submission.</p>
-            <br/>
-            <p>You will receive a confirmation by e-mail very soon with instructions to complete your profile.</p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-    </template>
-    <template id="registration_failure" name="Muskathlon registration failure">
-        <t t-call="website_compassion.layout">
-            <t t-set="title">Muskathlon Registration</t>
-            <div id="wrap">
-                <div class="container text-center">
-                    <h1>Registration Failure</h1>
-                    <p class="quote">
-                        Something went wrong with your registration.
-                        <t t-if="event">
-                            <a t-att-href="event.website_url">Please try again.</a>
-                        </t>
-                        <t t-else="">
-                            Please try again.
-                        </t>
-                        <br/>
-                        <br/>
-                        If the payment process was successful, please call us.
-                    </p>
+        </xpath>
+        <xpath expr="//div[@id='legal_terms']" position="after">
+            <div
+        class="form-group col-12 s_website_form_field s_website_form_required_custom mb-4"
+      >
+                <div class="form-check">
+                    <input
+            type="checkbox"
+            value="accepted"
+            id="muskathlon_policy"
+            name="muskathlon_policy"
+            class="s_website_form_input form-check-input"
+            required="required"
+          />
+                    <label
+            class="form-check-label font-weight-normal"
+            for="muskathlon_policy"
+          >
+                        <span class="acceptance_full">
+                            <a
+                href="/muskathlon-legal"
+                target="_blank"
+                class="color-white"
+              >I accept the legal terms of the Muskathlon.</a>
+                        </span>
+                        <span class="s_website_form_mark"> *</span>
+                    </label>
                 </div>
             </div>
-        </t>
+        </xpath>
     </template>
 </odoo>

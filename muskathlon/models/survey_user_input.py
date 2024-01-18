@@ -6,20 +6,17 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from odoo import api, models
+from odoo import models
 
 
 class SurveyUserInput(models.Model):
-    _name = "survey.user_input"
+    _inherit = "survey.user_input"
 
-    _inherit = ["survey.user_input", "mail.template"]
-
-    @api.multi
     def write(self, vals):
         """
         Automatically complete Medical Survey task when user filled it
         """
-        res = super(SurveyUserInput, self).write(vals)
+        res = super().write(vals)
         if vals.get("state") == "done":
             # Search for Muskathlon medical surveys
             registrations = (

@@ -27,7 +27,7 @@
                   t-set="event"
                   t-value="registration.compassion_event_id"
                 />
-                                <a t-attf-href="slug(registration)">
+                                <a t-att-href="slug(registration)">
                                     <img
                     t-att-src="event.website_image"
                     alt=""
@@ -87,6 +87,10 @@
     <template id="my_event_details">
         <t t-call="portal.frontend_layout">
             <t t-set="event" t-value="registration.event_id" />
+            <t
+        t-set="tasks"
+        t-value="registration.task_ids.filtered('task_id.website_published')"
+      />
             <t t-set="additional_title" t-value="event.name" />
             <t
         t-set="profile_picture"
@@ -99,35 +103,62 @@
                 href="/my/events"
               >My Events
                         </a></li>
+                        <t t-if="not edit_mode">
+                            <li
+                class="breadcrumb-item active"
+                aria-current="page"
+              ><t t-esc="additional_title" /></li>
+                        </t>
+                        <t t-else="">
+                            <li class="breadcrumb-item"><a
+                  t-attf-href="/my/events/#{slug(registration)}"
+                ><t t-esc="additional_title" /></a></li>
+                        </t>
                         <li
               class="breadcrumb-item active"
               aria-current="page"
-            ><t t-esc="additional_title" /></li>
+              t-if="edit_mode"
+              t-esc="edit_mode.title()"
+            />
                     </ol>
                 </nav>
-                <h2 t-esc="additional_title" class="text-uppercase" />
-                <h3 class="mt-4">My profile</h3>
-                <div id="profile_view">
-                    <img
-            t-att-src="profile_picture"
-            class="figure-img my-4"
-            alt=""
-            loading="lazy"
-            data-original-id="140127"
-            data-original-src="/theme_compassion/static/src/img/snippets/s_picture.jpg"
-            data-mimetype="image/jpeg"
-            data-original-title=""
-            title=""
-            aria-describedby="tooltip693698"
-          />
-                    <div class="row">
-                        <div
-              class="col col-sm-6 col-md-4 col-lg-3"
-            >Profile name:</div>
-                        <div
-              class="col col-sm-6 col-md-8 col-lg-9"
-              t-esc="registration.profile_name"
+                <div class="row mt-4">
+                    <div
+            t-attf-class="col-12 col-sm-#{'6' if tasks else '12'}"
+            name="main_section"
+          >
+                        <t
+              t-call="website_event_compassion.my_profile_readonly"
+              t-if="not edit_mode"
             />
+                        <t
+              t-call="website_event_compassion.my_profile_edit"
+              t-if="edit_mode=='profile'"
+            />
+                    </div>
+                    <div
+            class="col-12 col-sm-6"
+            t-if="tasks"
+            name="tasks_section"
+          >
+                        <h3 class="d-inline align-text-top">Tasks</h3>
+                        <span
+              class="badge badge-pill badge-primary d-inline ml-2"
+              t-if="registration.incomplete_task_count"
+              t-esc="registration.incomplete_task_count"
+              style="font-size: small"
+            />
+                        <div class="btn-group-vertical w-100 mt-4">
+                            <t t-foreach="tasks" t-as="task">
+                                <a
+                  type="button"
+                  t-attf-class="btn btn-#{'secondary' if task.done else 'primary'}"
+                  t-attf-href="../tasks/#{slug(task)}"
+                  t-att-target="'_blank' if task.task_id.open_new_tab else '_self'"
+                  t-esc="task.name"
+                />
+                            </t>
+                        </div>
                     </div>
                 </div>
                 <h3 class="mt-4">Fundraising</h3>
@@ -167,5 +198,282 @@
                 </div>
             </div>
         </t>
+    </template>
+    <template id="my_profile_readonly">
+        <h3>
+            <span>My profile</span>
+            <a class="btn btn-primary mx-auto" href="profile">
+                <i class="fa fa-pencil" />
+                <span>Edit</span>
+            </a>
+            <a
+        class="btn btn-primary mx-auto"
+        t-attf-href="/event/#{slug(event)}/#{slug(registration)}"
+      >
+                <i class="fa fa-eye" />
+                <span>View</span>
+            </a>
+        </h3>
+        <div id="profile_view">
+            <img
+        t-att-src="profile_picture"
+        class="figure-img my-4 w-50"
+        alt=""
+        loading="lazy"
+        data-original-id="140127"
+        data-original-src="/theme_compassion/static/src/img/snippets/s_picture.jpg"
+        data-mimetype="image/jpeg"
+        data-original-title=""
+        title=""
+        aria-describedby="tooltip693698"
+      />
+            <div class="row">
+                <div class="col col-sm-6 col-md-4 col-lg-3">Profile name:</div>
+                <div
+          class="col col-sm-6 col-md-8 col-lg-9"
+          t-esc="registration.profile_name"
+        />
+                <div class="col col-sm-6 col-md-4 col-lg-3">My motto:</div>
+                <div
+          class="col col-sm-6 col-md-8 col-lg-9"
+          t-esc="registration.ambassador_quote"
+        />
+                <div
+          class="col col-sm-6 col-md-4 col-lg-3"
+        >Receive receipts:</div>
+                <div class="col col-sm-6 col-md-4 col-lg-3 my-auto">
+                    <input
+            type="checkbox"
+            name="receive_ambassador_receipts"
+            checked="checked"
+            t-if="registration.partner_id.receive_ambassador_receipts"
+            disabled="disabled"
+          />
+                    <input
+            type="checkbox"
+            name="receive_ambassador_receipts"
+            t-if="not registration.partner_id.receive_ambassador_receipts"
+            readonly="1"
+            disabled="disabled"
+          />
+                </div>
+            </div>
+        </div>
+    </template>
+    <template id="my_profile_edit">
+        <h3>My profile</h3>
+        <span
+      id="form_values"
+      class="hidden"
+      data-for="event_registration_form"
+      t-att-data-values="{
+                'profile_name': registration.profile_name,
+                'registration_id': registration.id,
+                'ambassador_quote': registration.ambassador_quote,
+                }"
+    />
+        <section
+      class="s_website_form pt16 pb16 o_colored_level"
+      data-vcss="001"
+      data-snippet="s_website_form"
+      data-name="Form"
+    >
+            <div class="container">
+                <form
+          id="event_registration_form"
+          action="/website_form/"
+          method="post"
+          enctype="multipart/form-data"
+          class="o_mark_required"
+          data-mark="*"
+          data-success-mode="redirect"
+          t-attf-data-success-page="/my/events/#{slug(registration)}"
+          data-model_name="event.registration.form"
+        >
+                    <div class="s_website_form_rows row s_col_no_bgcolor">
+                        <div
+              class="form-group s_website_form_field col-12    "
+              data-type="binary"
+              data-name="Field"
+            >
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label
+                  class="col-sm-auto s_website_form_label"
+                  style="width: 200px"
+                  for="oo6z1lsyc1z"
+                >
+                                    <span
+                    class="s_website_form_label_content"
+                  >Profile picture</span>
+                                </label>
+                                <div class="col-sm">
+                                    <input
+                    type="file"
+                    class="form-control-file s_website_form_input"
+                    name="profile_picture"
+                    id="oo6z1lsyc1z"
+                  />
+                                </div>
+                            </div>
+                        </div>
+                        <div
+              class="form-group s_website_form_field col-12  s_website_form_model_required  "
+              data-type="char"
+              data-name="Field"
+            >
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label
+                  class="col-form-label col-sm-auto s_website_form_label "
+                  style="width: 200px"
+                  for="ou61cycwfny"
+                >
+                                    <span
+                    class="s_website_form_label_content"
+                  >Profile name</span>
+                                    <span class="s_website_form_mark"> *</span>
+                                </label>
+                                <div class="col-sm">
+                                    <input
+                    type="text"
+                    class="form-control s_website_form_input"
+                    name="profile_name"
+                    required="true"
+                    id="ou61cycwfny"
+                  />
+                                </div>
+                            </div>
+                        </div>
+                        <div
+              class="form-group s_website_form_field col-12  s_website_form_model_required  "
+              data-type="text"
+              data-name="Field"
+            >
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label
+                  class="col-form-label col-sm-auto s_website_form_label "
+                  style="width: 200px"
+                  for="otciu2zjufgr"
+                >
+                                    <span
+                    class="s_website_form_label_content"
+                  >My motto</span>
+                                    <span class="s_website_form_mark"> *</span>
+                                </label>
+                                <div class="col-sm">
+                                    <textarea
+                    class="form-control s_website_form_input"
+                    name="ambassador_quote"
+                    required="true"
+                    id="otciu2zjufgr"
+                    rows="3"
+                  />
+                                </div>
+                            </div>
+                        </div>
+                        <div
+              class="form-group s_website_form_field col-12 s_website_form_dnone  "
+              data-type="char"
+              data-name="Field"
+            >
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label
+                  class="col-form-label col-sm-auto s_website_form_label "
+                  style="width: 200px"
+                  for="oh4y43y9th2l"
+                >
+                                    <span
+                    class="s_website_form_label_content"
+                  >Registration</span>
+                                    <span class="s_website_form_mark"> *</span>
+                                </label>
+                                <div class="col-sm">
+                                    <input
+                    type="hidden"
+                    class="form-control s_website_form_input"
+                    name="registration_id"
+                    required="true"
+                    id="oh4y43y9th2l"
+                  />
+                                </div>
+                            </div>
+                        </div>
+                        <div
+              class="form-group s_website_form_field col-12 "
+              data-type="boolean"
+              data-name="Field"
+            >
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label
+                  class="col-form-label col-sm-auto s_website_form_label "
+                  style="width: 200px"
+                  for="oh4y43y9th2lab"
+                >
+                                    <span
+                    class="s_website_form_label_content"
+                  >Receive receipts:</span>
+                                </label>
+                                <div class="col-sm">
+                                    <input
+                    type="checkbox"
+                    class="h-100"
+                    name="receive_ambassador_receipts"
+                    id="oh4y43y9th2lab"
+                    checked="checked"
+                    t-if="registration.partner_id.receive_ambassador_receipts"
+                  />
+                                    <input
+                    type="checkbox"
+                    class="h-100"
+                    name="receive_ambassador_receipts"
+                    id="oh4y43y9th2lab"
+                    t-if="not registration.partner_id.receive_ambassador_receipts"
+                  />
+                                </div>
+                            </div>
+                        </div>
+                        <div
+              class="form-group s_website_form_field col-12    "
+              data-type="text"
+              data-name="Field"
+            >
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label
+                  class="col-form-label col-sm-auto s_website_form_label "
+                  style="width: 200px"
+                  for="opesesohl01f"
+                >
+                                    <span
+                    class="s_website_form_label_content"
+                  >Comments</span>
+                                </label>
+                                <div class="col-sm">
+                                    <textarea
+                    class="form-control s_website_form_input"
+                    name="comments"
+                    id="opesesohl01f"
+                    rows="3"
+                  />
+                                </div>
+                            </div>
+                        </div>
+                        <div
+              class="form-group col-12 s_website_form_submit"
+              data-name="Submit Button"
+            >
+                            <div
+                style="width: 200px;"
+                class="s_website_form_label"
+              />
+                            <a
+                href="#"
+                role="button"
+                class="btn btn-primary btn-lg s_website_form_send o_default_snippet_text"
+              >Submit</a>
+                            <span id="s_website_form_result" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
     </template>
 </odoo>

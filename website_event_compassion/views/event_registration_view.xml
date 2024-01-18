@@ -78,12 +78,6 @@
                 <field name="profile_name" />
                 <field name="state" readonly="0" />
                 <field name="stage_date" />
-                <field name="incomplete_task_ids" widget="many2many_tags" />
-                <field
-          name="completed_task_ids"
-          widget="many2many_tags"
-          domain="[('stage_id', '=', stage_id)]"
-        />
             </field>
             <xpath expr="//sheet/group">
                 <field name="fundraising" invisible="1" />
@@ -96,10 +90,12 @@
                     <field name="amount_objective" />
                     <field name="amount_raised" />
                     <field name="amount_raised_percents" widget="percentage" />
+                    <field name="ambassador_quote" readonly="1" />
                 </group>
                 <group name="trip_2" string="Personal information">
                     <field name="birth_name" />
-                    <field name="passport" />
+                    <field name="passport_filename" invisible="1" />
+                    <field name="passport" filename="passport_filename" />
                     <field name="passport_number" />
                     <field name="passport_expiration_date" />
                     <field
@@ -109,6 +105,26 @@
                     <field name="emergency_name" />
                     <field name="emergency_phone" />
                     <field name="emergency_relation_type" />
+                </group>
+                <group name="tasks" string="Tasks">
+                    <field name="task_ids" nolabel="1">
+                    <tree decoration-muted="done == True" editable="top">
+                        <field name="sequence" widget="handle" />
+                        <field name="task_id" />
+                        <field name="done" />
+                    </tree>
+                </field>
+                </group>
+                <group name="flight" string="Flights">
+                    <field name="flight_ids" nolabel="1">
+                    <tree>
+                        <field name="flight_type" />
+                        <field name="departure" />
+                        <field name="arrival" />
+                        <field name="flying_company" />
+                        <field name="flight_number" />
+                    </tree>
+                    </field>
                 </group>
             </xpath>
         </field>
@@ -132,6 +148,7 @@
         <field name="arch" type="xml">
             <kanban position="attributes">
                 <attribute name="default_group_by">stage_id</attribute>
+                <attribute name="quick_create">false</attribute>
             </kanban>
             <field name="name" position="after">
                 <field name="profile_picture" />
@@ -169,7 +186,7 @@
         <field name="name">Action All Attended</field>
         <field name="model_id" ref="model_event_registration" />
         <field name="code">
-            records.button_reg_close()
+            records.action_set_done()
         </field>
         <field name="state">code</field>
         <field name="binding_model_id" ref="model_event_registration" />

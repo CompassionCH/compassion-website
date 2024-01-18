@@ -42,7 +42,16 @@
                         </ol>
                     </nav>
                     <h2 class="text-center text-uppercase mb-4">
-                        Support <t t-esc="registration.profile_name" />
+                        <span>Support </span>
+                        <t t-esc="registration.profile_name" />
+                        <a
+              class="btn btn-primary ml-2"
+              t-attf-href="/my/events/#{slug(registration)}/edit"
+              t-if="registration.partner_id == env.user.partner_id"
+            >
+                            <i class="fa fa-pencil" />
+                            <span>Edit</span>
+                        </a>
                     </h2>
                     <div class="row s_nb_column_fixed">
                         <div

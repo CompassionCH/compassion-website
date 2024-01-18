@@ -81,7 +81,10 @@
                 <div class="container-fluid event_compassion">
                     <div class="row mb-4">
                         <div class="col-md-5 col-lg-4 max-width-xl-372">
-                            <div class="pt32 pb16 container d-flex">
+                            <div
+                name="dates_container"
+                class="pt32 pb16 container d-flex"
+              >
                                 <div
                   class="text-uppercase font-weight-bold"
                 >Date</div>
@@ -93,7 +96,6 @@
                                     </t>
                                 </div>
                             </div>
-                            <div t-field="event.website_side_info" />
                             <div class="container">
                                 <div
                   t-if="event.odoo_event_id.fundraising"
@@ -139,8 +141,11 @@
                   t-if="event.odoo_event_id.fundraising"
                 >See participants</a>
                             </div>
+                            <div t-field="event.website_side_info" />
                         </div>
-                        <div class="col-md-6 offset-md-1 col-lg-8 offset-lg-0">
+                        <div
+              class="col-md-6 offset-md-1 col-lg-8 offset-lg-0 my-auto"
+            >
                             <div
                 class="mb16"
                 t-field="event.website_description"
