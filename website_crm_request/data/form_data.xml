@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record
+    id="crm_claim.model_crm_claim"
+    model="ir.model"
+  >
+      <field name="website_form_key">crm_request</field>
+      <field name="website_form_access">True</field>
+      <field name="website_form_label">CRM request</field>
+    </record>
+    <function model="ir.model.fields" name="formbuilder_whitelist">
+      <value>crm.claim</value>
+      <value eval="[
+        'name',
+        'email_from',
+        'partner_phone',
+        'description',
+        ]" />
+    </function>
+</odoo>

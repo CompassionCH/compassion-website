@@ -34,13 +34,15 @@
     "author": "Compassion CH",
     "license": "AGPL-3",
     "website": "https://github.com/CompassionCH/compassion-website",
-    "data": [],
+    "data": [
+        "templates/assets.xml",
+        "data/form_data.xml",
+    ],
     "depends": [
         "crm_request",
         "website_form",
     ],
     "demo": [],
-    # TODO : T0509 migrate this module
-    "installable": False,
+    "installable": True,
     "auto_install": False,
 }
