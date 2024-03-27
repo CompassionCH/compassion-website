@@ -424,9 +424,22 @@ class MyAccountController(CustomerPortal):
         wordpress = (
             request.env["wordpress.configuration"].sudo().get_config(raise_error=False)
         )
+        partner_profile_info = {
+            "child_ref": child.local_id,
+            "pname": partner.firstname + " " + partner.lastname,
+            "cname": partner.company_id.name,
+            "pstreet": partner.street,
+            "pzip": partner.zip,
+            "pcity": partner.city,
+            "pcountry": partner.country_id.name,
+            "email": partner.email,
+            # Add any other fields you want to prefill in the form
+        }
+        # Construct query string with user profile info
+        query_string = urlencode(partner_profile_info)
         url_child_gift = (
-            (f"https://{wordpress.host}{wordpress.child_gift_url}")
-            if wordpress
+            (f"https://{wordpress.host}{wordpress.child_gift_url}?{query_string}")
+            if wordpress and partner_profile_info
             else "#"
         )
 
