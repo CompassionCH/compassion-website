@@ -1,558 +1,844 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* sms_sponsorship
+# 	* website_sponsorship
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 10.0\n"
+"Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-05 13:47+0000\n"
-"PO-Revision-Date: 2019-06-05 15:50+0200\n"
-"Last-Translator: <>\n"
+"POT-Creation-Date: 2024-04-08 06:23+0000\n"
+"PO-Revision-Date: 2024-04-08 06:23+0000\n"
+"Last-Translator: \n"
 "Language-Team: \n"
-"Language: fr_CH\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
-"X-Generator: Poedit 2.2.3\n"
 
-#. module: sms_sponsorship
-#: model:ir.ui.view,arch_db:sms_sponsorship.sms_child_request_search
-msgid "Active"
-msgstr "Actif"
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_legend
+msgid "&amp;nbsp;"
+msgstr ""
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract_partner_birthdate
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
+msgid ""
+"<font style=\"font-size: 62px; font-weight: bold;\">You want to sponsor a "
+"child, thank you!</font>"
+msgstr ""
+"<font style=\"font-size: 62px; font-weight: bold;\">Vous souhaitez parrainer"
+" un enfant, merci !</font>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
+msgid "<option value=\"\">Select a country</option>"
+msgstr "<option value=\"\">Choisissez un pays</option>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid ""
+"<select class=\"form-control s_website_form_input\" name=\"partner_title\" id=\"o5l5ton80fmp\" style=\"\">\n"
+"                                        <option value=\"1\">Madam</option>\n"
+"                                        <option value=\"2\">Miss</option>\n"
+"                                        <option value=\"3\">Mister</option>\n"
+"                                    </select>"
+msgstr ""
+"<select class=\"form-control s_website_form_input\" name=\"partner_title\" id=\"o5l5ton80fmp\" style=\"\">\n"
+"                                        <option value=\"1\">Mme</option>\n"
+"                                        <option value=\"2\">Mlle</option>\n"
+"                                        <option value=\"3\">Mr</option>\n"
+"                                    </select>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
+msgid ""
+"<select name=\"age_group\" class=\"form-control\">\n"
+"                                    <option value=\"\">Select an age range </option>\n"
+"                                    <option value=\"0-3\">0-3 years old</option>\n"
+"                                    <option value=\"4-6\">4-6 years old</option>\n"
+"                                    <option value=\"7-10\">7-10 years old</option>\n"
+"                                    <option value=\"11-14\">11-14 years old</option>\n"
+"                                    <option value=\"15-50\">15+ years old</option>\n"
+"                                </select>"
+msgstr ""
+"<select name=\"age_group\" class=\"form-control\">\n"
+"                                    <option value=\"\">Choisissez une tranche d'âge </option>\n"
+"                                    <option value=\"0-3\">0-3 ans</option>\n"
+"                                    <option value=\"4-6\">4-6 ans</option>\n"
+"                                    <option value=\"7-10\">7-10 ans</option>\n"
+"                                    <option value=\"11-14\">11-14 ans</option>\n"
+"                                    <option value=\"15-50\">15+ ans</option>\n"
+"                                </select>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
+msgid ""
+"<select name=\"gender\" class=\"form-control\">\n"
+"                                        <option value=\"\">Select a girl or a boy</option>\n"
+"                                        <option value=\"F\">Girl</option>\n"
+"                                        <option value=\"M\">Boy</option>\n"
+"                                    </select>"
+msgstr ""
+"<select name=\"gender\" class=\"form-control\">\n"
+"                                        <option value=\"\">Choisissez une fille ou un garçon</option>\n"
+"                                        <option value=\"F\">Fille</option>\n"
+"                                        <option value=\"M\">Garçon</option>\n"
+"                                    </select>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
+msgid ""
+"<small id=\"passwordHelpBlock\" class=\"form-text text-muted text-"
+"right\">Search for children born on the same day</small>"
+msgstr ""
+"<small id=\"passwordHelpBlock\" class=\"form-text text-muted text-"
+"right\">Rechercher des enfants nés le même jour</small>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "<span class=\"s_website_form_label_content\">Birthdate</span>"
+msgstr "<span class=\"s_website_form_label_content\">Date de naissance</span>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "<span class=\"s_website_form_label_content\">Child</span>"
+msgstr "<span class=\"s_website_form_label_content\">Enfant</span>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "<span class=\"s_website_form_label_content\">Church</span>"
+msgstr "<span class=\"s_website_form_label_content\">Église</span>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "<span class=\"s_website_form_label_content\">City</span>"
+msgstr "<span class=\"s_website_form_label_content\">Ville</span>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "<span class=\"s_website_form_label_content\">Details</span>"
+msgstr "<span class=\"s_website_form_label_content\">Détails</span>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid ""
+"<span class=\"s_website_form_label_content\">Email</span>\n"
+"                                    <span class=\"s_website_form_mark\"> *</span>"
+msgstr ""
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid ""
+"<span class=\"s_website_form_label_content\">Firstname</span>\n"
+"                                    <span class=\"s_website_form_mark\"> *</span>"
+msgstr ""
+"<span class=\"s_website_form_label_content\">Prénom<</span>\n"
+"                                    <span class=\"s_website_form_mark\"> *</span>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "<span class=\"s_website_form_label_content\">Job</span>"
+msgstr "<span class=\"s_website_form_label_content\">Travail</span>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "<span class=\"s_website_form_label_content\">Languages I can read</span>"
+msgstr ""
+"<span class=\"s_website_form_label_content\">Langues que je peux lire</span>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid ""
+"<span class=\"s_website_form_label_content\">Lastname</span>\n"
+"                                    <span class=\"s_website_form_mark\"> *</span>"
+msgstr ""
+"<span class=\"s_website_form_label_content\">Nom de famille</span>\n"
+"                                    <span class=\"s_website_form_mark\"> *</span>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "<span class=\"s_website_form_label_content\">Main language</span>"
+msgstr "<span class=\"s_website_form_label_content\">Langue principale</span>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "<span class=\"s_website_form_label_content\">Match Update</span>"
+msgstr ""
+"<span class=\"s_website_form_label_content\">Mise à jour de la "
+"correspondance</span>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "<span class=\"s_website_form_label_content\">Mobile</span>"
+msgstr ""
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid ""
+"<span class=\"s_website_form_label_content\">Origin of my sponsorship</span>"
+msgstr ""
+"<span class=\"s_website_form_label_content\">Origine de mon "
+"parrainage</span>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "<span class=\"s_website_form_label_content\">Payment method</span>"
+msgstr "<span class=\"s_website_form_label_content\">Mode de paiement</span>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "<span class=\"s_website_form_label_content\">Phone</span>"
+msgstr "<span class=\"s_website_form_label_content\">Téléphone</span>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "<span class=\"s_website_form_label_content\">Street</span>"
+msgstr "<span class=\"s_website_form_label_content\">Rue</span>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "<span class=\"s_website_form_label_content\">Title</span>"
+msgstr "<span class=\"s_website_form_label_content\">Titre</span>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid ""
+"<span class=\"s_website_form_label_content\">Type of sponsorship</span>\n"
+"                                    <span class=\"s_website_form_mark\"> *</span>"
+msgstr ""
+"<span class=\"s_website_form_label_content\">Type de parrainage</span>\n"
+"                                    <span class=\"s_website_form_mark\"> *</span>"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "<span class=\"s_website_form_label_content\">Zip</span>"
+msgstr ""
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.load_child_page
+msgid "<span class=\"sr-only\">Loading...</span>"
+msgstr "<span class=\"sr-only\">Chargement...</span>"
+
+#. module: website_sponsorship
+#: model:ir.filters,name:website_sponsorship.dynamic_snippet_children_filter
+msgid "Available Children"
+msgstr "Les enfants disponibles"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_page_header
+msgid "Become a sponsor and change"
+msgstr "Devenez un parrain et changez"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_birthdate_date
 msgid "Birthdate"
 msgstr "Date de naissance"
 
-#. module: sms_sponsorship
-#: model:ir.ui.view,arch_db:sms_sponsorship.sms_child_request_form
-msgid "Cancel request"
-msgstr "Annuler la requête"
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__campaign_id
+msgid "Campaign"
+msgstr "Campagne"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_child_id
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__can_publish
+#: model:ir.model.fields,field_description:website_sponsorship.field_recurring_contract_origin__can_publish
+msgid "Can Publish"
+msgstr "Peut être publié"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__child_id
 msgid "Child"
 msgstr "Enfant"
 
-#. module: sms_sponsorship
-#: model:ir.ui.view,arch_db:sms_sponsorship.sms_child_request_form
-msgid "Child filter criteria"
-msgstr "Critères de sélection d'enfant"
+#. module: website_sponsorship
+#: model:website.snippet.filter,name:website_sponsorship.dynamic_snippet_data_children
+msgid "Children"
+msgstr "Les enfants"
 
-#. module: sms_sponsorship
-#: selection:sms.child.request,state:0
-msgid "Child reserved"
-msgstr "Enfant réservé"
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_description
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_page_template
+msgid "Choose another child"
+msgstr "Choisir un autre enfant"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract_partner_city
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
+msgid "Choose for me"
+msgstr "Choisissez pour moi"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_city
 msgid "City"
 msgstr "Ville"
 
-#. module: sms_sponsorship
-#: model:ir.model,name:sms_sponsorship.model_crm_event_compassion
-msgid "Compassion event"
-msgstr "Evénement Compassion"
+#. module: website_sponsorship
+#: model:ir.model,name:website_sponsorship.model_res_partner
+msgid "Contact"
+msgstr ""
 
-#. module: sms_sponsorship
-#: code:addons/sms_sponsorship/forms/sms_sponsorship_registration_form.py:47
-#, python-format
-msgid "Confirm your sponsorship for %s "
-msgstr "Merci de confirmer votre parrainage pour %s "
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__contract_id
+msgid "Contract"
+msgstr "Contrat"
 
-#. module: sms_sponsorship
-#: model:ir.model,name:sms_sponsorship.model_recurring_contract
-msgid "Contract for recurring invoicing"
-msgstr "Contrat à facturation récurrente"
+#. module: website_sponsorship
+#: model:ir.model.fields.selection,name:website_sponsorship.selection__cms_form_sponsorship__sponsorship_type__sc
+msgid "Correspondence"
+msgstr "Correspondance"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract_partner_country_id
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_country_id
-msgid "Country"
-msgstr "Pays"
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "Correspondence settings"
+msgstr "Paramètres de correspondance"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_create_uid
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__cover_properties
+msgid "Cover Properties"
+msgstr "Propriétés de couverture"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__create_uid
 msgid "Created by"
 msgstr "Créé par"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_create_date
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__create_date
 msgid "Created on"
 msgstr "Créé le"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_date
-msgid "Date"
-msgstr "Date"
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_res_partner__legal_agreement_date
+#: model:ir.model.fields,field_description:website_sponsorship.field_res_users__legal_agreement_date
+msgid "Date of legal agreement"
+msgstr "Date de l'accord juridique"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract_immediately_add_gifts
-msgid "Directly send gifts to the child ?"
-msgstr "Directly send gifts to the child ?"
+#. module: website_sponsorship
+#: code:addons/addons-compassion-switzerland/compassion-website/website_sponsorship/models/compassion_child.py:0
+#: code:addons/website_sponsorship/models/compassion_child.py:0
+#, python-format
+msgid ""
+"Discover %s, a %s-year-old %s from %s. Become a sponsor and change %s life "
+"today. Join us in supporting %s's education, church activities, and favorite"
+" hobbies. Make a difference now!"
+msgstr ""
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract_display_name
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_display_name
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__display_name
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__display_name
+#: model:ir.model.fields,field_description:website_sponsorship.field_ir_qweb_field_html__display_name
+#: model:ir.model.fields,field_description:website_sponsorship.field_recurring_contract_origin__display_name
+#: model:ir.model.fields,field_description:website_sponsorship.field_res_partner__display_name
+#: model:ir.model.fields,field_description:website_sponsorship.field_res_partner_match__display_name
 msgid "Display Name"
 msgstr "Nom affiché"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract_partner_email
+#. module: website_sponsorship
+#. openerp-web
+#: code:addons/addons-compassion-switzerland/compassion-website/website_sponsorship/static/src/js/sponsorship_form_snippet.js:0
+#: code:addons/website_sponsorship/static/src/js/sponsorship_form_snippet.js:0
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_email
+#, python-format
 msgid "Email"
 msgstr "Courriel"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_crm_event_compassion_accepts_sms_booking
-msgid "Enable SMS Sponsorships"
-msgstr "Enable SMS Sponsorships"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_event_id
-msgid "Event"
-msgstr "Évènement"
-
-#. module: sms_sponsorship
-#: selection:sms.child.request,gender:0
-msgid "Female"
-msgstr "Fille"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_field_office_id
-msgid "Field Office"
-msgstr "Field Office"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_full_url
-msgid "Full url"
-msgstr "URL d'accès"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_gender
-msgid "Gender"
-msgstr "Genre"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_has_filter
-msgid "Has filter"
-msgstr "Has filter"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_hold_id
-msgid "Hold"
-msgstr "Hold"
-
-#. module: sms_sponsorship
-#: code:addons/sms_sponsorship/forms/sms_sponsorship_registration_form.py:67
+#. module: website_sponsorship
+#. openerp-web
+#: code:addons/addons-compassion-switzerland/compassion-website/website_sponsorship/static/src/js/sponsorship_form_snippet.js:0
+#: code:addons/website_sponsorship/static/src/js/sponsorship_form_snippet.js:0
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_firstname
 #, python-format
-msgid "How did you hear about Compassion?"
-msgstr "Comment avez-vous connu Compassion ?"
+msgid "Firstname"
+msgstr "Prénom"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract_origin_text
-msgid "I have heard of Compassion through"
-msgstr "J'ai connu Compassion au travers de :"
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "Give details if the options above don't suit"
+msgstr "Précisez si les options ci-dessus ne conviennent pas"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract_id
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_id
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.acceptance_full
+msgid ""
+"I accept the legal terms, the privacy policy &amp; conditions of Compassion."
+msgstr ""
+"J'accepte les conditions légales, la politique de confidentialité &amp; les "
+"conditions de Compassion."
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.sponsorship_done
+msgid "I'll do this later"
+msgstr "Je ferai cela plus tard"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__id
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__id
+#: model:ir.model.fields,field_description:website_sponsorship.field_ir_qweb_field_html__id
+#: model:ir.model.fields,field_description:website_sponsorship.field_recurring_contract_origin__id
+#: model:ir.model.fields,field_description:website_sponsorship.field_res_partner__id
+#: model:ir.model.fields,field_description:website_sponsorship.field_res_partner_match__id
 msgid "ID"
 msgstr "ID"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,help:sms_sponsorship.field_crm_event_compassion_accepts_sms_booking
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__is_published
+#: model:ir.model.fields,field_description:website_sponsorship.field_recurring_contract_origin__is_published
+msgid "Is Published"
+msgstr "Est publié"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
 msgid ""
-"If checked, children will be allocated especially for sponsorships made with "
-"SMS requests."
+"It's hard to escape extreme poverty when you're born into it. That's why we "
+"support children in all areas of their lives. With CHF 42.- per month, you "
+"can free a child from extreme poverty."
 msgstr ""
-"If checked, children will be allocated especially for sponsorships made with "
-"SMS requests."
+"Il est difficile d'échapper à l'extrême pauvreté quand on y est né. C'est "
+"pourquoi nous soutenons les enfants dans tous les domaines de leur vie. Avec"
+" CHF 42.- par mois, vous pouvez libérer un enfant de l'extrême pauvreté."
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_crm_event_compassion_initial_sms_allocation_done
-msgid "Initial sms allocation done"
-msgstr "Initial sms allocation done"
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_function
+msgid "Job"
+msgstr "Travail"
 
-#. module: sms_sponsorship
-#: model:ir.model,name:sms_sponsorship.model_account_invoice
-msgid "Invoice"
-msgstr "Facture"
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_spoken_lang_ids
+msgid "Languages I can read"
+msgstr "Langues que je sais lire"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_is_trying_to_fetch_child
-msgid "Is trying to fetch child"
-msgstr "En train de réserver un enfant"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract_partner_lang
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_lang_code
-msgid "Language"
-msgstr "Langue"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract___last_update
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request___last_update
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship____last_update
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child____last_update
+#: model:ir.model.fields,field_description:website_sponsorship.field_ir_qweb_field_html____last_update
+#: model:ir.model.fields,field_description:website_sponsorship.field_recurring_contract_origin____last_update
+#: model:ir.model.fields,field_description:website_sponsorship.field_res_partner____last_update
+#: model:ir.model.fields,field_description:website_sponsorship.field_res_partner_match____last_update
 msgid "Last Modified on"
 msgstr "Dernière modification le"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_write_uid
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__write_uid
 msgid "Last Updated by"
 msgstr "Modifié par"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_write_date
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__write_date
 msgid "Last Updated on"
 msgstr "Modifié le"
 
-#. module: sms_sponsorship
-#: model:ir.ui.view,arch_db:sms_sponsorship.sms_registration_confirmation
-msgid "Let a new story for"
-msgstr "La vie de"
-
-#. module: sms_sponsorship
-#: selection:sms.child.request,gender:0
-msgid "Male"
-msgstr "Garçon"
-
-#. module: sms_sponsorship
-#: model:ir.ui.view,arch_db:sms_sponsorship.sms_child_request_form
-msgid "Mark as completed"
-msgstr "Mark as completed"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_max_age
-msgid "Max age"
-msgstr "Age max"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_min_age
-msgid "Min age"
-msgstr "Age min"
-
-#. module: sms_sponsorship
-#: code:addons/sms_sponsorship/models/recurring_contract.py:109
+#. module: website_sponsorship
+#. openerp-web
+#: code:addons/addons-compassion-switzerland/compassion-website/website_sponsorship/static/src/js/sponsorship_form_snippet.js:0
+#: code:addons/website_sponsorship/static/src/js/sponsorship_form_snippet.js:0
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_lastname
 #, python-format
-msgid "New SMS sponsorship information"
-msgstr "Nouvelles informations étape 2 SMS"
+msgid "Lastname"
+msgstr "Nom de famille"
 
-#. module: sms_sponsorship
-#: model:ir.model,name:sms_sponsorship.model_res_partner
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_partner_id
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.load_child_page
+msgid "Looking for a child..."
+msgstr "Recherche d'un enfant..."
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_lang
+msgid "Main language"
+msgstr "Langue principale"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__match_create
+msgid "Match Create"
+msgstr "Correspondance Create"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__match_update
+msgid "Match Update"
+msgstr "Mise à jour de la correspondance"
+
+#. module: website_sponsorship
+#: model:ir.model,name:website_sponsorship.model_res_partner_match
+msgid "Match partner"
+msgstr "Partenaire d'appariement"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__medium_id
+msgid "Medium"
+msgstr ""
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_mobile
+msgid "Mobile"
+msgstr ""
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "More information"
+msgstr "En savoir plus"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_page_template
+msgid "More information about"
+msgstr "Plus d'informations sur"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "My coordinates"
+msgstr "Mes coordonnées"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__notes
+msgid "Notes"
+msgstr ""
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__origin_id
+msgid "Origin of my sponsorship"
+msgstr "Origine de mon parrainage"
+
+#. module: website_sponsorship
+#: model:ir.model.fields.selection,name:website_sponsorship.selection__cms_form_sponsorship__sponsorship_amount__plus
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "PLUS Sponsorship"
+msgstr "Parrainage PLUS"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.sponsorship_plus_help
+msgid ""
+"PLUS Sponsorship is an <b>additional donation of CHF 8.00 per month</b>: it "
+"enables Compassion to finance projects to change the children's environment."
+" The funds received under the Sponsorship Plus program contribute to a "
+"common fund and enable Compassion to support several projects each year."
+msgstr ""
+"Le Parrainage PLUS est un <b>don supplémentaire de 8 CHF par mois</b> : il "
+"permet à Compassion de financer des projets visant à changer l'environnement"
+" des enfants. Les fonds reçus dans le cadre du programme Parrainage Plus "
+"alimentent un fonds commun et permettent à Compassion de soutenir plusieurs "
+"projets chaque année."
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_id
 msgid "Partner"
 msgstr "Partenaire"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract_partner_id
-msgid "Partner id"
-msgstr "Partner id"
-
-#. module: sms_sponsorship
-#: code:addons/sms_sponsorship/models/queue_job.py:34
-#, python-format
-msgid "Partner update"
-msgstr "Partner update"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract_pay_first_month_ebanking
-msgid "Pay first month now"
-msgstr "Effectuer le premier don mensuel maintenant"
-
-#. module: sms_sponsorship
-#: code:addons/sms_sponsorship/forms/sms_sponsorship_registration_form.py:74
-#, python-format
-msgid "Payment Method"
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__payment_mode_id
+msgid "Payment method"
 msgstr "Méthode de paiement"
 
-#. module: sms_sponsorship
-#: model:ir.model,name:sms_sponsorship.model_payment_transaction
-msgid "Payment Transaction"
-msgstr "Transaction"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract_partner_phone
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_phone
 msgid "Phone"
 msgstr "Téléphone mobile"
 
-#. module: sms_sponsorship
-#: code:addons/sms_sponsorship/models/recurring_contract.py:106
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.load_child_page
+msgid "Please wait while we are looking for a child meeting your criterias..."
+msgstr ""
+"Veuillez patienter pendant que nous recherchons un enfant répondant à vos "
+"critères..."
+
+#. module: website_sponsorship
+#: model:ir.actions.server,name:website_sponsorship.child_publish_action
+msgid "Publish/Unpublish child"
+msgstr "Publier/annuler l'enfant"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.view_events_form
+msgid "Published"
+msgstr "Publié"
+
+#. module: website_sponsorship
+#: model:ir.model,name:website_sponsorship.model_ir_qweb_field_html
+msgid "Qweb Field HTML"
+msgstr "Champ Qweb HTML"
+
+#. module: website_sponsorship
+#: model:ir.model,name:website_sponsorship.model_recurring_contract_origin
+msgid "Recurring Contract Origin"
+msgstr "Origine du contrat récurrent"
+
+#. module: website_sponsorship
+#: model:ir.model.fields.selection,name:website_sponsorship.selection__cms_form_sponsorship__sponsorship_type__s
+msgid "Regular"
+msgstr "Régulier"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "Regular Sponsorship"
+msgstr "Parrainage Régulier"
+
+#. module: website_sponsorship
+#: model:ir.model.fields.selection,name:website_sponsorship.selection__cms_form_sponsorship__sponsorship_amount__regular
+msgid "Regular sponsorship"
+msgstr "Parrainage régulier"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
+msgid "Reset filters"
+msgstr "Réinitialisation des filtres"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,help:website_sponsorship.field_compassion_child__website_id
+msgid "Restrict publishing to this website."
+msgstr "Restreindre la publication sur ce site web."
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.sponsorship_done
+msgid "Review my preferences now"
+msgstr "Réviser mes préférences maintenant"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__is_seo_optimized
+msgid "SEO optimized"
+msgstr "Optimisation SEO"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_page_header
+msgid "Scroll down to next section"
+msgstr "Défilement vers la section suivante"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
+msgid "Search"
+msgstr "Recherche"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
+msgid "Search children"
+msgstr "Recherche d'enfants"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__seo_name
+msgid "Seo name"
+msgstr "Nom Seo"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.load_child_page
+msgid "Sorry, no children were found at the moment."
+msgstr "Désolé, aucun enfant n'a été trouvé pour le moment."
+
+#. module: website_sponsorship
+#: code:addons/addons-compassion-switzerland/compassion-website/website_sponsorship/wizards/sponsorship_form.py:0
+#: code:addons/website_sponsorship/wizards/sponsorship_form.py:0
 #, python-format
-msgid "Please verify the following information given by the sponsor:"
-msgstr "Merci de vérifier les infos remplies par le parrain :"
+msgid "Sorry, the child is no longer available."
+msgstr ""
 
-#. module: sms_sponsorship
-#: model:ir.model,name:sms_sponsorship.model_queue_job
-msgid "Queue Job"
-msgstr "Queue de jobs"
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__source_id
+msgid "Source"
+msgstr ""
 
-#. module: sms_sponsorship
-#: model:ir.ui.view,arch_db:sms_sponsorship.sms_registration_confirmation
-msgid "Registration successful !"
-msgstr "Merci beaucoup !"
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_description
+msgid "Sponsor"
+msgstr "Parrainage"
 
-#. module: sms_sponsorship
-#: selection:sms.child.request,state:0
-msgid "Request expired"
-msgstr "Requête expirée"
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
+msgid "Sponsor a child"
+msgstr "Parrainer un enfant"
 
-#. module: sms_sponsorship
-#: model:ir.ui.view,arch_db:sms_sponsorship.sms_child_request_form
-msgid "Request new child"
-msgstr "Réserver un autre enfant"
-
-#. module: sms_sponsorship
-#: selection:sms.child.request,state:0
-msgid "Request received"
-msgstr "Nouvelle requête"
-
-#. module: sms_sponsorship
-#: model:ir.model,name:sms_sponsorship.model_sms_child_request
-msgid "SMS Child request"
-msgstr "SMS Child request"
-
-#. module: sms_sponsorship
-#: code:addons/sms_sponsorship/models/queue_job.py:21
-#, python-format
-msgid "SMS Request"
-msgstr "Requête SMS"
-
-#. module: sms_sponsorship
-#: model:ir.actions.act_window,name:sms_sponsorship.action_sms_request
-#: model:ir.ui.menu,name:sms_sponsorship.menu_sms_request
-msgid "SMS Requests"
-msgstr "Parrainages SMS"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_staff_notification_settings_new_partner_notify_ids
-msgid "SMS new partner"
-msgstr "Nouveau partenaire SMS"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_recurring_contract_sms_request_id
-msgid "SMS request"
-msgstr "Parrainage SMS"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_sender
-msgid "Sender"
-msgstr "Expéditeur"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_crm_event_compassion_sms_number_hold_target
-msgid "Sms number hold target"
-msgstr "Sms number hold target"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_sms_reminder_sent
-msgid "Sms reminder sent"
-msgstr "Rappel SMS envoyé"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_compassion_hold_sms_request_id
-msgid "Sms request id"
-msgstr "Parrainage SMS"
-
-#. module: sms_sponsorship
-#: model:ir.model,name:sms_sponsorship.model_compassion_child
+#. module: website_sponsorship
+#: model:ir.model,name:website_sponsorship.model_compassion_child
 msgid "Sponsored Child"
 msgstr "Enfant parrainé"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_payment_transaction_sponsorship_id
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_sponsorship_id
-msgid "Sponsorship"
-msgstr "Parrainage"
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__sponsorship_type
+msgid "Sponsorship Type"
+msgstr "Type de parrainage"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_sponsorship_confirmed
-msgid "Sponsorship confirmed"
-msgstr "Parrainage confirmé"
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "Sponsorship settings"
+msgstr "Paramètres de parrainage"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract_partner_state_id
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_state
-msgid "State"
-msgstr "État"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_step1_url
-msgid "Step 1 URL"
-msgstr "Etape 1 URL"
-
-#. module: sms_sponsorship
-#: selection:sms.child.request,state:0
-msgid "Step 1 completed"
-msgstr "Etape 1 terminée"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_step2_url
-msgid "Step 2 URL"
-msgstr "Etape 2 URL"
-
-#. module: sms_sponsorship
-#: selection:sms.child.request,state:0
-msgid "Step 2 completed"
-msgstr "Etape 2 terminée"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_step1_url_id
-msgid "Step1 url id"
-msgstr "Etape 1 URL"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_sms_child_request_step2_url_id
-msgid "Step2 url id"
-msgstr "Etape 2 URL"
-
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract_partner_street
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_street
 msgid "Street"
 msgstr "Rue"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract_gtc_accept
-msgid "Terms and conditions"
-msgstr "Conditions générales"
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
+msgid "Submit"
+msgstr "Envoyer"
 
-#. module: sms_sponsorship
-#: model:ir.ui.view,arch_db:sms_sponsorship.sms_registration_confirmation
-msgid "Thank you for registration!"
-msgstr "Merci de tout coeur de votre parrainage."
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.sponsorship_done
+msgid "Thank you for sponsoring"
+msgstr "Merci d'avoir parrainé"
 
-#. module: sms_sponsorship
-#: code:addons/sms_sponsorship/models/res_partner.py:47
-#, python-format
+#. module: website_sponsorship
+#: model:ir.model.fields,help:website_sponsorship.field_compassion_child__website_url
+#: model:ir.model.fields,help:website_sponsorship.field_recurring_contract_origin__website_url
+msgid "The full URL to access the document through the website."
+msgstr "L'URL complète permettant d'accéder au document via le site web."
+
+#. module: website_sponsorship
+#: model:ir.model.fields,help:website_sponsorship.field_cms_form_sponsorship__campaign_id
 msgid ""
-"Thank you for your commitment towards %s. Now that all information is "
-"completed, we will activate your sponsorship as soon as we receive your "
-"first payment. <br/><br/>You will receive more documentation by post in the "
-"coming days. In the mean time, feel free to reach us if you have any "
-"question. <br/><br/>"
+"This is a name that helps you keep track of your different campaign efforts,"
+" e.g. Fall_Drive, Christmas_Special"
 msgstr ""
-"Thank you for your commitment towards %s. Now that all information is "
-"completed, we will activate your sponsorship as soon as we receive your "
-"first payment. <br/><br/>You will receive more documentation by post in the "
-"coming days. In the mean time, feel free to reach us if you have any "
-"question. <br/><br/>"
+"Il s'agit d'un nom qui vous aide à suivre les différents efforts de votre "
+"campagne, par exemple Fall_Drive, Christmas_Special"
 
-#. module: sms_sponsorship
-#: code:addons/sms_sponsorship/models/res_partner.py:35
-#: code:addons/sms_sponsorship/models/res_partner.py:55
-#, python-format
-msgid "Thank you for your sponsorship!"
-msgstr "Thank you for your sponsorship!"
+#. module: website_sponsorship
+#: model:ir.model.fields,help:website_sponsorship.field_cms_form_sponsorship__medium_id
+msgid "This is the method of delivery, e.g. Postcard, Email, or Banner Ad"
+msgstr ""
+"Il s'agit de la méthode de diffusion, par exemple carte postale, courrier "
+"électronique ou bannière publicitaire"
 
-#. module: sms_sponsorship
-#: code:addons/sms_sponsorship/controllers/main.py:178
-#, python-format
+#. module: website_sponsorship
+#: model:ir.model.fields,help:website_sponsorship.field_cms_form_sponsorship__source_id
 msgid ""
-"The payment was not successful, but your sponsorship has still been "
-"activated! You will be able to pay later using your selected payment method."
+"This is the source of the link, e.g. Search Engine, another domain, or name "
+"of email list"
 msgstr ""
-"The payment was not successful, but your sponsorship has still been "
-"activated! You will be able to pay later using your selected payment method."
+"Il s'agit de la source du lien, par exemple un moteur de recherche, un autre"
+" domaine ou le nom d'une liste d'adresses électroniques"
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,help:sms_sponsorship.field_sms_child_request_is_trying_to_fetch_child
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.sponsorship_done
 msgid ""
-"This is set to true when a child is currently being fetched. It prevents to "
-"fetch multiple children."
+"This seems to be your first sponsorship with Compassion. Do you have 5 "
+"minutes in order to review your preferences? Don't worry, you will be "
+"contacted later if you don't have time right now."
 msgstr ""
-"This is set to true when a child is currently being fetched. It prevents to "
-"fetch multiple children."
+"Il semble que ce soit votre premier parrainage avec Compassion. Avez-vous 5 "
+"minutes pour revoir vos préférences ? Ne vous inquiétez pas, vous serez "
+"contacté plus tard si vous n'avez pas le temps maintenant."
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract_partner_title
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_title
 msgid "Title"
 msgstr "Titre"
 
-#. module: sms_sponsorship
-#: model:ir.model,name:sms_sponsorship.model_demand_weekly_demand
-msgid "Weekly Demand"
-msgstr "Weekly Demand"
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__sponsorship_amount
+msgid "Type of sponsorship"
+msgstr "Type de parrainage"
 
-#. module: sms_sponsorship
-#: code:addons/sms_sponsorship/models/res_partner.py:23
-#, python-format
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.view_events_form
+msgid "Unpublished"
+msgstr "Non publié"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__website_published
+#: model:ir.model.fields,field_description:website_sponsorship.field_recurring_contract_origin__website_published
+msgid "Visible on current website"
+msgstr "Visible sur le site web actuel"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__website_id
+msgid "Website"
+msgstr "Site web"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__website_image
+msgid "Website Image"
+msgstr "Image Site web"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__website_legend
+msgid "Website Legend"
+msgstr "Légende du site web"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__website_reservation_id
+msgid "Website Reservation"
+msgstr "Réservation du site web"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__website_reservation_date
+msgid "Website Reservation Date"
+msgstr "Date de réservation du site web"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__website_url
+#: model:ir.model.fields,field_description:website_sponsorship.field_recurring_contract_origin__website_url
+msgid "Website URL"
+msgstr "URL du site web"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__website_meta_description
+msgid "Website meta description"
+msgstr "Méta-description du site web"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__website_meta_keywords
+msgid "Website meta keywords"
+msgstr "Mots clés méta du site web"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__website_meta_title
+msgid "Website meta title"
+msgstr "Titre méta du site"
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__website_meta_og_img
+msgid "Website opengraph image"
+msgstr "Site web image opengraph"
+
+#. module: website_sponsorship
+#: model:ir.model,name:website_sponsorship.model_cms_form_sponsorship
+msgid "Website sponsorship form"
+msgstr "Formulaire de parrainage du site web"
+
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_page_template
 msgid ""
-"You chose to invest in the life of %s. There are two more steps before %s "
-"will be informed that you sponsor %s, but you don't have to hurry! We have "
-"reserved the child so that you can take your time to complete the "
-"registration.<br/><br/>1. You can <a href='%s'>click here</a> to complete "
-"your information and your payment option in the coming days. <br/>2. Your "
-"sponsorship will be activated when we receive your first payment. <br/><br/"
-">Best regards"
+"With CHF <span id=\"sponsorship_amount\">42</span>.- per month, you will "
+"release"
 msgstr ""
-"You chose to invest in the life of %s. There are two more steps before %s "
-"will be informed that you sponsor %s, but you don't have to hurry! We have "
-"reserved the child so that you can take your time to complete the "
-"registration.<br/><br/>1. You can <a href='%s'>click here</a> to complete "
-"your information and your payment option in the coming days. <br/>2. Your "
-"sponsorship will be activated when we receive your first payment. <br/><br/"
-">Best regards"
+"Avec CHF <span id=\"sponsorship_amount\">42</span>.- par mois, vous libérez"
 
-#. module: sms_sponsorship
-#: code:addons/sms_sponsorship/forms/sms_sponsorship_registration_form.py:55
+#. module: website_sponsorship
+#: model:ir.model.fields.selection,name:website_sponsorship.selection__cms_form_sponsorship__sponsorship_type__swp
+msgid "Write&Pray"
+msgstr "Écrire&Prier"
+
+#. module: website_sponsorship
+#: code:addons/addons-compassion-switzerland/compassion-website/website_sponsorship/models/compassion_child.py:0
+#: code:addons/website_sponsorship/models/compassion_child.py:0
 #, python-format
-msgid "Your personal data"
-msgstr "Vos coordonnées"
+msgid "You cannot publish a child that is not available for sponsorship."
+msgstr ""
 
-#. module: sms_sponsorship
-#: model:ir.model.fields,field_description:sms_sponsorship.field_cms_form_recurring_contract_partner_zip
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.sponsorship_done
+msgid ""
+"You will soon receive all documentation needed to start the sponsorship in "
+"your mailbox."
+msgstr ""
+"Vous recevrez bientôt dans votre boîte aux lettres tous les documents "
+"nécessaires au démarrage du parrainage."
+
+#. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_zip
 msgid "Zip"
 msgstr "Code postal"
 
-#. module: sms_sponsorship
-#: model:ir.ui.view,arch_db:sms_sponsorship.sms_registration_confirmation
-msgid ""
-"begin!\n"
-"                            You will soon receive all documentation needed "
-"to start the sponsorship in your mailbox."
-msgstr ""
-"va changer grâce à vous! Vous allez recevoir dans les jours qui viennent les "
-"informations pour démarrer ce parrainage dans votre boîte aux lettres."
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_page_header
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.sponsorship_done
+msgid "child picture"
+msgstr "image de l'enfant"
 
-#. module: sms_sponsorship
-#: model:ir.model,name:sms_sponsorship.model_cms_form_match_partner
-msgid "cms.form.match.partner"
-msgstr "cms.form.match.partner"
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_page_template
+msgid "from poverty!"
+msgstr "de la pauvreté !"
 
-#. module: sms_sponsorship
-#: model:ir.model,name:sms_sponsorship.model_cms_form_recurring_contract
-msgid "cms.form.recurring.contract"
-msgstr "cms.form.recurring.contract"
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_page_header
+msgid "life today."
+msgstr "la vie aujourd'hui."
 
-#. module: sms_sponsorship
-#: model:ir.model,name:sms_sponsorship.model_compassion_abstract_hold
-msgid "compassion.abstract.hold"
-msgstr "compassion.abstract.hold"
-
-#. module: sms_sponsorship
-#: model:ir.model,name:sms_sponsorship.model_compassion_hold
-msgid "compassion.hold"
-msgstr "compassion.hold"
-
-#. module: sms_sponsorship
-#: model:ir.model,name:sms_sponsorship.model_privacy_statement_agreement
-msgid "privacy.statement.agreement"
-msgstr "privacy.statement.agreement"
-
-#. module: sms_sponsorship
-#: model:ir.model,name:sms_sponsorship.model_staff_notification_settings
-msgid "staff.notification.settings"
-msgstr "staff.notification.settings"
-
-#. module: sms_sponsorship
-#: code:addons/sms_sponsorship/models/sms_child_request.py:365
-#, python-format
-msgid "{} SMS Sponsorship are ongoing"
-msgstr "{} SMS Sponsorship are ongoing"
-
-#. module: sms_sponsorship
-#: code:addons/sms_sponsorship/models/sms_child_request.py:363
-#, python-format
-msgid "{} partner(s) have ongoing SMS Sponsorship"
-msgstr "{} partner(s) have ongoing SMS Sponsorship"
+#. module: website_sponsorship
+#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_legend
+msgid "y/o&amp;nbsp;"
+msgstr "ans&amp;nbsp;"
