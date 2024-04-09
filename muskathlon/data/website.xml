@@ -3,9 +3,16 @@
         <record id="muskathlon_website" model="website">
             <field name="name">Muskathlon</field>
             <field name="domain">muskathlon.compassion.ch</field>
-            <field name="homepage_id" ref="website_event_compassion.events_page" />
+            <field
+        name="homepage_id"
+        ref="website_event_compassion.events_page"
+      />
             <field name="default_lang_id" ref="base.lang_en" />
-            <field name="logo" type="base64" file="muskathlon/static/src/img/muskathlon.png" />
+            <field
+        name="logo"
+        type="base64"
+        file="muskathlon/static/src/img/muskathlon.png"
+      />
         </record>
     </data>
 </odoo>
