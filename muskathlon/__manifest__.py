@@ -51,6 +51,7 @@
         "data/event_type_mail.xml",
         "data/order_material_mail_template.xml",
         "data/queue_job.xml",
+        "data/website.xml",
         "reports/muskathlon_view.xml",
         "views/event_compassion_view.xml",
         "views/recurring_contracts_view.xml",
