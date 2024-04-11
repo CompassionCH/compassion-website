@@ -69,6 +69,12 @@
         "templates/event_donation.xml",
         "templates/my_events.xml",
         "data/website_page.xml",
+        "data/group_visit_emails.xml",
+        "templates/group_visit_medical_info.xml",
+        "templates/group_visit_party_invitation.xml",
+        "templates/group_visit_practical_information.xml",
+        "templates/group_visit_step2.xml",
+
     ],
     "installable": True,
     "auto_install": False,
