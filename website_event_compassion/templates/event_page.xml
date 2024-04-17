@@ -29,6 +29,17 @@
         </section>
     </template>
 
+    <template id="group_visit_event_stepper" name="Group visit stepper">
+        <div id="stepper">
+            <ol class="breadcrumb">
+                <li t-att-class="'active' if event_step == 1 else ('done' if event_step > 1 else '')">1. Registration</li>
+                <li t-att-class="'active' if event_step == 2 else ('done' if event_step > 2 else '')">2. Agreements</li>
+                <li t-att-class="'active' if event_step == 3 else ('done' if event_step > 3 else '')">3. Trip payment and impact setup</li>
+                <li t-att-class="'active' if event_step == 4 else ('done' if event_step > 4 else '')">4. Trip preparation</li>
+            </ol>
+        </div>
+    </template>
+
     <template id="event_barometer" name="Event barometer">
         <p
       t-att-class="barometer_title_class"

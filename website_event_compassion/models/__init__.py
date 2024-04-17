@@ -21,4 +21,5 @@ from . import (
     res_partner,
     sale_order,
     sale_order_line,
+    partner_communication_job,
 )
