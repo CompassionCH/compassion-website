@@ -17,6 +17,18 @@ module_data = [
     ("child_protection_config", "partner.communication.config", 220),
 ]
 
+reload_data = [
+    "security/access_rules.xml",
+    "data/res_users.xml",
+    "data/product.xml",
+    "data/mail_template.xml",
+    "data/event_type.xml",
+    "data/event_registration_task.xml",
+    "data/event_registration_stage.xml",
+    "data/event_type_mail.xml",
+    "data/website.xml",
+    "templates/muskathlon_page.xml",
+]
 
 def migrate(cr, version):
     # Associate prod records to XML records
@@ -24,3 +36,6 @@ def migrate(cr, version):
         openupgrade.add_xmlid(
             cr, "muskathlon", data[0], data[1], data[2], noupdate=False
         )
+
+    for data in reload_data:
+        openupgrade.load_data(cr, 'muskathlon', data)
