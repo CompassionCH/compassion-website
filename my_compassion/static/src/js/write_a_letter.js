@@ -35,8 +35,11 @@ function selectTemplate(selected_template_id) {
     search_params.toString();
   history.replaceState({}, document.title, url);
 
+  // Convert HTMLCollection to an array to use forEach
+  const templateImagesArray = Array.from(template_images);
+
   // Unselect all
-  template_images.forEach((template_image) => {
+  templateImagesArray.forEach((template_image) => {
     template_image.classList.remove("border", "border-5", "border-primary");
   });
 
@@ -217,7 +220,7 @@ function displayImages() {
 function updateImageDisplay(event) {
   const input_images = event.target.files;
 
-  input_images.forEach((file) => {
+  Array.from(input_images).forEach((file) => {
     const is_image = file.type.startsWith("image/");
 
     if (

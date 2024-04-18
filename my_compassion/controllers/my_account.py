@@ -636,7 +636,7 @@ class MyAccountController(CustomerPortal):
             gen_vals["language_id"] = language.id
         try:
             generator_id = int(kwargs.get("generator_id"))
-        except ValueError:
+        except (ValueError, TypeError):
             generator_id = None
         gen = None
         if generator_id:
