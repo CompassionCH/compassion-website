@@ -13,7 +13,6 @@ class StaffNotificationSettings(models.TransientModel):
         readonly=False,
     )
 
-    @api.multi
     def set_values(self):
         super().set_values()
         self.env["ir.config_parameter"].sudo().set_param(
@@ -21,7 +20,6 @@ class StaffNotificationSettings(models.TransientModel):
             ",".join(list(map(str, self.new_participant_notify_ids.ids))),
         )
 
-    @api.multi
     def get_values(self):
         param_obj = self.env["ir.config_parameter"].sudo()
         res = super().get_values()

@@ -54,7 +54,6 @@ class AccountInvoiceLine(models.Model):
                 self.crowdfunding_participant_id.project_id.event_id.analytic_id
             )
 
-    @api.multi
     def _get_ambassador_receipt_config(self):
         """
         Check if donation is linked to a crowdfunding event.

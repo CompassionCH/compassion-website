@@ -76,7 +76,6 @@ class CrowdfundingParticipant(models.Model):
     def get_sponsorship_url(self, participant_id):
         return self.browse(participant_id).sudo().sponsorship_url
 
-    @api.multi
     def _compute_sponsorship_url(self):
         wp = self.env["wordpress.configuration"].sudo().get_config()
         for participant in self:
@@ -94,13 +93,11 @@ class CrowdfundingParticipant(models.Model):
                 DEFAULT_URL % wp.survival_sponsorship_url
             )
 
-    @api.multi
     def _compute_product_number_reached(self):
         for participant in self:
             invl = participant.invoice_line_ids.filtered(lambda l: l.state == "paid")
             participant.product_number_reached = int(sum(invl.mapped("quantity")))
 
-    @api.multi
     def _compute_sponsorships(self):
         for participant in self:
             participant.sponsorship_ids = self.env["recurring.contract"].search(
@@ -111,12 +108,10 @@ class CrowdfundingParticipant(models.Model):
                 ]
             )
 
-    @api.multi
     def _compute_number_sponsorships_reached(self):
         for participant in self:
             participant.number_sponsorships_reached = len(participant.sponsorship_ids)
 
-    @api.multi
     def _compute_profile_photo_url(self):
         domain = self.env["website"].get_current_website()._get_http_domain()
         for participant in self:
@@ -135,7 +130,6 @@ class CrowdfundingParticipant(models.Model):
 
             participant.profile_photo_url = f"{domain}/{path}" if path else path
 
-    @api.multi
     def _compute_website_url(self):
         for participant in self:
             participant.website_url = f"/participant/{participant.id}"

@@ -66,7 +66,6 @@ class ProductTemplate(models.Model):
         super()._auto_init()
         self.env["product.template"].search([]).recompute_amount()
 
-    @api.multi
     def recompute_amount(self):
         """
         This function is used to calculate the total amount of funds impacted by all the campaigns

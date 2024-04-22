@@ -150,7 +150,6 @@ class CrowdfundingProject(models.Model):
         for project in self:
             project._set_image_value(project.image_small)
 
-    @api.one
     def _set_image_value(self, value):
         self.cover_photo = value
 
@@ -249,7 +248,6 @@ class CrowdfundingProject(models.Model):
         res.add_owner2participants()
         return res
 
-    @api.multi
     def add_owner2participants(self):
         """Add the project owner to the participant list."""
         for project in self:
@@ -287,14 +285,12 @@ class CrowdfundingProject(models.Model):
             else:
                 self.presentation_video_embed = self.presentation_video
 
-    @api.multi
     def _compute_product_number_goal(self):
         for project in self:
             project.product_number_goal = sum(
                 project.participant_ids.mapped("product_number_goal")
             )
 
-    @api.multi
     def _compute_product_number_reached(self):
         # Compute with SQL query for good performance
         self.env.cr.execute(
@@ -315,14 +311,12 @@ class CrowdfundingProject(models.Model):
             project.amount_reached = round(res[0])
             project.product_number_reached = round(res[1])
 
-    @api.multi
     def _compute_number_sponsorships_goal(self):
         for project in self:
             project.number_sponsorships_goal = sum(
                 project.participant_ids.mapped("number_sponsorships_goal")
             )
 
-    @api.multi
     def _compute_sponsorships(self):
         for project in self:
             project.sponsorship_ids = self.env["recurring.contract"].search(
@@ -333,31 +327,26 @@ class CrowdfundingProject(models.Model):
                 ]
             )
 
-    @api.multi
     def _compute_number_sponsorships_reached(self):
         for project in self:
             project.number_sponsorships_reached = len(project.sponsorship_ids)
 
-    @api.multi
     def _compute_website_url(self):
         for project in self:
             project.website_url = f"{project.website_id.domain}/project/{project.id}"
 
-    @api.multi
     def _compute_time_left(self):
         for project in self:
             project.time_left = format_timedelta(
                 project.deadline - date.today(), locale=self.env.lang[:2]
             )
 
-    @api.multi
     def _compute_owner_participant_id(self):
         for project in self:
             project.owner_participant_id = project.participant_ids.filtered(
                 lambda p: p.partner_id == project.project_owner_id
             ).id
 
-    @api.multi
     def _compute_cover_photo_url(self):
         domain = self.env["website"].get_current_website()._get_http_domain()
         for project in self:
@@ -365,14 +354,12 @@ class CrowdfundingProject(models.Model):
                 f"{domain}/web/content/crowdfunding.project/{project.id}/cover_photo"
             )
 
-    @api.multi
     def _compute_invoice_line_ids(self):
         for project in self:
             project.invoice_line_ids = self.env["account.invoice.line"].search(
                 [("crowdfunding_participant_id", "in", project.participant_ids.ids)]
             )
 
-    @api.multi
     def validate(self):
         self.write({"state": "active", "is_published": True})
         comm_obj = self.env["partner.communication.job"]
@@ -387,7 +374,6 @@ class CrowdfundingProject(models.Model):
                 }
             )
 
-    @api.multi
     def toggle_website_published(self):
         self.ensure_one()
         self.website_published = not self.website_published

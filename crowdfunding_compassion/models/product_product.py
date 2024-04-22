@@ -14,7 +14,6 @@ from odoo import api, models
 class ProductTemplate(models.Model):
     _inherit = "product.product"
 
-    @api.multi
     def recompute_amount(self):
         """(NOT THE BEST WAY TO HANDLE THE BUTTON APPEARING IN THE SUBVIEW ON PRODUCT.PRODUCT)
         This function is used to calculate the total amount of funds impacted by all the campaigns
