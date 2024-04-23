@@ -50,7 +50,7 @@ Credits
 Authors
 -------
 
-* Compassion CH
+* Compassion Switzerland
 
 Contributors
 ------------

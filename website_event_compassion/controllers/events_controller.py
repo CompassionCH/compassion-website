@@ -164,24 +164,10 @@ class EventsController(Controller):
         """
         if not event.is_published:
             return request.redirect(EVENTS_URL)
-        sale_order = request.website.sale_get_order(force_create=True)
+        sale_order = request.website.sale_get_order(force_create=True).sudo()
         if sale_order.state != "draft":
             request.session["sale_order_id"] = None
-            sale_order = request.website.sale_get_order(force_create=True)
+            sale_order = request.website.sale_get_order(force_create=True).sudo()
         product_id = event.odoo_event_id.donation_product_id.id
-        order_line_id = sale_order._cart_update(
-            product_id=product_id,
-            set_qty=1,
-        )["line_id"]
-        order_line = request.env["sale.order.line"].sudo().browse(order_line_id)
-        order_line.write(
-            {
-                "price_unit": amount,
-                "registration_id": registration.id,
-                "product_uom_qty": 1,
-            }
-        )
-        order_line.order_id.workflow_process_id = request.env.ref(
-            "sale_automatic_workflow.automatic_validation"
-        ).sudo()
+        sale_order.add_donation(product_id, amount, registration_id=registration.id)
         return request.redirect("/shop/checkout?express=1")

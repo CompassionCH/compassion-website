@@ -1,11 +1,16 @@
 #    Copyright (C) 2020 Compassion CH
 #    @author: Quentin Gigon
+import base64
 import urllib.parse as urlparse
 from datetime import date, datetime
 
 from babel.dates import format_timedelta
 
-from odoo import _, api, fields, models, tools
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
+from odoo.tools import ImageProcess, file_open, ormcache
+
+from ..exceptions import InvalidDeadlineException
 
 
 class CrowdfundingProject(models.Model):
@@ -45,20 +50,13 @@ class CrowdfundingProject(models.Model):
         index=True,
     )
     time_left = fields.Char(compute="_compute_time_left")
-    cover_photo = fields.Binary(
+    cover_photo = fields.Image(
         "Cover Photo",
         help="Upload a cover photo that represents your project. Best size: 900x400px",
-        attachment=True,
         required=False,
+        max_width=1024,
+        max_height=512,
     )
-    image = fields.Binary(
-        "Big-sized image", compute="_compute_images", inverse="_set_image"
-    )
-    image_small = fields.Binary("Small-sized image", compute="_compute_images")
-    image_medium = fields.Binary(
-        "Medium-sized image", compute="_compute_images", inverse="_set_image_medium"
-    )
-    image_variant_raw = fields.Binary()
     cover_photo_url = fields.Char(compute="_compute_cover_photo_url", required=False)
     presentation_video = fields.Char(
         help="Paste any video link that showcase your project"
@@ -87,6 +85,12 @@ class CrowdfundingProject(models.Model):
     number_sponsorships_reached = fields.Integer(
         "Sponsorships reached", compute="_compute_number_sponsorships_reached"
     )
+    number_csp_goal = fields.Integer(
+        "Sponsorships goal", compute="_compute_number_sponsorships_goal"
+    )
+    number_csp_reached = fields.Integer(
+        "Sponsorships reached", compute="_compute_number_sponsorships_reached"
+    )
     product_crowdfunding_impact = fields.Char(compute="_compute_impact_text")
     color_sponsorship = fields.Char(compute="_compute_color_sponsorship")
     color_product = fields.Char(compute="_compute_color_product")
@@ -96,8 +100,11 @@ class CrowdfundingProject(models.Model):
     sponsorship_ids = fields.Many2many(
         "recurring.contract", string="Sponsorships", compute="_compute_sponsorships"
     )
+    csp_sponsorship_ids = fields.Many2many(
+        "recurring.contract", string="Sponsorships", compute="_compute_csp_sponsorships"
+    )
     invoice_line_ids = fields.One2many(
-        "account.invoice.line", compute="_compute_invoice_line_ids", string="Donations"
+        "account.move.line", compute="_compute_invoice_line_ids", string="Donations"
     )
     project_owner_id = fields.Many2one("res.partner", "Project owner", required=True)
     owner_participant_id = fields.Many2one(
@@ -121,37 +128,19 @@ class CrowdfundingProject(models.Model):
     owner_firstname = fields.Char(string="Your firstname")
     active = fields.Boolean(default=True)
 
-    @api.depends("cover_photo")
-    def _compute_images(self):
+    @api.constrains("deadline", "state")
+    def _check_deadline(self):
         for project in self:
-            if project._context.get("bin_size"):
-                project.image_medium = project.cover_photo
-                project.image_small = project.cover_photo
-                project.image = project.cover_photo
-            else:
-                resized_images = tools.image_get_resized_images(
-                    project.cover_photo, return_big=True, avoid_resize_medium=True
+            if project.state != "done" and project.deadline < date.today():
+                raise InvalidDeadlineException
+
+    @api.constrains("type", "participant_ids")
+    def _check_type(self):
+        for project in self:
+            if project.type == "individual" and len(project.participant_ids) > 1:
+                raise ValidationError(
+                    _("Individual project can only have one participant.")
                 )
-                project.image_medium = resized_images["image_medium"]
-                project.image_small = resized_images["image_small"]
-                project.image = resized_images["image"]
-
-    def _set_image(self):
-        for project in self:
-            project.cover_photo = project.image_medium
-            project.image_variant2 = project.image_small
-            project.image_variant3 = project.image
-
-    def _set_image_medium(self):
-        for project in self:
-            project.cover_photo = project.image_medium
-
-    def _set_image_small(self):
-        for project in self:
-            project._set_image_value(project.image_small)
-
-    def _set_image_value(self, value):
-        self.cover_photo = value
 
     def _compute_description_short(self):
         for project in self:
@@ -224,9 +213,7 @@ class CrowdfundingProject(models.Model):
         event = self.env["crm.event.compassion"].create(
             {
                 "name": vals.get("name"),
-                "event_type_id": self.env.ref(
-                    "crowdfunding_compassion.event_type_crowdfunding"
-                ).id,
+                "type": "crowdfunding",
                 "crowdfunding_project_id": res.id,
                 "company_id": self.env.user.company_id.id,
                 "start_date": vals.get("deadline"),
@@ -234,7 +221,9 @@ class CrowdfundingProject(models.Model):
                 "hold_start_date": date.today(),
                 "number_allocate_children": vals.get("product_number_goal"),
                 "planned_sponsorships": vals.get("number_sponsorships_goal"),
-                "type": "crowdfunding",
+                "ambassador_config_id": self.env.ref(
+                    "crowdfunding_compassion.config_donation_received"
+                ).id,
             }
         )
         res.event_id = event
@@ -284,6 +273,8 @@ class CrowdfundingProject(models.Model):
                 )
             else:
                 self.presentation_video_embed = self.presentation_video
+        else:
+            self.presentation_video_embed = False
 
     def _compute_product_number_goal(self):
         for project in self:
@@ -296,10 +287,10 @@ class CrowdfundingProject(models.Model):
         self.env.cr.execute(
             """
             SELECT p.id, SUM(il.price_total), SUM(il.quantity)
-            FROM account_invoice_line il
+            FROM account_move_line il
             JOIN crowdfunding_participant pa ON pa.id = il.crowdfunding_participant_id
             JOIN crowdfunding_project p ON p.id = pa.project_id
-            WHERE il.state = 'paid'
+            WHERE il.payment_state = 'paid'
             AND p.id = ANY(%s)
             GROUP BY p.id
         """,
@@ -316,6 +307,9 @@ class CrowdfundingProject(models.Model):
             project.number_sponsorships_goal = sum(
                 project.participant_ids.mapped("number_sponsorships_goal")
             )
+            project.number_csp_goal = sum(
+                project.participant_ids.mapped("number_csp_goal")
+            )
 
     def _compute_sponsorships(self):
         for project in self:
@@ -323,6 +317,17 @@ class CrowdfundingProject(models.Model):
                 [
                     ("campaign_id", "=", project.campaign_id.id),
                     ("type", "like", "S"),
+                    ("type", "!=", "CSP"),
+                    ("state", "!=", "cancelled"),
+                ]
+            )
+
+    def _compute_csp_sponsorships(self):
+        for project in self:
+            project.csp_sponsorship_ids = self.env["recurring.contract"].search(
+                [
+                    ("campaign_id", "=", project.campaign_id.id),
+                    ("type", "=", "CSP"),
                     ("state", "!=", "cancelled"),
                 ]
             )
@@ -330,10 +335,11 @@ class CrowdfundingProject(models.Model):
     def _compute_number_sponsorships_reached(self):
         for project in self:
             project.number_sponsorships_reached = len(project.sponsorship_ids)
+            project.number_csp_reached = len(project.csp_sponsorship_ids)
 
     def _compute_website_url(self):
         for project in self:
-            project.website_url = f"{project.website_id.domain}/project/{project.id}"
+            project.website_url = f"/project/{project.id}"
 
     def _compute_time_left(self):
         for project in self:
@@ -344,7 +350,8 @@ class CrowdfundingProject(models.Model):
     def _compute_owner_participant_id(self):
         for project in self:
             project.owner_participant_id = project.participant_ids.filtered(
-                lambda p: p.partner_id == project.project_owner_id
+                lambda participant, _project=project: participant.partner_id
+                == _project.project_owner_id
             ).id
 
     def _compute_cover_photo_url(self):
@@ -356,7 +363,7 @@ class CrowdfundingProject(models.Model):
 
     def _compute_invoice_line_ids(self):
         for project in self:
-            project.invoice_line_ids = self.env["account.invoice.line"].search(
+            project.invoice_line_ids = self.env["account.move.line"].search(
                 [("crowdfunding_participant_id", "in", project.participant_ids.ids)]
             )
 
@@ -374,14 +381,15 @@ class CrowdfundingProject(models.Model):
                 }
             )
 
-    def toggle_website_published(self):
-        self.ensure_one()
-        self.website_published = not self.website_published
-        return True
-
     @api.model
     def get_active_projects(
-        self, limit=None, year=None, type=None, domain=None, offset=0, status="all"
+        self,
+        limit=None,
+        year=None,
+        project_type=None,
+        domain=None,
+        offset=0,
+        status="all",
     ):
         filters = list(
             filter(
@@ -391,7 +399,7 @@ class CrowdfundingProject(models.Model):
                     ("website_published", "=", True),
                     ("deadline", ">=", datetime(year, 1, 1)) if year else None,
                     ("create_date", "<=", datetime(year, 12, 31)) if year else None,
-                    ("type", "=", type) if type else None,
+                    ("type", "=", project_type) if project_type else None,
                     ("deadline", ">=", date.today()) if status == "active" else None,
                     ("deadline", "<", date.today()) if status == "finish" else None,
                 ],
@@ -425,10 +433,10 @@ class CrowdfundingProject(models.Model):
     def open_donations(self):
         return {
             "type": "ir.actions.act_window",
-            "name": _("Participants"),
+            "name": _("Donations"),
             "view_type": "form",
             "view_mode": "tree,form",
-            "res_model": "account.invoice.line",
+            "res_model": "account.move.line",
             "domain": [("crowdfunding_participant_id", "in", self.participant_ids.ids)],
             "target": "current",
             "context": {
@@ -466,3 +474,52 @@ class CrowdfundingProject(models.Model):
         res["default_opengraph"]["og:image:width"] = "640"
         res["default_opengraph"]["og:image:height"] = "442"
         return res
+
+    @ormcache()
+    def get_sponsor_card_header_image(self):
+        return (
+            ImageProcess(
+                base64.b64encode(
+                    file_open(
+                        "crowdfunding_compassion/static/src/img/"
+                        "sponsor_children_banner.jpg",
+                        "rb",
+                    ).read()
+                ),
+            )
+            .resize(max_width=400)
+            .image_base64(75)
+        )
+
+    @ormcache("value")
+    def fund_impact_val_formatting(self, value):
+        return format(value, ",d").replace(",", " ") if value > 9999 else value
+
+    @ormcache()
+    def sponsorship_card_content(self):
+        value = sum(self.sudo().search([]).mapped("number_sponsorships_reached"))
+        return {
+            "type": "sponsorship",
+            "value": self.fund_impact_val_formatting(value),
+            "name": _("Sponsor children"),
+            "text": _("sponsored children") if value > 1 else _("sponsored child"),
+            "description": _(
+                """
+For 42 francs a month, you're opening the way out of poverty for a child. Sponsorship
+ ensures that the child is known, loved and protected. In particular, it gives the child
+ access to schooling, tutoring, regular balanced meals, medical care and training in the
+ spiritual field, hygiene, etc. Every week, the child participates in the activities of
+ one of the project center of the 8,000 local churches that are partners of
+ Compassion. They allow him or her to discover and develop his or her talents."""
+            ),
+            "icon_image": self.get_sponsor_icon(),
+            "header_image": self.get_sponsor_card_header_image(),
+        }
+
+    @ormcache()
+    def get_sponsor_icon(self):
+        return base64.b64encode(
+            file_open(
+                "crowdfunding_compassion/static/src/img/icn_children.png", "rb"
+            ).read()
+        )

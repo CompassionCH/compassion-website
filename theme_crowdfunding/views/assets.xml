@@ -7,19 +7,32 @@
   >
         <xpath expr="link[last()]" position="after">
             <link
-        href="/theme_crowdfunding/static/src/style/custom.scss"
+        href="/theme_crowdfunding/static/src/scss/custom.scss"
         rel="stylesheet"
         type="text/scss"
       />
             <link
-        href="/theme_crowdfunding/static/src/style/stepper.scss"
+        href="/theme_crowdfunding/static/src/scss/stepper.scss"
         rel="stylesheet"
         type="text/scss"
       />
             <link
-        href="/theme_crowdfunding/static/src/style/faq.scss"
+        href="/theme_crowdfunding/static/src/scss/faq.scss"
         rel="stylesheet"
         type="text/scss"
+      />
+        </xpath>
+    </template>
+    <template
+    id="_assets_primary_variables"
+    inherit_id="website._assets_primary_variables"
+    priority="1"
+  >
+        <xpath expr="//link[last()]" position="after">
+            <link
+        rel="stylesheet"
+        type="text/scss"
+        href="/theme_crowdfunding/static/src/scss/primary_variables.scss"
       />
         </xpath>
     </template>

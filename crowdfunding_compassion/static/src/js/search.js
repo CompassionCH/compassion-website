@@ -1,4 +1,5 @@
 $(document).ready(function () {
+  "use strict";
   $("#myInput").on("keyup", function () {
     var value = $(this).val().toLowerCase();
     var items = $(".card");

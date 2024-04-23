@@ -15,9 +15,11 @@ class ProductTemplate(models.Model):
     _inherit = "product.product"
 
     def recompute_amount(self):
-        """(NOT THE BEST WAY TO HANDLE THE BUTTON APPEARING IN THE SUBVIEW ON PRODUCT.PRODUCT)
-        This function is used to calculate the total amount of funds impacted by all the campaigns
-        that used a specific product template by summing up the number of invoices paid for each campaign
-        that used this product template.
+        """
+        (NOT THE BEST WAY TO HANDLE THE BUTTON APPEARING IN THE SUBVIEW ON
+        PRODUCT.PRODUCT)
+        This function is used to calculate the total amount of funds impacted by all the
+        campaigns that used a specific product template by summing up the number of
+        invoices paid for each campaign that used this product template.
         """
         self.mapped("product_tmpl_id").recompute_amount()

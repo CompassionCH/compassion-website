@@ -1,4 +1,4 @@
-odoo.define("website_sponsorship.form_page", function (require) {
+odoo.define("crowdfunding_compassion.edit_project_form", function (require) {
   "use strict";
 
   var publicWidget = require("web.public.widget");

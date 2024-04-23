@@ -13,4 +13,5 @@ from . import (
     recurring_contract_origin,
     res_partner,
     res_partner_match,
+    res_partner_title,
 )

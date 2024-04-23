@@ -1,7 +1,10 @@
 #    Copyright (C) 2020 Compassion CH
 #    @author: Quentin Gigon
+from werkzeug.urls import url_encode
 
 from odoo import api, fields, models
+
+from ..exceptions import NoGoalException
 
 
 class CrowdfundingParticipant(models.Model):
@@ -32,11 +35,18 @@ class CrowdfundingParticipant(models.Model):
     number_sponsorships_reached = fields.Integer(
         compute="_compute_number_sponsorships_reached"
     )
+    number_csp_goal = fields.Integer(default=0)
+    number_csp_reached = fields.Integer(compute="_compute_number_sponsorships_reached")
     sponsorship_ids = fields.Many2many(
         "recurring.contract", compute="_compute_sponsorships", string="Sponsorships"
     )
+    csp_sponsorship_ids = fields.Many2many(
+        "recurring.contract",
+        compute="_compute_csp_sponsorships",
+        string="CSP Sponsorships",
+    )
     invoice_line_ids = fields.One2many(
-        "account.invoice.line", "crowdfunding_participant_id", string="Donations"
+        "account.move.line", "crowdfunding_participant_id", string="Donations"
     )
     source_id = fields.Many2one(
         "utm.source", "UTM Source", required=True, ondelete="cascade"
@@ -45,7 +55,7 @@ class CrowdfundingParticipant(models.Model):
     twitter_url = fields.Char(string="Twitter link")
     instagram_url = fields.Char(string="Instagram link")
     personal_web_page_url = fields.Char(string="Personal web page")
-    profile_photo = fields.Binary(related="partner_id.image")
+    profile_photo = fields.Image(related="partner_id.image_512")
     profile_photo_url = fields.Char(compute="_compute_profile_photo_url")
     sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
     survival_sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
@@ -65,11 +75,23 @@ class CrowdfundingParticipant(models.Model):
         )
     ]
 
+    @api.constrains(
+        "number_sponsorships_goal", "number_csp_goal", "product_number_goal"
+    )
+    def _check_goals(self):
+        for participant in self:
+            if (
+                participant.number_sponsorships_goal == 0
+                and participant.number_csp_goal == 0
+                and participant.product_number_goal == 0
+            ):
+                raise NoGoalException
+
     @api.model
     def create(self, vals):
         partner = self.env["res.partner"].browse(vals.get("partner_id"))
         project = self.env["crowdfunding.project"].browse(vals.get("project_id"))
-        vals["name"] = f"{project.name} - {partner.name}"
+        vals["name"] = f"{project.name} - {partner.preferred_name}"
         return super().create(vals)
 
     @api.model
@@ -79,6 +101,11 @@ class CrowdfundingParticipant(models.Model):
     def _compute_sponsorship_url(self):
         wp = self.env["wordpress.configuration"].sudo().get_config()
         for participant in self:
+            query = {
+                "utm_medium": "Crowdfunding",
+                "utm_campaign": participant.project_id.name,
+                "utm_source": participant.name,
+            }
             utm_medium = "Crowdfunding"
             utm_campaign = participant.project_id.name
             utm_source = participant.name
@@ -88,14 +115,16 @@ class CrowdfundingParticipant(models.Model):
                 f"&utm_campaign={utm_campaign}"
                 f"&utm_source={utm_source}"
             )
-            participant.sponsorship_url = DEFAULT_URL % wp.sponsorship_url
-            participant.survival_sponsorship_url = (
-                DEFAULT_URL % wp.survival_sponsorship_url
+            participant.sponsorship_url = f"/children?{url_encode(query)}"
+            participant.survival_sponsorship_url = DEFAULT_URL % getattr(
+                wp, "survival_sponsorship_url", ""
             )
 
     def _compute_product_number_reached(self):
         for participant in self:
-            invl = participant.invoice_line_ids.filtered(lambda l: l.state == "paid")
+            invl = participant.invoice_line_ids.filtered(
+                lambda line: line.payment_state == "paid"
+            )
             participant.product_number_reached = int(sum(invl.mapped("quantity")))
 
     def _compute_sponsorships(self):
@@ -104,6 +133,17 @@ class CrowdfundingParticipant(models.Model):
                 [
                     ("source_id", "=", participant.source_id.id),
                     ("type", "like", "S"),
+                    ("type", "!=", "CSP"),
+                    ("state", "!=", "cancelled"),
+                ]
+            )
+
+    def _compute_csp_sponsorships(self):
+        for participant in self:
+            participant.csp_sponsorship_ids = self.env["recurring.contract"].search(
+                [
+                    ("source_id", "=", participant.source_id.id),
+                    ("type", "=", "CSP"),
                     ("state", "!=", "cancelled"),
                 ]
             )
@@ -111,6 +151,7 @@ class CrowdfundingParticipant(models.Model):
     def _compute_number_sponsorships_reached(self):
         for participant in self:
             participant.number_sponsorships_reached = len(participant.sponsorship_ids)
+            participant.number_csp_reached = len(participant.csp_sponsorship_ids)
 
     def _compute_profile_photo_url(self):
         domain = self.env["website"].get_current_website()._get_http_domain()

@@ -25,6 +25,7 @@
     "data": [
         "data/form_data.xml",
         "data/children_snippet_data.xml",
+        "data/form_data.xml",
         "security/ir.model.access.csv",
         "security/access_rules.xml",
         "templates/assets.xml",

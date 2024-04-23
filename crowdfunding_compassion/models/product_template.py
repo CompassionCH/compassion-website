@@ -50,7 +50,13 @@ class ProductTemplate(models.Model):
         translate=True,
         help="Shown when setting the goal of a project, after the quantity field.",
     )
-    image_large = fields.Binary("Large image", help="Image for header", attachment=True)
+    image_large = fields.Binary("Large image", help="Image for header")
+    image_400 = fields.Image(
+        "400px image for header",
+        help="Image for homepage",
+        max_width=400,
+        related="image_large",
+    )
     crowdfunding_donation_quantity_1 = fields.Integer(
         default=1, help="Default quantity proposition when making a donation"
     )
@@ -68,12 +74,13 @@ class ProductTemplate(models.Model):
 
     def recompute_amount(self):
         """
-        This function is used to calculate the total amount of funds impacted by all the campaigns
-        that used a specific product template by summing up the number of invoices paid for each campaign
-        that used this product template.
+        This function is used to calculate the total amount of funds impacted by all the
+        campaigns that used a specific product template by summing up the number of
+        invoices paid for each campaign that used this product template.
         """
         for template in self:
-            # Sum the number of invoices paid for each campaign that used this product template
+            # Sum the number of invoices paid for each campaign that used this
+            # product template
             template.total_fund_impact = sum(
                 self.env["crowdfunding.project"]
                 .sudo()

@@ -26,12 +26,12 @@ class CrowdFundingWebsite(EventsController):
             ]
         )
         donations = (
-            request.env["account.invoice.line"]
+            request.env["account.move.line"]
             .sudo()
             .search(
                 [
                     ("crowdfunding_participant_id.partner_id", "=", partner.id),
-                    ("state", "=", "paid"),
+                    ("payment_state", "=", "paid"),
                 ]
             )
         )
@@ -55,53 +55,27 @@ class CrowdFundingWebsite(EventsController):
         return result
 
     @route(
-        ["/my/together/project/update/"],
+        ["/my/together/project/<model('crowdfunding.project'):project>/"],
         type="http",
         auth="user",
         website=True,
         sitemap=False,
     )
-    def my_account_projects_update(self, project_id=None, **kw):
-        project = request.env["crowdfunding.project"].search([("id", "=", project_id)])
-        kw["form_model_key"] = "cms.form.crowdfunding.project.update"
-        project_update_form = self.get_form("crowdfunding.project", project.id, **kw)
-        project_update_form.form_process()
-
+    def my_account_projects_update(self, project, **kw):
         values = {
-            "form": project_update_form,
+            "project": project,
         }
-        if project_update_form.form_success:
-            result = request.redirect("/my/together")
-        else:
-            result = request.render(
-                "crowdfunding_compassion.crowdfunding_form_template", values
-            )
-        return result
+        return request.render("crowdfunding_compassion.edit_project_form", values)
 
     @route(
-        ["/my/together/participation/update/"],
+        ["/my/together/participant/<model('crowdfunding.participant'):participant>/"],
         type="http",
         auth="user",
         website=True,
         sitemap=False,
     )
-    def my_account_participants_update(self, participant_id=None, **kw):
-        participant = request.env["crowdfunding.participant"].search(
-            [("id", "=", participant_id)]
-        )
-        kw["form_model_key"] = "cms.form.crowdfunding.participant.update"
-        participant_update_form = self.get_form(
-            "crowdfunding.participant", participant.id, **kw
-        )
-        participant_update_form.form_process()
-
+    def my_account_participants_update(self, participant, **kw):
         values = {
-            "form": participant_update_form,
+            "participant": participant,
         }
-        if participant_update_form.form_success:
-            result = request.redirect("/my/together")
-        else:
-            result = request.render(
-                "crowdfunding_compassion.crowdfunding_form_template", values
-            )
-        return result
+        return request.render("crowdfunding_compassion.edit_participation_form", values)

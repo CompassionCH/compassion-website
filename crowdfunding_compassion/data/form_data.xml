@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="model_cms_form_crowdfunding_project_step1" model="ir.model">
+      <field name="website_form_key">crowdfunding_project_step1</field>
+      <field name="website_form_access">True</field>
+      <field name="website_form_label">Crowdfunding - Create a project</field>
+    </record>
+    <function model="ir.model.fields" name="formbuilder_whitelist">
+      <value>cms.form.crowdfunding.project.step1</value>
+      <value
+      eval="[
+        'name',
+        'description',
+        'deadline',
+        'cover_photo',
+        'presentation_video',
+        'type',
+        'facebook_url',
+        'twitter_url',
+        'instagram_url',
+        'personal_web_page_url',
+        ]"
+    />
+    </function>
+    <record id="model_cms_form_crowdfunding_project_step2" model="ir.model">
+      <field name="website_form_key">crowdfunding_project_step2</field>
+      <field name="website_form_access">True</field>
+      <field name="website_form_label">Crowdfunding - Set a goal</field>
+    </record>
+    <function model="ir.model.fields" name="formbuilder_whitelist">
+      <value>cms.form.crowdfunding.project.step2</value>
+      <value
+      eval="[
+        'number_sponsorships_goal',
+        'number_csp_goal',
+        'product_number_goal',
+        'product_id',
+        'project_id',
+        ]"
+    />
+    </function>
+    <record id="model_cms_form_crowdfunding_project_step3" model="ir.model">
+      <field name="website_form_key">crowdfunding_project_step3</field>
+      <field name="website_form_access">True</field>
+      <field name="website_form_label">Crowdfunding - Join</field>
+    </record>
+    <function model="ir.model.fields" name="formbuilder_whitelist">
+      <value>cms.form.crowdfunding.project.step3</value>
+      <value
+      eval="[
+        'name',
+        'personal_motivation',
+        'nickname',
+        'partner_image_1920',
+        'facebook_url',
+        'twitter_url',
+        'instagram_url',
+        'personal_web_page_url',
+        'partner_title',
+        'partner_lastname',
+        'partner_firstname',
+        'partner_street',
+        'partner_zip',
+        'partner_city',
+        'partner_email',
+        'partner_birthdate_date',
+        'partner_phone',
+        'partner_mobile',
+        'partner_function',
+        'partner_lang',
+        'partner_spoken_lang_ids',
+        'match_update',
+        ]"
+    />
+    </function>
+    <record id="model_cms_form_crowdfunding_project_update" model="ir.model">
+      <field name="website_form_key">crowdfunding_project_update</field>
+      <field name="website_form_access">True</field>
+      <field name="website_form_label">Crowdfunding - Update a project</field>
+    </record>
+    <function model="ir.model.fields" name="formbuilder_whitelist">
+      <value>cms.form.crowdfunding.project.update</value>
+      <value
+      eval="[
+        'name',
+        'description',
+        'deadline',
+        'cover_photo',
+        'presentation_video',
+        'type',
+        'facebook_url',
+        'twitter_url',
+        'instagram_url',
+        'personal_web_page_url',
+        'project_id',
+        ]"
+    />
+    </function>
+    <record
+    id="model_cms_form_crowdfunding_participant_update"
+    model="ir.model"
+  >
+      <field name="website_form_key">crowdfunding_participant_update</field>
+      <field name="website_form_access">True</field>
+      <field
+      name="website_form_label"
+    >Crowdfunding - Update a participant</field>
+    </record>
+    <function model="ir.model.fields" name="formbuilder_whitelist">
+      <value>cms.form.crowdfunding.participant.update</value>
+      <value
+      eval="[
+        'personal_motivation',
+        'nickname',
+        'profile_photo',
+        'facebook_url',
+        'twitter_url',
+        'instagram_url',
+        'personal_web_page_url',
+        'participant_id',
+        ]"
+    />
+    </function>
+</odoo>

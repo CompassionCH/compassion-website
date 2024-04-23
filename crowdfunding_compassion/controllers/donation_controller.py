@@ -1,98 +1,98 @@
-import werkzeug
-
-from odoo.http import request, route
-
-from odoo.addons.cms_form.controllers.main import FormControllerMixin
-from odoo.addons.cms_form_compassion.controllers.payment_controller import (
-    PaymentFormController,
-)
+from odoo.http import Controller, request, route
 
 
-class DonationController(PaymentFormController, FormControllerMixin):
+class DonationController(Controller):
     @route(
-        ["/project/<model('crowdfunding.project'):project>/donation"],
+        [
+            "/project/<model('crowdfunding.project'):project>/donation",
+            "/project/<model('crowdfunding.project'):project>/"
+            "<model('crowdfunding.participant'):participant>/donation",
+        ],
         auth="public",
+        methods=["GET", "POST"],
         website=True,
         sitemap=False,
     )
-    def project_donation_page(self, page=1, project=None, **kwargs):
+    def project_donation_page(self, project, page=1, participant=None, **kwargs):
         """To preselect a participant, pass its id as participant query parameter"""
-        if not project.website_published:
+        if not project.website_published and not request.env.user.has_group(
+            "website.group_website_designer"
+        ):
             return request.redirect("/projects")
-        participant = int(kwargs.pop("participant", 0))
+        skip_type_selection = (
+            not project.number_sponsorships_goal and not project.number_csp_goal
+        )
         if int(page) == 1 and len(project.participant_ids) == 1:
             page = 2
-            participant = project.participant_ids.id
-        if int(page) == 2 and not project.number_sponsorships_goal:
-            # Skip directly to donation page
-            participant = request.env["crowdfunding.participant"].browse(participant)
-            return self.project_donation_form_page(3, project, participant, **kwargs)
+            participant = project.participant_ids
+        elif int(page) == 1:
+            participant = project.participant_ids[:1]
+        if int(page) == 2:
+            if not participant:
+                page = 1
+                participant = project.participant_ids[:1]
+            if isinstance(participant, str):
+                participant = request.env["crowdfunding.participant"].browse(
+                    int(participant)
+                )
+            if skip_type_selection:
+                # Skip directly to donation page
+                page = 3
 
+        # Used for redirection after page 2
+        action_url = {
+            "sponsorship": participant.sponsorship_url,
+            "csp": participant.survival_sponsorship_url,
+            "product": f"{project.website_url}/{participant.id}/donation?page=3",
+        }
         return request.render(
             "crowdfunding_compassion.project_donation_page",
             {
                 "project": project.sudo(),
                 "selected_participant": participant,
                 "page": page,
-                "skip_type_selection": not project.number_sponsorships_goal,
+                "skip_type_selection": skip_type_selection,
+                "participant_name": participant.nickname
+                or participant.partner_id.preferred_name,
+                "action_url": action_url,
             },
         )
 
     @route(
-        [
-            "/project/<model('crowdfunding.project'):project>"
-            "/donation/form/<model('crowdfunding.participant'):participant>"
-        ],
+        "/project/<model('crowdfunding.project'):project>"
+        "/<model('crowdfunding.participant'):participant>"
+        "/donation/submit",
+        type="http",
         auth="public",
+        methods=["POST"],
         website=True,
         sitemap=False,
     )
-    def project_donation_form_page(
-        self, page=3, project=None, participant=None, **kwargs
-    ):
-        if not project.website_published:
+    def post_donation_form(self, project, participant, amount, **post):
+        """
+        Use the cart of the website to process the donation.
+        Force the price of the order line to make sure it reflects the selected
+        amount for donation.
+        :param project: the project record
+        :param participant: the participant record
+        :param amount: the donation amount
+        :param post: the post request
+        :return: the rendered page
+        """
+        if not project.is_published:
             return request.redirect("/projects")
-        kwargs["form_model_key"] = "cms.form.crowdfunding.donation"
-
-        donation_form = self.get_form(
-            "crowdfunding.participant", participant.id, **kwargs
+        sale_order = request.website.sale_get_order(force_create=True).sudo()
+        if sale_order.state != "draft":
+            request.session["sale_order_id"] = None
+            sale_order = request.website.sale_get_order(force_create=True).sudo()
+        product = project.product_id
+        quantity = float(amount) / product.standard_price
+        sale_order.add_donation(
+            product.id,
+            product.standard_price,
+            qty=quantity,
+            participant_id=participant.id,
+            opt_out=post.get("opt_out"),
+            is_anonymous=post.get("is_anonymous"),
         )
-        donation_form.form_process()
-
-        # If the form is valid, redirect to payment
-        if donation_form.form_success:
-            return werkzeug.utils.redirect(donation_form.form_next_url(), code=303)
-
-        context = {
-            "project": project.sudo(),
-            "participant": participant.sudo(),
-            "form": donation_form,
-            "main_object": participant.sudo(),
-            "page": page,
-        }
-
-        return request.render(
-            "crowdfunding_compassion.project_donation_page",
-            context,
-        )
-
-    @route(
-        "/crowdfunding/payment/validate/<int:invoice_id>",
-        auth="public",
-        website=True,
-        sitemap=False,
-    )
-    def crowdfunding_donation_validate(self, invoice_id=None, **kwargs):
-        """Method called after a payment attempt"""
-        try:
-            invoice = request.env["account.invoice"].sudo().browse(int(invoice_id))
-            invoice.exists().ensure_one()
-            transaction = invoice.get_portal_last_transaction()
-        except ValueError:
-            transaction = request.env["payment.transaction"]
-
-        if transaction.state != "done":
-            return request.render("crowdfunding_compassion.donation_failure")
-
-        invoice.with_delay().generate_crowdfunding_receipt()
-        return request.render("crowdfunding_compassion.donation_successful")
+        return request.redirect("/shop/checkout?express=1")

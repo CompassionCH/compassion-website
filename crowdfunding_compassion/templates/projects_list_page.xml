@@ -11,7 +11,7 @@
             t-if="type == 'collective' and status=='active'"
           >
                         <h1
-              class="display-3 blue uppercase"
+              class="display-3 text-primary text-uppercase"
             >Join a great project</h1>
                         <h2 class="pb-4">
                             Here are the collective projects in progress.
@@ -28,7 +28,7 @@
               t-if="not (type == 'collective' and status=='active')"
             >
                             <h2
-                class="subheading blue text-center mb-5 mt-4 uppercase"
+                class="subheading text-primary text-center mb-5 mt-4 text-uppercase"
               >
                                 The projects
                             </h2>

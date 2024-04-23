@@ -1,22 +1,901 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
         <template
       id="my_account_crowdfunding"
       name="My account Crowdfunding"
-      inherit_id="website_compassion.my_account_layout"
+      inherit_id="my_compassion.my_account_menu"
     >
-            <xpath expr="//ul/li[4]" position="after">
+            <xpath expr="//a[@href='/my/letter']" position="after">
                 <t
-          t-if="request.session.get('uid') and request.env.user.partner_id.crowdfunding_project_count"
+          t-if="request.env.user.partner_id.crowdfunding_project_count"
         >
-                    <li
-            t-attf-class="nav-item#{' active' if selected == 'together' else ''}"
-          >
-                        <a class="nav-link" href="/my/together">Together</a>
-                    </li>
+                    <a
+            href="/my/together"
+            role="menuitem"
+            class="dropdown-item"
+          >Together</a>
                 </t>
             </xpath>
+        </template>
+        <template
+      id="my_account_crowdfunding_view_template"
+      name="My Account Together"
+    >
+            <t t-set="selected" t-value="'together'" />
+            <t t-call="portal.frontend_layout">
+                <div class="container" t-if="owned_projects">
+                    <h3
+            class="text-primary mt-4 mb-2 text-center text-uppercase"
+          >Your own projects</h3>
+                    <section class="projects no-padding-top center">
+                        <t t-set="projects" t-value="owned_projects" />
+                        <t
+              t-call="crowdfunding_compassion.my_account_project_board"
+            />
+                    </section>
+                </div>
+
+                <div class="container w-100" t-if="participating_projects">
+                    <h3
+            class="text-primary my-2 text-center text-uppercase"
+          >Projects you participate to</h3>
+                    <section class="projects no-padding-top center">
+                        <t
+              t-set="participations"
+              t-value="participating_projects"
+            />
+                        <t
+              t-call="crowdfunding_compassion.my_account_participation_board"
+            />
+                    </section>
+                </div>
+
+                <div class="container w-100" t-if="donations">
+                    <h3 class="text-primary my-2 text-center">Donations</h3>
+                    <section class="text-center">
+                        <t
+              t-call="crowdfunding_compassion.my_account_donation_board"
+            />
+                    </section>
+                </div>
+            </t>
+        </template>
+
+        <template id="edit_project_form">
+            <t t-call="portal.frontend_layout">
+                <t t-set="additional_title">Edit your project</t>
+                <section
+          class="s_title pt32 pb32 o_colored_level"
+          data-vcss="001"
+          data-snippet="s_title"
+          data-name="Title"
+        >
+                    <div class="container s_allow_columns">
+                        <h1
+              class="text-uppercase text-center"
+              t-esc="additional_title"
+            />
+                    </div>
+                </section>
+                <span
+          id="form_values"
+          class="hidden"
+          data-for="project_update_form"
+          t-att-data-values="{
+                        'name': project.name,
+                        'description': project.description,
+                        'presentation_video': project.presentation_video,
+                        'type': project.type,
+                        'facebook_url': project.facebook_url,
+                        'twitter_url': project.twitter_url,
+                        'instagram_url': project.instagram_url,
+                        'personal_web_page_url': project.personal_web_page_url,
+                }"
+          t-att-data-deadline="str(project.deadline or '')"
+        />
+                <section
+          class="s_website_form pt16 pb16 o_colored_level"
+          data-vcss="001"
+          data-snippet="s_website_form"
+          data-name="Form"
+        >
+                    <div class="container">
+                        <form
+              action="/website_form/"
+              method="post"
+              enctype="multipart/form-data"
+              class="o_mark_required"
+              data-mark="*"
+              data-success-mode="message"
+              data-success-page="/contactus-thank-you"
+              data-model_name="cms.form.crowdfunding.project.update"
+              id="project_update_form"
+            >
+                            <div
+                class="s_website_form_rows row s_col_no_bgcolor"
+              >
+                                <div
+                  class="form-group s_website_form_field col-12  s_website_form_model_required  "
+                  data-type="char"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class="col-form-label col-sm-auto s_website_form_label"
+                      style="width: 200px"
+                      for="ozhv0j400tne"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Name of your project</span>
+                                            <span
+                        class="s_website_form_mark"
+                      > *</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <input
+                        type="text"
+                        class="form-control s_website_form_input"
+                        name="name"
+                        required="true"
+                        placeholder="Use a catchy name that is accurate to your idea."
+                        id="ozhv0j400tne"
+                      />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group s_website_form_field col-12  s_website_form_model_required  "
+                  data-type="text"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class="col-form-label col-sm-auto s_website_form_label "
+                      style="width: 200px"
+                      for="o3vfah9kot96"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Project description</span>
+                                            <span
+                        class="s_website_form_mark"
+                      > *</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <textarea
+                        class="form-control s_website_form_input"
+                        name="description"
+                        required="true"
+                        placeholder="Aim of the project, why you want to create it, for which purpose and any useful information that the donors should know."
+                        id="o3vfah9kot96"
+                        rows="3"
+                      />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group s_website_form_field col-12  s_website_form_model_required  "
+                  data-type="date"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class="col-form-label col-sm-auto s_website_form_label "
+                      style="width: 200px"
+                      for="o3bpfpod07qf"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Deadline of project</span>
+                                            <span
+                        class="s_website_form_mark"
+                      > *</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <div
+                        class="s_website_form_date input-group date"
+                        id="datepicker6344257825274314"
+                        data-target-input="nearest"
+                      >
+                                                <input
+                          type="text"
+                          class="form-control datetimepicker-input s_website_form_input"
+                          data-target="#datepicker6344257825274314"
+                          name="deadline"
+                          required="true"
+                          placeholder="Indicate when your project should end."
+                          id="o3bpfpod07qf"
+                        />
+                                                <div
+                          class="input-group-append"
+                          data-target="#datepicker6344257825274314"
+                          data-toggle="datetimepicker"
+                        >
+                                                    <div
+                            class="input-group-text"
+                          >
+                                                        <i
+                              class="fa fa-calendar"
+                            />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group s_website_form_field col-12    "
+                  data-type="binary"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class=" col-sm-auto s_website_form_label "
+                      style="width: 200px"
+                      for="odlajyqegv3"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Cover Photo</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <input
+                        type="file"
+                        class="form-control-file s_website_form_input"
+                        name="cover_photo"
+                        id="odlajyqegv3"
+                      />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group s_website_form_field col-12    "
+                  data-type="url"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class="col-form-label col-sm-auto s_website_form_label "
+                      style="width: 200px"
+                      for="ok33hpd056fm"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Presentation Video</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <input
+                        type="url"
+                        class="form-control s_website_form_input"
+                        name="presentation_video"
+                        placeholder="Paste any video link that showcase your project (e.g. https://vimeo.com/jlkj34ek5)"
+                        id="ok33hpd056fm"
+                      />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group s_website_form_field col-12  s_website_form_model_required  "
+                  data-type="selection"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class=" col-sm-auto s_website_form_label "
+                      style="width: 200px"
+                      for="offzmpd9n0m"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >My project is</span>
+                                            <span
+                        class="s_website_form_mark"
+                      > *</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <div
+                        class="row s_col_no_resize s_col_no_bgcolor s_website_form_multiple"
+                        data-name="type"
+                        data-display="horizontal"
+                      >
+                                                <div
+                          class="radio col-12 col-lg-4 col-md-6"
+                        >
+                                                    <div class="form-check">
+                                                        <t
+                              t-if="project.type == 'individual'"
+                            >
+                                                            <input
+                                type="radio"
+                                class="s_website_form_input form-check-input"
+                                id="offzmpd9n0m0"
+                                name="type"
+                                value="individual"
+                                required="true"
+                                checked="checked"
+                              />
+                                                        </t>
+                                                        <t t-else="">
+                                                            <input
+                                type="radio"
+                                class="s_website_form_input form-check-input"
+                                id="offzmpd9n0m0"
+                                name="type"
+                                value="individual"
+                                required="true"
+                              />
+                                                        </t>
+                                                        <label
+                              class="form-check-label s_website_form_check_label"
+                              for="offzmpd9n0m0"
+                            >
+                                                            Individual
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div
+                          class="radio col-12 col-lg-4 col-md-6"
+                        >
+                                                    <div class="form-check">
+                                                        <t
+                              t-if="project.type == 'collective'"
+                            >
+                                                            <input
+                                type="radio"
+                                class="s_website_form_input form-check-input"
+                                id="offzmpd9n0m1"
+                                name="type"
+                                value="collective"
+                                required="true"
+                                checked="checked"
+                              />
+                                                        </t>
+                                                        <t t-else="">
+                                                            <input
+                                type="radio"
+                                class="s_website_form_input form-check-input"
+                                id="offzmpd9n0m1"
+                                name="type"
+                                value="collective"
+                                required="true"
+                              />
+                                                        </t>
+                                                        <label
+                              class="form-check-label s_website_form_check_label"
+                              for="offzmpd9n0m1"
+                            >
+                                                            Collective
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group s_website_form_field col-12    "
+                  data-type="url"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class="col-form-label col-sm-auto s_website_form_label "
+                      style="width: 200px"
+                      for="ol0q5a5zbd8r"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Facebook link</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <input
+                        type="url"
+                        class="form-control s_website_form_input"
+                        name="facebook_url"
+                        id="ol0q5a5zbd8r"
+                      />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group s_website_form_field col-12    "
+                  data-type="url"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class="col-form-label col-sm-auto s_website_form_label "
+                      style="width: 200px"
+                      for="o5qpoc3f7snh"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Twitter link</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <input
+                        type="url"
+                        class="form-control s_website_form_input"
+                        name="twitter_url"
+                        id="o5qpoc3f7snh"
+                      />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group s_website_form_field col-12    "
+                  data-type="url"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class="col-form-label col-sm-auto s_website_form_label "
+                      style="width: 200px"
+                      for="oc8kbbj6huml"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Instagram link</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <input
+                        type="url"
+                        class="form-control s_website_form_input"
+                        name="instagram_url"
+                        id="oc8kbbj6huml"
+                      />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group s_website_form_field col-12    "
+                  data-type="url"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class="col-form-label col-sm-auto s_website_form_label "
+                      style="width: 200px"
+                      for="o3aeb0zgt20l"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Personal web page</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <input
+                        type="url"
+                        class="form-control s_website_form_input"
+                        name="personal_web_page_url"
+                        id="o3aeb0zgt20l"
+                      />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group s_website_form_field col-12  s_website_form_required s_website_form_field_hidden "
+                  data-type="many2one"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class="col-form-label col-sm-auto s_website_form_label "
+                      style="width: 200px"
+                      for="o5nze561dzyy"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Project to update</span>
+                                            <span
+                        class="s_website_form_mark"
+                      >   *</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <select
+                        class="form-control s_website_form_input"
+                        name="project_id"
+                        required="1"
+                        id="o5nze561dzyy"
+                      >
+                                                <option
+                          t-att-value="project.id"
+                          selected="true"
+                          t-esc="project.name"
+                        />
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group col-12 s_website_form_submit"
+                  data-name="Submit Button"
+                >
+                                    <div
+                    style="width: 200px;"
+                    class="s_website_form_label"
+                  />
+                                    <a
+                    href="#"
+                    role="button"
+                    class="btn btn-primary btn-lg s_website_form_send o_default_snippet_text"
+                  >Submit</a>
+                                    <span id="s_website_form_result" />
+                                </div>
+                            </div>
+                        </form>
+                        <div class="s_website_form_end_message d-none">
+                            <div class="oe_structure">
+                                <section
+                  class="s_text_block pt64 pb64 o_colored_level o_cc o_cc2"
+                  data-snippet="s_text_block"
+                >
+                                    <div class="container text-center">
+                                        <h2><span class="fa fa-check-circle" />
+                                            Project Updated.
+                                        </h2>
+                                        <a
+                      href="/my/together"
+                      class="btn btn-primary btn-lg mt-4"
+                    >Back to My Account</a>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </t>
+        </template>
+
+        <template id="edit_participation_form">
+            <t t-call="portal.frontend_layout">
+                <t t-set="additional_title">Edit your profile</t>
+                <section
+          class="s_title pt32 pb32 o_colored_level"
+          data-vcss="001"
+          data-snippet="s_title"
+          data-name="Title"
+          style=""
+        >
+                    <div class="s_allow_columns container">
+                        <h1
+              t-esc="additional_title"
+              class="text-center text-uppercase"
+            />
+                    </div>
+                </section>
+                 <span
+          id="form_values"
+          class="hidden"
+          data-for="participant_update_form"
+          t-att-data-values="{
+                        'nickname': participant.nickname,
+                        'personal_motivation': participant.personal_motivation,
+                        'facebook_url': participant.facebook_url,
+                        'twitter_url': participant.twitter_url,
+                        'instagram_url': participant.instagram_url,
+                        'personal_web_page_url': participant.personal_web_page_url,
+                }"
+        />
+                <section
+          class="s_website_form pt16 pb16 o_colored_level"
+          data-vcss="001"
+          data-snippet="s_website_form"
+          data-name="Form"
+        >
+                    <div class="container">
+                        <form
+              action="/website_form/"
+              method="post"
+              enctype="multipart/form-data"
+              class="o_mark_required"
+              data-mark="*"
+              data-success-mode="message"
+              data-success-page="/contactus-thank-you"
+              data-model_name="cms.form.crowdfunding.participant.update"
+              id="participant_update_form"
+            >
+                            <div
+                class="s_website_form_rows row s_col_no_bgcolor"
+              >
+                                <div
+                  class="form-group s_website_form_field col-12    "
+                  data-type="char"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class="col-form-label col-sm-auto s_website_form_label"
+                      style="width: 200px"
+                      for="oshz2ngyfsin"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Name of your group / organisation</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <input
+                        type="text"
+                        class="form-control s_website_form_input"
+                        name="nickname"
+                        id="oshz2ngyfsin"
+                      />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group s_website_form_field col-12    "
+                  data-type="binary"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class=" col-sm-auto s_website_form_label "
+                      style="width: 200px"
+                      for="onbmcou9sxde"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Profile picture</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <input
+                        type="file"
+                        class="form-control-file s_website_form_input"
+                        name="profile_picture"
+                        id="onbmcou9sxde"
+                      />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group s_website_form_field col-12  s_website_form_model_required  "
+                  data-type="text"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class="col-form-label col-sm-auto s_website_form_label "
+                      style="width: 200px"
+                      for="on1e9aw73hxk"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Personal motivation</span>
+                                            <span
+                        class="s_website_form_mark"
+                      > *</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <textarea
+                        class="form-control s_website_form_input"
+                        name="personal_motivation"
+                        required="true"
+                        id="on1e9aw73hxk"
+                        rows="3"
+                      />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group s_website_form_field col-12    "
+                  data-type="url"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class="col-form-label col-sm-auto s_website_form_label "
+                      style="width: 200px"
+                      for="orhqfl85r30s"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Facebook link</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <input
+                        type="url"
+                        class="form-control s_website_form_input"
+                        name="facebook_url"
+                        id="orhqfl85r30s"
+                      />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group s_website_form_field col-12    "
+                  data-type="url"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class="col-form-label col-sm-auto s_website_form_label "
+                      style="width: 200px"
+                      for="ovxgnvr173e8"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Twitter link</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <input
+                        type="url"
+                        class="form-control s_website_form_input"
+                        name="twitter_url"
+                        id="ovxgnvr173e8"
+                      />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group s_website_form_field col-12    "
+                  data-type="url"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class="col-form-label col-sm-auto s_website_form_label "
+                      style="width: 200px"
+                      for="ojctmxniaqw8"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Instagram link</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <input
+                        type="url"
+                        class="form-control s_website_form_input"
+                        name="instagram_url"
+                        id="ojctmxniaqw8"
+                      />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group s_website_form_field col-12    "
+                  data-type="url"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class="col-form-label col-sm-auto s_website_form_label "
+                      style="width: 200px"
+                      for="o6cteeesy3vi"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Personal web page</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <input
+                        type="url"
+                        class="form-control s_website_form_input"
+                        name="personal_web_page_url"
+                        id="o6cteeesy3vi"
+                      />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group s_website_form_field col-12 s_website_form_required s_website_form_field_hidden"
+                  data-type="many2one"
+                  data-name="Field"
+                >
+                                    <div
+                    class="row s_col_no_resize s_col_no_bgcolor"
+                  >
+                                        <label
+                      class="col-form-label col-sm-auto s_website_form_label "
+                      style="width: 200px"
+                      for="o7d32of6eevv"
+                    >
+                                            <span
+                        class="s_website_form_label_content"
+                      >Participant to update</span>
+                                            <span
+                        class="s_website_form_mark"
+                      > *</span>
+                                        </label>
+                                        <div class="col-sm">
+                                            <select
+                        class="form-control s_website_form_input"
+                        name="participant_id"
+                        id="o7d32of6eevv"
+                        required=""
+                        style=""
+                      >
+                                                <option
+                          t-att-value="participant.id"
+                          t-esc="participant.name"
+                        />
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                  class="form-group col-12 s_website_form_submit"
+                  data-name="Submit Button"
+                >
+                                    <div
+                    style="width: 200px;"
+                    class="s_website_form_label"
+                  />
+                                    <a
+                    href="#"
+                    role="button"
+                    class="btn btn-primary btn-lg s_website_form_send o_default_snippet_text"
+                  >Submit</a>
+                                    <span id="s_website_form_result" />
+                                </div>
+                            </div>
+                        </form>
+                        <div class="s_website_form_end_message d-none">
+                            <div class="oe_structure">
+                                <section
+                  class="s_text_block pt64 pb64 o_colored_level o_cc o_cc2"
+                  data-snippet="s_text_block"
+                >
+                                    <div class="container">
+                                        <h2 class="text-center"><span
+                        class="fa fa-check-circle"
+                        data-original-title=""
+                        title=""
+                        aria-describedby="tooltip344077"
+                      />&amp;nbsp;Profile updated.<br /></h2>
+                                        <p class="text-center mt-4">
+                                            <a
+                        href="/my/together"
+                        class="btn btn-primary btn-lg"
+                        data-original-title=""
+                        title=""
+                        aria-describedby="tooltip335587"
+                      >Back to My Account</a>
+                                            <br />
+                                        </p>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </t>
         </template>
     </data>
 </odoo>

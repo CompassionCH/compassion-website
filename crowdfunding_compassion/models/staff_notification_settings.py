@@ -8,6 +8,7 @@ class StaffNotificationSettings(models.TransientModel):
 
     new_participant_notify_ids = fields.Many2many(
         "res.partner",
+        relation="res_config_settings_new_participant_notify_rel",
         string="New crowdfunding participant",
         domain=[("user_ids", "!=", False), ("user_ids.share", "=", False)],
         readonly=False,

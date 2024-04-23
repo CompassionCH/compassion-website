@@ -33,10 +33,12 @@
                             <div class="col-12 col-lg-4">
                                 <div class="card project-hero__card">
                                     <t t-if="model == 'participant'">
-                                        <h3 class="blue my-3 text-center">
+                                        <h3
+                      class="text-primary my-3 text-center"
+                    >
                                             <span>Support </span>
                                             <t
-                        t-esc="participant.nickname or participant.partner_id.firstname"
+                        t-esc="participant.nickname or participant.partner_id.preferred_name"
                       />
                                         </h3>
                                         <div class="project-hero__card-content">
@@ -64,6 +66,39 @@
                                             <t
                         t-set="goal_image"
                         t-value="'/crowdfunding_compassion/static/src/img/icn_children.png'"
+                      />
+                                            <t
+                        t-set="impact_type"
+                      >sponsorship</t>
+                                            <t
+                        t-call="crowdfunding_compassion.goal_progress"
+                        t-if="goal_objective"
+                      />
+
+                                            <!-- Setup data and display the CSP progress -->
+                                            <t
+                        t-if="participant.number_csp_reached > 1"
+                      >
+                                                <t
+                          t-set="goal_name"
+                        >mums and babies sponsored</t>
+                                            </t>
+                                            <t t-else="">
+                                                <t
+                          t-set="goal_name"
+                        >mum and baby sponsored</t>
+                                            </t>
+                                            <t
+                        t-set="goal_reached"
+                        t-value="participant.number_csp_reached"
+                      />
+                                            <t
+                        t-set="goal_objective"
+                        t-value="participant.number_csp_goal"
+                      />
+                                            <t
+                        t-set="goal_image"
+                        t-value="'/crowdfunding_compassion/static/src/img/icn_csp.png'"
                       />
                                             <t
                         t-set="impact_type"
@@ -102,7 +137,7 @@
                       />
                                             <t
                         t-set="goal_image"
-                        t-value="participant.project_id.product_id.image_medium or '/crowdfunding_compassion/static/src/img/icn_children.png'"
+                        t-value="participant.project_id.product_id.image_512 or '/crowdfunding_compassion/static/src/img/icn_children.png'"
                       />
                                             <t
                         t-call="crowdfunding_compassion.goal_progress"
@@ -130,7 +165,7 @@
                                     </t>
                                     <t t-else="">
                                         <h3
-                      class="blue my-3 text-center"
+                      class="text-primary my-3 text-center"
                     >Support the project</h3>
                                         <div class="project-hero__card-content">
                                             <t
@@ -160,49 +195,47 @@
                                             </a>
                                         </div>
                                     </t>
-                                    <div class="row">
                                         <div
-                      class="col project-hero__card-share-text align-self-center"
-                    >Share with your friends</div>
-                                        <div class="col align-self-center">
+                    class="project-hero__card-share-text align-self-center mt-4"
+                  >Share with your friends</div>
+                                        <div class="align-self-center">
                                             <div
-                        class="row project-hero__card-share-icons mx-auto"
-                      >
+                      class="project-hero__card-share-icons mx-auto"
+                    >
                                                 <t
-                          t-set="share_url"
-                          t-value="request.httprequest.url"
+                        t-set="share_url"
+                        t-value="request.httprequest.url"
+                      />
+                                                <a
+                        t-attf-href="https://www.facebook.com/sharer.php?u=#{ share_url }"
+                        target="_blank"
+                      >
+                                                    <i
+                          class="fa fa-facebook-official"
                         />
-                                                <a
-                          t-attf-href="https://www.facebook.com/sharer.php?u=#{ share_url }"
-                          target="_blank"
-                        >
-                                                    <i
-                            class="fa fa-facebook-official"
-                          />
                                                 </a>
                                                 <a
-                          t-attf-href="https://twitter.com/intent/tweet?url=#{ share_url }"
-                          target="_blank"
-                        >
+                        t-attf-href="https://twitter.com/intent/tweet?url=#{ share_url }"
+                        target="_blank"
+                      >
                                                     <i
-                            class="fa fa-twitter-square"
-                          />
+                          class="fa fa-twitter-square"
+                        />
                                                 </a>
                                                 <a
-                          t-attf-href="https://www.linkedin.com/sharing/share-offsite/?url=#{ share_url }"
-                          target="_blank"
-                        >
+                        t-attf-href="https://www.linkedin.com/sharing/share-offsite/?url=#{ share_url }"
+                        target="_blank"
+                      >
                                                     <i class="fa fa-linkedin" />
                                                 </a>
                                                 <a
-                          t-attf-href="mailto:?subject=I wanted you to see this project&amp;body=Check out this project #{ share_url }."
-                        >
+                        t-attf-href="mailto:?subject=I wanted you to see this project&amp;body=Check out this project #{ share_url }."
+                      >
                                                     <i class="fa fa-at" />
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -228,11 +261,11 @@
                   />
                                     <h5>
                                         <t
-                      t-esc="project.owner_participant_id.nickname or project.project_owner_id.name"
+                      t-esc="project.owner_participant_id.nickname or project.project_owner_id.preferred_name"
                       t-if="model == 'project'"
                     />
                                         <t
-                      t-esc="participant.nickname or participant.partner_id.name"
+                      t-esc="participant.nickname or participant.partner_id.preferred_name"
                       t-else=""
                     />
                                     </h5>
@@ -240,7 +273,9 @@
 
                                 <t t-if="model == 'project'">
                                     <!-- Project description and video -->
-                                    <h3 class="blue my-4">About the project</h3>
+                                    <h3
+                    class="text-primary my-4"
+                  >About the project</h3>
                                     <p>
                                         <t
                       t-set="description_lines"
@@ -270,7 +305,7 @@
                   t-if="model == 'participant' or project.type == 'individual'"
                 >
                                     <h3
-                    class="blue my-4"
+                    class="text-primary my-4"
                   >Why do I engage in this project</h3>
                                     <p><t
                       t-raw="participant.personal_motivation"
@@ -283,7 +318,7 @@
                     t-if="project.facebook_url or project.instagram_url or project.twitter_url or project.personal_web_page_url"
                   >
                                         <h5
-                      class="blue mt-4 uppercase"
+                      class="text-primary mt-4 text-uppercase"
                     >Follow my project on</h5>
                                     </t>
 
@@ -324,7 +359,7 @@
                     t-if="participant.facebook_url or participant.instagram_url or participant.twitter_url or participant.personal_web_page_url"
                   >
                                         <h5
-                      class="blue mt-4 uppercase"
+                      class="text-primary mt-4 text-uppercase"
                     >Follow me on</h5>
                                     </t>
 
@@ -371,7 +406,7 @@
 
                                 <t t-if="impact">
                                     <h3
-                    class="blue text-center uppercase"
+                    class="text-primary text-center text-uppercase"
                   >Impact so far</h3>
 
                                     <t t-foreach="impact" t-as="impact_tile">
@@ -383,7 +418,7 @@
 
                                 <t t-else="">
                                     <h3
-                    class="blue text-center mt-5 uppercase"
+                    class="text-primary text-center mt-5 text-uppercase"
                   >No impact yet</h3>
                                     <t
                     t-call="crowdfunding_compassion.impact_tile_empty"
@@ -398,7 +433,7 @@
                             <t t-if="project.type == 'collective'">
                                 <div class="my-5">
                                     <h2
-                    class="blue text-center mb-5"
+                    class="text-primary text-center mb-5"
                   >Participants</h2>
                                     <t t-if="len(project.participant_ids) > 6">
                                         <form
@@ -436,7 +471,7 @@
                   />
                                     <t
                     t-set="fund_icon"
-                    t-value="project.product_id.image_medium"
+                    t-value="project.product_id.image_512"
                   />
                                     <t
                     t-set="fund_name"

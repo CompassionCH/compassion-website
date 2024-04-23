@@ -1,0 +1,15 @@
+<odoo>
+    <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
+    <template
+    id="donation_product_shopping_cart"
+    inherit_id="website_sale.cart_line_product_link"
+  >
+        <xpath expr="//a" position="replace">
+            <t t-if="line.participant_id">
+                <a t-att-href="line.cart_link">
+                    <t t-raw="0" />
+                </a>
+            </t>
+        </xpath>
+    </template>
+</odoo>

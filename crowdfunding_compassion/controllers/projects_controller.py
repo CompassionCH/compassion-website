@@ -12,20 +12,35 @@ from datetime import date, datetime
 
 import werkzeug
 
-from odoo import _
-from odoo.http import Controller, local_redirect, request, route
+from odoo.http import Controller, request, route
 
-from odoo.addons.cms_form.controllers.main import FormControllerMixin
+STEP_1_FIELDS = [
+    "name",
+    "description",
+    "deadline",
+    "presentation_video",
+    "type",
+    "facebook_url",
+    "twitter_url",
+    "instagram_url",
+    "personal_web_page_url",
+]
+STEP_2_FIELDS = [
+    "number_sponsorships_goal",
+    "product_id",
+    "product_description",
+    "product_number_goal",
+]
+STEP_3_FIELDS = [
+    "partner_id",
+    "nickname",
+    "personal_motivation",
+    "sponsorship_card_audio",
+    "sponsorship_card_file",
+]
 
-from ..forms.project_creation_form import (
-    InvalidDateException,
-    InvalidLinkException,
-    NegativeGoalException,
-    NoGoalException,
-)
 
-
-class ProjectsController(Controller, FormControllerMixin):
+class ProjectsController(Controller):
     _project_post_per_page = 12
 
     @route(
@@ -34,7 +49,9 @@ class ProjectsController(Controller, FormControllerMixin):
         website=True,
         sitemap=False,
     )
-    def get_projects_list(self, type=None, page=1, year=None, status="all", **opt):
+    def get_projects_list(
+        self, project_type=None, page=1, year=None, status="all", **opt
+    ):
         if request.website:
             if (
                 request.website
@@ -53,7 +70,7 @@ class ProjectsController(Controller, FormControllerMixin):
                             ("deadline", "<=", datetime(year, 12, 31))
                             if year
                             else None,
-                            ("type", "=", type) if type else None,
+                            ("type", "=", project_type) if project_type else None,
                             ("deadline", ">=", date.today())
                             if status == "active"
                             else None,
@@ -72,12 +89,12 @@ class ProjectsController(Controller, FormControllerMixin):
                     total=total,
                     page=page,
                     step=self._project_post_per_page,
-                    url_args={"type": type, "status": status},
+                    url_args={"type": project_type, "status": status},
                 )
 
                 projects = project_obj.sudo().get_active_projects(
                     offset=(page - 1) * self._project_post_per_page,
-                    type=type,
+                    project_type=project_type,
                     domain=domain,
                     limit=self._project_post_per_page,
                     status=status,
@@ -87,7 +104,7 @@ class ProjectsController(Controller, FormControllerMixin):
                     {
                         "projects": projects,
                         "status": status,
-                        "type": type,
+                        "type": project_type,
                         "pager": pager,
                     },
                 )
@@ -106,83 +123,33 @@ class ProjectsController(Controller, FormControllerMixin):
         sitemap=False,
     )
     def project_creation(self, page=1, project_id=0, **kwargs):
+        project = request.env["crowdfunding.project"]
+        if project_id:
+            project = project.browse(project_id)
+            if not project.exists():
+                raise werkzeug.exceptions.NotFound()
         if project_id and page == 1:
             # Joining project can skip directly to step2
             page = 2
+        if page == 3 and not project_id:
+            # Check if a project was set in session
+            step2_id = request.session.get("project_creation_step2")
+            if step2_id:
+                project = (
+                    request.env["cms.form.crowdfunding.project.step2"]
+                    .browse(step2_id)
+                    .project_id
+                )
         values = {
-            "form_model_key": "cms.form.crowdfunding.project.step" + str(page),
-            "is_published": False,
             "page": page,
+            "funds": request.env["product.product"]
+            .sudo()
+            .search([("activate_for_crowdfunding", "=", True)]),
+            "project": project,
         }
-
-        form = request.httprequest.form
-        direction = form.get("wiz_submit")
-        save = kwargs.get("save")
-        if not direction and not save:
-            values.update({"refresh": True})
-
-        # This allows the translation to still work on the page
-        project_creation_form = self.get_form(
-            "crowdfunding.project", int(project_id), **values
-        )
-
-        if direction == "prev":
-            return local_redirect(
-                project_creation_form.form_next_url(project_creation_form.main_object)
-            )
-
-        try:
-            project_creation_form.form_process()
-        except InvalidLinkException:
-            request.website.add_status_message(
-                _("A link you entered is incorrect"), type_="danger"
-            )
-        except InvalidDateException:
-            request.website.add_status_message(
-                _("Please select a valid date"), type_="danger"
-            )
-        except NoGoalException:
-            request.website.add_status_message(
-                _("Please define a goal"), type_="danger"
-            )
-        except NegativeGoalException:
-            request.website.add_status_message(
-                _("Please define a positive goal"), type_="danger"
-            )
-        values.update(
-            {
-                "user": request.env.user,
-                "form": project_creation_form,
-                "funds": request.env["product.product"]
-                .sudo()
-                .search([("activate_for_crowdfunding", "=", True)]),
-                "product": project_creation_form.main_object.sudo().product_id,
-            }
-        )
-        project_creation_form = values["form"]
-        if project_creation_form.form_success:
-            # Force saving session, otherwise we lose values between steps
-            request.session.save_request_data()
-            return local_redirect(
-                project_creation_form.form_next_url(project_creation_form.main_object)
-            )
-        else:
-            return request.render(
-                "crowdfunding_compassion.project_creation_view_template",
-                values,
-                headers={"Cache-Control": "no-cache"},
-            )
-
-    @route(
-        "/projects/create/confirm/<model('crowdfunding.project'):project>",
-        auth="public",
-        type="http",
-        method="POST",
-        website=True,
-        sitemap=False,
-    )
-    def project_validation(self, project, **kwargs):
+        # Force saving session, otherwise we lose values between steps
         return request.render(
-            "crowdfunding_compassion.project_creation_confirmation_view_template",
-            {"project": project.sudo(), "is_new": len(project.participant_ids) == 1},
+            "crowdfunding_compassion.project_creation_view_template",
+            values,
+            headers={"Cache-Control": "no-cache"},
         )

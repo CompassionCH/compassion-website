@@ -12,4 +12,15 @@
             </field>
         </field>
     </record>
+
+    <record id="title_publish" model="ir.ui.view">
+        <field name="name">res.partner.title.publish</field>
+        <field name="model">res.partner.title</field>
+        <field name="inherit_id" ref="base.view_partner_title_tree" />
+        <field name="arch" type="xml">
+            <field name="shortcut" position="after">
+                <field name="website_published" />
+            </field>
+        </field>
+    </record>
 </odoo>

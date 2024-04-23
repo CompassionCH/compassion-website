@@ -40,8 +40,7 @@
         "my_compassion",
         "crm_compassion",  # compassion-modules
         "event_sale",
-        "website_sale",
-        "sale_automatic_workflow",  # OCA/sale-workflow
+        "website_sale_donation",
         "survey",
     ],
     "data": [

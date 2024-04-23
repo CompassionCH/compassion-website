@@ -38,7 +38,7 @@
                                     </td>
                                     <td t-if="project_active">
                                         <a
-                      t-attf-href="/my/together/project/update?project_id={{project.id}}"
+                      t-attf-href="/my/together/project/#{slug(project)}"
                     >
                                             Edit project
                                         </a>
@@ -49,7 +49,7 @@
 
                                     <td t-if="project_active">
                                         <a
-                      t-attf-href="/my/together/participation/update?participant_id={{project.owner_participant_id.id}}"
+                      t-attf-href="/my/together/participant/#{slug(project.owner_participant_id)}"
                     >
                                             Edit participation
                                         </a>
@@ -100,7 +100,7 @@
                                     </td>
                                     <td t-if="project_active">
                                         <a
-                      t-attf-href="/my/together/participation/update?participant_id={{participation.id}}"
+                      t-attf-href="/my/together/participant/#{slug(participation)}"
                     >
                                             Edit participation
                                         </a>

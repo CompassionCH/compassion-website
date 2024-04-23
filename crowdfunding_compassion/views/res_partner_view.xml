@@ -4,7 +4,7 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form" />
         <field name="arch" type="xml">
-            <button name="toggle_active" position="after">
+            <xpath expr="//div[@name='button_box']">
                 <button
           class="oe_stat_button"
           type="object"
@@ -18,7 +18,7 @@
             widget="statinfo"
           />
                 </button>
-            </button>
+            </xpath>
         </field>
     </record>
 </odoo>

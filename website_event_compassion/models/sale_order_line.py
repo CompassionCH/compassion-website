@@ -8,7 +8,7 @@
 #
 ##############################################################################
 
-from odoo import _, api, fields, models
+from odoo import _, fields, models
 
 
 class SaleOrderLine(models.Model):
@@ -18,27 +18,18 @@ class SaleOrderLine(models.Model):
 
     registration_id = fields.Many2one("event.registration")
 
-    def get_sale_order_line_multiline_description_sale(self, product):
-        """We override this method because we want a custom description when a
-        sale order is connected with an ambassador or event.
-        """
-        if self.registration_id:
-            return _("Donation for %s") % self.registration_id.partner_id.preferred_name
-        else:
-            return super().get_sale_order_line_multiline_description_sale(product)
-
-    @api.depends("registration_id")
-    def _compute_name_short(self):
-        """We override this method because we want a custom description when a
-        sale order is connected with an ambassador or event.
-        """
+    def _compute_cart_link(self):
         for line in self:
             if line.registration_id:
-                line.name_short = line.get_sale_order_line_multiline_description_sale(
-                    line.product_id
-                )
+                line.cart_link = line.registration_id.website_url
             else:
-                line.name_short = super(SaleOrderLine, line)._compute_name_short()
+                super(SaleOrderLine, line)._compute_cart_link()
+
+    def get_donation_description(self, product):
+        """Get the description for a donation."""
+        if self.registration_id:
+            return _("Donation for %s") % self.registration_id.partner_id.preferred_name
+        return super().get_donation_description(product)
 
     def _prepare_invoice_line(self, **optional_values):
         # Propagate ambassador and event to invoice line

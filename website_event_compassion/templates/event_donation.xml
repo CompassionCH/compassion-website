@@ -90,23 +90,4 @@
             </form>
         </section>
     </template>
-
-    <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
-    <template
-    id="donation_product_shopping_cart"
-    inherit_id="website_sale.cart_line_product_link"
-  >
-        <xpath expr="//a" position="replace">
-            <t t-if="line.registration_id">
-                <a t-att-href="line.registration_id.website_url">
-                    <t t-raw="0" />
-                </a>
-            </t>
-            <t t-else="">
-                <a t-att-href="line.product_id.website_url">
-                    <t t-raw="0" />
-                </a>
-            </t>
-        </xpath>
-    </template>
 </odoo>
