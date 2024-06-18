@@ -36,12 +36,16 @@ class SaleOrderLine(models.Model):
     def _prepare_invoice_line(self, **optional_values):
         # Propagate ambassador and event to invoice line
         res = super()._prepare_invoice_line(**optional_values)
-        analytic = self.participant_id.project_id.event_id.analytic_id
+        participant = self.participant_id
+        registration = self.registration_id
+        partner = participant.partner_id if participant else registration.partner_id
+        analytic = participant.project_id.event_id.analytic_id if participant else (
+            registration.compassion_event_id.analytic_id)
         res.update(
             {
-                "user_id": self.participant_id.partner_id.id,
+                "user_id": partner.id,
                 "analytic_account_id": analytic.id,
-                "crowdfunding_participant_id": self.participant_id.id,
+                "crowdfunding_participant_id": participant.id,
             }
         )
         return res
