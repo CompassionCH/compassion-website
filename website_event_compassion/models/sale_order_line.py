@@ -36,7 +36,6 @@ class SaleOrderLine(models.Model):
         res = super(SaleOrderLine, self)._prepare_invoice_line(**optional_values)
 
         if hasattr(self, 'registration_id') and self.registration_id:
-            # Propagate ambassador and event to invoice line for module_b
             res = super(SaleOrderLine, self)._prepare_invoice_line(**optional_values)
             analytic = self.registration_id.compassion_event_id.analytic_id
             res.update(
