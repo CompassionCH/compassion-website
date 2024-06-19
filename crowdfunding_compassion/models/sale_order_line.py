@@ -37,13 +37,14 @@ class SaleOrderLine(models.Model):
         res = super(SaleOrderLine, self)._prepare_invoice_line(**optional_values)
 
         if hasattr(self, 'participant_id') and self.participant_id:
-            res = super(SaleOrderLine, self)._prepare_invoice_line(**optional_values)
-            analytic = self.participant_id.project_id.event_id.analytic_id
+            user_id = self.participant_id.partner_id.id
+            analytic_id = self.participant_id.project_id.event_id.analytic_id.id
+            crowdfunding_participant_id = self.participant_id.id,
             res.update(
                 {
-                    "user_id": self.participant_id.partner_id.id,
-                    "analytic_account_id": analytic.id,
-                    "crowdfunding_participant_id": self.participant_id.id,
+                    "user_id": user_id,
+                    "analytic_account_id": analytic_id,
+                    "crowdfunding_participant_id": crowdfunding_participant_id,
                 }
             )
         return res
