@@ -32,15 +32,13 @@ class SaleOrderLine(models.Model):
         return super().get_donation_description(product)
 
     def _prepare_invoice_line(self, **optional_values):
-        res = super(SaleOrderLine, self)._prepare_invoice_line(**optional_values)
-
-        if hasattr(self, 'registration_id') and self.registration_id:
-            user_id = self.registration_id.partner_id.id
-            analytic_id = self.registration_id.compassion_event_id.analytic_id.id
+        res = super()._prepare_invoice_line(**optional_values)
+        registration = getattr(self, 'registration_id', False)
+        if registration:
             res.update(
                 {
-                    "user_id": user_id,
-                    "analytic_account_id": analytic_id,
+                    "user_id": registration.partner_id.id,
+                    "analytic_account_id": registration.compassion_event_id.analytic_id.id,
                 }
             )
         return res
