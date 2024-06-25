@@ -49,10 +49,18 @@ class EventRegistrationTaskRel(models.Model):
     _order = "registration_id, done, sequence, id"
 
     task_id = fields.Many2one(
-        "event.registration.task", "Task", required=True, index=True
+        "event.registration.task",
+        "Task",
+        required=True,
+        index=True,
+        ondelete="cascade",
     )
     registration_id = fields.Many2one(
-        "event.registration", "Registration", required=True, index=True
+        "event.registration",
+        "Registration",
+        required=True,
+        index=True,
+        ondelete="cascade",
     )
     stage_id = fields.Many2one(
         "event.registration.stage",

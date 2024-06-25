@@ -11,7 +11,7 @@ class MyEventsController(CustomerPortal):
         values["registrations"] = request.env["event.registration"].search(
             [
                 ("partner_id", "=", request.env.user.partner_id.id),
-                ("state", "in", ("open", "done")),
+                ("state", "!=", "cancel"),
             ]
         )
         return request.render("website_event_compassion.my_events_list", values)

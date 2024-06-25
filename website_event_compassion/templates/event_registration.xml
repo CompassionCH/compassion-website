@@ -660,12 +660,15 @@
                                 </div>
                             </div>
                         </div>
-                        <h3>Your public profile</h3>
+                        <h3
+              t-if="event.odoo_event_id.fundraising"
+            >Your public profile</h3>
                         <div class="row my-2">
                             <div
                 class="form-group s_website_form_field col-12  s_website_form_model_required  "
                 data-type="text"
                 data-name="Field"
+                t-if="event.odoo_event_id.fundraising"
               >
                                 <div
                   class="row s_col_no_resize s_col_no_bgcolor"
@@ -698,6 +701,7 @@
                 class="form-group s_website_form_field col-12    "
                 data-type="binary"
                 data-name="Field"
+                t-if="event.odoo_event_id.fundraising"
               >
                                 <div
                   class="row s_col_no_resize s_col_no_bgcolor"
@@ -726,6 +730,7 @@
                 class="form-group s_website_form_field col-12  s_website_form_model_required  "
                 data-type="text"
                 data-name="Field"
+                t-if="event.odoo_event_id.fundraising"
               >
                                 <div
                   class="row s_col_no_resize s_col_no_bgcolor"

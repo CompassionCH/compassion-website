@@ -20,6 +20,9 @@ class RegistrationForm(models.TransientModel):
         default=False,
     )
     passport = fields.Binary(related="registration_id.passport", readonly=False)
+    criminal_record = fields.Binary(
+        related="registration_id.criminal_record", readonly=False
+    )
     comments = fields.Text()
 
     @api.model_create_multi

@@ -68,9 +68,6 @@ class EventRegistration(models.Model):
         default=lambda r: r._default_stage(),
         readonly=False,
     )
-    state = fields.Selection(
-        related="stage_id.registration_state", readonly=True, store=True
-    )
     stage_date = fields.Date(default=fields.Date.today, copy=False)
     task_ids = fields.One2many(
         "event.registration.task.rel",
@@ -398,6 +395,10 @@ class EventRegistration(models.Model):
     def write(self, vals):
         if "stage_id" in vals:
             vals["stage_date"] = fields.Date.today()
+            if "state" not in vals:
+                stage = self.env["event.registration.stage"].browse(vals["stage_id"])
+                if stage.registration_state:
+                    vals["state"] = stage.registration_state
         super().write(vals)
         if "stage_id" in vals:
             self._compute_tasks()

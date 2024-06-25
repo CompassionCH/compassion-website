@@ -123,21 +123,27 @@
                     </ol>
                 </nav>
                 <div class="row mt-4">
+                    <t
+            t-set="main_section"
+            t-value="event.fundraising or edit_mode or main_content"
+          />
                     <div
             t-attf-class="col-12 col-sm-#{'6' if tasks else '12'}"
             name="main_section"
+            t-if="main_section"
           >
                         <t
               t-call="website_event_compassion.my_profile_readonly"
-              t-if="not edit_mode"
+              t-if="event.fundraising and not edit_mode"
             />
                         <t
               t-call="website_event_compassion.my_profile_edit"
               t-if="edit_mode=='profile'"
             />
+                        <t t-raw="main_content" t-if="main_content" />
                     </div>
                     <div
-            class="col-12 col-sm-6"
+            t-attf-class="col-12 col-sm-#{'6' if main_section else '12'}"
             t-if="tasks"
             name="tasks_section"
           >
@@ -161,8 +167,11 @@
                         </div>
                     </div>
                 </div>
-                <h3 class="mt-4">Fundraising</h3>
-                <t t-call="website_event_compassion.event_barometer">
+                <h3 class="mt-4" t-if="event.fundraising">Fundraising</h3>
+                <t
+          t-call="website_event_compassion.event_barometer"
+          t-if="event.fundraising"
+        >
                     <t t-set="barometer" t-value="registration" />
                     <t t-set="amount_inside" t-value="True" />
                     <t t-set="barometer_title_class" t-value="False" />
