@@ -96,3 +96,15 @@ class DonationController(Controller):
             is_anonymous=post.get("is_anonymous"),
         )
         return request.redirect("/shop/checkout?express=1")
+
+    @route(
+        "/project/<model('crowdfunding.project'):project>"
+        "/<model('crowdfunding.participant'):participant>"
+        "/shop/confirmation",
+        auth="public",
+        website=True,
+        sitemap=False
+    )
+    def crowdfunding_donation_validate(self, invoice_id=None, **kwargs):
+        """ Method called after a payment attempt """
+        return request.render("crowdfunding_compassion.donation_successful")
