@@ -178,6 +178,6 @@ class EventsController(Controller):
         website=True,
         sitemap=False
     )
-    def crowdfunding_donation_validate(self, invoice_id=None, **kwargs):
+    def crowdfunding_donation_validate(self):
         """ Method called after a payment attempt """
         return request.render("website_event_compassion.donation_successful")

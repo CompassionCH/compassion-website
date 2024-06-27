@@ -98,13 +98,11 @@ class DonationController(Controller):
         return request.redirect("/shop/checkout?express=1")
 
     @route(
-        "/project/<model('crowdfunding.project'):project>"
-        "/<model('crowdfunding.participant'):participant>"
         "/shop/confirmation",
         auth="public",
         website=True,
         sitemap=False
     )
-    def crowdfunding_donation_validate(self, invoice_id=None, **kwargs):
+    def crowdfunding_donation_validate(self):
         """ Method called after a payment attempt """
         return request.render("crowdfunding_compassion.donation_successful")
