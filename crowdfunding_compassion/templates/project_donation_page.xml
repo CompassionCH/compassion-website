@@ -1,18 +1,18 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
     <data>
         <!-- === Project Donation Page === -->
         <!-- The corresponding [crowdfunding.project] is passed to this template as context in variable [project] -->
         <template id="project_donation_page">
-            <t t-set="title" t-if="project.name"><t
-          t-esc="project.name"
-        /> | TOGETHER - Compassion Switzerland Fundraising</t>
+            <t t-set="title" t-if="project.name">
+                <t t-esc="project.name" />
+                | TOGETHER - Compassion Switzerland Fundraising
+            </t>
             <t t-call="crowdfunding_compassion.layout">
                 <div id="project_donation_page">
                     <span id="page" class="d-none" t-esc="page" />
                     <header>
                         <div class="container">
-
                             <div class="row justify-content-center mt-3 mb-3">
                                 <div class="col-4 text-center">
                                     <t
@@ -87,16 +87,19 @@
                                         <li t-att-class="class1">
                                             <a>
                                                 <div class="row">
-                                                    <div class="col-sm-12"><span
+                                                    <div class="col-sm-12">
+                                                        <span
                               class="circle"
-                            >1</span></div>
-                                                    <div class="col-sm-12"><span
+                            >1</span>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <span
                               class="label"
-                            >Participant selection</span></div>
+                            >Participant selection</span>
+                                                    </div>
                                                 </div>
                                             </a>
                                         </li>
-
                                         <!-- Second Step -->
                                         <li
                       t-att-class="class2"
@@ -104,30 +107,37 @@
                     >
                                             <a>
                                                 <div class="row">
-                                                    <div class="col-sm-12"><span
+                                                    <div class="col-sm-12">
+                                                        <span
                               class="circle"
-                            >2</span></div>
-                                                    <div class="col-sm-12"><span
+                            >2</span>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <span
                               class="label"
-                            >Donation type selection</span></div>
+                            >Donation type selection</span>
+                                                    </div>
                                                 </div>
                                             </a>
                                         </li>
-
                                         <!-- Third Step -->
                                         <li
                       t-att-class="class2 if skip_type_selection else class3"
                     >
                                             <a>
                                                 <div class="row">
-                                                    <div class="col-sm-12"><span
-                              class="circle"
-                            ><t
+                                                    <div class="col-sm-12">
+                                                        <span class="circle">
+                                                            <t
                                 t-esc="'2' if skip_type_selection else '3'"
-                              /></span></div>
-                                                    <div class="col-sm-12"><span
+                              />
+                                                        </span>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <span
                               class="label"
-                            >Your donation</span></div>
+                            >Your donation</span>
+                                                    </div>
                                                 </div>
                                             </a>
                                         </li>
@@ -136,7 +146,6 @@
                             </div>
                         </div>
                     </header>
-
                     <!-- Title section -->
                     <section class="bg-primary py-3 text-center">
                         <h2
@@ -152,7 +161,6 @@
               t-if="int(page) == 3 or (skip_type_selection and int(page) == 2)"
             >Choose your donation amount</h2>
                     </section>
-
                     <!-- PAGE 1 - Participant selection-->
                     <section t-if="int(page) == 1">
                         <form
@@ -226,17 +234,12 @@
                             </div>
                         </form>
                     </section>
-
                     <!-- PAGE 2 - Donation type selection -->
                     <section t-if="int(page) == 2 and not skip_type_selection">
                         <span
               class="d-none"
               id="action_url"
-              t-att-data-action_url="{
-                                'product': action_url['product'],
-                                'sponsorship': action_url['sponsorship'],
-                                'csp': action_url['csp']
-                                }"
+              t-att-data-action_url="{                                 'product': action_url['product'],                                 'sponsorship': action_url['sponsorship'],                                 'csp': action_url['csp']                                 }"
             />
                         <div class="container mt-3">
                             <div
@@ -286,7 +289,6 @@
                                         </label>
                                     </div>
                                 </t>
-
                                 <!-- Sponsorship selectable card -->
                                 <t
                   t-if="selected_participant.number_sponsorships_goal"
@@ -314,7 +316,6 @@
                           checked="checked"
                         />
                                             </t>
-
                                             <div
                         class="card h-100 card-body d-flex justify-content-around align-items-center"
                       >
@@ -325,7 +326,6 @@
                                                 <h4
                           class="text-primary text-center text-uppercase"
                         >Sponsor a child</h4>
-
                                                 <!-- Show the select button also if there is a product option-->
                                                 <t
                           t-if="project.product_id or project.number_csp_goal"
@@ -338,7 +338,6 @@
                                         </label>
                                     </div>
                                 </t>
-
                                 <!-- Sponsorship selectable card -->
                                 <t t-if="selected_participant.number_csp_goal">
                                     <div
@@ -352,7 +351,6 @@
                         value="csp"
                         class="card-input-element d-none"
                       />
-
                                             <div
                         class="card h-100 card-body d-flex justify-content-around align-items-center"
                       >
@@ -370,11 +368,9 @@
                                         </label>
                                     </div>
                                 </t>
-
                             </div>
                         </div>
                     </section>
-
                     <!-- PAGE 3 - Choose donation amount -->
                     <section
             class="donation-form-amount pt-1 pb-3"
@@ -391,7 +387,6 @@
                 t-att-value="request.csrf_token()"
               />
                             <div class="container">
-
                                 <div class="row mb-5">
                                     <!-- Amount selector -->
                                     <div class="col-sm-12 col-md-8">
@@ -413,7 +408,6 @@
                           t-call="crowdfunding_compassion.fund_amount_example"
                         />
                                             </t>
-
                                             <!-- Custom amount -->
                                             <div class="col-6 col-lg-6 mb-3">
                                                 <label class="h-100 w-100">
@@ -459,9 +453,9 @@
                               for="is_anonymous"
                             >Anonymous donation</label>
                                                     </div>
-                                                    <p class="small-text">
-                                                        I want to make an anonymous donation. My name will not be displayed on the project page.
-                                                    </p>
+                                                    <p
+                            class="small-text"
+                          >I want to make an anonymous donation. My name will not be displayed on the project page.</p>
                                                     <div
                             class="custom-control custom-switch"
                           >
@@ -476,11 +470,10 @@
                               for="opt_out"
                             >Unsubscribe from e-mails</label>
                                                     </div>
-                                                    <p class="small-text">
-                                                        I don't want to receive emails about the impact of my donation and the work of Compassion.
-                                                    </p>
+                                                    <p
+                            class="small-text"
+                          >I don't want to receive emails about the impact of my donation and the work of Compassion.</p>
                                                 </div>
-
                                             </div>
                                             <div class="col-12">
                                                 <button
@@ -490,7 +483,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <!-- Project card -->
                                     <div class="col-sm-12 col-md-4">
                                         <t
@@ -505,7 +497,6 @@
                             </div>
                         </form>
                     </section>
-
                     <!-- Pagination -->
                     <div class="container" t-if="int(page) != 3">
                         <a
@@ -528,6 +519,24 @@
             >Next step</a>
                     </div>
                 </div>
+            </t>
+        </template>
+
+        <!-- Displayed after successful payment by [EventsController] -->
+        <template id="donation_successful" name="Crowdfunding donation success">
+            <t t-call="crowdfunding_compassion.layout">
+                <section>
+                    <div class="jumbotron center-page mt-5">
+                        <h1>Donation Successful</h1>
+                        <p
+            >Thank you! Your donation helps release children from poverty!</p>
+                        <a href="/homepage">
+                            <button
+                class="btn btn-primary"
+              >Back to Homepage</button>
+                        </a>
+                    </div>
+                </section>
             </t>
         </template>
     </data>

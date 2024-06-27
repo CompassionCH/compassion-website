@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="donation_successful" name="Event donation success">
+        <t t-call="website.layout">
+            <t t-set="no_footer" t-value="True" />
+                    <div
+        style="background-image: url('/muskathlon/static/src/img/compassion_thankyou_donation.jpg'); background-size: cover;
+  background-position: center center;
+  height: 100vh;"
+      >
+                        <div class="jumbotron bg-white w-75 w-md-50 w-lg-25">
+                            <h1
+            class=""
+          >Thank you! Your gift helps release children from poverty!</h1>
+                              <a
+            class="btn btn-primary btn-lg"
+            t-att-href="registration.website_url"
+            role="button"
+          >Back to Muskathlon</a>
+                        </div>
+                    </div>
+        </t>
+    </template>
+</odoo>

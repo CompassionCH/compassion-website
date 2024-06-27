@@ -29,7 +29,7 @@
 # pylint: disable=C8101
 {
     "name": "Crowdfunding Compassion",
-    "version": "14.0.1.0.1",
+    "version": "14.0.1.0.2",
     "author": "Compassion CH",
     "license": "AGPL-3",
     "website": "https://github.com/CompassionCH/compassion-website",
@@ -53,6 +53,7 @@
         "data/action_rules.xml",
         "data/queue_job.xml",
         "data/form_data.xml",
+        "data/website_redirect.xml",
         "views/account_invoice_line_view.xml",
         "views/crowdfunding_participant_view.xml",
         "views/crowdfunding_project_view.xml",

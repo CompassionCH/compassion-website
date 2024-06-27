@@ -96,3 +96,26 @@ class DonationController(Controller):
             is_anonymous=post.get("is_anonymous"),
         )
         return request.redirect("/shop/checkout?express=1")
+
+    @route(
+        "/together/donation/confirmation",
+        auth="public",
+        website=True,
+        sitemap=False,
+        type="http",
+    )
+    def crowdfunding_donation_validate(self, **post):
+        """Method called after a payment attempt"""
+        sale_order_id = request.session.get("sale_last_order_id")
+        if sale_order_id:
+            order = request.env["sale.order"].sudo().browse(sale_order_id)
+            participant = order.mapped("order_line.participant_id")
+            return request.render(
+                "crowdfunding_compassion.donation_successful",
+                {
+                    "order": order,
+                    "participant": participant,
+                },
+            )
+        else:
+            return request.redirect("/projects")

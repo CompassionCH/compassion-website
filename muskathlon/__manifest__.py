@@ -29,7 +29,7 @@
 # pylint: disable=C8101
 {
     "name": "Muskathlon",
-    "version": "14.0.1.0.0",
+    "version": "14.0.1.1.0",
     "category": "Reports",
     "author": "Compassion CH",
     "license": "AGPL-3",
@@ -61,7 +61,9 @@
         "templates/muskathlon_registration_form.xml",
         "templates/muskathlon_order_material.xml",
         "templates/my_tasks_forms.xml",
+        "templates/donation_result.xml",
         "templates/assets.xml",
+        "data/website_redirect.xml",
     ],
     "depends": [
         "website_event_compassion",

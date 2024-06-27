@@ -1,0 +1,9 @@
+<odoo>
+    <record model="website.rewrite" id="donation_success_rewrite">
+        <field name="name">Donation Success</field>
+        <field name="url_from">/shop/confirmation</field>
+        <field name="url_to">/muskathlon/donation/confirmation</field>
+        <field name="website_id" ref="muskathlon.muskathlon_website" />
+        <field name="redirect_type">308</field>
+    </record>
+</odoo>
