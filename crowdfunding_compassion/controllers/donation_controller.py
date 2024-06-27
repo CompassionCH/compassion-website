@@ -105,4 +105,6 @@ class DonationController(Controller):
     )
     def crowdfunding_donation_validate(self):
         """ Method called after a payment attempt """
-        return request.render("crowdfunding_compassion.donation_successful")
+        current_website = request.env['website'].get_current_website()
+        if current_website == 'together':
+            return request.render("crowdfunding_compassion.donation_successful")

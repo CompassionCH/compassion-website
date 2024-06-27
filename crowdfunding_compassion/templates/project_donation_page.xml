@@ -261,25 +261,5 @@
                 </section>
             </t>
         </template>
-
-        <!-- Displayed after failure payment by [EventsController] -->
-        <template id="donation_failure" name="Crowdfunding donation failure">
-            <t t-call="crowdfunding_compassion.layout">
-                <section>
-                    <div class="jumbotron center-page mt-5">
-                        <h1>Payment Aborted</h1>
-                        <t t-raw="(error_intro and error_intro + '&lt;br/&gt;&lt;br/&gt;') or ''"/>
-                        Something went wrong during the payment process. Please try again.
-                        <br/>
-                        <br/>
-                        <div class="alert alert-info" role="alert">
-                            In case your payment was successful and you are seeing this message, you may experience some delay in the process of the transaction. Don't hesitate to
-                            <a href="mailto:info@compassion.ch">contact us</a>
-                            if you need any further assistance.
-                        </div>
-                    </div>
-                </section>
-            </t>
-        </template>
     </data>
 </odoo>

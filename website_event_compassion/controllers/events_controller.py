@@ -172,12 +172,14 @@ class EventsController(Controller):
         sale_order.add_donation(product_id, amount, registration_id=registration.id)
         return request.redirect("/shop/checkout?express=1")
 
-    @route(
+    @http.route(
         "/shop/confirmation",
         auth="public",
         website=True,
         sitemap=False
     )
-    def crowdfunding_donation_validate(self):
+    def event_donation_validate(self):
         """ Method called after a payment attempt """
-        return request.render("website_event_compassion.donation_successful")
+        current_website = request.env['website'].get_current_website()
+        if current_website.id == 4:
+            return request.render("website_event_compassion.donation_successful")
