@@ -10,7 +10,7 @@
 from datetime import datetime
 
 from odoo import _, fields, http
-from odoo.http import Controller, request
+from odoo.http import Controller, request, route
 
 from odoo.addons.http_routing.models.ir_http import slug
 from odoo.addons.website.models.ir_http import sitemap_qs2dom
@@ -171,3 +171,13 @@ class EventsController(Controller):
         product_id = event.odoo_event_id.donation_product_id.id
         sale_order.add_donation(product_id, amount, registration_id=registration.id)
         return request.redirect("/shop/checkout?express=1")
+
+    @route(
+        "/shop/confirmation",
+        auth="public",
+        website=True,
+        sitemap=False
+    )
+    def crowdfunding_donation_validate(self, invoice_id=None, **kwargs):
+        """ Method called after a payment attempt """
+        return request.render("website_event_compassion.donation_successful")

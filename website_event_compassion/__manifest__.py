@@ -67,6 +67,7 @@
         "templates/participant_page.xml",
         "templates/event_donation.xml",
         "templates/my_events.xml",
+        "templates/donation_result.xml",
         "data/website_page.xml",
     ],
     "installable": True,
