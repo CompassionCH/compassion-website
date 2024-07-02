@@ -526,7 +526,7 @@
         <template id="my_children_letters">
             <hr />
             <h3 id="letters_section">Letters history</h3>
-            <a class="btn btn-primary mt-4" href="/my/letter">Write a letter</a>
+            <a class="btn btn-primary mt-4" t-attf-href="/my/letter?child_id={{child_id.id}}">Write a letter</a>
             <div class="row mt-4">
                 <div class="col-md-6">
                     <t
