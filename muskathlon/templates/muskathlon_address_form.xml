@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="address_muskathlon" inherit_id="website_sale.address">
+        <xpath expr="//input[@name='email']/.." position="before">
+            <div
+        t-attf-class="form-group #{error.get('company') and 'o_has_error' or ''} col-lg-12 div_company_name"
+      >
+                <label class="col-form-label" for="company_name">Company</label>
+                <input
+          type="text"
+          name="company_name"
+          id="company_name"
+          t-attf-class="form-control #{error.get('company_name') and 'is-invalid' or ''}"
+          t-att-value="'company_name' in checkout and checkout['company_name']"
+        />
+            </div>
+        </xpath>
+    </template>
+</odoo>

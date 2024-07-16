@@ -63,6 +63,7 @@
         "templates/my_tasks_forms.xml",
         "templates/donation_result.xml",
         "templates/assets.xml",
+        "templates/muskathlon_address_form.xml",
         "data/website_redirect.xml",
     ],
     "depends": [
