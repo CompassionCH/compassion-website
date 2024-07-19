@@ -5,7 +5,10 @@
             <div
         t-attf-class="form-group #{error.get('company') and 'o_has_error' or ''} col-lg-12 div_company_name"
       >
-                <label class="col-form-label" for="company_name">Company Name</label>
+                <label
+          class="col-form-label"
+          for="company_name"
+        >Company Name</label>
                 <input
           type="text"
           name="company_name"
