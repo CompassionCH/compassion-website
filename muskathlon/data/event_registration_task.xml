@@ -14,25 +14,25 @@
         </record>
         <record id="task_criminal" model="event.registration.task">
             <field name="name">Upload Criminal Record</field>
-            <field name="sequence">3</field>
+            <field name="sequence">6</field>
             <field name="stage_id" ref="stage_fill_profile" />
             <field name="website_published" eval="True" />
         </record>
         <record id="task_flight_details" model="event.registration.task">
             <field name="name">Give flight details</field>
-            <field name="sequence">4</field>
+            <field name="sequence">3</field>
             <field name="stage_id" ref="stage_fill_profile" />
             <field name="website_published" eval="True" />
         </record>
         <record id="task_medical" model="event.registration.task">
             <field name="name">Fill medical survey</field>
-            <field name="sequence">5</field>
+            <field name="sequence">4</field>
             <field name="stage_id" ref="stage_fill_profile" />
             <field name="website_published" eval="True" />
         </record>
         <record id="task_sign_child_protection" model="event.registration.task">
             <field name="name">Sign child protection agreement</field>
-            <field name="sequence">6</field>
+            <field name="sequence">5</field>
             <field name="stage_id" ref="stage_fill_profile" />
             <field name="website_published" eval="True" />
             <field
