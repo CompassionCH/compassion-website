@@ -294,6 +294,7 @@ async function createLetter(mode = "preview") {
         images_list.forEach((image) => {
           removeImage(image.name, image.size, image.type);
         });
+        $("#view_my_letter").attr("href", response.result.preview_url);
         $("#letter_sent_correctly").modal("show");
         $(".christmas_action").toggleClass("d-none");
         sessionStorage.removeItem("generator_id");
