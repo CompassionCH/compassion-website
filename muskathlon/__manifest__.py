@@ -66,6 +66,7 @@
         "templates/donation_result.xml",
         "templates/assets.xml",
         "data/website_redirect.xml",
+        "templates/muskathlon_my_events.xml",
     ],
     "depends": [
         "website_event_compassion",

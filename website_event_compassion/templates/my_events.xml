@@ -161,8 +161,9 @@
                   t-attf-class="btn btn-#{'secondary' if task.done else 'primary'}"
                   t-attf-href="../tasks/#{slug(task)}"
                   t-att-target="'_blank' if task.task_id.open_new_tab else '_self'"
-                  t-esc="task.name"
-                />
+                >
+                                    <t t-esc="task.name" />
+                                </a>
                             </t>
                         </div>
                     </div>
