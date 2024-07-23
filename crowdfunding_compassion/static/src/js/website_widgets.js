@@ -29,6 +29,7 @@ odoo.define("crowdfunding_compassion.website_widgets", function (require) {
           else submit_button.attr("target", "");
         }
       });
+      donation_type_button.change();
     },
   });
 
