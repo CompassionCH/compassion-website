@@ -37,7 +37,10 @@ class WebsiteChild(http.Controller):
         offset = (page - 1) * self._children_per_page
         domain = self._extend_search_domain(domain, kwargs)
         children = child_obj.search(
-            domain + website_domain, offset=offset, limit=self._children_per_page
+            domain + website_domain,
+            offset=offset,
+            limit=self._children_per_page,
+            order="unsponsored_since asc, create_date asc, completion_date asc",
         )
         if not children:
             return self.load_child(**kwargs)
