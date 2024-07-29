@@ -163,6 +163,7 @@
                   t-att-target="'_blank' if task.task_id.open_new_tab else '_self'"
                 >
                                     <t t-esc="task.name" />
+                                    <i t-if="task.done" class="fa fa-check" />
                                 </a>
                             </t>
                         </div>
