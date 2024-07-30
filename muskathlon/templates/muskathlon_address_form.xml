@@ -2,7 +2,7 @@
 <odoo>
     <template id="address_muskathlon" inherit_id="website_sale.address">
         <xpath expr="//input[@name='vat']/.." position="attributes">
-            <attribute name="t-attf-class" add="hidden" separator=" "/>
+            <attribute name="t-attf-class" add="hidden" separator=" " />
         </xpath>
         <xpath expr="//input[@name='company_name']/.." position="attributes">
             <attribute name="t-attf-class" remove="col-lg-6" separator=" " />
