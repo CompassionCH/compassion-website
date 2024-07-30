@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <template id="address_muskathlon" inherit_id="website_sale.address">
+    <template id="address_muskathlon" inherit_id="website_sale.address_b2b">
         <xpath expr="//input[@name='vat']/.." position="attributes">
             <attribute name="t-attf-class" add="hidden" separator=" " />
         </xpath>
