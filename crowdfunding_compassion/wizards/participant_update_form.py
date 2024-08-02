@@ -11,6 +11,7 @@ from odoo import fields, models
 
 class CrowdfundingParticipatUpdateForm(models.TransientModel):
     _name = "cms.form.crowdfunding.participant.update"
+    _description = "Crowdfunding participant update form"
 
     profile_photo = fields.Image(
         "Profile picture",

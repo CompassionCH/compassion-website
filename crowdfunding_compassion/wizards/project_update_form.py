@@ -11,6 +11,7 @@ from odoo import fields, models
 
 class PartnerCoordinatesForm(models.TransientModel):
     _name = "cms.form.crowdfunding.project.update"
+    _description = "Crowdfunding project update"
 
     name = fields.Char(
         "Name of your project",
