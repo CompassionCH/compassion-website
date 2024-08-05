@@ -533,7 +533,7 @@ class MyAccountController(CustomerPortal):
         return request.render("my_compassion.my_donations_page_template", values)
 
     @route("/my/information", type="http", auth="user", website=True)
-    def my_information(self, form_id=None, **kw):
+    def my_information(self, form_id=None, privacy_policy=None, **kw):
         """
         The route to display the information about the partner
         :param form_id: the form that has been filled or None
@@ -547,6 +547,10 @@ class MyAccountController(CustomerPortal):
                 "partner": partner,
             }
         )
+
+        if privacy_policy == "accepted" and not partner.legal_agreement_date:
+            partner.legal_agreement_date = datetime.now()
+
         return request.render("my_compassion.my_information_page_template", values)
 
     @route("/my/download/<source>", type="http", auth="user", website=True)
