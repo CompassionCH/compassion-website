@@ -46,4 +46,3 @@ class PartnerMatch(models.AbstractModel):
             # No "firstname" or "lastname", the caller probably expected the initial
             # behavior of the parent with "name"
             return super()._match_name_and_zip(vals)
-
