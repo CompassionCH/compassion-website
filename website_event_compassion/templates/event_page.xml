@@ -54,9 +54,11 @@
             <t t-if="amount_inside">
                 <div t-attf-class="progress-amount #{ barometer_amount_class }">
                     <t
-            t-esc="'{:n}'.format(barometer.amount_raised or 0).replace(',', '\'')"
+            t-esc="barometer.amount_raised or 0"
+            t-options="{'widget': 'integer'}"
           />/<t
-            t-esc="'{:n}'.format(barometer.amount_objective or 0).replace(',', '\'')"
+            t-esc="barometer.amount_objective or 0"
+            t-options="{'widget': 'integer'}"
           />
                     <span
             t-field="barometer.sudo().company_id.currency_id.symbol"
@@ -67,9 +69,11 @@
         <t t-if="not amount_inside">
             <div t-attf-class="#{ barometer_amount_class }">
                 <t
-          t-esc="'{:n}'.format(barometer.amount_raised or 0).replace(',', '\'')"
+          t-esc="barometer.amount_raised or 0"
+          t-options="{'widget': 'integer'}"
         />/<t
-          t-esc="'{:n}'.format(barometer.amount_objective or 0).replace(',', '\'')"
+          t-esc="barometer.amount_objective or 0"
+          t-options="{'widget': 'integer'}"
         />
                 <span
           t-field="barometer.sudo().company_id.currency_id.symbol"
