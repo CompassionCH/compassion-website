@@ -385,7 +385,8 @@ class MyAccountController(CustomerPortal):
                 "|",
                 ("communication_id", "=", False),
                 ("sent_date", "!=", False),
-            ], order='scanned_date DESC'
+            ],
+            order="scanned_date DESC",
         )
         gift_categ = request.env.ref("sponsorship_compassion.product_category_gift")
         lines = (
