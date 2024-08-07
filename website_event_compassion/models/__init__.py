@@ -20,4 +20,5 @@ from . import (
     recurring_contract,
     res_partner,
     sale_order_line,
+    res_lang
 )
