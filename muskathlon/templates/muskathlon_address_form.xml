@@ -8,5 +8,12 @@
             <attribute name="t-attf-class" remove="col-lg-6" separator=" " />
             <attribute name="t-attf-class" add="col-lg-12" separator=" " />
         </xpath>
+        <xpath expr="//div[contains(@class, 'oe_cart')]//h2/a/.." position="attributes">
+            <attribute name="class" add="d-flex d-flex align-items-center flex-wrap" separator=" " />
+            <attribute name="style" add="column-gap: 0.5rem;" separator=";" />
+        </xpath>
+        <xpath expr="//div[contains(@class, 'oe_cart')]//h2/a" position="attributes">
+            <attribute name="style" add="margin-top: 0;" separator=";" />
+        </xpath>
     </template>
 </odoo>
