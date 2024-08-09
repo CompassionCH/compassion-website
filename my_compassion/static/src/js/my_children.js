@@ -3,6 +3,13 @@ const child_images = document.getElementsByClassName("child-image");
 const child_name = document.getElementsByClassName("child-name");
 const child_local_id = document.getElementsByClassName("child-local_id");
 
+// Change the href of the links to include the child_id
+const current_child_id = new URLSearchParams(window.location.search).get("child_id");
+selector = document.querySelector('a[href="/my/letter"]');
+selector.href = selector.href + "?child_id=" + current_child_id;
+selector = document.querySelector('a[href="/my/children"]');
+selector.href = selector.href + "?child_id=" + current_child_id;
+
 function selectChild(selected_child_id, reload) {
   // Change url to display selected child
   const search_params = new URLSearchParams(window.location.search);
