@@ -525,7 +525,7 @@
                       t-value="step == 2 and contract and len(contract.contract_line_ids) &gt; 1"
                     />
                                         <div
-                      class="radio col-12 col-lg-4 col-md-6"
+                      class="radio col-12 col-lg-6 col-md-6"
                     >
                                             <div class="form-check">
                                                 <t
@@ -560,9 +560,9 @@
                                             </div>
                                         </div>
                                         <div
-                      class="radio col-12 col-lg-4 col-md-6"
+                      class="radio col-12 col-lg-6 col-md-6"
                     >
-                                            <div class="form-check">
+                                            <div class="form-check d-flex">
                                                 <t t-if="sponsorship_plus">
                                                     <input
                             type="radio"
@@ -590,21 +590,20 @@
                         >
                                                     PLUS Sponsorship
                                                 </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-auto ml-auto">
+
                             <a
                 id="sponsorship_plus_info"
-                class="o_more_info_button mb-4 rounded-circle bg-primary align-items-center justify-content-center o_not_editable text-white"
+                class="o_more_info_button mb-4 ml-2 rounded-circle bg-primary align-items-center justify-content-center o_not_editable text-white"
                 href="#"
                 title="More information"
               >
                                 <i class="fa fa-question fa-1x" />
                             </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-1" />
                         <t t-call="website_sponsorship.sponsorship_plus_help" />
