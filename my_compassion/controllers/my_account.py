@@ -17,7 +17,7 @@ from passlib.context import CryptContext
 from werkzeug.exceptions import NotFound
 
 from odoo import _, fields
-from odoo.exceptions import UserError, AccessDenied
+from odoo.exceptions import AccessDenied, UserError
 from odoo.http import local_redirect, request, route
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
@@ -655,27 +655,37 @@ class MyAccountController(CustomerPortal):
         # Fixes a bug present in Odoo < 16.0
         # Fix commit in Odoo repository:
         # https://github.com/odoo/odoo/commit/6fea44277edef8ae7058e7bae9c69e84a026cfb8
-        for k, v in [('old', old), ('new1', new1), ('new2', new2)]:
+        for k, v in [("old", old), ("new1", new1), ("new2", new2)]:
             if not v:
-                return {'errors': {
-                    'password': {k: _("You cannot leave any password empty.")}}}
+                return {
+                    "errors": {
+                        "password": {k: _("You cannot leave any password empty.")}
+                    }
+                }
         if new1 != new2:
-            return {'errors': {'password': {
-                'new2': _("The new password and its confirmation must be identical.")}}}
+            return {
+                "errors": {
+                    "password": {
+                        "new2": _(
+                            "The new password and its confirmation must be identical."
+                        )
+                    }
+                }
+            }
 
         try:
-            request.env['res.users'].change_password(old, new1)
+            request.env["res.users"].change_password(old, new1)
         except AccessDenied as e:
             msg = e.args[0]
             if msg == AccessDenied().args[0]:
                 msg = _(
-                    'The old password you provided is incorrect, your password was not changed.')
-            return {'errors': {'password': {'old': msg}}}
+                    "The old password you provided is incorrect, your password was not "
+                    "changed."
+                )
+            return {"errors": {"password": {"old": msg}}}
         except UserError as e:
-            return {'errors': {'password': e.name}}
+            return {"errors": {"password": e.name}}
 
-            # update session token so the user does not get logged out (cache cleared by passwd change)
         new_token = request.env.user._compute_session_token(request.session.sid)
         request.session.session_token = new_token
-        return {'success': {'password': True}}
-
+        return {"success": {"password": True}}
