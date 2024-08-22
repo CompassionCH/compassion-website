@@ -1,13 +1,12 @@
 from openupgradelib import openupgrade
 from odoo import api, SUPERUSER_ID
 
-event_registration_task_ids = [
-    "task_passport",
-    "task_criminal",
-    "task_flight_details",
-    "task_medical",
-    "task_sign_child_protection",
-]
+muskathlon_task_sequence = {
+    "task_criminal": 6,
+    "task_flight_details": 3,
+    "task_medical": 4,
+    "task_sign_child_protection": 5,
+}
 
 
 def migrate(cr, version):
