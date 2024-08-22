@@ -9,24 +9,8 @@ muskathlon_task_sequence = {
 }
 
 
-def migrate(cr, version):
-    env = api.Environment(cr, SUPERUSER_ID, {})
+@openupgrade.migrate()
+def migrate(env, version):
+    for task_id, task_sequence in muskathlon_task_sequence.items():
+        env.ref(f"muskathlon.{task_id}").sequence = task_sequence
 
-    openupgrade.set_xml_ids_noupdate_value(
-        env,
-        "muskathlon",
-        event_registration_task_ids,
-        False
-    )
-
-    env.ref('muskathlon.task_criminal').sequence = 6
-    env.ref('muskathlon.task_flight_details').sequence = 3
-    env.ref('muskathlon.task_medical').sequence = 4
-    env.ref('muskathlon.task_sign_child_protection').sequence = 5
-
-    openupgrade.set_xml_ids_noupdate_value(
-        env,
-        "muskathlon",
-        event_registration_task_ids,
-        True
-    )
