@@ -1,7 +1,5 @@
 from odoo.http import Controller, request, route
 
-from odoo.addons.website_sale.controllers.main import WebsiteSale
-
 
 class DonationController(Controller):
     @route(
@@ -128,19 +126,3 @@ class DonationController(Controller):
             )
         else:
             return request.redirect("/projects")
-
-
-class DonationSaleController(WebsiteSale):
-    def _get_mandatory_fields_billing(self, country_id=False):
-        req = super()._get_mandatory_fields_billing(country_id)
-        # Field is removed from view, we can't require it.
-        if "state_id" in req:
-            req.remove("state_id")
-        return req
-
-    def _get_mandatory_fields_shipping(self, country_id=False):
-        req = super()._get_mandatory_fields_shipping(country_id)
-        # Field is removed from view, we can't require it.
-        if "state_id" in req:
-            req.remove("state_id")
-        return req
