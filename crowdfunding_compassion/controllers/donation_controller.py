@@ -91,8 +91,6 @@ class DonationController(Controller):
         if not quantity.is_integer():
             quantity = 1
             price = amount
-        else:
-            quantity = int(quantity)
 
         sale_order.add_donation(
             product.id,
