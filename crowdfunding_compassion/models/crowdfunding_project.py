@@ -523,3 +523,8 @@ For 42 francs a month, you're opening the way out of poverty for a child. Sponso
                 "crowdfunding_compassion/static/src/img/icn_children.png", "rb"
             ).read()
         )
+
+    def open_website_url(self):
+        res = super().open_website_url()
+        res["url"] = urlparse.urljoin(self.website_id._get_http_domain(), res["url"])
+        return res
