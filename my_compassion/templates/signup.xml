@@ -30,6 +30,12 @@
                         <t t-call="website_legal_page.acceptance_full" />
                     </label>
         </xpath>
+        <xpath expr="//input[@name='password']" position="replace">
+            <div class="position-relative">
+                <input type="password" name="password" id="password" class="form-control form-control-sm pr-5" required="required"/>
+                <i class="fa fa-eye position-absolute" id="eye_password" style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"/>
+            </div>
+        </xpath>
     </template>
 
 </odoo>
