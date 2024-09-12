@@ -498,8 +498,15 @@ class MyAccountController(CustomerPortal):
             ]
         )
 
+        end_reason_child_depart = request.env.ref("sponsorship_compassion.end_reason_depart")
+
         sponsorships = partner.sponsorship_ids.filtered(
             lambda s: s.state in ["waiting", "active", "mandate"]
+            and partner == s.mapped("partner_id")
+            or
+            s.state == "terminated"
+            and s.can_write_letter
+            and s.end_reason_id == end_reason_child_depart
             and partner == s.mapped("partner_id")
         )
         currency = sponsorships.mapped("pricelist_id.currency_id")[:1].name
@@ -509,7 +516,7 @@ class MyAccountController(CustomerPortal):
         sponsorships_by_group = {
             g: (
                 sponsorships.filtered(lambda s, g=g: s.group_id == g),
-                f"{int(g.total_amount):,d} {currency}",
+                f"{int(sum(sponsorships.filtered(lambda s, g=g: s.group_id == g).mapped('total_amount'))):,d} {currency}",
             )
             for g in sponsorships.mapped("group_id")
         }
