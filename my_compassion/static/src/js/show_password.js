@@ -1,30 +1,33 @@
 document.addEventListener("DOMContentLoaded", function (event) {
 
     odoo.define('my_compassion.show_password', function (require) {
-        'use strict';
+    'use strict';
 
-        var publicWidget = require('web.public.widget');
+        function togglePasswordVisibility(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input) {
+                if (input.type === "password") {
+                    input.type = "text";
+                    icon.classList.add("fa-eye-slash");
+                    icon.classList.remove("fa-eye");
+                } else {
+                    input.type = "password";
+                    icon.classList.add("fa-eye");
+                    icon.classList.remove("fa-eye-slash");
+                }
+            }
+        }
 
-        publicWidget.registry.show_password = publicWidget.Widget.extend({
-            selector: '#eye_password',
-            events: {
-                'click': '_onClick',
-            },
+        function addPasswordToggleListener(eyeId, inputId) {
+            const eyeIcon = document.getElementById(eyeId);
+            if (eyeIcon) {
+                eyeIcon.addEventListener("click", function () {
+                    togglePasswordVisibility(inputId, eyeIcon);
+                });
+            }
+        }
 
-            _onClick: function (ev) {
-                console.log("Show password clicked");
-                // ev.preventDefault();
-                // var $icon = $(ev.currentTarget);
-                // var $input = $icon.siblings('input');
-                // var type = $input.attr('type');
-                // if (type === 'password') {
-                //     $input.attr('type', 'text');
-                //     $icon.removeClass('fa-eye').addClass('fa-eye-slash');
-                // } else {
-                //     $input.attr('type', 'password');
-                //     $icon.removeClass('fa-eye-slash').addClass('fa-eye');
-                // }
-            },
-        });
+        addPasswordToggleListener("eye_password", "password");
+        addPasswordToggleListener("eye_confirm_password", "confirm_password");
     });
 });
