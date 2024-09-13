@@ -501,16 +501,16 @@ class MyAccountController(CustomerPortal):
             ]
         )
 
-        sponsorships = _get_sponsorships(partner, state="active")
-        currency = sponsorships.mapped("pricelist_id.currency_id")[:1].name
+        active_sponsorships = _get_sponsorships(partner, state="active")
+        currency = active_sponsorships.mapped("pricelist_id.currency_id")[:1].name
 
         # Dict of groups mapped to their sponsorships, and total amount
         # {group: (<sponsorships recordset>, total_amount string), ...}
         sponsorships_by_group = {}
-        for g in sponsorships.mapped("group_id"):
-            filtered_sponsorships = sponsorships.filtered(lambda s: s.group_id == g)
-            total = int(sum(filtered_sponsorships.mapped("total_amount")))
-            sponsorships_by_group[g] = (filtered_sponsorships, f"{total:,d} {currency}")
+        for g in active_sponsorships.mapped("group_id"):
+            sponsorships = active_sponsorships.filtered(lambda s, g=g: s.group_id == g)
+            total = int(sum(sponsorships.mapped("total_amount")))
+            sponsorships_by_group[g] = (sponsorships, f"{total:,d} {currency}")
 
         values = self._prepare_portal_layout_values()
         pager = request.website.pager(
