@@ -509,7 +509,7 @@ class MyAccountController(CustomerPortal):
         sponsorships_by_group = {}
         for g in sponsorships.mapped("group_id"):
             filtered_sponsorships = sponsorships.filtered(lambda s: s.group_id == g)
-            total = int(sum(filtered_sponsorships.mapped('total_amount')))
+            total = int(sum(filtered_sponsorships.mapped("total_amount")))
             sponsorships_by_group[g] = (filtered_sponsorships, f"{total:,d} {currency}")
 
         values = self._prepare_portal_layout_values()
