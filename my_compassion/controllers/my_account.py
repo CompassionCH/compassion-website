@@ -32,15 +32,20 @@ HISTORY_LIMIT = 1000
 
 
 def _get_user_children(state=None):
-    """
-    Find all the children for which the connected user has a contract for.
-    There is the possibility to fetch either only active children or only those
-    that are terminated / cancelled. By default, all sponsorships are returned
-
-    :return: a recordset of child.compassion which the connected user sponsors
-    """
     env = request.env
     partner = env.user.partner_id
+    return _get_sponsorships(partner, state).mapped("child_id").sorted("preferred_name")
+
+
+def _get_sponsorships(partner, state=None):
+    """
+    Find all the sponsorships of the given user.
+    There is the possibility to fetch either only active sponsorships or only those
+    that are terminated / cancelled. By default, all sponsorships are returned
+
+    :return: a recordset of recurring.contract of the given user
+    """
+    env = request.env
     end_reason_child_depart = env.ref("sponsorship_compassion.end_reason_depart")
 
     def filter_sponsorships(sponsorship):
@@ -72,8 +77,6 @@ def _get_user_children(state=None):
         partner.get_portal_sponsorships()
         .with_context(allow_during_suspension=True)
         .filtered(filter_sponsorships)
-        .mapped("child_id")
-        .sorted("preferred_name")
     )
 
 
@@ -498,17 +501,7 @@ class MyAccountController(CustomerPortal):
             ]
         )
 
-        end_reason_child_depart = request.env.ref("sponsorship_compassion.end_reason_depart")
-
-        sponsorships = partner.sponsorship_ids.filtered(
-            lambda s: s.state in ["waiting", "active", "mandate"]
-            and partner == s.mapped("partner_id")
-            or
-            s.state == "terminated"
-            and s.can_write_letter
-            and s.end_reason_id == end_reason_child_depart
-            and partner == s.mapped("partner_id")
-        )
+        sponsorships = _get_sponsorships(partner, state="active")
         currency = sponsorships.mapped("pricelist_id.currency_id")[:1].name
 
         # Dict of groups mapped to their sponsorships, and total amount
