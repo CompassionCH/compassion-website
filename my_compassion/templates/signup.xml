@@ -2,18 +2,6 @@
 <odoo>
 
     <template id="signup_sponsor" inherit_id="auth_signup.fields">
-        <xpath expr="//div[@class='form-group field-name']" position="after">
-            <div class="form-group field-name">
-                <label for="sponsor_ref">Your sponsor or child reference</label>
-                <input
-          t-att-type="'hidden' if only_passwords else 'text'"
-          name="sponsor_ref"
-          id="sponsor_ref"
-          class="form-control form-control-sm"
-          placeholder="Put any known reference here for matching with your account..."
-        />
-            </div>
-        </xpath>
         <xpath
       expr="//div[@class='form-group field-confirm_password']"
       position="after"
