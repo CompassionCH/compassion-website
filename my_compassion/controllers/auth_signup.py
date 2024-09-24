@@ -8,8 +8,6 @@
 ##############################################################################
 from datetime import datetime
 
-from odoo import _
-from odoo.exceptions import UserError
 from odoo.http import request
 
 from odoo.addons.auth_signup.controllers.main import AuthSignupHome
