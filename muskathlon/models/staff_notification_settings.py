@@ -19,14 +19,14 @@ class StaffNotificationSettings(models.TransientModel):
     # Users to notify for Muskathlon Registration
     muskathlon_lead_notify_id = fields.Many2many(
         "res.users",
-        string ="Muskathlon Registrations",
+        string="Muskathlon Registrations",
         domain=[("share", "=", False)],
         readonly=False,
         relation="muskathlon_lead_notify_rel",
     )
     muskathlon_order_notify_id = fields.Many2many(
         "res.users",
-        string ="Muskathlon Material Orders",
+        string="Muskathlon Material Orders",
         domain=[("share", "=", False)],
         readonly=False,
         relation="muskathlon_order_notify_rel",
@@ -49,13 +49,23 @@ class StaffNotificationSettings(models.TransientModel):
         params = self.env["ir.config_parameter"].sudo()
 
         res.update(
-            muskathlon_lead_notify_id=params.get_param("muskathlon.muskathlon_lead_notify_id", ""),
-            muskathlon_order_notify_id=params.get_param("muskathlon.muskathlon_order_notify_id", ""),
+            muskathlon_lead_notify_id=params.get_param(
+                "muskathlon.muskathlon_lead_notify_id", ""
+            ),
+            muskathlon_order_notify_id=params.get_param(
+                "muskathlon.muskathlon_order_notify_id", ""
+            ),
         )
-        if res['muskathlon_lead_notify_id']:
-            res['muskathlon_lead_notify_id'] = [int(id) for id in res['muskathlon_lead_notify_id'].split(',') if
-                                                id.isdigit()]
-        if res['muskathlon_order_notify_id']:
-            res['muskathlon_order_notify_id'] = [int(id) for id in res['muskathlon_order_notify_id'].split(',') if
-                                                 id.isdigit()]
+        if res["muskathlon_lead_notify_id"]:
+            res["muskathlon_lead_notify_id"] = [
+                int(id)
+                for id in res["muskathlon_lead_notify_id"].split(",")
+                if id.isdigit()
+            ]
+        if res["muskathlon_order_notify_id"]:
+            res["muskathlon_order_notify_id"] = [
+                int(id)
+                for id in res["muskathlon_order_notify_id"].split(",")
+                if id.isdigit()
+            ]
         return res
