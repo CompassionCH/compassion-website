@@ -36,11 +36,11 @@ class StaffNotificationSettings(models.TransientModel):
         super().set_values()
         self.env["ir.config_parameter"].sudo().set_param(
             "muskathlon.muskathlon_lead_notify_id",
-            str(self.muskathlon_lead_notify_id.id),
+            ",".join(map(str, self.muskathlon_lead_notify_id.ids)),
         )
         self.env["ir.config_parameter"].sudo().set_param(
             "muskathlon.muskathlon_order_notify_id",
-            str(self.muskathlon_order_notify_id.id),
+            ",".join(map(str, self.muskathlon_order_notify_id.ids)),
         )
 
     @api.model
