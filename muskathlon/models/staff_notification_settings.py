@@ -49,11 +49,13 @@ class StaffNotificationSettings(models.TransientModel):
         params = self.env["ir.config_parameter"].sudo()
 
         res.update(
-            muskathlon_lead_notify_id=int(
-                params.get_param("muskathlon.muskathlon_lead_notify_id", 1)
-            ),
-            muskathlon_order_notify_id=int(
-                params.get_param("muskathlon.muskathlon_order_notify_id", 1)
-            ),
+            muskathlon_lead_notify_id=params.get_param("muskathlon.muskathlon_lead_notify_id", ""),
+            muskathlon_order_notify_id=params.get_param("muskathlon.muskathlon_order_notify_id", ""),
         )
+        if res['muskathlon_lead_notify_id']:
+            res['muskathlon_lead_notify_id'] = [int(id) for id in res['muskathlon_lead_notify_id'].split(',') if
+                                                id.isdigit()]
+        if res['muskathlon_order_notify_id']:
+            res['muskathlon_order_notify_id'] = [int(id) for id in res['muskathlon_order_notify_id'].split(',') if
+                                                 id.isdigit()]
         return res
