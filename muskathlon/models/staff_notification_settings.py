@@ -17,17 +17,19 @@ class StaffNotificationSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
     # Users to notify for Muskathlon Registration
-    muskathlon_lead_notify_id = fields.Many2one(
+    muskathlon_lead_notify_id = fields.Many2many(
         "res.users",
-        "Muskathlon Registrations",
+        string ="Muskathlon Registrations",
         domain=[("share", "=", False)],
         readonly=False,
+        relation="muskathlon_lead_notify_rel",
     )
-    muskathlon_order_notify_id = fields.Many2one(
+    muskathlon_order_notify_id = fields.Many2many(
         "res.users",
-        "Muskathlon Material Orders",
+        string ="Muskathlon Material Orders",
         domain=[("share", "=", False)],
         readonly=False,
+        relation="muskathlon_order_notify_rel",
     )
 
     def set_values(self):
