@@ -45,6 +45,18 @@
         </xpath>
     </template>
 
+    <template id="password_field" inherit_id="web.login">
+    <xpath expr="//input[@name='password']" position="inside">
+                <i class="fa fa-eye" id="eye_password" style="position: absolute; right: 10px; top: 60%;cursor: pointer;"></i>
+    </xpath>
+    <xpath expr="." position="inside">
+        <script
+            type="text/javascript"
+            src="/my_compassion/static/src/js/show_password.js"
+        />
+    </xpath>
+</template>
+
     <template id="custom_assets" inherit_id="website.assets_frontend">
         <xpath expr="//link[last()]" position="after">
             <link
