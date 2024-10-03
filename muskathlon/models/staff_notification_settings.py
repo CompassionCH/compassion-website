@@ -17,12 +17,6 @@ class StaffNotificationSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
     # Users to notify for Muskathlon Registration
-    muskathlon_lead_notify_id = fields.Many2one(
-        "res.users",
-        "Muskathlon Registrations",
-        domain=[("share", "=", False)],
-        readonly=False,
-    )
     muskathlon_order_notify_id = fields.Many2one(
         "res.users",
         "Muskathlon Material Orders",
@@ -32,10 +26,6 @@ class StaffNotificationSettings(models.TransientModel):
 
     def set_values(self):
         super().set_values()
-        self.env["ir.config_parameter"].sudo().set_param(
-            "muskathlon.muskathlon_lead_notify_id",
-            str(self.muskathlon_lead_notify_id.id),
-        )
         self.env["ir.config_parameter"].sudo().set_param(
             "muskathlon.muskathlon_order_notify_id",
             str(self.muskathlon_order_notify_id.id),
@@ -47,9 +37,6 @@ class StaffNotificationSettings(models.TransientModel):
         params = self.env["ir.config_parameter"].sudo()
 
         res.update(
-            muskathlon_lead_notify_id=int(
-                params.get_param("muskathlon.muskathlon_lead_notify_id", 1)
-            ),
             muskathlon_order_notify_id=int(
                 params.get_param("muskathlon.muskathlon_order_notify_id", 1)
             ),
