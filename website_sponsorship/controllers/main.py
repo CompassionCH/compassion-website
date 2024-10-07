@@ -93,7 +93,8 @@ class WebsiteChild(http.Controller):
 
     @http.route(
         [
-            "/child/<model('compassion.child'):child>/",
+            # [T1835] : Note: the route MUST be specified *without* a trailing "/" otherwise when a child with a given id does not exist, the 404 Not Found page is not displayed and instead we get an infinite redirect loop. The root cause is that specifying a path with a trailing "/" adds the "/" to the path, and then ir_http.py (https://github.com/odoo/odoo/blob/f2765d2cab5671a010404c36842bf1b4c4d6350b/addons/website/models/ir_http.py#L265) redirects to a version without the "/", creating the infinite loop.
+            "/child/<model('compassion.child'):child>",
         ],
         type="http",
         auth="public",
