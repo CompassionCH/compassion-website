@@ -2,7 +2,7 @@
 #    @author: Quentin Gigon
 from werkzeug.urls import url_encode, url_parse
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 from odoo.tools import file_open
 
 from ..exceptions import NoGoalException
