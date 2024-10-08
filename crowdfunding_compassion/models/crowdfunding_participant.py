@@ -68,7 +68,6 @@ class CrowdfundingParticipant(models.Model):
         "and to this partner.",
     )
 
-
     # kanban colors
     color_sponsorship = fields.Char(compute="_compute_color_sponsorship")
     color_product = fields.Char(compute="_compute_color_product")
