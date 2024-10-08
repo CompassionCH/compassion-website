@@ -91,6 +91,19 @@ class WebsiteChild(http.Controller):
         # Put a child on hold and display its page
         return request.render("website_sponsorship.load_child_page")
 
+    def _ensure_child_available(self, child) -> None:
+        """Checks if child is in an available state and displays a NotFound page
+        otherwise.
+
+        Args:
+            child (CompassionChild): The child to check for availability.
+
+        Raises:
+            NotFound: Raised if child is not available.
+        """
+        if child.state not in child._available_states():
+            raise NotFound()
+
     @http.route(
         [
             # [T1835] : Note: the route MUST be specified *without* a trailing
@@ -110,8 +123,7 @@ class WebsiteChild(http.Controller):
         sitemap=False,
     )
     def child_page(self, child, show_sponsorship_form=False, **kwargs):
-        if child.state != "N":
-            raise NotFound()
+        self._ensure_child_available(child)
         return request.render(
             "website_sponsorship.child_page_template",
             {
@@ -133,8 +145,7 @@ class WebsiteChild(http.Controller):
         sitemap=False,
     )
     def child_sponsor_form(self, child, **kwargs):
-        if child.state != "N":
-            raise NotFound()
+        self._ensure_child_available(child)
         reservation_uuid = self._get_reservation_uuid()
         if not child.sudo().reserve_for_web_sponsorship(reservation_uuid):
             raise Gone()
