@@ -3,6 +3,7 @@
 from werkzeug.urls import url_encode, url_parse
 
 from odoo import api, fields, models
+from odoo.tools import file_open
 
 from ..exceptions import NoGoalException
 
@@ -61,6 +62,12 @@ class CrowdfundingParticipant(models.Model):
     survival_sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
     is_published = fields.Boolean(related="project_id.is_published", store=True)
     website_id = fields.Many2one("website", related="project_id.website_id", store=True)
+    thank_you_quote = fields.Html(
+        compute="_compute_thank_you_quote",
+        help="Used in thank you letters for donations linked to an event "
+        "and to this partner.",
+    )
+
 
     # kanban colors
     color_sponsorship = fields.Char(compute="_compute_color_sponsorship")
@@ -97,6 +104,26 @@ class CrowdfundingParticipant(models.Model):
     @api.model
     def get_sponsorship_url(self, participant_id):
         return self.browse(participant_id).sudo().sponsorship_url
+
+    def _compute_thank_you_quote(self):
+        html_file = file_open(
+            "partner_compassion/static/src/html/thank_you_quote_template.html"
+        )
+        template_html = str(html_file.read())
+        for details in self:
+            firstname = details.partner_id.firstname
+            lastname = details.partner_id.lastname
+            html_vals = {
+                "img_alt": details.display_name,
+                "image_data": details.partner_id.with_context(
+                    bin_size=False
+                ).image_512.decode("utf-8"),
+                "text": details.personal_motivation.strip() or "",
+                "attribution": _("Quote from %s %s") % (firstname, lastname)
+                if details.personal_motivation.strip()
+                else "",
+            }
+            details.thank_you_quote = template_html.format(**html_vals)
 
     def _compute_sponsorship_url(self):
         wp = self.env["wordpress.configuration"].sudo().get_config()
