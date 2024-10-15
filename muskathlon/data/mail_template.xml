@@ -112,6 +112,85 @@
       />
             <field name="model_id" ref="account.model_account_move_line" />
         </record>
+        <record
+      id="ambassador_sponsorship_notification_template"
+      model="mail.template"
+    >
+            <field
+        name="name"
+      >Muskathlon: Muskathlete Sponsorship Notification</field>
+            <field
+        name="model_id"
+        ref="partner_communication.model_partner_communication_job"
+      />
+            <field
+        name="email_from"
+      >${object.user_id.company_id.partner_id.email_formatted | safe}</field>
+            <field name="use_default_to" eval="True" />
+            <field
+        name="subject"
+      >Muskathlon: You received a new sponsorship!</field>
+            <field name="body_html" type="html">
+                <div>
+                    % set sponsorships = object.get_objects()
+                    % set partner = object.partner_id
+                    % set donors = sponsorships.mapped('partner_id')
+                    % set muskathlon = partner.registration_ids[:1]
+                </div>
+                <div>
+                    ${partner.salutation},
+                    <br />
+                    <br />
+                    Compassion is glad to inform you that you just received a sponsorship.
+                    <br />
+                    <br />
+                    % if len(donors) == 1:
+                        Your donor is ${donors.preferred_name} from ${donors.city}.
+                        % if donors.email and donors.thankyou_preference != 'none':
+                    You can personally thank ${donors.get('him')} if you wish by sending ${donors.get('him')} an e-mail at <a
+            href="mailto:${donors.email}"
+          >${donors.email}</a>. In any case, ${donors.get('he')} will receive a thank you letter from us.
+                        % endif
+                    % else:
+                        You received this from the following people. You may contact them by e-mail if you wish to thank them personally.
+                        <ul>
+                            % for donor in donors:
+                            <li
+            >${donor.preferred_name} from ${donor.city} ${'(<a
+                href="{}"
+              >{}</a>)'.format(donor.email, donor.email) if donor.email and donor.thankyou_preference != 'none' else ''}</li>
+                            % endfor
+                        </ul>
+                    % endif
+                    % if muskathlon:
+                        You currently have raised ${object.user_id.company_id.currency_id.symbol} ${muskathlon.amount_raised}.- You can check your barometer at anytime
+                        <a
+            href="${muskathlon.website_url}"
+          >on your sport profile page</a>.
+                    % endif
+                    <br />
+                    <br />
+                    Yours sincerely
+                </div>
+            </field>
+        </record>
+        <record
+      id="ambassador_sponsorship_notification_config"
+      model="partner.communication.config"
+    >
+            <field
+        name="name"
+      >Muskathlon: Muskathlete Sponsorship Notification</field>
+            <field name="send_mode">auto_digital</field>
+            <field
+        name="send_mode_pref_field"
+      >global_communication_delivery_preference</field>
+            <field
+        name="email_template_id"
+        ref="ambassador_sponsorship_notification_template"
+      />
+            <field name="model_id" ref="model_recurring_contract" />
+        </record>
 
         <!-- Registration confirmation -->
         <record id="registration_confirmation_template" model="mail.template">

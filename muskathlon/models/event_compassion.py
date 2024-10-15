@@ -50,6 +50,9 @@ class EventCompassion(models.Model):
             self.ambassador_config_id = self.env.ref(
                 "muskathlon.ambassador_donation_confirmation_config"
             )
+            self.ambassador_sponsorship_config_id = self.env.ref(
+                "muskathlon.ambassador_sponsorship_notification_config"
+            )
 
     @api.model
     def get_sport_levels(self):
