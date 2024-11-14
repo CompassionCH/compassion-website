@@ -261,6 +261,12 @@ async function createLetter(mode = "preview") {
   startStopLoading(mode);
   const params = new URLSearchParams(window.location.search);
 
+  if (letter_content.value.length === 0){
+    displayAlert("letter_text_empty_warning");
+    startStopLoading(mode);
+    return;
+  }
+
   const json_data = {
     body: letter_content.value,
     template_id: params.get("template_id"),
