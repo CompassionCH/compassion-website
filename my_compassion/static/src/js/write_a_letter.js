@@ -258,16 +258,14 @@ function startStopLoading(type) {
  * we can send a letter directly if the user pressed the corresponding button
  */
 async function createLetter(mode = "preview") {
-
   // Check if text is empty (and avoid sending the request if it is)
   if (letter_content.value.length === 0) {
     displayAlert("letter_text_empty_warning");
     return;
   }
-  
+
   startStopLoading(mode);
   const params = new URLSearchParams(window.location.search);
-
 
   const json_data = {
     body: letter_content.value,
