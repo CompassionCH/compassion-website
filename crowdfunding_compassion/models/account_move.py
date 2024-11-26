@@ -11,7 +11,8 @@ class AccountInvoice(models.Model):
         """Generate a Thank you Communication when invoice is a donation"""
         res = super().action_invoice_paid()
         for invoice in self.filtered("invoice_line_ids.crowdfunding_participant_id"):
-            invoice.with_delay(eta=10).generate_crowdfunding_receipt()
+            if invoice.payment_state == "paid":
+                invoice.with_delay(eta=10).generate_crowdfunding_receipt()
         return res
 
     def generate_crowdfunding_receipt(self):
