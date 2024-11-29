@@ -46,6 +46,8 @@
         "templates/signup.xml",
         "views/correspondence_template_view.xml",
         "views/partner_compassion_view.xml",
+        "data/signup_email_confirmation.xml",
+        "data/communication_config.xml",
     ],
     "depends": [
         "partner_communication_compassion",
@@ -54,6 +56,8 @@
         "website_sponsorship",
         "auth_signup",
         "website_crm_privacy_policy",  # OCA/website
+        "auth_signup_verify_email",  # OCA/server-auth
+        "queue_job",
     ],
     "demo": [],
     "installable": True,
