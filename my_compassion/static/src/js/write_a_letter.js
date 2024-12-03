@@ -148,7 +148,10 @@ function removeFile(name, size, type) {
  */
 function removeImage(name, size, type) {
   removeFile(name, size, type);
-  document.getElementById(`${name}_${size}_${type}`).remove();
+  const img_elem = document.getElementById(`${name}_${size}_${type}`);
+  if (img_elem != null) {
+    img_elem.remove();
+  }
 }
 
 function displayAlert(id) {
@@ -297,7 +300,10 @@ async function createLetter(mode = "preview") {
       } else if (mode === "send") {
         // Empty images and text (to avoid duplicate)
         letter_content.value = "";
-        images_list.forEach((image) => {
+        // Here, the clone is necessary because looping on an array which is being
+        // modified is asking for trouble.
+        const old_images_list = structuredClone(images_list);
+        old_images_list.forEach((image) => {
           removeImage(image.name, image.size, image.type);
         });
         $("#view_my_letter").attr("href", response.result.preview_url);
