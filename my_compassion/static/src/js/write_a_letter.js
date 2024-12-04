@@ -159,8 +159,8 @@ function displayAlert(id) {
 }
 
 /**
- * 
- * @param {File} image 
+ *
+ * @param {File} image
  * @returns True iff the mimetype of the given file is image/jpeg
  */
 function isJPEGImage(image) {
@@ -192,8 +192,9 @@ function displayImages() {
             compressReader.onload = function (t_event) {
               // [T2038] the new image name is necessary because the backend uses the
               // extension as a hint to detect the mimetype.
-              const new_name = isJPEGImage(original_image) ? 
-                original_image.name : original_image.name + ".jpg";
+              const new_name = isJPEGImage(original_image)
+                ? original_image.name
+                : original_image.name + ".jpg";
               const final_data = {
                 name: new_name,
                 data: t_event.target.result.split(",")[1],
