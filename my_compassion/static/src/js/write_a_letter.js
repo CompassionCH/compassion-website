@@ -162,6 +162,15 @@ function displayAlert(id) {
 }
 
 /**
+ *
+ * @param {File} image
+ * @returns True iff the mimetype of the given file is image/jpeg
+ */
+function isJPEGImage(image) {
+  return image.type.valueOf() === "image/jpeg";
+}
+
+/**
  * Display the images contained in new_images inside the HTML page
  */
 function displayImages() {
@@ -179,13 +188,18 @@ function displayImages() {
       image.onload = function (event) {
         if (
           original_image.size > resize_limit ||
-          original_image.type.valueOf() !== "image/jpeg"
+          !isJPEGImage(original_image)
         ) {
           compressImage(image).then((blob) => {
             const compressReader = new FileReader();
             compressReader.onload = function (t_event) {
+              // [T2038] the new image name is necessary because the backend uses the
+              // extension as a hint to detect the mimetype.
+              const new_name = isJPEGImage(original_image)
+                ? original_image.name
+                : original_image.name + ".jpg";
               const final_data = {
-                name: original_image.name,
+                name: new_name,
                 data: t_event.target.result.split(",")[1],
               };
               images_comp = images_comp.concat(final_data);
