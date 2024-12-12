@@ -28,6 +28,7 @@ class WebsiteChild(http.Controller):
             ("is_published", "=", True),
             ("state", "in", child_obj._available_states()),
             ("hold_id.expiration_date", ">", datetime.now()),
+            ("hold_id.state", "=", "active"),
             "|",
             ("website_reservation_date", "=", False),
             "&",

@@ -208,3 +208,13 @@ class CompassionChild(models.Model):
                 _("No child found for the given search parameters.")
             ) from error
         return child_id
+
+    def child_released(self, state="R"):
+        # Unpublish the child if it's released
+        self.write({"is_published": False})
+        return super().child_released(state)
+
+    def child_sponsored(self, sponsor_id):
+        # Unpublish the child if it's sponsored
+        self.write({"is_published": False})
+        return super().child_sponsored(sponsor_id)
