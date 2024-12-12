@@ -6,12 +6,20 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from odoo import _, models
+from odoo import _, fields, models
 
 
 class AccountMove(models.Model):
     _name = "account.move"
     _inherit = ["account.move", "translatable.model"]
+
+    gender = fields.Selection(
+        [
+            ("M", "Male"),
+            ("F", "Female"),
+        ],
+        store=False,
+    )
 
     def get_my_account_display_name(self):
         """
@@ -50,3 +58,11 @@ class AccountMove(models.Model):
 class AccountInvoiceLine(models.Model):
     _name = "account.move.line"
     _inherit = ["account.move.line", "translatable.model"]
+
+    gender = fields.Selection(
+        [
+            ("M", "Male"),
+            ("F", "Female"),
+        ],
+        store=False,
+    )
