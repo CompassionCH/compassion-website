@@ -373,6 +373,7 @@ class EventRegistration(models.Model):
                 [
                     ("line_ids.event_id", "=", event.id),
                     ("line_ids.user_id", "=", registration.partner_id.id),
+                    ("invoice_category", "!=", "sponsorship"),
                 ]
             )
 
@@ -569,7 +570,7 @@ class EventRegistration(models.Model):
             "domain": [
                 ("line_ids.event_id", "=", self.compassion_event_id.id),
                 ("line_ids.user_id", "=", self.partner_id.id),
-                ("line_ids.contract_id", "=", False),
+                ("invoice_category", "!=", "sponsorship"),
             ],
         }
 
