@@ -178,6 +178,7 @@ class EventRegistration(models.Model):
                         ("user_id", "=", partner.id),
                         ("payment_state", "=", "paid"),
                         ("event_id", "=", compassion_event.id),
+                        ("contract_id", "=", False),
                     ]
                 )
             )
@@ -568,6 +569,7 @@ class EventRegistration(models.Model):
             "domain": [
                 ("line_ids.event_id", "=", self.compassion_event_id.id),
                 ("line_ids.user_id", "=", self.partner_id.id),
+                ("line_ids.contract_id", "=", False),
             ],
         }
 
