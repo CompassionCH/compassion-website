@@ -11,6 +11,7 @@ import datetime
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+from odoo.tools import file_open
 
 from .event_compassion import EventCompassion
 
@@ -27,6 +28,11 @@ class MuskathlonRegistration(models.Model):
     sport_level_description = fields.Text("Describe your sport experience")
     t_shirt_size = fields.Selection(EventCompassion.get_t_shirt_sizes)
     is_in_two_months = fields.Boolean(compute="_compute_is_in_two_months")
+    thank_you_quote = fields.Html(
+        compute="_compute_thank_you_quote",
+        help="Used in thank you letters for donations linked to an event "
+             "and to this partner.",
+    )
 
     _sql_constraints = [
         (
@@ -35,6 +41,26 @@ class MuskathlonRegistration(models.Model):
             "Only one registration per participant/event is allowed!",
         )
     ]
+
+    def _compute_thank_you_quote(self):
+        html_file = file_open(
+            "partner_compassion/static/src/html/thank_you_quote_template.html"
+        )
+        template_html = str(html_file.read())
+        for registration in self:
+            firstname = registration.partner_id.firstname
+            lastname = registration.partner_id.lastname
+            html_vals = {
+                "img_alt": registration.display_name,
+                "image_data": registration.with_context(
+                    bin_size=False
+                ).profile_picture.decode("utf-8"),
+                "text": registration.ambassador_quote.strip() or "",
+                "attribution": _("Quote from %s %s") % (firstname, lastname)
+                if registration.ambassador_quote.strip()
+                else "",
+            }
+            registration.thank_you_quote = template_html.format(**html_vals)
 
     @api.model
     def create(self, values):
