@@ -57,23 +57,11 @@
                 <field name="sent_to_4m" />
                 <field name="payment_mode_id" />
                 <field name="journal_id" />
-                <filter
-          string="Not Paypal"
-          name="group_not_paypal"
-          domain="[('journal_id', 'not like', 'Paypal')]"
-        />
+                <filter string="Not Paypal" name="group_not_paypal" domain="[('journal_id', 'not like', 'Paypal')]" />
                 <separator />
-                <filter
-          string="Not sent to 4M"
-          name="group_not_sent_to_4m"
-          domain="[('sent_to_4m', '=', False)]"
-        />
+                <filter string="Not sent to 4M" name="group_not_sent_to_4m" domain="[('sent_to_4m', '=', False)]" />
                 <!-- group by -->
-                <filter
-          string="Ambassador"
-          name="group_ambassador"
-          context="{'group_by':'ambassador_id'}"
-        />
+                <filter string="Ambassador" name="group_ambassador" context="{'group_by':'ambassador_id'}" />
             </search>
         </field>
     </record>
@@ -95,16 +83,11 @@
         </field>
     </record>
     <!-- muskathlon reports menu -->
+    <menuitem id="menu_label_muskathlons" name="Muskathlons" parent="account.menu_finance_reports" sequence="5" />
     <menuitem
-    id="menu_label_muskathlons"
-    name="Muskathlons"
-    parent="account.menu_finance_reports"
-    sequence="5"
-  />
-    <menuitem
-    name="Muskathlon report"
-    action="action_muskathlons_report"
-    id="menu_muskathlon_report"
-    parent="menu_label_muskathlons"
-  />
+        name="Muskathlon report"
+        action="action_muskathlons_report"
+        id="menu_muskathlon_report"
+        parent="menu_label_muskathlons"
+    />
 </odoo>

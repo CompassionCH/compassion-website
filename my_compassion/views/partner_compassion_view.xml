@@ -7,10 +7,7 @@
         <field name="arch" type="xml">
             <!-- Add user login info -->
             <xpath expr="//field[@name='website'][1]" position="after">
-                <field
-          name="user_login"
-          attrs="{'invisible': [('user_login', '=', False)]}"
-        />
+                <field name="user_login" attrs="{'invisible': [('user_login', '=', False)]}" />
             </xpath>
         </field>
     </record>

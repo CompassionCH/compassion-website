@@ -43,6 +43,6 @@
         "partner_segmentation",
     ],
     "demo": [],
-    'installable': False,
+    "installable": False,
     "auto_install": True,
 }

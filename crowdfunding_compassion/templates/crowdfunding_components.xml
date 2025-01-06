@@ -7,21 +7,14 @@
         <template id="goal_progress" name="Goal progress">
             <div class="goal-progress__text-tile h6">
                 <img
-          class="goal-progress__icon"
-          t-attf-src="data:image/png;base64, #{ goal_image }"
-          t-if="isinstance(goal_image, bytes)"
-        />
-                <img
-          class="goal-progress__icon"
-          t-att-src="goal_image"
-          t-if="isinstance(goal_image, str)"
-        />
+                    class="goal-progress__icon"
+                    t-attf-src="data:image/png;base64, #{ goal_image }"
+                    t-if="isinstance(goal_image, bytes)"
+                />
+                <img class="goal-progress__icon" t-att-src="goal_image" t-if="isinstance(goal_image, str)" />
                 <t t-if="impact_type == 'large' and goal_reached &gt; 100">
                     <t t-set="goal_reached" t-value="int(goal_reached / 100)" />
-                    <t
-            t-set="goal_objective"
-            t-value="int(goal_objective / 100)"
-          />
+                    <t t-set="goal_objective" t-value="int(goal_objective / 100)" />
                 </t>
                 <div>
                     <span class="text--bold">
@@ -38,19 +31,16 @@
             </div>
             <div class="goal-progress__bar mb-2 mt-1">
                 <!-- Compute goal progress percentage -->
-                <t
-          t-set="progress_percentage"
-          t-value="int(goal_reached / goal_objective * 100)"
-        />
+                <t t-set="progress_percentage" t-value="int(goal_reached / goal_objective * 100)" />
                 <div class="progress">
                     <div
-            class="progress-bar bg-compassion"
-            role="progressbar"
-            t-attf-style="width: #{ progress_percentage }%"
-            t-att-aria-valuenow="progress_percentage"
-            aria-valuemin="0"
-            aria-valuemax="100"
-          />
+                        class="progress-bar bg-compassion"
+                        role="progressbar"
+                        t-attf-style="width: #{ progress_percentage }%"
+                        t-att-aria-valuenow="progress_percentage"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                    />
                 </div>
                 <span class="text--faded h6">
                     <t t-esc="progress_percentage" />
@@ -70,23 +60,11 @@
                 <t t-else="">
                     <t t-set="goal_name">sponsored child</t>
                 </t>
-                <t
-          t-set="goal_reached"
-          t-value="project.number_sponsorships_reached"
-        />
-                <t
-          t-set="goal_objective"
-          t-value="project.number_sponsorships_goal"
-        />
-                <t
-          t-set="goal_image"
-          t-value="'/crowdfunding_compassion/static/src/img/icn_children.png'"
-        />
+                <t t-set="goal_reached" t-value="project.number_sponsorships_reached" />
+                <t t-set="goal_objective" t-value="project.number_sponsorships_goal" />
+                <t t-set="goal_image" t-value="'/crowdfunding_compassion/static/src/img/icn_children.png'" />
                 <t t-set="impact_type">sponsorship</t>
-                <t
-          t-call="crowdfunding_compassion.goal_progress"
-          t-if="goal_objective"
-        />
+                <t t-call="crowdfunding_compassion.goal_progress" t-if="goal_objective" />
             </t>
             <!-- Setup data and display the CSP progress -->
             <t t-if="project.number_csp_goal">
@@ -98,52 +76,28 @@
                 </t>
                 <t t-set="goal_reached" t-value="project.number_csp_reached" />
                 <t t-set="goal_objective" t-value="project.number_csp_goal" />
-                <t
-          t-set="goal_image"
-          t-value="'/crowdfunding_compassion/static/src/img/icn_csp.png'"
-        />
+                <t t-set="goal_image" t-value="'/crowdfunding_compassion/static/src/img/icn_csp.png'" />
                 <t t-set="impact_type">sponsorship</t>
-                <t
-          t-call="crowdfunding_compassion.goal_progress"
-          t-if="goal_objective"
-        />
+                <t t-call="crowdfunding_compassion.goal_progress" t-if="goal_objective" />
             </t>
             <!-- Setup data and display the fund progress -->
             <t t-if="project.product_id">
+                <t t-set="impact_type" t-value="project.product_id.impact_type" />
                 <t
-          t-set="impact_type"
-          t-value="project.product_id.impact_type"
-        />
-                <t
-          t-if="(impact_type == 'standard' and project.product_number_reached > 1) or project.product_number_reached > 100"
-        >
-                    <t
-            t-set="goal_name"
-            t-value="project.product_id.crowdfunding_impact_text_passive_plural"
-          />
+                    t-if="(impact_type == 'standard' and project.product_number_reached > 1) or project.product_number_reached > 100"
+                >
+                    <t t-set="goal_name" t-value="project.product_id.crowdfunding_impact_text_passive_plural" />
                 </t>
                 <t t-else="">
-                    <t
-            t-set="goal_name"
-            t-value="project.product_id.crowdfunding_impact_text_passive_singular"
-          />
+                    <t t-set="goal_name" t-value="project.product_id.crowdfunding_impact_text_passive_singular" />
                 </t>
+                <t t-set="goal_reached" t-value="project.product_number_reached" />
+                <t t-set="goal_objective" t-value="project.product_number_goal" />
                 <t
-          t-set="goal_reached"
-          t-value="project.product_number_reached"
-        />
-                <t
-          t-set="goal_objective"
-          t-value="project.product_number_goal"
-        />
-                <t
-          t-set="goal_image"
-          t-value="project.product_id.image_512 or '/crowdfunding_compassion/static/src/img/icn_children.png'"
-        />
-                <t
-          t-call="crowdfunding_compassion.goal_progress"
-          t-if="goal_objective"
-        />
+                    t-set="goal_image"
+                    t-value="project.product_id.image_512 or '/crowdfunding_compassion/static/src/img/icn_children.png'"
+                />
+                <t t-call="crowdfunding_compassion.goal_progress" t-if="goal_objective" />
             </t>
             <t t-call="crowdfunding_compassion.project_deadline_widget" />
         </template>
@@ -154,10 +108,8 @@
                     ends today
                 </t>
                 <t t-elif="datetime.date.today() > project.deadline">
-                    <p
-            style="background-color: green; color: white; display: inline;
-                    padding: 6px"
-          >
+                    <p style="background-color: green; color: white; display: inline;
+                    padding: 6px">
                         <i class="fa fa-clock-o" />
                         project has ended
                     </p>
@@ -178,19 +130,17 @@
                     <a t-attf-href="/participant/#{participant.id}">
                         <div>
                             <img
-                class="participants__image"
-                t-att-src="participant.profile_photo_url"
-                alt="Participant image"
-                t-if="participant.profile_photo_url"
-              />
+                                class="participants__image"
+                                t-att-src="participant.profile_photo_url"
+                                alt="Participant image"
+                                t-if="participant.profile_photo_url"
+                            />
                         </div>
                     </a>
                     <div class="participants__content">
                         <h4 class="participants__name">
                             <a t-attf-href="/participant/#{participant.id}">
-                                <t
-                  t-esc="participant.nickname or participant.partner_id.sudo().preferred_name"
-                />
+                                <t t-esc="participant.nickname or participant.partner_id.sudo().preferred_name" />
                             </a>
                         </h4>
                         <!-- Setup data and display the sponsorship progress -->
@@ -200,23 +150,11 @@
                         <t t-else="">
                             <t t-set="goal_name">sponsored child</t>
                         </t>
-                        <t
-              t-set="goal_reached"
-              t-value="participant.number_sponsorships_reached"
-            />
-                        <t
-              t-set="goal_objective"
-              t-value="participant.number_sponsorships_goal"
-            />
-                        <t
-              t-set="goal_image"
-              t-value="'/crowdfunding_compassion/static/src/img/icn_children.png'"
-            />
+                        <t t-set="goal_reached" t-value="participant.number_sponsorships_reached" />
+                        <t t-set="goal_objective" t-value="participant.number_sponsorships_goal" />
+                        <t t-set="goal_image" t-value="'/crowdfunding_compassion/static/src/img/icn_children.png'" />
                         <t t-set="impact_type">sponsorship</t>
-                        <t
-              t-call="crowdfunding_compassion.goal_progress"
-              t-if="goal_objective"
-            />
+                        <t t-call="crowdfunding_compassion.goal_progress" t-if="goal_objective" />
                         <!-- Setup data and display the CSP progress -->
                         <t t-if="participant.number_csp_reached > 1">
                             <t t-set="goal_name">mums and babies sponsored</t>
@@ -224,64 +162,37 @@
                         <t t-else="">
                             <t t-set="goal_name">mum and baby sponsored</t>
                         </t>
-                        <t
-              t-set="goal_reached"
-              t-value="participant.number_csp_reached"
-            />
-                        <t
-              t-set="goal_objective"
-              t-value="participant.number_csp_goal"
-            />
-                        <t
-              t-set="goal_image"
-              t-value="'/crowdfunding_compassion/static/src/img/icn_csp.png'"
-            />
+                        <t t-set="goal_reached" t-value="participant.number_csp_reached" />
+                        <t t-set="goal_objective" t-value="participant.number_csp_goal" />
+                        <t t-set="goal_image" t-value="'/crowdfunding_compassion/static/src/img/icn_csp.png'" />
                         <t t-set="impact_type">sponsorship</t>
-                        <t
-              t-call="crowdfunding_compassion.goal_progress"
-              t-if="goal_objective"
-            />
+                        <t t-call="crowdfunding_compassion.goal_progress" t-if="goal_objective" />
                         <!-- Setup data and display the fund progress -->
+                        <t t-set="impact_type" t-value="project.product_id.impact_type" />
                         <t
-              t-set="impact_type"
-              t-value="project.product_id.impact_type"
-            />
-                        <t
-              t-if="(impact_type == 'standard' and project.product_number_reached > 1) or project.product_number_reached > 100"
-            >
-                            <t
-                t-set="goal_name"
-                t-value="project.product_id.crowdfunding_impact_text_passive_plural"
-              />
+                            t-if="(impact_type == 'standard' and project.product_number_reached > 1) or project.product_number_reached > 100"
+                        >
+                            <t t-set="goal_name" t-value="project.product_id.crowdfunding_impact_text_passive_plural" />
                         </t>
                         <t t-else="">
                             <t
-                t-set="goal_name"
-                t-value="project.product_id.crowdfunding_impact_text_passive_singular"
-              />
+                                t-set="goal_name"
+                                t-value="project.product_id.crowdfunding_impact_text_passive_singular"
+                            />
                         </t>
+                        <t t-set="goal_reached" t-value="participant.product_number_reached" />
+                        <t t-set="goal_objective" t-value="participant.product_number_goal" />
                         <t
-              t-set="goal_reached"
-              t-value="participant.product_number_reached"
-            />
-                        <t
-              t-set="goal_objective"
-              t-value="participant.product_number_goal"
-            />
-                        <t
-              t-set="goal_image"
-              t-value="participant.project_id.product_id.image_512 or '/crowdfunding_compassion/static/src/img/icn_children.png'"
-            />
-                        <t
-              t-call="crowdfunding_compassion.goal_progress"
-              t-if="goal_objective"
-            />
+                            t-set="goal_image"
+                            t-value="participant.project_id.product_id.image_512 or '/crowdfunding_compassion/static/src/img/icn_children.png'"
+                        />
+                        <t t-call="crowdfunding_compassion.goal_progress" t-if="goal_objective" />
                     </div>
                 </div>
                 <a
-          t-attf-href="/project/#{ project.id }/donation/?participant=#{ participant.id }&amp;page=2"
-          class="btn btn-primary btn-block mb-3"
-        >
+                    t-attf-href="/project/#{ project.id }/donation/?participant=#{ participant.id }&amp;page=2"
+                    class="btn btn-primary btn-block mb-3"
+                >
                     Support
                 </a>
             </div>
@@ -289,14 +200,12 @@
         <!-- Impact tile -->
         <!-- Individual [impact_tile] data must be set before calling this template -->
         <template id="impact_tile" name="Impact tile">
-            <div
-        t-attf-class="impact-tile impact-tile--#{ impact_tile['color'] }"
-      >
+            <div t-attf-class="impact-tile impact-tile--#{ impact_tile['color'] }">
                 <img
-          class="impact-tile__image"
-          t-attf-src="data:image;base64, #{impact_tile['image']}"
-          alt="Impact image"
-        />
+                    class="impact-tile__image"
+                    t-attf-src="data:image;base64, #{impact_tile['image']}"
+                    alt="Impact image"
+                />
                 <span class="text--bold">
                     <t t-if="impact_tile['quantity']>=1">
                         <t t-esc="impact_tile['text']" />
@@ -322,24 +231,20 @@
             <div class="impact-tile--empty">
                 Be the first to show love for this project,
                 <br />
-                <a
-          t-attf-href="/project/#{ project.id }/donation"
-        >make a donation now</a>
+                <a t-attf-href="/project/#{ project.id }/donation">make a donation now</a>
             </div>
         </template>
         <template id="participant_picture" name="Participant picture">
             <div class="card" style="border: none;">
                 <div class="card-body">
                     <img
-            class="profile-pic rounded-circle"
-            t-att-src="participant.profile_photo_url"
-            alt="Project participant"
-            t-if="participant.profile_photo_url"
-          />
+                        class="profile-pic rounded-circle"
+                        t-att-src="participant.profile_photo_url"
+                        alt="Project participant"
+                        t-if="participant.profile_photo_url"
+                    />
                     <h6 class="text-center text-uppercase mt-3">
-                        <t
-              t-esc="participant.nickname or participant.partner_id.sudo().preferred_name"
-            />
+                        <t t-esc="participant.nickname or participant.partner_id.sudo().preferred_name" />
                     </h6>
                 </div>
             </div>
@@ -347,19 +252,17 @@
         <template id="project_impact_card" name="Project impact card">
             <div class="card w-100 mb-5">
                 <img
-          class="card-img-top donation-type__project-card-image"
-          t-attf-src="data:image/png;base64, #{ project.cover_photo }"
-          alt="Project image"
-        />
+                    class="card-img-top donation-type__project-card-image"
+                    t-attf-src="data:image/png;base64, #{ project.cover_photo }"
+                    alt="Project image"
+                />
                 <div class="card-body text-center">
                     You are actually creating impact for:
                     <h4 class="text-uppercase mt-2 underline">
                         <t t-esc="project.name" />
                     </h4>
                     <t t-if="display_impact">
-                        <h4
-              class="text-primary text-text-uppercase mt-5 mb-3"
-            >Impact so far</h4>
+                        <h4 class="text-primary text-text-uppercase mt-5 mb-3">Impact so far</h4>
                         <t t-call="crowdfunding_compassion.project_progress" />
                     </t>
                 </div>
@@ -372,10 +275,7 @@
                         <div class="project-card__header">
                             <div class="project-card__header-title">
                                 <h6 class="card-title">
-                                    <a
-                    t-attf-href="/project/#{project.id}"
-                    style="color: white"
-                  >
+                                    <a t-attf-href="/project/#{project.id}" style="color: white">
                                         <t t-esc="project.name" />
                                     </a>
                                 </h6>
@@ -384,18 +284,12 @@
                                 <t t-if="project.type == 'collective'">
                                     <p>
                                         <small>
-                                            <i
-                        class="fa fa-user-circle white"
-                      />
+                                            <i class="fa fa-user-circle white" />
                                             <t
-                        t-esc="project.owner_participant_id.nickname or project.project_owner_id.preferred_name"
-                      />
-                                            <t
-                        t-if="(len(project.participant_ids) - 1) > 0"
-                      >
-                                                <t
-                          t-esc="' + ' + str((len(project.participant_ids) - 1))"
-                        />
+                                                t-esc="project.owner_participant_id.nickname or project.project_owner_id.preferred_name"
+                                            />
+                                            <t t-if="(len(project.participant_ids) - 1) > 0">
+                                                <t t-esc="' + ' + str((len(project.participant_ids) - 1))" />
                                                 <span>friends</span>
                                             </t>
                                         </small>
@@ -404,19 +298,15 @@
                                 <t t-else="">
                                     <p>
                                         <small>
-                                            <i
-                        class="fa fa-user-circle white"
-                      />
+                                            <i class="fa fa-user-circle white" />
                                             <t
-                        t-esc="project.owner_participant_id.nickname or project.project_owner_id.preferred_name"
-                      />
+                                                t-esc="project.owner_participant_id.nickname or project.project_owner_id.preferred_name"
+                                            />
                                         </small>
                                     </p>
                                 </t>
                             </div>
-                            <div
-                class="project-card__header-align-right project-card__header-icons"
-              >
+                            <div class="project-card__header-align-right project-card__header-icons">
                                 <p>
                                     <t t-if="project.type == 'collective'">
                                         <small>
@@ -436,36 +326,26 @@
                     </div>
                     <a t-attf-href="/project/#{project.id}">
                         <img
-              class="card-img-top"
-              t-attf-src="data:image/png;base64, #{ project.cover_photo }"
-              alt="Project image"
-            />
+                            class="card-img-top"
+                            t-attf-src="data:image/png;base64, #{ project.cover_photo }"
+                            alt="Project image"
+                        />
                     </a>
                     <div class="card-body project-card__body">
                         <div>
                             <p class="mb-4 project-card__body-description">
                                 <t t-esc="project.description" />
                             </p>
-                            <t
-                t-call="crowdfunding_compassion.project_progress"
-              />
+                            <t t-call="crowdfunding_compassion.project_progress" />
                         </div>
                         <div class="project-card__body-cta">
                             <t t-if="project.deadline >= datetime.date.today()">
-                                <a
-                  t-attf-href="/project/#{project.id}/donation"
-                  class="btn btn-primary btn-block mt-5"
-                >
+                                <a t-attf-href="/project/#{project.id}/donation" class="btn btn-primary btn-block mt-5">
                                     Donate
                                 </a>
                             </t>
-                            <t
-                t-if="project.type == 'collective' and project.deadline >= datetime.date.today()"
-              >
-                                <a
-                  t-attf-href="/projects/join/#{project.id}"
-                  class="btn btn-primary btn-block mt-2"
-                >
+                            <t t-if="project.type == 'collective' and project.deadline >= datetime.date.today()">
+                                <a t-attf-href="/projects/join/#{project.id}" class="btn btn-primary btn-block mt-2">
                                     Participate
                                 </a>
                             </t>
@@ -476,11 +356,7 @@
         </template>
         <template id="crowdfunding_rounded_image" name="Rounded Image">
             <div class="col-md-4 text-center">
-                <img
-          t-att-src="img_path"
-          class="w-50 rounded-circle pb-4"
-          alt="Responsive image"
-        />
+                <img t-att-src="img_path" class="w-50 rounded-circle pb-4" alt="Responsive image" />
             </div>
         </template>
         <!-- Fund card -->
@@ -488,16 +364,16 @@
             <div class="card fund-card my-3">
                 <div class="fund-card__header">
                     <img
-            class="fund-card__image"
-            t-attf-src="data:image/png;base64, #{ fund_image }"
-            t-if="isinstance(fund_image, bytes)"
-          />
+                        class="fund-card__image"
+                        t-attf-src="data:image/png;base64, #{ fund_image }"
+                        t-if="isinstance(fund_image, bytes)"
+                    />
                     <img
-            class="fund-card__icon"
-            t-attf-src="data:image/png;base64, #{ fund_icon }"
-            height="100"
-            t-if="isinstance(fund_icon, bytes)"
-          />
+                        class="fund-card__icon"
+                        t-attf-src="data:image/png;base64, #{ fund_icon }"
+                        height="100"
+                        t-if="isinstance(fund_icon, bytes)"
+                    />
                 </div>
                 <div class="fund-card__content">
                     <h5 class="text-primary my-3 fund-card__title">
@@ -516,40 +392,30 @@
         <template id="fund_amount_example" name="Fund amount example">
             <!-- Compute value -->
             <t t-set="product" t-value="project.product_id" />
+            <t t-set="current_value" t-value="product.standard_price * current_default_quantity" />
             <t
-        t-set="current_value"
-        t-value="product.standard_price * current_default_quantity"
-      />
-            <t
-        t-set="plural"
-        t-value="current_default_quantity > 1 if product.impact_type == 'standard' else current_default_quantity > 100"
-      />
+                t-set="plural"
+                t-value="current_default_quantity > 1 if product.impact_type == 'standard' else current_default_quantity > 100"
+            />
             <div class="col-6 col-lg-6 mb-3">
                 <label class="h-100 w-100">
-                    <input
-            type="radio"
-            name="amount"
-            t-att-value="current_value"
-            class="card-input-element d-none"
-          />
-                    <div
-            class="card h-100 d-flex justify-content-around align-items-center text-center"
-          >
+                    <input type="radio" name="amount" t-att-value="current_value" class="card-input-element d-none" />
+                    <div class="card h-100 d-flex justify-content-around align-items-center text-center">
                         <img
-              class="donation-type__card-icon"
-              t-attf-src="data:image/png;base64, #{ product.image_512 }"
-              t-if="isinstance(product.image_512, bytes)"
-            />
+                            class="donation-type__card-icon"
+                            t-attf-src="data:image/png;base64, #{ product.image_512 }"
+                            t-if="isinstance(product.image_512, bytes)"
+                        />
                         <img
-              class="donation-type__card-icon"
-              src="/crowdfunding_compassion/static/src/img/icn_children.png"
-              t-else=""
-            />
+                            class="donation-type__card-icon"
+                            src="/crowdfunding_compassion/static/src/img/icn_children.png"
+                            t-else=""
+                        />
                         <h4 class="text-primary">
                             <t t-esc="current_default_quantity" />
                             <t
-                t-esc="product.crowdfunding_quantity_plural if plural else product.crowdfunding_quantity_singular"
-              />
+                                t-esc="product.crowdfunding_quantity_plural if plural else product.crowdfunding_quantity_singular"
+                            />
                             <br />
                             CHF
                             <t t-esc="str(int(current_value)) + '.-'" />
@@ -560,43 +426,34 @@
         </template>
         <template id="crowdfunding_navbar" name="Navbar for Crowdfunding page">
             <nav
-        t-att-class="'navbar shadow navbar-expand-lg navbar-dark' if website.user_id != user_id else 'navbar sticky-top shadow navbar-expand-lg navbar-dark'"
-        id="mainNav"
-      >
+                t-att-class="'navbar shadow navbar-expand-lg navbar-dark' if website.user_id != user_id else 'navbar sticky-top shadow navbar-expand-lg navbar-dark'"
+                id="mainNav"
+            >
                 <a class="navbar-brand js-scroll-trigger" href="/homepage">
                     <img
-            t-att-src="'/crowdfunding_compassion/static/src/img/together_line_wh_' + env.lang[:2] + '.png'"
-            width="150"
-            height="auto"
-          />
+                        t-att-src="'/crowdfunding_compassion/static/src/img/together_line_wh_' + env.lang[:2] + '.png'"
+                        width="150"
+                        height="auto"
+                    />
                 </a>
                 <button
-          class="navbar-toggler navbar-toggler-right"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarResponsive"
-          aria-controls="navbarResponsive"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
+                    class="navbar-toggler navbar-toggler-right"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#navbarResponsive"
+                    aria-controls="navbarResponsive"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
                     <i class="fa fa-bars fa-xs " />
                 </button>
-                <div
-          class="collapse navbar-collapse dropdown"
-          id="navbarResponsive"
-        >
+                <div class="collapse navbar-collapse dropdown" id="navbarResponsive">
                     <ul class="navbar-nav text-text-uppercase ml-auto">
                         <li class="nav-item">
-                            <a
-                class="nav-link"
-                href="/projects/create"
-              >Submit your project</a>
+                            <a class="nav-link" href="/projects/create">Submit your project</a>
                         </li>
                         <li class="nav-item">
-                            <a
-                class="nav-link"
-                href="/projects"
-              >Browse all projects</a>
+                            <a class="nav-link" href="/projects">Browse all projects</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/about">About</a>
@@ -607,38 +464,26 @@
                         </t>
                         <t t-call="portal.user_dropdown">
                             <t t-set="_icon" t-value="true" />
-                            <t
-                t-set="_item_class"
-                t-value="'nav-item dropdown ml-lg-auto'"
-              />
-                            <t
-                t-set="_link_class"
-                t-value="'nav-link font-weight-bold'"
-              />
+                            <t t-set="_item_class" t-value="'nav-item dropdown ml-lg-auto'" />
+                            <t t-set="_link_class" t-value="'nav-link font-weight-bold'" />
                         </t>
                         <li class="nav-item">
                             <!--  lang selector        -->
                             <span class="lang-selector">
                                 <a
-                  t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='fr_CH')"
-                >
-                                    <img
-                    src="/theme_crowdfunding/static/src/img/FR.svg"
-                  />
+                                    t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='fr_CH')"
+                                >
+                                    <img src="/theme_crowdfunding/static/src/img/FR.svg" />
                                 </a>
                                 <a
-                  t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='de_DE')"
-                >
-                                    <img
-                    src="/theme_crowdfunding/static/src/img/DE.svg"
-                  />
+                                    t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='de_DE')"
+                                >
+                                    <img src="/theme_crowdfunding/static/src/img/DE.svg" />
                                 </a>
                                 <a
-                  t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='it_IT')"
-                >
-                                    <img
-                    src="/theme_crowdfunding/static/src/img/IT.svg"
-                  />
+                                    t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='it_IT')"
+                                >
+                                    <img src="/theme_crowdfunding/static/src/img/IT.svg" />
                                 </a>
                             </span>
                         </li>
@@ -647,12 +492,12 @@
             </nav>
         </template>
         <template
-      id="layout"
-      inherit_id="website.layout"
-      name="Crowdfunding Website Layout"
-      priority="20"
-      customize_show="False"
-    >
+            id="layout"
+            inherit_id="website.layout"
+            name="Crowdfunding Website Layout"
+            priority="20"
+            customize_show="False"
+        >
             <!--  Replace default header -->
             <xpath expr="//header" position="attributes">
                 <attribute name="style">display: none</attribute>
@@ -666,10 +511,10 @@
                         <div class="row py-5">
                             <div class="col-sm-12 col-md-4 f-logo">
                                 <img
-                  t-attf-src="https://compassion.ch/wp-content/themes/compassion/assets/img/compassion-logo-#{env.lang[:2]}.svg"
-                  width="190"
-                  height="auto"
-                />
+                                    t-attf-src="https://compassion.ch/wp-content/themes/compassion/assets/img/compassion-logo-#{env.lang[:2]}.svg"
+                                    width="190"
+                                    height="auto"
+                                />
                                 <p>
                                     Compassion Switzerland is the national branch of Compassion International. Through
                                     individual sponsorship and in collaboration with more than 8,000 local churches, we
@@ -680,41 +525,35 @@
                                 <ul class="nav flex-column">
                                     <!--  This page is not translated in Italian yet-->
                                     <li class="nav-item">
-                                        <a
-                      class="nav-link"
-                      href="/faq"
-                    >Frequently Asked Questions</a>
+                                        <a class="nav-link" href="/faq">Frequently Asked Questions</a>
                                     </li>
                                     <!--  This page is not translated in Italian yet-->
                                     <li class="nav-item">
-                                        <a
-                      class="nav-link"
-                      href="/about"
-                    >About</a>
+                                        <a class="nav-link" href="/about">About</a>
                                     </li>
                                     <li class="nav-item">
                                         <a
-                      t-if="request.lang.code == 'fr_CH'"
-                      class="nav-link active"
-                      href="https://compassion.ch/"
-                      target="_blank"
-                    >
+                                            t-if="request.lang.code == 'fr_CH'"
+                                            class="nav-link active"
+                                            href="https://compassion.ch/"
+                                            target="_blank"
+                                        >
                                             Compassion Suisse
                                         </a>
                                         <a
-                      t-if="request.lang.code == 'de_DE'"
-                      class="nav-link active"
-                      href="https://compassion.ch/de/"
-                      target="_blank"
-                    >
+                                            t-if="request.lang.code == 'de_DE'"
+                                            class="nav-link active"
+                                            href="https://compassion.ch/de/"
+                                            target="_blank"
+                                        >
                                             Compassion Schweiz
                                         </a>
                                         <a
-                      t-if="request.lang.code == 'it_IT'"
-                      class="nav-link active"
-                      href="https://compassion.ch/it/"
-                      target="_blank"
-                    >
+                                            t-if="request.lang.code == 'it_IT'"
+                                            class="nav-link active"
+                                            href="https://compassion.ch/it/"
+                                            target="_blank"
+                                        >
                                             Compassion Svizzera
                                         </a>
                                     </li>
@@ -725,137 +564,117 @@
 .social-link,
 .social-link:visited,
 .social-link:link {
-  color: #c0c0c0 !important;
-  font-size: small;
+    color: #c0c0c0 !important;
+    font-size: small;
 }
-                </style>
+                                </style>
                                 <ul class="nav flex-column">
                                     <li class="nav-item">
-                                        <a
-                      class="nav-link social-title text-uppercase"
-                    >Follow us</a>
+                                        <a class="nav-link social-title text-uppercase">Follow us</a>
                                     </li>
                                     <li class="nav-item">
                                         <a
-                      t-if="request.lang.code == 'fr_CH'"
-                      class="nav-link social-link"
-                      href="https://www.facebook.com/compassionsuisse/"
-                      target="_blank"
-                    >
+                                            t-if="request.lang.code == 'fr_CH'"
+                                            class="nav-link social-link"
+                                            href="https://www.facebook.com/compassionsuisse/"
+                                            target="_blank"
+                                        >
                                             Facebook
                                         </a>
                                         <a
-                      t-elif="request.lang.code == 'it_IT'"
-                      class="nav-link social-link"
-                      href="https://www.facebook.com/compassionsvizzera/"
-                      target="_blank"
-                    >
+                                            t-elif="request.lang.code == 'it_IT'"
+                                            class="nav-link social-link"
+                                            href="https://www.facebook.com/compassionsvizzera/"
+                                            target="_blank"
+                                        >
                                             Facebook
                                         </a>
                                         <a
-                      t-else=""
-                      class="nav-link social-link"
-                      href="https://www.facebook.com/compassionschweiz/"
-                      target="_blank"
-                    >
+                                            t-else=""
+                                            class="nav-link social-link"
+                                            href="https://www.facebook.com/compassionschweiz/"
+                                            target="_blank"
+                                        >
                                             Facebook
                                         </a>
                                     </li>
                                     <li class="nav-item">
                                         <a
-                      class="nav-link social-link"
-                      href="https://vimeo.com/compassionswitzerland"
-                      target="_blank"
-                    >
+                                            class="nav-link social-link"
+                                            href="https://vimeo.com/compassionswitzerland"
+                                            target="_blank"
+                                        >
                                             Vimeo
                                         </a>
                                     </li>
                                     <li class="nav-item">
                                         <a
-                      t-if="request.lang.code == 'fr_CH'"
-                      class="nav-link social-link"
-                      href="https://www.youtube.com/c/compassionsuisse"
-                      target="_blank"
-                    >
+                                            t-if="request.lang.code == 'fr_CH'"
+                                            class="nav-link social-link"
+                                            href="https://www.youtube.com/c/compassionsuisse"
+                                            target="_blank"
+                                        >
                                             YouTube
                                         </a>
                                         <a
-                      t-else=""
-                      class="nav-link social-link"
-                      href="https://www.youtube.com/channel/UChVNRRvihHG0AYPsdEFfasQ"
-                      target="_blank"
-                    >
+                                            t-else=""
+                                            class="nav-link social-link"
+                                            href="https://www.youtube.com/channel/UChVNRRvihHG0AYPsdEFfasQ"
+                                            target="_blank"
+                                        >
                                             YouTube
                                         </a>
                                     </li>
                                     <li class="nav-item">
                                         <a
-                      class="nav-link social-link"
-                      href="https://www.instagram.com/compassionswiss/"
-                      target="_blank"
-                    >
+                                            class="nav-link social-link"
+                                            href="https://www.instagram.com/compassionswiss/"
+                                            target="_blank"
+                                        >
                                             Instagram
                                         </a>
                                     </li>
                                     <li class="nav-item">
                                         <a
-                      class="nav-link social-link"
-                      href="https://www.linkedin.com/company/compassion-schweiz-suisse-svizzera"
-                      target="_blank"
-                    >
+                                            class="nav-link social-link"
+                                            href="https://www.linkedin.com/company/compassion-schweiz-suisse-svizzera"
+                                            target="_blank"
+                                        >
                                             Linkedin
                                         </a>
                                     </li>
                                     <li class="nav-item" style="display: none;">
-                                        <a
-                      class="nav-link active"
-                      href="#"
-                    >About this platform</a>
+                                        <a class="nav-link active" href="#">About this platform</a>
                                     </li>
                                     <li class="nav-item" style="display: none;">
-                                        <a
-                      class="nav-link"
-                      href="#"
-                    >Fundraising tools</a>
+                                        <a class="nav-link" href="#">Fundraising tools</a>
                                     </li>
                                     <li class="nav-item" style="display: none;">
-                                        <a
-                      class="nav-link "
-                      href="#"
-                    >Contact</a>
+                                        <a class="nav-link " href="#">Contact</a>
                                     </li>
                                 </ul>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-4 ">
-                                <small
-                >© 2024 Compassion Switzerland / all rights reserved</small>
+                                <small>© 2024 Compassion Switzerland / all rights reserved</small>
                             </div>
-                            <div
-                class="col-sm-12 col-md-4 text-right d-none d-md-block"
-              >
+                            <div class="col-sm-12 col-md-4 text-right d-none d-md-block">
                                 <span class="lang-selector">
                                     <a
-                    t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='fr_CH')"
-                  >
-                                        <img
-                      src="/theme_crowdfunding/static/src/img/FR.svg"
-                    />
+                                        t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='fr_CH')"
+                                    >
+                                        <img src="/theme_crowdfunding/static/src/img/FR.svg" />
                                     </a>
                                     <a
-                    t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='de_DE')"
-                  >
-                                        <img
-                      src="/theme_crowdfunding/static/src/img/DE.svg"
-                    />
+                                        t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='de_DE')"
+                                    >
+                                        <img src="/theme_crowdfunding/static/src/img/DE.svg" />
                                     </a>
                                     <a
-                    t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='it_IT')"
-                  >
-                                        <img
-                      src="/theme_crowdfunding/static/src/img/IT.svg"
-                    />
+                                        t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='it_IT')"
+                                    >
+                                        <img src="/theme_crowdfunding/static/src/img/IT.svg" />
                                     </a>
                                 </span>
                             </div>
@@ -866,10 +685,7 @@
         </template>
         <!-- Attach layout to Crowdfunding website -->
         <record id="layout" model="ir.ui.view">
-            <field
-        name="website_id"
-        ref="crowdfunding_compassion.crowdfunding_website"
-      />
+            <field name="website_id" ref="crowdfunding_compassion.crowdfunding_website" />
         </record>
     </data>
 </odoo>

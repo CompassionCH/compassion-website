@@ -1,0 +1,152 @@
+
+/* The Outer Container:
+   This now acts as the master controller for size.
+   Any height/width set inline here will force children to obey. */
+.js_language_selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    position: relative;
+    height: 48px;
+}
+
+/* The Button:
+   Forces the button to fill the parent completely and resets
+   rigid Bootstrap padding that causes overflow. */
+.js_language_selector .btn {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    padding: 0 0.75rem !important;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+}
+
+/* The Icons & Text:
+   Ensures icons and text remain vertically centered and
+   don't force the button to grow taller than allowed. */
+.js_language_selector .btn > span {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.language-selector__icon i {
+    display: flex;
+    align-items: center;
+    /* Ensures the icon scales down if the container is tiny */
+    max-height: 100%;
+    line-height: 1;
+}
+
+/* =========================================
+   2. DROPDOWN MENU ANIMATION
+   ========================================= */
+
+/* Curtain drop animation definition */
+@keyframes curtainDrop {
+    0% {
+        opacity: 0;
+        max-height: 0;
+        transform: scaleY(0.95);
+    }
+    100% {
+        opacity: 1;
+        max-height: 60vh;
+        transform: scaleY(1);
+    }
+}
+
+/* Apply Animation on the dropdown menu */
+.animation-drop.show {
+    animation: curtainDrop 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards; /* Smooth Ease */
+    display: block;
+}
+
+/* Hide inner scrollbar of the dropdown menu (Firefox) */
+.animation-drop {
+    scrollbar-width: none;
+}
+
+/* Hide inner scrollbar of the dropdown menu (Chrome/Safari/Edge) */
+.animation-drop::-webkit-scrollbar {
+    display: none;
+}
+
+/* Fix for flags inside the dropdown list to prevent stretching */
+.dropdown-menu .o_lang_flag {
+    display: none !important;
+}
+
+
+.language-selector__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* Ensures proper left and right alignment of the dropdown menu */
+.language-selector__dropdown-menu{
+      right: 0;
+      left: auto;
+      top: 100%;
+      margin-top: 0.25rem;
+      border-radius: 10px;
+    }
+
+/* Forces the items to use the Compassion Blue variable on interaction. */
+.js_language_selector .dropdown-menu .dropdown-item {
+    &:hover, &:focus, &:active, &.active {
+        background-color: var(--compassion-blue) !important;
+        color: #fff !important; /* Ensure text is readable */
+    }
+
+    transition: background-color 0.2s ease;
+}
+
+@include media-breakpoint-down(sm) {
+
+    .js_language_selector {
+        flex-direction: column;
+        align-items: stretch;
+        height: 100%;
+    }
+
+    .language-selector__dropdown-menu {
+        position: static !important;
+        transform: none !important;
+    }
+
+    .language-selector__icon_left {
+          display: none !important;
+      }
+
+    /* Mobile-Specific Animation
+       Desktop 'scaleY' animation can look weird in flow layout.
+       We use a simple max-height animation for the smooth "push down" effect.
+    */
+    @keyframes mobileAccordionDrop {
+        0% { opacity: 0; max-height: 0; overflow: hidden; }
+        100% { opacity: 1; max-height: 500px; overflow: visible; }
+    }
+
+    .animation-drop.show {
+        animation: mobileAccordionDrop 0.3s ease-out forwards;
+    }
+}
+
+/*
+Right icon animation
+*/
+
+.transition-icon {
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Vertical Mirror Effect (Chevron rotation) */
+[aria-expanded="true"] .transition-icon {
+    transform: scaleY(-1);
+}

@@ -1,0 +1,67 @@
+/**
+    * _portrait.scss
+    * =============
+    * Portrait Component Styles
+    * This file contains styles for the portrait component, including image and title styling.
+    */
+
+.portrait-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.portrait-frame {
+    @extend .rounded-circle;
+    @extend .border;
+    @extend .border-5;
+    @extend .mb-2;
+
+    border-color: var(--low-yellow);
+
+    &-size-small {
+        max-width: 80px;
+        max-height: 80px;
+
+        .portrait-image {
+            max-width: 65px;
+            max-height: 65px;
+        }
+    }
+
+    &-size-medium {
+        max-width: 130px;
+        max-height: 130px;
+
+        .portrait-image {
+            max-width: 110px;
+            max-height: 110px;
+        }
+    }
+
+    &-size-large {
+        max-width: 210px;
+        max-height: 210px;
+
+        .portrait-image {
+            max-width: 190px;
+            max-height: 190px;
+        }
+    }
+}
+
+.portrait-image {
+    @extend .img-circle;
+    @extend .border;
+    @extend .border-5;
+
+    border: var(--pure-white);
+    width: auto;
+    height: auto;
+}
+
+.portrait-title {
+    font-size: 1.875rem; /* 1.875rem (30px) */
+    line-height: 1.2; /* 2.25 / 1.875 */
+    font-weight: bold;
+}

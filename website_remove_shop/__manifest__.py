@@ -9,7 +9,7 @@
 # pylint: disable=C8101
 {
     "name": "Website - Hide Shop",
-    "version": "18.0.1.0.0",
+    "version": "14.0.1.0.0",
     "category": "Website",
     "author": "Compassion CH",
     "development_status": "Beta",
@@ -19,6 +19,6 @@
         "website_sale",
     ],
     "data": [],
-    "installable": True,
+    "installable": False,
     "auto_install": False,
 }

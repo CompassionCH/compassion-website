@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    This component represents Breadcrumb for the user's navigation.
+    TO BE DONE
+-->
+<odoo>
+    <template id="my2_breadcrumbs" name="Breadcrumb">
+        <nav aria-label="breadcrumbs">
+            <ol class="breadcrumb">
+                <t t-foreach="breadcrumbs" t-as="crumb">
+                    <li t-att-class="'breadcrumb-item active' if crumb.get('active') else 'breadcrumb-item'">
+                        <a t-att-href="crumb.get('url')">
+                            <t t-esc="crumb.get('name')" />
+                        </a>
+                    </li>
+                </t>
+            </ol>
+        </nav>
+    </template>
+</odoo>

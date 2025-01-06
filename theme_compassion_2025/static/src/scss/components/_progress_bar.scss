@@ -1,0 +1,66 @@
+// Our current Saas compiler version does not support standard pow or math.pow functions.
+@function pow($base, $exponent) {
+    $result: 1;
+    @if $exponent > 0 {
+        @for $_ from 1 through $exponent {
+            $result: $result * $base;
+        }
+    }
+    @return $result;
+}
+
+$color-pattern:
+    var(--core-blue),
+    var(--mid-pink),
+    var(--mid-orange),
+    var(--low-green);
+
+$num-colors: length($color-pattern);
+
+@function create-gradient($density-power) {
+    $density-repetitions: pow(2, $density-power);
+    $total-stripes: $num-colors * $density-repetitions;
+    $stripe-width: 100% / $total-stripes;
+    $gradient-stops: ();
+
+    @for $i from 0 through ($total-stripes * 2) - 1 {
+        $color: nth($color-pattern, ($i % $num-colors) + 1);
+        $start-pos: $i * $stripe-width;
+        $end-pos: ($i + 1) * $stripe-width;
+        $gradient-stops: append($gradient-stops, #{$color} #{$start-pos}, comma);
+        $gradient-stops: append($gradient-stops, #{$color} #{$end-pos}, comma);
+    }
+    @return linear-gradient(to right, $gradient-stops);
+}
+
+.progress-bar-container .progress {
+    background-color: #e9ecef;
+    overflow: hidden;
+    height: 5px;
+
+    &.density-low {
+        background-image: create-gradient(0);
+    }
+    &.density-medium {
+        background-image: create-gradient(1);
+    }
+    &.density-high {
+        background-image: create-gradient(2);
+    }
+}
+
+.progress-bar-container .progress.is-flowing {
+    background-size: 200% 100%;
+    animation: flowAnimation var(--flow-speed) linear infinite;
+    transition: clip-path 0.5s ease-out;
+    clip-path: inset(0 100% 0 0);
+}
+
+@keyframes flowAnimation {
+    0% {
+        background-position: -200% 0%;
+    }
+    100% {
+        background-position: 0% 0%;
+    }
+}

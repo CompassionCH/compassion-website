@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Component: Portrait Component
+
+    Description:
+    Displays a photograph or portrait with a title below it.
+    The portrait can be styled in different sizes (small, medium, large) based on the provided size parameter.
+    The image source and alternative text are also customizable.
+
+    This component is useful for showcasing children portrait photos, users,
+    or any other individual portraits on a website.
+
+    Props:
+    - title (string): The title to display below the portrait.
+    - src (string): The source URL for the portrait image.
+    - alt (string): The alternative text for the portrait image.
+    - size (string): The size of the portrait, can be 'small', 'medium', or 'large'.
+-->
+<odoo>
+    <template id="PortraitComponent" name="Portrait Component">
+        <div class="portrait-container">
+            <div t-attf-class="portrait-frame portrait-frame-size-#{size or 'medium'}">
+                <img class="portrait-image" t-att-src="src" t-att-alt="alt" />
+            </div>
+            <t t-if="title">
+                <div>
+                    <p class="portrait-title pb-md-0 mb-md-0">
+                        <t t-esc="title" />
+                    </p>
+                </div>
+            </t>
+        </div>
+    </template>
+</odoo>

@@ -1,0 +1,115 @@
+/*
+    This stylesheet concerns the my2_user_settings page
+    templates/pages/my2_user_settings.xml
+*/
+
+/* Hide elements meant for editing by default */
+.field-edit,
+.edit-mode {
+    display: none;
+}
+
+/* When the parent form has the 'is-editing' class, show the edit elements */
+.is-editing .field-edit,
+.is-editing .edit-mode {
+    display: block;
+}
+
+/* When in edit mode, hide the view-only elements */
+.is-editing .field-display,
+.is-editing .view-mode {
+    display: none;
+}
+
+/* Ensure anchor tags used as buttons behave correctly */
+.form-actions a {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+/* Switch buttons on the communication settings panel */
+.custom-switch .custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #0d6efd;
+}
+
+/* Tab container styling */
+.user_settings_tabs .nav-tabs {
+    border-bottom: none;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.user_settings_tabs .nav-tabs .nav-item {
+    flex: 1;
+    text-align: center;
+}
+
+/* Mobile Select container styling */
+.user_settings_tabs .settings_select {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Mobile Select element styling */
+.settings_select .custom-select {
+    border-radius: 25px;
+    height: 42px;
+    padding: 0 30px 0 20px;
+    font-size: 19px;
+    font-weight: 600;
+    color: #000000 !important;
+    background-color: #fdb518;
+    transition: background-color 0.2s ease-in-out;
+    border: 1px solid #fdb518 !important;
+}
+
+/* Mobile Select focus state */
+.settings_select .custom-select:focus {
+    background-color: #fdb518 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 0.2rem rgba(253, 181, 24, 0.5) !important;
+}
+
+/* Mobile Select options */
+.settings_select .custom-select option {
+    background-color: #ffd257;
+    color: #000;
+}
+
+/* Style for each desktop tab link */
+.user_settings_tabs .nav-tabs .nav-link {
+    width: 100%;
+    justify-content: center;
+    border: none;
+    margin-bottom: 0;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #000000 !important;
+    background-color: #ffd257;
+    transition: background-color 0.2s ease-in-out;
+    border-radius: 0; /* Default: no radius */
+}
+
+/* Active desktop tab state */
+.user_settings_tabs .nav-tabs .nav-link.active {
+    background-color: #fdb518;
+}
+
+/* Border Radius for the first and last tabs */
+.user_settings_tabs .nav-tabs .nav-item:first-child .nav-link {
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
+}
+
+.user_settings_tabs .nav-tabs .nav-item:last-child .nav-link {
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+}

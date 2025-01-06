@@ -5,25 +5,22 @@
             <div id="wrap">
                 <div class="container" />
                 <section
-          class="s_picture pt48 o_colored_level undefined o_cc o_cc4 pb48"
-          data-snippet="s_picture"
-          data-name="Picture"
-        >
+                    class="s_picture pt48 o_colored_level undefined o_cc o_cc4 pb48"
+                    data-snippet="s_picture"
+                    data-name="Picture"
+                >
                     <div class="container">
                         <div class="row s_nb_column_fixed">
-                            <div
-                class="col-lg-10 offset-lg-1 o_colored_level pb0"
-                style="text-align: center;"
-              >
+                            <div class="col-lg-10 offset-lg-1 o_colored_level pb0" style="text-align: center;">
                                 <a href="#sponsorship-form">
                                     <img
-                    t-att-src="main_object.website_image if not face_reveal else main_object.image_url.replace('media.ci.org/', 'media.ci.org/g_face,c_thumb,w_150,h_150,r_max/')"
-                    class="figure-img rounded-circle"
-                    alt="child picture"
-                    loading="lazy"
-                    aria-describedby="tooltip156301"
-                    style="max-width: 250px;"
-                  />
+                                        t-att-src="main_object.website_image if not face_reveal else main_object.image_url.replace('media.ci.org/', 'media.ci.org/g_face,c_thumb,w_150,h_150,r_max/')"
+                                        class="figure-img rounded-circle"
+                                        alt="child picture"
+                                        loading="lazy"
+                                        aria-describedby="tooltip156301"
+                                        style="max-width: 250px;"
+                                    />
                                 </a>
                                 <h1 style="text-align: center; ">
                                     Thank you for sponsoring
@@ -37,11 +34,11 @@
                 <div class="oe_structure" />
                 <t t-if="not done">
                     <section
-            id="next-step-chooser"
-            class="s_text_block pt32 pb32 o_colored_level"
-            data-snippet="s_text_block"
-            data-name="Text"
-          >
+                        id="next-step-chooser"
+                        class="s_text_block pt32 pb32 o_colored_level"
+                        data-snippet="s_text_block"
+                        data-name="Text"
+                    >
                         <div class="container s_allow_columns">
                             <p>
                                 This seems to be your first sponsorship with Compassion. Do you have 5 minutes in order
@@ -52,11 +49,11 @@
                                 <div class="o_colored_level col-lg-6">
                                     <p style="text-align: center;">
                                         <a
-                      id="step2-button"
-                      href="#"
-                      class="btn btn-primary w-100"
-                      aria-describedby="tooltip760887"
-                    >
+                                            id="step2-button"
+                                            href="#"
+                                            class="btn btn-primary w-100"
+                                            aria-describedby="tooltip760887"
+                                        >
                                             Review my preferences now
                                         </a>
                                         <br />
@@ -65,11 +62,11 @@
                                 <div class="o_colored_level col-lg-6">
                                     <p style="text-align: center; ">
                                         <a
-                      id="do_later"
-                      href="#"
-                      class="btn btn-outline-primary w-100"
-                      aria-describedby="tooltip128007"
-                    >
+                                            id="do_later"
+                                            href="#"
+                                            class="btn btn-outline-primary w-100"
+                                            aria-describedby="tooltip128007"
+                                        >
                                             I'll do this later
                                         </a>
                                         <br />
@@ -81,11 +78,11 @@
                     <div class="oe_structure" />
                 </t>
                 <section
-          id="thankyou_notice"
-          t-attf-class="s_text_block pt32 pb32 o_colored_level #{'d-none' if not done else ''}"
-          data-snippet="s_text_block"
-          data-name="Text"
-        >
+                    id="thankyou_notice"
+                    t-attf-class="s_text_block pt32 pb32 o_colored_level #{'d-none' if not done else ''}"
+                    data-snippet="s_text_block"
+                    data-name="Text"
+                >
                     <div class="container s_allow_columns">
                         <p class="text-center">
                             Can you imagine the enormous joy when our local employees are able to tell the child that he
