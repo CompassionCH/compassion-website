@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Component: RangeInputLoading
+
+    Description:
+    Displays a loading version of the RangeInput component. Meant to be used temporarily before being replaced
+    by the actual RangeInput.
+
+    Props:                                     Default:
+    - color (string): Color of the track.      [low-eggshell]
+-->
+<odoo>
+    <template id="RangeInputLoadingComponent" name="Range Input Loading Component">
+        <!-- Default property values -->
+        <t t-set="color" t-value="color or 'low-eggshell'" />
+        <!-- Component definition -->
+        <div class="slider-container">
+            <div t-attf-class="slider-track loading bg-#{color}" />
+        </div>
+    </template>
+</odoo>

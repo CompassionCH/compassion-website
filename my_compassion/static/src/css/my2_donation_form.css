@@ -1,0 +1,32 @@
+.donation-suggested-amount input {
+    display: none;
+}
+
+.donation-suggested-amount label {
+    height: 2.6rem;
+    text-align: center;
+    color: var(--low-blue);
+    align-content: center;
+    border: 1px solid var(--low-blue);
+    border-radius: 5px;
+    transition: 0.1s all linear;
+    cursor: pointer;
+}
+
+.donation-suggested-amount:has(input:checked) label {
+    color: var(--pure-white);
+    background-color: var(--low-blue);
+}
+
+.donation-inputs-container {
+    max-width: 365px;
+}
+
+.donation-inputs-container .limits-toggle {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.donation-inputs-container .limits-info a {
+    text-decoration: underline;
+}

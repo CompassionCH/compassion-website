@@ -16,10 +16,10 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree
-        decoration-primary="parent_state == 'draft'"
-        decoration-muted="parent_state in ('posted', 'cancel')"
-        default_order="due_date desc"
-      >
+                decoration-primary="parent_state == 'draft'"
+                decoration-muted="parent_state in ('posted', 'cancel')"
+                default_order="due_date desc"
+            >
                 <field name="due_date" />
                 <field name="partner_id" />
                 <field name="user_id" />

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Page: My Compassion 2 Thank you Page
+
+    Description:
+    This page display a thank you message after a user has completed a donation process
+
+    Used in route:
+    - /my2/gifts/thankyou
+
+    Injected data:
+    - sale_order: The sale order object containing the details of the donation
+-->
+<odoo>
+    <template id="my2_gifts_thank_you_page" name="My Compassion 2 Thank you Page">
+        <!-- Include stylesheet -->
+        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_gifts_thank_you.css" />
+        <t t-call="website.layout">
+            <div class="container">
+                <div class="single-column">
+                    <div class="mt-3 d-flex justify-content-center align-items-center">
+                        <h1 class="mb-0">
+                            <i class="pictogram pictogram-love bg-low-yellow text-center" />
+                        </h1>
+                    </div>
+                    <div class="px-3 d-flex flex-column align-items-center">
+                        <!-- TITLE -->
+                        <t t-call="theme_compassion_2025.TitleComponent">
+                            <t t-set="title_content">Thank you</t>
+                            <t t-set="color" t-value="'core-blue'" />
+                            <t t-set="show_underline" t-value="True" />
+                            <t t-set="underline_color" t-value="'low-yellow'" />
+                            <t t-set="description">Your generosity changes lives.</t>
+                        </t>
+                        <!-- GIFT PACKAGE CONTENT -->
+                        <div
+                            id="gift-package-content-wrapper"
+                            class="mb-4 w-100 d-flex flex-column align-items-stretch"
+                        >
+                            <!-- ONE-TIME GIFTS -->
+                            <t
+                                t-set="one_time_order_lines"
+                                t-value="sale_order.order_line.filtered(lambda line: line.frequency == 'one_time')"
+                            />
+                            <t t-foreach="one_time_order_lines" t-as="line">
+                                <t t-call="my_compassion.DonationItemComponent">
+                                    <t t-set="top_class" t-valuef="mt-3 donation-item donation-item-#{line.id}" />
+                                    <t t-set="name" t-value="line.product_template_id.my_compassion_name" />
+                                    <t
+                                        t-if="line.is_gift"
+                                        t-set="recipient"
+                                        t-value="line.gift_recipient_id.preferred_name"
+                                    />
+                                    <t t-set="title_color" t-value="'low-black'" />
+                                    <t t-set="accent_color" t-value="'mid-green'" />
+                                    <t t-set="price_color" t-value="'low-green'" />
+                                    <t t-set="recipient_color" t-value="'low-green'" />
+                                    <t t-set="bg_color" t-value="'mid-eggshell'" />
+                                    <t t-set="price" t-value="line.price_total" />
+                                    <t t-set="currency_name" t-value="line.currency_id.name" />
+                                    <t
+                                        t-set="image"
+                                        t-valuef="/web/image/#{line.product_template_id._name}/#{line.product_template_id.id}/my_compassion_image"
+                                    />
+                                </t>
+                            </t>
+                            <!-- MONTHLY GIFTS -->
+                            <t
+                                t-set="monthly_order_lines"
+                                t-value="sale_order.order_line.filtered(lambda line: line.frequency == 'monthly')"
+                            />
+                            <t t-foreach="monthly_order_lines" t-as="line">
+                                <t t-call="my_compassion.DonationItemComponent">
+                                    <t t-set="top_class" t-valuef="mt-3 donation-item donation-item-#{line.id}" />
+                                    <t t-set="name" t-value="line.product_template_id.my_compassion_name" />
+                                    <t
+                                        t-if="line.is_gift"
+                                        t-set="recipient"
+                                        t-value="line.gift_recipient_id.preferred_name"
+                                    />
+                                    <t t-set="title_color" t-value="'dark-blue'" />
+                                    <t t-set="accent_color" t-value="'dark-blue'" />
+                                    <t t-set="price_color" t-value="'dark-blue'" />
+                                    <t t-set="recipient_color" t-value="'dark-blue'" />
+                                    <t t-set="bg_color" t-value="'light-blue'" />
+                                    <t t-set="price" t-value="line.price_total" />
+                                    <t t-set="currency_name" t-value="line.currency_id.name" />
+                                    <t t-set="monthly" t-value="True" />
+                                    <t
+                                        t-set="image"
+                                        t-valuef="/web/image/#{line.product_template_id._name}/#{line.product_template_id.id}/my_compassion_image"
+                                    />
+                                </t>
+                            </t>
+                        </div>
+                        <!-- BACK TO HOME PAGE  -->
+                        <div
+                            class="gifts-thank-you-buttons-container w-100 mt-3 mb-5
+                                    d-flex flex-column align-items-stretch"
+                        >
+                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                <t t-set="variant" t-value="'compact'" />
+                                <t t-set="variation" t-value="'filled'" />
+                                <t t-set="label">Back to dashboard</t>
+                                <t t-set="color" t-value="'dark-blue'" />
+                                <t t-set="text_color" t-value="'pure-white'" />
+                                <t t-set="href" t-value="'/my2/dashboard'" />
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

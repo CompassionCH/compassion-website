@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Component: Theme Button from 2025 Compassion Switzerland Theme
+
+    Description:
+    This component renders a themed button with customizable properties
+
+    Will be used in probably multiple places in the website
+
+    See theme_compassion_2025/static/src/scss/components/_buttons.scss for the button styles
+    and theme_compassion_2025/static/src/scss/abstracts/_colors.scss for the color variables.
+
+    The variation can be 'hollow' or 'filled', which will determine if the button has a border or a background color.
+
+    Injected data:
+    - variant (string): Type of the button, e.g., 'default', 'impact' or 'compact'
+        - Impact is used for buttons that have a strong call to action, e.g., 'Donate Now'
+        - Compact is used for buttons that are smaller and more subtle or when space is limited
+        - Default is used for standard buttons
+    - variation (string): Variation of the button, e.g., 'hollow', 'filled' or 'outlined'
+    - label (string): Text to display on the button
+    - icon (string): FontAwesome icon class to display on the button
+    - color (string): Color of the button
+    - icon_color (string): Color of the icon
+    - text_color (string): Color of the text
+    - id (string, optional): The ID to be assigned to the button element.
+    - href (string, optional): The URL to link to. If provided, an 'a' tag will be rendered instead of a 'button'.
+    - radius (string, optional): Radius of the rounded corners: 'pill' (default) or 'small'
+    - data_custom (char, optional): data-custom attribute to be added to the button or link element, e.g., `data-custom="value"`
+    - target (string, optional): The target attribute for the link
+      (e.g., '_blank' to open in a new tab).
+    - rel (string, optional): The rel attribute for the link (e.g., 'noopener noreferrer'
+      for security).
+    - data_toggle (char, optional): data-toggle attribute to be added to the button or link element, e.g., `data-toggle="dropdown"`
+-->
+<odoo>
+    <template id="ThemedButtonComponent_Content" name="Button Content">
+        <t t-if="icon">
+            <span t-attf-class="btn__icon #{'btn__icon--' + variant if label else ''} text-#{icon_color}">
+                <i t-att-class="icon" />
+            </span>
+        </t>
+        <t t-if="label">
+            <span t-att-id="label_id">
+                <t t-esc="label" />
+            </span>
+        </t>
+    </template>
+    <template id="ThemedButtonComponent" name="Button Component">
+        <!-- Default property values -->
+        <t t-set="radius" t-value="radius or 'pill'" />
+        <!-- Determine button style class border or background depending on the variation -->
+        <t t-if="variation == 'hollow'">
+            <t t-set="style_class" t-value="'border border-2 border-' + color" />
+        </t>
+        <t t-elif="variation == 'filled'">
+            <t t-set="style_class" t-value="'bg-' + color" />
+        </t>
+        <t t-elif="variation == 'outlined'">
+            <t
+                t-set="style_class"
+                t-value="'bg-' + color + ' border border-2 border-' + text_color + ' text-' + color + '-hover'"
+            />
+        </t>
+        <t t-else="">
+            <t t-set="style_class" t-value="'bg-black'" />
+        </t>
+        <!-- Decide main button class depending on icon/label -->
+        <t t-if="icon and not label">
+            <t t-set="btn_class" t-value="'btn--' + variant + '-' + variation + '-icon-only'" />
+        </t>
+        <t t-else="">
+            <t t-set="btn_class" t-value="'btn--' + variant + '-' + variation" />
+        </t>
+        <!-- Render button or link -->
+        <t t-if="href">
+            <t t-set="rel_parts" t-value="(rel or '').split()" />
+            <t t-if="target == '_blank'">
+                <t t-foreach="['noopener', 'noreferrer']" t-as="security_rel">
+                    <t t-if="security_rel not in rel_parts">
+                        <t t-set="rel_parts" t-value="rel_parts + [security_rel]" />
+                    </t>
+                </t>
+            </t>
+            <t t-set="computed_rel" t-value="' '.join(rel_parts)" />
+            <a
+                t-att-href="href"
+                t-att-id="id"
+                t-attf-class="btn #{btn_class} btn--radius-#{radius} #{style_class} text-#{text_color}"
+                t-att-data-custom="data_custom"
+                t-att-target="target"
+                t-att-rel="computed_rel or None"
+                t-att-data-toggle="data_toggle"
+            >
+                <t t-call="theme_compassion_2025.ThemedButtonComponent_Content" />
+            </a>
+        </t>
+        <t t-else="">
+            <button
+                t-att-id="id"
+                t-attf-class="btn #{btn_class} btn--radius-#{radius} #{style_class} text-#{text_color}"
+                t-att-data-custom="data_custom"
+                t-att-data-mode="mode"
+                t-att-data-toggle="data_toggle"
+            >
+                <t t-call="theme_compassion_2025.ThemedButtonComponent_Content" />
+            </button>
+        </t>
+    </template>
+</odoo>

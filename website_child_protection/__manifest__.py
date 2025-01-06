@@ -11,7 +11,7 @@
     "maintainers": ["ecino"],
     "license": "AGPL-3",
     "application": False,
-    'installable': False,
+    "installable": False,
     "depends": [
         "website_form",
         "child_protection",

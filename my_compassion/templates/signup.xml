@@ -1,42 +1,40 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <template id="signup_sponsor" inherit_id="auth_signup.fields">
-        <xpath
-      expr="//div[@class='form-group field-confirm_password']"
-      position="after"
+    <template
+        id="signup_sponsor"
+        inherit_id="auth_signup.fields"
+        name="Signup Privacy Policy"
+        website_id="website.default_website"
     >
+        <xpath expr="//div[@class='form-group field-confirm_password']" position="after">
             <input
-        type="checkbox"
-        value="accepted"
-        id="privacy_policy"
-        name="privacy_policy"
-        class="s_website_form_input form-check-input"
-        required="required"
-      />
-                    <label class="form-check-label" for="privacy_policy">
-                        <t t-call="website_legal_page.acceptance_full" />
-                    </label>
+                type="checkbox"
+                value="accepted"
+                id="privacy_policy"
+                name="privacy_policy"
+                class="s_website_form_input form-check-input"
+                required="required"
+            />
+            <label class="form-check-label" for="privacy_policy">
+                <t t-call="website_legal_page.acceptance_full" />
+            </label>
         </xpath>
         <xpath expr="//input[@name='password']" position="inside">
-                 <i
-        class="fa fa-eye"
-        id="eye_password"
-        style="position: absolute; right: 10px; top: 67%; cursor: pointer;"
-      />
-        </xpath>
-         <xpath expr="//input[@name='confirm_password']" position="inside">
             <i
-        class="fa fa-eye"
-        id="eye_confirm_password"
-        style="position: absolute; right: 10px; top: 61%;cursor: pointer;"
-      />
+                class="fa fa-eye"
+                id="eye_password"
+                style="position: absolute; right: 10px; top: 67%; cursor: pointer;"
+            />
         </xpath>
-         <xpath expr="." position="inside">
-            <script
-        type="text/javascript"
-        src="/my_compassion/static/src/js/show_password.js"
-      />
+        <xpath expr="//input[@name='confirm_password']" position="inside">
+            <i
+                class="fa fa-eye"
+                id="eye_confirm_password"
+                style="position: absolute; right: 10px; top: 61%;cursor: pointer;"
+            />
+        </xpath>
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/my_compassion/static/src/js/show_password.js" />
         </xpath>
     </template>
-
 </odoo>

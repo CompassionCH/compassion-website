@@ -1,0 +1,59 @@
+/*
+    This stylesheet concerns the my2_new_letter page
+    templates/pages/my2_new_letter.xml
+*/
+.file-upload-placeholder {
+    border: 0.2rem solid #11265e;
+    border-radius: 12px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.file-upload-placeholder:hover {
+    border: 0.25rem solid #1d42a5;
+}
+
+/* Stretches the input field to its parent container */
+.file-upload-input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    outline: none;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.uploaded-file {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0.25rem;
+    position: relative; /* Ensure the remove button is positioned correctly */
+    text-align: center;
+}
+
+.uploaded-file img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.25rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.uploaded-file p {
+    word-wrap: break-word; /* Ensure text breaks into a new line */
+    overflow-wrap: break-word; /* Handle long words */
+}
+
+/*
+    Set the btn a custom size and puts it on the top right of its container
+*/
+.remove-attachment-button {
+    position: absolute;
+    padding: 0.0925rem 0.6125rem !important;
+    top: 0.3rem;
+    right: 0.3rem;
+}
+
+.remove-attachment-button:hover {
+    background-color: #f66565 !important;
+    border-color: #f66565 !important;
+}

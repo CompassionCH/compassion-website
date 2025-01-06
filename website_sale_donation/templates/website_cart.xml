@@ -1,9 +1,6 @@
 <odoo>
     <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
-    <template
-    id="donation_product_shopping_cart"
-    inherit_id="website_sale.cart_line_product_link"
-  >
+    <template id="donation_product_shopping_cart" inherit_id="website_sale.cart_line_product_link">
         <xpath expr="//a" position="replace">
             <t t-if="line.participant_id">
                 <a t-att-href="line.cart_link">
@@ -13,18 +10,15 @@
         </xpath>
     </template>
     <template id="wizard_checkout" inherit_id="website_sale.address">
-        <xpath
-      expr="//a[@role='button'][@class='btn btn-secondary mb32']"
-      position="attributes"
-    >
+        <xpath expr="//a[@role='button'][@class='btn btn-secondary mb32']" position="attributes">
             <attribute name="class">d-none</attribute>
         </xpath>
     </template>
     <template id="cart" inherit_id="website_sale.cart">
         <xpath
-      expr="//a[@role='button'][@class='btn btn-secondary mb32 d-none d-xl-inline-block']"
-      position="attributes"
-    >
+            expr="//a[@role='button'][@class='btn btn-secondary mb32 d-none d-xl-inline-block']"
+            position="attributes"
+        >
             <attribute name="class">d-none</attribute>
         </xpath>
     </template>
@@ -46,10 +40,7 @@
         </xpath>
     </template>
     <template id="checkout" inherit_id="website_sale.checkout">
-        <xpath
-      expr="//a[@role='button'][@href='/shop/cart']"
-      position="attributes"
-    >
+        <xpath expr="//a[@role='button'][@href='/shop/cart']" position="attributes">
             <attribute name="class">d-none</attribute>
         </xpath>
     </template>

@@ -10,7 +10,7 @@
     "author": "Compassion Switzerland",
     "maintainers": ["ecino"],
     "license": "AGPL-3",
-    'installable': False,
+    "installable": False,
     "external_dependencies": {
         "python": [],
         "bin": [],

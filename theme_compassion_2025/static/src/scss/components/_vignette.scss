@@ -1,0 +1,31 @@
+/**
+    * _vignette.scss
+    * ============
+    * This file contains the styles for the vignette component used in MyCompassion.
+    */
+
+.vignette {
+    width: 100%;
+    aspect-ratio: 1;
+    border-top-left-radius: 0.4rem;
+    border-top-right-radius: 0.4rem;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+
+    @media (min-width: $breakpoint-sm) {
+        min-width: 24rem;
+    }
+}
+
+.vignette h3 {
+    font-size: 1.2rem;
+}
+
+.vignette h5 {
+    font-size: 1rem;
+}
+
+.vignette-icon {
+    width: auto;
+    aspect-ratio: 1;
+}
