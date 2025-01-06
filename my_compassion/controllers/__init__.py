@@ -7,4 +7,4 @@
 #
 ##############################################################################
 
-from . import auth_signup, auto_texts, my_account
+from . import auth_signup, auto_texts, my_account, my_compassion_children

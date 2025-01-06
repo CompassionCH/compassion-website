@@ -37,6 +37,7 @@
     "data": [
         "security/access_rules.xml",
         "security/ir.model.access.csv",
+        "templates/assets.xml",
         "templates/my_account_components.xml",
         "templates/my_account_personal_info.xml",
         "templates/my_account_donations.xml",
@@ -44,6 +45,7 @@
         "templates/my_account_write_a_letter.xml",
         "templates/login_template.xml",
         "templates/signup.xml",
+        "templates/pages/my_children.xml",
         "views/correspondence_template_view.xml",
         "views/partner_compassion_view.xml",
     ],
