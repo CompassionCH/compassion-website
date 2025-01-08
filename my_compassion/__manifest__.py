@@ -10,6 +10,7 @@
 #
 #    Copyright (C) 2018-2023 Compassion CH (http://www.compassion.ch)
 #    @author: Emanuel Cino <ecino@compassion.ch>
+#    @author: Noé Berdoz <nberdoz@compassion.ch>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -37,7 +38,7 @@
     "data": [
         "security/access_rules.xml",
         "security/ir.model.access.csv",
-        "templates/assets.xml",
+        "templates/my2_assets.xml",
         "templates/my_account_components.xml",
         "templates/my_account_personal_info.xml",
         "templates/my_account_donations.xml",
@@ -45,7 +46,8 @@
         "templates/my_account_write_a_letter.xml",
         "templates/login_template.xml",
         "templates/signup.xml",
-        "templates/pages/my_children.xml",
+        "templates/pages/my2_children.xml",
+        "templates/components/my2_children_card.xml",
         "views/correspondence_template_view.xml",
         "views/partner_compassion_view.xml",
     ],
