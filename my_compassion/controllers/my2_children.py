@@ -13,4 +13,11 @@ from odoo import http
 class MyCompassionChildrenController(http.Controller):
     @http.route('/my2/children/', type="http", auth="public", website=True) # in public for testing purposes
     def my2_children(self, **kwargs):
-        return request.render('my_compassion.my2_children')
+        partner = request.env.user.partner_id
+
+        return request.render(
+            'my_compassion.my2_children_page',
+            {
+                'sponsorship_ids': partner.sponsorship_ids,
+            }
+        )

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- TODO DOC -->
+<odoo>
+    <template id="my2_children_card_component" name="Children Card Component">
+        <link rel="stylesheet" href="/my_compassion/static/src/css/card.css"/>
+        <div class="children-card">
+            <div class="children-card-body">
+                <!-- Dynamic content will be shown from here -->
+                <div>
+                    <img
+                            t-attf-src="/web/image/compassion.child/{{child_id}}/portrait"
+                            alt="Child image"
+                            style="width: 90%; height: 90%;"
+                    />
+                    <t t-esc="child_image"/>
+                </div>
+                <p>
+                    <t t-esc="child_local_id"/>
+                </p>
+                <p>
+                    <t t-esc="child_name"/>
+                </p>
+                <p>
+                    <t t-esc="child_age"/> years old
+                </p>
+                <p>
+                    <t t-esc="child_country"/>
+                </p>
+            </div>
+        </div>
+    </template>
+</odoo>
