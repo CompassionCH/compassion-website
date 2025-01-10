@@ -8,3 +8,26 @@
 body {
     font-family: 'Montserrat', sans-serif;
 }
+
+/* Set the text responsiveness behaviour, so we can use 'rem' values in the project */
+html {
+  font-size: 1rem;
+}
+
+@media (min-width: 576px) { /* Small devices */
+  html {
+    font-size: 1.2rem;
+  }
+}
+
+@media (min-width: 768px) { /* Medium devices */
+  html {
+    font-size: 1.4rem;
+  }
+}
+
+@media (min-width: 992px) { /* Large devices */
+  html {
+    font-size: 1.6rem;
+  }
+}

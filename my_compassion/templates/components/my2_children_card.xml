@@ -6,11 +6,11 @@
 <odoo>
     <template id="my2_children_card_component" name="Children Card Component">
         <link rel="stylesheet" href="/my_compassion/static/src/css/card.css"/>
-        <div class="children-card">
+        <div class="children-card w-100">
             <div class="children-card-body">
                 <div class="row align-items-center">
                     <!-- Image Section (Left) -->
-                    <div style="background-color: yellow" class="col-4 text-center">
+                    <div class="col-4 text-center children-card-image-section">
                         <img
                                 class="img-circle img-responsive"
                                 t-attf-src="/web/image/compassion.child/{{child_id}}/portrait"
@@ -19,17 +19,17 @@
                         <t t-esc="child_image"/>
                     </div>
                     <!-- Text Section (Right) -->
-                    <div style="background-color: red" class="col-8">
-                        <p>
-                            <t t-esc="child_local_id"/>
-                        </p>
-                        <p>
+                    <div class="col-8 children-card-text-section">
+<!--                        <p>-->
+<!--                            <t t-esc="child_local_id"/>-->
+<!--                        </p>-->
+                        <p class="children-card-title">
                             <t t-esc="child_name"/>
                         </p>
-                        <p>
+                        <p class="children-card-age">
                             <t t-esc="child_age"/> years old
                         </p>
-                        <p>
+                        <p class="children-card-country">
                             <t t-esc="child_country"/>
                         </p>
                     </div>

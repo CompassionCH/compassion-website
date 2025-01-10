@@ -2,14 +2,10 @@
 <!-- TODO DOC -->
 <odoo>
     <template
-            id="assets_my_compassion"
+            id="my_compassion_assets"
             name="My Compassion 2.0 assets"
             inherit_id="website.assets_frontend"
     >
-        <!-- Adds the mobile first optimization in the head of every page -->
-        <xpath expr="//head" position="inside">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        </xpath>
         <!-- Loads files at the end of page -->
         <xpath expr="//script[last()]" position="after">
             <link
@@ -17,6 +13,15 @@
                     rel="stylesheet"
                     type="text/css"
             />
+        </xpath>
+    </template>
+    <template id="my_compassion_meta"
+              name="Add custom meta"
+              inherit_id="website.layout"
+    >
+        <!-- Adds the mobile first optimization in the head of every page -->
+        <xpath expr="//head/meta[last()]" position="after">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         </xpath>
     </template>
 </odoo>
