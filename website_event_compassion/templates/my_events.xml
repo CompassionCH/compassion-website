@@ -169,7 +169,13 @@
                         </div>
                     </div>
                 </div>
-                <h3 class="mt-4" t-if="event.fundraising">Fundraising</h3>
+                <h3 class="mt-4" t-if="event.fundraising">
+                    <span class="mr-2">Fundraising</span>
+            <a class="btn btn-primary mx-auto" href="fundraising">
+                <i class="fa fa-handshake-o" />
+                <span>Fundraising tools</span>
+            </a>
+                </h3>
                 <t
           t-call="website_event_compassion.event_barometer"
           t-if="event.fundraising"

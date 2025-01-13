@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Compassion Odoo 14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-25 06:21+0000\n"
+"POT-Creation-Date: 2025-01-13 14:29+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -36,6 +36,16 @@ msgid ""
 msgstr ""
 "<i class=\"fa-eye\"/>\n"
 "                <span>Vedi</span>"
+
+#. module: website_event_compassion
+#: model_terms:ir.ui.view,arch_db:website_event_compassion.my_event_details
+#, fuzzy
+msgid ""
+"<i class=\"fa fa-handshake-o\"/>\n"
+"                <span>Fundraising tools</span>"
+msgstr ""
+"<i class=\"fa fa-handshake-o\"/>\n"
+"                <span>Strumenti per la raccolta fondi</span>"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.participant_page
@@ -94,6 +104,12 @@ msgstr ""
 "<small id=\"passportHelpBlock\" class=\"form-text text-muted\">\n"
 "Il tuo nome come appare sul passaporto.\n"
 "</small>"
+
+#. module: website_event_compassion
+#: model_terms:ir.ui.view,arch_db:website_event_compassion.my_event_details
+#, fuzzy
+msgid "<span class=\"mr-2\">Fundraising</span>"
+msgstr "<span>Fondi raccolti:</span>"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.event_registration_form
@@ -356,8 +372,14 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.event_registration_form
 msgid ""
 "<span class=\"s_website_form_label_content\">Profile\n"
-"                                            picture</span>"
-msgstr "<span class=\"s_website_form_label_content\">Foto del profilo</span>"
+"                                            picture</span>\n"
+"                                        <span class=\"s_website_form_mark\"> "
+"*</span>"
+msgstr ""
+"<span class=\"s_website_form_label_content\">Foto del profilo\n"
+"                                            immagine</span>\n"
+"                                        <span class=\"s_website_form_mark\"> "
+"*</span>"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.event_registration_form
@@ -474,7 +496,7 @@ msgstr "Attività"
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_event__activity_exception_decoration
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__activity_exception_decoration
 msgid "Activity Exception Decoration"
-msgstr "Decorazione eccezione attività"
+msgstr "Attività Eccezione Decorazione"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_event__activity_state
@@ -486,7 +508,7 @@ msgstr "Stato di attività"
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_event__activity_type_icon
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__activity_type_icon
 msgid "Activity Type Icon"
-msgstr "Icona tipo di attività"
+msgstr "Icona Tipo di attività"
 
 #. module: website_event_compassion
 #: model:ir.model.fields.selection,name:website_event_compassion.selection__event_mail__interval_type__after_stage
@@ -545,7 +567,7 @@ msgstr "Associa questa attività a questa fase di registrazione."
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_type__message_attachment_count
 msgid "Attachment Count"
-msgstr "Conteggio degli allegati"
+msgstr "Numero allegati"
 
 #. module: website_event_compassion
 #: model:event.registration.stage,name:website_event_compassion.stage_all_attended
@@ -686,6 +708,16 @@ msgid "Cover Properties"
 msgstr "Proprietà della copertina"
 
 #. module: website_event_compassion
+#: model_terms:ir.ui.view,arch_db:website_event_compassion.view_event_registration_form
+msgid "Create Down Payment"
+msgstr "Crea l'acconto"
+
+#. module: website_event_compassion
+#: model_terms:ir.ui.view,arch_db:website_event_compassion.view_event_registration_form
+msgid "Create Trip Invoice"
+msgstr "Crea una fattura di viaggio"
+
+#. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_crm_event_compassion_open_wizard__create_uid
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_flight__create_uid
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration_communication_wizard__create_uid
@@ -779,10 +811,11 @@ msgstr "Partenza"
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_type__display_name
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_type_mail__display_name
 #: model:ir.model.fields,field_description:website_event_compassion.field_recurring_contract__display_name
+#: model:ir.model.fields,field_description:website_event_compassion.field_res_lang__display_name
 #: model:ir.model.fields,field_description:website_event_compassion.field_res_partner__display_name
 #: model:ir.model.fields,field_description:website_event_compassion.field_sale_order_line__display_name
 msgid "Display Name"
-msgstr "Nome visualizzato"
+msgstr "Nome Visualizzato"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.event_registration_call_to_action
@@ -829,6 +862,17 @@ msgid "Down Payment"
 msgstr "Acconto"
 
 #. module: website_event_compassion
+#: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__down_payment_link
+msgid "Down Payment Link"
+msgstr "Link al pagamento dell'acconto"
+
+#. module: website_event_compassion
+#: code:addons/website_event_compassion/models/event_registration.py:0
+#, python-format
+msgid "Down payment for %s"
+msgstr "Acconto per %s"
+
+#. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration_stage__duration
 msgid "Duration"
 msgstr "Durata"
@@ -839,7 +883,7 @@ msgstr "Durata"
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__partner_email
 #, python-format
 msgid "Email"
-msgstr "Email"
+msgstr "E-mail"
 
 #. module: website_event_compassion
 #. openerp-web
@@ -1055,7 +1099,7 @@ msgstr "Followers (Partner)"
 #: model:ir.model.fields,help:website_event_compassion.field_event_event__activity_type_icon
 #: model:ir.model.fields,help:website_event_compassion.field_event_registration__activity_type_icon
 msgid "Font awesome icon e.g. fa-tasks"
-msgstr "Icona Font Awesome es. fa-tasks"
+msgstr "Icona font awesome ad esempio fa-tasks"
 
 #. module: website_event_compassion
 #: model:ir.model.fields.selection,name:website_event_compassion.selection__event_registration__emergency_relation_type__friend
@@ -1064,7 +1108,6 @@ msgstr "Amico"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_crm_event_compassion_open_wizard__fundraising
-#: model_terms:ir.ui.view,arch_db:website_event_compassion.my_event_details
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.view_event_event_wordpress
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.view_event_registration_form
 msgid "Fundraising"
@@ -1138,6 +1181,7 @@ msgstr "Voglio contribuire con una donazione"
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_type__id
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_type_mail__id
 #: model:ir.model.fields,field_description:website_event_compassion.field_recurring_contract__id
+#: model:ir.model.fields,field_description:website_event_compassion.field_res_lang__id
 #: model:ir.model.fields,field_description:website_event_compassion.field_res_partner__id
 #: model:ir.model.fields,field_description:website_event_compassion.field_sale_order_line__id
 msgid "ID"
@@ -1153,7 +1197,7 @@ msgstr "Icona"
 #: model:ir.model.fields,help:website_event_compassion.field_event_event__activity_exception_icon
 #: model:ir.model.fields,help:website_event_compassion.field_event_registration__activity_exception_icon
 msgid "Icon to indicate an exception activity."
-msgstr "Icona per indicare un'attività eccezione."
+msgstr "Icona per indicare un'attività di eccezione."
 
 #. module: website_event_compassion
 #: model:ir.model.fields,help:website_event_compassion.field_event_event__fundraising
@@ -1177,7 +1221,7 @@ msgstr "Se selezionato, i nuovi messaggi richiedono la tua attenzione"
 #: model:ir.model.fields,help:website_event_compassion.field_event_type__message_has_error
 #: model:ir.model.fields,help:website_event_compassion.field_event_type__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
-msgstr "Se è selezionata, alcuni messaggi presentano un errore di consegna."
+msgstr "Se selezionato, alcuni messaggi presentano un errore di consegna."
 
 #. module: website_event_compassion
 #: model:ir.model.fields,help:website_event_compassion.field_event_registration_task__task_complete_on_click
@@ -1255,6 +1299,11 @@ msgstr ""
 "di Gesù!"
 
 #. module: website_event_compassion
+#: model:ir.model,name:website_event_compassion.model_res_lang
+msgid "Languages"
+msgstr "Lingue"
+
+#. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__partner_spoken_lang_ids
 msgid "Languages I can read"
 msgstr "Lingue che so leggere"
@@ -1276,10 +1325,11 @@ msgstr "Lingue che so leggere"
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_type____last_update
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_type_mail____last_update
 #: model:ir.model.fields,field_description:website_event_compassion.field_recurring_contract____last_update
+#: model:ir.model.fields,field_description:website_event_compassion.field_res_lang____last_update
 #: model:ir.model.fields,field_description:website_event_compassion.field_res_partner____last_update
 #: model:ir.model.fields,field_description:website_event_compassion.field_sale_order_line____last_update
 msgid "Last Modified on"
-msgstr "Ultima modifica su"
+msgstr "Ultima modifica il"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_crm_event_compassion_open_wizard__write_uid
@@ -1319,7 +1369,7 @@ msgstr "Pianificazione della posta sulla categoria dell'evento"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_type__message_main_attachment_id
 msgid "Main Attachment"
-msgstr "Attacco principale"
+msgstr "Allegato principale"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__partner_lang
@@ -1355,7 +1405,7 @@ msgstr "Sondaggio medico"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_type__message_has_error
 msgid "Message Delivery error"
-msgstr "Errore di consegna del messaggio"
+msgstr "Errore di consegna messaggio"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_type__message_ids
@@ -1590,6 +1640,17 @@ msgstr "Nome del passaporto"
 #, python-format
 msgid "Passport number"
 msgstr "Numero di passaporto"
+
+#. module: website_event_compassion
+#: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__payment_link
+msgid "Payment Link"
+msgstr "Link per il pagamento"
+
+#. module: website_event_compassion
+#: code:addons/website_event_compassion/models/event_registration.py:0
+#, python-format
+msgid "Payment for %s"
+msgstr "Pagamento per %s"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.view_event_registration_form
@@ -1892,6 +1953,11 @@ msgid "Side info"
 msgstr "Info collaterali"
 
 #. module: website_event_compassion
+#: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__single_room
+msgid "Single Room"
+msgstr "Camera singola"
+
+#. module: website_event_compassion
 #: model:product.template,name:website_event_compassion.product_template_single_room
 msgid "Single room extra fee"
 msgstr "Supplemento camera singola"
@@ -1966,7 +2032,7 @@ msgstr "Sport"
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_type__stage_ids
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_type_mail__stage_id
 msgid "Stage"
-msgstr "Stadio"
+msgstr "Palcoscenico"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__stage_date
@@ -2003,7 +2069,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__partner_street
 #, python-format
 msgid "Street"
-msgstr "Via"
+msgstr "Indirizzo"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.my_profile_edit
@@ -2058,7 +2124,12 @@ msgstr "L'URL completo per accedere al documento attraverso il Sito Web "
 #. module: website_event_compassion
 #: model:ir.model.fields,help:website_event_compassion.field_event_registration__down_payment_id
 msgid "The move of this entry line."
-msgstr ""
+msgstr "Il movimento di questa linea di ingresso."
+
+#. module: website_event_compassion
+#: model:ir.model.fields,help:website_event_compassion.field_event_registration__single_room
+msgid "The participant wants a single room"
+msgstr "Il partecipante desidera una camera singola"
 
 #. module: website_event_compassion
 #: code:addons/website_event_compassion/models/event_event.py:0
@@ -2099,7 +2170,7 @@ msgstr ""
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__partner_title
 msgid "Title"
-msgstr "Titolo"
+msgstr "Qualifica"
 
 #. module: website_event_compassion
 #: model:product.template,name:website_event_compassion.product_template_trip_price
@@ -2117,10 +2188,15 @@ msgid "Trigger "
 msgstr "Innesco "
 
 #. module: website_event_compassion
+#: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__trip_invoice_id
+msgid "Trip invoice"
+msgstr "Fattura del viaggio"
+
+#. module: website_event_compassion
 #: model:ir.model.fields,help:website_event_compassion.field_event_event__activity_exception_decoration
 #: model:ir.model.fields,help:website_event_compassion.field_event_registration__activity_exception_decoration
 msgid "Type of the exception activity on record."
-msgstr "Tipo di attività eccezione sul record."
+msgstr "Tipo di attività di eccezione registrata."
 
 #. module: website_event_compassion
 #: model:ir.model.fields.selection,name:website_event_compassion.selection__event_registration_stage__registration_state__draft
@@ -2181,7 +2257,7 @@ msgstr "Ti risponderemo al più presto."
 #: model:ir.model.fields,field_description:website_event_compassion.field_crm_event_compassion__website_id
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__website_id
 msgid "Website"
-msgstr "Sito Web"
+msgstr "Sito web"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_crm_event_compassion__website_description
@@ -2236,7 +2312,7 @@ msgstr "Meta titolo del sito web"
 #: model:ir.model.fields,field_description:website_event_compassion.field_crm_event_compassion__website_meta_og_img
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__website_meta_og_img
 msgid "Website opengraph image"
-msgstr "Sito web opengraph immagine"
+msgstr "Immagine OpenGraph"
 
 #. module: website_event_compassion
 #: model:ir.model,name:website_event_compassion.model_cms_form_sponsorship
@@ -2272,7 +2348,7 @@ msgstr "Viaggio per i giovani"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__partner_zip
 msgid "Zip"
-msgstr "Zip"
+msgstr "CAP"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.event_registration_call_to_action
@@ -2677,7 +2753,7 @@ msgstr ""
 #~ msgstr "La tua salute"
 
 #~ msgid "Your trip with Compassion - Medical information"
-#~ msgstr "Il tuo viaggio con Compassion - Informazioni mediche"
+#~ msgstr "Il tuo viaggio con Compassion Svizzera - Questionario medico"
 
 #~ msgid ""
 #~ "<small id=\"emergencyHelpBlock\" class=\"form-text text-muted\">\n"
@@ -2711,6 +2787,12 @@ msgstr ""
 #~ "<small id=\"passportHelpBlock\" class=\"form-text text-muted\">\n"
 #~ "Il tuo nome come appare sul passaporto.\n"
 #~ "</small>"
+
+#~ msgid ""
+#~ "<span class=\"s_website_form_label_content\">Profile\n"
+#~ "                                            picture</span>"
+#~ msgstr ""
+#~ "<span class=\"s_website_form_label_content\">Foto del profilo</span>"
 
 #~ msgid "Impact text 1."
 #~ msgstr "Testo d'impatto 1."
