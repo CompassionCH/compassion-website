@@ -4,7 +4,6 @@
     <template id="my2_children_page" name="My Compassion 2 Children Page">
         <link rel="stylesheet" href="/my_compassion/static/src/css/line-divider.css"/>
         <t t-call="website.layout">
-            <t t-set="child_name" t-value="'Oh no'"/>
             <div class="container">
                 <div class="row">
                     <span>Your sponsorships</span>
@@ -21,17 +20,12 @@
                             <!-- Using card component -->
                             <t t-call="my_compassion.my2_children_card_component">
                                 <!-- The data we are passing to the children_card_component -->
-                                <t t-set="child_id" t-value="sponsorship.child_id.id"/>
-                                <t t-set="child_local_id"
-                                   t-value="sponsorship.child_id.local_id"/>
-                                <t t-set="child_name" t-value="sponsorship.child_name"/>
-                                <t t-set="child_age" t-value="sponsorship.child_age"/>
-                                <t t-set="child_country"
-                                   t-value="sponsorship.child_id.field_office_id.name"/>
+                                <t t-set="sponsorship" t-value="sponsorship"/>
                             </t>
                         </div>
                     </t>
                 </t>
+                <!-- + NEW SPONSORSHIP BUTTON & LINE DIVIDER -->
                 <div class="row">
                     <button type="button" class="btn btn-block rounded btn-primary">
                         <span class="fa font-weight-light">+</span>
@@ -50,13 +44,7 @@
                             <!-- Using card component -->
                             <t t-call="my_compassion.my2_children_card_component">
                                 <!-- The data we are passing to the children_card_component -->
-                                <t t-set="child_id" t-value="sponsorship.child_id.id"/>
-                                <t t-set="child_local_id"
-                                   t-value="sponsorship.child_id.local_id"/>
-                                <t t-set="child_name" t-value="sponsorship.child_name"/>
-                                <t t-set="child_age" t-value="sponsorship.child_age"/>
-                                <t t-set="child_country"
-                                   t-value="sponsorship.child_id.field_office_id.name"/>
+                                <t t-set="child_sponsorship" t-value="sponsorship"/>
                             </t>
                         </div>
                     </t>
