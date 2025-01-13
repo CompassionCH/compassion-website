@@ -31,7 +31,7 @@ class MuskathlonRegistration(models.Model):
     thank_you_quote = fields.Html(
         compute="_compute_thank_you_quote",
         help="Used in thank you letters for donations linked to an event "
-             "and to this partner.",
+        "and to this partner.",
     )
 
     _sql_constraints = [
