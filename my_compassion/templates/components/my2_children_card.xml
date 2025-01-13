@@ -19,10 +19,10 @@
                         <t t-esc="child_image"/>
                     </div>
                     <!-- Text Section (Right) -->
-                    <div class="col-8 children-card-text-section">
-<!--                        <p>-->
-<!--                            <t t-esc="child_local_id"/>-->
-<!--                        </p>-->
+                    <div class="col-8 children-card-text-section h-100">
+                        <div class="text-right">
+                            <p class="children-card-status"><i class="fa fa-laptop"/> New letter available!</p>
+                        </div>
                         <p class="children-card-title">
                             <t t-esc="child_name"/>
                         </p>
@@ -32,6 +32,12 @@
                         <p class="children-card-country">
                             <t t-esc="child_country"/>
                         </p>
+                        <p class="children-card-local-id">
+                            <t t-esc="child_local_id"/>
+                        </p>
+                        <div class="text-right">
+                            <p class="children-card-last-contact">Last contact on 13.01.25</p>
+                        </div>
                     </div>
                 </div>
             </div>

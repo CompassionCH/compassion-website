@@ -10,23 +10,27 @@
                     <span>Your sponsorships</span>
                 </div>
                 <div>
-                    <p>DEBUG</p>
+                    <br/>
+                    DEBUG <br/>
                     <span style="color: green" t-esc="sponsorship_ids"/>
                 </div>
+                <!-- ACTIVE SPONSORSHIPS CHILDREN-->
                 <t t-foreach="sponsorship_ids" t-as="sponsorship">
-                    <div class="row">
-                        <!-- Using card component -->
-                        <t t-call="my_compassion.my2_children_card_component">
-                            <!-- The data we are passing to the children_card_component -->
-                            <t t-set="child_id" t-value="sponsorship.child_id.id"/>
-                            <t t-set="child_local_id"
-                               t-value="sponsorship.child_id.local_id"/>
-                            <t t-set="child_name" t-value="sponsorship.child_name"/>
-                            <t t-set="child_age" t-value="sponsorship.child_age"/>
-                            <t t-set="child_country"
-                               t-value="sponsorship.child_id.field_office_id.name"/>
-                        </t>
-                    </div>
+                    <t t-if="sponsorship.state == 'active'">
+                        <div class="row">
+                            <!-- Using card component -->
+                            <t t-call="my_compassion.my2_children_card_component">
+                                <!-- The data we are passing to the children_card_component -->
+                                <t t-set="child_id" t-value="sponsorship.child_id.id"/>
+                                <t t-set="child_local_id"
+                                   t-value="sponsorship.child_id.local_id"/>
+                                <t t-set="child_name" t-value="sponsorship.child_name"/>
+                                <t t-set="child_age" t-value="sponsorship.child_age"/>
+                                <t t-set="child_country"
+                                   t-value="sponsorship.child_id.field_office_id.name"/>
+                            </t>
+                        </div>
+                    </t>
                 </t>
                 <div class="row">
                     <button type="button" class="btn btn-block rounded btn-primary">
@@ -39,6 +43,24 @@
                         <div class="line-divider"/>
                     </div>
                 </div>
+                <!-- TERMINATED SPONSORSHIPS CHILDREN -->
+                <t t-foreach="sponsorship_ids" t-as="sponsorship">
+                    <t t-if="sponsorship.state == 'terminated'">
+                        <div class="row">
+                            <!-- Using card component -->
+                            <t t-call="my_compassion.my2_children_card_component">
+                                <!-- The data we are passing to the children_card_component -->
+                                <t t-set="child_id" t-value="sponsorship.child_id.id"/>
+                                <t t-set="child_local_id"
+                                   t-value="sponsorship.child_id.local_id"/>
+                                <t t-set="child_name" t-value="sponsorship.child_name"/>
+                                <t t-set="child_age" t-value="sponsorship.child_age"/>
+                                <t t-set="child_country"
+                                   t-value="sponsorship.child_id.field_office_id.name"/>
+                            </t>
+                        </div>
+                    </t>
+                </t>
             </div>
         </t>
     </template>

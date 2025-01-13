@@ -2,15 +2,12 @@
     This stylesheet concerns the my2_chidren_card component
     templates/components/my2_children_card.xml
 */
-.body {
-    color: red;
-}
 .children-card {
     background-color: #ffffff;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Small shadow below */
-    margin: 20px 0;
+    margin: 10px 10px;
     padding: 20px;
 }
 
@@ -20,25 +17,38 @@
 }
 
 .children-card-image-section {
-    background-color: yellow;
 }
 
 .children-card-text-section {
-    background-color: red;
+}
+
+.children-card-status {
+    font-family: 'Montserrat', sans-serif, bold;
+    font-size: 0.97rem;
 }
 
 .children-card-title {
     font-size: 1rem;
-    background-color: #0c5460;
+    margin-bottom: 0.5rem;
 }
 
 .children-card-age {
-    font-size: 0.9rem;
-    background-color: yellow;
-    margin-bottom: 0.1rem;
+    font-size: 0.97rem;
+    margin-bottom: 0.5rem;
 }
 
 .children-card-country {
     font-size: 0.9rem;
-    background-color: green;
+    margin-bottom: 0.1rem;
+}
+
+.children-card-local-id {
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+.children-card-last-contact {
+    font-size: 0.97rem;
+    font-weight: 300;
+    color: gray;
 }
