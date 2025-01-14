@@ -481,7 +481,10 @@ class EventRegistration(models.Model):
                 registration.profile_name = registration.partner_id.preferred_name
             # Set default fundraising objective if none was set
             event = records.event_id
-            if not registration.amount_objective and event.participants_amount_objective:
+            if (
+                not registration.amount_objective
+                and event.participants_amount_objective
+            ):
                 registration.amount_objective = event.participants_amount_objective
             # Set donation receipt preference
             registration.partner_id.receive_ambassador_receipts = True
