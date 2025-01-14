@@ -472,28 +472,30 @@ class EventRegistration(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        record = super().create(vals_list)
-        for registration in record:
+        records = super().create(vals_list)
+        for registration in records:
+            # Copy image fields
             if registration.profile_picture:
                 registration.partner_id.image_1920 = registration.profile_picture
             if not registration.profile_name:
                 registration.profile_name = registration.partner_id.preferred_name
+            # Set default fundraising objective if none was set
+            event = records.event_id
+            if not registration.amount_objective and event.participants_amount_objective:
+                registration.amount_objective = event.participants_amount_objective
+            # Set donation receipt preference
+            registration.partner_id.receive_ambassador_receipts = True
 
         # check the subtype note by default
         # for all the default follower of a new registration
-        self.mapped("message_follower_ids").write(
+        records.mapped("message_follower_ids").write(
             {"subtype_ids": [(4, self.env.ref("mail.mt_note").id)]}
         )
 
-        # Set default fundraising objective if none was set
-        event = record.event_id
-        if not record.amount_objective and event.participants_amount_objective:
-            record.amount_objective = event.participants_amount_objective
-
         # Automatically compute tasks and change stage if tasks are good
-        record._compute_tasks()
-        record.next_stage()
-        return record
+        records._compute_tasks()
+        records.next_stage()
+        return records
 
     ##########################################################################
     #                             PUBLIC METHODS                             #
