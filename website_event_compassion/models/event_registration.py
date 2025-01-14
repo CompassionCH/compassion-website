@@ -11,6 +11,7 @@ import logging
 
 from odoo import SUPERUSER_ID, _, api, fields, models
 from odoo.http import request
+from odoo.tools import index_exists
 from odoo.tools.mimetypes import guess_mimetype
 
 from odoo.addons.website.models.website import slugify as slug
@@ -143,6 +144,16 @@ class EventRegistration(models.Model):
     website_id = fields.Many2one(
         "website", related="compassion_event_id.website_id", store=True
     )
+
+    def _auto_init(self):
+        """This will speedup barometer computations"""
+        super()._auto_init()
+        if not index_exists(self.env.cr, "index_user_payment_event_contract"):
+            self.env.cr.execute(
+                """
+                CREATE INDEX index_user_payment_event_contract
+                ON account_move_line (user_id, payment_state, event_id, contract_id)"""
+            )
 
     ##########################################################################
     #                             FIELDS METHODS                             #
