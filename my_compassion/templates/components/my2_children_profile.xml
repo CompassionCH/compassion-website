@@ -2,7 +2,6 @@
 <!--
     This component represents the children profile design, with a picture on the left,
     and the child information on the right
-    The entire profile is clickable and links to the child's timeline page.
 -->
 <odoo>
     <template id="my2_children_profile_component" name="Children Profile Component">
@@ -12,7 +11,7 @@
             <div class="children-profile-body">
                 <div class="row align-items-center">
                     <!-- Profile Image Section (Left) -->
-                    <div class="col-4 text-center justify-center children-profile-image-section">
+                    <div class="col-4 text-center children-profile-image-section">
                         <img
                                 class="img-circle img-responsive"
                                 t-attf-src="/web/image/compassion.child/{{compassion_child.id}}/portrait"
