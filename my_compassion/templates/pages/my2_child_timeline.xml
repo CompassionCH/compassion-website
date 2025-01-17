@@ -15,7 +15,7 @@
                     <span style="color: green" t-esc="compassion_child"/>
                 </div>
 
-                <div class="row">
+                <div class="row mb-2">
                     <div class="col-12">
                         <!-- Using children_profile component -->
                         <t t-call="my_compassion.my2_children_profile_component">
@@ -26,13 +26,46 @@
                 </div>
 
                 <!-- Buttons (More Info, New Letter, New Gift) -->
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-12">
-                        <button type="button" class="btn btn-block rounded btn-primary">
+                        <button type="button"
+                                class="btn-compassion btn-compassion-blue">
                             <span class="font-weight-bold">
                                 More Info
                             </span>
                         </button>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-6 text-center">
+                        <button type="button"
+                                class="btn-compassion btn-compassion-white">
+                            <span>
+                                New letter
+                            </span>
+                        </button>
+                    </div>
+                    <div class="col-6 text-center">
+                        <button type="button"
+                                class="btn-compassion btn-compassion-white">
+                            <span>
+                                New gift
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Timeline -->
+                <div class="row mb-3">
+                    <div class="col-1">
+                        |
+                    </div>
+                    <div class="col-2">
+                        <i class="fa fa-gift"></i>
+                    </div>
+                    <div class="col-9">
+                        <p>Family gift</p>
+                        <p>CHF 10.-</p>
+                        <p>10 September 2024</p>
                     </div>
                 </div>
             </div>
