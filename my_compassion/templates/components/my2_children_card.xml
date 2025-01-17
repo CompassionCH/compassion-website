@@ -6,12 +6,12 @@
 -->
 <odoo>
     <template id="my2_children_card_component" name="Children Card Component">
-        <link rel="stylesheet" href="/my_compassion/static/src/css/card.css"/>
+        <link rel="stylesheet" href="/my_compassion/static/src/css/children_card.css"/>
         <div t-att-class="'children-card w-100 children-card-terminated' if sponsorship.state == 'terminated' else 'children-card w-100'">
             <div class="children-card-body">
                 <a t-att-href="'/my2/children/' + str(sponsorship.child_id.id)">
                     <div class="row align-items-center">
-                        <!-- Image Section (Left) -->
+                        <!-- Card Image Section (Left) -->
                         <div class="col-4 text-center children-card-image-section">
                             <img
                                     class="img-circle img-responsive"
@@ -20,7 +20,7 @@
                             />
                             <t t-esc="child_image"/>
                         </div>
-                        <!-- Text Section (Right) -->
+                        <!-- Card Text Section (Right) -->
                         <div class="col-8 children-card-text-section h-100">
                             <div class="text-right">
                                 <p class="children-card-status"><i

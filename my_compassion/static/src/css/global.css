@@ -1,5 +1,10 @@
 /* This stylesheet is applied everywhere in MyCompassion */
 
+/* CSS Variables */
+:root {
+    --compassion-blue: #005EB8;
+}
+
 /* Regular */
 @font-face {
     font-family: 'Montserrat';
@@ -45,4 +50,12 @@ h1 {
    font-size: 1.4rem;
     margin-top: 1rem;
     margin-bottom: 0.5rem;
+}
+
+/*
+  Force the #wrapwrap container to hide any overflowing content,
+  preventing horizontal scrolling issues on mobile devices.
+*/
+#wrapwrap {
+    overflow: hidden !important;
 }
