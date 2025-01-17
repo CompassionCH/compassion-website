@@ -56,3 +56,22 @@
     font-weight: 300;
     color: gray;
 }
+
+/* ANIMATIONS ----------------------------------------------------------------------- */
+
+.children-card {
+    /* ease transformation means that it will starts slow, speeds up, then slows down */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover effect: Slightly enlarges the card and adds a soft shadow. */
+.children-card:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Active (click or tap) effect: Shrinks the card slightly to simulate pressing. */
+.children-card:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
