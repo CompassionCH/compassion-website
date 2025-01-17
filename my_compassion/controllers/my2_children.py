@@ -54,8 +54,3 @@ class MyCompassionChildrenController(http.Controller):
                         'compassion_child': child,
                     }
                 )
-
-
-
-
-
