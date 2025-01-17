@@ -6,12 +6,9 @@
         <t t-call="website.layout">
             <div class="container">
                 <div class="row">
-                    <span>Your sponsorships</span>
-                </div>
-                <div>
-                    <br/>
-                    DEBUG <br/>
-                    <span style="color: green" t-esc="sponsorship_ids"/>
+                    <div class="col-12">
+                        <h1>Your sponsorships</h1>
+                    </div>
                 </div>
                 <!-- ACTIVE SPONSORSHIPS CHILDREN-->
                 <t t-foreach="sponsorship_ids" t-as="sponsorship">

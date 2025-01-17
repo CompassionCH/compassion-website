@@ -57,6 +57,13 @@
     color: gray;
 }
 
+/* Override default <a> styles to prevent text in cards from inheriting unwanted styles */
+a, a:visited, a:hover, a:active, a:focus {
+    color: #212427 !important;
+    text-decoration: none !important;
+    outline: none !important;
+}
+
 /* ANIMATIONS ----------------------------------------------------------------------- */
 
 .children-card {

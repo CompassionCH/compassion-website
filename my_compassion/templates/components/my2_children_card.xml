@@ -2,52 +2,56 @@
 <!--
     This component represents the children card design, with a picture on the left,
     and the child information on the right
+    The entire card is clickable and links to the child's timeline page.
 -->
 <odoo>
     <template id="my2_children_card_component" name="Children Card Component">
         <link rel="stylesheet" href="/my_compassion/static/src/css/card.css"/>
         <div t-att-class="'children-card w-100 children-card-terminated' if sponsorship.state == 'terminated' else 'children-card w-100'">
             <div class="children-card-body">
-                <div class="row align-items-center">
-                    <!-- Image Section (Left) -->
-                    <div class="col-4 text-center children-card-image-section">
-                        <img
-                                class="img-circle img-responsive"
-                                t-attf-src="/web/image/compassion.child/{{sponsorship.child_id.id}}/portrait"
-                                alt="Child image"
-                        />
-                        <t t-esc="child_image"/>
-                    </div>
-                    <!-- Text Section (Right) -->
-                    <div class="col-8 children-card-text-section h-100">
-                        <div class="text-right">
-                            <p class="children-card-status"><i class="fa fa-envelope-o"/>
-                                New letter available!</p>
+                <a t-att-href="'/my2/children/' + str(sponsorship.child_id.id)">
+                    <div class="row align-items-center">
+                        <!-- Image Section (Left) -->
+                        <div class="col-4 text-center children-card-image-section">
+                            <img
+                                    class="img-circle img-responsive"
+                                    t-attf-src="/web/image/compassion.child/{{sponsorship.child_id.id}}/portrait"
+                                    alt="Child image"
+                            />
+                            <t t-esc="child_image"/>
                         </div>
-                        <p class="children-card-title">
-                            <t t-esc="sponsorship.child_name"/>
-                        </p>
-                        <p class="children-card-age">
-                            <t t-esc="sponsorship.child_age"/> years old
-                        </p>
-                        <p class="children-card-country">
-                            <t t-esc="sponsorship.child_id.field_office_id.name"/>
-                        </p>
-                        <p class="children-card-local-id">
-                            <t t-esc="sponsorship.child_id.local_id"/>
-                        </p>
-                        <div class="text-right">
-                            <p class="children-card-last-contact">
-                                <t t-if="sponsorship.state == 'terminated'">
-                                    Terminated
-                                </t>
-                                <t t-else="">
-                                    Last contact on 13.01.25
-                                </t>
+                        <!-- Text Section (Right) -->
+                        <div class="col-8 children-card-text-section h-100">
+                            <div class="text-right">
+                                <p class="children-card-status"><i
+                                        class="fa fa-envelope-o"/>
+                                    New letter available!</p>
+                            </div>
+                            <p class="children-card-title">
+                                <t t-esc="sponsorship.child_name"/>
                             </p>
+                            <p class="children-card-age">
+                                <t t-esc="sponsorship.child_age"/> years old
+                            </p>
+                            <p class="children-card-country">
+                                <t t-esc="sponsorship.child_id.field_office_id.name"/>
+                            </p>
+                            <p class="children-card-local-id">
+                                <t t-esc="sponsorship.child_id.local_id"/>
+                            </p>
+                            <div class="text-right">
+                                <p class="children-card-last-contact">
+                                    <t t-if="sponsorship.state == 'terminated'">
+                                        Terminated
+                                    </t>
+                                    <t t-else="">
+                                        Last contact on 13.01.25
+                                    </t>
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     </template>
