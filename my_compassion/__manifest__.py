@@ -50,10 +50,13 @@
         "views/correspondence_template_view.xml",
         "views/partner_compassion_view.xml",
 
-        # My Compassion 2
+        # My Compassion 2 pages
         "templates/pages/my2_children.xml",
         "templates/pages/my2_child_timeline.xml",
+
+        # My Compassion 2 components
         "templates/components/my2_children_card.xml",
+        "templates/components/my2_children_profile.xml",
     ],
     "depends": [
         "partner_communication_compassion",

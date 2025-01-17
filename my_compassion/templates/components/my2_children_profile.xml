@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    This component represents the children profile design, with a picture on the left,
+    and the child information on the right
+    The entire profile is clickable and links to the child's timeline page.
+-->
+<odoo>
+    <template id="my2_children_profile_component" name="Children Profile Component">
+        <link rel="stylesheet"
+              href="/my_compassion/static/src/css/children_profile.css"/>
+        <div class="children-profile w-100">
+            <div class="children-profile-body">
+                <div class="row align-items-center">
+                    <!-- Profile Image Section (Left) -->
+                    <div class="col-4 text-center justify-center children-profile-image-section">
+                        <img
+                                class="img-circle img-responsive"
+                                t-attf-src="/web/image/compassion.child/{{compassion_child.id}}/portrait"
+                                alt="Child image"
+                        />
+                    </div>
+                    <!-- Profile Text Section (Right) -->
+                    <div class="col-8 children-profile-text-section h-100">
+                        <p class="children-profile-title">
+                            <t t-esc="compassion_child.preferred_name"/>
+                        </p>
+                        <p class="children-profile-country">
+                            <t t-esc="compassion_child.field_office_id.name"/>
+                        </p>
+                        <p class="children-profile-age">
+                            <t t-esc="compassion_child.age"/> years old
+                        </p>
+                        <div class="text-right">
+                            <p class="children-profile-local-id">
+                                <t t-esc="compassion_child.local_id"/>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>
