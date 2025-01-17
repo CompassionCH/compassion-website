@@ -26,8 +26,6 @@
 #    along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-
-# pylint: disable=C8101
 {
     "name": "MyCompassion - Sponsor portal website",
     "version": "14.0.1.0.0",
@@ -38,7 +36,10 @@
     "data": [
         "security/access_rules.xml",
         "security/ir.model.access.csv",
+
+        # My compassion 2 assets, needs to be placed before others
         "templates/my2_assets.xml",
+
         "templates/my_account_components.xml",
         "templates/my_account_personal_info.xml",
         "templates/my_account_donations.xml",
@@ -46,10 +47,13 @@
         "templates/my_account_write_a_letter.xml",
         "templates/login_template.xml",
         "templates/signup.xml",
-        "templates/pages/my2_children.xml",
-        "templates/components/my2_children_card.xml",
         "views/correspondence_template_view.xml",
         "views/partner_compassion_view.xml",
+
+        # My Compassion 2
+        "templates/pages/my2_children.xml",
+        "templates/pages/my2_child_timeline.xml",
+        "templates/components/my2_children_card.xml",
     ],
     "depends": [
         "partner_communication_compassion",
@@ -63,3 +67,5 @@
     "installable": True,
     "auto_install": False,
 }
+
+# pylint: disable=C8101
