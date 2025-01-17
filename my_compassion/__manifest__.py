@@ -53,10 +53,12 @@
         # My Compassion 2 pages
         "templates/pages/my2_children.xml",
         "templates/pages/my2_child_timeline.xml",
+        "templates/pages/my2_child_details.xml",
 
         # My Compassion 2 components
         "templates/components/my2_children_card.xml",
         "templates/components/my2_children_profile.xml",
+        "templates/components/my2_details_card.xml",
     ],
     "depends": [
         "partner_communication_compassion",
