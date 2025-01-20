@@ -5,11 +5,12 @@
 <odoo>
     <template id="my2_letter_card_component" name="Letter Card Component">
         <link rel="stylesheet" href="/my_compassion/static/src/css/details_card.css"/>
+        <link rel="stylesheet" href="/my_compassion/static/src/css/letter_card.css"/>
         <div class="details-card w-100">
             <div class="details-card-body">
                 <div class="row align-items-center">
-                    <div class="col-5" style="background-color: purple">
-                        <i class="fa fa-envelope-o"/>
+                    <div class="col-5">
+                        <i class="fa fa-envelope-o letter-icon"/>
                     </div>
                     <div class="col-7 h-100">
                         <div class="row">
@@ -25,7 +26,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="offset-1 col-5" style="background-color: red">
+                            <div class="offset-1 col-5">
                                 <button type="button"
                                         class="btn-compassion btn-compassion-blue">
                                     <span>
@@ -33,7 +34,7 @@
                                     </span>
                                 </button>
                             </div>
-                            <div class="col-5 offset-1" style="background-color: green">
+                            <div class="col-5 offset-1">
                                 <button type="button"
                                         class="btn-compassion btn-compassion-blue">
                                     <span>
