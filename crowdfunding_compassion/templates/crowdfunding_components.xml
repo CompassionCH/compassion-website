@@ -587,11 +587,12 @@
       >
                 <a class="navbar-brand js-scroll-trigger" href="/homepage">
                     <img
-            t-attf-src="https://compassion.ch/wp-content/themes/compassion/assets/img/compassion-logo-#{env.lang[:2]}.svg"
+            t-att-src="'/crowdfunding_compassion/static/src/img/together_line_wh_' + env.lang[:2] + '.png'"
             width="150"
             height="auto"
           />
                 </a>
+
                 <button
           class="navbar-toggler navbar-toggler-right"
           type="button"
@@ -698,7 +699,9 @@
                   height="auto"
                 />
                                 <p
-                >Compassion Switzerland is the national branch of Compassion International. Through individual sponsorship and in collaboration with more than 8,000 local churches, we support more than 2 million of the world's poorest children in 29 countries.
+                >Compassion Switzerland is the national branch of Compassion International. Through
+                                    individual sponsorship and in collaboration with more than 8,000 local churches, we
+                                    support more than 2 million of the world's poorest children in 29 countries.
                                 </p>
                             </div>
 
