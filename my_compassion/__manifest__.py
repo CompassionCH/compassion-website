@@ -60,6 +60,7 @@
         "templates/components/my2_children_card.xml",
         "templates/components/my2_children_profile.xml",
         "templates/components/my2_details_card.xml",
+        "templates/components/my2_letter_card.xml",
     ],
     "depends": [
         "partner_communication_compassion",

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    This component represents the letter card design
+-->
+<odoo>
+    <template id="my2_letter_card_component" name="Letter Card Component">
+        <link rel="stylesheet" href="/my_compassion/static/src/css/details_card.css"/>
+        <div class="details-card w-100">
+            <div class="details-card-body">
+                <div class="row align-items-center">
+                    <div class="col-5" style="background-color: purple">
+                        <i class="fa fa-envelope-o"/>
+                    </div>
+                    <div class="col-7 h-100">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="text-right">
+                                    <p>
+                                        <t t-esc="letter.sent_date"/>
+                                    </p>
+                                    <p>
+                                        <t t-esc="letter.state"/>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="offset-1 col-5" style="background-color: red">
+                                <button type="button"
+                                        class="btn-compassion btn-compassion-blue">
+                                    <span>
+                                        <i class="fa fa-eye"/>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="col-5 offset-1" style="background-color: green">
+                                <button type="button"
+                                        class="btn-compassion btn-compassion-blue">
+                                    <span>
+                                        <i class="fa fa-download"/>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>

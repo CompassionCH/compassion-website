@@ -35,11 +35,16 @@
                 </div>
 
                 <!-- Here will be the letters -->
-                <div class="row mb-2">
-                    <div class="col-12">
-                        Letters card
-                    </div>
-                </div>
+                 <!-- ACTIVE SPONSORSHIPS CHILDREN-->
+                <t t-foreach="letters" t-as="letter">
+                        <div class="row">
+                            <!-- Using letter_card component -->
+                            <t t-call="my_compassion.my2_letter_card_component">
+                                <!-- The data we are passing to the letter_card_component -->
+                                <t t-set="letter" t-value="letter"/>
+                            </t>
+                        </div>
+                </t>
             </div>
         </t>
     </template>
