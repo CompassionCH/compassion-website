@@ -55,6 +55,7 @@
         "templates/pages/my2_child_timeline.xml",
         "templates/pages/my2_child_details.xml",
         "templates/pages/my2_child_letters.xml",
+        "templates/pages/my2_new_letter.xml",
 
         # My Compassion 2 components
         "templates/components/my2_children_card.xml",

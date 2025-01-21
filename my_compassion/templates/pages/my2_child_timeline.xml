@@ -29,12 +29,14 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-6 text-center">
-                        <button type="button"
-                                class="btn-compassion btn-compassion-white">
-                            <span>
-                                New letter
-                            </span>
-                        </button>
+                        <a t-att-href="'/my2/children/' + str(compassion_child.id) + '/letter/new'">
+                            <button type="button"
+                                    class="btn-compassion btn-compassion-white">
+                                <span>
+                                    New letter
+                                </span>
+                            </button>
+                        </a>
                     </div>
                     <div class="col-6 text-center">
                         <button type="button"

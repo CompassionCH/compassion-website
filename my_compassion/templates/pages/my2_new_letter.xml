@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- TODO DOC -->
+<odoo>
+    <template id="my2_new_letter_page" name="My Compassion 2 New Letter Page">
+        <t t-call="website.layout">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <p>Write a letter</p>
+                        <p>To :</p>
+                        <!-- Dropdown list for selecting a child -->
+                        <div class="form-group">
+                            <label for="child-dropdown">Select a Child:</label>
+                            <select id="child-dropdown" class="form-control">
+                                <!-- Loop through children_sponsored_by_partner -->
+                                <t t-foreach="children_sponsored_by_partner" t-as="child">
+                                    <option
+                                        t-att-value="child.id"
+                                        t-att-selected="'selected' if child.id == selected_child.id else None">
+                                        <t t-esc="child.preferred_name"/>
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
