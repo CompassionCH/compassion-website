@@ -50,6 +50,6 @@ class MyCompassionCorrespondenceController(http.Controller):
             'my_compassion.my2_new_letter_page',
             {
                 'selected_child': selected_child,
-                'children_sponsored_by_partner': children_sponsored_by_partner,
+                'sponsorship_ids': partner.sponsorship_ids,
             }
         )
