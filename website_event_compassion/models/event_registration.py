@@ -616,14 +616,17 @@ class EventRegistration(models.Model):
                     }
                 )
                 order.order_line[0].event_id = registration.event_id.id
+
                 registration.write(
                     {
                         "sale_order_id": order.id,
                         "sale_order_line_id": order.order_line[0].id,
-                        "event_ticket_id": ticket.id,
                     }
                 )
+
                 order.action_confirm()
+
+                registration.write({"event_ticket_id": ticket.id})
         return True
 
     def create_trip_invoice(self):
