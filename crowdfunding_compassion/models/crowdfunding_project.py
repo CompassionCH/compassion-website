@@ -167,6 +167,42 @@ class CrowdfundingProject(models.Model):
                     )
                 )
 
+    @api.constrains("facebook_url")
+    def _check_facebook_url(self):
+        if self.facebook_url:
+            parsed_url = urlparse.urlparse(self.facebook_url)
+            domain = parsed_url.netloc.lower()
+
+            if not (domain == "facebook.com" or domain.endswith(".facebook.com")):
+                raise ValidationError(
+                    _("The facebook link must be from the 'facebook.com' domain only.")
+                )
+
+    @api.constrains("twitter_url")
+    def _check_twitter_url(self):
+        if self.twitter_url:
+            parsed_url = urlparse.urlparse(self.twitter_url)
+            domain = parsed_url.netloc.lower()
+
+            if not (domain == "x.com" or domain.endswith(".x.com")):
+                raise ValidationError(
+                    _("The X link must be from the 'x.com' domain only.")
+                )
+
+    @api.constrains("instagram_url")
+    def _check_instagram_url(self):
+        if self.instagram_url:
+            parsed_url = urlparse.urlparse(self.instagram_url)
+            domain = parsed_url.netloc.lower()
+
+            if not (domain == "instagram.com" or domain.endswith(".instagram.com")):
+                raise ValidationError(
+                    _(
+                        "The instagram link must be from the "
+                        "'instagram.com' domain only."
+                    )
+                )
+
     def _compute_description_short(self):
         for project in self:
             if len(project.description) > 100:
