@@ -73,7 +73,6 @@ class EventRegistration(models.Model):
         domain="['|', ('event_type_ids', '=', False),"
         "      ('event_type_ids', '=', event_type_id)]",
         group_expand="_read_group_stage_ids",
-        default=lambda r: r._default_stage(),
         readonly=False,
     )
     stage_date = fields.Date(default=fields.Date.today, copy=False)
@@ -325,16 +324,9 @@ class EventRegistration(models.Model):
 
     @api.model
     def _default_stage(self):
-        type_id = self._context.get("default_event_type_id")
-        if type_id:
-            stage = self.env["event.registration.stage"].search(
-                ["|", ("event_type_ids", "=", type_id), ("event_type_ids", "=", False)],
-                limit=1,
-            )
-        else:
-            stage = self.env["event.registration.stage"].search(
-                [("event_type_ids", "=", False)], limit=1
-            )
+        stage = self.env["event.registration.stage"].search(
+            [("event_type_ids", "=", False)], limit=1
+        )
         return stage.id
 
     def _compute_incomplete_task_count(self):
@@ -486,6 +478,9 @@ class EventRegistration(models.Model):
                 and event.participants_amount_objective
             ):
                 registration.amount_objective = event.participants_amount_objective
+            if not registration.stage_id:
+                event_stages = registration.event_id.event_type_id.stage_ids
+                registration.stage_id = event_stages[:1] or self._default_stage()
             # Set donation receipt preference
             registration.partner_id.receive_ambassador_receipts = True
 
