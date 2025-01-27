@@ -4,6 +4,8 @@
     <template id="my2_new_letter_page" name="My Compassion 2 New Letter Page">
         <t t-call="website.layout">
             <div class="container">
+                <!-- Calling breadcrumb component -->
+                <t t-call="my_compassion.my2_breadcrumb"/>
                 <div class="row">
                     <div class="col-12">
                         <h1>Write a letter</h1>
@@ -44,7 +46,8 @@
                 </div>
                 <div class="row mb-2">
                     <div class="col-12 text-right">
-                        <button type="submit" class="btn btn-primary">Submit Letter</button>
+                        <button type="submit" class="btn btn-primary">Submit
+                            Letter</button>
                     </div>
                 </div>
             </div>
