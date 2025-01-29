@@ -46,10 +46,24 @@ class MyCompassionCorrespondenceController(http.Controller):
             if compassion_child.id == child_id:
                 selected_child= compassion_child
 
+        # Retrieve the letter templates
+        templates = (
+            request.env["correspondence.template"].search(
+                [
+                    ("active", "=", True),
+                    ("website_published", "=", True),
+                ]
+            )
+            # Sort the templates alphabetically, placing "Christmas" templates at the beginning
+            # "0" is special sorting key because it comes before any letter in ASCII order.
+            .sorted(lambda t: "0" if "christmas" in t.name.lower() else t.name)
+        )
+
         return request.render(
             'my_compassion.my2_new_letter_page',
             {
                 'selected_child': selected_child,
                 'sponsorship_ids': partner.sponsorship_ids,
+                'templates': templates,
             }
         )
