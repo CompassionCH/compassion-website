@@ -36,6 +36,22 @@
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-8">
+                        <!-- Dropdown list for selecting a letter template -->
+                        <div class="form-group">
+                            <label for="template-dropdown">Select a Template:</label>
+                            <select id="template-dropdown" class="form-control">
+                                <t t-foreach="templates" t-as="template">
+                                    <option t-att-value="template.id">
+                                        <t t-esc="template.name"/>
+                                        <t t-esc="template.template_image_url"/>
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-12">
                         <!-- Textarea for letter writing -->
                         <div class="form-group">
