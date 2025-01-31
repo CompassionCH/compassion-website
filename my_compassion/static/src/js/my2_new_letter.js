@@ -25,12 +25,15 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
             const childId = document.getElementById("child-dropdown").value;
             const templateId = document.getElementById("template-dropdown").value;
-            const letterContent = document.getElementById("letter-input").value;
+            const letterBody = document.getElementById("letter-input").value;
 
             const data = {
                 child_id: childId,
                 template_id: templateId,
-                letter_content: letterContent
+                letter_body: letterBody,
+                source: "mycompassion",
+                csrf_token: odoo.csrf_token,
+                attachments: null // TO DO
             };
 
             try {
@@ -38,7 +41,10 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     route: "/my2/children/letter/new",
                     params: data
                 });
+                // TO DO handle the success
+                console.log(result)
             } catch (error) {
+                // TO DO handle the error notification to the client
                 console.error("Failed to create letter: ", error)
             }
         }
