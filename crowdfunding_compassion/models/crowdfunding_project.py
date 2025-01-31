@@ -12,6 +12,7 @@ from odoo.tools import ImageProcess, file_open, ormcache
 
 from ..exceptions import InvalidDeadlineException
 
+import re
 
 class CrowdfundingProject(models.Model):
     _name = "crowdfunding.project"
@@ -144,6 +145,13 @@ class CrowdfundingProject(models.Model):
                 raise ValidationError(
                     _("Individual project can only have one participant.")
                 )
+
+    @api.constrains('presentation_video')
+    def _check_presentation_video(self):
+        if self.presentation_video:
+            domain = re.search(r"https?://([a-zA-Z0-9.-]+)", self.presentation_video)
+            if domain and not (domain.group(1) == 'www.youtube.com' or domain.group(1) == 'vimeo.com'):
+                raise ValidationError("The facebook link must be from the 'www.youtube.com' or 'vimeo.com' domain only.")
 
     def _compute_description_short(self):
         for project in self:
