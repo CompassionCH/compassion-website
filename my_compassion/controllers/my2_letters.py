@@ -67,3 +67,49 @@ class MyCompassionCorrespondenceController(http.Controller):
                 'templates': templates,
             }
         )
+
+    @http.route('/my2/children/letter/new', type="json", auth="user", methods=['POST'])
+    def my2_create_new_letter(self, **post):
+        """
+            Used in my2_new_letter.js for sending the new letter form data
+        """
+
+        # Retrieve JSON data
+        child_id = int(post.get('child_id'))
+        template_id = post.get('template_id')
+        letter_body = post.get('letter_body')
+        source = post.get('source')
+        csrf_token = post.get('csrf_token') # Should we use it somehow?
+        attachments = post.get('attachments')
+
+        # Retrieve related user data
+        partner = request.env.user.partner_id
+        children_sponsored_by_partner = partner.sponsorship_ids.child_id
+
+        # Retrieve the child object already instantiated
+        selected_child = None
+        for compassion_child in children_sponsored_by_partner:
+            if compassion_child.id == child_id:
+                selected_child = compassion_child
+
+        letter_values = {
+            "name": f"{source}-{selected_child.local_id}",
+            "selection_domain": str(
+                [
+                    ("child_id.local_id", "=", selected_child.local_id),
+                    ("state", "not in", ["draft", "cancelled"]),
+                ]
+            ),
+            "body": letter_body,
+            "template_id": int(template_id),
+            "image_ids": attachments,
+            "source": source,
+        }
+
+        letter_generator = request.env["correspondence.s2b.generator"].sudo().create(letter_values)
+        letter_generator.generate_letters()
+
+        return {
+            "preview_url": f"{request.httprequest.host_url}/web/image/{letter_generator._name}/{letter_generator.id}/preview_pdf",
+            "letter_values": letter_values,
+        }
