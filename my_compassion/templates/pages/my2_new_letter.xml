@@ -11,64 +11,67 @@
                         <h1>Write a letter</h1>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-8">
-                        <!-- Dropdown list for selecting a child -->
-                        <div class="form-group">
-                            <label for="child-dropdown">Select a Child:</label>
-                            <select id="child-dropdown" class="form-control">
-                                <!-- Loop through children_sponsored_by_partner -->
-                                <t t-foreach="sponsorship_ids" t-as="sponsorship">
-                                    <!-- Shows only active sponsorships as selections -->
-                                    <t t-if="sponsorship.state == 'active'">
-                                        <option
-                                                t-att-value="sponsorship.child_id.id"
-                                                t-att-selected="'selected' if sponsorship.child_id.id == selected_child.id else None">
-                                            <t t-esc="sponsorship.child_id.preferred_name"/>
+                <form>
+                    <div class="row">
+                        <div class="col-8">
+                            <!-- Dropdown list for selecting a child -->
+                            <div class="form-group">
+                                <label for="child-dropdown">Select a Child:</label>
+                                <select id="child-dropdown" class="form-control">
+                                    <!-- Loop through children_sponsored_by_partner -->
+                                    <t t-foreach="sponsorship_ids" t-as="sponsorship">
+                                        <!-- Shows only active sponsorships as selections -->
+                                        <t t-if="sponsorship.state == 'active'">
+                                            <option
+                                                    t-att-value="sponsorship.child_id.id"
+                                                    t-att-selected="'selected' if sponsorship.child_id.id == selected_child.id else None">
+                                                <t t-esc="sponsorship.child_id.preferred_name"/>
+                                            </option>
+                                        </t>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div id="child-reactive-img"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-8">
+                            <!-- Dropdown list for selecting a letter template -->
+                            <div class="form-group">
+                                <label for="template-dropdown">Select a
+                                    Template:</label>
+                                <select id="template-dropdown" class="form-control">
+                                    <t t-foreach="templates" t-as="template">
+                                        <option t-att-value="template.id">
+                                            <t t-esc="template.name"/>
+                                            <t t-esc="template.template_image_url"/>
                                         </option>
                                     </t>
-                                </t>
-                            </select>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-4">
-                        <div id="child-reactive-img"></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-8">
-                        <!-- Dropdown list for selecting a letter template -->
-                        <div class="form-group">
-                            <label for="template-dropdown">Select a Template:</label>
-                            <select id="template-dropdown" class="form-control">
-                                <t t-foreach="templates" t-as="template">
-                                    <option t-att-value="template.id">
-                                        <t t-esc="template.name"/>
-                                        <t t-esc="template.template_image_url"/>
-                                    </option>
-                                </t>
-                            </select>
+                    <div class="row">
+                        <div class="col-12">
+                            <!-- Textarea for letter writing -->
+                            <div class="form-group">
+                                <label for="letter-input">Write Your Letter:</label>
+                                <textarea
+                                        id="letter-input"
+                                        class="form-control"
+                                        rows="10"
+                                        placeholder="Type your letter here..."></textarea></div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <!-- Textarea for letter writing -->
-                        <div class="form-group">
-                            <label for="letter-input">Write Your Letter:</label>
-                            <textarea
-                                    id="letter-input"
-                                    class="form-control"
-                                    rows="10"
-                                    placeholder="Type your letter here..."></textarea></div>
+                    <div class="row mb-2">
+                        <div class="col-12 text-right">
+                            <button type="submit" class="btn btn-primary">Submit
+                                Letter</button>
+                        </div>
                     </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col-12 text-right">
-                        <button type="submit" class="btn btn-primary">Submit
-                            Letter</button>
-                    </div>
-                </div>
+                </form>
             </div>
         </t>
         <!-- Include Owl library -->
@@ -77,6 +80,10 @@
         <script
                 type="text/javascript"
                 src="/my_compassion/static/src/js/my2_child_selector_image.js"
+        />
+        <script
+                type="text/javascript"
+                src="/my_compassion/static/src/js/my2_new_letter.js"
         />
     </template>
 </odoo>
