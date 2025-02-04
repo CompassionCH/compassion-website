@@ -106,10 +106,23 @@ class MyCompassionCorrespondenceController(http.Controller):
             "source": source,
         }
 
+        # Retrieved code from legacy, wondering use case ?
+        language = request.env["langdetect"].sudo().detect_language(letter_body)
+        if language:
+            letter_values["language_id"] = language.id
+
+
         letter_generator = request.env["correspondence.s2b.generator"].sudo().create(letter_values)
+
+        # I don't understand why was it made like this
+        # This is how legacy retrieves the sponsorship_id...
+        letter_generator.onchange_domain()
+
+        letter_generator.preview()
         letter_generator.generate_letters()
 
         return {
-            "preview_url": f"{request.httprequest.host_url}/web/image/{letter_generator._name}/{letter_generator.id}/preview_pdf",
+            "preview_url": f"{request.httprequest.host_url}web/image/{letter_generator._name}/{letter_generator.id}/preview_pdf",
             "letter_values": letter_values,
+            "generator_id": letter_generator.id,
         }
