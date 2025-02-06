@@ -113,6 +113,9 @@ class CrowdfundingProject(models.Model):
     owner_participant_id = fields.Many2one(
         "crowdfunding.participant", compute="_compute_owner_participant_id"
     )
+    owner_number_sponsorships_goal = fields.Integer()
+    owner_number_csp_goal = fields.Integer()
+    owner_product_number_goal = fields.Integer()
     participant_ids = fields.One2many(
         "crowdfunding.participant", "project_id", string="Participants", required=True
     )
@@ -254,6 +257,9 @@ class CrowdfundingProject(models.Model):
                 participant = {
                     "partner_id": project.project_owner_id.id,
                     "project_id": project.id,
+                    "number_sponsorships_goal": project.owner_number_sponsorships_goal,
+                    "number_csp_goal": project.owner_number_csp_goal,
+                    "product_number_goal": project.owner_product_number_goal,
                 }
                 project.write({"participant_ids": [(0, 0, participant)]})
 
