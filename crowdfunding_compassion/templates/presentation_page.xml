@@ -285,7 +285,7 @@
                       t-foreach="description_lines"
                       t-as="description_line"
                     >
-                                            <span t-raw="description_line" />
+                                            <span t-esc="description_line" />
                                             <br />
                                         </t>
                                     </p>
