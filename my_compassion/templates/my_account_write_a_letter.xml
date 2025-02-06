@@ -217,7 +217,7 @@
             <t t-foreach="auto_texts" t-as="auto_text">
                 <span
           t-attf-id="auto_text_#{auto_text}"
-          t-raw="auto_text_value"
+          t-esc="auto_text_value"
           style="display: none;"
         />
             </t>
