@@ -148,6 +148,25 @@ class CrowdfundingProject(models.Model):
                     _("Individual project can only have one participant.")
                 )
 
+    @api.constrains("presentation_video")
+    def _check_presentation_video(self):
+        if self.presentation_video:
+            parsed_url = urlparse.urlparse(self.presentation_video)
+            domain = parsed_url.netloc.lower()
+
+            if not (
+                domain == "youtube.com"
+                or domain.endswith(".youtube.com")
+                or domain == "vimeo.com"
+                or domain.endswith(".vimeo.com")
+            ):
+                raise ValidationError(
+                    _(
+                        "The video link must be from the 'www.youtube.com' "
+                        "or 'vimeo.com' domain only."
+                    )
+                )
+
     def _compute_description_short(self):
         for project in self:
             if len(project.description) > 100:
