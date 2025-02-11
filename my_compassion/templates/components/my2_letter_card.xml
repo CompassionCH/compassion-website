@@ -40,12 +40,14 @@
                                 </a>
                             </div>
                             <div class="col-5 offset-1">
-                                <button type="button"
-                                        class="btn-compassion btn-compassion-blue">
-                                    <span>
-                                        <i class="fa fa-download"/>
-                                    </span>
-                                </button>
+                                <a t-attf-href="/b2s_image?id={{letter.uuid}}" t-attf-download="{{letter.name}}">
+                                    <button type="button"
+                                            class="btn-compassion btn-compassion-blue">
+                                        <span>
+                                            <i class="fa fa-download"/>
+                                        </span>
+                                    </button>
+                                </a>
                             </div>
                         </div>
                     </div>
