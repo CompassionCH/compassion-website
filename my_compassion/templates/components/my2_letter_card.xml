@@ -9,15 +9,17 @@
         <div class="details-card w-100">
             <div class="details-card-body">
                 <div class="row align-items-center">
+                    <!-- Left part of the card with the letter icon -->
                     <div class="col-5">
                         <i class="fa fa-envelope-o letter-icon"/>
                     </div>
+                    <!-- Right part of the card component -->
                     <div class="col-7 h-100">
                         <div class="row">
                             <div class="col-12">
                                 <div class="text-right">
                                     <p>
-                                        <t t-esc="letter.sent_date"/>
+                                        <t t-esc="letter.scanned_date"/>
                                     </p>
                                     <p>
                                         <t t-esc="letter.state"/>
@@ -25,14 +27,17 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Buttons part -->
                         <div class="row">
                             <div class="offset-1 col-5">
-                                <button type="button"
-                                        class="btn-compassion btn-compassion-blue">
-                                    <span>
-                                        <i class="fa fa-eye"/>
-                                    </span>
-                                </button>
+                                <a t-attf-href="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf" target="_blank">
+                                    <button type="button"
+                                            class="btn-compassion btn-compassion-blue">
+                                        <span>
+                                            <i class="fa fa-eye"/>
+                                        </span>
+                                    </button>
+                                </a>
                             </div>
                             <div class="col-5 offset-1">
                                 <button type="button"
