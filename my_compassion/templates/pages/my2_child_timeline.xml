@@ -19,7 +19,7 @@
                 <!-- Buttons (More Info, New Letter, New Gift) -->
                 <div class="row mb-3">
                     <div class="col-12">
-                        <a t-att-href="'/my2/children/' + str(compassion_child.id) + '/details'">
+                        <a t-attf-href="/my2/children/{{ compassion_child.id }}/details">
                             <button type="button"
                                     class="btn-compassion btn-compassion-blue">
                                 <span class="font-weight-bold">
