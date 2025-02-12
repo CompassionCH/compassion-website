@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!-- TODO DOC -->
+<!--
+    These templates inherit from Odoo's "website" templates and adds custom behaviour to it.
+-->
 <odoo>
+    <!-- Make all pages load global.css file -->
     <template
             id="my_compassion_assets"
             name="My Compassion 2.0 assets"
@@ -15,6 +18,8 @@
             />
         </xpath>
     </template>
+    
+    <!-- Add a meta instruction in all page's header -->
     <template id="my_compassion_meta"
               name="Add custom meta"
               inherit_id="website.layout"
