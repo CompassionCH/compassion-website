@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!-- TODO DOC -->
+<!--
+    Page: My Compassion 2 New Letter Page
+
+    Description:
+    This page allows the user to write a new letter to a sponsored child,
+    with options to select a child, a letter template, and a text input for the letter content.
+
+    Used in route:
+    - /my2/children/<int:child_id>/letter/new
+
+    Injected data:
+    - sponsorship_ids (array of 'recurring_contract' records): The list of sponsorships linked to the user
+    - templates (array of 'template' records): The available letter templates to choose from.
+    - selected_child ('compassion_child' record): The pre-selected child.
+-->
 <odoo>
     <template id="my2_new_letter_page" name="My Compassion 2 New Letter Page">
         <t t-call="website.layout">

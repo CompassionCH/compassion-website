@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!-- TODO DOC -->
+<!--
+    Page: My Compassion 2 Child Details Page
+
+    Description:
+    This page displays detailed information about a sponsored child.
+
+    Used in route:
+    - /my2/children/<int:child_id>/details
+
+    Injected Data:
+    - compassion_child (record): The related child object.
+-->
 <odoo>
     <template id="my2_child_details_page" name="My Compassion 2 Child Details Page">
         <t t-call="website.layout">
@@ -44,7 +55,17 @@
                         <t t-call="my_compassion.my2_details_card_component">
                             <!-- The data we are passing to the card_details component -->
                             <t t-set="card_title" t-value="'General'"/>
-                            <t t-set="compassion_child" t-value="compassion_child"/>
+                            <t t-set="content">
+                                <p>
+                                    <strong>Birthdate:</strong> <t t-esc="compassion_child.birthdate"/>
+                                </p>
+                                <p>
+                                    <strong>Hobby:</strong> <t t-esc="compassion_child.hobby_ids[0].name"/>
+                                </p>
+                                <p>
+                                    <strong>Education Level:</strong> <t t-esc="compassion_child.education_level"/>
+                                </p>
+                            </t>
                         </t>
                     </div>
                 </div>

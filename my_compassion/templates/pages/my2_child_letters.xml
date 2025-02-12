@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!-- TODO DOC -->
+<!--
+    Page: My Compassion 2 Child Letters Page
+
+    Description:
+    This page displays all the letters associated with a sponsored child.
+
+    Used in route:
+    - /my2/children/<int:child_id>/letters
+
+    Injected data:
+    - compassion_child (record): The related child object.
+    - letters (array of 'correspondence' records): The related sponsorship letters.
+-->
 <odoo>
     <template id="my2_child_letters_page" name="My Compassion 2 Child Letters Page">
         <t t-call="website.layout">

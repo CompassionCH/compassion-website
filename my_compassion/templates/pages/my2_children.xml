@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!-- TODO DOC -->
+<!--
+Page: My Compassion 2 Children Page
+
+    Description:
+    This page displays all sponsorships linked to the user, categorized into active and terminated sponsorships.
+
+    Used in route:
+    - /my2/children/
+
+    Injected data:
+    - sponsorship_ids (array of 'recurring_contract' records): The sponsorships associated with the user.
+-->
 <odoo>
     <template id="my2_children_page" name="My Compassion 2 Children Page">
         <link rel="stylesheet" href="/my_compassion/static/src/css/line-divider.css"/>

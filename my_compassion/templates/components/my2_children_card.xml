@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
-    This component represents the children card design, with a picture on the left,
-    and the child information on the right
-    The entire card is clickable and links to the child's timeline page.
+    Description:
+    Displays a child's profile in a clickable card format. The card contains a picture on the left
+    and the child’s information on the right. Clicking the card redirects to the child’s timeline page.
+    If the related sponsorship is terminated, the card will have a different style.
+
+    Props:
+    - sponsorship (record): The sponsorship related object.
 -->
 <odoo>
     <template id="my2_children_card_component" name="Children Card Component">
         <link rel="stylesheet" href="/my_compassion/static/src/css/children_card.css"/>
         <div t-att-class="'children-card w-100 children-card-terminated' if sponsorship.state == 'terminated' else 'children-card w-100'">
             <div class="children-card-body">
-                <a t-att-href="'/my2/children/' + str(sponsorship.child_id.id)">
+                <a t-attf-href="/my2/children/{{sponsorship.child_id.id}}">
                     <div class="row align-items-center">
                         <!-- Card Image Section (Left) -->
                         <div class="col-4 text-center children-card-image-section">
@@ -18,7 +22,6 @@
                                     t-attf-src="/web/image/compassion.child/{{sponsorship.child_id.id}}/portrait"
                                     alt="Child image"
                             />
-                            <t t-esc="child_image"/>
                         </div>
                         <!-- Card Text Section (Right) -->
                         <div class="col-8 children-card-text-section h-100">
