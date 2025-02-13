@@ -4,9 +4,9 @@
         <field name="model_id" ref="model_crowdfunding_project" />
         <field
       name="domain_force"
-    >[('project_owner_id', '=', user.partner_id.id)]</field>
+    >[('project_owner_id', '=', request.env.user.partner_id.id )]</field>
         <field name="groups" eval="[(4, ref('base.group_portal'))]" />
-        <field name="perm_read" eval="False" />
+        <field name="perm_read" eval="True" />
         <field name="perm_write" eval="True" />
         <field name="perm_create" eval="True" />
         <field name="perm_unlink" eval="True" />
@@ -16,7 +16,7 @@
         <field name="model_id" ref="model_crowdfunding_participant" />
         <field
       name="domain_force"
-    >[('partner_id', '=', user.partner_id.id)]</field>
+    >[('partner_id', '=', request.env.user.partner_id.id )]</field>
         <field name="groups" eval="[(4, ref('base.group_portal'))]" />
         <field name="perm_read" eval="False" />
         <field name="perm_write" eval="True" />
