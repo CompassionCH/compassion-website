@@ -713,8 +713,7 @@ class EventRegistration(models.Model):
                 registration.write({"stage_id": next_stage.id})
 
         # Send potential communications after stage transition
-        if stage_complete:
-            self.env["event.mail"].with_delay().run()
+        self.env["event.mail"].sudo().with_delay(priority=50).run()
         return True
 
     def _track_subtype(self, init_values):
