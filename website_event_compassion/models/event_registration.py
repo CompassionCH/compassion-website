@@ -408,6 +408,7 @@ class EventRegistration(models.Model):
                         "res_id": registration.id,
                         "datas": passport,
                         "name": name,
+                        "public": False,
                     }
                 )
             else:
