@@ -58,7 +58,7 @@
                         />
                                                 <span>
                                                     Your <span
-                            t-raw="params.get('action_done', message)"
+                            t-esc="params.get('action_done', message)"
                           />
                                                     has been sent <b
                           >successfully</b>
