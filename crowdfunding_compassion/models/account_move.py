@@ -1,7 +1,7 @@
 #    Copyright (C) 2022 Compassion CH
 #    @author: Emanuel Cino
 
-from odoo import models
+from odoo import SUPERUSER_ID, models
 
 
 class AccountInvoice(models.Model):
@@ -12,7 +12,10 @@ class AccountInvoice(models.Model):
         res = super().action_invoice_paid()
         for invoice in self.filtered("invoice_line_ids.crowdfunding_participant_id"):
             if invoice.payment_state == "paid":
-                invoice.with_delay(eta=10).generate_crowdfunding_receipt()
+                invoice.with_user(SUPERUSER_ID).with_delay(
+                    eta=10,
+                    identity_key=f"{self._name}.crowdfunding_receipt.{invoice.id}",
+                ).generate_crowdfunding_receipt()
         return res
 
     def generate_crowdfunding_receipt(self):
