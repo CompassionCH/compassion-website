@@ -25,7 +25,10 @@ class MyEventsController(CustomerPortal):
         website=True,
     )
     def my_registration(self, registration, edit_mode=False, **kwargs):
-        if request.env.user.partner_id.id == registration.partner_id.id or request.env.user.has_group("base.group_system"):
+        if (
+            request.env.user.partner_id.id == registration.partner_id.id
+            or request.env.user.has_group("base.group_system")
+        ):
             values = self._prepare_portal_layout_values()
             values.update(
                 {
@@ -36,7 +39,7 @@ class MyEventsController(CustomerPortal):
             )
             return request.render("website_event_compassion.my_event_details", values)
         else:
-            return request.redirect('/my/events')
+            return request.redirect("/my/events")
 
     def get_donations(self, registration):
         partner = registration.partner_id
