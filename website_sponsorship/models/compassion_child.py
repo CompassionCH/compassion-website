@@ -182,7 +182,7 @@ class CompassionChild(models.Model):
                 active_id=childpool.id,
                 active_model=childpool._name,
                 default_is_published=True,  # Directly publish the child
-                async_mode=False,  # Make sure we wait for the hold to be done
+                queue_job__no_delay=True,  # Make sure we wait for the hold to be done
             )
             .create(
                 {
