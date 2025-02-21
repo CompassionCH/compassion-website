@@ -16,6 +16,7 @@
 -->
 <odoo>
     <template id="my2_new_letter_page" name="My Compassion 2 New Letter Page">
+        <link rel="stylesheet" href="/my_compassion/static/src/css/template_image.css"/>
         <t t-call="website.layout">
             <div class="container">
                 <!-- Calling breadcrumb component -->
@@ -50,22 +51,21 @@
                             <div id="child-reactive-img"></div>
                         </div>
                     </div>
+                    <!-- List of template images for selecting a letter template -->
                     <div class="row">
-                        <div class="col-8">
-                            <!-- Dropdown list for selecting a letter template -->
-                            <div class="form-group">
-                                <label for="template-dropdown">Select a
-                                    Template:</label>
-                                <select id="template-dropdown" class="form-control">
-                                    <t t-foreach="templates" t-as="template">
-                                        <option t-att-value="template.id">
-                                            <t t-esc="template.name"/>
-                                            <t t-esc="template.template_image_url"/>
-                                        </option>
-                                    </t>
-                                </select>
-                            </div>
+                        <div class="col-12">
+                            <p class="font-weight-bold">Choose a Template:</p>
                         </div>
+                    </div>
+                    <div class="row">
+                        <t t-foreach="templates" t-as="template" t-key="template.id">
+                            <div class="col-6 col-md-4 col-lg-3 text-center mb-3">
+                                <!-- Display the template image -->
+                                <img t-att-src="template.template_image_url"
+                                     t-att-data-template-id="template.id"
+                                     class="img-fluid border shadow-sm template-image"/>
+                            </div>
+                        </t>
                     </div>
                     <div class="row">
                         <div class="col-12">
@@ -94,6 +94,10 @@
         <script
                 type="text/javascript"
                 src="/my_compassion/static/src/js/my2_child_selector_image.js"
+        />
+        <script
+                type="text/javascript"
+                src="/my_compassion/static/src/js/my2_template_image_selection.js"
         />
         <script
                 type="text/javascript"

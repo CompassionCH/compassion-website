@@ -1,5 +1,6 @@
 /**
  * Handles the new_letter form submission.
+ * Is used in /templates/pages/my2_new_letter.xml
  */
 document.addEventListener("DOMContentLoaded", function (event) {
     odoo.define("my_compassion", function (require) {
@@ -24,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
             event.preventDefault();
 
             const childId = document.getElementById("child-dropdown").value;
-            const templateId = document.getElementById("template-dropdown").value;
+            const templateId = document.getElementById("selected-template").getAttribute('data-template-id');
             const letterBody = document.getElementById("letter-input").value;
 
             const data = {
