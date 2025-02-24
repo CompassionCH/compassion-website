@@ -20,10 +20,15 @@ class MyCompassionChildrenController(http.Controller):
         """
         partner = request.env.user.partner_id
 
+        breadcrumbs = [
+            {'name': 'Children', 'url': '/my2/children/', 'active': True},
+        ]
+
         return request.render(
             'my_compassion.my2_children_page',
             {
                 'sponsorship_ids': partner.sponsorship_ids,
+                'breadcrumbs': breadcrumbs,
             }
         )
 
@@ -34,10 +39,17 @@ class MyCompassionChildrenController(http.Controller):
 
         for child in children_sponsored_by_partner:
             if child.id == child_id:
+
+                breadcrumbs = [
+                    {'name': 'Children', 'url': '/my2/children/', 'active': False},
+                    {'name': child.preferred_name, 'url': '/my2/children/' + str(child_id), 'active': True},
+                ]
+
                 return request.render(
                     'my_compassion.my2_child_timeline_page',
                     {
                         'compassion_child': child,
+                        'breadcrumbs': breadcrumbs,
                     }
                 )
 
@@ -48,9 +60,17 @@ class MyCompassionChildrenController(http.Controller):
 
         for child in children_sponsored_by_partner:
             if child.id == child_id:
+
+                breadcrumbs = [
+                    {'name': 'Children', 'url': '/my2/children/', 'active': False},
+                    {'name': child.preferred_name, 'url': '/my2/children/' + str(child_id), 'active': False},
+                    {'name': 'Details', 'url': '/my2/children/' + str(child_id) + '/details', 'active': True},
+                ]
+
                 return request.render(
                     'my_compassion.my2_child_details_page',
                     {
                         'compassion_child': child,
+                        'breadcrumbs': breadcrumbs,
                     }
                 )

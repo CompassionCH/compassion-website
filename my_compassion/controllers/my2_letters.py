@@ -27,11 +27,22 @@ class MyCompassionCorrespondenceController(http.Controller):
 
         for compassion_child in children_sponsored_by_partner:
             if compassion_child.id == child_id:
+
+                breadcrumbs = [
+                    {'name': 'Children', 'url': '/my2/children/', 'active': False},
+                    {'name': compassion_child.preferred_name,
+                     'url': '/my2/children/' + str(child_id), 'active': True},
+                    {'name': 'Letters',
+                     'url': '/my2/children/' + str(child_id) + '/letters',
+                     'active': True},
+                ]
+
                 return request.render(
                     'my_compassion.my2_child_letters_page',
                     {
                         'compassion_child': compassion_child,
                         'letters': letters,
+                        'breadcrumbs': breadcrumbs,
                     }
                 )
 
@@ -44,7 +55,7 @@ class MyCompassionCorrespondenceController(http.Controller):
         selected_child = None
         for compassion_child in children_sponsored_by_partner:
             if compassion_child.id == child_id:
-                selected_child= compassion_child
+                selected_child = compassion_child
 
         # Retrieve the letter templates
         templates = (
@@ -59,12 +70,19 @@ class MyCompassionCorrespondenceController(http.Controller):
             .sorted(lambda t: "0" if "christmas" in t.name.lower() else t.name)
         )
 
+        breadcrumbs = [
+            {'name': 'Children', 'url': '/my2/children/', 'active': False},
+            {'name': 'New Letter', 'url': '/my2/children/' + str(child_id) + '/letter/new',
+             'active': True},
+        ]
+
         return request.render(
             'my_compassion.my2_new_letter_page',
             {
                 'selected_child': selected_child,
                 'sponsorship_ids': partner.sponsorship_ids,
                 'templates': templates,
+                'breadcrumbs': breadcrumbs,
             }
         )
 

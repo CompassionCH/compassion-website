@@ -17,7 +17,9 @@ Page: My Compassion 2 Children Page
         <t t-call="website.layout">
             <div class="container">
                 <!-- Calling breadcrumb component -->
-                <t t-call="my_compassion.my2_breadcrumb"/>
+                <t t-call="my_compassion.my2_breadcrumbs">
+                    <t t-set="breadcrumbs" t-value="breadcrumbs"/>
+                </t>
                 <div class="row">
                     <div class="col-12">
                         <h1>Your sponsorships</h1>
