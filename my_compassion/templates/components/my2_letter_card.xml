@@ -13,12 +13,15 @@
     <template id="my2_letter_card_component" name="Letter Card Component">
         <link rel="stylesheet" href="/my_compassion/static/src/css/details_card.css"/>
         <link rel="stylesheet" href="/my_compassion/static/src/css/letter_card.css"/>
-        <div class="details-card w-100">
+        <div class="details-card w-100"
+             t-att-data-generator-id="letter.generator_id.id">
             <div class="details-card-body">
                 <div class="row align-items-center">
                     <!-- Left part of the card with the letter icon -->
                     <div class="col-5">
-                        <i class="fa fa-envelope-o letter-icon"/>
+                        <div class="ml-3">
+                            <i class="fa fa-envelope-o letter-icon"/>
+                        </div>
                     </div>
                     <!-- Right part of the card component -->
                     <div class="col-7 h-100">
@@ -37,7 +40,8 @@
                         <!-- Buttons part -->
                         <div class="row">
                             <div class="offset-1 col-5">
-                                <a t-attf-href="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf" target="_blank">
+                                <a t-attf-href="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf"
+                                   target="_blank">
                                     <button type="button"
                                             class="btn-compassion btn-compassion-blue">
                                         <span>
@@ -47,7 +51,8 @@
                                 </a>
                             </div>
                             <div class="col-5 offset-1">
-                                <a t-attf-href="/b2s_image?id={{letter.uuid}}" t-attf-download="{{letter.name}}">
+                                <a t-attf-href="/b2s_image?id={{letter.uuid}}"
+                                   t-attf-download="{{letter.name}}">
                                     <button type="button"
                                             class="btn-compassion btn-compassion-blue">
                                         <span>
@@ -61,5 +66,9 @@
                 </div>
             </div>
         </div>
+        <script
+                type="text/javascript"
+                src="/my_compassion/static/src/js/my2_highlight_new_letter.js"
+        />
     </template>
 </odoo>
