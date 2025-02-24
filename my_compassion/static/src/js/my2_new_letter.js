@@ -42,8 +42,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     route: "/my2/children/letter/new",
                     params: data
                 });
-                // TO DO handle the success
-                console.log(result)
+                // Redirect the user to the child's letters page
+                window.location.href = `/my2/children/${childId}/letters?new_letter_generator_id=${result.generator_id}`;
+                // TO DO handle the success, the user needs a feedback confirmation on the letters page
             } catch (error) {
                 // TO DO handle the error notification to the client
                 console.error("Failed to create letter: ", error)
