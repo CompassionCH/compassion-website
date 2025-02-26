@@ -22,7 +22,7 @@ class MyCompassionCorrespondenceController(http.Controller):
             [
                 ("partner_id", "=", partner.id)
             ],
-            order="scanned_date DESC"
+            order="create_date DESC"
         )
 
         for compassion_child in children_sponsored_by_partner:
@@ -137,10 +137,17 @@ class MyCompassionCorrespondenceController(http.Controller):
         letter_generator.onchange_domain()
 
         letter_generator.preview()
-        letter_generator.generate_letters()
+        letter_generator_job = letter_generator.generate_letters_job()
 
-        return {
-            "preview_url": f"{request.httprequest.host_url}web/image/{letter_generator._name}/{letter_generator.id}/preview_pdf",
-            "letter_values": letter_values,
-            "generator_id": letter_generator.id,
-        }
+        if letter_generator_job:
+
+            return {
+                "preview_url": f"{request.httprequest.host_url}web/image/{letter_generator._name}/{letter_generator.id}/preview_pdf",
+                "letter_values": letter_values,
+                "generator_id": letter_generator.id,
+            }
+
+        else:
+            return {
+                "error": "Something went wrong.",
+            }
