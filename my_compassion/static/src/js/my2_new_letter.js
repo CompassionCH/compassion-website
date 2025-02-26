@@ -24,8 +24,15 @@ document.addEventListener("DOMContentLoaded", function (event) {
             // allowing us to send the data via an RPC call instead of making a page reload.
             event.preventDefault();
 
+            const selectedTemplateImage = document.getElementById("selected-template");
+            const templateId = selectedTemplateImage ? selectedTemplateImage.getAttribute('data-template-id') : null;
+
+            if (!selectedTemplateImage) {
+                // TODO handle missing template logic in a friendly UI/UX way
+                alert("Please select a template.");
+            }
+
             const childId = document.getElementById("child-dropdown").value;
-            const templateId = document.getElementById("selected-template").getAttribute('data-template-id');
             const letterBody = document.getElementById("letter-input").value;
 
             const data = {
@@ -42,8 +49,11 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     route: "/my2/children/letter/new",
                     params: data
                 });
-                // Redirect the user to the child's letters page
-                window.location.href = `/my2/children/${childId}/letters?new_letter_generator_id=${result.generator_id}`;
+
+                if (result) {
+                    // Redirect the user to the child's letters page
+                    window.location.href = `/my2/children/${childId}/letters?new_letter_generator_id=${result.generator_id}`;
+                }
                 // TO DO handle the success, the user needs a feedback confirmation on the letters page
             } catch (error) {
                 // TO DO handle the error notification to the client
