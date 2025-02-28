@@ -99,6 +99,7 @@ class MyCompassionCorrespondenceController(http.Controller):
         source = post.get('source')
         csrf_token = post.get('csrf_token') # Should we use it somehow?
         attachments = post.get('attachments')
+        mode = post.get('mode') # Either send or preview
 
         # Retrieve related user data
         partner = request.env.user.partner_id
@@ -137,9 +138,11 @@ class MyCompassionCorrespondenceController(http.Controller):
         letter_generator.onchange_domain()
 
         letter_generator.preview()
-        letter_generator_job = letter_generator.generate_letters_job()
 
-        if letter_generator_job:
+        if mode == 'send':
+            letter_generator.generate_letters_job()
+
+        if letter_generator:
 
             return {
                 "preview_url": f"{request.httprequest.host_url}web/image/{letter_generator._name}/{letter_generator.id}/preview_pdf",

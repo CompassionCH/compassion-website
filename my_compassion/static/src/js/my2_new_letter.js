@@ -30,10 +30,14 @@ document.addEventListener("DOMContentLoaded", function (event) {
             if (!selectedTemplateImage) {
                 // TODO handle missing template logic in a friendly UI/UX way
                 alert("Please select a template.");
+                return;
             }
 
             const childId = document.getElementById("child-dropdown").value;
             const letterBody = document.getElementById("letter-input").value;
+
+            const submitButton = event.submitter;
+            const mode = submitButton.getAttribute("data-mode")
 
             const data = {
                 child_id: childId,
@@ -41,7 +45,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 letter_body: letterBody,
                 source: "mycompassion",
                 csrf_token: odoo.csrf_token,
-                attachments: null // TO DO
+                attachments: null, // TO DO
+                mode: mode
             };
 
             try {
@@ -50,9 +55,14 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     params: data
                 });
 
-                if (result) {
+                if (result && mode === 'send') {
                     // Redirect the user to the child's letters page
                     window.location.href = `/my2/children/${childId}/letters?new_letter_generator_id=${result.generator_id}`;
+                }
+
+                if (result && mode === 'preview') {
+                    // TODO create a reactive preview letter image
+                    window.location.href = result["preview_url"];
                 }
                 // TO DO handle the success, the user needs a feedback confirmation on the letters page
             } catch (error) {
