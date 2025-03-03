@@ -61,8 +61,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 }
 
                 if (result && mode === 'preview') {
-                    // TODO create a reactive preview letter image
-                    window.location.href = result["preview_url"];
+                    document.getElementById("previewImage").src = result["preview_url"];
+                        $("#previewModal").modal("show"); // Show the modal
                 }
                 // TO DO handle the success, the user needs a feedback confirmation on the letters page
             } catch (error) {
