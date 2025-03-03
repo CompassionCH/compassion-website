@@ -17,6 +17,7 @@
 <odoo>
     <template id="my2_new_letter_page" name="My Compassion 2 New Letter Page">
         <link rel="stylesheet" href="/my_compassion/static/src/css/template_image.css"/>
+        <link rel="stylesheet" href="/my_compassion/static/src/css/add_a_picture_input.css"/>
         <t t-call="website.layout">
             <div class="container">
                 <!-- Calling breadcrumb component -->
@@ -101,6 +102,7 @@
                         </div>
                     </div>
 
+                    <!-- Text area for letter writing -->
                     <div class="row">
                         <div class="col-12">
                             <!-- Textarea for letter writing -->
@@ -110,10 +112,30 @@
                                         id="letter-input"
                                         class="form-control"
                                         rows="10"
-                                        placeholder="Type your letter here..."></textarea></div>
+                                        placeholder="Type your letter here...">
+                                </textarea>
+                            </div>
                         </div>
                     </div>
 
+                    <!-- Add attachments box input -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="letter-attachments">Attachments</label>
+                            <div class="file-upload-placeholder">
+                                <input type="file" class="file-upload-input"
+                                       id="letter-attachments" multiple="true"/>
+                                <div class="text-center p-3">
+                                    <i class="fa fa-plus-square-o fa-3x text-primary"></i>
+                                    <br/>
+                                    <span>Add a picture</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Preview and Submit buttons -->
                     <div class="row mb-2">
                         <div class="col-12 text-right">
                             <button type="submit" class="btn btn-outline-primary" data-mode="preview">
@@ -125,7 +147,6 @@
                         </div>
                     </div>
 
-                    <!-- Preview Letter Modal -->
                     <!-- Modal for previewing the letter -->
                     <div class="modal fade" id="previewModal" tabindex="-1"
                          role="dialog" aria-labelledby="previewModalLabel"
