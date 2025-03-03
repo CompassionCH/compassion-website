@@ -1,6 +1,10 @@
 /**
  * Handles the new_letter form submission.
  * Is used in /templates/pages/my2_new_letter.xml
+ *
+ * TODO: Compress the image, and ensure it is a JPEG
+ * // [T2038] the new image name is necessary because the backend uses the
+ * // extension as a hint to detect the mimetype.
  */
 document.addEventListener("DOMContentLoaded", function (event) {
     odoo.define("my_compassion", function (require) {
@@ -36,8 +40,36 @@ document.addEventListener("DOMContentLoaded", function (event) {
             const childId = document.getElementById("child-dropdown").value;
             const letterBody = document.getElementById("letter-input").value;
 
+            const fileInput = document.getElementById("letter-attachments");
+            const files = fileInput.files;
+            let attachments = [];
+
+            // Convert each file to a base64 string using promises
+            const filePromises = Array.from(files).map(file => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = function() {
+                        resolve({
+                            filename: file.name,
+                            content: reader.result.split(',')[1] // Get the base64 content
+                        });
+                    };
+                    reader.onerror = function() {
+                        reject("Error reading file.");
+                    };
+                });
+            });
+
+            // Wait for all files to be processed
+            try {
+                attachments = await Promise.all(filePromises);
+            } catch (error) {
+                console.error("Failed to process files: ", error);
+            }
+
             const submitButton = event.submitter;
-            const mode = submitButton.getAttribute("data-mode")
+            const mode = submitButton.getAttribute("data-mode") // define the send mode, either 'send' or 'preview'
 
             const data = {
                 child_id: childId,
@@ -45,9 +77,12 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 letter_body: letterBody,
                 source: "mycompassion",
                 csrf_token: odoo.csrf_token,
-                attachments: null, // TO DO
+                attachments: attachments,
+                // attachments: JSON.stringify(attachments),
                 mode: mode
             };
+
+            console.log(data);
 
             try {
                 const result = await rpc.query({

@@ -111,6 +111,21 @@ class MyCompassionCorrespondenceController(http.Controller):
             if compassion_child.id == child_id:
                 selected_child = compassion_child
 
+        # This is from legacy, it should be refactored in my opinion
+        datas = []
+        for file in attachments:
+            if isinstance(file, dict) and "content" in file:
+                datas.append(
+                    (
+                        0,
+                        0,
+                        {
+                            "datas": file["content"],
+                            "name": file["filename"],
+                        },
+                    )
+                )
+
         letter_values = {
             "name": f"{source}-{selected_child.local_id}",
             "selection_domain": str(
@@ -121,7 +136,7 @@ class MyCompassionCorrespondenceController(http.Controller):
             ),
             "body": letter_body,
             "template_id": int(template_id),
-            "image_ids": attachments,
+            "image_ids": datas,
             "source": source,
         }
 
