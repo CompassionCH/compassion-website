@@ -29,15 +29,36 @@
 }
 
 .uploaded-file {
-    border: 1px solid #ddd;
     padding: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     border-radius: 0.25rem;
-    background-color: #f9f9f9;
+    position: relative; /* Ensure the remove button is positioned correctly */
+    text-align: center;
 }
 
 .uploaded-file img {
     max-width: 100%;
     height: auto;
     border-radius: 0.25rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.uploaded-file p {
+    word-wrap: break-word; /* Ensure text breaks into a new line */
+    overflow-wrap: break-word; /* Handle long words */
+}
+
+/*
+    Set the btn a custom size and puts it on the top right of its container
+*/
+.remove-attachment-button {
+    position: absolute;
+    padding: 0.0925rem 0.6125rem !important;
+    top: 0.3rem;
+    right: 0.3rem;
+}
+
+.remove-attachment-button:hover {
+    background-color: #f66565 !important;
+    border-color: #f66565 !important;
 }
