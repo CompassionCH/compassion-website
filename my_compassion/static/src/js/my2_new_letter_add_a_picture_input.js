@@ -4,15 +4,15 @@
  * Is used in /templates/pages/my2_new_letter.xml
  */
 document.getElementById('letter-attachments').addEventListener('change', function(event) {
-    // Get the list of files selected by the user
-    const files = event.target.files;
-
-    // Select the container where uploaded files will be displayed
+    const files = Array.from(event.target.files); // Convert FileList to Array
     const container = document.getElementById('uploaded-files-container');
 
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
+    // Initialize uploadedFiles array if not already defined
+    if (!window.uploadedFiles) {
+        window.uploadedFiles = [];
+    }
 
+    files.forEach((file, index) => {
         const fileReader = new FileReader();
 
         fileReader.onload = function(e) {
@@ -32,24 +32,33 @@ document.getElementById('letter-attachments').addEventListener('change', functio
 
             // Create a button element for the "X" to remove the file
             const removeButton = document.createElement('button');
-            removeButton.classList.add('btn', 'btn-danger', 'remove-attachment-button')
+            removeButton.classList.add('btn', 'btn-danger', 'remove-attachment-button');
             removeButton.innerHTML = 'X';
 
-            // Add an event listener to the remove button
+            // Remove file when clicking "X"
             removeButton.addEventListener('click', function() {
-                fileDiv.remove(); // Remove the fileDiv from the DOM
+                const fileIndex = window.uploadedFiles.indexOf(file);
+                if (fileIndex > -1) {
+                    window.uploadedFiles.splice(fileIndex, 1); // Remove from array
+                    updateFileInput(); // Update the file input field
+                    fileDiv.remove(); // Remove from UI
+                }
             });
 
-            // Append the img, p, button to the fileDiv
             fileDiv.appendChild(img);
             fileDiv.appendChild(fileName);
             fileDiv.appendChild(removeButton);
-
-            // Append the fileDiv to the container to display the file
             container.appendChild(fileDiv);
         };
 
-        // Read the file as a data URL
         fileReader.readAsDataURL(file);
+        window.uploadedFiles.push(file); // Add the new file to the array
+    });
+
+    function updateFileInput() {
+        const newFileList = new DataTransfer();
+        window.uploadedFiles.forEach(file => newFileList.items.add(file));
+        event.target.files = newFileList.files; // Update input with new files
     }
 });
+
