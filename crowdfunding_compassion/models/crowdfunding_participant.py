@@ -114,9 +114,7 @@ class CrowdfundingParticipant(models.Model):
             lastname = details.partner_id.lastname
             html_vals = {
                 "img_alt": details.display_name,
-                "image_data": details.partner_id.with_context(
-                    bin_size=False
-                ).image_512.decode("utf-8"),
+                "image_url": f"/web/partner_image/{details.partner_id.id}/image_512",
                 "text": details.personal_motivation.strip() or "",
                 "attribution": _("Quote from %s %s") % (firstname, lastname)
                 if details.personal_motivation.strip()
