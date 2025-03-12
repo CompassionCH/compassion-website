@@ -4,8 +4,11 @@
 */
 
 #selected-template {
-    outline: 0.2rem solid #007bff; /* Blue outline */
+    outline: 0.15rem solid #007bff; /* Blue outline */
     box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Glow effect */
+    max-width: 40%; /* Ensures the image never exceeds the container's width */
+    height: auto; /* Keeps the aspect ratio intact */
+    max-height: 40%; /* Limits the image height */
 }
 
 /* ANIMATIONS ----------------------------------------------------------------------- */

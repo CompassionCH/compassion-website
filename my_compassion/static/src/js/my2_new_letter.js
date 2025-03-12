@@ -2,9 +2,6 @@
  * Handles the new_letter form submission.
  * Is used in /templates/pages/my2_new_letter.xml
  *
- * TODO: Compress the image, and ensure it is a JPEG
- * // [T2038] the new image name is necessary because the backend uses the
- * // extension as a hint to detect the mimetype.
  */
 document.addEventListener("DOMContentLoaded", function (event) {
     odoo.define("my_compassion", function (require) {

@@ -55,20 +55,20 @@
 
                     <!-- Button to open the modal for selecting a letter template -->
                     <div class="row">
-                        <div class="form-group ml-3">
-                            <label for="template-selection">
-                                Select a Template:
-                            </label>
-                            <!-- Button content will be dynamically updated by the template name -->
-                            <button type="button" id="template-selection"
-                                    class="btn btn-outline-primary form-control">
-                                Click here to choose a template
-                            </button>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="template-selection">
+                                    Select a Template:
+                                </label>
+                                <!-- Button content will be dynamically updated by the template name -->
+                                <button type="button" id="template-selection"
+                                        class="btn btn-outline-primary form-control">
+                                    Click here
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <!-- Show the chosen template dynamically -->
-                    <div class="row mb-3">
-                        <div class="col-12 center">
+                        <!-- Show the chosen template dynamically -->
+                        <div class="col-6 mb-3">
                             <div id="template-reactive-img"></div>
                         </div>
                     </div>
