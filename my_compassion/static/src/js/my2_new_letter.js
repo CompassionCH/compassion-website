@@ -3,71 +3,50 @@
  * Is used in /templates/pages/my2_new_letter.xml
  *
  */
-document.addEventListener("DOMContentLoaded", function (event) {
+document.addEventListener("DOMContentLoaded", function () {
     odoo.define("my_compassion", function (require) {
         "use strict";
 
-        const rpc = require('web.rpc');
+        const rpc = require("web.rpc");
 
-        // To trigger onSubmitLetter() when the form is submitted.
         const form = document.querySelector("form");
         if (form) {
             form.addEventListener("submit", onSubmitLetter);
         }
 
         /**
-         * Captures the form data and sends it to the backend via an RPC call.
+         * Handles the submission of the letter creation form. This function manages Preview and Submit mode
+         *
+         * @async
+         * @function
          * @param {Event} event - The form submission event.
+         *
+         * @returns {Promise<void>} Resolves once the letter submission process is complete.
          */
         async function onSubmitLetter(event) {
-
-            // ensures that the form is handled via JavaScript,
-            // allowing us to send the data via an RPC call instead of making a page reload.
+            // Prevent default form submission to handle the process manually
             event.preventDefault();
 
-            const selectedTemplateImage = document.getElementById("selected-template");
-            const templateId = selectedTemplateImage ? selectedTemplateImage.getAttribute('data-template-id') : null;
+            // Get the button that triggered the form submission (either Preview or Submit)
+            const submitButton = event.submitter;
+            const mode = submitButton.getAttribute("data-mode");
 
-            if (!selectedTemplateImage) {
-                // TODO handle missing template logic in a friendly UI/UX way
+            // Collect the form data
+            const {
+                childId,
+                templateId,
+                letterBody,
+                attachments
+            } = await collectFormData();
+
+            // Ensure data validation
+            // TODO this should be enhance, and take more possible case in account.
+            if (!templateId) {
                 alert("Please select a template.");
                 return;
             }
 
-            const childId = document.getElementById("child-dropdown").value;
-            const letterBody = document.getElementById("letter-input").value;
-
-            const fileInput = document.getElementById("letter-attachments");
-            const files = fileInput.files;
-            let attachments = [];
-
-            // Convert each file to a base64 string using promises
-            const filePromises = Array.from(files).map(file => {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.readAsDataURL(file);
-                    reader.onload = function() {
-                        resolve({
-                            filename: file.name,
-                            content: reader.result.split(',')[1] // Get the base64 content
-                        });
-                    };
-                    reader.onerror = function() {
-                        reject("Error reading file.");
-                    };
-                });
-            });
-
-            // Wait for all files to be processed
-            try {
-                attachments = await Promise.all(filePromises);
-            } catch (error) {
-                console.error("Failed to process files: ", error);
-            }
-
-            const submitButton = event.submitter;
-            const mode = submitButton.getAttribute("data-mode") // define the send mode, either 'send' or 'preview'
-
+            // Prepare the data to send to the backend
             const data = {
                 child_id: childId,
                 template_id: templateId,
@@ -75,31 +54,209 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 source: "mycompassion",
                 csrf_token: odoo.csrf_token,
                 attachments: attachments,
-                // attachments: JSON.stringify(attachments),
                 mode: mode
             };
 
-            console.log(data);
+            let fakeProgressPromise;
+            let timeoutId;
+
+            // If the mode is 'send', show a modal with a fake progress bar
+            if (mode === "send") {
+                $("#submitModal").modal("show");
+                const progressControl = showFakeProgress();
+                fakeProgressPromise = progressControl.promise;
+                timeoutId = progressControl.timeoutId;
+            }
+
+            // Send the data to the server using RPC, either with send or preview mode.
+            const rpcPromise = submitLetterRPC(data);
+
+            // Wait for either the RPC to succeed or the fake progress to finish
+            try {
+                await Promise.race([
+                    rpcPromise.catch((err) => {
+                        throw err;
+                    }),
+                    fakeProgressPromise || Promise.resolve()
+                ]);
+            } catch (error) {
+                // Remove the modal with the fake progress bar in case of error
+                if (timeoutId) clearTimeout(timeoutId);
+                $("#submitModal").modal("hide");
+                console.error("Failed to create letter: ", error);
+                // TODO: Show error message in UI
+                return;
+            }
+
+            // If no errors occurred, handle the response from the server
+            try {
+                const result = await rpcPromise;
+                // Wait for the fake progress if needed
+                // (Yes this is an anti-pattern, I'm sorry, I need to rush)
+                if (fakeProgressPromise) await fakeProgressPromise;
+                await handleResponse(mode, result, childId);
+            } finally {
+                // Close the modal if in 'send' mode after the process is complete
+                if (mode === "send") $("#submitModal").modal("hide");
+            }
+        }
+
+        /**
+         * Collects and prepares all data from the letter submission form.
+         *
+         * This function extracts the selected child ID, letter content,
+         * selected template ID (from the chosen image), and file attachments
+         * from the form. It also encodes the attachments into base64 format.
+         *
+         * @async
+         * @function
+         * @returns {Promise<Object>} A promise that resolves to an object containing:
+         *   @property {string} childId - The ID of the selected child.
+         *   @property {string|null} templateId - The ID of the selected template, or null if not selected.
+         *   @property {string} letterBody - The body text of the letter.
+         *   @property {Array<{filename: string, content: string}>} attachments - The list of base64-encoded attachments.
+         */
+        async function collectFormData() {
+            const childId = document.getElementById("child-dropdown").value;
+            const letterBody = document.getElementById("letter-input").value;
+
+            const selectedTemplateImage = document.getElementById("selected-template");
+            const templateId = selectedTemplateImage ? selectedTemplateImage.getAttribute("data-template-id") : null;
+
+            const fileInput = document.getElementById("letter-attachments");
+            const attachments = await encodeAttachments(fileInput.files);
+
+            return {childId, templateId, letterBody, attachments};
+        }
+
+        /**
+         * Encodes a list of files into base64 format for backend transmission.
+         *
+         * This function takes a FileList (from an input[type="file"]) and returns
+         * an array of objects, each containing the original filename and its content
+         * as a base64-encoded string (excluding the MIME prefix).
+         *
+         * @async
+         * @function
+         * @param {FileList} fileList - The list of files selected by the user.
+         * @returns {Promise<Array<{filename: string, content: string}>>}
+         *   A promise resolving to an array of attachment objects with:
+         *   - filename: Original name of the file.
+         *   - content: Base64-encoded string (without the data URI prefix).
+         */
+        async function encodeAttachments(fileList) {
+            const filePromises = Array.from(fileList).map((file) => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = () => {
+                        resolve({
+                            filename: file.name,
+                            content: reader.result.split(",")[1],
+                        });
+                    };
+                    reader.onerror = () => reject("Error reading file.");
+                });
+            });
 
             try {
-                const result = await rpc.query({
-                    route: "/my2/children/letter/new",
-                    params: data
-                });
-
-                if (result && mode === 'send') {
-                    // Redirect the user to the child's letters page
-                    window.location.href = `/my2/children/${childId}/letters?new_letter_generator_id=${result.generator_id}`;
-                }
-
-                if (result && mode === 'preview') {
-                    document.getElementById("previewImage").src = result["preview_url"];
-                        $("#previewModal").modal("show"); // Show the modal
-                }
-                // TO DO handle the success, the user needs a feedback confirmation on the letters page
+                return await Promise.all(filePromises);
             } catch (error) {
-                // TO DO handle the error notification to the client
-                console.error("Failed to create letter: ", error)
+                console.error("Failed to process attachments: ", error);
+                return [];
+            }
+        }
+
+        /**
+         * Simulates a multi-step progress indicator for letter submission.
+         *
+         * This function fakes progress feedback for the user interface by sequentially
+         * updating a progress bar and text element with predefined steps (e.g., "Sending your letter information…").
+         * Each step is displayed for 1 second before moving to the next, giving the illusion of work being done.
+         *
+         * It returns a Promise that resolves once all progress steps have been displayed,
+         * along with the timeout ID to optionally allow cancelling the progress animation externally.
+         *
+         * @function
+         * @returns {{promise: Promise<void>, timeoutId: number}}
+         *   An object containing:
+         *   - `promise`: Resolves when the last step is complete.
+         *   - `timeoutId`: The ID of the last setTimeout, useful for canceling if needed.
+         */
+        function showFakeProgress() {
+            const steps = [
+                "Sending your letter information…",
+                "Creating your letter…",
+                "Applying the template…",
+                "Adding your text…",
+                "Adding your attachments…",
+                "Finalizing…"
+            ];
+
+            let currentStep = 0;
+            const progressBar = document.getElementById("progressBar");
+            const progressText = document.getElementById("progressText");
+
+            let timeoutId;
+
+            const promise = new Promise((resolve) => {
+                function updateProgress() {
+                    if (currentStep < steps.length) {
+                        const progress = ((currentStep + 1) / steps.length) * 100;
+                        progressBar.style.width = `${progress}%`;
+                        progressText.textContent = steps[currentStep];
+                        currentStep++;
+                        timeoutId = setTimeout(updateProgress, 1000);
+                    } else {
+                        resolve();
+                    }
+                }
+
+                updateProgress();
+            });
+
+            return {promise, timeoutId};
+        }
+
+        /**
+         * Sends the letter form data to the backend via RPC.
+         *
+         * The backend is expected to return a preview URL (in preview mode)
+         * and a generator ID for redirection (in send mode).
+         *
+         * @function
+         * @param {Object} data - The data payload to send with the request.
+         *
+         * @returns {Promise<Object>} A promise that resolves with the backend response.
+         */
+        function submitLetterRPC(data) {
+            return rpc.query({
+                route: "/my2/children/letter/new",
+                params: data
+            });
+        }
+
+        /**
+         * Handles the server response after submitting or previewing a letter.
+         *
+         * Depending on the mode, this function either redirects the user to the letters
+         * page with a reference to the newly created generator, or displays a preview
+         * image of the letter in a modal dialog.
+         *
+         * @async
+         * @function
+         * @param {string} mode - Submission mode: `'send'` to submit the letter, `'preview'` to show a preview.
+         * @param {Object} result - The result object returned by the server.
+         * @param {string} childId - The ID of the selected child, used in the redirect URL.
+         *
+         * @returns {Promise<void>} Resolves when the UI navigation or update is complete.
+         */
+        async function handleResponse(mode, result, childId) {
+            if (mode === "send") {
+                window.location.href = `/my2/children/${childId}/letters?new_letter_generator_id=${result.generator_id}`;
+            } else if (mode === "preview") {
+                document.getElementById("previewImage").src = result.preview_url;
+                $("#previewModal").modal("show");
             }
         }
     });

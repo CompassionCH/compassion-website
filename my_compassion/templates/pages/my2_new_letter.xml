@@ -17,7 +17,8 @@
 <odoo>
     <template id="my2_new_letter_page" name="My Compassion 2 New Letter Page">
         <link rel="stylesheet" href="/my_compassion/static/src/css/template_image.css"/>
-        <link rel="stylesheet" href="/my_compassion/static/src/css/add_a_picture_input.css"/>
+        <link rel="stylesheet"
+              href="/my_compassion/static/src/css/add_a_picture_input.css"/>
         <t t-call="website.layout">
             <div class="container">
                 <!-- Calling breadcrumb component -->
@@ -78,8 +79,11 @@
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="templateSelectionModalLabel">Select a Template</h5>
-                                    <button type="button" class="close" data-dismiss="modal">
+                                    <h5 class="modal-title"
+                                        id="templateSelectionModalLabel">Select a
+                                        Template</h5>
+                                    <button type="button" class="close"
+                                            data-dismiss="modal">
                                         x
                                     </button>
                                 </div>
@@ -141,10 +145,12 @@
                     <!-- Preview and Submit buttons -->
                     <div class="row mb-2">
                         <div class="col-12 text-right">
-                            <button type="submit" class="btn btn-outline-primary" data-mode="preview">
+                            <button type="submit" class="btn btn-outline-primary"
+                                    data-mode="preview">
                                 Preview Letter
                             </button>
-                            <button type="submit" class="btn btn-primary" data-mode="send">
+                            <button type="submit" class="btn btn-primary"
+                                    data-mode="send">
                                 Submit Letter
                             </button>
                         </div>
@@ -176,6 +182,22 @@
                         </div>
                     </div>
 
+                    <!-- Feedback Modal for when the user submitted the letter -->
+                    <div class="modal fade" id="submitModal" tabindex="-1" role="dialog"
+                         aria-labelledby="submitModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content text-center p-4">
+                                <div class="modal-body">
+                                    <div class="progress mb-3">
+                                        <div class="progress-bar" role="progressbar"
+                                             style="width: 0%" id="progressBar"></div>
+                                    </div>
+                                    <p id="progressText" class="mb-0">Starting...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </form>
             </div>
         </t>
@@ -195,8 +217,8 @@
                 src="/my_compassion/static/src/js/my2_new_letter.js"
         />
         <script
-            type="text/javascript"
-            src="/my_compassion/static/src/js/my2_new_letter_add_a_picture_input.js"
+                type="text/javascript"
+                src="/my_compassion/static/src/js/my2_new_letter_add_a_picture_input.js"
         />
     </template>
 </odoo>
