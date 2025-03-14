@@ -32,17 +32,11 @@ document.addEventListener("DOMContentLoaded", function () {
             const mode = submitButton.getAttribute("data-mode");
 
             // Collect the form data
-            const {
-                childId,
-                templateId,
-                letterBody,
-                attachments
-            } = await collectFormData();
-
-            // Ensure data validation
-            // TODO this should be enhance, and take more possible case in account.
-            if (!templateId) {
-                alert("Please select a template.");
+            let childId, templateId, letterBody, attachments;
+            try {
+                ({ childId, templateId, letterBody, attachments } = await collectFormData());
+            } catch (error) {
+                alert(error.message);
                 return;
             }
 
@@ -62,7 +56,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // If the mode is 'send', show a modal with a fake progress bar
             if (mode === "send") {
-                $("#submitModal").modal("show");
+                // Show the modal and prevents the user to be able to close the modal
+                $("#submitModal").modal({backdrop: 'static', keyboard: false}, "show");
                 const progressControl = showFakeProgress();
                 fakeProgressPromise = progressControl.promise;
                 timeoutId = progressControl.timeoutId;
@@ -73,16 +68,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Wait for either the RPC to succeed or the fake progress to finish
             try {
+                // Promise.race waits for the first promise to settle (either resolves or rejects)
                 await Promise.race([
+                    // The RPC request promise
                     rpcPromise.catch((err) => {
                         throw err;
                     }),
+                    // If no fake progress is required (i.e., fakeProgressPromise is undefined in preview mode),
+                    // we use Promise.resolve() which immediately resolves (i.e., does nothing)
+                    // to ensure Promise.race always has a valid promise to work with.
                     fakeProgressPromise || Promise.resolve()
                 ]);
             } catch (error) {
                 // Remove the modal with the fake progress bar in case of error
                 if (timeoutId) clearTimeout(timeoutId);
                 $("#submitModal").modal("hide");
+                alert("Failed to create letter:" + error)
                 console.error("Failed to create letter: ", error);
                 // TODO: Show error message in UI
                 return;
@@ -91,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // If no errors occurred, handle the response from the server
             try {
                 const result = await rpcPromise;
-                // Wait for the fake progress if needed
+                // Wait for the fake progress to even if backend response was faster
                 // (Yes this is an anti-pattern, I'm sorry, I need to rush)
                 if (fakeProgressPromise) await fakeProgressPromise;
                 await handleResponse(mode, result, childId);
@@ -124,7 +125,24 @@ document.addEventListener("DOMContentLoaded", function () {
             const templateId = selectedTemplateImage ? selectedTemplateImage.getAttribute("data-template-id") : null;
 
             const fileInput = document.getElementById("letter-attachments");
+
+            // TODO handle in a clean way encoding potential issue with a throw new Error
             const attachments = await encodeAttachments(fileInput.files);
+
+
+            // Validate inputs and throw error messages in case of missing value
+            // TODO instead of displaying an alert, display something with a better UI.
+            if (!childId) {
+                throw new Error("Please select a child.");
+            }
+
+            if (!templateId) {
+                throw new Error("Please select a template.");
+            }
+
+            if (!letterBody) {
+                throw new Error("Please write something in your letter")
+            }
 
             return {childId, templateId, letterBody, attachments};
         }
@@ -200,6 +218,8 @@ document.addEventListener("DOMContentLoaded", function () {
             let timeoutId;
 
             const promise = new Promise((resolve) => {
+                // TODO currently the progress is "fake", this logic needs to be refactored
+                // in a real progress bar that makes sense.
                 function updateProgress() {
                     if (currentStep < steps.length) {
                         const progress = ((currentStep + 1) / steps.length) * 100;
