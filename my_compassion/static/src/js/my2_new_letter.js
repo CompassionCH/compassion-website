@@ -34,8 +34,14 @@ document.addEventListener("DOMContentLoaded", function () {
             // Collect the form data
             let childId, templateId, letterBody, attachments;
             try {
-                ({ childId, templateId, letterBody, attachments } = await collectFormData());
+                ({
+                    childId,
+                    templateId,
+                    letterBody,
+                    attachments
+                } = await collectFormData());
             } catch (error) {
+                // TODO enhance error display to the user
                 alert(error.message);
                 return;
             }
@@ -57,7 +63,11 @@ document.addEventListener("DOMContentLoaded", function () {
             // If the mode is 'send', show a modal with a fake progress bar
             if (mode === "send") {
                 // Show the modal and prevents the user to be able to close the modal
-                $("#submitModal").modal({backdrop: 'static', keyboard: false}, "show");
+                $("#submitModal").modal({
+                    backdrop: 'static',
+                    keyboard: false
+                }).modal('show');
+
                 const progressControl = showFakeProgress();
                 fakeProgressPromise = progressControl.promise;
                 timeoutId = progressControl.timeoutId;
@@ -66,7 +76,6 @@ document.addEventListener("DOMContentLoaded", function () {
             // Send the data to the server using RPC, either with send or preview mode.
             const rpcPromise = submitLetterRPC(data);
 
-            // Wait for either the RPC to succeed or the fake progress to finish
             try {
                 // Promise.race waits for the first promise to settle (either resolves or rejects)
                 await Promise.race([
@@ -74,11 +83,17 @@ document.addEventListener("DOMContentLoaded", function () {
                     rpcPromise.catch((err) => {
                         throw err;
                     }),
-                    // If no fake progress is required (i.e., fakeProgressPromise is undefined in preview mode),
-                    // we use Promise.resolve() which immediately resolves (i.e., does nothing)
-                    // to ensure Promise.race always has a valid promise to work with.
+                    // If no fake progress is needed (in preview mode),
+                    // use Promise.resolve() to ensure Promise.race always has a valid promise.
                     fakeProgressPromise || Promise.resolve()
                 ]);
+
+                const result = await rpcPromise;
+                // Wait for the fake progress to even if backend response was faster
+                // (Yes this is an anti-pattern, I'm sorry, I need to rush)
+                if (fakeProgressPromise) await fakeProgressPromise;
+                await handleResponse(mode, result, childId);
+
             } catch (error) {
                 // Remove the modal with the fake progress bar in case of error
                 if (timeoutId) clearTimeout(timeoutId);
@@ -87,18 +102,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error("Failed to create letter: ", error);
                 // TODO: Show error message in UI
                 return;
-            }
-
-            // If no errors occurred, handle the response from the server
-            try {
-                const result = await rpcPromise;
-                // Wait for the fake progress to even if backend response was faster
-                // (Yes this is an anti-pattern, I'm sorry, I need to rush)
-                if (fakeProgressPromise) await fakeProgressPromise;
-                await handleResponse(mode, result, childId);
-            } finally {
-                // Close the modal if in 'send' mode after the process is complete
-                if (mode === "send") $("#submitModal").modal("hide");
             }
         }
 
