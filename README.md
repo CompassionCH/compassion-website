@@ -18,16 +18,19 @@ Available addons
 ----------------
 addon | version | maintainers | summary
 --- | --- | --- | ---
-[muskathlon](muskathlon/) | 14.0.1.0.0 | [![ecino](https://github.com/ecino.png?size=30px)](https://github.com/ecino) | Muskathlon
+[crowdfunding_compassion](crowdfunding_compassion/) | 14.0.1.0.2 |  | Crowdfunding Compassion
+[muskathlon](muskathlon/) | 14.0.1.2.1 | [![ecino](https://github.com/ecino.png?size=30px)](https://github.com/ecino) | Muskathlon
 [my_compassion](my_compassion/) | 14.0.1.0.0 |  | MyCompassion - Sponsor portal website
 [my_compassion_segmentation](my_compassion_segmentation/) | 14.0.1.0.0 |  | MyCompassion - Segmentation
 [theme_compassion](theme_compassion/) | 14.0.1.0.0 |  | Compassion Blue Theme
+[theme_crowdfunding](theme_crowdfunding/) | 14.0.1.0.0 |  | Crowdfunding Compassion Theme
 [theme_muskathlon](theme_muskathlon/) | 14.0.1.0.0 |  | Compassion Muskathlon Theme
 [website_child_protection](website_child_protection/) | 14.0.1.0.0 | [![ecino](https://github.com/ecino.png?size=30px)](https://github.com/ecino) | Adds a form for letting partners agree with the child protection
 [website_crm_request](website_crm_request/) | 14.0.1.0.0 |  | Website CRM Request
-[website_event_compassion](website_event_compassion/) | 14.0.1.1.0 | [![ecino](https://github.com/ecino.png?size=30px)](https://github.com/ecino) | Public website pages for Compassion Events with registration
+[website_event_compassion](website_event_compassion/) | 14.0.1.3.0 | [![ecino](https://github.com/ecino.png?size=30px)](https://github.com/ecino) | Public website pages for Compassion Events with registration
+[website_remove_shop](website_remove_shop/) | 14.0.1.0.0 |  | Website - Hide Shop
+[website_sale_donation](website_sale_donation/) | 14.0.1.1.0 | [![ecino](https://github.com/ecino.png?size=30px)](https://github.com/ecino) | Allows to have a product considered as a donation
 [website_sponsorship](website_sponsorship/) | 14.0.1.0.0 |  | Website - Sponsor a child form
-[website_switzerland](website_switzerland/) | 14.0.1.0.0 |  | Website - Compassion Switzerland custom views
 
 [//]: # (end addons)
 <!-- prettier-ignore-end -->

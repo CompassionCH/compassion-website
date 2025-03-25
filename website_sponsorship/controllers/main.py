@@ -13,7 +13,7 @@ class WebsiteChild(http.Controller):
 
     @http.route(
         [
-            "/children/",
+            "/children",
             "/children/page/<int:page>",
             "/children/<string:random>",
         ],
