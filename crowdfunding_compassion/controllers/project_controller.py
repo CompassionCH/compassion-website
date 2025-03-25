@@ -25,9 +25,10 @@ class ProjectController(HomepageController):
 
     def sitemap_participant(env, rule, qs):
         projects = env["crowdfunding.participant"]
+        today = datetime.today()
         dom = sitemap_qs2dom(qs, "/participant", projects._rec_name)
         dom += request.website.website_domain()
-        dom += [("website_published", "=", True)]
+        dom += [("website_published", "=", True), ("project_id.deadline", ">", today)]
         for f in projects.search(dom):
             loc = "/participant/%s" % slug(f)
             if not qs or qs.lower() in loc:

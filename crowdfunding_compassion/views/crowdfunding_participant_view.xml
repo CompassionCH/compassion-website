@@ -210,7 +210,7 @@
                 <field name="project_id" />
                 <filter
           name="state_active"
-          domain="[('project_id.state', '=', 'active')]"
+          domain="[('project_id.state', '=', 'active'),('project_id.active', '=', True),('project_id.deadline', '>=', context_today().strftime('%Y-%m-%d'))]"
           string="Active"
         />
                 <filter
