@@ -184,6 +184,7 @@ class CrowdfundingParticipant(models.Model):
                 path = (
                     f"web/content/crowdfunding.participant"
                     f"/{participant.id}/profile_photo"
+                    f"/{participant.partner_id.preferred_name}.jpg"
                 )
             elif title.name == "Mister":
                 path = "crowdfunding_compassion/static/src/img/guy.png"

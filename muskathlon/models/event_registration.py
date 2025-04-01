@@ -55,7 +55,8 @@ class MuskathlonRegistration(models.Model):
             html_vals = {
                 "img_alt": registration.display_name,
                 "image_url": f"{base_url}/web/image"
-                f"/event.registration/{registration.id}/profile_picture/500x200",
+                f"/event.registration/{registration.id}"
+                f"/profile_picture/500x200/{firstname}.jpg",
                 "text": registration.ambassador_quote.strip() or "",
                 "attribution": _("Quote from %s %s") % (firstname, lastname)
                 if registration.ambassador_quote.strip()
