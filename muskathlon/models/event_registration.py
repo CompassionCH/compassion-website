@@ -47,15 +47,15 @@ class MuskathlonRegistration(models.Model):
             "partner_compassion/static/src/html/thank_you_quote_template.html"
         )
         template_html = str(html_file.read())
+        base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
         for registration in self:
             partner = registration.partner_id
             firstname = partner.firstname
             lastname = partner.lastname
             html_vals = {
                 "img_alt": registration.display_name,
-                "image_url": f"{partner.get_base_url()}/web/image"
-                f"/event.registration/{registration.id}"
-                f"/profile_picture/500x200",
+                "image_url": f"{base_url}/web/image"
+                f"/event.registration/{registration.id}/profile_picture/500x200",
                 "text": registration.ambassador_quote.strip() or "",
                 "attribution": _("Quote from %s %s") % (firstname, lastname)
                 if registration.ambassador_quote.strip()
