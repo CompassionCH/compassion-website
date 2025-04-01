@@ -48,11 +48,12 @@ class MuskathlonRegistration(models.Model):
         )
         template_html = str(html_file.read())
         for registration in self:
-            firstname = registration.partner_id.firstname
-            lastname = registration.partner_id.lastname
+            partner = registration.partner_id
+            firstname = partner.firstname
+            lastname = partner.lastname
             html_vals = {
                 "img_alt": registration.display_name,
-                "image_url": f"{registration.get_base_url()}/web/image"
+                "image_url": f"{partner.get_base_url()}/web/image"
                 f"/event.registration/{registration.id}"
                 f"/profile_picture/500x200",
                 "text": registration.ambassador_quote.strip() or "",
