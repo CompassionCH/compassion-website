@@ -88,7 +88,7 @@ class MyEventsController(CustomerPortal):
                     "amount": str(registration.event_id.sponsorship_donation_value),
                     "currency": event.currency_id.symbol,
                     "donor firstname": sponsorship.partner_id.preferred_name or "",
-                    "donor lastname": sponsorship.partner_id.lastname or "",
+                    "donor lastname": sponsorship.partner_id.lastname if sponsorship.partner_id.preferred_name!= sponsorship.partner_id.lastname else "",
                     "donor email": sponsorship.partner_id.email or "",
                 }
             )
