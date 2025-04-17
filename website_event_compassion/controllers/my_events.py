@@ -64,9 +64,9 @@ class MyEventsController(CustomerPortal):
                     "date": move_line.date,
                     "amount": str(move_line.price_total),
                     "currency": move_line.currency_id.symbol,
-                    "donor firstname": move_line.partner_id.preferred_name,
-                    "donor lastname": move_line.partner_id.lastname,
-                    "donor email": move_line.partner_id.email,
+                    "donor firstname": move_line.partner_id.preferred_name or "",
+                    "donor lastname": move_line.partner_id.lastname or "",
+                    "donor email": move_line.partner_id.email or "",
                 }
             )
         donation_sponsorships = (
@@ -87,9 +87,9 @@ class MyEventsController(CustomerPortal):
                     "date": sponsorship.create_date.date(),
                     "amount": str(registration.event_id.sponsorship_donation_value),
                     "currency": event.currency_id.symbol,
-                    "donor firstname": sponsorship.partner_id.preferred_name,
-                    "donor lastname": sponsorship.partner_id.lastname,
-                    "donor email": sponsorship.partner_id.email,
+                    "donor firstname": sponsorship.partner_id.preferred_name or "",
+                    "donor lastname": sponsorship.partner_id.lastname or "",
+                    "donor email": sponsorship.partner_id.email or "",
                 }
             )
         donations.sort(key=lambda x: x["date"], reverse=True)
