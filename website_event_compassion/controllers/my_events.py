@@ -65,7 +65,7 @@ class MyEventsController(CustomerPortal):
                     "amount": str(move_line.price_total),
                     "currency": move_line.currency_id.symbol,
                     "donor firstname": move_line.partner_id.preferred_name or "",
-                    "donor lastname": move_line.partner_id.lastname or "",
+                    "donor lastname": move_line.partner_id.lastname if move_line.partner_id.preferred_name!=move_line.partner_id.lastname else "",
                     "donor email": move_line.partner_id.email or "",
                 }
             )
