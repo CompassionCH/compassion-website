@@ -44,3 +44,8 @@ class My2LettersFilter(http.Controller):
             })
 
         return {'letters': result_letters}
+
+    @http.route(['/my2/children/<int:child_id>/get_all_letters'], type='json', auth='user', website=True)
+    def get_all_letters(self, child_id, **kwargs):
+        domain = [('child_id', '=', child_id)]
+        return self._get_filtered_letters(domain)

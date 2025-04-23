@@ -15,6 +15,8 @@
 <odoo>
     <template id="my_compassion_assets" inherit_id="web.assets_frontend">
         <xpath expr="." position="inside">
+            <!-- CSS -->
+            <link rel="stylesheet" href="/my_compassion/static/src/css/global.css"/>
             <script type="text/javascript" src="/my_compassion/static/src/js/my2_letters_filter.js"/>
         </xpath>
     </template>
@@ -55,12 +57,12 @@
                 <!-- Filter Toggle Buttons -->
                 <div class="row mb-3">
                     <div class="col-6 text-center">
-                        <button type="button" id="filter-from" class="btn-compassion btn-compassion-white" data-direction="supporter_to_beneficiary">
+                        <button type="button" id="filter-from" class="btn-compassion btn-compassion-white inactive" data-direction="supporter_to_beneficiary">
                             <span>Supporter to Beneficiary</span>
                         </button>
                     </div>
                     <div class="col-6 text-center">
-                        <button type="button" id="filter-to" class="btn-compassion btn-compassion-white" data-direction="beneficiary_to_supporter">
+                        <button type="button" id="filter-to" class="btn-compassion btn-compassion-white inactive" data-direction="beneficiary_to_supporter">
                             <span>Beneficiary to Supporter</span>
                         </button>
                     </div>
