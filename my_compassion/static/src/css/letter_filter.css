@@ -1,0 +1,39 @@
+/*
+    This stylesheet concerns the my_child_letters.xml component
+    templates/components/my2_child_letters_page
+*/
+/* Default styles for the buttons */
+.btn-compassion.inactive {
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+}
+
+/* Active state of the buttons */
+.btn-compassion.active {
+  background-color: rgba(
+    0,
+    123,
+    255,
+    0.5
+  ); /* Adjust to your active button color */
+  color: white;
+}
+
+/* Align calendars like the filter buttons */
+.calendar-row {
+  display: flex;
+  justify-content: center; /* Align center like buttons */
+  gap: 1rem; /* Space between calendars */
+  margin-top: 1rem; /* Space between buttons and calendars */
+  margin-bottom: 1rem; /* Space between calendars and letter liste */
+}
+
+/* Style to match button size/spacing */
+#month-start,
+#month-end {
+  width: 200px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  text-align: center;
+}

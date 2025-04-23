@@ -11,28 +11,47 @@
 -->
 <odoo>
     <template id="my2_letter_card_component" name="Letter Card Component">
-        <link rel="stylesheet" href="/my_compassion/static/src/css/details_card.css"/>
-        <link rel="stylesheet" href="/my_compassion/static/src/css/letter_card.css"/>
-        <div class="details-card w-100"
-             t-att-data-generator-id="letter.generator_id.id">
+        <link
+      rel="stylesheet"
+      href="/my_compassion/static/src/css/details_card.css"
+    />
+        <link
+      rel="stylesheet"
+      href="/my_compassion/static/src/css/letter_card.css"
+    />
+        <xpath expr="//script[last()]" position="after">
+
+            <!-- Your global styles -->
+            <link
+        rel="stylesheet"
+        href="/my_compassion/static/src/css/global.css"
+      />
+
+        </xpath>
+        <div
+      class="details-card w-100"
+      t-att-data-generator-id="letter.generator_id.id"
+    >
             <div class="details-card-body">
                 <div class="row align-items-center">
                     <!-- Left part of the card with the letter icon -->
                     <div class="col-5">
                         <div class="ml-3">
-                            <i class="fa fa-envelope-o letter-icon"/>
+                            <i class="fa fa-envelope-o letter-icon" />
                         </div>
                     </div>
                     <!-- Right part of the card component -->
                     <div class="col-7 h-100">
                         <div class="row">
                             <div class="col-12">
-                                <div class="text-right">
+                                <div class="text-right"
+                  t-att-data-direction="letter.direction or ''"
+                  t-att-data-scanned-date="letter.scanned_date or ''">
                                     <p>
-                                        <t t-esc="letter.scanned_date"/>
+                                        <t t-esc="letter.scanned_date" />
                                     </p>
                                     <p>
-                                        <t t-esc="letter.state"/>
+                                        <t t-esc="letter.direction" />
                                     </p>
                                 </div>
                             </div>
@@ -40,23 +59,31 @@
                         <!-- Buttons part -->
                         <div class="row">
                             <div class="offset-1 col-5">
-                                <a t-attf-href="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf"
-                                   target="_blank">
-                                    <button type="button"
-                                            class="btn-compassion btn-compassion-blue">
+                                <a
+                  t-attf-href="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf"
+                  target="_blank"
+                >
+                                    <button
+                    type="button"
+                    class="btn-compassion btn-compassion-blue"
+                  >
                                         <span>
-                                            <i class="fa fa-eye"/>
+                                            <i class="fa fa-eye" />
                                         </span>
                                     </button>
                                 </a>
                             </div>
                             <div class="col-5 offset-1">
-                                <a t-attf-href="/b2s_image?id={{letter.uuid}}"
-                                   t-attf-download="{{letter.name}}">
-                                    <button type="button"
-                                            class="btn-compassion btn-compassion-blue">
+                                <a
+                  t-attf-href="/b2s_image?id={{letter.uuid}}"
+                  t-attf-download="{{letter.name}}"
+                >
+                                    <button
+                    type="button"
+                    class="btn-compassion btn-compassion-blue"
+                  >
                                         <span>
-                                            <i class="fa fa-download"/>
+                                            <i class="fa fa-download" />
                                         </span>
                                     </button>
                                 </a>
@@ -67,8 +94,8 @@
             </div>
         </div>
         <script
-                type="text/javascript"
-                src="/my_compassion/static/src/js/my2_child_letters_highlight_new_letter.js"
-        />
+      type="text/javascript"
+      src="/my_compassion/static/src/js/my2_child_letters_highlight_new_letter.js"
+    />
     </template>
 </odoo>
