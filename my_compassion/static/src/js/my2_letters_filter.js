@@ -5,9 +5,11 @@ odoo.define('my_compassion.my2_letters_filter', function (require) {
 
     $(function() {
         console.log('DOM ready');
+        var isNewestFirst = true;
 
         // Set initial state and load all letters
         $('#filter-from, #filter-to').removeClass('active').addClass('inactive');
+        $('#toggle-date-order').removeClass('active').addClass('inactive');
         loadAllLetters();
 
         function loadAllLetters() {
@@ -20,10 +22,7 @@ odoo.define('my_compassion.my2_letters_filter', function (require) {
                 ajax.jsonRpc(`/my2/children/${childId}/get_all_letters`, 'call', {})
                     .then(function(result) {
                         if (result && result.letters && result.letters.length) {
-                            $container.empty();
-                            result.letters.forEach(function(letter) {
-                                $container.append(letter.html);
-                            });
+                            displayLetters(result.letters);
                         } else {
                             $container.html('<p class="text-center">No letters found</p>');
                         }
@@ -34,6 +33,35 @@ odoo.define('my_compassion.my2_letters_filter', function (require) {
                     });
             }
         }
+
+        function displayLetters(letters) {
+            var $container = $('.my2-letters-container');
+            $container.empty();
+
+            // Sort letters based on current order
+            letters.sort(function(a, b) {
+                var dateA = new Date(a.scanned_date);
+                var dateB = new Date(b.scanned_date);
+                return isNewestFirst ? dateB - dateA : dateA - dateB;
+            });
+
+            letters.forEach(function(letter) {
+                $container.append(letter.html);
+            });
+        }
+
+        // Date order toggle handler
+        $('#toggle-date-order').click(function() {
+            isNewestFirst = !isNewestFirst;
+            $(this).text(isNewestFirst ? 'Newest First' : 'Oldest First');
+            $(this).toggleClass('active inactive');
+
+            // Reorder current letters
+            var $container = $('.my2-letters-container');
+            var letters = $container.children().toArray();
+            letters.reverse();
+            $container.append(letters);
+        });
 
         $('#filter-from, #filter-to').click(function(e) {
             e.preventDefault();
