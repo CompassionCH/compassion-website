@@ -67,6 +67,24 @@
                         </button>
                     </div>
                 </div>
+                <div class="date-picker-container">
+                        <div class="date-range-picker d-flex justify-content-between align-items-end mb-3">
+                            <div class="start-date mr-3">
+                                <h6>Start Date</h6>
+                                <div class="d-flex">
+                                    <select class="form-control start-month mr-2" style="width: 140px;"></select>
+                                    <select class="form-control start-year" style="width: 100px;"></select>
+                                </div>
+                            </div>
+                            <div class="end-date">
+                                <h6>End Date</h6>
+                                <div class="d-flex">
+                                    <select class="form-control end-month mr-2" style="width: 140px;"></select>
+                                    <select class="form-control end-year" style="width: 100px;"></select>
+                                </div>
+                            </div>
+                        </div>
+                </div>
                 <!-- Order of the letters -->
                 <div class="row mb-4">
                     <button id="toggle-date-order" class="btn btn-compassion">
@@ -76,7 +94,6 @@
                 <!-- Letters List -->
                 <!-- Important: Add data-child-id attribute here -->
                 <div class="my2-letters-container" t-att-data-child-id="compassion_child.id">
-                    <t t-foreach="letters" t-as="letter">
                         <div class="my2-letters-container" t-att-data-child-id="compassion_child.id">
                             <t t-if="letters">
                                 <t t-foreach="letters" t-as="letter">
@@ -89,7 +106,6 @@
                                 </div>
                             </t>
                         </div>
-                    </t>
                 </div>
             </div>
         </t>

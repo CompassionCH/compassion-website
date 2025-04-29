@@ -80,7 +80,8 @@
             '/my_compassion/static/src/js/my2_child_details.js',
             '/my_compassion/static/src/js/my2_child_letters.js',
             '/my_compassion/static/src/js/my2_new_letter.js',
-            '/my_compassion/static/src/js/my2_letters_filter.js',
+            #'/my_compassion/static/src/js/my2_date_picker.js',
+            #'/my_compassion/static/src/js/my2_letters_filter.js',
         ],
         'web.assets_common': [
             '/my_compassion/static/src/scss/my_compassion.scss',
