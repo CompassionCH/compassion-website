@@ -20,24 +20,7 @@ button.btn-compassion.btn-compassion-white.active {
   color: #fff;
 }
 
-/* Align calendars like the filter buttons */
-.calendar-row {
-  display: flex;
-  justify-content: center; /* Align center like buttons */
-  gap: 1rem; /* Space between calendars */
-  margin-top: 1rem; /* Space between buttons and calendars */
-  margin-bottom: 1rem; /* Space between calendars and letter liste */
-}
-
-/* Style to match button size/spacing */
-#month-start,
-#month-end {
-  width: 200px;
-  padding: 0.5rem;
-  font-size: 1rem;
-  text-align: center;
-}
-
+/* Container styles */
 .date-range-picker {
     margin: 20px 0;
     padding: 15px;
@@ -45,20 +28,81 @@ button.btn-compassion.btn-compassion-white.active {
     border-radius: 8px;
 }
 
-.date-range-picker select.date-picker {
-    min-width: 200px;
+/* Flex container adjustments */
+.date-range-picker .d-flex {
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
 }
 
-#date-picker-from,
-#date-picker-to {
-    display: inline-block;
+/* Individual date sections */
+.start-date,
+.end-date {
+    flex: 1;
+    min-width: 280px;
+    text-align: center;
 }
 
-.form-select.date-picker {
-    padding: 0.375rem 2.25rem 0.375rem 0.75rem;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
+/* Select container */
+.start-date .d-flex,
+.end-date .d-flex {
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Select elements */
+.start-month,
+.start-year,
+.end-month,
+.end-year {
+    display: inline-flex;
+    align-items: center;
+    border: 2px solid rgba(0,94,184,255);
+    border-radius: 10px;
+    padding: 6px 12px;
+    font-family: Arial, sans-serif;
+    color: rgba(0,94,184,255);
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    background-color: white;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Month selects */
+.start-month,
+.end-month {
+    width: 140px;
+}
+
+/* Year selects */
+.start-year,
+.end-year {
+    width: 100px;
+}
+
+/* Headings */
+.date-range-picker h6 {
+    margin-bottom: 10px;
+}
+
+/* Remove margin-right from Bootstrap's mr-2 class */
+.mr-2 {
+    margin-right: 0 !important;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .date-range-picker .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .start-date,
+    .end-date {
+        margin-bottom: 15px;
+        width: 100%;
+    }
 }
