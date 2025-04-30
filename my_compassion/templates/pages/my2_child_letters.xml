@@ -16,15 +16,21 @@
     <template id="my_compassion_assets" inherit_id="web.assets_frontend">
         <xpath expr="." position="inside">
             <!-- CSS -->
-            <link rel="stylesheet" href="/my_compassion/static/src/css/global.css"/>
-            <script type="text/javascript" src="/my_compassion/static/src/js/my2_letters_filter.js"/>
+            <link
+        rel="stylesheet"
+        href="/my_compassion/static/src/css/global.css"
+      />
+            <script
+        type="text/javascript"
+        src="/my_compassion/static/src/js/my2_letters_filter.js"
+      />
         </xpath>
     </template>
     <template
     id="my2_child_letters_page"
     name="My Compassion 2 Child Letters Page"
   >
-        <t t-call-assets="my_compassion.my_compassion_assets" t-js="true"/>
+        <t t-call-assets="my_compassion.my_compassion_assets" t-js="true" />
         <link
       rel="stylesheet"
       href="/my_compassion/static/src/css/template_image.css"
@@ -35,7 +41,7 @@
     />
 
         <t t-call="website.layout">
-            <t t-call-assets="website.assets_frontend" t-js="true"/>
+            <t t-call-assets="website.assets_frontend" t-js="true" />
             <div class="container">
                 <!-- Calling breadcrumb component -->
                 <t t-call="my_compassion.my2_breadcrumbs" />
@@ -57,12 +63,22 @@
                 <!-- Filter Toggle Buttons -->
                 <div class="row mb-3">
                     <div class="col-6 text-center">
-                        <button type="button" id="filter-from" class="btn-compassion btn-compassion-white inactive" data-direction="supporter_to_beneficiary">
+                        <button
+              type="button"
+              id="filter-from"
+              class="btn-compassion btn-compassion-white inactive"
+              data-direction="supporter_to_beneficiary"
+            >
                             <span>Supporter to Beneficiary</span>
                         </button>
                     </div>
                     <div class="col-6 text-center">
-                        <button type="button" id="filter-to" class="btn-compassion btn-compassion-white inactive" data-direction="beneficiary_to_supporter">
+                        <button
+              type="button"
+              id="filter-to"
+              class="btn-compassion btn-compassion-white inactive"
+              data-direction="beneficiary_to_supporter"
+            >
                             <span>Beneficiary to Supporter</span>
                         </button>
                     </div>
@@ -73,15 +89,15 @@
                             <div class="start-date">
                                 <h6>Start Date</h6>
                                 <div class="d-flex">
-                                    <select class="start-month"></select>
-                                    <select class="start-year"></select>
+                                    <select class="start-month" />
+                                    <select class="start-year" />
                                 </div>
                             </div>
                             <div class="end-date">
                                 <h6>End Date</h6>
                                 <div class="d-flex">
-                                    <select class="end-month"></select>
-                                    <select class="end-year"></select>
+                                    <select class="end-month" />
+                                    <select class="end-year" />
                                 </div>
                             </div>
                         </div>
@@ -95,8 +111,14 @@
                 </div>
                 <!-- Letters List -->
                 <!-- Important: Add data-child-id attribute here -->
-                <div class="my2-letters-container" t-att-data-child-id="compassion_child.id">
-                        <div class="my2-letters-container" t-att-data-child-id="compassion_child.id">
+                <div
+          class="my2-letters-container"
+          t-att-data-child-id="compassion_child.id"
+        >
+                        <div
+            class="my2-letters-container"
+            t-att-data-child-id="compassion_child.id"
+          >
                             <t t-if="letters">
                                 <t t-foreach="letters" t-as="letter">
                                     <!-- Your existing letter structure -->

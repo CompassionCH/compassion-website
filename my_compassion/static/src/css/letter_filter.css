@@ -2,107 +2,147 @@
     This stylesheet concerns the my_child_letters.xml component
     templates/components/my2_child_letters_page
 */
-/* Default styles for the buttons */
+/*
+    This stylesheet concerns the my_child_letters.xml component
+    templates/components/my2_child_letters_page
+*/
+
+/* Button styles */
 button.btn-compassion.btn-compassion-white.inactive {
   background-color: #fff;
   color: #000;
   border: 1px solid #716f6f;
 }
 
-/* Active state of the buttons */
 button.btn-compassion.btn-compassion-white.active {
-  background-color: rgba(
-    33,
-    43,
-    89,
-    255
-  ); /* Adjust to your active button color */
+  background-color: rgba(33, 43, 89, 255);
   color: #fff;
 }
 
 /* Container styles */
+.date-picker-container {
+  margin: 20px 0;
+}
+
 .date-range-picker {
-    margin: 20px 0;
-    padding: 15px;
-    background: #f8f9fa;
-    border-radius: 8px;
+  margin: 20px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
 }
 
 /* Flex container adjustments */
 .date-range-picker .d-flex {
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
 }
 
 /* Individual date sections */
 .start-date,
 .end-date {
-    flex: 1;
-    min-width: 280px;
-    text-align: center;
+  flex: 1;
+  min-width: 280px;
+  text-align: center;
 }
 
 /* Select container */
 .start-date .d-flex,
 .end-date .d-flex {
-    justify-content: center;
-    gap: 8px;
+  justify-content: center;
+  gap: 8px;
 }
 
 /* Select elements */
-.start-month,
-.start-year,
-.end-month,
-.end-year {
-    display: inline-flex;
-    align-items: center;
-    border: 2px solid rgba(0,94,184,255);
-    border-radius: 10px;
-    padding: 6px 12px;
-    font-family: Arial, sans-serif;
-    color: rgba(0,94,184,255);
-    font-weight: 600;
-    cursor: pointer;
-    user-select: none;
-    background-color: white;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+select.start-month,
+select.start-year,
+select.end-month,
+select.end-year {
+  display: inline-flex;
+  align-items: center;
+  border: 2px solid rgba(0, 94, 184, 255);
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-family: Arial, sans-serif;
+  color: rgba(0, 94, 184, 255);
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  background-color: white;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Remove default select styling */
+select::-ms-expand {
+  display: none;
+}
+
+/* Hover state */
+select.start-month:hover,
+select.start-year:hover,
+select.end-month:hover,
+select.end-year:hover {
+  border-color: rgba(0, 75, 147, 255);
+  color: rgba(0, 75, 147, 255);
+}
+
+/* Focus state */
+select.start-month:focus,
+select.start-year:focus,
+select.end-month:focus,
+select.end-year:focus {
+  outline: none;
+  border-color: rgba(0, 75, 147, 255);
+  box-shadow: 0 0 0 2px rgba(0, 94, 184, 0.2);
 }
 
 /* Month selects */
-.start-month,
-.end-month {
-    width: 140px;
+select.start-month,
+select.end-month {
+  width: 140px;
 }
 
 /* Year selects */
-.start-year,
-.end-year {
-    width: 100px;
+select.start-year,
+select.end-year {
+  width: 100px;
 }
 
 /* Headings */
 .date-range-picker h6 {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
+  color: #333;
 }
 
 /* Remove margin-right from Bootstrap's mr-2 class */
 .mr-2 {
-    margin-right: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Letters container */
+.my2-letters-container {
+  margin-top: 20px;
 }
 
 /* Media query for smaller screens */
 @media (max-width: 768px) {
-    .date-range-picker .d-flex.justify-content-between {
-        flex-direction: column;
-        align-items: center;
-    }
+  .date-range-picker .d-flex.justify-content-between {
+    flex-direction: column;
+    align-items: center;
+  }
 
-    .start-date,
-    .end-date {
-        margin-bottom: 15px;
-        width: 100%;
-    }
+  .start-date,
+  .end-date {
+    margin-bottom: 15px;
+    width: 100%;
+  }
+
+  select.start-month,
+  select.start-year,
+  select.end-month,
+  select.end-year {
+    width: auto;
+  }
 }

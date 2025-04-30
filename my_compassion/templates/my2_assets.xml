@@ -5,17 +5,36 @@
 <odoo>
     <!-- Make all pages load global.css file -->
      <!-- Define custom asset bundle -->
-      <template id="my_compassion_assets" inherit_id="web.assets_frontend" name="My Compassion Assets">
+      <template
+    id="my_compassion_assets"
+    inherit_id="web.assets_frontend"
+    name="My Compassion Assets"
+  >
         <xpath expr="." position="inside">
             <!-- JS Dependencies -->
-            <script type="text/javascript" src="/web/static/src/js/boot.js"/>
-            <script type="text/javascript" src="/web/static/src/js/services/core.js"/>
-            <script type="text/javascript" src="/web/static/src/js/core/ajax.js"/>
+            <script type="text/javascript" src="/web/static/src/js/boot.js" />
+            <script
+        type="text/javascript"
+        src="/web/static/src/js/services/core.js"
+      />
+            <script
+        type="text/javascript"
+        src="/web/static/src/js/core/ajax.js"
+      />
             <!-- CSS -->
-            <link rel="stylesheet" href="/my_compassion/static/src/css/global.css"/>
+            <link
+        rel="stylesheet"
+        href="/my_compassion/static/src/css/global.css"
+      />
             <!-- Custom JS -->
-            <script type="text/javascript" src="/my_compassion/static/src/js/my2_date_picker.js"/>
-            <script type="text/javascript" src="/my_compassion/static/src/js/my2_letters_filter.js"/>
+            <script
+        type="text/javascript"
+        src="/my_compassion/static/src/js/my2_date_picker.js"
+      />
+            <script
+        type="text/javascript"
+        src="/my_compassion/static/src/js/my2_letters_filter.js"
+      />
         </xpath>
     </template>
 

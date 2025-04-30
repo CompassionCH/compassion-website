@@ -44,9 +44,11 @@
                     <div class="col-7 h-100">
                         <div class="row">
                             <div class="col-12">
-                                <div class="text-right"
+                                <div
+                  class="text-right"
                   t-att-data-direction="letter.direction or ''"
-                  t-att-data-scanned-date="letter.scanned_date or ''">
+                  t-att-data-scanned-date="letter.scanned_date or ''"
+                >
                                     <p>
                                         <t t-esc="letter.scanned_date" />
                                     </p>
