@@ -38,6 +38,8 @@
     "data": [
         "security/access_rules.xml",
         "security/ir.model.access.csv",
+        # My Compassion 2 data
+        "data/my2_website.xml",
         # My compassion 2 assets, needs to be placed before others
         "templates/my2_assets.xml",
         "templates/my_account_components.xml",
@@ -57,6 +59,7 @@
         "templates/pages/my2_child_letters.xml",
         "templates/pages/my2_dashboard.xml",
         "templates/pages/my2_new_letter.xml",
+        "templates/pages/my2_login_template.xml",
         # My Compassion 2 components
         "templates/components/my2_children_card.xml",
         "templates/components/my2_letter_card.xml",

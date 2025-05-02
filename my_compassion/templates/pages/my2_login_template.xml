@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Custom Login Page Layout TODO theme classes are not working -->
+    <template id="my2_login_template" inherit_id="website.login_layout" website_id="my_compassion.my2_website">
+        <xpath expr="t" position="replace">
+            <t t-set="no_footer" t-value="True" />
+            <t t-call="website.layout">
+                <div class="container bg-high-blue my-auto">
+                    <div class="content-column">
+                        <div class="card text-center">
+                            <h5 class="card-header bg-core-blue">Sign in to myCompassion</h5>
+                            <div class="card-body">
+                                <t t-raw="0" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+    </template>
+    <!-- Login Form Customization TODO -->
+    <template id="my2_login_form" inherit_id="password_field" website_id="my_compassion.my2_website">
+        <xpath expr="//button[@type='submit']" position="attributes">
+            <attribute name="class">btn btn-link btn--impact-filled</attribute>
+        </xpath>
+    </template>
+    <!-- Signup Form Customization TODO -->
+    <template id="my2_signup_form" inherit_id="auth_signup.signup" website_id="my_compassion.my2_website">
+        <xpath expr="//button[@type='submit']" position="attributes">
+            <attribute name="class">btn btn-link btn--impact-filled</attribute>
+        </xpath>
+    </template>
+</odoo>
