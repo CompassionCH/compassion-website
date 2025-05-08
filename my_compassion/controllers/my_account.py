@@ -422,7 +422,7 @@ class MyAccountController(CustomerPortal):
         }
         # Construct query string with user profile info
         query_string = urlencode(partner_profile_info)
-        lang = request.env.context.get('lang') or partner.lang
+        lang = request.env.context.get('lang')
         lang_prefix = f"{lang.split('_')[0]}" if lang else None
         url_child_gift = (
             (f"https://{wordpress.host}/{lang_prefix}{wordpress.child_gift_url}?{query_string}")
