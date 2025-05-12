@@ -425,7 +425,9 @@ class MyAccountController(CustomerPortal):
         lang = request.env.context.get('lang')
         lang_prefix = f"{lang.split('_')[0]}" if lang else None
         url_child_gift = (
-            (f"https://{wordpress.host}/{lang_prefix}{wordpress.child_gift_url}?{query_string}")
+            (
+                f"https://{wordpress.host}/{lang_prefix}{wordpress.child_gift_url}?{query_string}"
+            )
             if wordpress and partner_profile_info
             else "#"
         )
