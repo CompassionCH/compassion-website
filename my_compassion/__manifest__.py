@@ -67,25 +67,8 @@
         "website_sponsorship",
         "auth_signup",
         "website_crm_privacy_policy",  # OCA/website
-        "base_setup",  # OCA/base_setup
     ],
-    "assets": {
-        "web.assets_frontend": [
-            "/my_compassion/static/src/js/my2_letters.js",
-            "/my_compassion/static/src/js/my2_children.js",
-            "/my_compassion/static/src/js/my2_child_details.js",
-            "/my_compassion/static/src/js/my2_child_letters.js",
-            "/my_compassion/static/src/js/my2_new_letter.js",
-            #'/my_compassion/static/src/js/my2_date_picker.js',
-            #'/my_compassion/static/src/js/my2_letters_filter.js',
-        ],
-        "web.assets_common": [
-            "/my_compassion/static/src/scss/my_compassion.scss",
-        ],
-    },
     "demo": [],
     "installable": True,
     "auto_install": False,
 }
-
-# pylint: disable=C8101

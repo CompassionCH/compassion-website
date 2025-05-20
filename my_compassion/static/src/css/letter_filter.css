@@ -24,18 +24,29 @@ button.btn-compassion.btn-compassion-white.active {
   margin: 20px 0;
 }
 
+/* Date picker styles */
 .date-range-picker {
   margin: 20px 0;
   padding: 15px;
   background: #f8f9fa;
   border-radius: 8px;
+  width: auto;
 }
 
-/* Flex container adjustments */
-.date-range-picker .d-flex {
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
+/* Filter button position */
+.letter-filter {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 50%;
+  margin-left: auto;
+  margin-right: 1em;
+  gap: 16px;
+}
+
+.filter-buttons-half-width {
+  width: 50%;
+  gap: 16px;
 }
 
 /* Individual date sections */
@@ -43,14 +54,13 @@ button.btn-compassion.btn-compassion-white.active {
 .end-date {
   flex: 1;
   min-width: 280px;
-  text-align: center;
 }
 
-/* Select container */
-.start-date .d-flex,
-.end-date .d-flex {
-  justify-content: center;
-  gap: 8px;
+.date-range-picker .fa-calendar {
+  color: #005eb8;
+  font-size: 1.2em;
+  margin-left: 5px;
+  vertical-align: middle;
 }
 
 /* Select elements */
@@ -101,12 +111,13 @@ select.end-year:focus {
 /* Month selects */
 select.start-month,
 select.end-month {
-  width: 140px;
+  width: 200px;
 }
 
 /* Year selects */
 select.start-year,
 select.end-year {
+  margin-bottom: 15px;
   width: 100px;
 }
 
@@ -116,33 +127,7 @@ select.end-year {
   color: #333;
 }
 
-/* Remove margin-right from Bootstrap's mr-2 class */
-.mr-2 {
-  margin-right: 0 !important;
-}
-
 /* Letters container */
 .my2-letters-container {
   margin-top: 20px;
-}
-
-/* Media query for smaller screens */
-@media (max-width: 768px) {
-  .date-range-picker .d-flex.justify-content-between {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .start-date,
-  .end-date {
-    margin-bottom: 15px;
-    width: 100%;
-  }
-
-  select.start-month,
-  select.start-year,
-  select.end-month,
-  select.end-year {
-    width: auto;
-  }
 }
