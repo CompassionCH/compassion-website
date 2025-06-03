@@ -297,6 +297,10 @@
                       t-att-src="project.presentation_video_embed"
                       frameborder="0"
                     />
+                                        <script
+                      src="https://player.vimeo.com/api/player.js"
+                      t-if="'vimeo' in project.presentation_video"
+                    />
                                     </t>
                                 </t>
 

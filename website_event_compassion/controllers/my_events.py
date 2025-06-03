@@ -53,7 +53,7 @@ class MyEventsController(CustomerPortal):
                     ("user_id", "=", partner.id),
                     ("payment_state", "=", "paid"),
                     ("event_id", "=", event.id),
-                    ("move_id.invoice_category","=","fund")
+                    ("move_id.invoice_category", "=", "fund"),
                 ]
             )
         )
@@ -65,7 +65,10 @@ class MyEventsController(CustomerPortal):
                     "amount": str(move_line.price_total),
                     "currency": move_line.currency_id.symbol,
                     "donor firstname": move_line.partner_id.preferred_name or "",
-                    "donor lastname": move_line.partner_id.lastname if move_line.partner_id.preferred_name!=move_line.partner_id.lastname else "",
+                    "donor lastname": move_line.partner_id.lastname
+                    if move_line.partner_id.preferred_name
+                    != move_line.partner_id.lastname
+                    else "",
                     "donor email": move_line.partner_id.email or "",
                 }
             )
@@ -88,7 +91,10 @@ class MyEventsController(CustomerPortal):
                     "amount": str(registration.event_id.sponsorship_donation_value),
                     "currency": event.currency_id.symbol,
                     "donor firstname": sponsorship.partner_id.preferred_name or "",
-                    "donor lastname": sponsorship.partner_id.lastname if sponsorship.partner_id.preferred_name!= sponsorship.partner_id.lastname else "",
+                    "donor lastname": sponsorship.partner_id.lastname
+                    if sponsorship.partner_id.preferred_name
+                    != sponsorship.partner_id.lastname
+                    else "",
                     "donor email": sponsorship.partner_id.email or "",
                 }
             )

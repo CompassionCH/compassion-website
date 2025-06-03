@@ -333,13 +333,19 @@ class CrowdfundingProject(models.Model):
                     ]
                 )
             elif "vimeo" in url_data.hostname and "video" not in url_data.path:
-                self.presentation_video_embed = "/".join(
-                    [
-                        url_data.scheme + "://player." + url_data.hostname,
-                        "video",
-                        url_data.path.lstrip("/"),
-                    ]
-                )
+                path_parts = url_data.path.split("/", 2)
+                if len(path_parts) > 1:
+                    self.presentation_video_embed = "/".join(
+                        [
+                            url_data.scheme + "://player." + url_data.hostname,
+                            "video",
+                            path_parts[1],
+                        ]
+                    )
+                    if len(path_parts) > 2:
+                        self.presentation_video_embed += "?h=" + path_parts[2]
+                else:
+                    self.presentation_video_embed = self.presentation_video
             else:
                 self.presentation_video_embed = self.presentation_video
         else:
