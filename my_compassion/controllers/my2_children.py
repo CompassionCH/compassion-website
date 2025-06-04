@@ -12,7 +12,7 @@ from odoo import http
 
 class MyCompassionChildrenController(http.Controller):
 
-    @http.route('/my2/children/', type="http", auth="user", website=True)
+    @http.route('/my2/children/', type="http", auth="user", website=True, sitemap=False)
     def my2_render_children_page(self, **kwargs):
         """
         Renders the children page related to the logged-in user's sponsorships.
@@ -32,7 +32,7 @@ class MyCompassionChildrenController(http.Controller):
             }
         )
 
-    @http.route('/my2/children/<int:child_id>', type="http", auth="user", website=True)
+    @http.route('/my2/children/<int:child_id>', type="http", auth="user", website=True, sitemap=False)
     def my2_render_child_timeline_page(self, child_id, **kwargs):
         partner = request.env.user.partner_id
         children_sponsored_by_partner = partner.sponsorship_ids.child_id
@@ -53,7 +53,7 @@ class MyCompassionChildrenController(http.Controller):
                     }
                 )
 
-    @http.route('/my2/children/<int:child_id>/details', type="http", auth="user", website=True)
+    @http.route('/my2/children/<int:child_id>/details', type="http", auth="user", website=True, sitemap=False)
     def my2_render_child_details_page(self, child_id, **kwargs):
         partner = request.env.user.partner_id
         children_sponsored_by_partner = partner.sponsorship_ids.child_id
