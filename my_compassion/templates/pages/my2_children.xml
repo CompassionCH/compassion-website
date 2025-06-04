@@ -45,19 +45,33 @@ Page: My Compassion 2 Children Page
                 </div>
                 <!-- ACTIVE SPONSORSHIPS CHILDREN-->
                 <div class="row g-4 mb-3">
-                    <t t-foreach="sponsorship_ids" t-as="sponsorship">
-                        <t t-if="sponsorship.state == 'active'">
-                            <t t-call="my_compassion.my2_children_card_component">
-                                <t t-set="sponsorship" t-value="sponsorship" />
+                    <t t-foreach="sponsorships_data" t-as="sponsorship_data">
+                        <t t-if="sponsorship_data['sponsorship'].state == 'active'">
+                            <t
+                t-call="my_compassion.my2_children_card_component"
+              >
+                                <t
+                  t-set="sponsorships_data"
+                  t-value="sponsorship_data"
+                />
                             </t>
                         </t>
                     </t>
                 </div>
                 <!-- TERMINATED SPONSORSHIPS CHILDREN -->
                 <div class="row g-4">
-                    <t t-foreach="sponsorship_ids" t-as="sponsorship">
-                        <t t-if="sponsorship.state == 'terminated'">
-                            <t t-call="my_compassion.my2_children_card_component">
+                    <t t-foreach="sponsorships_data" t-as="sponsorship_data">
+                        <t
+            t-if="sponsorship_data['sponsorship'].state == 'terminated'"
+          >
+                            <t
+                t-call="my_compassion.my2_children_card_component"
+              >
+                                <!-- The data we are passing to the children_card_component -->
+                                <t
+                  t-set="sponsorship_data"
+                  t-value="sponsorships_data"
+                />
                                 <t t-set="sponsorship" t-value="sponsorship" />
                             </t>
                         </t>

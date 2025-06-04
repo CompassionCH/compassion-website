@@ -6,11 +6,13 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+from datetime import datetime
+
 from werkzeug.exceptions import NotFound
 
 from odoo import http
-from odoo.http import request
 
+from odoo.http import request
 
 class MyCompassionChildrenController(http.Controller):
     @http.route("/my2/children/", type="http", auth="user", website=True, sitemap=False)
@@ -42,14 +44,63 @@ class MyCompassionChildrenController(http.Controller):
             {"name": "Children", "url": "/my2/children/", "active": True},
         ]
 
+        sponsorships_data = [] 
+
+        # Iterate through each sponsorship of the partner
+        for sponsorship in partner.sponsorship_ids:
+            has_unread_letter = bool(
+                request.env["correspondence"].search(
+                    [
+                        ("child_id", "=", sponsorship.child_id.id),
+                        ("email_read", "=", False),
+                        ("direction", "=", "Beneficiary To Supporter"),
+                    ],
+                    limit=1,
+                )
+            )
+
+            # Calculate days until next birthday
+            today = datetime.today().date()
+            birthday_this_year = sponsorship.child_id.birthdate.replace(year=today.year)
+            delta = (birthday_this_year - today).days
+            # If the birthday has already occurred this year, calculate for next year
+            if delta < 0:
+                birthday_next_year = birthday_this_year.replace(year=today.year + 1)
+                delta = (birthday_next_year - today).days
+
+            # Calculate days since last letter
+            last_letter = request.env["correspondence"].search(
+                [
+                    ("child_id", "=", sponsorship.child_id.id),
+                    ("direction", "=", "Supporter To Beneficiary"),
+                ],
+                order="create_date DESC",
+                limit=1,
+            )
+
+            if last_letter:
+                last_letter_date = last_letter.create_date.date()
+                delta_last_letter = (today - last_letter_date).days
+
+        sponsorships_data.append(
+            {
+                "sponsorship": sponsorship,
+                "has_unread_letter": has_unread_letter,
+                "days_until_birthday": delta,
+                "delta_last_letter": delta_last_letter if last_letter else None,
+            }
+        )
+
         return request.render(
             "my_compassion.my2_children_page",
             {
                 "sponsorship_ids": partner.sponsorship_ids,
                 "latest_correspondences_by_child_id": latest_corr_by_child,
                 "breadcrumbs": breadcrumbs,
+                "sponsorships_data": sponsorships_data,
             },
         )
+
 
     @http.route(
         '/my2/children/<model("compassion.child"):child>',
@@ -82,10 +133,8 @@ class MyCompassionChildrenController(http.Controller):
         raise NotFound()
 
     @http.route(
-        '/my2/children/<model("compassion.child"):child>/details',
-        type="http",
-        auth="user",
-        website=True,
+        "/my2/children/<model("compassion.child"):child>/details", type="http", auth="user", website=True
+    ,
         sitemap=False,
     )
     def my2_render_child_details_page(self, child, **kwargs):

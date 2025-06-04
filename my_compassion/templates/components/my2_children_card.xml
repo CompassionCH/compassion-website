@@ -25,6 +25,46 @@
                 <div class="h2 mb-3">
                     <t t-esc="sponsorship.preferred_name" />
                 </div>
+                <!-- TODO these status messages were made before redesign and need to be adapted (this whole div) -->
+                <div class="text-right">
+                    <!-- Status Messages -->
+                    <!-- Status for unread letter -->
+                    <t t-if="sponsorship_data['has_unread_letter']">
+                        <p class="children-card-status">
+                            <i class="fa fa-envelope" style="color: green;"/>
+                            New letter available!
+                        </p>
+                    </t>
+                    <!-- Status for birthday, check if it's soon or today -->
+                    <t t-elif="sponsorship_data['days_until_birthday'] &lt;= 160 ">
+                        <t t-if="sponsorship_data['days_until_birthday'] == 0">
+                            <p class="children-card-status">
+                                <i class="fa fa-birthday-cake" style="color: orange"/>
+                                Birthday today!
+                            </p>
+                        </t>
+                        <t t-else="">
+                            <p class="children-card-status">
+                                <i class="fa fa-birthday-cake" style="color: orange"/>
+                                Birthday in <t t-esc="sponsorship_data['days_until_birthday']"/> days!
+                            </p>
+                        </t>
+                    </t>
+                    <!-- Status to encouraged to send a lettre -->
+                    <t t-elif="sponsorship_data['delta_last_letter'] &gt;= 90">
+                        <p class="children-card-status">
+                            <i class="fa fa-paper-plane" style="color: blue"/>
+                            Send a Letter ;)
+                        </p>
+                    </t>
+                    <!-- Default status -->
+                    <t t-else="">
+                        <p class="children-card-status">
+                            <i class="fa fa-check" style="color: green"/>
+                            Active sponsorship!
+                        </p>
+                    </t>
+                </div>
                 <!-- Correspondence Status and info section -->
                 <div class="h5 mb-3">
                     <t
