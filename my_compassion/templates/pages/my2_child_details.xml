@@ -6,7 +6,7 @@
     This page displays detailed information about a sponsored child.
 
     Used in route:
-    - /my2/children/<int:child_id>/details
+    - /my2/children/<model("compassion.child"):child>/details
 
     Injected Data:
     - compassion_child (record): The related child object.
