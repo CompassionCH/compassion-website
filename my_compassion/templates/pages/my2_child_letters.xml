@@ -6,7 +6,7 @@
     This page displays all the letters associated with a sponsored child.
 
     Used in route:
-    - /my2/children/<int:child_id>/letters
+    - /my2/children/<model("compassion.child"):child>/letters
 
     Injected data:
     - compassion_child (record): The related child object.

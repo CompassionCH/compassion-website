@@ -12,9 +12,9 @@ from odoo import http
 
 class MyCompassionCorrespondenceController(http.Controller):
 
-    @http.route('/my2/children/<int:child_id>/letters', type="http", auth="user",
+    @http.route('/my2/children/<model("compassion.child"):child>/letters', type="http", auth="user",
                 website=True)
-    def my2_render_child_letters_page(self, child_id, **kwargs):
+    def my2_render_child_letters_page(self, child, **kwargs):
         partner = request.env.user.partner_id
         children_sponsored_by_partner = partner.sponsorship_ids.child_id
 
@@ -25,22 +25,21 @@ class MyCompassionCorrespondenceController(http.Controller):
             order="create_date DESC"
         )
 
-        for compassion_child in children_sponsored_by_partner:
-            if compassion_child.id == child_id:
+        if child in children_sponsored_by_partner:
 
                 breadcrumbs = [
                     {'name': 'Children', 'url': '/my2/children/', 'active': False},
-                    {'name': compassion_child.preferred_name,
-                     'url': '/my2/children/' + str(child_id), 'active': True},
+                    {'name': child.preferred_name,
+                     'url': '/my2/children/' + str(child.id), 'active': True},
                     {'name': 'Letters',
-                     'url': '/my2/children/' + str(child_id) + '/letters',
+                     'url': '/my2/children/' + str(child.id) + '/letters',
                      'active': True},
                 ]
 
                 return request.render(
                     'my_compassion.my2_child_letters_page',
                     {
-                        'compassion_child': compassion_child,
+                        'compassion_child': child,
                         'letters': letters,
                         'breadcrumbs': breadcrumbs,
                     }

@@ -30,7 +30,7 @@
                 <!-- Buttons New Letter and New Gift -->
                 <div class="row mb-3">
                     <div class="col-6 text-center">
-                        <a t-att-href="'/my2/children/' + str(compassion_child.id) + '/letters'">
+                        <a t-attf-href="/my2/children/{{compassion_child.id}}/letters">
                             <button type="button"
                                     class="btn-compassion btn-compassion-white">
                                 <span>
