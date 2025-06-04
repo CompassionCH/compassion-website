@@ -32,17 +32,15 @@ class MyCompassionChildrenController(http.Controller):
             }
         )
 
-    @http.route('/my2/children/<int:child_id>', type="http", auth="user", website=True)
-    def my2_render_child_timeline_page(self, child_id, **kwargs):
+    @http.route('/my2/children/<model("compassion.child"):child>', type="http", auth="user", website=True)
+    def my2_render_child_timeline_page(self, child, **kwargs):
         partner = request.env.user.partner_id
         children_sponsored_by_partner = partner.sponsorship_ids.child_id
 
-        for child in children_sponsored_by_partner:
-            if child.id == child_id:
-
+        if child in children_sponsored_by_partner:
                 breadcrumbs = [
                     {'name': 'Children', 'url': '/my2/children/', 'active': False},
-                    {'name': child.preferred_name, 'url': '/my2/children/' + str(child_id), 'active': True},
+                    {'name': child.preferred_name, 'url': '/my2/children/' + str(child.id), 'active': True},
                 ]
 
                 return request.render(

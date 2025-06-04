@@ -7,7 +7,7 @@
     such as gifts, letters, and other sponsorship activities.
 
     Used in route:
-    - /my2/children/<int:child_id>/
+    - /my2/children/<model("compassion.child"):child>/
 
     Injected data:
     - compassion_child (record): The related child object.
