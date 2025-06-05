@@ -45,45 +45,41 @@ class MyCompassionCorrespondenceController(http.Controller):
                     }
                 )
 
-    @http.route('/my2/children/<int:child_id>/letter/new', type="http", auth="user", website=True)
-    def my2_render_new_letter_page(self, child_id, **kwargs):
+    @http.route('/my2/children/<model("compassion.child"):child>/letter/new', type="http", auth="user", website=True)
+    def my2_render_new_letter_page(self, child, **kwargs):
         partner = request.env.user.partner_id
         children_sponsored_by_partner = partner.sponsorship_ids.child_id
 
-        # Retrieve the child object already instantiated
-        selected_child = None
-        for compassion_child in children_sponsored_by_partner:
-            if compassion_child.id == child_id:
-                selected_child = compassion_child
+        if child in children_sponsored_by_partner:
 
-        # Retrieve the letter templates
-        templates = (
-            request.env["correspondence.template"].search(
-                [
-                    ("active", "=", True),
-                    ("website_published", "=", True),
-                ]
+            # Retrieve the letter templates
+            templates = (
+                request.env["correspondence.template"].search(
+                    [
+                        ("active", "=", True),
+                        ("website_published", "=", True),
+                    ]
+                )
+                # Sort the templates alphabetically, placing "Christmas" templates at the beginning
+                # "0" is special sorting key because it comes before any letter in ASCII order.
+                .sorted(lambda t: "0" if "christmas" in t.name.lower() else t.name)
             )
-            # Sort the templates alphabetically, placing "Christmas" templates at the beginning
-            # "0" is special sorting key because it comes before any letter in ASCII order.
-            .sorted(lambda t: "0" if "christmas" in t.name.lower() else t.name)
-        )
 
-        breadcrumbs = [
-            {'name': 'Children', 'url': '/my2/children/', 'active': False},
-            {'name': 'New Letter', 'url': '/my2/children/' + str(child_id) + '/letter/new',
-             'active': True},
-        ]
+            breadcrumbs = [
+                {'name': 'Children', 'url': '/my2/children/', 'active': False},
+                {'name': 'New Letter', 'url': '/my2/children/' + str(child.id) + '/letter/new',
+                 'active': True},
+            ]
 
-        return request.render(
-            'my_compassion.my2_new_letter_page',
-            {
-                'selected_child': selected_child,
-                'sponsorship_ids': partner.sponsorship_ids,
-                'templates': templates,
-                'breadcrumbs': breadcrumbs,
-            }
-        )
+            return request.render(
+                'my_compassion.my2_new_letter_page',
+                {
+                    'selected_child': child,
+                    'sponsorship_ids': partner.sponsorship_ids,
+                    'templates': templates,
+                    'breadcrumbs': breadcrumbs,
+                }
+            )
 
     @http.route('/my2/children/letter/new', type="json", auth="user", methods=['POST'])
     def my2_create_new_letter(self, **post):
