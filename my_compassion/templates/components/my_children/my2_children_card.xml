@@ -10,7 +10,7 @@
 -->
 <odoo>
     <template id="my2_children_card_component" name="Children Card Component">
-        <link rel="stylesheet" href="/my_compassion/static/src/css/children_card.css"/>
+        <link rel="stylesheet" href="/addons-compassion-switzerland/compassion-website/my_compassion/static/src/css/children_card.css"/>
         <div t-att-class="'children-card w-100 children-card-terminated' if sponsorship.state == 'terminated' else 'children-card w-100'">
             <div class="children-card-body">
                 <a t-attf-href="/my2/children/{{sponsorship.child_id.id}}">

@@ -58,11 +58,12 @@
         "templates/pages/my2_new_letter.xml",
 
         # My Compassion 2 components
-        "templates/components/my2_children_card.xml",
-        "templates/components/my2_children_profile.xml",
+        "templates/components/my_children/my2_children_card.xml",
+        "templates/components/my_children/my2_children_profile.xml",
         "templates/components/my2_details_card.xml",
         "templates/components/my2_letter_card.xml",
         "templates/components/my2_breadcrumbs.xml",
+        "templates/components/my_children/my2_children_details_information.xml"
     ],
     "depends": [
         "partner_communication_compassion",
