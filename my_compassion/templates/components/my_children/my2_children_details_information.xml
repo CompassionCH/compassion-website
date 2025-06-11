@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Page: My Compassion 2 Child Details component
+
+    Description:
+    This component displays detailed information about a sponsored child.
+
+    Injected Data:
+    - compassion_child (record): The related child object.
+-->
+<odoo>
+    <template id="my2_children_details_information_component" name="Children Details Component">
+        <link rel="stylesheet"
+              href="/my_compassion/static/src/css/details_information.css"/>
+        <!-- GENERAL INFORMATION -->
+        <div class="children_details_block">
+            <div class="children_details_title">
+                <p class="font-weight-bold">General</p>
+            </div>
+            <div class="children_details_content">
+                <div class="children_details_row">
+                    <span class="children_details_label">Gender</span>
+                    <span class="children_details_value"><t t-esc="compassion_child.translate('gender')"/></span>
+                </div>
+                <div class="children_details_row">
+                    <span class="children_details_label">Birthdate</span>
+                    <span class="children_details_value"><t t-esc="compassion_child.birthdate"/></span>
+                </div>
+                <div class="children_details_row">
+                    <span class="children_details_label">Hobby</span>
+                    <span class="children_details_value">
+                        <t t-set="value" t-value="compassion_child.get_list('hobby_ids.value')"/>
+                        <t t-esc="value"/>
+                    </span>
+                </div>
+                <div class="children_details_row">
+                    <span class="children_details_label">Education Level</span>
+                    <span class="children_details_value"><t t-esc="compassion_child.translate('education_level')"/></span>
+                </div>
+            </div>
+        </div>
+        <!-- FAMILY INFORMATION -->
+        <div class="children_details_block">
+            <div class="children_details_title">
+                <p class="font-weight-bold">Family</p>
+            </div>
+            <div class="children_details_content">
+                <div class="children_details_row">
+                    <span class="children_details_label">Legal representatives</span>
+                    <t t-if="compassion_child.household_id.member_ids">
+                        <div class="children_details_value">
+                            <t t-foreach="compassion_child.household_id.member_ids" t-as="member">
+                                <t t-if="member.is_primary_caregiver">
+                                    <div class="pb-2">
+                                        <t t-esc="'%s (%s)' % (member.name, member.translate('role').title())" />
+                                    </div>
+                                </t>
+                            </t>
+                        </div>
+                    </t>
+                </div>
+                <t t-if="compassion_child.household_id.male_guardian_job">
+                    <div class="children_details_row">
+                        <span class="children_details_label">Father/representative's job</span>
+                        <span class="children_details_value">
+                            <t t-set="value" t-value="request.env['ir.advanced.translation'].get(compassion_child.household_id.translate('male_guardian_job'))"/>
+                            <t t-esc="value"/>
+                        </span>
+                    </div>
+                </t>
+                <t t-if="compassion_child.household_id.female_guardian_job">
+                    <div class="children_details_row">
+                        <span class="children_details_label">Mother/representative's job</span>
+                        <span class="children_details_value">
+                            <t t-set="value" t-value="request.env['ir.advanced.translation'].get(compassion_child.household_id.translate('female_guardian_job'), female=True)"/>
+                            <t t-esc="value"/>
+                        </span>
+                    </div>
+                </t>
+                <div class="children_details_row">
+                    <span class="children_details_label">Household members</span>
+                    <t t-if="compassion_child.household_id.member_ids">
+                        <div class="children_details_value">
+                            <t t-foreach="compassion_child.household_id.member_ids" t-as="member">
+                                <div class="pb-2">
+                                    <t t-esc="'%s (%s)' % (member.name, member.translate('role').title())" />
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+                </div>
+                <div class="children_details_row">
+                    <span class="children_details_label">Household duties</span>
+                    <span class="children_details_value">
+                        <t t-set="value" t-value="compassion_child.get_list('duty_ids.value')"/>
+                        <t t-esc="value"/>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <!-- COMMUNITY INFORMATION -->
+        <div class="children_details_block">
+            <div class="children_details_title">
+                <p class="font-weight-bold">Community</p>
+            </div>
+            <div class="children_details_content">
+                <div class="children_details_row">
+                    <span class="children_details_label">Location</span>
+                    <!-- We display the closest city and the country. As one or both can be null, we check it before displaying -->
+                    <span class="children_details_value"><t t-esc="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"/></span>
+                </div>
+                <div class="children_details_row">
+                    <span class="children_details_label">Population</span>
+                    <span class="children_details_value"><t t-esc="compassion_child.project_id.community_population"/></span>
+                </div>
+                <div class="children_details_row">
+                    <span class="children_details_label">Language</span>
+                    <span class="children_details_value"><t t-esc="compassion_child.project_id.primary_language_id.name"/></span>
+                </div>
+                <div class="children_details_row">
+                    <span class="children_details_label">Common jobs</span>
+                    <t t-set="value" t-value="compassion_child.get_list('project_id.primary_adults_occupation_ids.value')" />
+                    <span class="children_details_value"><t t-esc="value"/></span>
+                </div>
+                <div class="children_details_row">
+                    <span class="children_details_label">Typical food</span>
+                    <t t-set="value" t-value="compassion_child.get_list('project_id.primary_diet_ids.value')" />
+                    <span class="children_details_value"><t t-esc="value"/></span>
+                </div>
+            </div>
+        </div>
+        <!-- COMPASSION CENTER INFORMATION-->
+        <div class="children_details_block">
+            <div class="children_details_title">
+                <p class="font-weight-bold">Compassion Center</p>
+            </div>
+            <div class="children_details_content">
+                <div class="children_details_row">
+                    <span class="children_details_label">Closest city</span>
+                    <span class="children_details_value"><t t-esc="compassion_child.project_id.closest_city"/></span>
+                </div>
+                <div class="children_details_row">
+                    <span class="children_details_label">Number of sponsored children</span>
+                    <span class="children_details_value"><t t-esc="compassion_child.project_id.nb_cdsp_kids"/></span>
+                </div>
+                <div class="children_details_row">
+                    <span class="children_details_label">Project Activities</span>
+                    <t t-set="value" t-value="(compassion_child.project_id.get_activity_for_age(compassion_child.age)).mapped('value')" />
+                    <div class="children_details_value">
+                        <t t-foreach="value" t-as="item">
+                            <div class="pb-2">
+                                <t t-esc="item" />
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>
