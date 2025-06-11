@@ -16,8 +16,44 @@ document.addEventListener("DOMContentLoaded", function () {
       var childId = $container.attr("data-child-id");
       var currentDirection = null;
 
+      const MONTHS = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      const CURRENT_YEAR = new Date().getFullYear();
+      const CURRENT_MONTH = new Date().getMonth() + 1;
+
+      // Utility to generate year options
+      function getYearOptions(start, end) {
+        return Array.from({ length: end - start + 1 }, (_, i) => end - i)
+          .map((year) => `<option value="${year}">${year}</option>`)
+          .join("");
+      }
+
+      // Utility to generate month options
+      function getMonthOptions(startMonth = 1, months = MONTHS) {
+        return months
+          .slice(startMonth - 1)
+          .map(
+            (month, i) => `<option value="${i + startMonth}">${month}</option>`
+          )
+          .join("");
+      }
+
       /**
-       * Display letters in container
+       * Display letters in the container
+       *
+       * @param {Array} letters - Array of letter objects to display
        */
       function displayLetters(letters) {
         $container.empty();
@@ -25,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       /**
-       * Apply all filters together
+       * Apply all filters and fetch letters based on selected criteria
        */
       function applyAllFilters() {
         var startMonth = parseInt($(".start-month").val());
@@ -65,55 +101,26 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       /**
-       * Update end date options
+       * Update end date options based on selected start date
+       * @param {number} startMonth - Selected start month (1-12)
+       * @param {number} startYear - Selected start year
        */
       function updateEndDateOptions(startMonth, startYear) {
-        var currentYear = new Date().getFullYear();
-        var currentMonth = new Date().getMonth() + 1;
-
-        var years = [];
-        for (var year = currentYear; year >= startYear; year--) {
-          years.push(`<option value="${year}">${year}</option>`);
-        }
-        $(".end-year").html(years.join(""));
-
-        var months = [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-          "August",
-          "September",
-          "October",
-          "November",
-          "December",
-        ];
+        $(".end-year").html(getYearOptions(startYear, CURRENT_YEAR));
+        var selectedEndYear = parseInt($(".end-year").val());
 
         var monthsHtml =
-          startYear === parseInt($(".end-year").val())
-            ? months
-                .slice(startMonth - 1)
-                .map(
-                  (month, i) =>
-                    `<option value="${i + startMonth}">${month}</option>`
-                )
-                .join("")
-            : months
-                .map((month, i) => `<option value="${i + 1}">${month}</option>`)
-                .join("");
-
+          startYear === selectedEndYear
+            ? getMonthOptions(startMonth, MONTHS)
+            : getMonthOptions(1, MONTHS);
         $(".end-month").html(monthsHtml);
 
-        // Set default end date
         $(".end-month").val(
-          startYear === currentYear
-            ? Math.max(startMonth, Math.min(currentMonth, 12))
+          startYear === CURRENT_YEAR
+            ? Math.max(startMonth, Math.min(CURRENT_MONTH, 12))
             : 12
         );
-        $(".end-year").val(currentYear);
+        $(".end-year").val(CURRENT_YEAR);
       }
 
       /**
@@ -126,44 +133,13 @@ document.addEventListener("DOMContentLoaded", function () {
             var minDate = result.min_date
               ? new Date(result.min_date)
               : new Date();
-            var currentYear = new Date().getFullYear();
             var minYear = minDate.getFullYear();
 
-            // Populate months dropdown
-            var months = [
-              "January",
-              "February",
-              "March",
-              "April",
-              "May",
-              "June",
-              "July",
-              "August",
-              "September",
-              "October",
-              "November",
-              "December",
-            ];
-            var monthsHtml = months
-              .map(
-                (month, index) =>
-                  `<option value="${index + 1}">${month}</option>`
-              )
-              .join("");
-            $(".start-month, .end-month").html(monthsHtml);
-
-            // Populate years dropdown
-            var yearsCount = currentYear - minYear + 1;
-            var years = Array.from(
-              { length: yearsCount },
-              (_, i) => currentYear - i
+            $(".start-month, .end-month").html(getMonthOptions(1, MONTHS));
+            $(".start-year, .end-year").html(
+              getYearOptions(minYear, CURRENT_YEAR)
             );
-            var yearsHtml = years
-              .map((year) => `<option value="${year}">${year}</option>`)
-              .join("");
-            $(".start-year, .end-year").html(yearsHtml);
 
-            // Set initial values
             $(".start-month").val(1);
             $(".start-year").val(minYear);
 
