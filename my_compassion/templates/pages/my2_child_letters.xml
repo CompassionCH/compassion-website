@@ -13,108 +13,89 @@
     - letters (array of 'correspondence' records): The related sponsorship letters.
 -->
 <odoo>
-    <template
-    id="my2_child_letters_page"
-    name="My Compassion 2 Child Letters Page"
-  >
-        <link
-      rel="stylesheet"
-      href="/my_compassion/static/src/css/letter_filter.css"
-    />
+    <template id="my2_child_letters_page" name="My Compassion 2 Child Letters Page">
+
+        <!-- Stylesheet -->
+        <link rel="stylesheet" href="/my_compassion/static/src/css/letter_filter.css"/>
+
+        <!-- Base layout -->
         <t t-call="website.layout">
             <div class="container">
-                <!-- Calling breadcrumb component -->
-                <t t-call="my_compassion.my2_breadcrumbs" />
+
+                <!-- Breadcrumb -->
+                <t t-call="my_compassion.my2_breadcrumbs"/>
+
+                <!-- Child profile -->
                 <div class="row mb-2">
                     <div class="col-12">
-                        <!-- Using children_profile component -->
-                        <t
-              t-call="my_compassion.my2_children_profile_component"
-            >
-                            <!-- The data we are passing to the children_profile_component -->
-                            <t
-                t-set="compassion_child"
-                t-value="compassion_child"
-              />
+                        <t t-call="my_compassion.my2_children_profile_component">
+                            <t t-set="compassion_child" t-value="compassion_child"/>
                         </t>
                     </div>
                 </div>
-                <div class="date-picker-container">
-                    <div
-            class="date-range-picker row mb-3 d-flex justify-content-center"
-          >
 
-                        <div
-              class="start-date col-xs-auto col-6 d-flex justify-content-center"
-            >
+                <!-- Date Picker -->
+                <div class="date-picker-container">
+                    <div class="date-range-picker row mb-3 d-flex justify-content-center">
+
+                        <!-- Start Date -->
+                        <div class="start-date col-xs-auto col-6 d-flex justify-content-center">
                             <div>
-                                <h6>Start Date <i class="fa fa-calendar" /></h6>
-                                    <select class="start-month" />
-                                    <select class="start-year" />
+                                <h6>Start Date <i class="fa fa-calendar"/></h6>
+                                <select class="start-month"/>
+                                <select class="start-year"/>
                             </div>
                         </div>
-                        <div
-              class="end-date col-xs-auto col-6 d-flex justify-content-center"
-            >
+
+                        <!-- End Date -->
+                        <div class="end-date col-xs-auto col-6 d-flex justify-content-center">
                             <div>
-                                <h6>End Date <i class="fa fa-calendar" /></h6>
-                                    <select class="end-month" />
-                                    <select class="end-year" />
+                                <h6>End Date <i class="fa fa-calendar"/></h6>
+                                <select class="end-month"/>
+                                <select class="end-year"/>
                             </div>
                         </div>
 
                     </div>
                 </div>
-                <!-- Filter Toggle Buttons -->
+
+                <!-- Filter Buttons -->
                 <div class="row mb-4">
                     <div class="letter-filter">
                         <button
-              type="button"
-              id="filter-to"
-              class="btn-compassion btn-compassion-white inactive"
-              data-direction="beneficiary_to_supporter"
-            >
-                            <span>Recieved</span>
+                            type="button"
+                            id="filter-to"
+                            class="btn-compassion btn-compassion-white inactive"
+                            data-direction="beneficiary_to_supporter">
+                            <span>Received</span>
                         </button>
                         <button
-              type="button"
-              id="filter-from"
-              class="btn-compassion btn-compassion-white inactive"
-              data-direction="supporter_to_beneficiary"
-            >
+                            type="button"
+                            id="filter-from"
+                            class="btn-compassion btn-compassion-white inactive"
+                            data-direction="supporter_to_beneficiary">
                             <span>Sent</span>
                         </button>
                     </div>
                 </div>
-                <!-- Order of the letters -->
+
+                <!-- Sort Order Toggle -->
                 <div class="row mb-5">
                     <div class="letter-filter">
-                        <button
-              id="toggle-date-order"
-              class="btn btn-compassion"
-            >
+                        <button id="toggle-date-order" class="btn btn-compassion">
                             Newest First
                         </button>
                     </div>
                 </div>
-                <!-- Letters List -->
-                <div
-          class="my2-letters-container"
-          t-att-data-child-id="compassion_child.id"
-        >
-                </div>
+
+                <!-- Letters Container -->
+                <div class="my2-letters-container" t-att-data-child-id="compassion_child.id"/>
             </div>
         </t>
-        <!-- Include Custom Javascript -->
-        <script
-      type="text/javascript"
-      src="/my_compassion/static/src/js/my2_letters_filter.js"
-    >
-        </script>
-        <script
-      type="text/javascript"
-      src="/my_compassion/static/src/js/my2_date_picker.js"
-    >
-        </script>
+
+        <!-- Scripts -->
+        <script type="text/javascript" src="/my_compassion/static/src/js/my2_letters_filter.js"/>
+        <script type="text/javascript" src="/my_compassion/static/src/js/my2_date_picker.js"/>
+
     </template>
 </odoo>
