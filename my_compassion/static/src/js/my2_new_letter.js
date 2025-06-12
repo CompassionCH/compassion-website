@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", function () {
     odoo.define("my_compassion", function (require) {
         "use strict";
 
+        // Import necessary modules (here we need the ToastService for notifications)
+        const ToastService = require("my_compassion.toast_service");
         const rpc = require("web.rpc");
 
         const form = document.querySelector("form");
@@ -42,7 +44,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 } = await collectFormData());
             } catch (error) {
                 // TODO enhance error display to the user
-                alert(error.message);
+                ToastService.error("Failed to create letter: " + error.message);
+                console.error("Failed to create letter: ", error);
                 return;
             }
 
@@ -98,9 +101,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Remove the modal with the fake progress bar in case of error
                 if (timeoutId) clearTimeout(timeoutId);
                 $("#submitModal").modal("hide");
-                alert("Failed to create letter:" + error)
-                console.error("Failed to create letter: ", error);
                 // TODO: Show error message in UI
+                ToastService.error("Failed to create letter: " + error.message);
+                console.error("Failed to create letter: ", error);
                 return;
             }
         }

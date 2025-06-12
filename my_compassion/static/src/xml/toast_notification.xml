@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates xml:space="preserve">
+    <t t-name="my_compassion.toast_notification_component">
+        <div class="toast-container">
+            <div class="toast-notification">
+                <div class="icon">
+                    <t t-if="widget.type === 'success'">✔️</t>
+                    <t t-if="widget.type === 'danger'">❌</t>
+                    <t t-if="widget.type === 'info'">ℹ️</t>
+                </div>
+                <div class="content">
+                    <strong t-esc="widget.title"></strong>
+                    <span t-esc="widget.message"></span>
+                </div>
+                <button type="button" class="close" aria-label="Close">X</button>
+            </div>
+        </div>
+    </t>
+</templates>
