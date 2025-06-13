@@ -1,81 +1,69 @@
-.toast-container {
+.toast-notification {
     position: fixed;
     top: 1rem;
-    right: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 10000;
-    background-color: #333;
-    color: white;
-    padding: 1rem;
-    border-radius: 5px;
-    max-width: 300px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    opacity: 0.95;
-}
 
-.toast-notification {
     display: flex;
+    flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+
     padding: 1rem;
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    color: #1b1b1b;
     max-width: 400px;
+    width: calc(100% - 2rem); /* For small screens */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     margin-bottom: 1rem;
-    position: relative;
-    font-family: sans-serif;
 }
 
-.toast-notification strong {
-    font-weight: 700;
-    display: block;
-    margin-bottom: 0.2rem;
+.toast-notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 0.5rem;
 }
 
-.toast-notification .icon {
-    font-size: 1.5rem;
-    flex-shrink: 0;
-    margin-top: 0.2rem;
+.toast-notification-title {
+    display: flex;
+    align-items: center;
 }
 
-.toast-notification .close {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.75rem;
-    font-size: 1.2rem;
-    font-weight: bold;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: inherit;
+.toast-notification-title .icon {
+    display: flex;
+    align-items: center;
+    font-size: 1.25rem;
+    width: 1.5rem;
+    height: 1.5rem;
 }
 
 /* Success */
 .toast-notification.success {
-    background-color: #c8f7c5;
-    color: #1d3c34;
+    background-color: #BCE372;
+    color: #264F35;
 }
 
 .toast-notification.success .icon {
-    color: #1d3c34;
+    color: #264F35;
 }
 
 /* Error */
 .toast-notification.danger {
-    background-color: #ffa49f;
-    color: #7a1c1c;
+    background-color: #F78970;
+    color: #DC2725;
 }
 
 .toast-notification.danger .icon {
-    color: #7a1c1c;
+    color: #DC2725;
 }
 
 /* Info */
 .toast-notification.info {
-    background-color: #b9dfff;
-    color: #1b3557;
+    background-color: #AEC9EC;
+    color: #0F224D;
 }
 
 .toast-notification.info .icon {
-    color: #1b3557;
+    color: #0F224D;
 }

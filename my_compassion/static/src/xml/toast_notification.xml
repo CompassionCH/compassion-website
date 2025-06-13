@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <templates xml:space="preserve">
     <t t-name="my_compassion.toast_notification_component">
-        <div class="toast-container">
-            <div class="toast-notification">
-                <div class="icon">
-                    <t t-if="widget.type === 'success'">✔️</t>
-                    <t t-if="widget.type === 'danger'">❌</t>
-                    <t t-if="widget.type === 'info'">ℹ️</t>
-                </div>
-                <div class="content">
+        <div t-attf-class="toast-notification {{ widget.type }}">
+            <div class="toast-notification-header">
+                <div class="toast-notification-title">
+                    <t t-if="widget.type === 'success'"><i class="icon fa fa-check-circle-o" aria-hidden="true"></i></t>
+                    <t t-if="widget.type === 'danger'"><i class="icon fa fa-times-circle-o" aria-hidden="true"></i></t>
+                    <t t-if="widget.type === 'info'"><i class="icon fa fa-info-circle"></i></t>
                     <strong t-esc="widget.title"></strong>
-                    <span t-esc="widget.message"></span>
                 </div>
-                <button type="button" class="close" aria-label="Close">X</button>
+            </div>
+            <div class="toast-notification-content">
+                <span t-esc="widget.message"></span>
             </div>
         </div>
     </t>

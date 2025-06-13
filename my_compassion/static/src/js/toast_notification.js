@@ -40,7 +40,7 @@ odoo.define('my_compassion.toast_notification', function (require) {
 
             // Automatically remove the toast after 6 seconds
             // The average reading time for a toast is around 5 seconds + 1 second per 120 characters
-            setTimeout(() => this.destroy(), 6000);
+            // setTimeout(() => this.destroy(), 6000);
 
             // Call the parent start method
             return this._super.apply(this, arguments);

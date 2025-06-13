@@ -43,9 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     attachments
                 } = await collectFormData());
             } catch (error) {
-                // TODO enhance error display to the user
-                ToastService.error("Failed to create letter: " + error.message);
-                console.error("Failed to create letter: ", error);
+                ToastService.error(error.message);
                 return;
             }
 
@@ -101,9 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Remove the modal with the fake progress bar in case of error
                 if (timeoutId) clearTimeout(timeoutId);
                 $("#submitModal").modal("hide");
-                // TODO: Show error message in UI
-                ToastService.error("Failed to create letter: " + error.message);
-                console.error("Failed to create letter: ", error);
+                ToastService.error("An error occurred while processing your letter. Please try again or contact the support.");
                 return;
             }
         }
@@ -137,13 +133,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             // Validate inputs and throw error messages in case of missing value
-            // TODO instead of displaying an alert, display something with a better UI.
             if (!childId) {
-                throw new Error("Please select a child.");
+                throw new Error("Please select a child to write to.");
             }
 
             if (!templateId) {
-                throw new Error("Please select a template.");
+                throw new Error("Please select a template for your letter.");
             }
 
             if (!letterBody) {
@@ -186,7 +181,7 @@ document.addEventListener("DOMContentLoaded", function () {
             try {
                 return await Promise.all(filePromises);
             } catch (error) {
-                console.error("Failed to process attachments: ", error);
+                ToastService.error("An error occurred while processing attachments. Please try again or contact the support.");
                 return [];
             }
         }
