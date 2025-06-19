@@ -101,7 +101,9 @@ class EventRegistration(models.Model):
     host_url = fields.Char(compute="_compute_host_url")
     sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
     event_name = fields.Char(related="event_id.name", tracking=True)
-    profile_picture = fields.Binary(readonly=False, string="Profile picture")
+    profile_picture = fields.Image(
+        readonly=False, string="Profile picture", max_width=500, max_height=500
+    )
     profile_name = fields.Char()
     ambassador_quote = fields.Text()
     criminal_record = fields.Binary(
