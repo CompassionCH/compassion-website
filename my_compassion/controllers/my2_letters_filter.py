@@ -18,6 +18,8 @@ class My2LettersFilter(http.Controller):
         auth="user",
         website=True,
     )
+    # This route retrieves all letters for a specific child
+
     def get_letters(self, child_id, **kwargs):
         domain = [("child_id", "=", child_id)]
 
@@ -27,9 +29,6 @@ class My2LettersFilter(http.Controller):
         result_letters = []
 
         for letter in letters:
-            html = request.env["ir.qweb"]._render(
-                "my_compassion.my2_letter_card_component", {"letter": letter}
-            )
             result_letters.append(
                 {
                     "uuid": letter.uuid,
@@ -37,51 +36,6 @@ class My2LettersFilter(http.Controller):
                     "generator_id": letter.generator_id.id,
                     "scanned_date": letter.scanned_date,
                     "name": letter.name,
-                    "html": html,
-                }
-            )
-
-        return {"letters": result_letters}
-
-    @http.route(
-        ["/my2/children/<int:child_id>/filter_letters"],
-        type="json",
-        auth="user",
-        website=True,
-    )
-    def filter_letters(
-        self,
-        child_id,
-        start_date=None,
-        end_date=None,
-        direction=None,
-        sort_order="desc",
-    ):
-        domain = [("child_id", "=", child_id)]
-
-        if start_date and end_date:
-            domain += [
-                ("scanned_date", ">=", start_date),
-                ("scanned_date", "<=", end_date),
-            ]
-
-        if direction in ["Supporter To Beneficiary", "Beneficiary To Supporter"]:
-            domain += [("direction", "=", direction)]
-
-        letters = request.env["correspondence"].search(
-            domain, order="scanned_date " + sort_order
-        )
-
-        result_letters = []
-        for letter in letters:
-            html = request.env["ir.qweb"]._render(
-                "my_compassion.my2_letter_card_component", {"letter": letter}
-            )
-            result_letters.append(
-                {
-                    "html": html,
-                    "scanned_date": fields.Date.to_string(letter.scanned_date),
-                    "direction": letter.direction,
                 }
             )
 
