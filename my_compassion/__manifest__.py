@@ -71,6 +71,7 @@
         "website_sponsorship",
         "auth_signup",
         "website_crm_privacy_policy",  # OCA/website
+        "web",
     ],
     "demo": [],
     "installable": True,
