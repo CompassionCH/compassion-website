@@ -18,13 +18,6 @@ class MyCompassionCorrespondenceController(http.Controller):
         partner = request.env.user.partner_id
         children_sponsored_by_partner = partner.sponsorship_ids.child_id
 
-        letters = request.env['correspondence'].search(
-            [
-                ("partner_id", "=", partner.id)
-            ],
-            order="create_date DESC"
-        )
-
         for compassion_child in children_sponsored_by_partner:
             if compassion_child.id == child_id:
 
@@ -41,7 +34,6 @@ class MyCompassionCorrespondenceController(http.Controller):
                     'my_compassion.my2_child_letters_page',
                     {
                         'compassion_child': compassion_child,
-                        'letters': letters,
                         'breadcrumbs': breadcrumbs,
                     }
                 )
