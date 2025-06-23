@@ -19,7 +19,7 @@ odoo.define('my_compassion.toast_service', function (require) {
             new Toast(null, {
                 title,
                 message: msg,
-                type: 'info' // Bootstrap-style class for errorsz
+                type: 'info' // Bootstrap-style class for errors
             }).appendTo($('body')); // Appended to body to ensure visibility
         },
 
