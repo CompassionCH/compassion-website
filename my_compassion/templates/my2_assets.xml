@@ -37,19 +37,4 @@
     </template>
 
     <!-- QWeb template for toast (used by JS via qweb.render) -->
-    <template id="toast_notification_component">
-        <t t-name="my_compassion.toast_notification_component">
-            <div t-attf-class="toast-notification {{ type }}">
-                <strong t-esc="title"/><br/>
-                <span t-esc="message"/>
-            </div>
-        </t>
-    </template>
-
-    <!-- Inject toast template into page layout to ensure it's loaded -->
-    <template id="my_compassion_template_injector" inherit_id="website.layout">
-        <xpath expr="//body" position="inside">
-            <t t-call="my_compassion.toast_notification_component"/>
-        </xpath>
-    </template>
 </odoo>
