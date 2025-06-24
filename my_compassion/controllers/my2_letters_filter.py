@@ -18,7 +18,8 @@ class My2LettersFilter(http.Controller):
         auth="user",
         website=True,
     )
-    # This route retrieves all letters for a specific child
+    # This route retrieves all letters for a specific child.
+    # Called from the frontend to display letters (see my_compassion/static/src/js/my2_letters_filter.js)
 
     def get_letters(self, child_id, **kwargs):
         domain = [("child_id", "=", child_id)]
