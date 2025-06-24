@@ -5,11 +5,11 @@ CHRISTMAS_TEXTS = {
 
 Je te souhaite de belles fêtes de Noël!
 
-A Noël, tout commence avec un enfant! Nous fêtons la venue de Jésus parmi nous, signe de l’amour de Dieu pour nous et pour le monde entier.
+Il y a très longtemps, par une nuit silencieuse, des bergers gardaient leurs moutons. Soudain, un ange leur apparut et leur apporta une merveilleuse nouvelle: Jésus était né! Les bergers furent d'abord effrayés, mais l'ange leur dit de se réjouir, car l'enfant apportait la paix et l'espoir à tous les hommes.
 
-Quelle bonne nouvelle: il a aussi promis d’être avec nous tous les jours de notre vie et de prendre soin de nous! C’est vrai quand tout va bien. C’est vrai aussi en temps de crise, de défi.
+Les bergers se mirent alors immédiatement en route pour voir l'enfant. Lorsqu'ils le trouvèrent, ils surent que Dieu avait préparé un grand cadeau pour nous tous. C'est la joie que nous pouvons célébrer chaque année à Noël.
 
-Je te souhaite, ainsi qu’à tes proches, le meilleur pour la nouvelle année.
+Je te souhaite le meilleur pour la nouvelle année, à toi et à ceux que tu aimes.
 
 
 %s
@@ -17,11 +17,11 @@ Je te souhaite, ainsi qu’à tes proches, le meilleur pour la nouvelle année.
     "eng": """Hello %s,
 
 
-Merry Christmas!
+I wish you a very merry Christmas!
 
-At Christmas, everything begins with a child! We celebrate the coming of Jesus among us, a sign of God's love for us and for the whole world.
+A long time ago, on a quiet night, shepherds were watching over their sheep. Suddenly, an angel appeared to them and brought wonderful news: Jesus was born! The shepherds were scared at first, but the angel told them to rejoice because the child would bring peace and hope to all people.
 
-What good news: He promises to be with us all the days of our life and to take care of us! This is true when everything is going well. It is also true in times of crisis and challenge.
+The shepherds immediately set off to see the child, and when they found him, they knew that God had prepared a great gift for us all. This is the joy that we celebrate every year at Christmas.
 
 I wish you and your loved ones all the best for the New Year.
 
@@ -31,13 +31,13 @@ I wish you and your loved ones all the best for the New Year.
     "por": """Olá %s,
 
 
-Votos sinceros de um Feliz Natal!
+Desejo a você um Natal maravilhoso!
 
-No Natal, tudo começa com uma criança! Celebramos a vinda de Jesus, um sinal do amor de Deus por todos nós e o mundo inteiro.
+Há muito tempo, em uma noite tranquila, os pastores estavam cuidando de suas ovelhas. De repente, um anjo apareceu para eles e trouxe uma notícia maravilhosa: Jesus havia nascido! A princípio, os pastores ficaram assustados, mas o anjo lhes disse para se alegrarem porque a criança traria paz e esperança a todas as pessoas.
 
-Que óptimas notícias: Deus prometeu estar connosco todos os dias da nossa vida e tomar conta de nós quando tudo corre bem, mas também em tempos dificeis de crise e desafios.
+Os pastores partiram imediatamente para ver a criança e, quando a encontraram, souberam que Deus havia preparado um grande presente para todos nós. Esta é a alegria que podemos celebrar todos os anos no Natal.
 
-A ti e aos teus entes queridos desejo-vos tudo de bom para o Ano Novo.
+Desejo a você e a seus entes queridos tudo de bom para o Ano Novo.
 
 
 %s
@@ -45,13 +45,13 @@ A ti e aos teus entes queridos desejo-vos tudo de bom para o Ano Novo.
     "spa": """Hola %s
 
 
-¡Te deseo unas muy felices fiestas de Navidad!
+¡Te deseo una maravillosa Navidad!
 
-En Navidad, ¡todo empieza con un niño! Celebramos la venida de Jesús entre nosotros, signo del amor de Dios por nosotros y por el mundo entero.
+Hace mucho tiempo, en una noche tranquila, unos pastores cuidaban de sus ovejas. De repente, se les apareció un ángel y les dio una noticia maravillosa: ¡Jesús había nacido! Los pastores se asustaron al principio, pero el ángel les dijo que se alegraran porque el niño traería paz y esperanza a todos los pueblos.
 
-Qué buena noticia: también ha prometido estar con nosotros todos los días de nuestra vida y cuidarnos. Esto es cierto cuando todo va bien. También es cierto en tiempos de crisis y desafíos.
+Los pastores salieron inmediatamente a ver al niño y, cuando lo encontraron, supieron que Dios había preparado un gran regalo para todos nosotros. Esta es la alegría que podemos celebrar cada año en Navidad.
 
-Te deseo a ti y a tus seres queridos todo lo mejor para el Año Nuevo.
+¡Te deseo a ti y a tus seres queridos todo lo mejor para el Año Nuevo!
 
 
 %s

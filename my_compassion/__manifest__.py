@@ -26,6 +26,8 @@
 #    along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+
+# pylint: disable=C8101
 {
     "name": "MyCompassion - Sponsor portal website",
     "version": "14.0.1.0.0",
@@ -49,6 +51,8 @@
         "templates/signup.xml",
         "views/correspondence_template_view.xml",
         "views/partner_compassion_view.xml",
+        "data/signup_email_confirmation.xml",
+        "data/communication_config.xml",
 
         # My Compassion 2 pages
         "templates/pages/my2_children.xml",
@@ -67,15 +71,15 @@
     "depends": [
         "partner_communication_compassion",
         "wordpress_configuration",
+        "web",
         "website_child_protection",
         "website_sponsorship",
         "auth_signup",
         "website_crm_privacy_policy",  # OCA/website
-        "web",
+        "auth_signup_verify_email",  # OCA/server-auth
+        "queue_job",
     ],
     "demo": [],
     "installable": True,
     "auto_install": False,
 }
-
-# pylint: disable=C8101
