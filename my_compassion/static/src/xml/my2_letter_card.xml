@@ -1,18 +1,8 @@
-/**
- * Owl component for displaying a letter card in the letters page.
- * The ideal would be to store the template in a separate file, but it
- * hadn't worked so far.
- */
-document.addEventListener('DOMContentLoaded', function () {
-    odoo.define('my_compassion.OwlLetterCard', function (require) {
-        "use strict";
-        const { Component } = owl;
-        const { xml } = owl.tags;
-
-        class OwlLetterCard extends Component {
-            static template = xml`
-            <div class="letter-card">
-                <t t-set="letter" t-value="props.letter"/>
+<?xml version="1.0" encoding="utf-8" ?>
+<templates xml:space="preserve">
+    <t t-name="my_compassion.my2_letter_card_component" owl="1">
+    <div class="letter-card">
+                <t t-set="letter" t-value="letter"/>
                 <link
                     rel="stylesheet"
                     href="/my_compassion/static/src/css/details_card.css"
@@ -93,10 +83,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     src="/my_compassion/static/src/js/my2_child_letters_highlight_new_letter.js"
                 />
 
-        </div>`; 
-        }
-        
-        return OwlLetterCard;
-    });
-});    
-
+        </div>
+    </t>
+</templates>
