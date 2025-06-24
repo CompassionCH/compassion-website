@@ -103,7 +103,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         /**
         * Entry point for the filtering.
-        * Initialize the owl Component and the date picker
+        * Initializes the letters, loads the XML template, sets up the date filter,
+        * and renders the letters.
         */  
         async function init(){
             await initializeLetters();
@@ -116,7 +117,6 @@ document.addEventListener("DOMContentLoaded", function () {
         /**
          * Applies date filtering based on the selected start and end dates.
          * Once the filter is applied, it displays the letters.
-         *
          */
         function applyFilter() {
             // Filter letters based on the selected date range
