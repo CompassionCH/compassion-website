@@ -2,14 +2,13 @@ document.addEventListener("DOMContentLoaded", function () {
     odoo.define("my_compassion.letters_filter", function (require) {
         "use strict";
 
-        // Owl components and utilities
-        const { Component, mount, useState} = owl;
-        const { xml } = owl.tags;
-        const OwlLetterCard = require("my_compassion.OwlLetterCard");
-        let owlLetterList;
-
         // Ajax utility for making RPC calls
         const ajax = require("web.ajax");
+
+        // Import Qweb to render templates
+        const core = require('web.core');
+        const qweb = core.qweb;
+        const $container = $(".my2-letters-container");
 
         // Constants for date filtering dropdown options
         const MONTHS = [
@@ -18,7 +17,6 @@ document.addEventListener("DOMContentLoaded", function () {
         ];
         const CURRENT_YEAR = new Date().getFullYear();
         const CURRENT_MONTH = new Date().getMonth() + 1;
-        // Store global values to avoid to recompute them unless it's needed
         let START_YEAR;
         let START_MONTH;
         let startDateFilter;
@@ -27,52 +25,24 @@ document.addEventListener("DOMContentLoaded", function () {
         let isNewestFirst = true;
         let currentDirection = null;
 
-            
+        // Store letters in a global variable
+        let originalLetterList = []; 
+        // This will be used to store the filtered letters
+        let letters = [];
+
+
         /**
-         * Owl component for displaying a list of letters.
-         * This component renders a list of letter cards using the OwlLetterCard component.
+         * Fetch letters for a specific child from the server using an AJAX call.
+         * 
+         * @param {number} childId The ID of the child we want to fetch letters for.
+         * @param {Object} $container A reference to the container where we can display 
+         * an error message if needed.
+         * @returns The list of letters, or an empty array if there was an error.
          */
-        class OwlLetterList extends Component {
-            static template = xml`
-            <div>
-                <t t-foreach="state.letters" t-as="letter" t-key="letter.uuid">
-                    <div class="col-12 mx-auto mb-2">
-                        <OwlLetterCard letter="letter"/>
-                    </div>
-                </t>
-          </div>`
-          ;
-
-            static components = {OwlLetterCard};
-
-        constructor() {
-            super(...arguments);
-            this.state = useState({
-                letters: this.props.letters || []
-            });
-        }
-
-        // Method to update the letters (and thereby re-render the component)
-        setLetters(newLetters) {
-            this.state.letters = newLetters;
-        }
-
-        get letters(){
-            return this.state.letters;
-        }
-
-        // Getter to access the original letter list
-        // This returns a copy of the original letter list to avoid direct mutation
-        get originalLetterList(){
-            return this.props.originalLetterList.slice();
-        }
-    }
-
-        // Fetch letters from the backend
         async function importLetter(childId, $container) {
             try {
                 const result = await ajax.jsonRpc(`/my2/children/${childId}/get_letters`, "call", {});
-                if (result && result.letters) {
+                if (result?.letters) {
                     return result.letters;
                 }
             } catch (error) {
@@ -84,25 +54,20 @@ document.addEventListener("DOMContentLoaded", function () {
             return [];
         }
 
-        // Initialize and mount the component
-        async function initializeComponent() {
-            const $container = $(".my2-letters-container");
-            // You may want to get childId from a global variable or DOM
+        /**
+         * Import letters and initialize the letters list.
+         */
+        async function initializeLetters() {
+            // Retrieve the child ID to import letters for
             const childId = $container.attr("data-child-id");
-            let letters = await importLetter(childId, $container);        
-            if (letters.length > 0) {
-                // Add a field date to each letter retrieved from scanned date
-                letters.forEach((letter) =>
-                    letter.date = new Date(letter.scanned_date)
-                );               
 
-                owlLetterList = await mount(OwlLetterList, {
-                    target: $container[0],
-                    props: { 
-                        letters: letters,
-                        originalLetterList: letters // Store the original list before filtering
-                    },
-                }); 
+            originalLetterList = await importLetter(childId, $container);        
+            if (originalLetterList.length > 0) {
+                // Add a field date to each letter retrieved from scanned date
+                originalLetterList.forEach((letter) =>
+                    letter.date = new Date(letter.scanned_date)
+                );
+                letters = originalLetterList.slice(); // Copy the original list
             }
         }
 
@@ -112,8 +77,8 @@ document.addEventListener("DOMContentLoaded", function () {
          */
         function initializeDateFilter() {
             // Retrieve start year and month on letters
-            if (owlLetterList){
-                let startDate = owlLetterList.letters.at(-1)?.scanned_date;
+            if (letters.length > 0) {
+                let startDate = letters.at(-1)?.scanned_date;
                 if (startDate) {
                     START_YEAR = new Date(startDate).getFullYear();
                     START_MONTH = new Date(startDate).getMonth() + 1;
@@ -141,19 +106,22 @@ document.addEventListener("DOMContentLoaded", function () {
         * Initialize the owl Component and the date picker
         */  
         async function init(){
-            await initializeComponent();
+            await initializeLetters();
+            await ajax.loadXML('/my_compassion/static/src/xml/my2_letter_card.xml', qweb);
             initializeDateFilter();
+            renderLetters();
         }
 
 
         /**
          * Applies date filtering based on the selected start and end dates.
+         * Once the filter is applied, it displays the letters.
          *
          */
         function applyFilter() {
             // Filter letters based on the selected date range
             // Start from the original list
-            let letters = owlLetterList.originalLetterList;
+            letters = originalLetterList.slice();
             if (!isNewestFirst) {
                 letters.reverse();
             }
@@ -167,11 +135,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 letters = letters.filter((letter) =>
                     letter.direction === currentDirection
                 );
-            }
-
-            owlLetterList.setLetters(letters);    
+            }  
+            renderLetters();
         }
 
+        /**
+         * Renders the letters in the container using the Qweb template.
+         */ 
+        function renderLetters() {
+            $container.empty();
+            letters.forEach((letter) => {
+                const letterCard = qweb.render("my_compassion.my2_letter_card_component", {
+                    letter: letter,
+                });
+                $container.append(letterCard);
+            });
+
+        }
 
         /**
          * Populates the year options for the date filter.
@@ -284,7 +264,8 @@ document.addEventListener("DOMContentLoaded", function () {
             $(this).text(isNewestFirst ? "Newest First" : "Oldest First");
             $(this).toggleClass("active inactive");
             // As letters are already sorted, we can just reverse them;
-            owlLetterList.letters.reverse();
+            letters.reverse();
+            renderLetters();
         });
 
         // Call the initialization
