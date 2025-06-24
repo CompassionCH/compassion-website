@@ -1,0 +1,32 @@
+/*
+    This stylesheet concerns the template selection display on the page my2_new_letter.xml
+    /templates/pages/my2_new_letter_page.xml
+*/
+
+#selected-template {
+    outline: 0.15rem solid #007bff; /* Blue outline */
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Glow effect */
+    max-width: 40%; /* Ensures the image never exceeds the container's width */
+    height: auto; /* Keeps the aspect ratio intact */
+    max-height: 40%; /* Limits the image height */
+}
+
+/* ANIMATIONS ----------------------------------------------------------------------- */
+/*
+    Use !important to override injected #selected-template styles
+    as an id override a class.
+*/
+
+/* Hover effect for images */
+.template-image:hover {
+    transform: scale(1.01) !important;
+    outline: 0.2rem solid #007bff !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    transition: outline 0.1s ease !important; /* Smooth transition */
+}
+
+/* Active (click or tap) effect: Shrinks the image slightly to simulate pressing. */
+.template-image:active {
+    transform: scale(0.98) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}

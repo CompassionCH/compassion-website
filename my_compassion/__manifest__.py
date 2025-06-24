@@ -10,6 +10,7 @@
 #
 #    Copyright (C) 2018-2023 Compassion CH (http://www.compassion.ch)
 #    @author: Emanuel Cino <ecino@compassion.ch>
+#    @author: Noé Berdoz <nberdoz@compassion.ch>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -25,8 +26,6 @@
 #    along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-
-# pylint: disable=C8101
 {
     "name": "MyCompassion - Sponsor portal website",
     "version": "14.0.1.0.0",
@@ -37,6 +36,10 @@
     "data": [
         "security/access_rules.xml",
         "security/ir.model.access.csv",
+
+        # My compassion 2 assets, needs to be placed before others
+        "templates/my2_assets.xml",
+
         "templates/my_account_components.xml",
         "templates/my_account_personal_info.xml",
         "templates/my_account_donations.xml",
@@ -48,6 +51,20 @@
         "views/partner_compassion_view.xml",
         "data/signup_email_confirmation.xml",
         "data/communication_config.xml",
+
+        # My Compassion 2 pages
+        "templates/pages/my2_children.xml",
+        "templates/pages/my2_child_timeline.xml",
+        "templates/pages/my2_child_details.xml",
+        "templates/pages/my2_child_letters.xml",
+        "templates/pages/my2_new_letter.xml",
+
+        # My Compassion 2 components
+        "templates/components/my2_children_card.xml",
+        "templates/components/my2_children_profile.xml",
+        "templates/components/my2_details_card.xml",
+        "templates/components/my2_letter_card.xml",
+        "templates/components/my2_breadcrumbs.xml",
     ],
     "depends": [
         "partner_communication_compassion",
@@ -58,8 +75,11 @@
         "website_crm_privacy_policy",  # OCA/website
         "auth_signup_verify_email",  # OCA/server-auth
         "queue_job",
+        "web",
     ],
     "demo": [],
     "installable": True,
     "auto_install": False,
 }
+
+# pylint: disable=C8101

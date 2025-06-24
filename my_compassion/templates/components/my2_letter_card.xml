@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Component: Letter Card
+
+    Description:
+    Displays a letter in a card format with an envelope icon on the left and letter details on the right.
+    Includes buttons to view or download the letter.
+
+    Props:
+    - letter (record): The related letter object.
+-->
+<odoo>
+    <template id="my2_letter_card_component" name="Letter Card Component">
+        <link
+      rel="stylesheet"
+      href="/my_compassion/static/src/css/details_card.css"
+    />
+        <link
+      rel="stylesheet"
+      href="/my_compassion/static/src/css/letter_card.css"
+    />
+        <div
+      class="details-card w-100"
+      t-att-data-generator-id="letter.generator_id.id"
+    >
+            <div class="details-card-body">
+                <div class="row align-items-center">
+                    <!-- Left part of the card with the letter icon -->
+                    <div class="col-5">
+                        <div class="ml-3">
+                            <i
+                name="iconLetter"
+                t-att-class="'fa letter-icon ' + (letter.email_read and 'fa-envelope-open-o' or 'fa-envelope-o')"
+              />
+                        </div>
+                    </div>
+                    <!-- Right part of the card component -->
+                    <div class="col-7 h-100">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="text-right">
+                                    <p>
+                                        <t t-esc="letter.scanned_date" />
+                                    </p>
+                                    <p>
+                                        <t t-esc="letter.state" />
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Buttons part -->
+                        <div class="row">
+                            <div class="offset-1 col-5">
+                                <a
+                  t-attf-href="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf"
+                  target="_blank"
+                >
+                                    <button
+                    name="btn_LetterView"
+                    type="button"
+                    class="btn-compassion btn-compassion-blue"
+                    onclick="onLetterViewButtonClick(event)"
+                  >
+                                        <span>
+                                            <i class="fa fa-eye" />
+                                        </span>
+                                    </button>
+                                </a>
+                            </div>
+                            <div class="col-5 offset-1">
+                                <a
+                  t-attf-href="/b2s_image?id={{letter.uuid}}"
+                  t-attf-download="{{letter.name}}"
+                >
+                                    <button
+                    name="btn_download"
+                    type="button"
+                    class="btn-compassion btn-compassion-blue"
+                    onclick="onDownloadButtonClick(event)"
+                  >
+                                        <span>
+                                            <i class="fa fa-download" />
+                                        </span>
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script
+      type="text/javascript"
+      src="/my_compassion/static/src/js/my2_child_letters_card_behavior.js"
+    />
+    </template>
+</odoo>
