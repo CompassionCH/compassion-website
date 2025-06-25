@@ -185,9 +185,6 @@ document.addEventListener("DOMContentLoaded", function () {
         // Event handlers
         // Handle the change event on start date or end date
         $(".start-year, .start-month, .end-year, .end-month").change(function () {
-            // Retrive the triggered element
-            let changedElement = $(this).attr("class");
-            console.log("Changed element:", changedElement);
             // Get the selected values from the dropdowns
             let startYear = parseInt($(".start-year").val());
             let startMonth = parseInt($(".start-month").val());
