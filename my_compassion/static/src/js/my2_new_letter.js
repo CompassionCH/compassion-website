@@ -13,6 +13,33 @@ document.addEventListener("DOMContentLoaded", function () {
         if (form) {
             form.addEventListener("submit", onSubmitLetter);
         }
+        const letterInput = document.getElementById("letter-input");
+        const RE_EMOJI = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
+
+        if (letterInput) {
+            letterInput.addEventListener("input", function () {
+                const originalValue = letterInput.value;
+                const cleanedValue = originalValue.replace(RE_EMOJI, "");
+
+                if (originalValue !== cleanedValue) {
+                    let warning = document.getElementById("emoji-warning");
+                    if (!warning) {
+                        warning = document.createElement("div");
+                        warning.id = "emoji-warning";
+                        warning.style.color = "red";
+                        warning.style.marginTop = "5px";
+                        letterInput.parentNode.appendChild(warning);
+                    }
+                    warning.textContent = "Emojis are not supported in letters.";
+                    letterInput.value = cleanedValue;
+                } else {
+                    const warning = document.getElementById("emoji-warning");
+                    if (warning) {
+                        warning.remove();
+                    }
+                }
+            });
+        }
 
         /**
          * Handles the submission of the letter creation form. This function manages Preview and Submit mode
