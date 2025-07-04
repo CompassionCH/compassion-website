@@ -1,7 +1,7 @@
 {
-    "name": "Compassion Theme Redesign",
+    "name": "Compassion Theme 2025",
     "category": "Theme/Compassion",
-    "summary": "Compassion Theme New Design",
+    "summary": "Compassion Theme 2025",
     "website": "https://github.com/CompassionCH/compassion-website",
     "sequence": 260,
     "version": "14.0.1.0.0",
@@ -12,6 +12,6 @@
         "views/images_content.xml",
         "views/template_header.xml",
     ],
-    "images": ["static/description/compassion_screenshot.jpeg"],
+    "images": ["static/description/compassion_screenshot.png"],
     "license": "LGPL-3",
 }
