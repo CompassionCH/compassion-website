@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<template id="CompactButtonComponent" name="Compact Button Component">
+        <button t-attf-class="btn btn--compact-#{variation} #{bg_color} #{text_color}">
+            <t t-if="icon">
+                <span t-attf-class="btn__icon btn__icon--impact #{icon_color}">
+                    <i t-att-class="icon"/>
+                </span>
+            </t>
+            <span><t t-esc="label"/></span>
+        </button>
+    </template>
+</odoo>

@@ -11,6 +11,17 @@
         "views/assets.xml",
         "views/images_content.xml",
         "views/template_header.xml",
+
+        # Buttons
+        "templates/components/buttons/Compact.xml",
+        "templates/components/buttons/Default.xml",
+        "templates/components/buttons/Impact.xml",
+
+        # Pictograms
+        "templates/components/pictograms/BirthdayGift.xml",
+        "templates/components/pictograms/FamilyGift.xml",
+        "templates/components/pictograms/GeneralDonation.xml",
+        "templates/components/pictograms/LetterWriting.xml",
     ],
     "images": ["static/description/compassion_screenshot.png"],
     "license": "LGPL-3",
