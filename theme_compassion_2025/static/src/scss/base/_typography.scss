@@ -1,0 +1,79 @@
+@mixin type-style($size, $family, $line-height, $style: normal) {
+  font-family: $family, sans-serif;
+  font-size: $size;
+  line-height: $line-height;
+  font-style: $style;
+}
+
+/*********************************************************/
+/* HEADING Styles
+/*********************************************************/
+h1 {
+  @include type-style(50px, 'NeighbourSans Bold', 120%);
+}
+
+.modal-title {
+  @include type-style(26px, 'NeighbourSans Bold', 120%);
+}
+
+h2 {
+  @include type-style(33px, 'NeighbourSans Bold', 120%);
+}
+
+h3 {
+  @include type-style(24px, 'NeighbourSans Bold', 120%);
+}
+
+h4 {
+  @include type-style(24px, 'NeighbourSans Medium', 120%);
+}
+
+h5 {
+  @include type-style(18px, 'NeighbourSans Medium', 130%);
+}
+
+/*********************************************************/
+/* BODY Styles
+/*********************************************************/
+.body-large {
+  @include type-style(22px, 'NeighbourSans Regular', 140%);
+
+  &.bold {
+    font-family: 'NeighbourSans DemiBold', sans-serif;
+  }
+}
+
+.body-standard {
+  @include type-style(28px, 'NeighbourSans Regular', 150%);
+
+  &.bold {
+    font-family: 'NeighbourSans DemiBold', sans-serif;
+  }
+}
+
+.body-small {
+  @include type-style(16px, 'NeighbourSans Regular', 150%);
+
+  &.bold {
+    font-family: 'NeighbourSans DemiBold', sans-serif;
+  }
+}
+
+.tiny-text {
+  @include type-style(14px, 'NeighbourSans Regular', 120%);
+
+  &.bold {
+    font-family: 'NeighbourSans DemiBold', sans-serif;
+  }
+}
+
+/*********************************************************/
+/* QUOTE Styles
+/*********************************************************/
+.quote-large {
+  @include type-style(20px, 'NeighbourSans Regular', 150%, italic);
+}
+
+.quote-small {
+  @include type-style(18px, 'NeighbourSans Regular', 150%, italic);
+}
