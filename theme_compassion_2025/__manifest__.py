@@ -13,9 +13,7 @@
         "views/template_header.xml",
 
         # Buttons
-        "templates/components/buttons/Compact.xml",
-        "templates/components/buttons/Default.xml",
-        "templates/components/buttons/Impact.xml",
+        "templates/components/buttons/ThemedButton.xml",
 
         # Pictograms
         "templates/components/pictograms/BirthdayGift.xml",
