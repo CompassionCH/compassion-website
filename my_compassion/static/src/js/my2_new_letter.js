@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (!warning) {
                         warning = document.createElement("div");
                         warning.id = "emoji-warning";
+                       // TODO refactor the styling with a class from the theme when theme is ready
                         warning.style.color = "red";
                         warning.style.marginTop = "5px";
                         letterInput.parentNode.appendChild(warning);
