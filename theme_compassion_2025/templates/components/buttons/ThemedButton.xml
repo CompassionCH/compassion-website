@@ -13,10 +13,13 @@
     The variation can be 'hollow' or 'filled', which will determine if the button has a border or a background color.
 
     Injected data:
-    - button_type (string): Type of the button, e.g., 'default', 'impact' or 'compact'
+    - variant (string): Type of the button, e.g., 'default', 'impact' or 'compact'
+        - Impact is used for buttons that have a strong call to action, e.g., 'Donate Now'
+        - Compact is used for buttons that are smaller and more subtle or when space is limited
+        - Default is used for standard buttons
+    - variation (string): Variation of the button, e.g., 'hollow' or 'filled'
     - label (string): Text to display on the button
     - icon (string): FontAwesome icon class to display on the button
-    - variation (string): Variation of the button, e.g., 'hollow' or 'filled'
     - color (string): Color of the button
     - icon_color (string): Color of the icon
     - text_color (string): Color of the text
@@ -31,9 +34,9 @@
           <t t-set="style_class" t-value="'bg-' + color"/>
         </t>
 
-        <button t-attf-class="btn btn--#{button_type}-#{variation} #{style_class} text-#{text_color}">
+        <button t-attf-class="btn btn--#{variant}-#{variation} #{style_class} text-#{text_color}">
             <t t-if="icon">
-                <span t-attf-class="btn__icon btn__icon--#{button_type} text-#{icon_color}">
+                <span t-attf-class="btn__icon btn__icon--#{variant} text-#{icon_color}">
                     <i t-att-class="icon"/>
                 </span>
             </t>
