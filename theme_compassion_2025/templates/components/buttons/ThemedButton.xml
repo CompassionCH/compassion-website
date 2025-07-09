@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <!--
     Component: Theme Button from 2025 Compassion Switzerland Theme
 
@@ -25,23 +25,25 @@
     - text_color (string): Color of the text
 -->
 <odoo>
-	<template id="ThemedButtonComponent" name="Button Component">
+    <template id="ThemedButtonComponent" name="Button Component">
         <!-- Determine button style class border or background depending on the variation-->
         <t t-if="variation == 'hollow'">
-          <t t-set="style_class" t-value="'border border-2 border-' + color"/>
+            <t t-set="style_class" t-value="'border border-2 border-' + color" />
         </t>
         <t t-else="">
-          <t t-set="style_class" t-value="'bg-' + color"/>
+            <t t-set="style_class" t-value="'bg-' + color" />
         </t>
 
         <button t-attf-class="btn btn--#{variant}-#{variation} #{style_class} text-#{text_color}">
             <t t-if="icon">
                 <span t-attf-class="btn__icon btn__icon--#{variant} text-#{icon_color}">
-                    <i t-att-class="icon"/>
+                    <i t-att-class="icon" />
                 </span>
             </t>
             <t t-if="label">
-                <span><t t-esc="label"/></span>
+                <span>
+                    <t t-esc="label" />
+                </span>
             </t>
         </button>
     </template>

@@ -1,0 +1,26 @@
+// Base styles for any element using a pictogram class.
+// This ensures consistency and leverages the `currentColor` change you made.
+[class^="pictogram-"],
+[class*=" pictogram-"] {
+  display: inline-block;
+  // Use 1em to make the icon size relative to the font-size of its parent
+  width: 1.2em;
+  height: 1.2em;
+  // `currentColor` allows the icon color to be set with the CSS `color` property
+  background-color: currentColor;
+  vertical-align: middle; // Helps align icons with text
+
+  // Use `mask` to display the SVG shape, allowing the background-color to show through
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+// Loop through the list of pictograms and generate a unique class for each one.
+@each $pictogram in $pictograms { // No "var." prefix needed with @import
+  // Convert "BibleGift" to ".pictogram-bible-gift"
+  .pictogram-#{to-kebab-case($pictogram)} { // No "func." prefix needed
+    // Set the specific SVG file for this class
+    mask-image: url("/theme_compassion_2025/static/src/img/pictograms/#{$pictogram}.svg");
+  }
+}
