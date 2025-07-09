@@ -12,14 +12,14 @@
     // Check if the character is in our list of uppercase letters.
     // `str-index` returns the position if found, or null if not.
     @if str-index($uppercase-letters, $char) {
-      // If it's an uppercase letter and not the first character, add a hyphen.
-      @if $i > 1 {
+        // If it's an uppercase letter and not the first character, add a hyphen.
+        @if $i > 1 {
         $new-string: $new-string + "-";
-      }
-      $new-string: $new-string + to-lower-case($char);
+        }
+        $new-string: $new-string + to-lower-case($char);
     } @else {
-      // Otherwise, just add the character as is.
-      $new-string: $new-string + $char;
+        // Otherwise, just add the character as is.
+        $new-string: $new-string + $char;
     }
     }
     @return $new-string;
