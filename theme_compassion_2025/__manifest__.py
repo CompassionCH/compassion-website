@@ -11,6 +11,7 @@
         "views/assets.xml",
         "views/images_content.xml",
         "views/template_header.xml",
+
         # Buttons
         "templates/components/buttons/ThemedButton.xml",
     ],

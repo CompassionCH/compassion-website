@@ -30,8 +30,11 @@
         <t t-if="variation == 'hollow'">
             <t t-set="style_class" t-value="'border border-2 border-' + color" />
         </t>
-        <t t-else="">
+        <t t-if="variation == 'filled'">
             <t t-set="style_class" t-value="'bg-' + color" />
+        </t>
+        <t t-else="">
+            <t t-set="style_class" t-value="'bg-black'" />
         </t>
 
         <button t-attf-class="btn btn--#{variant}-#{variation} #{style_class} text-#{text_color}">
