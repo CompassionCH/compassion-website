@@ -10,47 +10,37 @@
 -->
 <odoo>
     <template id="my2_children_card_component" name="Children Card Component">
-        <link
-      rel="stylesheet"
-      href="/my_compassion/static/src/css/children_card.css"
-    />
-        <div
-      t-att-class="'children-card w-100 children-card-terminated' if sponsorship.state == 'terminated' else 'children-card w-100'"
-    >
+        <link rel="stylesheet" href="/my_compassion/static/src/css/children_card.css"/>
+        <div t-att-class="'children-card w-100 children-card-terminated' if sponsorship.state == 'terminated' else 'children-card w-100'">
             <div class="children-card-body">
                 <a t-attf-href="/my2/children/{{sponsorship.child_id.id}}">
                     <div class="row align-items-center">
                         <!-- Card Image Section (Left) -->
-                        <div
-              class="col-4 text-center children-card-image-section"
-            >
+                        <div class="col-4 text-center children-card-image-section">
                             <img
-                class="img-circle img-responsive"
-                t-attf-src="/web/image/compassion.child/{{sponsorship.child_id.id}}/portrait"
-                alt="Child image"
-              />
+                                    class="img-circle img-responsive"
+                                    t-attf-src="/web/image/compassion.child/{{sponsorship.child_id.id}}/portrait"
+                                    alt="Child image"
+                            />
                         </div>
                         <!-- Card Text Section (Right) -->
                         <div class="col-8 children-card-text-section h-100">
                             <div class="text-right">
                                 <p class="children-card-status"><i
-                    class="fa fa-envelope-o"
-                  />
+                                        class="fa fa-envelope-o"/>
                                     New letter available!</p>
                             </div>
                             <p class="children-card-title">
-                                <t t-esc="sponsorship.preferred_name" />
+                                <t t-esc="sponsorship.preferred_name"/>
                             </p>
                             <p class="children-card-age">
-                                <t t-esc="sponsorship.child_age" /> years old
+                                <t t-esc="sponsorship.child_age"/> years old
                             </p>
                             <p class="children-card-country">
-                                <t
-                  t-esc="sponsorship.child_id.field_office_id.name"
-                />
+                                <t t-esc="sponsorship.child_id.field_office_id.name"/>
                             </p>
                             <p class="children-card-local-id">
-                                <t t-esc="sponsorship.child_id.local_id" />
+                                <t t-esc="sponsorship.child_id.local_id"/>
                             </p>
                             <div class="text-right">
                                 <p class="children-card-last-contact">

@@ -16,18 +16,13 @@
 -->
 <odoo>
     <template id="my2_new_letter_page" name="My Compassion 2 New Letter Page">
-        <link
-      rel="stylesheet"
-      href="/my_compassion/static/src/css/template_image.css"
-    />
-        <link
-      rel="stylesheet"
-      href="/my_compassion/static/src/css/add_a_picture_input.css"
-    />
+        <link rel="stylesheet" href="/my_compassion/static/src/css/template_image.css"/>
+        <link rel="stylesheet"
+              href="/my_compassion/static/src/css/add_a_picture_input.css"/>
         <t t-call="website.layout">
             <div class="container">
                 <!-- Calling breadcrumb component -->
-                <t t-call="my_compassion.my2_breadcrumbs" />
+                <t t-call="my_compassion.my2_breadcrumbs"/>
                 <div class="row">
                     <div class="col-12">
                         <h1>Write a letter</h1>
@@ -38,27 +33,16 @@
                         <div class="col-8">
                             <!-- Dropdown list for selecting a child -->
                             <div class="form-group">
-                                <label
-                  for="child-dropdown"
-                >Select a Child:</label>
-                                <select
-                  id="child-dropdown"
-                  class="form-control"
-                >
+                                <label for="child-dropdown">Select a Child:</label>
+                                <select id="child-dropdown" class="form-control">
                                     <!-- Loop through children_sponsored_by_partner -->
-                                    <t
-                    t-foreach="sponsorship_ids"
-                    t-as="sponsorship"
-                  >
+                                    <t t-foreach="sponsorship_ids" t-as="sponsorship">
                                         <!-- Shows only active sponsorships as selections -->
                                         <t t-if="sponsorship.state == 'active'">
                                             <option
-                        t-att-value="sponsorship.child_id.id"
-                        t-att-selected="'selected' if sponsorship.child_id.id == selected_child.id else None"
-                      >
-                                                <t
-                          t-esc="sponsorship.child_id.preferred_name"
-                        />
+                                                    t-att-value="sponsorship.child_id.id"
+                                                    t-att-selected="'selected' if sponsorship.child_id.id == selected_child.id else None">
+                                                <t t-esc="sponsorship.child_id.preferred_name"/>
                                             </option>
                                         </t>
                                     </t>
@@ -66,7 +50,7 @@
                             </div>
                         </div>
                         <div class="col-4">
-                            <div id="child-reactive-img" />
+                            <div id="child-reactive-img"></div>
                         </div>
                     </div>
 
@@ -78,61 +62,42 @@
                                     Select a Template:
                                 </label>
                                 <!-- Button content will be dynamically updated by the template name -->
-                                <button
-                  type="button"
-                  id="template-selection"
-                  class="btn btn-outline-primary form-control"
-                >
+                                <button type="button" id="template-selection"
+                                        class="btn btn-outline-primary form-control">
                                     Click here
                                 </button>
                             </div>
                         </div>
                         <!-- Show the chosen template dynamically -->
                         <div class="col-6 mb-3">
-                            <div id="template-reactive-img" />
+                            <div id="template-reactive-img"></div>
                         </div>
                     </div>
 
                     <!-- Modal showed when the user clicks on the button for selecting a template -->
-                    <div
-            class="modal fade"
-            id="templateSelectionModal"
-            tabindex="-1"
-          >
+                    <div class="modal fade" id="templateSelectionModal" tabindex="-1">
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5
-                    class="modal-title"
-                    id="templateSelectionModalLabel"
-                  >Select a
+                                    <h5 class="modal-title"
+                                        id="templateSelectionModalLabel">Select a
                                         Template</h5>
-                                    <button
-                    type="button"
-                    class="close"
-                    data-dismiss="modal"
-                  >
+                                    <button type="button" class="close"
+                                            data-dismiss="modal">
                                         x
                                     </button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="row">
-                                        <t
-                      t-foreach="templates"
-                      t-as="template"
-                      t-key="template.id"
-                    >
-                                            <div
-                        class="col-6 col-md-4 col-lg-3 text-center mb-3"
-                      >
+                                        <t t-foreach="templates" t-as="template"
+                                           t-key="template.id">
+                                            <div class="col-6 col-md-4 col-lg-3 text-center mb-3">
                                                 <!-- Display the template image -->
-                                                <img
-                          data-dismiss="modal"
-                          t-att-src="template.template_image_url"
-                          t-att-data-template-id="template.id"
-                          t-att-data-template-name="template.name"
-                          class="img-fluid border shadow-sm template-image"
-                        />
+                                                <img data-dismiss="modal"
+                                                     t-att-src="template.template_image_url"
+                                                     t-att-data-template-id="template.id"
+                                                     t-att-data-template-name="template.name"
+                                                     class="img-fluid border shadow-sm template-image"/>
                                             </div>
                                         </t>
                                     </div>
@@ -146,15 +111,12 @@
                         <div class="col-12">
                             <!-- Textarea for letter writing -->
                             <div class="form-group">
-                                <label
-                  for="letter-input"
-                >Write Your Letter:</label>
+                                <label for="letter-input">Write Your Letter:</label>
                                 <textarea
-                  id="letter-input"
-                  class="form-control"
-                  rows="10"
-                  placeholder="Type your letter here..."
-                />
+                                        id="letter-input"
+                                        class="form-control"
+                                        rows="10"
+                                        placeholder="Type your letter here..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -164,17 +126,11 @@
                         <div class="col-12">
                             <label for="letter-attachments">Attachments</label>
                             <div class="file-upload-placeholder">
-                                <input
-                  type="file"
-                  class="file-upload-input"
-                  id="letter-attachments"
-                  multiple="true"
-                />
+                                <input type="file" class="file-upload-input"
+                                       id="letter-attachments" multiple="true"/>
                                 <div class="text-center p-3">
-                                    <i
-                    class="fa fa-plus-square-o fa-3x text-primary"
-                  />
-                                    <br />
+                                    <i class="fa fa-plus-square-o fa-3x text-primary"></i>
+                                    <br/>
                                     <span>Add a picture</span>
                                 </div>
                             </div>
@@ -189,94 +145,54 @@
                     <!-- Preview and Submit buttons -->
                     <div class="row mb-2">
                         <div class="col-12 text-right">
-                            <button
-                type="submit"
-                class="btn btn-outline-primary"
-                data-mode="preview"
-              >
+                            <button type="submit" class="btn btn-outline-primary"
+                                    data-mode="preview">
                                 Preview Letter
                             </button>
-                            <button
-                type="submit"
-                class="btn btn-primary"
-                data-mode="send"
-              >
+                            <button type="submit" class="btn btn-primary"
+                                    data-mode="send">
                                 Submit Letter
                             </button>
                         </div>
                     </div>
 
                     <!-- Modal for previewing the letter -->
-                    <div
-            class="modal fade"
-            id="previewModal"
-            tabindex="-1"
-            role="dialog"
-            aria-labelledby="previewModalLabel"
-            aria-hidden="true"
-          >
+                    <div class="modal fade" id="previewModal" tabindex="-1"
+                         role="dialog" aria-labelledby="previewModalLabel"
+                         aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content h-100">
                                 <div class="modal-header">
-                                    <h5
-                    class="modal-title"
-                    id="previewModalLabel"
-                  >
+                                    <h5 class="modal-title" id="previewModalLabel">
                                         Letter Preview</h5>
-                                    <button
-                    type="button"
-                    class="close"
-                    data-dismiss="modal"
-                    aria-label="Close"
-                  >
+                                    <button type="button" class="close"
+                                            data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">x</span>
                                     </button>
                                 </div>
                                 <div class="modal-body text-center h-100">
-                                    <iframe
-                    id="previewImage"
-                    src=""
-                    class="w-100 h-100 border-0"
-                  />
+                                    <iframe id="previewImage" src=""
+                                            class="w-100 h-100 border-0"/>
                                 </div>
                                 <div class="modal-footer">
-                                    <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-dismiss="modal"
-                  >Close</button>
+                                    <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Feedback Modal for when the user submitted the letter -->
-                    <div
-            class="modal fade"
-            id="submitModal"
-            tabindex="-1"
-            role="dialog"
-            aria-labelledby="submitModalLabel"
-            aria-hidden="true"
-          >
-                        <div
-              class="modal-dialog modal-dialog-centered"
-              role="document"
-            >
+                    <div class="modal fade" id="submitModal" tabindex="-1" role="dialog"
+                         aria-labelledby="submitModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content text-center p-4">
                                 <div class="modal-body">
                                     <div class="progress mb-3">
-                                        <div
-                      class="progress-bar progress-bar-striped progress-bar-animated"
-                      role="progressbar"
-                      style="width: 0%"
-                      id="progressBar"
-                    />
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                             style="width: 0%" id="progressBar"></div>
                                     </div>
-                                    <p
-                    id="progressText"
-                    class="mb-0"
-                  >Starting...</p>
+                                    <p id="progressText" class="mb-0">Starting...</p>
                                 </div>
                             </div>
                         </div>
@@ -286,23 +202,23 @@
             </div>
         </t>
         <!-- Include Owl library -->
-        <script type="text/javascript" src="/web/static/lib/owl/owl.js" />
+        <script type="text/javascript" src="/web/static/lib/owl/owl.js"></script>
         <!-- Include Custom Javascript -->
         <script
-      type="text/javascript"
-      src="/my_compassion/static/src/js/my2_new_letter_child_selector_image.js"
-    />
+                type="text/javascript"
+                src="/my_compassion/static/src/js/my2_new_letter_child_selector_image.js"
+        />
         <script
-      type="text/javascript"
-      src="/my_compassion/static/src/js/my2_new_letter_template_image_selection.js"
-    />
+                type="text/javascript"
+                src="/my_compassion/static/src/js/my2_new_letter_template_image_selection.js"
+        />
         <script
-      type="text/javascript"
-      src="/my_compassion/static/src/js/my2_new_letter.js"
-    />
+                type="text/javascript"
+                src="/my_compassion/static/src/js/my2_new_letter.js"
+        />
         <script
-      type="text/javascript"
-      src="/my_compassion/static/src/js/my2_new_letter_add_a_picture_input.js"
-    />
+                type="text/javascript"
+                src="/my_compassion/static/src/js/my2_new_letter_add_a_picture_input.js"
+        />
     </template>
 </odoo>
