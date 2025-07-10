@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Component: Theme Button from 2025 Compassion Switzerland Theme
+
+    Description:
+    This component renders a themed button with customizable properties
+
+    Will be used in probably multiple places in the website
+
+    See theme_compassion_2025/static/src/scss/components/_buttons.scss for the button styles
+    and theme_compassion_2025/static/src/scss/abstracts/_colors.scss for the color variables.
+
+    The variation can be 'hollow' or 'filled', which will determine if the button has a border or a background color.
+
+    Injected data:
+    - variant (string): Type of the button, e.g., 'default', 'impact' or 'compact'
+        - Impact is used for buttons that have a strong call to action, e.g., 'Donate Now'
+        - Compact is used for buttons that are smaller and more subtle or when space is limited
+        - Default is used for standard buttons
+    - variation (string): Variation of the button, e.g., 'hollow' or 'filled'
+    - label (string): Text to display on the button
+    - icon (string): FontAwesome icon class to display on the button
+    - color (string): Color of the button
+    - icon_color (string): Color of the icon
+    - text_color (string): Color of the text
+-->
+<odoo>
+    <template id="ThemedButtonComponent" name="Button Component">
+        <!-- Determine button style class border or background depending on the variation-->
+        <t t-if="variation == 'hollow'">
+            <t t-set="style_class" t-value="'border border-2 border-' + color" />
+        </t>
+        <t t-if="variation == 'filled'">
+            <t t-set="style_class" t-value="'bg-' + color" />
+        </t>
+        <t t-else="">
+            <t t-set="style_class" t-value="'bg-black'" />
+        </t>
+
+        <button t-attf-class="btn btn--#{variant}-#{variation} #{style_class} text-#{text_color}">
+            <t t-if="icon">
+                <span t-attf-class="btn__icon btn__icon--#{variant} text-#{icon_color}">
+                    <i t-att-class="icon" />
+                </span>
+            </t>
+            <t t-if="label">
+                <span>
+                    <t t-esc="label" />
+                </span>
+            </t>
+        </button>
+    </template>
+</odoo>
