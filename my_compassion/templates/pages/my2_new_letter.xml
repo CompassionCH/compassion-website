@@ -40,7 +40,7 @@
                         <div class="col-8">
                             <!-- Dropdown list for selecting a child -->
                             <div class="form-group">
-                                <label for="child-dropdown">Select a Child:</label>
+                                <label class="text-core-blue" for="child-dropdown">To</label>
                                 <select id="child-dropdown" class="form-control">
                                     <!-- Loop through children_sponsored_by_partner -->
                                     <t t-foreach="sponsorship_ids" t-as="sponsorship">
@@ -65,8 +65,8 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
-                                <label for="template-selection">
-                                    Select a Template:
+                                <label class="text-core-blue" for="template-selection">
+                                    Template
                                 </label>
                                 <!-- Button content will be dynamically updated by the template name -->
                                 <button type="button" id="template-selection"
@@ -114,24 +114,21 @@
                     </div>
 
                     <!-- Text area for letter writing -->
-                    <div class="row">
-                        <div class="col-12">
-                            <!-- Textarea for letter writing -->
-                            <div class="form-group">
-                                <label for="letter-input">Write Your Letter:</label>
-                                <textarea
-                                        id="letter-input"
-                                        class="form-control"
-                                        rows="10"
-                                        placeholder="Type your letter here..."></textarea>
-                            </div>
+                    <div class="form-group">
+                        <div class="d-flex justify-content-between">
+                            <label class="text-core-blue" for="letter-input">Text</label>
+                            <label class="text-core-blue" for="letter-input">page 0/15</label>
                         </div>
+                        <textarea
+                                id="letter-input"
+                                class="form-control"
+                                rows="10"
+                                placeholder="Type your letter here..."></textarea>
                     </div>
 
                     <!-- Add attachments box input -->
                     <div class="row mb-3">
                         <div class="col-12">
-                            <label for="letter-attachments">Attachments</label>
                             <div class="file-upload-placeholder">
                                 <input type="file" class="file-upload-input"
                                        id="letter-attachments" multiple="true"/>
