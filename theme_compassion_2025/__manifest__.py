@@ -9,6 +9,7 @@
 #                            in Jesus' name
 #
 #    Copyright (C) 2025 Compassion CH (http://www.compassion.ch)
+#    @author: Daniel Palumbo
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
