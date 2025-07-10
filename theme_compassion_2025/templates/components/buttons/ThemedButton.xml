@@ -37,7 +37,7 @@
             <t t-set="style_class" t-value="'bg-black'" />
         </t>
 
-        <button t-attf-class="btn btn--#{variant}-#{variation} #{style_class} text-#{text_color}">
+        <button t-attf-class="btn btn--#{variant}-#{variation} #{style_class} text-#{text_color}" t-att-data-mode="mode">
             <t t-if="icon">
                 <span t-attf-class="btn__icon btn__icon--#{variant} text-#{icon_color}">
                     <i t-att-class="icon" />
