@@ -1,63 +1,62 @@
 <odoo>
     <template id="event_donation" name="Event donation form">
-        <t
-      t-set="currency"
-      t-value="registration.sudo().company_id.currency_id.symbol"
-    />
+        <t t-set="currency" t-value="registration.sudo().company_id.currency_id.symbol" />
         <section id="event_donation_form" class="container py-4">
             <h3>I want to contribute with a donation</h3>
-            <p>Show your support to <t
-          t-esc="registration.profile_name"
-        /> with the
+            <p>
+                Show your support to
+                <t t-esc="registration.profile_name" />
+                with the
                 amount of
-                your choice.</p>
+                your choice.
+            </p>
             <form action="donation" method="post" enctype="multipart/form-data">
-                <input
-          type="hidden"
-          name="amount"
-          id="input_amount"
-          required="True"
-        />
-                <input
-          type="hidden"
-          name="csrf_token"
-          t-att-value="request.csrf_token()"
-        />
+                <input type="hidden" name="amount" id="input_amount" required="True" />
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
                 <div class="my-3 row">
                     <div class="col-12 col-md-3 mb-2 mb-md-0">
                         <button
-              class="amount_button btn btn-outline-primary btn-lg w-100"
-              type="button"
-              data-donation-value="10"
-              t-translation="off"
-            ><t t-esc="currency" />
-                            10</button>
+                            class="amount_button btn btn-outline-primary btn-lg w-100"
+                            type="button"
+                            data-donation-value="10"
+                            t-translation="off"
+                        >
+                            <t t-esc="currency" />
+                            10
+                        </button>
                     </div>
                     <div class="col-12 col-md-3 mb-2 mb-md-0">
                         <button
-              class="amount_button btn btn-outline-primary btn-lg w-100"
-              type="button"
-              data-donation-value="25"
-              t-translation="off"
-            ><t t-esc="currency" />
-                            25</button>
+                            class="amount_button btn btn-outline-primary btn-lg w-100"
+                            type="button"
+                            data-donation-value="25"
+                            t-translation="off"
+                        >
+                            <t t-esc="currency" />
+                            25
+                        </button>
                     </div>
                     <div class="col-12 col-md-3 mb-2 mb-md-0">
                         <button
-              class="amount_button btn btn-outline-primary btn-lg w-100"
-              type="button"
-              data-donation-value="50"
-              t-translation="off"
-            ><t t-esc="currency" />
-                            50</button>
+                            class="amount_button btn btn-outline-primary btn-lg w-100"
+                            type="button"
+                            data-donation-value="50"
+                            t-translation="off"
+                        >
+                            <t t-esc="currency" />
+                            50
+                        </button>
                     </div>
                     <div class="col-12 col-md-3 mb-2 mb-md-0">
                         <button
-              class="amount_button btn btn-outline-primary btn-lg w-100"
-              type="button"
-              data-donation-value="100"
-              t-translation="off"
-            ><t t-esc="currency" /> 100</button>
+                            class="amount_button btn btn-outline-primary btn-lg w-100"
+                            type="button"
+                            data-donation-value="100"
+                            t-translation="off"
+                        >
+                            <t t-esc="currency" />
+                            100
+                        </button>
                     </div>
                 </div>
 
@@ -65,23 +64,18 @@
                     <span class="btn btn-outline-primary btn-lg">
                         <span t-esc="currency" />
                         <input
-              id="amount_custom_input"
-              type="number"
-              min="5"
-              placeholder="Custom amount"
-              aria-label="Amount"
-              style="outline: none;"
-              class="border-0 bg-transparent text-center"
-            />
+                            id="amount_custom_input"
+                            type="number"
+                            min="5"
+                            placeholder="Custom amount"
+                            aria-label="Amount"
+                            style="outline: none;"
+                            class="border-0 bg-transparent text-center"
+                        />
                     </span>
                 </div>
-                <div class="error alert alert-danger d-none" role="alert">
-                    Please enter an amount.
-                </div>
-                <button
-          type="submit"
-          class="btn btn-secondary btn-lg mb-2"
-        >Donate Now</button>
+                <div class="error alert alert-danger d-none" role="alert">Please enter an amount.</div>
+                <button type="submit" class="btn btn-secondary btn-lg mb-2">Donate Now</button>
             </form>
         </section>
     </template>

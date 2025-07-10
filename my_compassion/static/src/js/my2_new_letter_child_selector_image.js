@@ -17,8 +17,8 @@
  */
 
 // Import necessary components from Owl manually
-const {Component, mount, useState} = owl;
-const {xml} = owl.tags;
+const { Component, mount, useState } = owl;
+const { xml } = owl.tags;
 
 /**
  * ChildSelectorImage Component
@@ -32,9 +32,9 @@ class ChildSelectorImage extends Component {
         <div class="child-image-container w-50 w-md-25">
             <!-- Render the image only if a child is selected -->
             <t t-if="state.selectedChildId">
-                <img 
-                    class="img-circle img-responsive" 
-                    t-att-src="'/web/image/compassion.child/' + state.selectedChildId + '/portrait'" 
+                <img
+                    class="img-circle img-responsive"
+                    t-att-src="'/web/image/compassion.child/' + state.selectedChildId + '/portrait'"
                     alt="Child image" />
             </t>
         </div>
@@ -93,7 +93,7 @@ async function mountImage() {
         // Mount the component and store the instance for later use
         mountedComponent = await mount(ChildSelectorImage, {
             target,
-            props: {selectedChildId: initialChildId}
+            props: { selectedChildId: initialChildId },
         });
     }
 }

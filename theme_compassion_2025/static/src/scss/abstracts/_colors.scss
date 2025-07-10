@@ -8,42 +8,42 @@
 
 // DO NOT TOUCH IF THE DESIGN GUIDELINES HAS NOT CHANGED SINCE 2025
 $compassion-colors: (
-  'core-blue': #2a5eec,
-  'dark-blue': #11265e,
-  'low-blue': #1d42a5,
-  'mid-blue': #6a8ef2,
-  'high-blue': #aabff7,
+    "core-blue": #2a5eec,
+    "dark-blue": #11265e,
+    "low-blue": #1d42a5,
+    "mid-blue": #6a8ef2,
+    "high-blue": #aabff7,
 
-  'low-green': #235339,
-  'mid-green': #499e57,
-  'high-green': #c2e189,
+    "low-green": #235339,
+    "mid-green": #499e57,
+    "high-green": #c2e189,
 
-  'low-yellow': #fdb518,
-  'mid-yellow': #ffd257,
-  'high-yellow': #fff2ad,
+    "low-yellow": #fdb518,
+    "mid-yellow": #ffd257,
+    "high-yellow": #fff2ad,
 
-  'low-pink': #a50f25,
-  'mid-pink': #ee828d,
-  'high-pink': #fac6d2,
+    "low-pink": #a50f25,
+    "mid-pink": #ee828d,
+    "high-pink": #fac6d2,
 
-  'low-orange': #ab270a,
-  'mid-orange': #fb513a,
-  'high-orange': #ff9c7c,
+    "low-orange": #ab270a,
+    "mid-orange": #fb513a,
+    "high-orange": #ff9c7c,
 
-  'low-brown': #6c3813,
-  'mid-brown': #914a22,
-  'high-brown': #f1b782,
+    "low-brown": #6c3813,
+    "mid-brown": #914a22,
+    "high-brown": #f1b782,
 
-  'low-black': #000000,
-  'off-black': #121a1a,
-  'low-grey': #494f61,
-  'mid-grey': #7c8399,
+    "low-black": #000000,
+    "off-black": #121a1a,
+    "low-grey": #494f61,
+    "mid-grey": #7c8399,
 
-  'low-eggshell': #eae4df,
-  'mid-eggshell': #f7f0eb,
-  'high-eggshell': #fcf8f4,
+    "low-eggshell": #eae4df,
+    "mid-eggshell": #f7f0eb,
+    "high-eggshell": #fcf8f4,
 
-  'pure-white': #ffffff,
+    "pure-white": #ffffff,
 );
 
 /**
@@ -52,65 +52,65 @@ $compassion-colors: (
  * Follow the pattern of Bootstrap for consistency (I prefer tailwind but odoo use bootstrap...)
  */
 @each $name, $color in $compassion-colors {
-  // Background colors
-  .bg-#{$name} {
-    background-color: $color !important;
-  }
+    // Background colors
+    .bg-#{$name} {
+        background-color: $color !important;
+    }
 
-  .bg-#{$name}-hover:hover {
-    background-color: $color !important;
-  }
+    .bg-#{$name}-hover:hover {
+        background-color: $color !important;
+    }
 
-  // Text colors
-  .text-#{$name} {
-    color: $color !important;
-  }
+    // Text colors
+    .text-#{$name} {
+        color: $color !important;
+    }
 
-  .text-#{$name}-hover:hover {
-    color: $color !important;
-  }
+    .text-#{$name}-hover:hover {
+        color: $color !important;
+    }
 
-  // Border colors
-  .border-#{$name} {
-    border-color: $color !important;
-  }
+    // Border colors
+    .border-#{$name} {
+        border-color: $color !important;
+    }
 
-  .border-left-#{$name} {
-    border-left: 1px solid $color !important;
-  }
+    .border-left-#{$name} {
+        border-left: 1px solid $color !important;
+    }
 
-  .border-right-#{$name} {
-    border-right: 1px solid $color !important;
-  }
+    .border-right-#{$name} {
+        border-right: 1px solid $color !important;
+    }
 
-  .border-top-#{$name} {
-    border-top: 1px solid $color !important;
-  }
+    .border-top-#{$name} {
+        border-top: 1px solid $color !important;
+    }
 
-  .border-bottom-#{$name} {
-    border-bottom: 1px solid $color !important;
-  }
+    .border-bottom-#{$name} {
+        border-bottom: 1px solid $color !important;
+    }
 
-  // Button style (if needed, can be refined further)
-  .btn-#{$name} {
-    background-color: $color !important;
-    border-color: $color !important;
-    color: #fff !important;
-  }
+    // Button style (if needed, can be refined further)
+    .btn-#{$name} {
+        background-color: $color !important;
+        border-color: $color !important;
+        color: #fff !important;
+    }
 
-  .btn-#{$name}:hover {
-    background-color: darken($color, 10%) !important;
-    border-color: darken($color, 12%) !important;
-  }
+    .btn-#{$name}:hover {
+        background-color: darken($color, 10%) !important;
+        border-color: darken($color, 12%) !important;
+    }
 
-  .btn-outline-#{$name} {
-    color: $color !important;
-    border-color: $color !important;
-    background-color: transparent !important;
-  }
+    .btn-outline-#{$name} {
+        color: $color !important;
+        border-color: $color !important;
+        background-color: transparent !important;
+    }
 
-  .btn-outline-#{$name}:hover {
-    background-color: $color !important;
-    color: #fff !important;
-  }
+    .btn-outline-#{$name}:hover {
+        background-color: $color !important;
+        color: #fff !important;
+    }
 }

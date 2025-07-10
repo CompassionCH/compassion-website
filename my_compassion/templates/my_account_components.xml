@@ -5,21 +5,9 @@
         <!--     1. selected, the id of the selected navigation element, for highlight purposes -->
         <template id="my_account_menu" inherit_id="portal.my_account_link">
             <xpath expr="//a[@href='/my/home']" position="after">
-                <a
-          href="/my/children"
-          role="menuitem"
-          class="dropdown-item"
-        >My Children</a>
-                <a
-          href="/my/donations"
-          role="menuitem"
-          class="dropdown-item"
-        >My Donations</a>
-                <a
-          href="/my/letter"
-          role="menuitem"
-          class="dropdown-item"
-        >Write a letter</a>
+                <a href="/my/children" role="menuitem" class="dropdown-item">My Children</a>
+                <a href="/my/donations" role="menuitem" class="dropdown-item">My Donations</a>
+                <a href="/my/letter" role="menuitem" class="dropdown-item">Write a letter</a>
             </xpath>
             <xpath expr="//a[@href='/my/home']" position="attributes">
                 <attribute name="href">/my/information</attribute>
@@ -30,12 +18,15 @@
         <template id="sponsor_a_child" name="My Children">
             <t t-call="portal.frontend_layout">
                 <div class="container text-center">
-                    <br /><br /><br />
-                    You do not support any child yet. You can start a sponsorship by following <a
-            href="https://compassion.ch/parrainer-un-enfant"
-            target="_blank"
-          >this link</a>.
-                    <br /><br /><br />
+                    <br />
+                    <br />
+                    <br />
+                    You do not support any child yet. You can start a sponsorship by following
+                    <a href="https://compassion.ch/parrainer-un-enfant" target="_blank">this link</a>
+                    .
+                    <br />
+                    <br />
+                    <br />
                 </div>
             </t>
         </template>
@@ -46,10 +37,14 @@
         <template id="fill_key_value">
             <div class="row" t-if="value">
                 <div class="col-6 border-right">
-                    <label><t t-raw="0" /></label>
+                    <label>
+                        <t t-raw="0" />
+                    </label>
                 </div>
                 <div class="col-6">
-                    <label><t t-esc="value" /></label>
+                    <label>
+                        <t t-esc="value" />
+                    </label>
                 </div>
             </div>
         </template>

@@ -12,74 +12,49 @@
                 <h3 class="text-center">This event has no participant yet.</h3>
             </t>
             <div class="row mt-2">
-                <t
-          t-foreach="event.registration_ids.filtered('website_published')"
-          t-as="registration"
-        >
+                <t t-foreach="event.registration_ids.filtered('website_published')" t-as="registration">
                     <div class="col-12 col-sm-6 col-xl-4 mb-4">
                         <div class="card">
                             <t
-                t-set="ambassador_picture"
-                t-value="'/website_event_compassion/static/src/img/default-user-image.png'"
-              />
+                                t-set="ambassador_picture"
+                                t-value="'/website_event_compassion/static/src/img/default-user-image.png'"
+                            />
                             <t t-if="registration.profile_picture">
                                 <t
-                  t-set="ambassador_picture"
-                  t-value="'/web/image/event.registration/' + str(registration.id) + '/profile_picture'"
-                />
+                                    t-set="ambassador_picture"
+                                    t-value="'/web/image/event.registration/' + str(registration.id) + '/profile_picture'"
+                                />
                             </t>
                             <a t-att-href="registration.website_url">
                                 <div class="square-container">
-
                                     <img
-                    t-att-src="ambassador_picture"
-                    t-att-alt="registration.profile_name"
-                    class="card-img-top square-img"
-                  />
+                                        t-att-src="ambassador_picture"
+                                        t-att-alt="registration.profile_name"
+                                        class="card-img-top square-img"
+                                    />
                                 </div>
                             </a>
                             <div class="card-body">
-                                <t
-                  t-call="website_event_compassion.participant_card"
-                />
+                                <t t-call="website_event_compassion.participant_card" />
                                 <a t-att-href="registration.website_url">
                                     <div class="card-title">
                                         <h4>
-                                            <t
-                        t-esc="registration.profile_name"
-                      />
+                                            <t t-esc="registration.profile_name" />
                                         </h4>
                                     </div>
                                 </a>
                                 <div class="card-text mb-2">
-                                    <t
-                    t-call="website_event_compassion.event_barometer"
-                  >
-                                        <t
-                      t-set="barometer"
-                      t-value="registration"
-                    />
-                                        <t
-                      t-set="amount_inside"
-                      t-value="False"
-                    />
-                                        <t
-                      t-set="barometer_title_class"
-                      t-value="False"
-                    />
-                                        <t
-                      t-set="barometer_amount_class"
-                    >amount_raised</t>
+                                    <t t-call="website_event_compassion.event_barometer">
+                                        <t t-set="barometer" t-value="registration" />
+                                        <t t-set="amount_inside" t-value="False" />
+                                        <t t-set="barometer_title_class" t-value="False" />
+                                        <t t-set="barometer_amount_class">amount_raised</t>
                                     </t>
                                 </div>
-                                <a
-                  t-att-href="registration.website_url"
-                  class="btn btn-primary w-100 name details"
-                >
+                                <a t-att-href="registration.website_url" class="btn btn-primary w-100 name details">
                                     View profile
                                 </a>
                             </div>
-
                         </div>
                     </div>
                 </t>

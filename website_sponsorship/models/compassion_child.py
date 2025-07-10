@@ -94,10 +94,7 @@ class CompassionChild(models.Model):
         self.ensure_one()
         if not self.is_published and self.state not in self._available_states():
             raise UserError(
-                _(
-                    "You cannot publish a child that is not available for "
-                    "sponsorship."
-                )
+                _("You cannot publish a child that is not available for sponsorship.")
             )
         return super().website_publish_button()
 

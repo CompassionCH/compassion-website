@@ -3,17 +3,16 @@
  *
  * Used in /templates/pages/my2_new_letter.xml
  */
-document.addEventListener('DOMContentLoaded', () => {
-
+document.addEventListener("DOMContentLoaded", () => {
     // Constants
     const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
-    const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-    const COMPRESSION_QUALITY = 0.90 // 90%
+    const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    const COMPRESSION_QUALITY = 0.9; // 90%
     const MAX_DIMENSION = 800; // 800px width/height
 
     // Retrieve the input where the users put files and the container for displaying the file preview
-    const fileInput = document.getElementById('letter-attachments');
-    const container = document.getElementById('uploaded-files-container');
+    const fileInput = document.getElementById("letter-attachments");
+    const container = document.getElementById("uploaded-files-container");
 
     let uploadedFiles = [];
 
@@ -21,10 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
      * Generates a unique key for a file based on its metadata.
      *
      * @param {File} file - The file to generate a key for.
-     * @returns {string} A unique key combining the file's name, size, type, and last modified date.
+     * @returns {String} A unique key combining the file's name, size, type, and last modified date.
      */
-    const generateFileKey = file =>
-        `${file.name}-${file.size}-${file.type}-${file.lastModified}`;
+    const generateFileKey = (file) => `${file.name}-${file.size}-${file.type}-${file.lastModified}`;
 
     /**
      * Updates the file input element with the current list of uploaded files.
@@ -32,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     const updateFileInput = () => {
         const dataTransfer = new DataTransfer();
-        uploadedFiles.forEach(file => dataTransfer.items.add(file));
+        uploadedFiles.forEach((file) => dataTransfer.items.add(file));
         fileInput.files = dataTransfer.files;
     };
 
@@ -40,14 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
      * Reads a file as a Data URL (base64 encoded string).
      *
      * @param {File} file - The file to read.
-     * @returns {Promise<string>} A promise that resolves with the file's Data URL.
+     * @returns {Promise<String>} A promise that resolves with the file's Data URL.
      */
-    const readFileAsDataURL = (file) => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
+    const readFileAsDataURL = (file) =>
+        new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
 
     /**
      * Compresses and converts an image file to JPEG format.
@@ -57,78 +56,82 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {File} originalFile - The image file to compress.
      * @returns {Promise<File>} A promise that resolves with the compressed JPEG file.
      */
-    const compressImage = (originalFile) => new Promise((resolve, reject) => {
-        const img = new Image();
-        img.src = URL.createObjectURL(originalFile);
+    const compressImage = (originalFile) =>
+        new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = URL.createObjectURL(originalFile);
 
-        img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
 
-            // Calculate new dimensions
-            let width = img.width;
-            let height = img.height;
+                // Calculate new dimensions
+                let width = img.width;
+                let height = img.height;
 
-            // Resize the image proportionally to fit MAX_DIMENSION if needed
-            if (width > height && width > MAX_DIMENSION) {
-                height *= MAX_DIMENSION / width;
-                width = MAX_DIMENSION;
-            } else if (height > MAX_DIMENSION) {
-                width *= MAX_DIMENSION / height;
-                height = MAX_DIMENSION;
-            }
+                // Resize the image proportionally to fit MAX_DIMENSION if needed
+                if (width > height && width > MAX_DIMENSION) {
+                    height *= MAX_DIMENSION / width;
+                    width = MAX_DIMENSION;
+                } else if (height > MAX_DIMENSION) {
+                    width *= MAX_DIMENSION / height;
+                    height = MAX_DIMENSION;
+                }
 
-            // Set canvas dimensions
-            canvas.width = width;
-            canvas.height = height;
+                // Set canvas dimensions
+                canvas.width = width;
+                canvas.height = height;
 
-            // Draw and compress image
-            ctx.drawImage(img, 0, 0, width, height);
+                // Draw and compress image
+                ctx.drawImage(img, 0, 0, width, height);
 
-            // Convert the canvas element to a Blob with a MIME type of image/jpeg
-            canvas.toBlob((blob) => {
-                if (!blob) return reject(new Error('Image compression failed'));
+                // Convert the canvas element to a Blob with a MIME type of image/jpeg
+                canvas.toBlob(
+                    (blob) => {
+                        if (!blob) return reject(new Error("Image compression failed"));
 
-                // Create new File object with JPEG format
-                const compressedFile = new File([blob],
-                    originalFile.name.replace(/\.[^/.]+$/, '.jpg'),
-                    {type: 'image/jpeg'}
+                        // Create new File object with JPEG format
+                        const compressedFile = new File([blob], originalFile.name.replace(/\.[^/.]+$/, ".jpg"), {
+                            type: "image/jpeg",
+                        });
+
+                        URL.revokeObjectURL(img.src);
+                        resolve(compressedFile);
+                    },
+                    "image/jpeg",
+                    COMPRESSION_QUALITY,
                 );
+            };
 
-                URL.revokeObjectURL(img.src);
-                resolve(compressedFile);
-            }, 'image/jpeg', COMPRESSION_QUALITY);
-        };
-
-        img.onerror = reject;
-    });
+            img.onerror = reject;
+        });
 
     /**
      * Creates a DOM element to display an uploaded file.
      * Includes a preview image, file name, and a remove button.
      *
      * @param {File} file - The file to create an element for.
-     * @param {string} dataUrl - The Data URL of the file for the preview.
+     * @param {String} dataUrl - The Data URL of the file for the preview.
      * @returns {HTMLElement} The created file container element.
      */
     const createFileElement = (file, dataUrl) => {
-        const fileDiv = document.createElement('div');
-        fileDiv.className = 'col-4 uploaded-file position-relative';
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "col-4 uploaded-file position-relative";
         fileDiv.dataset.fileKey = generateFileKey(file);
 
-        const preview = Object.assign(document.createElement('img'), {
-            className: 'img-fluid',
+        const preview = Object.assign(document.createElement("img"), {
+            className: "img-fluid",
             src: dataUrl,
-            style: 'max-height: 200px; object-fit: contain;'
+            style: "max-height: 200px; object-fit: contain;",
         });
 
-        const fileName = Object.assign(document.createElement('p'), {
-            textContent: file.name
+        const fileName = Object.assign(document.createElement("p"), {
+            textContent: file.name,
         });
 
-        const removeBtn = Object.assign(document.createElement('button'), {
-            className: 'btn btn-danger remove-attachment-button',
-            innerHTML: 'X'
+        const removeBtn = Object.assign(document.createElement("button"), {
+            className: "btn btn-danger remove-attachment-button",
+            innerHTML: "X",
         });
 
         fileDiv.append(preview, fileName, removeBtn);
@@ -139,13 +142,13 @@ document.addEventListener('DOMContentLoaded', () => {
      * Handles click events on the uploaded files container.
      * Removes a file when its "X" button is clicked.
      */
-    container.addEventListener('click', e => {
-        if (e.target.classList.contains('remove-attachment-button')) {
-            const fileDiv = e.target.closest('.uploaded-file');
+    container.addEventListener("click", (e) => {
+        if (e.target.classList.contains("remove-attachment-button")) {
+            const fileDiv = e.target.closest(".uploaded-file");
             if (!fileDiv) return;
 
             const fileKey = fileDiv.dataset.fileKey;
-            uploadedFiles = uploadedFiles.filter(f => generateFileKey(f) !== fileKey);
+            uploadedFiles = uploadedFiles.filter((f) => generateFileKey(f) !== fileKey);
             fileDiv.remove();
             updateFileInput();
         }
@@ -156,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * Validates, compresses, and processes newly uploaded files.
      * Displays previews and updates the file input with the current list of files.
      */
-    fileInput.addEventListener('change', async () => {
+    fileInput.addEventListener("change", async () => {
         const newFiles = Array.from(fileInput.files);
         const existingKeys = new Set(uploadedFiles.map(generateFileKey));
 
@@ -194,9 +197,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Create and append preview
                     container.appendChild(createFileElement(compressedFile, dataUrl));
                 } catch (error) {
-                    console.error('Error processing file:', error);
+                    console.error("Error processing file:", error);
                     alert(`Failed to process ${file.name}: ${error.message}`);
-                    uploadedFiles = uploadedFiles.filter(f => generateFileKey(f) !== fileKey);
+                    uploadedFiles = uploadedFiles.filter((f) => generateFileKey(f) !== fileKey);
                 }
             }
         } finally {

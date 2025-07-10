@@ -7,7 +7,8 @@
     * @author Daniel Palumbo
     */
 
-html, body{
+html,
+body {
     display: -webkit-flex;
     justify-content: center;
     width: 100%;
@@ -15,13 +16,13 @@ html, body{
     position: relative;
 }
 
-body{
+body {
     max-width: 1920px;
     padding-left: 16px;
     padding-right: 16px;
-    font-family: 'NeighbourSans Regular', sans-serif;
+    font-family: "NeighbourSans Regular", sans-serif;
     font-size: 16px;
-    background-color: map-get($compassion-colors, 'pure-white');
+    background-color: map-get($compassion-colors, "pure-white");
 
     // Bootstrap "sm" breakpoint starts at 640px,
     // so we create a media query for that to adds bigger gutters for larger screens as per the designer's request
@@ -30,6 +31,3 @@ body{
         padding-right: 36px;
     }
 }
-
-
-

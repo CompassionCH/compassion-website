@@ -4,28 +4,25 @@
  *
  * Is used in /templates/pages/my2_new_letter.xml
  */
-document.addEventListener('DOMContentLoaded', function () {
-
+document.addEventListener("DOMContentLoaded", function () {
     // Open the modal when the select element is clicked
-    document.getElementById('template-selection').addEventListener('click', function () {
-        $('#templateSelectionModal').modal('show');
+    document.getElementById("template-selection").addEventListener("click", function () {
+        $("#templateSelectionModal").modal("show");
     });
 
     // Get all template images
-    const templateImages = document.querySelectorAll('.template-image');
+    const templateImages = document.querySelectorAll(".template-image");
 
     // Add click event listener to each image
-    templateImages.forEach(image => {
-        image.addEventListener('click', function () {
-
-
+    templateImages.forEach((image) => {
+        image.addEventListener("click", function () {
             // Get the selected template ID from the data attribute
-            const selectedTemplateId = image.getAttribute('data-template-id');
-            const selectedTemplateName = image.getAttribute('data-template-name');
-            const selectedTemplateImageLink = image.getAttribute('src');
+            const selectedTemplateId = image.getAttribute("data-template-id");
+            const selectedTemplateName = image.getAttribute("data-template-name");
+            const selectedTemplateImageLink = image.getAttribute("src");
 
             // Replace the button content with the template name selected
-            const buttonElement = document.getElementById('template-selection');
+            const buttonElement = document.getElementById("template-selection");
             buttonElement.textContent = selectedTemplateName;
 
             // Add or replace the template image
@@ -38,11 +35,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const img = document.createElement("img");
             img.className = "img-fluid border shadow-sm";
             img.src = selectedTemplateImageLink;
-            img.id = "selected-template"
-            img.setAttribute('data-template-id', selectedTemplateId);
+            img.id = "selected-template";
+            img.setAttribute("data-template-id", selectedTemplateId);
 
             targetDiv.appendChild(img);
-
         });
     });
 });

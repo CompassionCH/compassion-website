@@ -16,7 +16,7 @@
 }
 
 .children-card-body {
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
 }
 
 .children-card-image-section {
@@ -26,7 +26,7 @@
 }
 
 .children-card-status {
-    font-family: 'Montserrat', sans-serif, bold;
+    font-family: "Montserrat", sans-serif, bold;
     font-size: 0.97rem;
 }
 
@@ -57,7 +57,11 @@
 }
 
 /* Override default <a> styles to prevent text in cards from inheriting unwanted styles */
-a, a:visited, a:hover, a:active, a:focus {
+a,
+a:visited,
+a:hover,
+a:active,
+a:focus {
     color: #212427 !important;
     text-decoration: none !important;
     outline: none !important;
@@ -67,7 +71,9 @@ a, a:visited, a:hover, a:active, a:focus {
 
 .children-card {
     /* ease transformation means that it will starts slow, speeds up, then slows down */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 /* Hover effect: Slightly enlarges the card and adds a soft shadow. */

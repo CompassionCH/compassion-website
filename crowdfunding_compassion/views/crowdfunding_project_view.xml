@@ -8,22 +8,17 @@
             <form>
                 <header>
                     <button
-            name="validate"
-            string="Validate project"
-            type="object"
-            class="btn-primary"
-            attrs="{'invisible':[('state', '!=', 'draft')]}"
-          />
+                        name="validate"
+                        string="Validate project"
+                        type="object"
+                        class="btn-primary"
+                        attrs="{'invisible':[('state', '!=', 'draft')]}"
+                    />
                     <field name="state" widget="statusbar" />
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button
-              name="open_participants"
-              type="object"
-              class="oe_stat_button"
-              icon="fa-group"
-            >
+                        <button name="open_participants" type="object" class="oe_stat_button" icon="fa-group">
                             <div class="o_form_field o_stat_info">
                                 <span class="o_stat_value">
                                     <field name="number_participants" />
@@ -31,26 +26,16 @@
                                 <span class="o_stat_text">Participants</span>
                             </div>
                         </button>
-                        <button
-              name="open_donations"
-              type="object"
-              class="oe_stat_button"
-              icon="fa-money"
-            >
+                        <button name="open_donations" type="object" class="oe_stat_button" icon="fa-money">
                             <div class="o_form_field o_stat_info">
                                 <span class="o_stat_value">
-                                    <span class="oe_inline">CHF </span>
+                                    <span class="oe_inline">CHF</span>
                                     <field name="amount_reached" />
                                 </span>
                                 <span class="o_stat_text">Donations</span>
                             </div>
                         </button>
-                        <button
-              name="open_sponsorships"
-              type="object"
-              class="oe_stat_button"
-              icon="fa-child"
-            >
+                        <button name="open_sponsorships" type="object" class="oe_stat_button" icon="fa-child">
                             <div class="o_form_field o_stat_info">
                                 <span class="o_stat_value">
                                     <field name="number_sponsorships_reached" />
@@ -58,32 +43,21 @@
                                 <span class="o_stat_text">Sponsorships</span>
                             </div>
                         </button>
-                        <field
-              name="website_published"
-              widget="website_redirect_button"
-            />
+                        <field name="website_published" widget="website_redirect_button" />
 
                         <field name="active" invisible="1" />
                         <widget
-              name="web_ribbon"
-              title="Archived"
-              bg_color="bg-danger"
-              attrs="{'invisible': [('active', '=', True)]}"
-            />
-
+                            name="web_ribbon"
+                            title="Archived"
+                            bg_color="bg-danger"
+                            attrs="{'invisible': [('active', '=', True)]}"
+                        />
                     </div>
                     <div>
-                        <field
-              name="cover_photo"
-              widget="image"
-              class="oe_avatar"
-            />
+                        <field name="cover_photo" widget="image" class="oe_avatar" />
                         <div class="oe_title">
                             <h4>
-                                <field
-                  name="website_id"
-                  groups="website.group_website_publisher"
-                />
+                                <field name="website_id" groups="website.group_website_publisher" />
                             </h4>
 
                             <h3>
@@ -97,68 +71,55 @@
                     <notebook name="project_relation">
                         <page string="Details" name="project_description">
                             <div class="container-fluid">
-
                                 <div class="row">
                                     <div class="col">
                                         <label for="deadline" />
                                         <h3>
-                                            <field
-                        name="deadline"
-                        widget="date"
-                      />
+                                            <field name="deadline" widget="date" />
                                         </h3>
                                         <label for="project_owner_id" />
                                         <h3>
-                                            <field
-                        name="project_owner_id"
-                        widget="many2one"
-                      />
+                                            <field name="project_owner_id" widget="many2one" />
                                         </h3>
-                                        <field
-                      name="owner_participant_id"
-                      invisible="1"
-                    />
+                                        <field name="owner_participant_id" invisible="1" />
                                         <label
-                      for="owner_number_sponsorships_goal"
-                      attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
-                    />
+                                            for="owner_number_sponsorships_goal"
+                                            attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
+                                        />
                                         <field
-                      name="owner_number_sponsorships_goal"
-                      attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
-                    />
+                                            name="owner_number_sponsorships_goal"
+                                            attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
+                                        />
                                         <label
-                      for="owner_number_csp_goal"
-                      attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
-                    />
+                                            for="owner_number_csp_goal"
+                                            attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
+                                        />
                                         <field
-                      name="owner_number_csp_goal"
-                      attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
-                    />
+                                            name="owner_number_csp_goal"
+                                            attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
+                                        />
                                         <label
-                      for="owner_product_number_goal"
-                      attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
-                    />
+                                            for="owner_product_number_goal"
+                                            attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
+                                        />
                                         <field
-                      name="owner_product_number_goal"
-                      attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
-                    />
+                                            name="owner_product_number_goal"
+                                            attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
+                                        />
                                         <label
-                      for="event_id"
-                      attrs="{'readonly':True , 'invisible':[('event_id', '==', '')] }"
-                    />
+                                            for="event_id"
+                                            attrs="{'readonly':True , 'invisible':[('event_id', '==', '')] }"
+                                        />
                                         <h3>
                                             <field
-                        name="event_id"
-                        widget="many2one"
-                        attrs="{'readonly':True , 'invisible':[('event_id', '=', '')] }"
-                      />
+                                                name="event_id"
+                                                widget="many2one"
+                                                attrs="{'readonly':True , 'invisible':[('event_id', '=', '')] }"
+                                            />
                                         </h3>
                                         <label for="product_id" />
                                         <h3>
-                                            <field
-                        name="product_id"
-                        widget="many2one"
-                      />
+                                            <field name="product_id" widget="many2one" />
                                         </h3>
                                         <label for="product_price" />
                                         <h3>
@@ -168,64 +129,47 @@
                                     <div class="col">
                                         <label for="product_number_reached" />
                                         <h3>
+                                            <field name="product_number_reached" />
+                                            /
+                                            <field name="product_number_goal" />
                                             <field
-                        name="product_number_reached"
-                      /> / <field name="product_number_goal" />
-                                            <field
-                        name="product_crowdfunding_impact"
-                        style="margin-left: 0.5em; font-weight: normal"
-                      />
+                                                name="product_crowdfunding_impact"
+                                                style="margin-left: 0.5em; font-weight: normal"
+                                            />
                                         </h3>
-                                        <label
-                      for="number_sponsorships_reached"
-                    />
+                                        <label for="number_sponsorships_reached" />
                                         <h3>
-                                            <field
-                        name="number_sponsorships_reached"
-                      /> / <field name="number_sponsorships_goal" />
+                                            <field name="number_sponsorships_reached" />
+                                            /
+                                            <field name="number_sponsorships_goal" />
                                         </h3>
                                         <label for="number_csp_reached" />
                                         <h3>
-                                            <field
-                        name="number_csp_reached"
-                      /> / <field name="number_csp_goal" />
+                                            <field name="number_csp_reached" />
+                                            /
+                                            <field name="number_csp_goal" />
                                         </h3>
                                     </div>
                                     <div class="col">
                                         <label for="presentation_video" />
                                         <h3>
-                                            <field
-                        name="presentation_video"
-                        widget="char"
-                      />
+                                            <field name="presentation_video" widget="char" />
                                         </h3>
                                         <label for="facebook_url" />
                                         <h3>
-                                            <field
-                        name="facebook_url"
-                        widget="char"
-                      />
+                                            <field name="facebook_url" widget="char" />
                                         </h3>
                                         <label for="twitter_url" />
                                         <h3>
-                                            <field
-                        name="twitter_url"
-                        widget="char"
-                      />
+                                            <field name="twitter_url" widget="char" />
                                         </h3>
                                         <label for="instagram_url" />
                                         <h3>
-                                            <field
-                        name="instagram_url"
-                        widget="char"
-                      />
+                                            <field name="instagram_url" widget="char" />
                                         </h3>
                                         <label for="personal_web_page_url" />
                                         <h3>
-                                            <field
-                        name="personal_web_page_url"
-                        widget="char"
-                      />
+                                            <field name="personal_web_page_url" widget="char" />
                                         </h3>
                                     </div>
                                 </div>
@@ -233,21 +177,14 @@
                                     <div class="col">
                                         <label for="description" />
                                         <p>
-                                            <field
-                        name="description"
-                        nolabel="1"
-                      />
+                                            <field name="description" nolabel="1" />
                                         </p>
                                     </div>
                                 </div>
                             </div>
                         </page>
                         <page string="Participants" name="project_participants">
-                            <field
-                name="participant_ids"
-                widget="one2many"
-                context="{'default_project_id': active_id}"
-              >
+                            <field name="participant_ids" widget="one2many" context="{'default_project_id': active_id}">
                                 <tree>
                                     <field name="partner_id" />
                                     <field name="product_number_reached" />
@@ -257,11 +194,11 @@
                         </page>
                         <page string="Donations">
                             <field
-                name="invoice_line_ids"
-                widget="one2many"
-                context="{'default_tree_view': %(crowdfunding_compassion.donation_tree_view)d}"
-                domain="[('payment_state','=','paid')]"
-              />
+                                name="invoice_line_ids"
+                                widget="one2many"
+                                context="{'default_tree_view': %(crowdfunding_compassion.donation_tree_view)d}"
+                                domain="[('payment_state','=','paid')]"
+                            />
                         </page>
                         <page string="Sponsorships">
                             <field name="sponsorship_ids" widget="one2many">
@@ -307,42 +244,14 @@
                 <field name="type" />
                 <field name="create_date" />
                 <field name="deadline" />
-                <filter
-          name="state_active"
-          domain="[('state', '=', 'active')]"
-          string="Active"
-        />
-                <filter
-          name="state_draft"
-          domain="[('state', '=', 'draft')]"
-          string="Draft"
-        />
-                <filter
-          name="state_done"
-          domain="[('state', '=', 'done')]"
-          string="Done"
-        />
+                <filter name="state_active" domain="[('state', '=', 'active')]" string="Active" />
+                <filter name="state_draft" domain="[('state', '=', 'draft')]" string="Draft" />
+                <filter name="state_done" domain="[('state', '=', 'done')]" string="Done" />
                 <group expand="0" string="Group By">
-                    <filter
-            string="Type project"
-            name="type"
-            context="{'group_by':'type'}"
-          />
-                    <filter
-            string="Created"
-            name="create_date"
-            context="{'group_by':'create_date'}"
-          />
-                    <filter
-            string="Project owner"
-            name="project_owner_id"
-            context="{'group_by':'project_owner_id'}"
-          />
-                    <filter
-            string="Deadline"
-            name="deadline"
-            context="{'group_by':'deadline'}"
-          />
+                    <filter string="Type project" name="type" context="{'group_by':'type'}" />
+                    <filter string="Created" name="create_date" context="{'group_by':'create_date'}" />
+                    <filter string="Project owner" name="project_owner_id" context="{'group_by':'project_owner_id'}" />
+                    <filter string="Deadline" name="deadline" context="{'group_by':'deadline'}" />
                 </group>
             </search>
         </field>
@@ -354,10 +263,10 @@
         <field name="model">crowdfunding.project</field>
         <field name="arch" type="xml">
             <tree
-        decoration-info="website_published==False or state=='draft'"
-        decoration-muted="active==False or state=='done'"
-        default_order="deadline desc"
-      >
+                decoration-info="website_published==False or state=='draft'"
+                decoration-muted="active==False or state=='done'"
+                default_order="deadline desc"
+            >
                 <field name="cover_photo" widget='image' />
                 <field name="name" />
                 <field name="website_id" />
@@ -412,63 +321,40 @@
                 <templates>
                     <t t-name="kanban-box">
                         <div
-              t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click card o_kanban_record_has_image_fill"
-            >
+                            t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click card o_kanban_record_has_image_fill"
+                        >
                             <div class="o_dropdown_kanban dropdown">
-                                <a
-                  class="dropdown-toggle o-no-caret btn"
-                  role="button"
-                  data-toggle="dropdown"
-                >
+                                <a class="dropdown-toggle o-no-caret btn" role="button" data-toggle="dropdown">
                                     <span class="fa fa-ellipsis-v" />
                                 </a>
                                 <div class="dropdown-menu" role="menu">
                                     <t t-if="widget.editable">
-                                        <a
-                      role="menuitem"
-                      type="edit"
-                      class="dropdown-item"
-                    >Edit</a>
+                                        <a role="menuitem" type="edit" class="dropdown-item">Edit</a>
                                     </t>
                                     <t t-if="widget.deletable">
-                                        <a
-                      role="menuitem"
-                      type="delete"
-                      class="dropdown-item"
-                    >Delete</a>
+                                        <a role="menuitem" type="delete" class="dropdown-item">Delete</a>
                                     </t>
-                                    <t
-                    t-if="record.state.raw_value != 'active'"
-                  >
-                                        <a
-                      role="menuitem"
-                      name="validate"
-                      type="object"
-                      class="dropdown-item"
-                    >Validate</a>
+                                    <t t-if="record.state.raw_value != 'active'">
+                                        <a role="menuitem" name="validate" type="object" class="dropdown-item">
+                                            Validate
+                                        </a>
                                     </t>
-                                    <ul
-                    class="oe_kanban_colorpicker"
-                    data-field="color"
-                  />
+                                    <ul class="oe_kanban_colorpicker" data-field="color" />
                                 </div>
                             </div>
                             <div
-                class="o_kanban_image_fill_left d-none d-md-block"
-                t-attf-style="background-image:url('#{kanban_image('crowdfunding.project', 'cover_photo', record.id.raw_value)}')"
-              >
+                                class="o_kanban_image_fill_left d-none d-md-block"
+                                t-attf-style="background-image:url('#{kanban_image('crowdfunding.project', 'cover_photo', record.id.raw_value)}')"
+                            >
                                 <img
-                  class="o_kanban_image_inner_pic"
-                  t-if="record.project_owner_id.raw_value"
-                  t-att-alt="record.project_owner_id.value"
-                  t-att-src="kanban_image('res.partner', 'image_128', record.project_owner_id.raw_value)"
-                />
+                                    class="o_kanban_image_inner_pic"
+                                    t-if="record.project_owner_id.raw_value"
+                                    t-att-alt="record.project_owner_id.value"
+                                    t-att-src="kanban_image('res.partner', 'image_128', record.project_owner_id.raw_value)"
+                                />
                             </div>
                             <div class="card-body oe_kanban_details">
-                                <h4
-                  class="card-title"
-                  style="text-transform: text-uppercase;"
-                >
+                                <h4 class="card-title" style="text-transform: text-uppercase;">
                                     <a type="open">
                                         <field name="name" />
                                     </a>
@@ -483,41 +369,34 @@
                                         <field name="time_left" />
                                         )
                                     </span>
-                                    <span
-                    class="badge badge-primary"
-                    t-if="record.state.raw_value == 'active'"
-                  >
+                                    <span class="badge badge-primary" t-if="record.state.raw_value == 'active'">
                                         <field name="amount_reached" />
                                         .-CHF
                                     </span>
                                 </h5>
                                 <h5>
                                     <span
-                    t-attf-class="#{record.color_sponsorship.raw_value}"
-                    t-if="record.number_sponsorships_goal.raw_value"
-                  >
-                                        <field
-                      name="number_sponsorships_reached"
-                    />
+                                        t-attf-class="#{record.color_sponsorship.raw_value}"
+                                        t-if="record.number_sponsorships_goal.raw_value"
+                                    >
+                                        <field name="number_sponsorships_reached" />
                                         /
-                                        <field
-                      name="number_sponsorships_goal"
-                    />
+                                        <field name="number_sponsorships_goal" />
                                         sponsorship reached
                                     </span>
                                     <span
-                    t-attf-class="#{record.color_sponsorship.raw_value}"
-                    t-if="record.number_csp_reached.raw_value"
-                  >
+                                        t-attf-class="#{record.color_sponsorship.raw_value}"
+                                        t-if="record.number_csp_reached.raw_value"
+                                    >
                                         <field name="number_csp_reached" />
                                         /
                                         <field name="number_csp_goal" />
                                         CSP reached
                                     </span>
                                     <span
-                    t-attf-class="#{record.color_product.raw_value}"
-                    t-if="record.product_number_goal.raw_value"
-                  >
+                                        t-attf-class="#{record.color_product.raw_value}"
+                                        t-if="record.product_number_goal.raw_value"
+                                    >
                                         <field name="product_number_reached" />
                                         /
                                         <field name="product_number_goal" />
@@ -525,26 +404,18 @@
                                     </span>
                                 </h5>
                                 <p
-                  class="card-text"
-                  data-toggle="tooltip"
-                  data-html="true"
-                  t-att-title="record.description_short.raw_value"
-                >
+                                    class="card-text"
+                                    data-toggle="tooltip"
+                                    data-html="true"
+                                    t-att-title="record.description_short.raw_value"
+                                >
                                     <field name="description_short" />
                                 </p>
                             </div>
-                            <div
-                class="card-footer w-100 text-muted text-center"
-              >
-                                <a
-                  name="open_participants"
-                  type="object"
-                  class="btn btn-outline-info"
-                  role="button"
-                >
-                                    <field
-                    name="number_participants"
-                  /> Participants
+                            <div class="card-footer w-100 text-muted text-center">
+                                <a name="open_participants" type="object" class="btn btn-outline-info" role="button">
+                                    <field name="number_participants" />
+                                    Participants
                                 </a>
                             </div>
                         </div>
@@ -555,24 +426,19 @@
     </record>
 
     <!-- Action opening the tree view -->
-    <record
-    id="open_view_crowdfunding_project_tree"
-    model="ir.actions.act_window"
-  >
+    <record id="open_view_crowdfunding_project_tree" model="ir.actions.act_window">
         <field name="name">Project</field>
         <field name="res_model">crowdfunding.project</field>
         <field name="view_mode">tree,kanban,form,graph</field>
-        <field
-      name="context"
-    >{'search_default_state_draft':1,'search_default_state_active':1}</field>
+        <field name="context">{'search_default_state_draft':1,'search_default_state_active':1}</field>
     </record>
 
     <!-- Menu -->
     <menuitem
-    id="menu_crowdfunding_project"
-    parent="menu_event_crowdfunding"
-    name="Projects"
-    action="open_view_crowdfunding_project_tree"
-    sequence="1"
-  />
+        id="menu_crowdfunding_project"
+        parent="menu_event_crowdfunding"
+        name="Projects"
+        action="open_view_crowdfunding_project_tree"
+        sequence="1"
+    />
 </odoo>

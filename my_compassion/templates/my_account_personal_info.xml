@@ -17,9 +17,7 @@
                         </div>
                         <!-- Privacy data and child protection -->
                         <div class="col-md-6">
-                            <t
-                t-call="my_compassion.my_information_privacy_data"
-              />
+                            <t t-call="my_compassion.my_information_privacy_data" />
                         </div>
                     </div>
                 </div>
@@ -47,10 +45,7 @@
             <t t-call="my_compassion.fill_key_value">Street</t>
 
             <!-- City -->
-            <t
-        t-set="value"
-        t-value="' '.join(list(filter(None, [partner.zip, partner.city])))"
-      />
+            <t t-set="value" t-value="' '.join(list(filter(None, [partner.zip, partner.city])))" />
             <t t-call="my_compassion.fill_key_value">City</t>
 
             <!-- Country -->
@@ -75,36 +70,36 @@
 
             <div class="d-flex mt-4">
                 <!-- This button opens the form to modify the personal info -->
-                <a
-          href="/my/account?redirect=/my/information"
-          role="button"
-          class="btn btn-primary mr-4"
-        >Edit my details</a>
+                <a href="/my/account?redirect=/my/information" role="button" class="btn btn-primary mr-4">
+                    Edit my details
+                </a>
 
-                <a
-          href="/my/security?redirect=/my/information"
-          role="button"
-          class="btn btn-primary ml-4"
-        >Change Password</a>
+                <a href="/my/security?redirect=/my/information" role="button" class="btn btn-primary ml-4">
+                    Change Password
+                </a>
             </div>
-
         </template>
 
         <!-- Display the date at which the partner signed some charters, otherwise propose to sign them -->
         <template id="my_information_privacy_data">
             <h3 class="mt-4">Privacy data</h3>
-            <p
-      >Compassion knows that children living in extreme poverty are vulnerable. We put their protection as our number one priority.
-                <t
-          t-if="not partner.date_agreed_child_protection_charter"
-        >We ask our volunteering friends and people that travel to visit their sponsored child to sign a child protection charter. If you want to make a step further, you can sign this document as well and show us that you share our values.
+            <p>
+                Compassion knows that children living in extreme poverty are vulnerable. We put their protection as our
+                number one priority.
+                <t t-if="not partner.date_agreed_child_protection_charter">
+                    We ask our volunteering friends and people that travel to visit their sponsored child to sign a
+                    child protection charter. If you want to make a step further, you can sign this document as well and
+                    show us that you share our values.
                 </t>
                 <t t-else="">
-                    We thank you that you have signed our child protection charter. You can review the document at any time from here.
+                    We thank you that you have signed our child protection charter. You can review the document at any
+                    time from here.
                 </t>
             </p>
-            <p
-      >Compassion is also serious about the protection of your data. All your information is kept private and only used internally. You can sign or review our data protection policy from here.</p>
+            <p>
+                Compassion is also serious about the protection of your data. All your information is kept private and
+                only used internally. You can sign or review our data protection policy from here.
+            </p>
 
             <!-- Child protection charter -->
             <div class="row mb-2">
@@ -113,17 +108,17 @@
                 </div>
                 <div class="col-6">
                     <t t-if="partner.date_agreed_child_protection_charter">
-                        <span>Signing date: </span>
-                        <t
-              t-esc="partner.get_date('date_agreed_child_protection_charter', 'date_short')"
-            />
+                        <span>Signing date:</span>
+                        <t t-esc="partner.get_date('date_agreed_child_protection_charter', 'date_short')" />
                         <a href="/child-protection-charter">(view agreement)</a>
                     </t>
                     <t t-else="">
                         <a
-              href="/partner/child-protection-charter?redirect=/my/information"
-              class="btn btn-primary w-100"
-            >Sign Child Protection Charter</a>
+                            href="/partner/child-protection-charter?redirect=/my/information"
+                            class="btn btn-primary w-100"
+                        >
+                            Sign Child Protection Charter
+                        </a>
                     </t>
                 </div>
             </div>
@@ -135,38 +130,27 @@
                 </div>
                 <div class="col-6">
                     <t t-if="partner.legal_agreement_date">
-                        <span>Signing date: </span>
-                        <t
-              t-esc="partner.get_date('legal_agreement_date', 'date_short')"
-            />
+                        <span>Signing date:</span>
+                        <t t-esc="partner.get_date('legal_agreement_date', 'date_short')" />
                         <a href="/legal" target="_blank">(view agreement)</a>
                     </t>
                     <form t-else="" enctype="application/x-www-form-urlencoded">
                         <div class="form-check">
-                                <input
-                type="checkbox"
-                value="accepted"
-                id="privacy_policy"
-                name="privacy_policy"
-                class="s_website_form_input form-check-input"
-              />
-                                <label
-                class="form-check-label font-weight-normal"
-                for="privacy_policy"
-              >
-                                    <t
-                  t-call="website_legal_page.acceptance_full"
-                />
-                                </label>
-                            </div>
-                        <button
-              class="btn btn-primary w-100 mt-2"
-              type="submit"
-            >Sign the Agreement</button>
+                            <input
+                                type="checkbox"
+                                value="accepted"
+                                id="privacy_policy"
+                                name="privacy_policy"
+                                class="s_website_form_input form-check-input"
+                            />
+                            <label class="form-check-label font-weight-normal" for="privacy_policy">
+                                <t t-call="website_legal_page.acceptance_full" />
+                            </label>
+                        </div>
+                        <button class="btn btn-primary w-100 mt-2" type="submit">Sign the Agreement</button>
                     </form>
                 </div>
             </div>
         </template>
-
     </data>
 </odoo>

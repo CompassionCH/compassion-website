@@ -13,12 +13,12 @@ Page: My Compassion 2 Children Page
 -->
 <odoo>
     <template id="my2_children_page" name="My Compassion 2 Children Page">
-        <link rel="stylesheet" href="/my_compassion/static/src/css/line-divider.css"/>
+        <link rel="stylesheet" href="/my_compassion/static/src/css/line-divider.css" />
         <t t-call="website.layout">
             <div class="container">
                 <!-- Calling breadcrumb component -->
                 <t t-call="my_compassion.my2_breadcrumbs">
-                    <t t-set="breadcrumbs" t-value="breadcrumbs"/>
+                    <t t-set="breadcrumbs" t-value="breadcrumbs" />
                 </t>
                 <div class="row">
                     <div class="col-12">
@@ -32,7 +32,7 @@ Page: My Compassion 2 Children Page
                             <!-- Using children_card component -->
                             <t t-call="my_compassion.my2_children_card_component">
                                 <!-- The data we are passing to the children_card_component -->
-                                <t t-set="sponsorship" t-value="sponsorship"/>
+                                <t t-set="sponsorship" t-value="sponsorship" />
                             </t>
                         </div>
                     </t>
@@ -48,7 +48,7 @@ Page: My Compassion 2 Children Page
                 </div>
                 <div class="row">
                     <div class="line-divider-container">
-                        <div class="line-divider"/>
+                        <div class="line-divider" />
                     </div>
                 </div>
                 <!-- TERMINATED SPONSORSHIPS CHILDREN -->
@@ -58,7 +58,7 @@ Page: My Compassion 2 Children Page
                             <!-- Using card component -->
                             <t t-call="my_compassion.my2_children_card_component">
                                 <!-- The data we are passing to the children_card_component -->
-                                <t t-set="child_sponsorship" t-value="sponsorship"/>
+                                <t t-set="child_sponsorship" t-value="sponsorship" />
                             </t>
                         </div>
                     </t>

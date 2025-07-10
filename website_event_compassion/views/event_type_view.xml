@@ -10,11 +10,8 @@
                     <field name="compassion_event_type" />
                 </group>
             </div>
-            <xpath
-        expr="//div[@name='event_type_communication']//div[@class='o_setting_left_pane']"
-        position="before"
-      >
-<!--                <div class="o_setting_right_pane"/>-->
+            <xpath expr="//div[@name='event_type_communication']//div[@class='o_setting_left_pane']" position="before">
+                <!--                <div class="o_setting_right_pane"/>-->
                 <div class="o_setting_right_pane">
                     <label for="medical_survey_id" />
                     <field name="medical_survey_id" />
@@ -24,41 +21,29 @@
                     <field name="feedback_survey_id" />
                 </div>
             </xpath>
-            <xpath
-        expr="//field[@name='event_type_mail_ids']//field[@name='template_id']"
-        position="attributes"
-      >
-                <attribute
-          name="attrs"
-        >{'required': [('notification_type', '=', 'mail')],
-                  'invisible': [('notification_type', '!=', 'communication')]}</attribute>
+            <xpath expr="//field[@name='event_type_mail_ids']//field[@name='template_id']" position="attributes">
+                <attribute name="attrs">
+                    {'required': [('notification_type', '=', 'mail')],
+                  'invisible': [('notification_type', '!=', 'communication')]}
+                </attribute>
             </xpath>
-            <xpath
-        expr="//field[@name='event_type_mail_ids']//field[@name='template_id']"
-        position="after"
-      >
+            <xpath expr="//field[@name='event_type_mail_ids']//field[@name='template_id']" position="after">
                 <field
-          name="communication_id"
-          attrs="{'required': [('notification_type', '=', 'communication')],
+                    name="communication_id"
+                    attrs="{'required': [('notification_type', '=', 'communication')],
                                                         'invisible': [('notification_type', '!=', 'communication')]}"
-        />
+                />
             </xpath>
-            <xpath
-        expr="//field[@name='event_type_mail_ids']//field[@name='interval_type']"
-        position="after"
-      >
+            <xpath expr="//field[@name='event_type_mail_ids']//field[@name='interval_type']" position="after">
                 <field
-          name="stage_id"
-          domain="['|', ('event_type_ids', '=', active_id), ('event_type_ids', '=', False)]"
-          attrs="{'required': [('interval_type', '=', 'after_stage')]}"
-        />
+                    name="stage_id"
+                    domain="['|', ('event_type_ids', '=', active_id), ('event_type_ids', '=', False)]"
+                    attrs="{'required': [('interval_type', '=', 'after_stage')]}"
+                />
             </xpath>
             <xpath expr="/form/sheet" position="after">
                 <div class="oe_chatter">
-                    <field
-            name="message_follower_ids"
-            groups="base.group_user"
-          />
+                    <field name="message_follower_ids" groups="base.group_user" />
                     <field name="message_ids" />
                 </div>
             </xpath>

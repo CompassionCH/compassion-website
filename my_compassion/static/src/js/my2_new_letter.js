@@ -14,7 +14,8 @@ document.addEventListener("DOMContentLoaded", function () {
             form.addEventListener("submit", onSubmitLetter);
         }
         const letterInput = document.getElementById("letter-input");
-        const RE_EMOJI = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
+        const RE_EMOJI =
+            /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
 
         if (letterInput) {
             letterInput.addEventListener("input", function () {
@@ -26,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (!warning) {
                         warning = document.createElement("div");
                         warning.id = "emoji-warning";
-                       // TODO refactor the styling with a class from the theme when theme is ready
+                        // TODO refactor the styling with a class from the theme when theme is ready
                         warning.style.color = "red";
                         warning.style.marginTop = "5px";
                         letterInput.parentNode.appendChild(warning);
@@ -62,12 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Collect the form data
             let childId, templateId, letterBody, attachments;
             try {
-                ({
-                    childId,
-                    templateId,
-                    letterBody,
-                    attachments
-                } = await collectFormData());
+                ({ childId, templateId, letterBody, attachments } = await collectFormData());
             } catch (error) {
                 // TODO enhance error display to the user
                 alert(error.message);
@@ -82,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 source: "mycompassion",
                 csrf_token: odoo.csrf_token,
                 attachments: attachments,
-                mode: mode
+                mode: mode,
             };
 
             let fakeProgressPromise;
@@ -91,10 +87,12 @@ document.addEventListener("DOMContentLoaded", function () {
             // If the mode is 'send', show a modal with a fake progress bar
             if (mode === "send") {
                 // Show the modal and prevents the user to be able to close the modal
-                $("#submitModal").modal({
-                    backdrop: 'static',
-                    keyboard: false
-                }).modal('show');
+                $("#submitModal")
+                    .modal({
+                        backdrop: "static",
+                        keyboard: false,
+                    })
+                    .modal("show");
 
                 const progressControl = showFakeProgress();
                 fakeProgressPromise = progressControl.promise;
@@ -113,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }),
                     // If no fake progress is needed (in preview mode),
                     // use Promise.resolve() to ensure Promise.race always has a valid promise.
-                    fakeProgressPromise || Promise.resolve()
+                    fakeProgressPromise || Promise.resolve(),
                 ]);
 
                 const result = await rpcPromise;
@@ -121,12 +119,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 // (Yes this is an anti-pattern, I'm sorry, I need to rush)
                 if (fakeProgressPromise) await fakeProgressPromise;
                 await handleResponse(mode, result, childId);
-
             } catch (error) {
                 // Remove the modal with the fake progress bar in case of error
                 if (timeoutId) clearTimeout(timeoutId);
                 $("#submitModal").modal("hide");
-                alert("Failed to create letter:" + error)
+                alert("Failed to create letter:" + error);
                 console.error("Failed to create letter: ", error);
                 // TODO: Show error message in UI
                 return;
@@ -143,10 +140,10 @@ document.addEventListener("DOMContentLoaded", function () {
          * @async
          * @function
          * @returns {Promise<Object>} A promise that resolves to an object containing:
-         *   @property {string} childId - The ID of the selected child.
-         *   @property {string|null} templateId - The ID of the selected template, or null if not selected.
-         *   @property {string} letterBody - The body text of the letter.
-         *   @property {Array<{filename: string, content: string}>} attachments - The list of base64-encoded attachments.
+         *   @property {String} childId - The ID of the selected child.
+         *   @property {String|null} templateId - The ID of the selected template, or null if not selected.
+         *   @property {String} letterBody - The body text of the letter.
+         *   @property {Array<{filename: String, content: String}>} attachments - The list of base64-encoded attachments.
          */
         async function collectFormData() {
             const childId = document.getElementById("child-dropdown").value;
@@ -160,7 +157,6 @@ document.addEventListener("DOMContentLoaded", function () {
             // TODO handle in a clean way encoding potential issue with a throw new Error
             const attachments = await encodeAttachments(fileInput.files);
 
-
             // Validate inputs and throw error messages in case of missing value
             // TODO instead of displaying an alert, display something with a better UI.
             if (!childId) {
@@ -172,10 +168,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             if (!letterBody) {
-                throw new Error("Please write something in your letter")
+                throw new Error("Please write something in your letter");
             }
 
-            return {childId, templateId, letterBody, attachments};
+            return { childId, templateId, letterBody, attachments };
         }
 
         /**
@@ -188,7 +184,7 @@ document.addEventListener("DOMContentLoaded", function () {
          * @async
          * @function
          * @param {FileList} fileList - The list of files selected by the user.
-         * @returns {Promise<Array<{filename: string, content: string}>>}
+         * @returns {Promise<Array<{filename: String, content: String}>>}
          *   A promise resolving to an array of attachment objects with:
          *   - filename: Original name of the file.
          *   - content: Base64-encoded string (without the data URI prefix).
@@ -227,7 +223,7 @@ document.addEventListener("DOMContentLoaded", function () {
          * along with the timeout ID to optionally allow cancelling the progress animation externally.
          *
          * @function
-         * @returns {{promise: Promise<void>, timeoutId: number}}
+         * @returns {{promise: Promise<void>, timeoutId: Number}}
          *   An object containing:
          *   - `promise`: Resolves when the last step is complete.
          *   - `timeoutId`: The ID of the last setTimeout, useful for canceling if needed.
@@ -239,7 +235,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "Applying the template…",
                 "Adding your text…",
                 "Adding your attachments…",
-                "Finalizing…"
+                "Finalizing…",
             ];
 
             let currentStep = 0;
@@ -266,7 +262,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 updateProgress();
             });
 
-            return {promise, timeoutId};
+            return { promise, timeoutId };
         }
 
         /**
@@ -283,7 +279,7 @@ document.addEventListener("DOMContentLoaded", function () {
         function submitLetterRPC(data) {
             return rpc.query({
                 route: "/my2/children/letter/new",
-                params: data
+                params: data,
             });
         }
 
@@ -296,9 +292,9 @@ document.addEventListener("DOMContentLoaded", function () {
          *
          * @async
          * @function
-         * @param {string} mode - Submission mode: `'send'` to submit the letter, `'preview'` to show a preview.
+         * @param {String} mode - Submission mode: `'send'` to submit the letter, `'preview'` to show a preview.
          * @param {Object} result - The result object returned by the server.
-         * @param {string} childId - The ID of the selected child, used in the redirect URL.
+         * @param {String} childId - The ID of the selected child, used in the redirect URL.
          *
          * @returns {Promise<void>} Resolves when the UI navigation or update is complete.
          */
