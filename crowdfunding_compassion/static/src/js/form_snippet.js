@@ -22,7 +22,7 @@ odoo.define("crowdfunding_compassion.form_snippet", function (require) {
                 string: _t("Project description"),
                 placeholder: _t(
                     "Aim of the project, why you want to create it, for which " +
-                        "purpose and any useful information that the donors should know.",
+                        "purpose and any useful information that the donors should know."
                 ),
             },
             {
@@ -45,7 +45,7 @@ odoo.define("crowdfunding_compassion.form_snippet", function (require) {
                 name: "presentation_video",
                 string: _t("Presentation Video"),
                 placeholder: _t(
-                    "Paste any video link that showcase your project " + "(e.g. https://vimeo.com/jlkj34ek5)",
+                    "Paste any video link that showcase your project " + "(e.g. https://vimeo.com/jlkj34ek5)"
                 ),
             },
             {
@@ -92,7 +92,7 @@ odoo.define("crowdfunding_compassion.form_snippet", function (require) {
                 name: "number_sponsorships_goal",
                 string: _t("Sponsor children"),
                 placeholder: _t(
-                    "If you want to propose people to sponsor a child, " + "please indicate the goal number.",
+                    "If you want to propose people to sponsor a child, " + "please indicate the goal number."
                 ),
             },
             {
@@ -100,8 +100,7 @@ odoo.define("crowdfunding_compassion.form_snippet", function (require) {
                 name: "number_csp_goal",
                 string: _t("Sponsor mums and babies"),
                 placeholder: _t(
-                    "If you want to propose people to sponsor a mum and her baby, " +
-                        "please indicate the goal number.",
+                    "If you want to propose people to sponsor a mum and her baby, " + "please indicate the goal number."
                 ),
             },
             {
@@ -221,7 +220,7 @@ odoo.define("crowdfunding_compassion.form_snippet", function (require) {
                 string: _t("Project description"),
                 placeholder: _t(
                     "Aim of the project, why you want to create it, for which " +
-                        "purpose and any useful information that the donors should know.",
+                        "purpose and any useful information that the donors should know."
                 ),
             },
             {
@@ -244,7 +243,7 @@ odoo.define("crowdfunding_compassion.form_snippet", function (require) {
                 name: "presentation_video",
                 string: _t("Presentation Video"),
                 placeholder: _t(
-                    "Paste any video link that showcase your project " + "(e.g. https://vimeo.com/jlkj34ek5)",
+                    "Paste any video link that showcase your project " + "(e.g. https://vimeo.com/jlkj34ek5)"
                 ),
             },
             {

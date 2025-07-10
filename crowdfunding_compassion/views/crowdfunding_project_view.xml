@@ -44,7 +44,6 @@
                             </div>
                         </button>
                         <field name="website_published" widget="website_redirect_button" />
-
                         <field name="active" invisible="1" />
                         <widget
                             name="web_ribbon"
@@ -59,7 +58,6 @@
                             <h4>
                                 <field name="website_id" groups="website.group_website_publisher" />
                             </h4>
-
                             <h3>
                                 <field name="type" />
                             </h3>
@@ -233,7 +231,6 @@
             </form>
         </field>
     </record>
-
     <!-- Search view -->
     <record id="crowdfunding_project_search_all" model="ir.ui.view">
         <field name="name">crowdfunding.project.search</field>
@@ -256,7 +253,6 @@
             </search>
         </field>
     </record>
-
     <!-- Tree view -->
     <record id="view_crowdfunding_project_tree" model="ir.ui.view">
         <field name="name">crowdfunding.project.tree</field>
@@ -281,7 +277,6 @@
             </tree>
         </field>
     </record>
-
     <!-- Graph view -->
     <record id="crowdfunding_project_graph_view" model="ir.ui.view">
         <field name="name">crowdfunding.project.graph</field>
@@ -294,7 +289,6 @@
             </graph>
         </field>
     </record>
-
     <!-- Kanban view -->
     <record id="crowdfunding_project_kanban_view" model="ir.ui.view">
         <field name="name">crowdfunding.project.kanban</field>
@@ -424,7 +418,6 @@
             </kanban>
         </field>
     </record>
-
     <!-- Action opening the tree view -->
     <record id="open_view_crowdfunding_project_tree" model="ir.actions.act_window">
         <field name="name">Project</field>
@@ -432,7 +425,6 @@
         <field name="view_mode">tree,kanban,form,graph</field>
         <field name="context">{'search_default_state_draft':1,'search_default_state_active':1}</field>
     </record>
-
     <!-- Menu -->
     <menuitem
         id="menu_crowdfunding_project"

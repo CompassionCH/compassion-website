@@ -347,7 +347,6 @@
                             </label>
                         </div>
                         <hr class="text-primary my-5" />
-
                         <!-- If no cause is selected for the project we display the funds available. -->
                         <t t-if="not product">
                             <div class="row">
@@ -371,7 +370,6 @@
                                                     width="128px"
                                                 />
                                             </a>
-
                                             <div class="card-body">
                                                 <h3 class="text-primary card-title text-center" t-field="fund.name" />
                                                 <p
@@ -422,7 +420,6 @@
                                 <div class="col-sm-2" t-if="nb_fund &lt; 3" />
                             </div>
                         </t>
-
                         <!-- If a cause is set, it means a participant is joining and must only set his personal goal. -->
                         <t t-if="product">
                             <div class="col col-12 text-center">

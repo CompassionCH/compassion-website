@@ -68,7 +68,7 @@ odoo.define("crowdfunding_compassion.website_widgets", function (require) {
         _checkCustomCard: function () {
             const customAmountCard = document.getElementById("custom-amount-card");
             const otherCardsInputs = document.querySelectorAll(
-                'input[name="amount"]:not(#custom-amount-card):not(#custom-amount-field)',
+                'input[name="amount"]:not(#custom-amount-card):not(#custom-amount-field)'
             );
 
             if (customAmountCard && otherCardsInputs) {

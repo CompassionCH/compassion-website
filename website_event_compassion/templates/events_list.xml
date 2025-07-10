@@ -6,7 +6,6 @@
         <field name="parent_id" ref="website.main_menu" />
         <field name="sequence" type="int">20</field>
     </record>
-
     <template id="list" name="Events list page">
         <t t-call="website.layout">
             <t t-set="additional_title">Events</t>
@@ -50,7 +49,6 @@
                                     t-field="event.start_date"
                                     t-options="{'widget': 'date'}"
                                 />
-
                                 <a t-att-href="event.website_url" class="btn btn-primary o_default_snippet_text">
                                     View event
                                 </a>

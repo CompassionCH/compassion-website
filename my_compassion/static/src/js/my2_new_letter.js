@@ -14,8 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
             form.addEventListener("submit", onSubmitLetter);
         }
         const letterInput = document.getElementById("letter-input");
-        const RE_EMOJI =
-            /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
+        const RE_EMOJI = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
 
         if (letterInput) {
             letterInput.addEventListener("input", function () {

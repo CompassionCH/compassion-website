@@ -13,7 +13,6 @@
                 <attribute name="href">/my/information</attribute>
             </xpath>
         </template>
-
         <!-- Displayed when user sponsors no child on children related views  -->
         <template id="sponsor_a_child" name="My Children">
             <t t-call="portal.frontend_layout">
@@ -30,7 +29,6 @@
                 </div>
             </t>
         </template>
-
         <!-- Utility to create a row, given the key and its corresponding value. Gets the following arguments: -->
         <!--     1. key, the key to fill in on the right, should be passed inside the template call -->
         <!--     2. value, the value to fill in on the left, nothing is displayed if empty -->

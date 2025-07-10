@@ -4,7 +4,6 @@
         <t t-call="portal.frontend_layout">
             <t t-set="event" t-value="main_object.compassion_event_id" />
             <t t-set="additional_title" t-value="event.name" />
-
             <div class="container my-5">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
@@ -116,7 +115,6 @@
             <t t-set="form_type">childpack</t>
         </t>
     </template>
-
     <template id="muskathlon_order_generic_form">
         <section
             class="s_website_form pt16 pb16 o_colored_level"

@@ -38,14 +38,12 @@
                         </div>
                     </nav>
                 </t>
-
                 <!-- The horizontal pictures to select the child -->
                 <!-- When reload is set to true, the child picture are link that
                 reload the page instead of only selecting the child
                 this allow more flexibility on the behaviour of a click -->
                 <t t-set="reload" t-value="'true'" />
                 <t t-call="my_compassion.children_horizontal_cards" />
-
                 <!-- Small menu to jump directly to the right section inside the view -->
                 <body data-spy="scroll" data-target="#section_menu">
                     <div class="container">
@@ -74,21 +72,16 @@
                                 </li>
                             </ul>
                         </nav>
-
                         <!-- The actual sections implementation -->
                         <t t-call="my_compassion.my_children_info" />
-
                         <t t-call="my_compassion.my_children_pictures" />
-
                         <t t-call="my_compassion.my_children_gift_history" />
-
                         <t t-call="my_compassion.my_children_letters" />
                     </div>
                 </body>
                 <div class="mb-5" />
             </t>
         </template>
-
         <!-- Children pictures at the top of the view -->
         <template id="children_horizontal_cards">
             <!-- Template for horizontal children cards. Must provide following data :
@@ -135,7 +128,6 @@
             </nav>
             <script type="text/javascript" src="/my_compassion/static/src/js/my_children.js" defer="defer" />
         </template>
-
         <!-- Children general information inside the view -->
         <template id="my_children_info">
             <div id="info_section">
@@ -147,22 +139,18 @@
                             <!-- Age -->
                             <t t-set="value" t-value="child_id.age" />
                             <t t-call="my_compassion.fill_key_value">Age</t>
-
                             <!-- Birthdate -->
                             <t t-set="value" t-value="child_id.get_date('birthdate', 'date_full')" />
                             <t t-call="my_compassion.fill_key_value">Birthdate</t>
-
                             <!-- Gender -->
                             <t t-set="value" t-value="child_id.translate('gender')" />
                             <t t-call="my_compassion.fill_key_value">Gender</t>
-
                             <!-- Hobbies -->
                             <t t-set="value" t-value="child_id.get_list('hobby_ids.value')" />
                             <t t-if="request.env.lang != 'de_DE'">
                                 <t t-set="value" t-value="value.capitalize()" />
                             </t>
                             <t t-call="my_compassion.fill_key_value">Hobbies</t>
-
                             <!-- Education level -->
                             <t t-if="child_id.education_level and child_id.education_level != 'Not Enrolled'">
                                 <t t-set="value" t-value="child_id.translate('education_level')" />
@@ -171,7 +159,6 @@
                             <br />
                         </t>
                     </div>
-
                     <div class="col-md-6">
                         <!-- Family information -->
                         <t
@@ -195,7 +182,6 @@
                                     </t>
                                 </div>
                             </div>
-
                             <!-- Family, not a single string so we have to construct it -->
                             <div class="row" t-if="child_id.household_id.member_ids">
                                 <div class="col-6 border-right">
@@ -215,28 +201,24 @@
                                     </t>
                                 </div>
                             </div>
-
                             <!-- Father/representative's job -->
                             <t
                                 t-set="value"
                                 t-value="request.env['ir.advanced.translation'].get(child_id.household_id.translate('male_guardian_job'))"
                             />
                             <t t-call="my_compassion.fill_key_value">Father/representative's job</t>
-
                             <!-- Mother/representative's job -->
                             <t
                                 t-set="value"
                                 t-value="request.env['ir.advanced.translation'].get(child_id.household_id.translate('female_guardian_job'), female=True)"
                             />
                             <t t-call="my_compassion.fill_key_value">Mother/representative's job</t>
-
                             <!-- Household duties -->
                             <t t-set="value" t-value="child_id.get_list('duty_ids.value')" />
                             <t t-if="request.env.lang != 'de_DE'">
                                 <t t-set="value" t-value="value.capitalize()" />
                             </t>
                             <t t-call="my_compassion.fill_key_value">Household duties</t>
-
                             <br />
                         </t>
                     </div>
@@ -254,15 +236,12 @@
                                 t-value="', '.join(list(filter(None, [child_id.project_id.closest_city, child_id.project_id.country_id.name])))"
                             />
                             <t t-call="my_compassion.fill_key_value">Location</t>
-
                             <!-- Population -->
                             <t t-set="value" t-value="child_id.project_id.community_population" />
                             <t t-call="my_compassion.fill_key_value">Population</t>
-
                             <!-- Language -->
                             <t t-set="value" t-value="child_id.project_id.primary_language_id.name" />
                             <t t-call="my_compassion.fill_key_value">Language</t>
-
                             <!-- Common job -->
                             <t
                                 t-set="value"
@@ -272,14 +251,12 @@
                                 <t t-set="value" t-value="value.capitalize()" />
                             </t>
                             <t t-call="my_compassion.fill_key_value">Common jobs</t>
-
                             <!-- Typical food -->
                             <t t-set="value" t-value="child_id.get_list('project_id.primary_diet_ids.value')" />
                             <t t-if="request.env.lang != 'de_DE'">
                                 <t t-set="value" t-value="value.capitalize()" />
                             </t>
                             <t t-call="my_compassion.fill_key_value">Typical food</t>
-
                             <br />
                         </t>
                     </div>
@@ -291,11 +268,9 @@
                             <!-- Project name -->
                             <t t-set="value" t-value="child_id.project_id.closest_city" />
                             <t t-call="my_compassion.fill_key_value">Closest city</t>
-
                             <!-- Number of sponsor children -->
                             <t t-set="value" t-value="child_id.project_id.nb_cdsp_kids" />
                             <t t-call="my_compassion.fill_key_value">Number of sponsored children</t>
-
                             <!-- Project activities -->
                             <t t-if="child_activities">
                                 <t t-set="value" t-value="child_activities.mapped('value')" />
@@ -305,14 +280,12 @@
                                 <t t-set="value" t-value="', '.join(value)" />
                                 <t t-call="my_compassion.fill_key_value">Project activities</t>
                             </t>
-
                             <br />
                         </t>
                     </div>
                 </div>
             </div>
         </template>
-
         <!-- Children pictures inside the view -->
         <template id="my_children_pictures">
             <hr />
@@ -367,7 +340,6 @@
                 </a>
             </div>
         </template>
-
         <!-- Display the gift history for the selected child -->
         <template id="my_children_gift_history">
             <div id="gift_history_section" class="mt-4">
@@ -417,7 +389,6 @@
                 </a>
             </div>
         </template>
-
         <!-- Display the correspondence with the selected child -->
         <template id="my_children_letters">
             <hr />
@@ -465,7 +436,6 @@
                 <span>Download correspondence from all my sponsored children</span>
             </a>
         </template>
-
         <!-- Actual implementation of letter displaying. It is called two times, one for the S2B -->
         <!--  and one for the B2S-->
         <template id="display_letters">

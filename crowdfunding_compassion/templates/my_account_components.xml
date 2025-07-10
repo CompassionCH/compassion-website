@@ -33,7 +33,6 @@
                                         <a t-attf-href="/my/together/project/#{slug(project)}">Edit project</a>
                                     </td>
                                     <td t-else="">-</td>
-
                                     <td t-if="project_active">
                                         <a t-attf-href="/my/together/participant/#{slug(project.owner_participant_id)}">
                                             Edit participation
@@ -47,7 +46,6 @@
                 </div>
             </div>
         </template>
-
         <template id="my_account_participation_board">
             <div class="row">
                 <div class="col-xs-12">
@@ -88,7 +86,6 @@
                 </div>
             </div>
         </template>
-
         <template id="my_account_donation_board">
             <div class="row">
                 <div class="col-12">
@@ -103,7 +100,6 @@
                                 <th>Date</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             <t t-foreach="donations" t-as="donation">
                                 <t
@@ -125,7 +121,6 @@
                 </div>
             </div>
         </template>
-
         <template id="my_account_donation_tbody">
             <tr>
                 <td>

@@ -54,7 +54,6 @@
                                             />
                                             <t t-set="impact_type">sponsorship</t>
                                             <t t-call="crowdfunding_compassion.goal_progress" t-if="goal_objective" />
-
                                             <!-- Setup data and display the CSP progress -->
                                             <t t-if="participant.number_csp_reached > 1">
                                                 <t t-set="goal_name">mums and babies sponsored</t>
@@ -70,7 +69,6 @@
                                             />
                                             <t t-set="impact_type">sponsorship</t>
                                             <t t-call="crowdfunding_compassion.goal_progress" t-if="goal_objective" />
-
                                             <!-- Setup data and display the fund progress -->
                                             <t t-set="impact_type" t-value="project.product_id.impact_type" />
                                             <t
@@ -171,7 +169,6 @@
                         </div>
                     </div>
                 </section>
-
                 <!-- Content -->
                 <section class="project-content">
                     <div class="container">
@@ -201,7 +198,6 @@
                                         />
                                     </h5>
                                 </div>
-
                                 <t t-if="model == 'project'">
                                     <!-- Project description and video -->
                                     <h3 class="text-primary my-4">About the project</h3>
@@ -226,7 +222,6 @@
                                         />
                                     </t>
                                 </t>
-
                                 <!-- Project video and owner personal motivation  -->
                                 <t t-if="model == 'participant' or project.type == 'individual'">
                                     <h3 class="text-primary my-4">Why do I engage in this project</h3>
@@ -234,7 +229,6 @@
                                         <t t-esc="participant.personal_motivation" />
                                     </p>
                                 </t>
-
                                 <!-- Social sharing links -->
                                 <t t-if="model == 'project'">
                                     <t
@@ -242,22 +236,18 @@
                                     >
                                         <h5 class="text-primary mt-4 text-uppercase">Follow my project on</h5>
                                     </t>
-
                                     <t t-if="project.facebook_url">
                                         <a t-att-href="project.facebook_url" target="_blank">Facebook</a>
                                         <br />
                                     </t>
-
                                     <t t-if="project.instagram_url">
                                         <a t-att-href="project.instagram_url" target="_blank">Instagram</a>
                                         <br />
                                     </t>
-
                                     <t t-if="project.twitter_url">
                                         <a t-att-href="project.twitter_url" target="_blank">X</a>
                                         <br />
                                     </t>
-
                                     <t t-if="project.personal_web_page_url">
                                         <a t-att-href="project.personal_web_page_url" target="_blank">My website</a>
                                         <br />
@@ -269,46 +259,38 @@
                                     >
                                         <h5 class="text-primary mt-4 text-uppercase">Follow me on</h5>
                                     </t>
-
                                     <t t-if="participant.facebook_url">
                                         <a t-att-href="participant.facebook_url" target="_blank">Facebook</a>
                                         <br />
                                     </t>
-
                                     <t t-if="participant.instagram_url">
                                         <a t-att-href="participant.instagram_url" target="_blank">Instagram</a>
                                         <br />
                                     </t>
-
                                     <t t-if="participant.twitter_url">
                                         <a t-att-href="participant.twitter_url" target="_blank">X</a>
                                         <br />
                                     </t>
-
                                     <t t-if="participant.personal_web_page_url">
                                         <a t-att-href="participant.personal_web_page_url" target="_blank">My website</a>
                                         <br />
                                     </t>
                                 </t>
                             </div>
-
                             <!-- Side content -->
                             <div id="impacts" class="col-12 col-lg-4" style="overflow:auto;max-height:360px;">
                                 <t t-if="impact">
                                     <h3 class="text-primary text-center text-uppercase">Impact so far</h3>
-
                                     <t t-foreach="impact" t-as="impact_tile">
                                         <t t-call="crowdfunding_compassion.impact_tile" />
                                     </t>
                                 </t>
-
                                 <t t-else="">
                                     <h3 class="text-primary text-center mt-5 text-uppercase">No impact yet</h3>
                                     <t t-call="crowdfunding_compassion.impact_tile_empty" />
                                 </t>
                             </div>
                         </div>
-
                         <t t-if="model == 'project'">
                             <!-- Participants -->
                             <t t-if="project.type == 'collective'">
@@ -332,7 +314,6 @@
                                     </div>
                                 </div>
                             </t>
-
                             <!-- Fund cards -->
                             <div class="row justify-content-center">
                                 <t t-if="project.product_id">
@@ -344,7 +325,6 @@
                                         <t t-call="crowdfunding_compassion.fund_card" />
                                     </div>
                                 </t>
-
                                 <t t-if="project.number_sponsorships_goal > 0">
                                     <t t-set="fund_image" t-value="sponsorship_card_content['header_image']" />
                                     <t t-set="fund_icon" t-value="sponsorship_card_content['icon_image']" />

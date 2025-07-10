@@ -11,17 +11,14 @@
             <t t-set="additional_title">Write a letter</t>
             <t t-call="portal.frontend_layout">
                 <t t-call="my_compassion.letter_horizontal_pictures" />
-
                 <div class="container-fluid pr-5 pl-5 mb-5 mt-4">
                     <div class="row">
                         <div class="col-md-4">
                             <t t-call="my_compassion.letter_templates" />
                         </div>
-
                         <div class="col-md-4">
                             <t t-call="my_compassion.letter_text_content" />
                         </div>
-
                         <div class="col-md-4">
                             <t t-call="my_compassion.letter_actions" />
                         </div>
@@ -30,14 +27,12 @@
             </t>
             <script type="text/javascript" src="/my_compassion/static/src/js/write_a_letter.js" defer="defer" />
         </template>
-
         <!-- Children pictures at the top of the view -->
         <template id="letter_horizontal_pictures">
             <h3 class="text-primary text-center text-uppercase my-5">I want to write to:</h3>
             <t t-set="reload" t-value="'false'" />
             <t t-call="my_compassion.children_horizontal_cards" />
         </template>
-
         <!-- Here are displayed all the available templates to write a letter -->
         <template id="letter_templates">
             <h3 class="text-primary text-center text-uppercase mb-4">Choose a template</h3>
@@ -68,7 +63,6 @@
                 </t>
             </ul>
         </template>
-
         <!-- Display the text box to write the content of the letter -->
         <template id="letter_text_content">
             <h3 class="text-primary text-center text-uppercase mb-4">Write your text</h3>
@@ -112,7 +106,6 @@
                                 <li>Your social media contact (Facebook or other platforms)</li>
                                 <li>Don't make any promise about a gift or a visit</li>
                             </ul>
-
                             <h5>Technical Recommendation</h5>
                             <ul>
                                 <li>Make sure that any image you upload does not exceed 10Mb.</li>
@@ -140,7 +133,6 @@
                 style="height: 30rem; resize: none;"
             />
         </template>
-
         <!-- Menu of available actions to do with you letter (image loading, preview, send, ...) -->
         <template id="letter_actions">
             <h3 class="text-primary text-center text-uppercase mb-4">Add a picture</h3>
@@ -148,7 +140,6 @@
             <button class="btn btn-primary w-100 mb-2" onclick="document.getElementById('file_selector').click();">
                 <span>Add image</span>
             </button>
-
             <!-- Filled with javascript -->
             <!-- TODO CI-765: Change overflow-y to scroll so that images are not resized once the element become scrollable -->
             <ul
@@ -164,7 +155,6 @@
             <t t-foreach="auto_texts" t-as="auto_text">
                 <span t-attf-id="auto_text_#{auto_text}" t-esc="auto_text_value" style="display: none;" />
             </t>
-
             <h3 class="text-primary text-center text-uppercase mt-5 mb-4">Send your letter</h3>
             <button id="preview_normal" class="btn btn-primary w-100 mb-2" onclick="createLetter('preview')">
                 Preview

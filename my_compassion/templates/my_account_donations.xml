@@ -17,7 +17,6 @@
                 </div>
             </t>
         </template>
-
         <!-- Template that displays the single group for partners that have only one -->
         <template id="my_donations_payment_options">
             <h3>My payment options</h3>
@@ -29,18 +28,15 @@
                         <!-- Payment mode -->
                         <t t-set="value" t-value="group.payment_mode_id.name" />
                         <t t-call="my_compassion.fill_key_value">Payment mode</t>
-
                         <!-- Number of fully paid children -->
                         <t t-set="value" t-value="len(sponsorships)" />
                         <t t-call="my_compassion.fill_key_value">Number of sponsorships</t>
-
                         <!-- Payment frequency -->
                         <t
                             t-set="value"
                             t-value="str(group.advance_billing_months) + ' ' + group.translate('recurring_unit')"
                         />
                         <t t-call="my_compassion.fill_key_value">Payment frequency</t>
-
                         <!-- Payment amount -->
                         <t t-set="value" t-value="total_amount" />
                         <t t-call="my_compassion.fill_key_value">Total amount</t>
@@ -48,7 +44,6 @@
                 </t>
             </div>
         </template>
-
         <template id="my_sponsorship_donation">
             <hr />
             <div class="mt-4">
@@ -85,7 +80,6 @@
                 </div>
             </div>
         </template>
-
         <!-- view to display all the paid gift history -->
         <template id="my_donations_gift_history">
             <hr t-if="due_invoices" />
