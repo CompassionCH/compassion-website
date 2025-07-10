@@ -149,14 +149,24 @@
                     <!-- Preview and Submit buttons -->
                     <div class="row mb-2">
                         <div class="col-12 text-right">
-                            <button type="submit" class="btn btn-outline-primary"
-                                    data-mode="preview">
-                                Preview Letter
-                            </button>
-                            <button type="submit" class="btn btn-primary"
-                                    data-mode="send">
-                                Submit Letter
-                            </button>
+                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                <t t-set="variant" t-value="'default'"/>
+                                <t t-set="variation" t-value="'filled'"/>
+                                <t t-set="label" t-value="'Preview Letter'"/>
+                                <t t-set="icon" t-value="'icon-eye'"/>
+                                <t t-set="color" t-value="'dark-blue'"/>
+                                <t t-set="text_color" t-value="'pure_white'"/>
+                                <t t-set="mode" t-value="'preview'"/>
+                            </t>
+                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                <t t-set="variant" t-value="'default'"/>
+                                <t t-set="variation" t-value="'filled'"/>
+                                <t t-set="label" t-value="'Send'"/>
+                                <t t-set="icon" t-value="'icon-send01'"/>
+                                <t t-set="color" t-value="'dark-blue'"/>
+                                <t t-set="text_color" t-value="'pure_white'"/>
+                                <t t-set="mode" t-value="'send'"/>
+                            </t>
                         </div>
                     </div>
 
@@ -193,7 +203,8 @@
                             <div class="modal-content text-center p-4">
                                 <div class="modal-body">
                                     <div class="progress mb-3">
-                                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                             role="progressbar"
                                              style="width: 0%" id="progressBar"></div>
                                     </div>
                                     <p id="progressText" class="mb-0">Starting...</p>
