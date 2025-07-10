@@ -55,7 +55,8 @@
             </xpath>
             <xpath expr="//field[@name='event_mail_ids']//field[@name='template_id']" position="attributes">
                 <attribute name="attrs">
-                    {'required': [('notification_type', '=', 'mail')], 'invisible': [('notification_type', '!=', 'mail')]}
+                    {'required': [('notification_type', '=', 'mail')], 'invisible': [('notification_type', '!=',
+                    'mail')]}
                 </attribute>
             </xpath>
             <xpath expr="//field[@name='event_mail_ids']//field[@name='template_id']" position="before">

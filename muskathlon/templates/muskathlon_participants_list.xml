@@ -4,7 +4,6 @@
         <xpath expr="//div[@class='card-title']/.." position="after">
             <t t-set="discipline" t-value="registration.sport_discipline_id.with_context(lang='en_US')" />
             <t t-set="discipline_loc" t-value="registration.sport_discipline_id" />
-
             <div t-if="discipline.sport == 'Bike'" class="mb-3" t-att-title="discipline_loc.name">
                 <img class="sport_icon_sm" src="/muskathlon/static/src/data/biking.png" />
                 <span class="distance_km">

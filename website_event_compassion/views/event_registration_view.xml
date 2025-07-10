@@ -31,7 +31,6 @@
                     attrs="{ 'invisible': [('trip_invoice_id', '!=', False)] }"
                 />
             </button>
-
             <!-- Replace state widget by registration stage -->
             <field name="state" position="attributes">
                 <attribute name="invisible">1</attribute>
@@ -124,7 +123,6 @@
             </xpath>
         </field>
     </record>
-
     <record id="view_event_registration_tree_compassion" model="ir.ui.view">
         <field name="name">event.registration.website.compassion.tree</field>
         <field name="model">event.registration</field>
@@ -135,7 +133,6 @@
             </field>
         </field>
     </record>
-
     <record model="ir.ui.view" id="view_event_registration_kanban">
         <field name="name">event.registration.kanban</field>
         <field name="model">event.registration</field>
@@ -163,7 +160,6 @@
             </xpath>
         </field>
     </record>
-
     <record model="ir.actions.server" id="event_registration_all_attended_action">
         <field name="name">Action All Attended</field>
         <field name="model_id" ref="model_event_registration" />

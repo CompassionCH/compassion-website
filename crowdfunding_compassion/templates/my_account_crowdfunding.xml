@@ -21,7 +21,6 @@
                         <t t-call="crowdfunding_compassion.my_account_project_board" />
                     </section>
                 </div>
-
                 <div class="container w-100" t-if="participating_projects">
                     <h3 class="text-primary mt-4 mb-2 text-center text-uppercase">Projects you participate to</h3>
                     <section class="projects no-padding-top center">
@@ -29,7 +28,6 @@
                         <t t-call="crowdfunding_compassion.my_account_participation_board" />
                     </section>
                 </div>
-
                 <div class="container w-100" t-if="donations">
                     <h3 class="text-primary my-2 text-center">Donations</h3>
                     <section class="text-center">
@@ -38,7 +36,6 @@
                 </div>
             </t>
         </template>
-
         <template id="edit_project_form">
             <t t-call="portal.frontend_layout">
                 <t t-set="additional_title">Edit your project</t>
@@ -467,7 +464,6 @@
                 </section>
             </t>
         </template>
-
         <template id="edit_participation_form">
             <t t-call="portal.frontend_layout">
                 <t t-set="additional_title">Edit your profile</t>

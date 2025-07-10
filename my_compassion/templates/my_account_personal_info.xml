@@ -23,63 +23,49 @@
                 </div>
             </t>
         </template>
-
         <!-- The template that displays the personal information of the partner -->
         <template id="my_information_personal">
             <h3 class="mt-4">Coordinates</h3>
-
             <!-- Ref -->
             <t t-set="value" t-value="partner.ref" />
             <t t-call="my_compassion.fill_key_value">My reference</t>
-
             <!-- Title -->
             <t t-set="value" t-value="partner.title.name" />
             <t t-call="my_compassion.fill_key_value">Title</t>
-
             <!-- Name -->
             <t t-set="value" t-value="partner.name" />
             <t t-call="my_compassion.fill_key_value">Name</t>
-
             <!-- Street -->
             <t t-set="value" t-value="partner.street" />
             <t t-call="my_compassion.fill_key_value">Street</t>
-
             <!-- City -->
             <t t-set="value" t-value="' '.join(list(filter(None, [partner.zip, partner.city])))" />
             <t t-call="my_compassion.fill_key_value">City</t>
-
             <!-- Country -->
             <t t-set="value" t-value="partner.country_id.name" />
             <t t-call="my_compassion.fill_key_value">Country</t>
-
             <!-- Phone -->
             <t t-set="value" t-value="partner.phone" />
             <t t-call="my_compassion.fill_key_value">Phone</t>
-
             <!-- Mobile -->
             <t t-set="value" t-value="partner.mobile" />
             <t t-call="my_compassion.fill_key_value">Mobile</t>
-
             <!-- Email -->
             <t t-set="value" t-value="partner.email" />
             <t t-call="my_compassion.fill_key_value">Email</t>
-
             <!-- MyCompassion login -->
             <t t-set="value" t-value="partner.user_login" />
             <t t-call="my_compassion.fill_key_value">MyCompassion login</t>
-
             <div class="d-flex mt-4">
                 <!-- This button opens the form to modify the personal info -->
                 <a href="/my/account?redirect=/my/information" role="button" class="btn btn-primary mr-4">
                     Edit my details
                 </a>
-
                 <a href="/my/security?redirect=/my/information" role="button" class="btn btn-primary ml-4">
                     Change Password
                 </a>
             </div>
         </template>
-
         <!-- Display the date at which the partner signed some charters, otherwise propose to sign them -->
         <template id="my_information_privacy_data">
             <h3 class="mt-4">Privacy data</h3>
@@ -100,7 +86,6 @@
                 Compassion is also serious about the protection of your data. All your information is kept private and
                 only used internally. You can sign or review our data protection policy from here.
             </p>
-
             <!-- Child protection charter -->
             <div class="row mb-2">
                 <div class="col-6 border-right">
@@ -122,7 +107,6 @@
                     </t>
                 </div>
             </div>
-
             <!-- Data protection -->
             <div class="row">
                 <div class="col-6 border-right">

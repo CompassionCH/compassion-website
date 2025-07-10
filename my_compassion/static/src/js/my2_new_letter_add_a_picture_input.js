@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         resolve(compressedFile);
                     },
                     "image/jpeg",
-                    COMPRESSION_QUALITY,
+                    COMPRESSION_QUALITY
                 );
             };
 

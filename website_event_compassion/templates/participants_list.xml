@@ -2,7 +2,6 @@
 <odoo>
     <!-- This template can be inherited to customize inside a participant card (adding icons for instance) -->
     <template id="participant_card" name="Participant card" />
-
     <template id="event_participants_list" name="Event participants list">
         <div id="compassion_event_participants">
             <t t-if="event.registration_ids.filtered('website_published')">
@@ -60,7 +59,6 @@
                 </t>
             </div>
         </div>
-
         <!-- animation for participants details button -->
         <script>
             $('.participant_card a').hover(function() {

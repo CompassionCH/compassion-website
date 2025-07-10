@@ -14,7 +14,6 @@
                             The countdown has begun.
                         </h2>
                     </div>
-
                     <div id="project_cards">
                         <div t-if="not (type == 'collective' and status=='active')">
                             <h2 class="subheading text-primary text-center mb-5 mt-4 text-uppercase">The projects</h2>
@@ -99,7 +98,6 @@
                 </section>
             </t>
         </template>
-
         <record id="projects_page" model="website.page">
             <field name="name">Projects</field>
             <field name="website_published">True</field>

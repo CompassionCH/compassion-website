@@ -31,7 +31,6 @@
             </div>
         </section>
     </template>
-
     <template id="event_barometer" name="Event barometer">
         <p t-att-class="barometer_title_class" t-if="barometer_title_class">Funds raised</p>
         <div t-attf-class="progress #{barometer_bg_class}">
@@ -61,13 +60,11 @@
             </div>
         </t>
     </template>
-
     <template id="event_page" name="Event page">
         <t t-call="website.layout">
             <t t-set="additional_title" t-value="event.name" />
             <div id="wrap">
                 <t t-call="website_event_compassion.event_header" />
-
                 <!-- Event description -->
                 <div class="container-fluid event_compassion pl-lg-5">
                     <div class="row mb-4">
