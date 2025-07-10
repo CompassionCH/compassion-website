@@ -43,13 +43,13 @@ repos:
           # update the NOT INSTALLABLE ADDONS section above
           - id: oca-update-pre-commit-excluded-addons
           - id: oca-fix-manifest-website
-            args: ["https://github.com/CompassionCH/compassion-switzerland"]
+            args: ["https://github.com/CompassionCH/compassion-website"]
           - id: oca-gen-addon-readme
             args:
                 - --addons-dir=.
                 - --branch=14.0
                 - --org-name=CompassionCH
-                - --repo-name=compassion-switzerland
+                - --repo-name=compassion-website
                 - --if-source-changed
                 - --keep-source-digest
                 - --convert-fragments-to-markdown
