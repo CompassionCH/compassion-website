@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }),
                     // If no fake progress is needed (in preview mode),
                     // use Promise.resolve() to ensure Promise.race always has a valid promise.
-                    fakeProgressPromise || Promise.resolve(),
+                    fakeProgressPromise ?? Promise.resolve(),
                 ]);
 
                 const result = await rpcPromise;
