@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Component: Title Component with optional underline
+
+    Props:
+    - title_content (string): The title to display.
+    - color (string): Text color for the title.
+    - show_underline (boolean): True/False to show underline.
+    - underline_color (string): Color for the underline.
+-->
+<odoo>
+    <template id="TitleComponent" name="Title Component">
+        <style>
+            .underline {
+                width: 60px;
+                border: 2px solid;
+                margin: 10px auto 30px;
+            }
+
+            .sm {
+                font-size: 20px;
+            }
+
+            .md {
+                font-size: 32px;
+            }
+
+            .lg {
+                font-size: 48px;
+            }
+        </style>
+        <div class="text-center">
+            <h1 t-attf-class="text-{{ color }} {{ title_size }}">
+                <t t-esc="title_content"/>
+            </h1>
+            <t t-if="show_underline">
+                <div t-attf-class="underline text-{{ underline_color }}"></div>
+            </t>
+        </div>
+    </template>
+</odoo>

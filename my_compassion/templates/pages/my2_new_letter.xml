@@ -24,8 +24,15 @@
                 <!-- Calling breadcrumb component -->
                 <t t-call="my_compassion.my2_breadcrumbs"/>
                 <div class="row">
-                    <div class="col-12">
-                        <h1>Write a letter</h1>
+                    <div class="col-12 text-center">
+
+                        <t t-call="theme_compassion_2025.TitleComponent">
+                            <t t-set="title_content" t-value="'Write a letter'"/>
+                            <t t-set="color" t-value="'core-blue'"/>
+                            <t t-set="underline_color" t-value="'low-yellow'"/>
+                            <t t-set="show_underline" t-value="True"/>
+                            <t t-set="title_size" t-value="'md'"/>
+                        </t>
                     </div>
                 </div>
                 <form>
