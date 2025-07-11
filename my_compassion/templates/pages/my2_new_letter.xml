@@ -56,13 +56,17 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-4">
-                            <div id="child-reactive-img"></div>
+                        <div class="col-4 d-flex justify-content-end mb-4">
+                            <t t-call="theme_compassion_2025.PortraitComponent">
+                                        <t t-set="src" t-value="'/web/image/compassion.child/' + str(selected_child.id) + '/portrait'"/>
+                                        <t t-set="alt" t-value="'' + str(selected_child.id) + 'portrait image'"/>
+                                        <t t-set="size" t-value="'small'"/>
+                                    </t>
                         </div>
                     </div>
 
                     <!-- Button to open the modal for selecting a letter template -->
-                    <div class="row">
+                    <div class="row mb-4">
                         <div class="col-6">
                             <div class="form-group">
                                 <label class="text-core-blue" for="template-selection">
@@ -122,8 +126,7 @@
                         <textarea
                                 id="letter-input"
                                 class="form-control"
-                                rows="10"
-                                placeholder="Type your letter here..."></textarea>
+                                rows="10"></textarea>
                     </div>
 
                     <!-- Add attachments box input -->
