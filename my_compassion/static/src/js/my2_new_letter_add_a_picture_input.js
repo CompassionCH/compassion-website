@@ -127,8 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const removeBtn = Object.assign(document.createElement('button'), {
-            className: 'btn btn-danger remove-attachment-button',
-            innerHTML: '<i class="fa fa-times"></i>'
+            className: 'btn btn-danger remove-attachment-button text-center',
+            innerHTML: '×'
         });
         removeBtn.style.width = '32px';
         removeBtn.style.height = '32px';
@@ -137,8 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
         removeBtn.style.display = 'flex';
         removeBtn.style.alignItems = 'center';
         removeBtn.style.justifyContent = 'center';
-        removeBtn.style.backgroundColor = '#dc3545'; // couleur danger
+        removeBtn.style.backgroundColor = '#dc3545';
         removeBtn.style.border = 'none';
+        removeBtn.style.fontSize = '28px';
 
 
         fileDiv.append(preview, fileName, removeBtn);
