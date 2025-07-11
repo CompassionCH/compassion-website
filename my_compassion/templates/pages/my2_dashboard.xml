@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Page: My Compassion 2 Dashboard Page
+
+    Description:
+    This page displays a dashboard with quick access to useful pages.
+    Depending on the user role (sponsor, donator or volunteer), the view displays different information and content.
+
+    Used in route:
+    - /my2/dashboard/
+
+    Injected data:
+    - ?
+-->
+<odoo>
+    <template id="my2_dashboard_page" name="My Compassion 2 Dashboard Page">
+        <t t-call="website.layout">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <h1>My hub</h1>
+                    </div>
+                </div>
+                <!-- AVAILABLE VIGNETTES -->
+                <div>
+                    <div class="m-5">
+                        <t t-call="my_compassion.my2_vignette">
+                            <t t-set="image" t-value="'/theme_compassion_2025/static/src/img/snippets/library_image_07.jpg'"/>
+                            <t t-set="color" t-value="'high-brown'"/>
+                            <t t-set="bg_color" t-value="'low-brown'"/>
+                        </t>
+                    </div>
+
+                    <div class="m-5">
+                        <t t-call="my_compassion.my2_vignette">
+                            <t t-set="image" t-value="'/theme_compassion_2025/static/src/img/snippets/library_image_13.jpg'"/>
+                            <t t-set="color" t-value="'low-green'"/>
+                            <t t-set="bg_color" t-value="'high-green'"/>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

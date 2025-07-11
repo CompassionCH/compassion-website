@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Component: Vignette
+
+    Description:
+    Displays a square clickable vignette with an image, title (optionally a subtitle) and icon to redirect the user to
+    pages of the website.
+
+    Props:
+    - image (string): Image displayed on the vignette.
+    - title (string): Title of the vignette.
+    - subtitle (string): Subtitle to display under the title (optional).
+    - icon (string): FontAwesome icon class to display on the vignette.
+    - color (string): Text and icon color.
+    - bg_color (string): Color of the vignette banner.
+    - href (string): Href target of the vignette.
+-->
+<odoo>
+    <template id="my2_vignette" name="Vignette">
+        <a href="http://google.com" class="text-decoration-none">
+            <div class="card" style="width: 18rem;">
+                <img t-att-src="image" class="card-img-top"/>
+                <div t-attf-class="card-body bg-#{bg_color}" >
+                    <h5 t-attf-class="card-title text-#{color}">Card title</h5>
+                    <h6 t-attf-class="card-subtitle text-#{color}">subtitle</h6>
+                </div>
+            </div>
+        </a>
+    </template>
+</odoo>
