@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates xml:space="preserve">
+    <t t-name="my_compassion.toast_notification_component">
+        <div t-attf-class="toast-notification {{ widget.type }}">
+            <div class="toast-notification-header">
+                <div class="toast-notification-title">
+                    <t t-if="widget.type === 'success'"><i class="icon fa fa-check-circle-o" aria-hidden="true"></i></t>
+                    <t t-if="widget.type === 'danger'"><i class="icon fa fa-times-circle-o" aria-hidden="true"></i></t>
+                    <t t-if="widget.type === 'info'"><i class="icon fa fa-info-circle"></i></t>
+                    <strong t-esc="widget.title"></strong>
+                </div>
+            </div>
+            <div class="toast-notification-content">
+                <span t-esc="widget.message"></span>
+            </div>
+        </div>
+    </t>
+</templates>
