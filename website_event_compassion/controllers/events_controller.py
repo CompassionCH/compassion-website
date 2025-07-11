@@ -32,15 +32,16 @@ class EventsController(Controller):
 
     def sitemap_participants(env, rule, qs):
         registrations = env["event.registration"]
+        today = fields.Date.to_string(datetime.today())
         dom = sitemap_qs2dom(qs, "/event", registrations._rec_name)
         dom += request.website.website_domain()
-        dom += [("website_published", "=", True)]
+        dom += [("website_published", "=", True), ("event_id.date_end", ">=", today)]
         for reg in registrations.search(dom):
             loc = f"/event/{slug(reg.compassion_event_id)}/{slug(reg)}"
             if not qs or qs.lower() in loc:
                 yield {"loc": loc}
 
-    @http.route("/events/", auth="public", website=True, sitemap=True)
+    @http.route("/events", auth="public", website=True, sitemap=True)
     def list(self, **kwargs):
         today = fields.Date.to_string(datetime.today())
         # Events that are set to finish after today

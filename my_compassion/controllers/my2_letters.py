@@ -13,7 +13,7 @@ from odoo import http
 class MyCompassionCorrespondenceController(http.Controller):
 
     @http.route('/my2/children/<int:child_id>/letters', type="http", auth="user",
-                website=True)
+                website=True, sitemap=False)
     def my2_render_child_letters_page(self, child_id, **kwargs):
         partner = request.env.user.partner_id
         children_sponsored_by_partner = partner.sponsorship_ids.child_id
@@ -46,7 +46,7 @@ class MyCompassionCorrespondenceController(http.Controller):
                     }
                 )
 
-    @http.route('/my2/children/<int:child_id>/letter/new', type="http", auth="user", website=True)
+    @http.route('/my2/children/<int:child_id>/letter/new', type="http", auth="user", website=True, sitemap=False)
     def my2_render_new_letter_page(self, child_id, **kwargs):
         partner = request.env.user.partner_id
         children_sponsored_by_partner = partner.sponsorship_ids.child_id
@@ -86,7 +86,7 @@ class MyCompassionCorrespondenceController(http.Controller):
             }
         )
 
-    @http.route('/my2/children/letter/new', type="json", auth="user", methods=['POST'])
+    @http.route('/my2/children/letter/new', type="json", auth="user", methods=['POST'], sitemap=False)
     def my2_create_new_letter(self, **post):
         """
             Used in my2_new_letter.js for sending the new letter form data

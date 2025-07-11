@@ -579,7 +579,8 @@
                       id="emergencyHelpBlock"
                       class="form-text text-muted"
                     >
-                                            Please let us know who we can contact in case of an emergency during the trip.
+                                            Please let us know who we can contact in case
+                                            of an emergency during the trip.
                                         </small>
                                     </div>
                                 </div>
@@ -659,7 +660,64 @@
                                     </div>
                                 </div>
                             </div>
+                            <div
+                class="form-group s_website_form_field col-12 col-lg-6  "
+                data-type="char"
+                data-name="Field"
+                t-if="main_object.type == 'tour'"
+              >
+                                <div
+                  class="row s_col_no_resize s_col_no_bgcolor"
+                >
+                                    <label
+                    class="col-form-label col-sm-auto s_website_form_label "
+                    style="width: 200px"
+                    for="omg2unuzqrqr"
+                  >
+                                        <span
+                      class="s_website_form_label_content"
+                    >Share room with (other participant name)</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input
+                      type="tel"
+                      class="form-control s_website_form_input"
+                      name="double_room"
+                      id="share_room"
+                    />
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                class="form-group s_website_form_field col-12 col-lg-6  "
+                data-type="boolean"
+                data-name="Field"
+                t-if="main_object.type == 'tour'"
+              >
+                                <div
+                  class="row s_col_no_resize s_col_no_bgcolor"
+                >
+                                    <label
+                    class="col-form-label col-sm-auto s_website_form_label"
+                    style="width: 200px"
+                    for="single_room_field"
+                  >
+                                        <span
+                      class="s_website_form_label_content"
+                    >I want a single room (extra fee)</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <input
+                      type="checkbox"
+                      class="form-control s_website_form_select_item"
+                      name="single_room"
+                      id="single_room_field"
+                    />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
                         <h3
               t-if="event.odoo_event_id.fundraising"
             >Your public profile</h3>
@@ -764,7 +822,10 @@
                       id="mottoHelpBlock"
                       class="form-text text-muted"
                     >
-                                            What motivates you to take part in the project? Write a few sentences. They will be published on your profile and appear in the thank-you letters to your donors.
+                                            What motivates you to take part in the
+                                            project? Write a few sentences. They will be
+                                            published on your profile and appear in the
+                                            thank-you letters to your donors.
                                         </small>
                                     </div>
                                 </div>

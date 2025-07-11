@@ -62,7 +62,7 @@
           data-name="Image - Text"
         >
                     <div class="container">
-                        <div class="row align-items-center">
+                        <div class="row align-items-start">
                             <div class="col-lg-6 pt16 pb16 o_colored_level">
                                 <h2>Sponsorships - Order Childpacks</h2>
                                 <p
@@ -78,7 +78,44 @@
                   translate="no"
                 >Put a custom resources block here. Video, images, documents, etc... It will be displayed on every Muskathlon event</p>
                                 <div class="oe_structure" />
-                            </div>
+                                <t
+                  t-set="event"
+                  t-value="main_object.compassion_event_id"
+                />
+                                <t
+                  t-set="resources"
+                  t-value="event.website_my_fundraising or event.website_my_information or event.website_my_press_material or event.website_my_sport_material or event.website_my_introduction"
+                />
+                                <h2 t-if="resources">Resources</h2>
+                                <h3
+                  t-if="event.website_my_fundraising != ''"
+                >Fundraising - tips and ideas</h3>
+                                <div
+                  t-if="event.website_my_fundraising != ''"
+                  t-field="event.website_my_fundraising"
+                />
+                                <h3
+                  t-if="event.website_my_information != ''"
+                >Information about Compassion</h3>
+                                <div
+                  t-if="event.website_my_information != ''"
+                  t-field="event.website_my_information"
+                />
+                                <h3
+                  t-if="event.website_my_press_material != ''"
+                >Press material</h3>
+                                <div
+                  t-if="event.website_my_press_material != ''"
+                  t-field="event.website_my_press_material"
+                />
+                                <h3
+                  t-if="event.website_my_sport_material != ''"
+                >Sport</h3>
+                                <div
+                  t-if="event.website_my_sport_material != ''"
+                  t-field="event.website_my_sport_material"
+                />
+                                </div>
                         </div>
                     </div>
                 </section>

@@ -114,6 +114,34 @@
                         widget="many2one"
                       />
                                         </h3>
+                                        <field
+                      name="owner_participant_id"
+                      invisible="1"
+                    />
+                                        <label
+                      for="owner_number_sponsorships_goal"
+                      attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
+                    />
+                                        <field
+                      name="owner_number_sponsorships_goal"
+                      attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
+                    />
+                                        <label
+                      for="owner_number_csp_goal"
+                      attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
+                    />
+                                        <field
+                      name="owner_number_csp_goal"
+                      attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
+                    />
+                                        <label
+                      for="owner_product_number_goal"
+                      attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
+                    />
+                                        <field
+                      name="owner_product_number_goal"
+                      attrs="{'invisible': [('owner_participant_id', '!=', False)]}"
+                    />
                                         <label
                       for="event_id"
                       attrs="{'readonly':True , 'invisible':[('event_id', '==', '')] }"

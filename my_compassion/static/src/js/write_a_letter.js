@@ -316,7 +316,7 @@ async function createLetter(mode = "preview") {
         letter_content.value = "";
         // Here, the clone is necessary because looping on an array which is being
         // modified is asking for trouble.
-        const old_images_list = structuredClone(images_list);
+        const old_images_list = JSON.parse(JSON.stringify(images_list));
         old_images_list.forEach((image) => {
           removeImage(image.name, image.size, image.type);
         });

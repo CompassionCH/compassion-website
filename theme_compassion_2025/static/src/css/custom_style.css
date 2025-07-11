@@ -1,0 +1,15 @@
+/* ::after to simulate right border */
+@media (max-width: 991px) {
+  .border-thread-right::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 100%;
+    background-image: url("/theme_compassion_2025/static/src/img/vertical-thread-1.svg");
+    background-repeat: repeat-y;
+    background-size: contain;
+    pointer-events: none;
+  }
+}

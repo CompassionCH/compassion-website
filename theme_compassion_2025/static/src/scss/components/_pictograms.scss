@@ -1,0 +1,44 @@
+/**
+    * _pictograms.scss
+    * ============
+    * This file contains the styles for the pictograms used in the Compassion website.
+    * It includes a list of all pictograms and generates CSS classes for each one.
+    *
+    * The svg pictograms can then be called using the css class "pictogram-{name}". e.g. pictogram-advocacy
+    *
+    * The SVGs are set to use `mask-image` so they can inherit the color from their parent element.
+    * This allows for easy styling and color changes using the `color` property.
+    *
+    * Note: The SVG files should be placed in the static/src/img/pictograms/ directory.
+    *       Make sure the filenames match the names in the $pictograms list.
+    *
+    *       See the _variables.scss file where the $pictograms list is defined
+    *       and the _functions.scss file for the to-kebab-case function used to convert names.
+    */
+
+// Base styles for any element using a pictogram class.
+// This ensures consistency and leverages the `currentColor` change you made.
+[class^="pictogram-"],
+[class*=" pictogram-"] {
+    display: inline-block;
+    // Use 1em to make the icon size relative to the font-size of its parent
+    width: 1.2em;
+    height: 1.2em;
+    // `currentColor` allows the icon color to be set with the CSS `color` property
+    background-color: currentColor;
+    vertical-align: middle; // Helps align icons with text
+
+    // Use `mask` to display the SVG shape, allowing the background-color to show through
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+}
+
+// Loop through the list of pictograms and generate a unique class for each one.
+@each $pictogram in $pictograms { // No "var." prefix needed with @import
+    // Convert "BibleGift" to ".pictogram-bible-gift"
+    .pictogram-#{to-kebab-case($pictogram)} { // No "func." prefix needed
+    // Set the specific SVG file for this class
+    mask-image: url("/theme_compassion_2025/static/src/img/pictograms/#{$pictogram}.svg");
+    }
+}

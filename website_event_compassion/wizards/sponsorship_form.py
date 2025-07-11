@@ -16,6 +16,7 @@ class WebsiteSponsorship(models.TransientModel):
 
     def _get_sponsorship_vals(self):
         vals = super()._get_sponsorship_vals()
-        vals["ambassador_id"] = self.registration_id.partner_id.id
-        vals["origin_id"] = self.registration_id.compassion_event_id.origin_id.id
+        if self.registration_id:
+            vals["ambassador_id"] = self.registration_id.partner_id.id
+            vals["origin_id"] = self.registration_id.compassion_event_id.origin_id.id
         return vals

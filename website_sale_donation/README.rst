@@ -35,7 +35,7 @@ Changelog
 14.0.1.1.0
 ----------
 
-- [ADD] Automatically match partner during checkout.
+-  [ADD] Automatically match partner during checkout.
 
 Bug Tracker
 ===========
@@ -58,7 +58,7 @@ Authors
 Contributors
 ------------
 
-- Emanuel Cino ecino@compassion.ch
+-  Emanuel Cino ecino@compassion.ch
 
 Maintainers
 -----------
