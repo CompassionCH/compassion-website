@@ -1,3 +1,5 @@
+// TODO manage translations of Toast messages
+
 // Define a new Odoo module called 'my_compassion.toast_service'
 odoo.define('my_compassion.toast_service', function (require) {
     "use strict";
