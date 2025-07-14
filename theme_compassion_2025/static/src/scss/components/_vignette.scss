@@ -5,7 +5,7 @@
     */
 
 .vignette {
-    width: 24rem;
+    min-width: 360px;
     aspect-ratio: 1;
     border-top-left-radius: 0.4rem;
     border-top-right-radius: 0.4rem;
@@ -13,9 +13,12 @@
     border-bottom-right-radius: 0;
 }
 
-.vignette .card-body {
-    height: 25%;
-    border-radius: 0 !important;
+.vignette h3 {
+    font-size: 1.2rem;
+}
+
+.vignette h5 {
+    font-size: 1rem;
 }
 
 .vignette i {

@@ -16,14 +16,15 @@ Page: My Compassion 2 Dashboard Page
     <template id="my2_dashboard_page" name="My Compassion 2 Dashboard Page">
         <t t-call="website.layout">
             <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <h1>My hub</h1>
-                    </div>
-                </div>
+                <t t-call="theme_compassion_2025.TitleComponent">
+                    <t t-set="title_content" t-value="'My Hub'"/>
+                    <t t-set="color" t-value="'core-blue'"/>
+                    <t t-set="show_underline" t-value="true"/>
+                    <t t-set="underline_color" t-value="'low-yellow'"/>
+                </t>
                 <!-- DASHBOARD ITEMS -->
-                <div>
-                    <div class="m-5">
+                <div class="row mb-4 justify-content-center">
+                    <div class="col-sm my-3 flex-grow-0">
                         <t t-call="theme_compassion_2025.VignetteComponent">
                             <t t-set="image" t-value="'/theme_compassion_2025/static/src/img/snippets/library_image_07.jpg'"/>
                             <t t-set="title" t-value="'My donations'"/>
@@ -33,7 +34,17 @@ Page: My Compassion 2 Dashboard Page
                         </t>
                     </div>
 
-                    <div class="m-5">
+                    <div class="col-sm my-3 flex-grow-0">
+                        <t t-call="theme_compassion_2025.VignetteComponent">
+                            <t t-set="image" t-value="'/theme_compassion_2025/static/src/img/snippets/library_image_11.jpg'"/>
+                            <t t-set="title" t-value="'You are sponsoring 4 children'"/>
+                            <t t-set="icon" t-value="'pictogram-child-sponsorship'"/>
+                            <t t-set="color" t-value="'pure-white'"/>
+                            <t t-set="bg_color" t-value="'core-blue'"/>
+                        </t>
+                    </div>
+
+                    <div class="col-sm my-3 flex-grow-0">
                         <t t-call="theme_compassion_2025.VignetteComponent">
                             <t t-set="image" t-value="'/theme_compassion_2025/static/src/img/snippets/library_image_13.jpg'"/>
                             <t t-set="title" t-value="'Volunteers'"/>

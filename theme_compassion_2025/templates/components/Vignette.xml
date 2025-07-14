@@ -25,9 +25,9 @@
             <a t-att-href="href" class="text-decoration-none h-100">
                 <div class="d-flex flex-column h-100">
                     <img t-att-src="image" class="card-img-top flex-grow-1"/>
-                    <div t-attf-class="card-body py-2 flex-grow-0 d-flex bg-#{bg_color}" >
+                    <div t-attf-class="card-body rounded-0 h-25 py-2 flex-grow-0 d-flex bg-#{bg_color}" >
                         <div t-attf-class="d-flex flex-column justify-content-center flex-grow-1" >
-                            <div class="pl-4" >
+                            <div class="pl-3" >
                                 <h3 t-attf-class="card-title m-0 text-#{color}">
                                     <t t-esc="title" />
                                 </h3>
