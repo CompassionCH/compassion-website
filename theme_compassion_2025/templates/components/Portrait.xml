@@ -27,9 +27,11 @@
                 />
             </div>
             <t t-if="title">
-                <p class="portrait-title">
-                    <t t-esc="title"/>
-                </p>
+                <div>
+                    <p class="portrait-title pb-md-0 mb-md-0">
+                        <t t-esc="title"/>
+                    </p>
+                </div>
             </t>
         </div>
     </template>
