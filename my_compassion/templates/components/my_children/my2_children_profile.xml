@@ -48,10 +48,48 @@
                     <i class="icon-calendar-heart02 text-pure-white m-2"></i>
                 </div>
                 <!-- TODO: Handle language changes for birthday -->
-                <p class="child-info-text">My birthday is <span><t t-esc="compassion_child.birthdate.strftime('%d %B')"/></span></p>
+                <!-- TODO: Put that in the backend -->
+                <t t-set="day" t-value="compassion_child.birthdate.day"/>
+                <t t-set="month" t-value="compassion_child.birthdate.strftime('%B')"/>
+                <t t-set="suffix" t-value="'th'"/>
+
+                <t t-if="day in [1, 21, 31]">
+                    <t t-set="suffix" t-value="'st'"/>
+                </t>
+                <t t-elif="day in [2, 22]">
+                    <t t-set="suffix" t-value="'nd'"/>
+                </t>
+                <t t-elif="day in [3, 23]">
+                    <t t-set="suffix" t-value="'rd'"/>
+                </t>
+
+                <p class="child-info-text">
+                    My birthday is the
+                    <span class="text-core-blue font-weight-bold"><t t-esc="day"/><t t-esc="suffix"/> <t t-esc="month"/></span>
+                </p>
             </div>
-            <div></div>
-            <div></div>
+            <div class="child-info-item d-flex align-items-center">
+                <div class="icon-frame bg-mid-green mr-2">
+                    <i class="icon-heart text-pure-white m-2"></i>
+                </div>
+                <p class="child-info-text">
+                    <span class="text-mid-green font-weight-bold">
+                        I love
+                    </span>
+                    <t t-esc="compassion_child.get_list('hobby_ids.value')"/>
+                </p>
+            </div>
+            <div class="child-info-item d-flex align-items-center">
+                <div class="icon-frame bg-mid-pink mr-2">
+                    <i class="icon-graduation-hat01 text-pure-white m-2"></i>
+                </div>
+                <p class="child-info-text">
+                    I'm in
+                    <span class="text-mid-pink font-weight-bold"><t t-esc="compassion_child.translate('education_level')"/></span>
+                    <span>and my favourite subjects is</span>
+                    <t t-esc="compassion_child.get_list('subject_ids.value')"/>
+                </p>
+            </div>
         </div>
 
         <!-- Child related information title -->
