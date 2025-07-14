@@ -12,7 +12,6 @@
 -->
 <odoo>
     <template id="TitleComponent" name="Title Component">
-        <!-- The <style> tag has been removed and its content moved to a dedicated SCSS file -->
         <div class="title-component">
             <h1 t-attf-class="title-heading title-size-#{title_size or 'md'} text-#{color}">
                 <t t-esc="title_content"/>
