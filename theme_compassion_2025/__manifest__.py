@@ -41,6 +41,7 @@
         "templates/components/Portrait.xml",
         # Buttons
         "templates/components/buttons/ThemedButton.xml",
+        "templates/components/Title.xml",
     ],
     "images": ["static/description/compassion_screenshot.png"],
     "license": "LGPL-3",
