@@ -1,0 +1,24 @@
+/**
+    * _vignette.scss
+    * ============
+    * This file contains the styles for the vignette component used in the Compassion website.
+    */
+
+.vignette {
+    width: 24rem;
+    aspect-ratio: 1;
+    border-top-left-radius: 0.4rem;
+    border-top-right-radius: 0.4rem;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.vignette .card-body {
+    height: 25%;
+    border-radius: 0 !important;
+}
+
+.vignette i {
+    width: auto;
+    aspect-ratio: 1;
+}

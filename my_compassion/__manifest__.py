@@ -68,7 +68,6 @@
         "templates/components/my2_details_card.xml",
         "templates/components/my2_letter_card.xml",
         "templates/components/my2_breadcrumbs.xml",
-        "templates/components/my2_vignette.xml",
     ],
     "depends": [
         "partner_communication_compassion",

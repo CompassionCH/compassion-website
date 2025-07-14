@@ -21,19 +21,24 @@ Page: My Compassion 2 Dashboard Page
                         <h1>My hub</h1>
                     </div>
                 </div>
-                <!-- AVAILABLE VIGNETTES -->
+                <!-- DASHBOARD ITEMS -->
                 <div>
                     <div class="m-5">
-                        <t t-call="my_compassion.my2_vignette">
+                        <t t-call="theme_compassion_2025.VignetteComponent">
                             <t t-set="image" t-value="'/theme_compassion_2025/static/src/img/snippets/library_image_07.jpg'"/>
+                            <t t-set="title" t-value="'My donations'"/>
+                            <t t-set="icon" t-value="'pictogram-gift-donation-general'"/>
                             <t t-set="color" t-value="'high-brown'"/>
                             <t t-set="bg_color" t-value="'low-brown'"/>
                         </t>
                     </div>
 
                     <div class="m-5">
-                        <t t-call="my_compassion.my2_vignette">
+                        <t t-call="theme_compassion_2025.VignetteComponent">
                             <t t-set="image" t-value="'/theme_compassion_2025/static/src/img/snippets/library_image_13.jpg'"/>
+                            <t t-set="title" t-value="'Volunteers'"/>
+                            <t t-set="subtitle" t-value="'We need letter translators!'"/>
+                            <t t-set="icon" t-value="'pictogram-local-empowerment-partnership'"/>
                             <t t-set="color" t-value="'low-green'"/>
                             <t t-set="bg_color" t-value="'high-green'"/>
                         </t>
