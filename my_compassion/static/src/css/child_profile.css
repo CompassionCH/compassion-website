@@ -42,6 +42,10 @@
 
 /* --- Child Profile Tabs --- */
 
+.child-related-information {
+    margin-top: 50px;
+}
+
 /* Tab container styling */
 .child-related-information .nav-tabs {
     border-bottom: none; /* Remove Bootstrap's default line */
@@ -65,22 +69,28 @@
     /* Typography */
     font-size: 19px;
     font-weight: 600; /* Demi-bold */
-    color: var(--low-black) !important; /* Override default link color */
+    color: #000000 !important; /* Override default link color */
 
     /* Colors and Transition for inactive state */
-    background-color: var(--high-yellow);
+    background-color: #ffd257;
     transition: background-color 0.2s ease-in-out;
 }
 
 /* Active tab state */
 .child-related-information .nav-tabs .nav-link.active {
-    background-color: var(--low-yellow);
+    background-color: #fdb518;
 }
 
 /* Border Radius for the first and last tabs */
 .child-related-information .nav-tabs .nav-item:first-child .nav-link {
     border-top-left-radius: 25px;
     border-bottom-left-radius: 25px;
+}
+
+.child-related-information .nav-tabs .nav-item .nav-link {
+    border-top-left-radius: 0rem;
+    border-bottom-left-radius: 0rem;
+    border-top-right-radius: 0rem;
 }
 
 .child-related-information .nav-tabs .nav-item:last-child .nav-link {
@@ -90,7 +100,7 @@
 
 /* Style the content pane to match and create a unified look */
 .child-related-information .tab-content {
-    background-color: var(--low-yellow);
+    background-color: #fff2ad;
     border-radius: 25px;
     padding: 2rem;
     /* Pull the content up to visually connect with the active tab */
