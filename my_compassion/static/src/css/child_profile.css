@@ -43,7 +43,7 @@
 /* --- Child Profile Tabs --- */
 
 .child-related-information {
-    margin-top: 50px;
+    margin: 50px 0;
 }
 
 /* Tab container styling */
@@ -113,4 +113,17 @@
 /* The individual tab-pane no longer needs a background color */
 .tab-pane {
     background-color: transparent;
+}
+
+.tab-items {
+    padding-left: 0px;
+}
+
+.tab-item {
+    list-style: none; /* Remove the default browser bullet */
+    padding-bottom: 10px; /* Add some space below each item */
+}
+
+.tab-item-title {
+    font-family: 'NeighbourSans DemiBold', sans-serif;
 }
