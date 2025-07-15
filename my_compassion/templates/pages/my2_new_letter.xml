@@ -35,10 +35,9 @@
                         </t>
                     </div>
                 </div>
-                <form>
-                    <div class="row">
-                        <div class="col-8">
-                            <!-- Dropdown list for selecting a child -->
+                <form class="col-12 col-md-10 col-lg-8 mx-auto">
+                    <div class="row align-items-center mb-3">
+                        <div class="col-7">
                             <div class="form-group">
                                 <label class="text-core-blue" for="child-dropdown">To</label>
                                 <select id="child-dropdown" class="form-control">
@@ -56,23 +55,21 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-4 d-flex justify-content-end mb-4">
+                        <div class="col-5 d-flex justify-content-end">
                             <t t-call="theme_compassion_2025.PortraitComponent">
-                                        <t t-set="src" t-value="'/web/image/compassion.child/' + str(selected_child.id) + '/portrait'"/>
-                                        <t t-set="alt" t-value="'' + str(selected_child.id) + 'portrait image'"/>
-                                        <t t-set="size" t-value="'small'"/>
-                                    </t>
+                                <t t-set="src"
+                                   t-value="'/web/image/compassion.child/' + str(selected_child.id) + '/portrait'"/>
+                                <t t-set="alt" t-value="'' + str(selected_child.id) + 'portrait image'"/>
+                                <t t-set="size" t-value="'small'"/>
+                            </t>
                         </div>
                     </div>
 
                     <!-- Button to open the modal for selecting a letter template -->
-                    <div class="row mb-4">
-                        <div class="col-6">
+                    <div class="row align-items-center mb-3">
+                        <div class="col-7">
                             <div class="form-group">
-                                <label class="text-core-blue" for="template-selection">
-                                    Template
-                                </label>
-                                <!-- Button content will be dynamically updated by the template name -->
+                                <label class="text-core-blue" for="template-selection">Template</label>
                                 <button type="button" id="template-selection"
                                         class="btn btn-outline-primary form-control">
                                     Click here
@@ -123,10 +120,7 @@
                             <label class="text-core-blue" for="letter-input">Text</label>
                             <label class="text-core-blue" for="letter-input">page 0/15</label>
                         </div>
-                        <textarea
-                                id="letter-input"
-                                class="form-control"
-                                rows="10"></textarea>
+                        <textarea id="letter-input" class="form-control" rows="10"></textarea>
                     </div>
 
                     <!-- Add attachments box input -->
@@ -136,9 +130,20 @@
                                 <input type="file" class="file-upload-input"
                                        id="letter-attachments" multiple="true"/>
                                 <div class="text-center p-3">
-                                    <i class="fa fa-plus-square-o fa-3x text-primary"></i>
+                                    <i class="icon-image-plus fa-2x text-dark-blue mb-3"></i>
                                     <br/>
-                                    <span>Add a picture</span>
+                                    <span class="text-mid-grey">supported format: jpeg,</span>
+                                    <br/>
+                                    <span class="text-mid-grey"> png, webp</span>
+                                    <br/>
+                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                        <t t-set="variant" t-value="'default'"/>
+                                        <t t-set="variation" t-value="'filled'"/>
+                                        <t t-set="label" t-value="'Select picture'"/>
+                                        <t t-set="icon" t-value="'icon-download01'"/>
+                                        <t t-set="color" t-value="'dark-blue'"/>
+                                        <t t-set="text_color" t-value="'pure_white'"/>
+                                    </t>
                                 </div>
                             </div>
                         </div>
@@ -159,9 +164,12 @@
                                 <t t-set="icon" t-value="'icon-save01'"/>
                                 <t t-set="color" t-value="'dark-blue'"/>
                                 <t t-set="text_color" t-value="'pure_white'"/>
+                                <t t-set="mode" t-value="'draft'"/>
                             </t>
                         </div>
-                        <div class="col-12 text-right">
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-6 ">
                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                 <t t-set="variant" t-value="'default'"/>
                                 <t t-set="variation" t-value="'filled'"/>
@@ -171,6 +179,8 @@
                                 <t t-set="text_color" t-value="'pure_white'"/>
                                 <t t-set="mode" t-value="'preview'"/>
                             </t>
+                        </div>
+                        <div class="col-6 text-right ">
                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                 <t t-set="variant" t-value="'default'"/>
                                 <t t-set="variation" t-value="'filled'"/>
