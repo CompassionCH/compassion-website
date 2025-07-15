@@ -5,6 +5,10 @@
     If the related sponsorship is terminated, the card will have a different background.
     The card contains the latest correspondance with the partner.
 
+    Props:
+    - sponsorship (record): The sponsorship related object.
+    - latest correspondence with each sponsored child
+
 -->
 <odoo>
     <template id="my2_children_card_component" name="Children Card Component">
@@ -29,11 +33,16 @@
                 <div class="h5 mb-3">
                     <t t-set="latest_correspondence"
                        t-value="(latest_correspondences_by_child_id or {}).get(sponsorship.child_id.id)"/>
+                    <t t-set="sponsorship_end_date"
+                       t-value="sponsorship.end_date"/>
 
-                    <!-- TODO: find a way to use the predefined colors, maybe a scss style is needed -->
                     <div style="display: block; margin-bottom: 8px;">
-                        <span style="display: inline-block; border-bottom: 2px solid #fb513a; padding-bottom: 4px;">
-                            <t t-if="latest_correspondence">
+                        <span class="border-bottom border-2 border-high-orange">
+                            <t t-if="sponsorship_end_date">
+                                Sponsorship terminated on  <t
+                                    t-esc="sponsorship_end_date.strftime('%d %B %Y')"/>
+                            </t>
+                            <t t-elif="latest_correspondence">
                                 Last contact <t
                                     t-esc="latest_correspondence.write_date.strftime('%d %B %Y')"/>
                             </t>
