@@ -10,42 +10,91 @@ Page: My Compassion 2 Dashboard Page
     - /my2/dashboard/
 
     Injected data:
-    - ?
+    - TODO
 -->
 <odoo>
+    <!-- DASHBOARD GRID ITEM -->
+    <template id="DashboardGridItem" name="Dashboard grid item">
+        <div class="col-sm my-3 flex-grow-0">
+            <t t-raw="0"/>
+        </div>
+    </template>
+
+    <!-- DASHBOARD -->
     <template id="my2_dashboard_page" name="My Compassion 2 Dashboard Page">
+        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_dashboard.css"/>
         <t t-call="website.layout">
             <div class="container">
-                <t t-call="theme_compassion_2025.TitleComponent">
-                    <t t-set="title_content" t-value="'My Hub'"/>
-                    <t t-set="color" t-value="'core-blue'"/>
-                    <t t-set="show_underline" t-value="true"/>
-                    <t t-set="underline_color" t-value="'low-yellow'"/>
-                    <t t-set="description" t-value="'Access your resources and ways to get involved.'"/>
-                </t>
-                <!-- DASHBOARD ITEMS -->
+                <!-- BANNER -->
+                <div class="dashboard-banner d-none d-lg-block mt-4">
+                    <div class="position-absolute m-5 pl-5 pt-2">
+                        <h1 class="text-pure-white">
+                            Welcome to the new<br/><span class="text-low-yellow">my</span>Compassion
+                        </h1>
+                    </div>
+                    <img src="/theme_compassion_2025/static/src/img/snippets/dashboard_banner.png" class="img-fluid"/>
+                </div>
+                <!-- TITLE -->
+                <div class="mt-4">
+                    <t t-call="theme_compassion_2025.TitleComponent">
+                        <t t-set="title_content" t-value="'My hub'"/>
+                        <t t-set="color" t-value="'core-blue'"/>
+                        <t t-set="show_underline" t-value="true"/>
+                        <t t-set="underline_color" t-value="'low-yellow'"/>
+                        <t t-set="description" t-value="'Access your resources and ways to get involved.'"/>
+                    </t>
+                </div>
+                <!-- VIGNETTES AND ACTIONS -->
                 <div class="row mb-4 justify-content-center">
-                    <div class="col-sm my-3 flex-grow-0">
+                    <t t-call="my_compassion.DashboardGridItem">
                         <t t-call="theme_compassion_2025.VignetteComponent">
-                            <t t-set="image" t-value="'/theme_compassion_2025/static/src/img/snippets/library_image_07.jpg'"/>
+                            <t t-set="image" t-value="'/theme_compassion_2025/static/src/img/snippets/s_image_text.jpg'"/>
                             <t t-set="title" t-value="'My donations'"/>
                             <t t-set="icon" t-value="'pictogram-gift-donation-general'"/>
                             <t t-set="color" t-value="'high-brown'"/>
                             <t t-set="bg_color" t-value="'low-brown'"/>
                         </t>
-                    </div>
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variant" t-value="'default'"/>
+                            <t t-set="variation" t-value="'filled'"/>
+                            <t t-set="label" t-value="'Make a gift of compassion'"/>
+                            <t t-set="icon" t-value="'pictogram-letter-writing'"/>
+                            <t t-set="color" t-value="'mid-brown'"/>
+                            <t t-set="icon_color" t-value="'high-brown'"/>
+                            <t t-set="text_color" t-value="'pure-white'"/>
+                        </t>
+                    </t>
 
-                    <div class="col-sm my-3 flex-grow-0">
+                    <t t-call="my_compassion.DashboardGridItem">
                         <t t-call="theme_compassion_2025.VignetteComponent">
                             <t t-set="image" t-value="'/theme_compassion_2025/static/src/img/snippets/library_image_11.jpg'"/>
-                            <t t-set="title" t-value="'You are sponsoring 4 children'"/>
+                            <t t-set="title" t-value="'You are sponsoring'"/>
+                            <t t-set="subtitle" t-value="'&lt;span class=&quot;text-low-yellow&quot;&gt;4&lt;/span&gt; children'"/>
                             <t t-set="icon" t-value="'pictogram-child-sponsorship'"/>
                             <t t-set="color" t-value="'pure-white'"/>
                             <t t-set="bg_color" t-value="'core-blue'"/>
                         </t>
-                    </div>
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variant" t-value="'default'"/>
+                            <t t-set="variation" t-value="'hollow'"/>
+                            <t t-set="label" t-value="'A new letter has arrived!'"/>
+                            <t t-set="icon" t-value="'pictogram-child-focused'"/>
+                            <t t-set="color" t-value="'low-green'"/>
+                            <t t-set="icon_color" t-value="'low-green'"/>
+                            <t t-set="text_color" t-value="'low-green'"/>
+                        </t>
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variant" t-value="'default'"/>
+                            <t t-set="variation" t-value="'filled'"/>
+                            <t t-set="label" t-value="'Write a letter to a child'"/>
+                            <t t-set="icon" t-value="'pictogram-letter-writing'"/>
+                            <t t-set="color" t-value="'core-blue'"/>
+                            <t t-set="icon_color" t-value="'low-yellow'"/>
+                            <t t-set="text_color" t-value="'pure-white'"/>
+                        </t>
+                    </t>
 
-                    <div class="col-sm my-3 flex-grow-0">
+                    <t t-call="my_compassion.DashboardGridItem">
                         <t t-call="theme_compassion_2025.VignetteComponent">
                             <t t-set="image" t-value="'/theme_compassion_2025/static/src/img/snippets/library_image_13.jpg'"/>
                             <t t-set="title" t-value="'Volunteers'"/>
@@ -54,7 +103,16 @@ Page: My Compassion 2 Dashboard Page
                             <t t-set="color" t-value="'low-green'"/>
                             <t t-set="bg_color" t-value="'high-green'"/>
                         </t>
-                    </div>
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variant" t-value="'default'"/>
+                            <t t-set="variation" t-value="'filled'"/>
+                            <t t-set="label" t-value="'Translate a letter'"/>
+                            <t t-set="icon" t-value="'pictogram-letter-writing'"/>
+                            <t t-set="color" t-value="'mid-green'"/>
+                            <t t-set="icon_color" t-value="'low-green'"/>
+                            <t t-set="text_color" t-value="'pure-white'"/>
+                        </t>
+                    </t>
                 </div>
             </div>
         </t>

@@ -1,0 +1,25 @@
+.dashboard-banner {
+    aspect-ratio: 3;
+    position: relative;
+}
+
+.dashboard-banner::before {
+  content: '';
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: absolute;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(100, 100, 100, 0.0) 70%);
+}
+
+.dashboard-banner img {
+    width: 100%;
+}
+.dashboard-banner h1 {
+    font-family: "NeighbourSans Medium";
+}
+
+button {
+    margin-top: 1.5rem !important;
+    width: 100%;
+}
