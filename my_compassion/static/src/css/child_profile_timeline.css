@@ -1,0 +1,289 @@
+/** Timeline
+    * --------------------------------------------------
+    * A simple timeline component.
+    * The timeline is responsive and adapts to different screen sizes.
+    * Inspired by https://codyhouse.co/demo/vertical-timeline/index.html
+    *
+    * @version 1.0.0
+    * @author Daniel Palumbo
+    * @license MIT
+    */
+
+/* MAIN CONTAINTER */
+.cd-timeline {
+    overflow: hidden;
+    background-color: #aabff7;
+    padding: 0 15px;
+}
+.cd-timeline__container {
+    position: relative;
+    padding: 1.25em 0;
+    padding: calc(1.25*1em) 0;
+}
+.cd-timeline__container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 18px;
+    height: 100%;
+    width: 4px;
+    background-color:  #ffffff;
+}
+@media (min-width: 64rem) {
+    .cd-timeline__container::before {
+        left: 50%;
+        -webkit-transform: translateX(-50%);
+        -ms-transform: translateX(-50%);
+        transform: translateX(-50%);
+    }
+    .container {
+        padding-left: 0px;
+        padding-right: 36px;
+      }
+}
+@media (min-width: 640px) {
+  .cd-timeline {
+    padding: 0 36px; /* Adjust padding depending on screen gutters from the theme 2025 for better alignment */
+  }
+}
+
+/** * TIMELINE BLOCK
+ * --------------------------------------------------
+ * Each block represents an event in the timeline.
+ * The blocks are displayed in a column layout on small screens and in a row layout on larger screens.
+ */
+.cd-timeline__block {
+    display: -ms-flexbox;
+    display: flex;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 2em;
+}
+.cd-timeline__block:last-child {
+    margin-bottom: 0;
+}
+@media (min-width: 64rem) {
+    .cd-timeline__block:nth-child(even) {
+        -ms-flex-direction: row-reverse;
+        flex-direction: row-reverse;
+    }
+}
+
+/** TIMELINE IMAGE
+ * --------------------------------------------------
+ */
+.cd-timeline__img {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px hsl(0, 0%, 100%),inset 0 2px 0 rgba(0,0,0,0.08),0 3px 0 4px rgba(0,0,0,0.05);
+}
+.cd-timeline__img .pictogram {
+    width: 45px;
+    height: 45px;
+}
+@media (min-width: 64rem) {
+    .cd-timeline__img {
+        width: 60px;
+        height: 60px;
+        -ms-flex-order: 1;
+        order: 1;
+        margin-left: calc(5% - 30px);
+        will-change: transform;
+    }
+    .cd-timeline__block:nth-child(even) .cd-timeline__img {
+        margin-right: calc(5% - 30px);
+    }
+}
+
+/** TIMELINE CONTENT
+ * --------------------------------------------------
+ */
+.cd-timeline__content {
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    position: relative;
+    margin-left: 1.25em;
+    background-color:  #ffffff;
+    border-radius: 0.25em;
+    padding: 1.25em;
+    box-shadow: 0 3px 0 hsl(205, 38%, 89%);
+}
+.cd-timeline__content::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    right: 100%;
+    width: 0;
+    height: 0;
+    border: 7px solid transparent;
+    border-right-color: hsl(0, 0%, 100%);
+}
+.cd-timeline__content h2 {
+    color: hsl(206, 21%, 24%);
+}
+/* @MEDIA - TIMELINE ELEMENTS POSITIONING
+ * --------------------------------------------------
+ */
+@media (min-width: 64rem) {
+    .cd-timeline__content {
+        width: 40%;
+        -ms-flex-positive: 0;
+        flex-grow: 0;
+        will-change: transform;
+        font-size: 0.8em;
+        --line-height-multiplier:  1.2;
+        margin: 0 1.5em;
+    }
+    .cd-timeline__content::before {
+        top: 24px;
+    }
+    .cd-timeline__block:nth-child(odd) .cd-timeline__content::before {
+        right: auto;
+        left: 100%;
+        width: 0;
+        height: 0;
+        border: 7px solid transparent;
+        border-left-color: hsl(0, 0%, 100%);
+    }
+}
+@media (min-width: 64rem) {
+    .cd-timeline__date {
+        position: absolute;
+        width: 100%;
+        left: 135%;
+        top: 20px;
+    }
+    .cd-timeline__block:nth-child(even) .cd-timeline__date {
+        left: auto;
+        right: 135%;
+        text-align: right;
+    }
+}
+@media (min-width: 64rem) {
+    .cd-timeline__img--hidden,.cd-timeline__content--hidden {
+        visibility: hidden;
+    }
+    .cd-timeline__img--bounce-in {
+        -webkit-animation: cd-bounce-1 0.6s;
+        animation: cd-bounce-1 0.6s;
+    }
+    .cd-timeline__content--bounce-in {
+        -webkit-animation: cd-bounce-2 0.6s;
+        animation: cd-bounce-2 0.6s;
+    }
+    .cd-timeline__block:nth-child(even) .cd-timeline__content--bounce-in {
+        -webkit-animation-name: cd-bounce-2-inverse;
+        animation-name: cd-bounce-2-inverse;
+    }
+}
+/* TIMELINE ANIMATIONS
+ * --------------------------------------------------
+ * The timeline elements are animated when they come into view.
+ * The animations are triggered by adding the classes
+ * 'cd-timeline__img--bounce-in' and 'cd-timeline__content--bounce-in'.
+ */
+@-webkit-keyframes cd-bounce-1 {
+    0% {
+        opacity: 0;
+        -webkit-transform: scale(0.5);
+        transform: scale(0.5);
+    }
+    60% {
+        opacity: 1;
+        -webkit-transform: scale(1.2);
+        transform: scale(1.2);
+    }
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+@keyframes cd-bounce-1 {
+    0% {
+        opacity: 0;
+        -webkit-transform: scale(0.5);
+        transform: scale(0.5);
+    }
+    60% {
+        opacity: 1;
+        -webkit-transform: scale(1.2);
+        transform: scale(1.2);
+    }
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+@-webkit-keyframes cd-bounce-2 {
+    0% {
+        opacity: 0;
+        -webkit-transform: translateX(-100px);
+        transform: translateX(-100px);
+    }
+    60% {
+        opacity: 1;
+        -webkit-transform: translateX(20px);
+        transform: translateX(20px);
+    }
+    100% {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+    }
+}
+@keyframes cd-bounce-2 {
+    0% {
+        opacity: 0;
+        -webkit-transform: translateX(-100px);
+        transform: translateX(-100px);
+    }
+    60% {
+        opacity: 1;
+        -webkit-transform: translateX(20px);
+        transform: translateX(20px);
+    }
+    100% {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+    }
+}
+@-webkit-keyframes cd-bounce-2-inverse {
+    0% {
+        opacity: 0;
+        -webkit-transform: translateX(100px);
+        transform: translateX(100px);
+    }
+    60% {
+        opacity: 1;
+        -webkit-transform: translateX(-20px);
+        transform: translateX(-20px);
+    }
+    100% {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+    }
+}
+@keyframes cd-bounce-2-inverse {
+    0% {
+        opacity: 0;
+        -webkit-transform: translateX(100px);
+        transform: translateX(100px);
+    }
+    60% {
+        opacity: 1;
+        -webkit-transform: translateX(-20px);
+        transform: translateX(-20px);
+    }
+    100% {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+    }
+}

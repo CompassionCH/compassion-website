@@ -18,6 +18,8 @@
     <template id="my2_child_timeline_page" name="My Compassion 2 Child Timeline Page">
         <link rel="stylesheet"
                       href="/my_compassion/static/src/css/child_profile.css"/>
+        <link rel="stylesheet"
+                      href="/my_compassion/static/src/css/child_profile_timeline.css"/>
         <t t-call="website.layout">
             <div class="container">
                 <div class="content-column">
@@ -119,13 +121,13 @@
                         <!-- Desktop Tabs (Visible on medium screens and up) -->
                         <ul class="nav nav-tabs d-none d-md-flex" id="child-info-tabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link"
+                                <a class="nav-link active"
                                    id="family-tab-link"
                                    data-toggle="tab"
                                    href="#family-tab"
                                    role="tab"
                                    aria-controls="family-tab"
-                                   aria-selected="false">
+                                   aria-selected="true">
                                     My Family
                                 </a>
                             </li>
@@ -141,13 +143,13 @@
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link active"
+                                <a class="nav-link"
                                    id="country-tab-link"
                                    data-toggle="tab"
                                    href="#country-tab"
                                    role="tab"
                                    aria-controls="country-tab"
-                                   aria-selected="true">
+                                   aria-selected="false">
                                     My Country
                                 </a>
                             </li>
@@ -156,7 +158,7 @@
                         <!-- Tab Content -->
                         <div class="tab-content" id="child-info-tabs-content">
                             <!-- FAMILY TAB CONTENT -->
-                            <div class="tab-pane fade" id="family-tab" role="tabpanel" aria-labelledby="family-tab-link">
+                            <div class="tab-pane fade show active" id="family-tab" role="tabpanel" aria-labelledby="family-tab-link">
                                 <div class="description-text">
                                     <p>
                                         I currently live in
@@ -263,7 +265,7 @@
                                 </ul>
                             </div>
                             <!-- COUNTRY TAB CONTENT -->
-                            <div class="tab-pane fade show active" id="country-tab" role="tabpanel" aria-labelledby="country-tab-link">
+                            <div class="tab-pane fade" id="country-tab" role="tabpanel" aria-labelledby="country-tab-link">
                                 <t t-set="field_office" t-value="compassion_child.field_office_id"/>
                                 <ul class="tab-items">
                                     <li class="tab-item">
@@ -353,8 +355,20 @@
                         <t t-set="description" t-value="'Follow the thread of hope and
                         encouragement you’ve woven together.'"/>
                     </t>
+
+
                 </div>
             </div>
+            <!-- ### Partner and child timeline component ### -->
+            <section class="cd-timeline js-cd-timeline">
+                <div class="cd-timeline__container">
+                    <div class="content-column">
+                        <t t-call="my_compassion.SponsorChildTimelineBatchComponent">
+                            <t t-set="items" t-value="records"></t>
+                        </t>
+                    </div>
+                </div> <!-- cd-timeline__container -->
+            </section> <!-- cd-timeline -->
         </t>
     </template>
 </odoo>
