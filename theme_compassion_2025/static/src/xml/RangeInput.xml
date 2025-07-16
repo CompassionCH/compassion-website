@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Component: RangeInput
+
+    Description:
+    Displays a double-ended slider to input a range between a maximum and a minimum value.
+
+    Props:                                                                      Default:
+    - minValue (int): Minimum range end value.                                  [0]
+    - maxValue (int): Maximum range end value.                                  [100]
+    - initialLow (int): Initial low end of the range.                           [=min-value]
+    - initialHigh (int): Initial high end of the range.                         [=max-value]
+    - minGap (int): Smallest interval allowed.                                  [0]
+    - thumbColor (string): Slider thumb (range endpoint) color.                 [mid-yellow]
+    - labelColor (string): Slider thumb label color.                            [low-black]
+    - rangeColor (string): Color of the track in-between the range endpoints.   [low-yellow]
+    - trackColor (string): Color of the track outside the range endpoints.      [low-eggshell]
+-->
+<templates>
+    <t t-name="theme_compassion_2025.RangeInputComponent">
+        <!-- Component definition -->
+        <div class="slider-container">
+            <div t-attf-class="slider-track bg-#{widget.trackColor}"/>
+            <div t-attf-class="slider-range bg-#{widget.rangeColor}"/>
+            <input type="range"
+                   t-att-min="widget.minValue"
+                   t-att-max="widget.maxValue"
+                   t-att-value="widget.minValue"
+                   t-attf-class="slider-low slider-thumb-#{widget.thumbColor}"/>
+            <input type="range"
+                   t-att-min="widget.minValue"
+                   t-att-max="widget.maxValue"
+                   t-att-value="widget.maxValue"
+                   t-attf-class="slider-high slider-thumb-#{widget.thumbColor}"/>
+            <div t-attf-class="label-low text-#{widget.labelColor}">
+                <t t-esc="widget.initialLow"/>
+            </div>
+            <div t-attf-class="label-high text-#{widget.labelColor}">
+                <t t-esc="widget.initialHigh"/>
+            </div>
+        </div>
+    </t>
+</templates>

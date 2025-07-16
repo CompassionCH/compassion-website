@@ -1,0 +1,92 @@
+/**
+    * _range_input.scss
+    * ============
+    * This file contains the styles for the range input component used in MyCompassion.
+    */
+
+.slider-container {
+  --thumb-size: 2.2rem;
+  --progress-ratio-low: 0;
+  --progress-ratio-high: 1;
+  position: relative;
+  width: 100%;
+  min-height: var(--thumb-size);
+}
+
+.slider-low, .slider-high {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background-color: transparent;
+  pointer-events: none;
+}
+
+.slider-track {
+  height: 0.5rem;
+  position: absolute;
+  margin: auto;
+  margin-left: calc(var(--thumb-size) / 2);
+  margin-right: calc(var(--thumb-size) / 2);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.slider-range {
+  height: 0.5rem;
+  position: absolute;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--progress-ratio-low) * (100% - var(--thumb-size)) + calc(var(--thumb-size) / 2));
+  right: calc((1 - var(--progress-ratio-high)) * (100% - var(--thumb-size)) + calc(var(--thumb-size) / 2));
+}
+
+.slider-low::-webkit-slider-thumb, .slider-high::-webkit-slider-thumb,
+.slider-low::-moz-range-thumb, .slider-high::-moz-range-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: var(--thumb-size);
+  height: var(--thumb-size);
+  border-radius: 50%;
+  border: none;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.label-low, .label-high {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.label-low {
+  left: calc(var(--progress-ratio-low) * (100% - var(--thumb-size)) + calc(var(--thumb-size) / 2));
+}
+
+.label-high {
+  left: calc(var(--progress-ratio-high) * (100% - var(--thumb-size)) + calc(var(--thumb-size) / 2));
+}
+
+.loading {
+  animation: loading-animation 2s infinite;
+}
+
+@keyframes loading-animation {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}

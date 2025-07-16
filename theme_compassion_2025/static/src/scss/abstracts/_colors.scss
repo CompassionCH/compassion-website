@@ -115,4 +115,10 @@ $compassion-colors: (
         background-color: $color !important;
         color: #fff !important;
     }
+
+    // Slider style
+    .slider-thumb-#{$name}::-webkit-slider-thumb,
+    .slider-thumb-#{$name}::-moz-range-thumb {
+      background-color: $color !important;
+    }
 }
