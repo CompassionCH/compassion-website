@@ -36,21 +36,20 @@
                     <t t-set="sponsorship_end_date"
                        t-value="sponsorship.end_date"/>
 
-                    <div style="display: block; margin-bottom: 8px;">
-                        <span class="border-bottom border-2 border-high-orange">
-                            <t t-if="sponsorship_end_date">
-                                Sponsorship terminated on  <t
-                                    t-esc="sponsorship_end_date.strftime('%d %B %Y')"/>
-                            </t>
-                            <t t-elif="latest_correspondence">
-                                Last contact <t
-                                    t-esc="latest_correspondence.write_date.strftime('%d %B %Y')"/>
-                            </t>
-                            <t t-else="">
-                                No correspondences
-                            </t>
-                        </span>
-                    </div>
+                    <span class="border-bottom border-2 border-high-orange">
+                        <t t-if="sponsorship_end_date">
+                            Sponsorship terminated on  <t
+                                t-esc="sponsorship_end_date.strftime('%d %B %Y')"/>
+                        </t>
+                        <t t-elif="latest_correspondence">
+                            Last contact <t
+                                t-esc="latest_correspondence.write_date.strftime('%d %B %Y')"/>
+                        </t>
+                        <t t-else="">
+                            No correspondences
+                        </t>
+                    </span>
+                    <div class="mb-3"></div>
 
                     <i class="icon-gift02 bg-low-yellow"></i>
                     <t t-esc="sponsorship.child_age"/> years old
