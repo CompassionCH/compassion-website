@@ -19,7 +19,7 @@
 -->
 <odoo>
     <template id="SponsorChildTimelineBatchComponent" name="My Compassion 2 Child Timeline Batch Component">
-        <t t-foreach="items" t-as="item">
+        <t t-foreach="records" t-as="item">
             <t t-if="item.model == 'sponsorship_gift'">
                 <div class="cd-timeline__block">
                     <t t-if="item.title == 'Birthday gift'">

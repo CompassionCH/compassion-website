@@ -360,15 +360,22 @@
                 </div>
             </div>
             <!-- ### Partner and child timeline component ### -->
-            <section class="cd-timeline js-cd-timeline">
+            <section class="cd-timeline js-cd-timeline" t-att-data-child-id="compassion_child.id">
                 <div class="cd-timeline__container">
                     <div class="content-column">
                         <t t-call="my_compassion.SponsorChildTimelineBatchComponent">
-                            <t t-set="items" t-value="records"></t>
+                            <t t-set="records" t-value="records"></t>
                         </t>
                     </div>
                 </div> <!-- cd-timeline__container -->
+                <div id="timeline-loader" class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
             </section> <!-- cd-timeline -->
         </t>
+        <!-- Include Custom Javascript -->
+        <script type="text/javascript" src="/my_compassion/static/src/js/child_profile_timeline.js"/>
     </template>
 </odoo>
