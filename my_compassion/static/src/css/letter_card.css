@@ -2,11 +2,147 @@
     This stylesheet concerns the my2_letter_card component
     templates/components/my2_letter_card.xml
 */
-.letter-icon {
-    font-size: 3rem;
-    color: var(--compassion-blue);
+.my2-letter-card {
+  --color-env: #0077B2;
+  --color-env2: #006b9f;
+  --color-flap: #003049;
+  --color-bg: #e6f2f8;
+
+  --env-border-radius: 0px;
+  --env-width: 84px;
+  --env-height: 54px;
+  --heart-width: 50px;
 }
 
-.new-letter-created {
-    border: 0.2rem solid deepskyblue;
+#envelope {
+  position: relative;
+  width: var(--env-width);
+  height: var(--env-height);
+  border-bottom-left-radius: var(--env-border-radius);
+  border-bottom-right-radius: var(--env-border-radius);
+  margin-left: auto;
+  margin-right: auto;
+  top: 0px;
+  background-color: var(--color-flap);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.front {
+  position: absolute;
+  width: 0;
+  height: 0;
+  z-index: 3;
+}
+
+.flap {
+  border-left: calc(var(--env-width) / 2) solid transparent;
+  border-right: calc(var(--env-width) / 2) solid transparent;
+  border-bottom: calc(var(--env-height) / 2 - 8px) solid transparent;
+  border-top: calc(var(--env-height) / 2 + 8px) solid var(--color-flap);
+  transform-origin: top;
+  pointer-events: none;
+}
+
+.pocket {
+  border-left: calc(var(--env-width) / 2) solid var(--color-env);
+  border-right: calc(var(--env-width) / 2) solid var(--color-env);
+  border-bottom: calc(var(--env-height) / 2) solid var(--color-env2);
+  border-top: calc(var(--env-height) / 2) solid transparent;
+  border-bottom-left-radius: var(--env-border-radius);
+  border-bottom-right-radius: var(--env-border-radius);
+}
+
+.letter {
+  position: relative;
+  background-color: #fff;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  height: 90%;
+  top: 5%;
+  border-radius: var(--env-border-radius);
+  box-shadow: 0 2px 26px rgba(0, 0, 0, 0.12);
+}
+
+.letter:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-image: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.00) 25%,
+      rgba(215, 227, 239, 0.70) 55%,
+      rgba(215, 227, 239, 1.00) 100%);
+}
+
+.open .flap {
+  transform: rotateX(180deg);
+  transition: transform 0.4s ease, z-index 0.6s;
+  z-index: 1;
+}
+
+.close .flap {
+  transform: rotateX(0deg);
+  transition: transform 0.4s 0.6s ease, z-index 1s;
+  z-index: 5;
+}
+
+.close .letter {
+  transform: translateY(0px);
+  transition: transform 0.4s ease, z-index 1s;
+  z-index: 1;
+}
+
+.open .letter {
+  transform: translateY(calc(var(--env-height) / -3));
+  transition: transform 0.4s 0.6s ease, z-index 0.6s;
+  z-index: 2;
+}
+
+.close {
+  opacity: 100%;
+  animation: none;
+}
+
+body {
+  background-color: var(--color-bg);
+}
+
+.envelope-wrapper {
+  height: calc(var(--env-height) + 200px);
+}
+
+.envelope-wrapper {
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.reset button {
+  font-weight: 800;
+  font-style: normal;
+  transition: all 0.1s linear;
+  -webkit-appearance: none;
+  background-color: transparent;
+  border: solid 2px var(--color-env);
+  border-radius: 4px;
+  color: var(--color-env);
+  display: inline-block;
+  font-size: 14px;
+  text-transform: uppercase;
+  margin: 5px;
+  padding: 10px;
+  line-height: 1em;
+  text-decoration: none;
+  min-width: 120px;
+  cursor: pointer;
+}
+
+.reset button:hover {
+  background-color: var(--color-env);
+  color: #fff;
 }

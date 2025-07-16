@@ -18,33 +18,26 @@ class MyCompassionCorrespondenceController(http.Controller):
         partner = request.env.user.partner_id
         children_sponsored_by_partner = partner.sponsorship_ids.child_id
 
-        letters = request.env['correspondence'].search(
-            [
-                ("partner_id", "=", partner.id)
-            ],
-            order="create_date DESC"
-        )
+        for child in children_sponsored_by_partner:
+            if child.id == child_id:
 
-        for compassion_child in children_sponsored_by_partner:
-            if compassion_child.id == child_id:
-
-                breadcrumbs = [
-                    {'name': 'Children', 'url': '/my2/children/', 'active': False},
-                    {'name': compassion_child.preferred_name,
-                     'url': '/my2/children/' + str(child_id), 'active': True},
-                    {'name': 'Letters',
-                     'url': '/my2/children/' + str(child_id) + '/letters',
-                     'active': True},
-                ]
+                letters = request.env['correspondence'].search(
+                    [
+                        ("partner_id", "=", partner.id),
+                        ("child_id", "=", child_id)
+                    ],
+                    order="create_date DESC"
+                )
 
                 return request.render(
                     'my_compassion.my2_child_letters_page',
                     {
-                        'compassion_child': compassion_child,
+                        'child_id': child_id,
                         'letters': letters,
-                        'breadcrumbs': breadcrumbs,
+                        'child': child,
                     }
                 )
+
 
     @http.route('/my2/children/<int:child_id>/letter/new', type="http", auth="user", website=True, sitemap=False)
     def my2_render_new_letter_page(self, child_id, **kwargs):
