@@ -27,7 +27,7 @@ class MyCompassionChildrenController(http.Controller):
         received_correspondences = correspondences_table.search([
             ('partner_id', '=', partner.id),
             ('direction', '=', 'Beneficiary To Supporter'),
-        ], order='write_date desc')
+        ], order='create_date desc')
 
         for corr in received_correspondences:
             child_id = corr.child_id.id
