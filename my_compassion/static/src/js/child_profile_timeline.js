@@ -11,29 +11,35 @@ odoo.define("my_compassion.ChildTimelineInfiniteScrolling", function (require) {
          * @override
          */
         start: function () {
-            this.offset = 9; // Start with the first page already loaded
+            this.offset = 9;
             this.limit = 9;
             this.childId = this.$el.data("child-id");
             this.isLoading = false;
             this.allLoaded = false;
+            this._scrollInitialized = false;
 
             this.$loader = this.$("#timeline-loader");
             this.$container = this.$(".content-column");
+            const widgetThis = this;
 
-            console.log('ChildTimelineInfiniteScrolling has started');
+            console.log("ChildTimelineInfiniteScrolling has started");
 
-            // Bind scroll to window manually
-            this._scrollHandler = this._onWindowScroll.bind(this);
-            $(window).on("scroll.timeline", this._scrollHandler);
+            $( document ).ready(function() {
+                widgetThis._scrollHandler = widgetThis._onWindowScroll.bind(widgetThis);
+                $(window).on("scroll.timeline", widgetThis._scrollHandler);
+                console.log(widgetThis);
+            });
 
             return this._super.apply(this, arguments);
         },
 
         _onWindowScroll: function () {
-            const loaderTop = this.$loader.offset().top;
+            console.log("ChildTimelineInfiniteScrolling _onWindowScroll");
+
+            const timelineBottom = this.$el.offset().top + this.$el.outerHeight();
             const windowBottom = $(window).scrollTop() + $(window).height();
 
-            if (windowBottom >= loaderTop - 50) {
+            if (windowBottom >= timelineBottom - 50) {
                 this._loadMoreData();
             }
         },
@@ -42,17 +48,13 @@ odoo.define("my_compassion.ChildTimelineInfiniteScrolling", function (require) {
          * @override
          */
         destroy: function () {
-            // Important to clean up the event listener to prevent memory leaks
             $(window).off("scroll.timeline", this._scrollHandler);
             this._super.apply(this, arguments);
         },
 
-        //--------------------------------------------------------------------------
-        // Handlers
-        //--------------------------------------------------------------------------
-
         _loadMoreData: function () {
-            console.log('ChildTimelineInfiniteScrolling loads more data');
+            console.log("ChildTimelineInfiniteScrolling loads more data");
+
             if (this.isLoading || this.allLoaded) return;
 
             this.isLoading = true;
@@ -78,4 +80,3 @@ odoo.define("my_compassion.ChildTimelineInfiniteScrolling", function (require) {
         },
     });
 });
-
