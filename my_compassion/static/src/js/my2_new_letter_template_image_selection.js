@@ -7,9 +7,11 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     // Open the modal when the select element is clicked
-    document.getElementById('template-selection').addEventListener('click', function () {
+    document.getElementById('template-selection').addEventListener('click', function (event) {
+        event.preventDefault();
         $('#templateSelectionModal').modal('show');
     });
+
 
     // Get all template images
     const templateImages = document.querySelectorAll('.template-image');
