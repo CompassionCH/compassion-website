@@ -130,16 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
             className: 'btn btn-danger remove-attachment-button text-center',
             innerHTML: '×'
         });
-        removeBtn.style.width = '32px';
-        removeBtn.style.height = '32px';
-        removeBtn.style.borderRadius = '50%';
-        removeBtn.style.padding = '0';
-        removeBtn.style.display = 'flex';
-        removeBtn.style.alignItems = 'center';
-        removeBtn.style.justifyContent = 'center';
-        removeBtn.style.backgroundColor = '#dc3545';
-        removeBtn.style.border = 'none';
-        removeBtn.style.fontSize = '28px';
 
 
         fileDiv.append(preview, fileName, removeBtn);
