@@ -40,7 +40,7 @@
                         <div class="col-7">
                             <div class="form-group">
                                 <label class="text-core-blue" for="child-dropdown">To</label>
-                                <select id="child-dropdown" class="form-control">
+                                <t t-call="theme_compassion_2025.SelectComponent">
                                     <!-- Loop through children_sponsored_by_partner -->
                                     <t t-foreach="sponsorship_ids" t-as="sponsorship">
                                         <!-- Shows only active sponsorships as selections -->
@@ -52,7 +52,7 @@
                                             </option>
                                         </t>
                                     </t>
-                                </select>
+                                </t>
                             </div>
                         </div>
                         <div class="col-5 d-flex justify-content-end">
@@ -67,7 +67,7 @@
 
                     <!-- Button to open the modal for selecting a letter template -->
                     <div class="row align-items-center mb-3">
-                        <div class="col-7">
+                        <div class="col-6">
                             <div class="form-group">
                                 <label class="text-core-blue" for="template-selection">Template</label>
                                 <button type="button" id="template-selection"
@@ -76,11 +76,11 @@
                                 </button>
                             </div>
                         </div>
-                        <!-- Show the chosen template dynamically -->
-                        <div class="col-6 mb-3">
+                        <div class="col-6 text-right">
                             <div id="template-reactive-img"></div>
                         </div>
                     </div>
+
 
                     <!-- Modal showed when the user clicks on the button for selecting a template -->
                     <div class="modal fade" id="templateSelectionModal" tabindex="-1">
