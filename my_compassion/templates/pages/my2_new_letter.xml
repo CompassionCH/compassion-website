@@ -41,6 +41,7 @@
                             <div class="form-group">
                                 <label class="text-core-blue" for="child-dropdown">To</label>
                                 <t t-call="theme_compassion_2025.SelectComponent">
+                                    <t t-set="id" t-value="'child-dropdown'"/>
                                     <!-- Loop through children_sponsored_by_partner -->
                                     <t t-foreach="sponsorship_ids" t-as="sponsorship">
                                         <!-- Shows only active sponsorships as selections -->
