@@ -43,6 +43,7 @@
         # Components
         "templates/components/Title.xml",
         "templates/components/Vignette.xml",
+        "templates/components/Select.xml",
         # Buttons
         "templates/components/buttons/ThemedButton.xml",
     ],
