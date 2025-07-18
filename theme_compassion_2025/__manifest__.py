@@ -38,12 +38,11 @@
         "views/assets.xml",
         "views/images_content.xml",
         "views/template_header.xml",
+        "views/footer.xml",
         "templates/components/Portrait.xml",
-
         # Components
         "templates/components/Title.xml",
         "templates/components/Vignette.xml",
-        
         # Buttons
         "templates/components/buttons/ThemedButton.xml",
     ],
