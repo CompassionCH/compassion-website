@@ -20,6 +20,20 @@ class MyCompassionChildrenController(http.Controller):
         """
         partner = request.env.user.partner_id
 
+        #To keep a list of the latest correspondence with each sponsored child:
+        latest_correspondences_by_child_id = {}
+        correspondences_table = request.env['correspondence'].sudo()
+
+        received_correspondences = correspondences_table.search([
+            ('partner_id', '=', partner.id),
+            ('direction', '=', 'Beneficiary To Supporter'),
+        ], order='create_date desc')
+
+        for corr in received_correspondences:
+            child_id = corr.child_id.id
+            if child_id not in latest_correspondences_by_child_id:
+                latest_correspondences_by_child_id[child_id] = corr
+
         breadcrumbs = [
             {'name': 'Children', 'url': '/my2/children/', 'active': True},
         ]
@@ -28,6 +42,7 @@ class MyCompassionChildrenController(http.Controller):
             'my_compassion.my2_children_page',
             {
                 'sponsorship_ids': partner.sponsorship_ids,
+                'latest_correspondences_by_child_id': latest_correspondences_by_child_id,
                 'breadcrumbs': breadcrumbs,
             }
         )
