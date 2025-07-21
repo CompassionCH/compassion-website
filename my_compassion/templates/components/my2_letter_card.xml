@@ -17,18 +17,14 @@
         <div class="position-relative d-flex shadow-sm rounded-4  h-100">
 
             <!-- Icon at the left -->
-            <div class="my2-letter-card pt-2 pl-3">
-                <div class="envelope-wrapper">
-                    <div id="envelope" class="close">
-                        <div class="front flap"></div>
-                        <div class="front pocket"></div>
-                        <div class="letter"></div>
-                    </div>
-                </div>
+            <div class="ml-2 mt-4 my2-envelope"
+                 t-att-class="'ml-2 mt-4 my2-envelope ' + ('envelope--blue' if letter.direction == 'Supporter To Beneficiary' else 'envelope--green')">
+                <div class="env-body"></div>
+                <div class="env-flap"></div>
             </div>
 
             <!-- Text block at the right -->
-            <div class="flex-grow-1 d-flex flex-column p-2">
+            <div class="flex-grow-1 d-flex flex-column ml-2 mr-2 mb-2 mt-4">
 
                 <!-- Top row: Title (left) and Dropdown (right) -->
                 <div class="d-flex justify-content-between align-items-start mb-4">

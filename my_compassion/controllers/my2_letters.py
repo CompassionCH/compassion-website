@@ -8,6 +8,7 @@
 ##############################################################################
 from odoo.http import request
 from odoo import http
+from datetime import date
 
 
 class MyCompassionCorrespondenceController(http.Controller):
@@ -20,7 +21,6 @@ class MyCompassionCorrespondenceController(http.Controller):
 
         for child in children_sponsored_by_partner:
             if child.id == child_id:
-
                 letters = request.env['correspondence'].search(
                     [
                         ("partner_id", "=", partner.id),
@@ -28,6 +28,7 @@ class MyCompassionCorrespondenceController(http.Controller):
                     ],
                     order="create_date DESC"
                 )
+                current_year = date.today().year
 
                 return request.render(
                     'my_compassion.my2_child_letters_page',
@@ -35,6 +36,8 @@ class MyCompassionCorrespondenceController(http.Controller):
                         'child_id': child_id,
                         'letters': letters,
                         'child': child,
+                        'current_year' : current_year,
+                        'children_list': children_sponsored_by_partner,
                     }
                 )
 
