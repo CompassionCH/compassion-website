@@ -263,16 +263,87 @@
                                 </ul>
                             </div>
                             <!-- COUNTRY TAB CONTENT -->
-                            <!-- TODO: This section is populated with data that comes from who knows where from
-                                       compassion international. Need to check it with them and get the data here
-                                       It should be replaced with dynamic data from the backend.
-                            -->
                             <div class="tab-pane fade show active" id="country-tab" role="tabpanel" aria-labelledby="country-tab-link">
+                                <t t-set="field_office" t-value="compassion_child.field_office_id"/>
                                 <ul class="tab-items">
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Official Country Name:</strong>
                                         <t t-esc="compassion_child.project_id.country_id.name"/>
                                     </li>
+                                    <t t-if="field_office.capital_city">
+                                        <li class="tab-item">
+                                            <strong class="tab-item-title">Capital City:</strong>
+                                            <t t-esc="field_office.capital_city"/>
+                                        </li>
+                                    </t>
+                                    <t t-if="field_office.population">
+                                        <li class="tab-item">
+                                            <strong class="tab-item-title">Population:</strong>
+                                            <t t-esc="field_office.population" t-options='{"widget": "integer"}'/>
+                                        </li>
+                                    </t>
+                                    <t t-if="field_office.male_life_expectancy">
+                                        <li class="tab-item">
+                                            <strong class="tab-item-title">Male life expectancy:</strong>
+                                            <t t-esc="field_office.male_life_expectancy"/>
+                                            <span>Years Old</span>
+                                        </li>
+                                    </t>
+                                    <t t-if="field_office.female_life_expectancy">
+                                        <li class="tab-item">
+                                            <strong class="tab-item-title">Female life expectancy:</strong>
+                                            <t t-esc="field_office.female_life_expectancy"/>
+                                            <span>Years Old</span>
+                                        </li>
+                                    </t>
+                                    <t t-if="field_office.urban_water_access">
+                                        <li class="tab-item">
+                                            <strong class="tab-item-title">Urban population with drinking water access:</strong>
+                                            <t t-esc="field_office.urban_water_access * 100" t-options='{"widget": "float", "precision": 0}'/>
+                                            <span t-translation="off">%</span>
+                                        </li>
+                                    </t>
+                                    <t t-if="field_office.rural_water_access">
+                                        <li class="tab-item">
+                                            <strong class="tab-item-title">Rural population with drinking water access:</strong>
+                                            <t t-esc="field_office.rural_water_access * 100" t-options='{"widget": "float", "precision": 0}'/>
+                                            <span t-translation="off">%</span>
+                                        </li>
+                                    </t>
+                                    <t t-if="field_office.adult_literacy_rate">
+                                        <li class="tab-item">
+                                            <strong class="tab-item-title">Adult literacy rate:</strong>
+                                            <t t-esc="field_office.adult_literacy_rate * 100" t-options='{"widget": "float", "precision": 0}'/>
+                                            <span t-translation="off">%</span>
+                                        </li>
+                                    </t>
+                                    <t t-if="field_office.infant_mortality_rate">
+                                        <li class="tab-item">
+                                            <strong class="tab-item-title">Infant mortality rate:</strong>
+                                            <t t-esc="field_office.infant_mortality_rate * 100" t-options='{"widget": "float", "precision": 0}'/>
+                                            <span t-translation="off">%</span>
+                                        </li>
+                                    </t>
+                                    <t t-if="field_office.under_five_mortality_rate">
+                                        <li class="tab-item">
+                                            <strong class="tab-item-title">Under-five mortality rate:</strong>
+                                            <t t-esc="field_office.under_five_mortality_rate * 100" t-options='{"widget": "float", "precision": 0}'/>
+                                            <span t-translation="off">%</span>
+                                        </li>
+                                    </t>
+                                    <t t-if="field_office.religions">
+                                        <li class="tab-item">
+                                            <strong class="tab-item-title">Religion:</strong>
+                                            <t t-esc="field_office.religions"/>
+                                        </li>
+                                    </t>
+                                     <t t-if="field_office.less_than_2_dollars_a_day">
+                                        <li class="tab-item">
+                                            <strong class="tab-item-title">Population living on less than $2/day:</strong>
+                                            <t t-esc="field_office.less_than_2_dollars_a_day * 100" t-options='{"widget": "float", "precision": 0}'/>
+                                            <span t-translation="off">%</span>
+                                        </li>
+                                    </t>
                                 </ul>
                             </div>
                         </div>
