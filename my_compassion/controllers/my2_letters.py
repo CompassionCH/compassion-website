@@ -13,155 +13,189 @@ from datetime import date
 
 class MyCompassionCorrespondenceController(http.Controller):
 
-    @http.route('/my2/children/<int:child_id>/letters', type="http", auth="user",
+    @http.route(['/my2/children/letters', '/my2/children/letters/<int:child_id>'], type="http", auth="user",
                 website=True, sitemap=False)
-    def my2_render_child_letters_page(self, child_id, **kwargs):
+    def my2_render_child_letters_page(self, child_id=None, **kwargs):
         partner = request.env.user.partner_id
         children_sponsored_by_partner = partner.sponsorship_ids.child_id
+        current_year = date.today().year
 
-        for child in children_sponsored_by_partner:
-            if child.id == child_id:
-                letters = request.env['correspondence'].search(
-                    [
-                        ("partner_id", "=", partner.id),
-                        ("child_id", "=", child_id)
-                    ],
-                    order="create_date DESC"
-                )
-                current_year = date.today().year
+        filter_child = next((c for c in children_sponsored_by_partner if c.id == child_id), None)
 
-                return request.render(
-                    'my_compassion.my2_child_letters_page',
-                    {
-                        'child_id': child_id,
-                        'letters': letters,
-                        'child': child,
-                        'current_year' : current_year,
-                        'children_list': children_sponsored_by_partner,
-                    }
-                )
+        filter_domain = [("partner_id", "=", partner.id)]
+        if filter_child:
+            filter_domain.append(("child_id", "=", child_id))
 
-
-    @http.route('/my2/children/<int:child_id>/letter/new', type="http", auth="user", website=True, sitemap=False)
-    def my2_render_new_letter_page(self, child_id, **kwargs):
-        partner = request.env.user.partner_id
-        children_sponsored_by_partner = partner.sponsorship_ids.child_id
-
-        # Retrieve the child object already instantiated
-        selected_child = None
-        for compassion_child in children_sponsored_by_partner:
-            if compassion_child.id == child_id:
-                selected_child = compassion_child
-
-        # Retrieve the letter templates
-        templates = (
-            request.env["correspondence.template"].search(
-                [
-                    ("active", "=", True),
-                    ("website_published", "=", True),
-                ]
-            )
-            # Sort the templates alphabetically, placing "Christmas" templates at the beginning
-            # "0" is special sorting key because it comes before any letter in ASCII order.
-            .sorted(lambda t: "0" if "christmas" in t.name.lower() else t.name)
-        )
-
-        breadcrumbs = [
-            {'name': 'Children', 'url': '/my2/children/', 'active': False},
-            {'name': 'New Letter', 'url': '/my2/children/' + str(child_id) + '/letter/new',
-             'active': True},
-        ]
+        letters = request.env['correspondence'].search(filter_domain, order="create_date DESC")
+        letter_children_pairs = []
+        for letter in letters:
+            if letter.child_id:
+                letter_children_pairs.append((letter, letter.child_id))
 
         return request.render(
-            'my_compassion.my2_new_letter_page',
+            'my_compassion.my2_child_letters_page',
             {
-                'selected_child': selected_child,
-                'sponsorship_ids': partner.sponsorship_ids,
-                'templates': templates,
-                'breadcrumbs': breadcrumbs,
+                'child_id': child_id,
+                'letter_children_pairs': letter_children_pairs,
+                'filter_child': filter_child,
+                'current_year': current_year,
+                'children_list': children_sponsored_by_partner,
             }
         )
 
-    @http.route('/my2/children/letter/new', type="json", auth="user", methods=['POST'], sitemap=False)
-    def my2_create_new_letter(self, **post):
-        """
-            Used in my2_new_letter.js for sending the new letter form data
-        """
 
-        # Retrieve JSON data
-        child_id = int(post.get('child_id'))
-        template_id = post.get('template_id')
-        letter_body = post.get('letter_body')
-        source = post.get('source')
-        csrf_token = post.get('csrf_token') # Should we use it somehow?
-        attachments = post.get('attachments')
-        mode = post.get('mode') # Either send or preview
+@http.route('/my2/children/<int:child_id>/letters', type="http", auth="user",
+            website=True, sitemap=False)
+def my2_render_child_letters_page(self, child_id, **kwargs):
+    partner = request.env.user.partner_id
+    children_sponsored_by_partner = partner.sponsorship_ids.child_id
 
-        # Retrieve related user data
-        partner = request.env.user.partner_id
-        children_sponsored_by_partner = partner.sponsorship_ids.child_id
-
-        # Retrieve the child object already instantiated
-        selected_child = None
-        for compassion_child in children_sponsored_by_partner:
-            if compassion_child.id == child_id:
-                selected_child = compassion_child
-
-        # This is from legacy, it should be refactored in my opinion
-        datas = []
-        for file in attachments:
-            if isinstance(file, dict) and "content" in file:
-                datas.append(
-                    (
-                        0,
-                        0,
-                        {
-                            "datas": file["content"],
-                            "name": file["filename"],
-                        },
-                    )
-                )
-
-        letter_values = {
-            "name": f"{source}-{selected_child.local_id}",
-            "selection_domain": str(
+    for child in children_sponsored_by_partner:
+        if child.id == child_id:
+            letters = request.env['correspondence'].search(
                 [
-                    ("child_id.local_id", "=", selected_child.local_id),
-                    ("state", "not in", ["draft", "cancelled"]),
-                ]
-            ),
-            "body": letter_body,
-            "template_id": int(template_id),
-            "image_ids": datas,
-            "source": source,
+                    ("partner_id", "=", partner.id),
+                    ("child_id", "=", child_id)
+                ],
+                order="create_date DESC"
+            )
+            current_year = date.today().year
+
+            return request.render(
+                'my_compassion.my2_child_letters_page',
+                {
+                    'child_id': child_id,
+                    'letters': letters,
+                    'child': child,
+                    'current_year': current_year,
+                    'children_list': children_sponsored_by_partner,
+                }
+            )
+
+
+@http.route('/my2/children/<int:child_id>/letter/new', type="http", auth="user",
+            website=True, sitemap=False)
+def my2_render_new_letter_page(self, child_id, **kwargs):
+    partner = request.env.user.partner_id
+    children_sponsored_by_partner = partner.sponsorship_ids.child_id
+
+    # Retrieve the child object already instantiated
+    selected_child = None
+    for compassion_child in children_sponsored_by_partner:
+        if compassion_child.id == child_id:
+            selected_child = compassion_child
+
+    # Retrieve the letter templates
+    templates = (
+        request.env["correspondence.template"].search(
+            [
+                ("active", "=", True),
+                ("website_published", "=", True),
+            ]
+        )
+        # Sort the templates alphabetically, placing "Christmas" templates at the beginning
+        # "0" is special sorting key because it comes before any letter in ASCII order.
+        .sorted(lambda t: "0" if "christmas" in t.name.lower() else t.name)
+    )
+
+    breadcrumbs = [
+        {'name': 'Children', 'url': '/my2/children/', 'active': False},
+        {'name': 'New Letter', 'url': '/my2/children/' + str(child_id) + '/letter/new',
+         'active': True},
+    ]
+
+    return request.render(
+        'my_compassion.my2_new_letter_page',
+        {
+            'selected_child': selected_child,
+            'sponsorship_ids': partner.sponsorship_ids,
+            'templates': templates,
+            'breadcrumbs': breadcrumbs,
+        }
+    )
+
+
+@http.route('/my2/children/letter/new', type="json", auth="user", methods=['POST'],
+            sitemap=False)
+def my2_create_new_letter(self, **post):
+    """
+        Used in my2_new_letter.js for sending the new letter form data
+    """
+
+    # Retrieve JSON data
+    child_id = int(post.get('child_id'))
+    template_id = post.get('template_id')
+    letter_body = post.get('letter_body')
+    source = post.get('source')
+    csrf_token = post.get('csrf_token')  # Should we use it somehow?
+    attachments = post.get('attachments')
+    mode = post.get('mode')  # Either send or preview
+
+    # Retrieve related user data
+    partner = request.env.user.partner_id
+    children_sponsored_by_partner = partner.sponsorship_ids.child_id
+
+    # Retrieve the child object already instantiated
+    selected_child = None
+    for compassion_child in children_sponsored_by_partner:
+        if compassion_child.id == child_id:
+            selected_child = compassion_child
+
+    # This is from legacy, it should be refactored in my opinion
+    datas = []
+    for file in attachments:
+        if isinstance(file, dict) and "content" in file:
+            datas.append(
+                (
+                    0,
+                    0,
+                    {
+                        "datas": file["content"],
+                        "name": file["filename"],
+                    },
+                )
+            )
+
+    letter_values = {
+        "name": f"{source}-{selected_child.local_id}",
+        "selection_domain": str(
+            [
+                ("child_id.local_id", "=", selected_child.local_id),
+                ("state", "not in", ["draft", "cancelled"]),
+            ]
+        ),
+        "body": letter_body,
+        "template_id": int(template_id),
+        "image_ids": datas,
+        "source": source,
+    }
+
+    # Retrieved code from legacy, wondering use case ?
+    language = request.env["langdetect"].sudo().detect_language(letter_body)
+    if language:
+        letter_values["language_id"] = language.id
+
+    letter_generator = request.env["correspondence.s2b.generator"].sudo().create(
+        letter_values)
+
+    # I don't understand why was it made like this
+    # This is how legacy retrieves the sponsorship_id...
+    letter_generator.onchange_domain()
+
+    letter_generator.preview()
+
+    if mode == 'send':
+        letter_generator.generate_letters_job()
+
+    if letter_generator:
+
+        return {
+            "preview_url": f"{request.httprequest.host_url}web/image/{letter_generator._name}/{letter_generator.id}/preview_pdf",
+            "letter_values": letter_values,
+            "generator_id": letter_generator.id,
         }
 
-        # Retrieved code from legacy, wondering use case ?
-        language = request.env["langdetect"].sudo().detect_language(letter_body)
-        if language:
-            letter_values["language_id"] = language.id
-
-
-        letter_generator = request.env["correspondence.s2b.generator"].sudo().create(letter_values)
-
-        # I don't understand why was it made like this
-        # This is how legacy retrieves the sponsorship_id...
-        letter_generator.onchange_domain()
-
-        letter_generator.preview()
-
-        if mode == 'send':
-            letter_generator.generate_letters_job()
-
-        if letter_generator:
-
-            return {
-                "preview_url": f"{request.httprequest.host_url}web/image/{letter_generator._name}/{letter_generator.id}/preview_pdf",
-                "letter_values": letter_values,
-                "generator_id": letter_generator.id,
-            }
-
-        else:
-            return {
-                "error": "Something went wrong.",
-            }
+    else:
+        return {
+            "error": "Something went wrong.",
+        }
