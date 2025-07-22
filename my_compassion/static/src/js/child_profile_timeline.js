@@ -1,65 +1,70 @@
-odoo.define("my_compassion.child_profile_timeline", function (require) {
-    "use strict";
+document.addEventListener("DOMContentLoaded", () => {
+    const timelineEl = document.querySelector(".cd-timeline");
+    const scrollParent = document.querySelector("#wrapwrap");
 
-    const ajax = require("web.ajax");
+    if (!timelineEl || !scrollParent) return;
 
-    document.addEventListener("DOMContentLoaded", () => {
-        const timelineEl = document.querySelector(".cd-timeline");
-        const scrollParent = document.querySelector("#wrapwrap");
+    const childId = timelineEl.dataset.childId;
+    const loader = timelineEl.querySelector("#timeline-loader");
+    const container = timelineEl.querySelector(".content-column");
 
-        if (!timelineEl || !scrollParent) return;
+    let offset = 9;
+    const limit = 9;
+    let isLoading = false;
+    let allLoaded = false;
 
-        const childId = timelineEl.dataset.childId;
-        const loader = timelineEl.querySelector("#timeline-loader");
-        const container = timelineEl.querySelector(".content-column");
+    function loadMoreData() {
+        if (isLoading || allLoaded) return;
 
-        let offset = 9;
-        const limit = 9;
-        let isLoading = false;
-        let allLoaded = false;
+        isLoading = true;
+        loader.style.display = "block";
 
-        const formData = new FormData();
-        formData.append("offset", offset);
-        formData.append("limit", limit);
+        fetch(`/my2/children/${childId}/timeline-batch`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest", // Tells Odoo it's an AJAX call
+            },
+            body: JSON.stringify({
+                jsonrpc: "2.0",
+                method: "call",
+                params: {
+                    offset,
+                    limit,
+                },
+            }),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                const html = data.result?.html || "";
+                const hasMore = data.result?.has_more_records;
 
-        function loadMoreData() {
-            if (isLoading || allLoaded) return;
-
-            isLoading = true;
-            loader.style.display = "block";
-
-            ajax.jsonRpc(`/my2/children/${childId}/timeline-batch`, "call", {
-                offset,
-                limit,
+                if (html.trim()) {
+                    container.insertAdjacentHTML("beforeend", html);
+                    offset += limit;
+                    allLoaded = !hasMore;
+                } else {
+                    allLoaded = true;
+                }
             })
-                .then((data) => {
-                    if (data.html.trim()) {
-                        container.insertAdjacentHTML("beforeend", data.html);
-                        offset += limit;
-                        allLoaded = !data.has_more_records;
-                    } else {
-                        allLoaded = true;
-                    }
-                })
-                .catch((err) => {
-                    console.error("Error loading timeline data:", err);
-                })
-                .finally(() => {
-                    isLoading = false;
-                    loader.style.display = "none";
-                });
+            .catch((err) => {
+                console.error("Error loading timeline data:", err);
+            })
+            .finally(() => {
+                isLoading = false;
+                loader.style.display = "none";
+            });
+    }
+
+    function onScroll() {
+        const scrollTop = scrollParent.scrollTop;
+        const scrollHeight = scrollParent.scrollHeight;
+        const clientHeight = scrollParent.clientHeight;
+
+        if (scrollTop + clientHeight >= scrollHeight - 100) {
+            loadMoreData();
         }
+    }
 
-        function onScroll() {
-            const scrollTop = scrollParent.scrollTop;
-            const scrollHeight = scrollParent.scrollHeight;
-            const clientHeight = scrollParent.clientHeight;
-
-            if (scrollTop + clientHeight >= scrollHeight - 100) {
-                loadMoreData();
-            }
-        }
-
-        scrollParent.addEventListener("scroll", onScroll);
-    });
+    scrollParent.addEventListener("scroll", onScroll);
 });
