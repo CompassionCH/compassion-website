@@ -98,10 +98,11 @@ class MyCompassionChildrenController(http.Controller):
 
     @http.route(
         "/my2/children/<int:child_id>/timeline-batch",
-        type="http",
+        type="json",
         auth="user",
         website=True,
         sitemap=False,
+        methods=["POST"],
     )
     def my2_get_child_timeline_items(self, child_id, **kwargs):
         """API endpoint for infinite scroll. Returns a rendered HTML snippet."""

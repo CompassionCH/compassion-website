@@ -11,6 +11,14 @@ odoo.define("my_compassion.ChildTimelineInfiniteScrolling", function (require) {
          * @override
          */
         start: function () {
+            /*return this._super.apply(this, arguments).then(() => {
+                setTimeout(() => this._initializeScroll(), 0);
+            });*/
+        },
+
+        _initializeScroll: function () {
+            if (!this.$el.length) return;
+
             this.offset = 9;
             this.limit = 9;
             this.childId = this.$el.data("child-id");
@@ -20,26 +28,20 @@ odoo.define("my_compassion.ChildTimelineInfiniteScrolling", function (require) {
 
             this.$loader = this.$("#timeline-loader");
             this.$container = this.$(".content-column");
-            const widgetThis = this;
 
-            console.log("ChildTimelineInfiniteScrolling has started");
-
-            $( document ).ready(function() {
-                widgetThis._scrollHandler = widgetThis._onWindowScroll.bind(widgetThis);
-                $(window).on("scroll.timeline", widgetThis._scrollHandler);
-                console.log(widgetThis);
-            });
-
-            return this._super.apply(this, arguments);
+            // For the scrolling to trigger, we attach the scrolling to the main container (wrapwrap)
+            // as it is the main scrollable area, not the window due to a 100% height layout and an overflow auto.
+            this._scrollHandler = this._onWindowScroll.bind(this);
+            $("#wrapwrap").on("scroll.timeline", this._scrollHandler);
         },
 
         _onWindowScroll: function () {
-            console.log("ChildTimelineInfiniteScrolling _onWindowScroll");
+            const scrollTop = $(window).scrollTop();
+            const windowHeight = $(window).height();
+            const documentHeight = $(document).height();
 
-            const timelineBottom = this.$el.offset().top + this.$el.outerHeight();
-            const windowBottom = $(window).scrollTop() + $(window).height();
-
-            if (windowBottom >= timelineBottom - 50) {
+            // Trigger when user is within 100px of the bottom
+            if (scrollTop + windowHeight >= documentHeight - 100) {
                 this._loadMoreData();
             }
         },
@@ -48,13 +50,11 @@ odoo.define("my_compassion.ChildTimelineInfiniteScrolling", function (require) {
          * @override
          */
         destroy: function () {
-            $(window).off("scroll.timeline", this._scrollHandler);
+            $("#wrapwrap").off("scroll.timeline", this._scrollHandler);
             this._super.apply(this, arguments);
         },
 
         _loadMoreData: function () {
-            console.log("ChildTimelineInfiniteScrolling loads more data");
-
             if (this.isLoading || this.allLoaded) return;
 
             this.isLoading = true;
@@ -73,7 +73,9 @@ odoo.define("my_compassion.ChildTimelineInfiniteScrolling", function (require) {
                 } else {
                     this.allLoaded = true;
                 }
-
+            }).catch((error) => {
+                console.error("RPC error while loading more data:", error);
+            }).finally(() => {
                 this.isLoading = false;
                 this.$loader.hide();
             });
