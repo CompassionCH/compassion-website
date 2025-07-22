@@ -6,6 +6,8 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+from werkzeug.exceptions import NotFound
+
 from odoo import http
 from odoo.http import request
 
@@ -48,6 +50,7 @@ class MyCompassionCorrespondenceController(http.Controller):
                     "breadcrumbs": breadcrumbs,
                 },
             )
+        raise NotFound()
 
     @http.route(
         '/my2/children/<model("compassion.child"):child>/letter/new',
@@ -92,6 +95,7 @@ class MyCompassionCorrespondenceController(http.Controller):
                     "breadcrumbs": breadcrumbs,
                 },
             )
+        raise NotFound()
 
     @http.route("/my2/children/letter/new", type="json", auth="user", methods=["POST"])
     def my2_create_new_letter(self, **post):

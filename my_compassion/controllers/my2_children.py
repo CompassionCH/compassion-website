@@ -6,6 +6,8 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+from werkzeug.exceptions import NotFound
+
 from odoo import http
 from odoo.http import request
 
@@ -58,6 +60,7 @@ class MyCompassionChildrenController(http.Controller):
                     "breadcrumbs": breadcrumbs,
                 },
             )
+        raise NotFound()
 
     @http.route(
         '/my2/children/<model("compassion.child"):child>/details',
@@ -91,3 +94,4 @@ class MyCompassionChildrenController(http.Controller):
                     "breadcrumbs": breadcrumbs,
                 },
             )
+        raise NotFound()
