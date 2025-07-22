@@ -6,19 +6,18 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from odoo.http import request
 from odoo import http
+from odoo.http import request
 
 
 class MyCompassionUserController(http.Controller):
-
-    @http.route('/my2/dashboard/', type="http", auth="user", website=True, sitemap=False)
+    @http.route(
+        "/my2/dashboard/", type="http", auth="user", website=True, sitemap=False
+    )
     def my2_render_dashboard_page(self, **kwargs):
         """
-        Renders the dashboard page according to the logged-in user's role (sponsor, donator or volunteer).
+        Renders the dashboard page according to the logged-in user's role
+        (sponsor, donor or volunteer).
         return: An HTTP response containing a rendered template with the dashboard.
         """
-        return request.render(
-            'my_compassion.my2_dashboard_page',
-            {}
-        )
+        return request.render("my_compassion.my2_dashboard_page", {})

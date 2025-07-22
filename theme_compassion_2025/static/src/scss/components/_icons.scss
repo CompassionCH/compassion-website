@@ -35,10 +35,12 @@
 }
 
 // Loop through the list of icons and generate a unique class for each one.
-@each $icon in $icons { // No "var." prefix needed with @import
+@each $icon in $icons {
+    // No "var." prefix needed with @import
     // Convert "BibleGift" to ".icon-bible-gift"
-    .icon-#{to-kebab-case($icon)} { // No "func." prefix needed
-    // Set the specific SVG file for this class
-    mask-image: url("/theme_compassion_2025/static/src/img/icons/#{$icon}.svg");
+    .icon-#{to-kebab-case($icon)} {
+        // No "func." prefix needed
+        // Set the specific SVG file for this class
+        mask-image: url("/theme_compassion_2025/static/src/img/icons/#{$icon}.svg");
     }
 }

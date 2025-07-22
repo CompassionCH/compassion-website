@@ -74,8 +74,10 @@ class MyCompassionCorrespondenceController(http.Controller):
                         ("website_published", "=", True),
                     ]
                 )
-                # Sort the templates alphabetically, placing "Christmas" templates at the beginning
-                # "0" is special sorting key because it comes before any letter in ASCII order.
+                # Sort the templates alphabetically, placing "Christmas"
+                # templates at the beginning
+                # "0" is special sorting key because it comes
+                # before any letter in ASCII order.
                 .sorted(lambda t: "0" if "christmas" in t.name.lower() else t.name)
             )
 
@@ -99,7 +101,13 @@ class MyCompassionCorrespondenceController(http.Controller):
             )
         raise NotFound()
 
-    @http.route("/my2/children/letter/new", type="json", auth="user", methods=["POST"], sitemap=False)
+    @http.route(
+        "/my2/children/letter/new",
+        type="json",
+        auth="user",
+        methods=["POST"],
+        sitemap=False,
+    )
     def my2_create_new_letter(self, **post):
         """
         Used in my2_new_letter.js for sending the new letter form data
@@ -110,7 +118,6 @@ class MyCompassionCorrespondenceController(http.Controller):
         template_id = post.get("template_id")
         letter_body = post.get("letter_body")
         source = post.get("source")
-        csrf_token = post.get("csrf_token")  # Should we use it somehow?
         attachments = post.get("attachments")
         mode = post.get("mode")  # Either send or preview
 
@@ -173,7 +180,9 @@ class MyCompassionCorrespondenceController(http.Controller):
 
         if letter_generator:
             return {
-                "preview_url": f"{request.httprequest.host_url}web/image/{letter_generator._name}/{letter_generator.id}/preview_pdf",
+                "preview_url": f"{request.httprequest.host_url}web/image"
+                f"/{letter_generator._name}/{letter_generator.id}"
+                f"/preview_pdf",
                 "letter_values": letter_values,
                 "generator_id": letter_generator.id,
             }

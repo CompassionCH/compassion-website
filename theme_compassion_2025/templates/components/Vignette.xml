@@ -25,10 +25,10 @@
             </t>
             <a t-att-href="href" class="text-decoration-none h-100">
                 <div class="d-flex flex-column h-100">
-                    <img t-att-src="image" class="card-img-top flex-grow-1"/>
-                    <div t-attf-class="card-body rounded-0 h-25 py-2 flex-grow-0 d-flex bg-#{bg_color}" >
-                        <div t-attf-class="d-flex flex-column justify-content-center flex-grow-1" >
-                            <div class="pl-3" >
+                    <img t-att-src="image" class="card-img-top flex-grow-1" />
+                    <div t-attf-class="card-body rounded-0 h-25 py-2 flex-grow-0 d-flex bg-#{bg_color}">
+                        <div t-attf-class="d-flex flex-column justify-content-center flex-grow-1">
+                            <div class="pl-3">
                                 <h3 t-attf-class="card-title m-0 text-#{color}">
                                     <t t-raw="title" />
                                 </h3>
@@ -40,7 +40,7 @@
                             </div>
                         </div>
                         <t t-if="icon">
-                            <i t-attf-class="#{icon} vignette-icon h-100 text-right text-#{color}"></i>
+                            <i t-attf-class="#{icon} vignette-icon h-100 text-right text-#{color}" />
                         </t>
                     </div>
                 </div>

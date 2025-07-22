@@ -3,10 +3,7 @@
         <field name="name">view.correspondance.template.website</field>
         <field name="model">correspondence.template</field>
         <field name="priority" eval="100" />
-        <field
-      name="inherit_id"
-      ref="sbc_compassion.view_correspondence_template_origin_form"
-    />
+        <field name="inherit_id" ref="sbc_compassion.view_correspondence_template_origin_form" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='active']" position="after">
                 <field name="website_published" />
