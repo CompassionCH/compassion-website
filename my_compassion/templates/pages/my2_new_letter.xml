@@ -7,7 +7,7 @@
     with options to select a child, a letter template, and a text input for the letter content.
 
     Used in route:
-    - /my2/children/<int:child_id>/letter/new
+    - /my2/children/<model("compassion.child"):child>/letter/new
 
     Injected data:
     - sponsorship_ids (array of 'recurring_contract' records): The list of sponsorships linked to the user
