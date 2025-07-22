@@ -29,20 +29,24 @@
                 <div class="container">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a
-                  href="/events"
-                >Events</a></li>
-                            <li class="breadcrumb-item"><a
-                  t-att-href="event.website_url"
-                ><t t-esc="event.name" /></a></li>
+                            <li class="breadcrumb-item">
+                                <a href="/events">Events</a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a t-att-href="event.website_url">
+                                    <t t-esc="event.name" />
+                                </a>
+                            </li>
                             <li
                 class="breadcrumb-item active"
                 aria-current="page"
-              ><t t-esc="registration.profile_name" /></li>
+              >
+                                <t t-esc="registration.profile_name" />
+                            </li>
                         </ol>
                     </nav>
                     <h2 class="text-center text-uppercase mb-4">
-                        <span>Support </span>
+                        <span>Support</span>
                         <t t-esc="registration.profile_name" />
                         <a
               class="btn btn-primary ml-2"
@@ -89,8 +93,10 @@
               >
                                 <t t-set="barometer" t-value="registration" />
                                 <t t-set="amount_inside" t-value="True" />
-                                <t t-set="barometer_amount_class">w-100 m-auto
-                                    text-center</t>
+                                <t t-set="barometer_amount_class">
+                                    w-100 m-auto
+                                    text-center
+                                </t>
                                 <t
                   t-set="barometer_bg_class"
                 >bg-100 shadow-sm h-100</t>
@@ -142,7 +148,6 @@
             <div class="oe_structure" />
         </t>
     </template>
-
     <template id="event_registration_call_to_action">
         <section
       class="s_call_to_action o_cc o_cc3 pt48 pb24"
@@ -159,33 +164,35 @@
                             </span>
                             <br />
                         </h3>
-                        <p>Sponsoring a child converts to an equivalent donation
-                            of <span
+                        <p>
+                            Sponsoring a child converts to an equivalent donation
+                            of
+                            <span
                 t-field="registration.event_id.sponsorship_donation_value"
               />
                             and will raise the barometer
                             of
-                            <t
-                t-esc="registration.profile_name"
-              /> accordingly.</p>
+                            <t t-esc="registration.profile_name" />
+                            accordingly.
+                        </p>
                     </div>
                     <div class="col-lg-3">
                         <a
               t-att-href="registration.sponsorship_url"
               class="btn btn-primary text-uppercase w-100 mb-2"
-            >Sponsor a
-                            child</a>
+            >
+                            Sponsor a
+                            child
+                        </a>
                         <a
               href="#event_donation_form"
               class="btn btn-primary text-uppercase w-100"
-            >Donate
-                        </a>
+            >Donate</a>
                     </div>
                 </div>
             </div>
         </section>
     </template>
-
     <template
     id="sponsorship_form_with_ambassador"
     inherit_id="website_sponsorship.child_sponsorship_form"
@@ -203,8 +210,9 @@
             style="width: 200px"
             for="input_ambassador"
           >
-                        <span class="s_website_form_label_content">Ambassador
-                        </span>
+                        <span
+              class="s_website_form_label_content"
+            >Ambassador</span>
                     </label>
                     <div class="col-sm">
                         <input

@@ -7,7 +7,6 @@
             <t t-call="crowdfunding_compassion.layout">
                 <header>
                     <div class="container">
-
                         <div class="row justify-content-center mt-5 mb-3">
                             <div class="col-4 text-center">
                                 <t t-if="project.cover_photo">
@@ -28,9 +27,8 @@
                             <h2
                 class="text-primary text-uppercase text-center"
               >Create a new project</h2>
-                            <h3
-                class="text-center text-secondary"
-              >You are only 3 steps away from releasing children from extreme
+                            <h3 class="text-center text-secondary">
+                                You are only 3 steps away from releasing children from extreme
                                 poverty thanks to your project!
                             </h3>
                         </t>
@@ -63,45 +61,57 @@
                                     <li t-att-class="class1">
                                         <a>
                                             <div class="row">
-                                                <div class="col-sm-12"><span
+                                                <div class="col-sm-12">
+                                                    <span
                             class="circle"
-                          >1</span></div>
-                                                <div class="col-sm-12"><span
+                          >1</span>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <span
                             class="label"
-                          >Your project</span></div>
+                          >Your project</span>
+                                                </div>
                                             </div>
                                         </a>
                                     </li>
-
                                     <!-- Second Step -->
                                     <li t-att-class="class2">
                                         <a>
                                             <div class="row">
-                                                <div class="col-sm-12"><span
+                                                <div class="col-sm-12">
+                                                    <span
                             class="circle"
-                          >2</span></div>
-                                                <div class="col-sm-12"><span
+                          >2</span>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <span
                             class="label"
                             t-if="not product"
-                          >Your fund</span></div>
-                                                <div class="col-sm-12"><span
+                          >Your fund</span>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <span
                             class="label"
                             t-if="product"
-                          >Your goal</span></div>
+                          >Your goal</span>
+                                                </div>
                                             </div>
                                         </a>
                                     </li>
-
                                     <!-- Third Step -->
                                     <li t-att-class="class3">
                                         <a>
                                             <div class="row">
-                                                <div class="col-sm-12"><span
+                                                <div class="col-sm-12">
+                                                    <span
                             class="circle"
-                          >3</span></div>
-                                                <div class="col-sm-12"><span
+                          >3</span>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <span
                             class="label"
-                          >Your personal information</span></div>
+                          >Your personal information</span>
+                                                </div>
                                             </div>
                                         </a>
                                     </li>
@@ -120,7 +130,9 @@
                         <h3
               class="text-center text-uppercase py-3"
               t-if="not product"
-            >Choose for what you want to invest in</h3>
+            >
+                            Choose for what you want to invest in
+                        </h3>
                         <h3
               class="text-center text-uppercase py-3"
               t-if="product"
@@ -136,7 +148,6 @@
                         </h5>
                     </div>
                 </section>
-
                 <div class="container creation-form">
                     <div class="row justify-content-center">
                         <div class="col">
@@ -144,7 +155,11 @@
                                 <div
                   id="collective_media_help"
                   style="display:none"
-                >If there is any social media pages for your event, you can link them on the project page. Please don't put any personal profiles here. You will be able to put your personal social media accounts in the last step.</div>
+                >
+                                    If there is any social media pages for your event, you can link them on the project
+                                    page. Please don't put any personal profiles here. You will be able to put your
+                                    personal social media accounts in the last step.
+                                </div>
                                 <div
                   id="collective_url_help"
                   style="display:none"
@@ -152,7 +167,10 @@
                                 <div
                   id="individual_media_help"
                   style="display:none"
-                >If you have any social media account that you use to promote your project, you can link them to your personal page.</div>
+                >
+                                    If you have any social media account that you use to promote your project, you can
+                                    link them to your personal page.
+                                </div>
                                 <div
                   id="individual_url_help"
                   style="display:none"

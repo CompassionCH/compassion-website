@@ -31,7 +31,6 @@
           attrs="{ 'invisible': [('trip_invoice_id', '!=', False)] }"
         />
             </button>
-
             <!-- Replace state widget by registration stage -->
             <field name="state" position="attributes">
                 <attribute name="invisible">1</attribute>
@@ -132,28 +131,27 @@
                 </group>
                 <group name="tasks" string="Tasks">
                     <field name="task_ids" nolabel="1">
-                    <tree decoration-muted="done == True" editable="top">
-                        <field name="sequence" widget="handle" />
-                        <field name="task_id" />
-                        <field name="done" />
-                    </tree>
-                </field>
+                        <tree decoration-muted="done == True" editable="top">
+                            <field name="sequence" widget="handle" />
+                            <field name="task_id" />
+                            <field name="done" />
+                        </tree>
+                    </field>
                 </group>
                 <group name="flight" string="Flights">
                     <field name="flight_ids" nolabel="1">
-                    <tree>
-                        <field name="flight_type" />
-                        <field name="departure" />
-                        <field name="arrival" />
-                        <field name="flying_company" />
-                        <field name="flight_number" />
-                    </tree>
+                        <tree>
+                            <field name="flight_type" />
+                            <field name="departure" />
+                            <field name="arrival" />
+                            <field name="flying_company" />
+                            <field name="flight_number" />
+                        </tree>
                     </field>
                 </group>
             </xpath>
         </field>
     </record>
-
     <record id="view_event_registration_tree_compassion" model="ir.ui.view">
         <field name="name">event.registration.website.compassion.tree</field>
         <field name="model">event.registration</field>
@@ -164,7 +162,6 @@
             </field>
         </field>
     </record>
-
     <record model="ir.ui.view" id="view_event_registration_kanban">
         <field name="name">event.registration.kanban</field>
         <field name="model">event.registration</field>
@@ -186,6 +183,7 @@
           class="col-3"
           t-attf-style="background-image: url('#{kanban_image('event.registration', 'profile_picture', record.id.raw_value,  placeholder)}'); background-size: cover;"
         >
+
                 </div>
             </xpath>
             <xpath
@@ -202,16 +200,13 @@
             </xpath>
         </field>
     </record>
-
     <record
     model="ir.actions.server"
     id="event_registration_all_attended_action"
   >
         <field name="name">Action All Attended</field>
         <field name="model_id" ref="model_event_registration" />
-        <field name="code">
-            records.action_set_done()
-        </field>
+        <field name="code">records.action_set_done()</field>
         <field name="state">code</field>
         <field name="binding_model_id" ref="model_event_registration" />
     </record>

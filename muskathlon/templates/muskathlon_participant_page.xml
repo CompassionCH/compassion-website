@@ -13,7 +13,6 @@
         t-set="discipline_loc"
         t-value="registration.sport_discipline_id"
       />
-
             <div
         t-if="discipline.sport == 'Bike'"
         class="mb-4"
@@ -24,9 +23,10 @@
           class="sport_icon_sm"
           src="/muskathlon/static/src/data/biking.png"
         />
-                <span class="distance_km"><t
-            t-esc="discipline.distance_km"
-          />km</span>
+                <span class="distance_km">
+                    <t t-esc="discipline.distance_km" />
+                    km
+                </span>
             </div>
             <div
         t-if="discipline.sport == 'Running'"
@@ -38,9 +38,10 @@
           class="sport_icon_sm"
           src="/muskathlon/static/src/data/running.png"
         />
-                <span class="distance_km"><t
-            t-esc="discipline.distance_km"
-          />km</span>
+                <span class="distance_km">
+                    <t t-esc="discipline.distance_km" />
+                    km
+                </span>
             </div>
             <div
         t-if="discipline.sport == 'Walking'"
@@ -52,9 +53,10 @@
           class="sport_icon_sm"
           src="/muskathlon/static/src/data/walking.png"
         />
-                <span class="distance_km"><t
-            t-esc="discipline.distance_km"
-          />km</span>
+                <span class="distance_km">
+                    <t t-esc="discipline.distance_km" />
+                    km
+                </span>
             </div>
             <div
         t-if="discipline.sport == 'Climbing'"
@@ -66,9 +68,10 @@
           class="sport_icon_sm"
           src="/muskathlon/static/src/data/climbing.png"
         />
-                <span class="distance_km"><t
-            t-esc="discipline.distance_km"
-          />km</span>
+                <span class="distance_km">
+                    <t t-esc="discipline.distance_km" />
+                    km
+                </span>
             </div>
         </xpath>
     </template>
