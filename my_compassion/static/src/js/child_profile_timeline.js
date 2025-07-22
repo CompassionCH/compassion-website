@@ -1,84 +1,65 @@
-odoo.define("my_compassion.ChildTimelineInfiniteScrolling", function (require) {
+odoo.define("my_compassion.child_profile_timeline", function (require) {
     "use strict";
 
-    const publicWidget = require("web.public.widget");
-    const rpc = require("web.rpc");
+    const ajax = require("web.ajax");
 
-    publicWidget.registry.ChildTimelineInfiniteScrolling = publicWidget.Widget.extend({
-        selector: ".js-cd-timeline",
+    document.addEventListener("DOMContentLoaded", () => {
+        const timelineEl = document.querySelector(".cd-timeline");
+        const scrollParent = document.querySelector("#wrapwrap");
 
-        /**
-         * @override
-         */
-        start: function () {
-            /*return this._super.apply(this, arguments).then(() => {
-                setTimeout(() => this._initializeScroll(), 0);
-            });*/
-        },
+        if (!timelineEl || !scrollParent) return;
 
-        _initializeScroll: function () {
-            if (!this.$el.length) return;
+        const childId = timelineEl.dataset.childId;
+        const loader = timelineEl.querySelector("#timeline-loader");
+        const container = timelineEl.querySelector(".content-column");
 
-            this.offset = 9;
-            this.limit = 9;
-            this.childId = this.$el.data("child-id");
-            this.isLoading = false;
-            this.allLoaded = false;
-            this._scrollInitialized = false;
+        let offset = 9;
+        const limit = 9;
+        let isLoading = false;
+        let allLoaded = false;
 
-            this.$loader = this.$("#timeline-loader");
-            this.$container = this.$(".content-column");
+        const formData = new FormData();
+        formData.append("offset", offset);
+        formData.append("limit", limit);
 
-            // For the scrolling to trigger, we attach the scrolling to the main container (wrapwrap)
-            // as it is the main scrollable area, not the window due to a 100% height layout and an overflow auto.
-            this._scrollHandler = this._onWindowScroll.bind(this);
-            $("#wrapwrap").on("scroll.timeline", this._scrollHandler);
-        },
+        function loadMoreData() {
+            if (isLoading || allLoaded) return;
 
-        _onWindowScroll: function () {
-            const scrollTop = $(window).scrollTop();
-            const windowHeight = $(window).height();
-            const documentHeight = $(document).height();
+            isLoading = true;
+            loader.style.display = "block";
 
-            // Trigger when user is within 100px of the bottom
-            if (scrollTop + windowHeight >= documentHeight - 100) {
-                this._loadMoreData();
+            ajax.jsonRpc(`/my2/children/${childId}/timeline-batch`, "call", {
+                offset,
+                limit,
+            })
+                .then((data) => {
+                    if (data.html.trim()) {
+                        container.insertAdjacentHTML("beforeend", data.html);
+                        offset += limit;
+                        allLoaded = !data.has_more_records;
+                    } else {
+                        allLoaded = true;
+                    }
+                })
+                .catch((err) => {
+                    console.error("Error loading timeline data:", err);
+                })
+                .finally(() => {
+                    isLoading = false;
+                    loader.style.display = "none";
+                });
+        }
+
+        function onScroll() {
+            const scrollTop = scrollParent.scrollTop;
+            const scrollHeight = scrollParent.scrollHeight;
+            const clientHeight = scrollParent.clientHeight;
+
+            if (scrollTop + clientHeight >= scrollHeight - 100) {
+                loadMoreData();
             }
-        },
+        }
 
-        /**
-         * @override
-         */
-        destroy: function () {
-            $("#wrapwrap").off("scroll.timeline", this._scrollHandler);
-            this._super.apply(this, arguments);
-        },
-
-        _loadMoreData: function () {
-            if (this.isLoading || this.allLoaded) return;
-
-            this.isLoading = true;
-            this.$loader.show();
-
-            rpc.query({
-                route: `/my2/children/${this.childId}/timeline-batch`,
-                params: {
-                    offset: this.offset,
-                    limit: this.limit,
-                }
-            }).then((data) => {
-                if (data.trim()) {
-                    this.$container.append(data);
-                    this.offset += this.limit;
-                } else {
-                    this.allLoaded = true;
-                }
-            }).catch((error) => {
-                console.error("RPC error while loading more data:", error);
-            }).finally(() => {
-                this.isLoading = false;
-                this.$loader.hide();
-            });
-        },
+        scrollParent.addEventListener("scroll", onScroll);
     });
 });

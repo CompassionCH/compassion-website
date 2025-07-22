@@ -87,12 +87,7 @@ class MyCompassionChildrenController(http.Controller):
                     },
                 ],
                 "records": records,
-                "pageable": {
-                    "offset": offset,
-                    "limit": limit,
-                    "total": total,
-                    "has_more_records": total > offset + limit,
-                },
+                "has_more_records": total > offset + limit,
             },
         )
 
@@ -102,7 +97,6 @@ class MyCompassionChildrenController(http.Controller):
         auth="user",
         website=True,
         sitemap=False,
-        methods=["POST"],
     )
     def my2_get_child_timeline_items(self, child_id, **kwargs):
         """API endpoint for infinite scroll. Returns a rendered HTML snippet."""
@@ -118,25 +112,24 @@ class MyCompassionChildrenController(http.Controller):
         partner = request.env.user.partner_id
 
         records, total = self._get_timeline_records(partner.id, child.id, offset, limit)
+        has_more = total > offset + limit
 
-        if not records:
-            return request.make_response("", headers={"Content-Type": "text/html"})
-
-        html_response = request.env["ir.ui.view"]._render_template(
-            "my_compassion.SponsorChildTimelineBatchComponent",
-            {
-                "records": records,
-                "pageable": {
-                    "offset": offset,
-                    "limit": limit,
-                    "total": total,
-                    "has_more_records": total > offset + limit,
+        html = (
+            request.env["ir.ui.view"]._render_template(
+                "my_compassion.SponsorChildTimelineBatchComponent",
+                {
+                    "records": records,
+                    "has_more_records": has_more,
                 },
-            },
+            )
+            if records
+            else ""
         )
-        return request.make_response(
-            html_response, headers={"Content-Type": "text/html"}
-        )
+
+        return {
+            "html": html,
+            "has_more_records": has_more,
+        }
 
     @http.route(
         "/my2/children/<int:child_id>/details",
