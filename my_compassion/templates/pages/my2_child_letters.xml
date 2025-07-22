@@ -233,7 +233,7 @@
             </div>
 
             <!-- Letters -->
-            <div id="lettersContainer" class="row">
+            <div id="lettersContainer" class="row mb-3">
                 <t t-foreach="letter_children_pairs" t-as="pair" t-foreach-index="i">
                     <t t-set="letter" t-value="pair[0]"/>
                     <t t-set="child" t-value="pair[1]"/>
@@ -251,9 +251,9 @@
             </div>
 
             <!-- Buttons for changing page -->
-            <div class="d-flex justify-content-center align-items-center my-3">
+            <div class="d-flex justify-content-center align-items-center mb-5">
                 <!-- Previous Page Button -->
-                <a id="prevPageBtn" role="button" class="mx-2"
+                <a id="prevPageBtn" role="button"
                    aria-label="Previous page" t-att-disabled="true">
                     <t t-call="theme_compassion_2025.ThemedButtonComponent">
                         <t t-set="variation" t-value="'hollow'"/>
@@ -265,12 +265,12 @@
                 </a>
 
                 <!-- Page Indicator -->
-                <span id="pageIndicator" class="mx-3">
+                <span id="pageIndicator" class="p-2">
                     Page 1 of 1
                 </span>
 
                 <!-- Next Page Button -->
-                <a id="nextPageBtn" role="button" class="mx-2" aria-label="Next page"
+                <a id="nextPageBtn" role="button" aria-label="Next page"
                    t-att-disabled="false">
                     <t t-call="theme_compassion_2025.ThemedButtonComponent">
                         <t t-set="variation" t-value="'hollow'"/>

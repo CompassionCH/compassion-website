@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const modal = document.getElementById('filterModal');
     // Get all letter elements inside lettersContainer
     const allLetters = Array.from(document.querySelectorAll('#lettersContainer > div'));
+    let currentLetters = [...allLetters];
 
     // Mapping month names to numbers for date filtering
     const monthToNumberMap = {
@@ -34,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Pagination variables and elements
     const lettersPerPage = 24;
     let currentPage = 1;
-    const totalPages = Math.ceil(allLetters.length / lettersPerPage);
+    let totalPages = Math.ceil(allLetters.length / lettersPerPage);
 
     const prevBtn = document.getElementById('prevPageBtn');
     const nextBtn = document.getElementById('nextPageBtn');
@@ -45,19 +46,19 @@ document.addEventListener('DOMContentLoaded', function () {
         currentPage = page;
 
         // Hide all letters initially
-        allLetters.forEach(el => el.style.display = 'none');
+        currentLetters.forEach(el => el.style.display = 'none');
 
         // Calculate start and end indexes for current page slice
         const start = (currentPage - 1) * lettersPerPage;
         const end = start + lettersPerPage;
 
         // Show only letters in current page range
-        allLetters.slice(start, end).forEach(el => el.style.display = 'block');
+        currentLetters.slice(start, end).forEach(el => el.style.display = 'block');
 
         // Update pagination buttons and page indicator
         if (prevBtn) prevBtn.disabled = currentPage === 1;
         if (nextBtn) nextBtn.disabled = currentPage === totalPages;
-        if (pageIndicator) pageIndicator.textContent = `Page ${currentPage} of ${totalPages}`;
+        if (pageIndicator) pageIndicator.textContent = `Page ${currentPage} of ${Math.ceil(currentLetters.length / lettersPerPage)}`;
     }
 
     // Attach event listeners to pagination buttons if present
@@ -75,71 +76,67 @@ document.addEventListener('DOMContentLoaded', function () {
     // Show the first page on load
     showPage(1);
 
-    // Apply filters and sorting when OK button is clicked
-    if (okBtn) {
-        okBtn.addEventListener('click', function () {
-            const letters = allLetters;
+// Apply filters and sorting when OK button is clicked
+if (okBtn) {
+    okBtn.addEventListener('click', function () {
+        const filterYearFrom = document.getElementById('yearDropdownFrom')?.value;
+        const filterYearTo = document.getElementById('yearDropdownTo')?.value;
+        const filterMonthFrom = document.getElementById('monthDropdownFrom')?.value;
+        const filterMonthTo = document.getElementById('monthDropdownTo')?.value;
 
-            const filterYearFrom = document.getElementById('yearDropdownFrom')?.value;
-            const filterYearTo = document.getElementById('yearDropdownTo')?.value;
-            const filterMonthFrom = document.getElementById('monthDropdownFrom')?.value;
-            const filterMonthTo = document.getElementById('monthDropdownTo')?.value;
+        const sortNewestFirst = (document.querySelector('input[name="sortOptions"]:checked')?.value || 'newest') === 'newest';
+        const selectedType = document.querySelector('input[name="typeOptions"]:checked')?.value;
 
-            const sortNewestFirst = (document.querySelector('input[name="sortOptions"]:checked')?.value || 'newest') === 'newest';
-            const selectedType = document.querySelector('input[name="typeOptions"]:checked')?.value;
+        const fromDate = new Date(
+            parseInt(filterYearFrom || '1900'),
+            (monthToNumberMap[filterMonthFrom] || 1) - 1,
+            1
+        );
+        const toDate = new Date(
+            parseInt(filterYearTo || '2100'),
+            (monthToNumberMap[filterMonthTo] || 12) - 1,
+            31
+        );
 
-            // Build from and to Date objects for filtering
-            const fromDate = new Date(
-                parseInt(filterYearFrom || '1900'),
-                (monthToNumberMap[filterMonthFrom] || 1) - 1,
-                1
-            );
-
-            const toDate = new Date(
-                parseInt(filterYearTo || '2100'),
-                (monthToNumberMap[filterMonthTo] || 12) - 1,
-                31
-            );
-
-            // Filter cards by date range and type
-            letters.forEach(card => {
-                const cardDate = new Date(card.dataset.create_date);
-                const inRange = cardDate >= fromDate && cardDate <= toDate;
-                const rightType = card.dataset.type === selectedType || !selectedType;
-                card.style.display = (inRange && rightType) ? 'block' : 'none';
-            });
-
-            // Sort cards by creation date (in place)
-            letters.sort((a, b) => {
-                const dateA = new Date(a.dataset.create_date);
-                const dateB = new Date(b.dataset.create_date);
-                return sortNewestFirst ? dateB - dateA : dateA - dateB;
-            });
-
-            // Update the filter count badge
-            let filtersCount = 0;
-            if (filterYearFrom || filterMonthFrom || filterYearTo || filterMonthTo) filtersCount++;
-            if (selectedType) filtersCount++;
-
-            const filterBtn = document.querySelector('a[data-target="#filterModal"] button');
-            if (filterBtn) {
-                if (filtersCount > 0) {
-                    document.querySelector('#filterToggleBtn button span:nth-of-type(2)').textContent = filtersCount + ' filters applied';
-                } else {
-                    document.querySelector('#filterToggleBtn button span:nth-of-type(2)').textContent = '0 filters applied';
-                }
-            }
-
-            // Re-render filtered and sorted cards in the container
-            const container = document.getElementById('lettersContainer');
-            container.innerHTML = '';
-            letters.forEach(el => container.appendChild(el));
-
-            // Reset pagination variables after filtering
-            currentPage = 1;
-            showPage(currentPage);
+        // Filter + sort
+        let filteredLetters = allLetters.filter(card => {
+            const cardDate = new Date(card.dataset.create_date);
+            const inRange = cardDate >= fromDate && cardDate <= toDate;
+            const rightType = card.dataset.type === selectedType || !selectedType;
+            return inRange && rightType;
         });
-    }
+
+        filteredLetters.sort((a, b) => {
+            const dateA = new Date(a.dataset.create_date);
+            const dateB = new Date(b.dataset.create_date);
+            return sortNewestFirst ? dateB - dateA : dateA - dateB;
+        });
+
+        // Update UI
+        const container = document.getElementById('lettersContainer');
+        container.innerHTML = '';
+        filteredLetters.forEach(el => {
+            el.style.display = 'block';
+            container.appendChild(el);
+        });
+
+        // Update global currentLetters for pagination
+        currentLetters = filteredLetters;
+        currentPage = 1;
+        totalPages = Math.ceil(currentLetters.length / lettersPerPage);
+        showPage(currentPage);
+
+        // Update filter count
+        let filtersCount = 0;
+        if (filterYearFrom || filterMonthFrom || filterYearTo || filterMonthTo) filtersCount++;
+        if (selectedType) filtersCount++;
+
+        const filterCountSpan = document.querySelector('#filterToggleBtn button span:nth-of-type(2)');
+        if (filterCountSpan) {
+            filterCountSpan.textContent = filtersCount > 0 ? `${filtersCount} filters applied` : '0 filters applied';
+        }
+    });
+}
 
     // Reset filters and restore default state when Cancel button clicked
     if (cancelBtn) {
