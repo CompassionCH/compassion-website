@@ -6,7 +6,7 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from odoo import models
+from odoo import SUPERUSER_ID, models
 
 
 class SurveyUserInput(models.Model):
@@ -21,7 +21,7 @@ class SurveyUserInput(models.Model):
             # Search for Muskathlon medical surveys
             registrations = (
                 self.env["event.registration"]
-                .sudo()
+                .with_user(SUPERUSER_ID)
                 .search(
                     [
                         ("partner_id", "in", self.mapped("partner_id").ids),
@@ -38,5 +38,9 @@ class SurveyUserInput(models.Model):
                     ]
                 )
             )
-            registrations.with_delay().muskathlon_medical_survey_done()
+            registrations.with_delay(
+                priority=100,
+                channel="root.partner_communication",
+                identity_key=f"muskathlon.medical_survey.{registrations.ids}",
+            ).muskathlon_medical_survey_done()
         return res

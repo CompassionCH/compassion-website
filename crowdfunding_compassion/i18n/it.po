@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Compassion Odoo 14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-01 13:47+0000\n"
+"POT-Creation-Date: 2025-02-11 10:33+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1284,9 +1284,11 @@ msgstr "Compassion Svizzera"
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.layout
 msgid ""
 "Compassion Switzerland is the national branch of Compassion International. "
-"Through individual sponsorship and in collaboration with more than 8,000 "
-"local churches, we support more than 2 million of the world's poorest "
-"children in 29 countries."
+"Through\n"
+"                                    individual sponsorship and in "
+"collaboration with more than 8,000 local churches, we\n"
+"                                    support more than 2 million of the "
+"world's poorest children in 29 countries."
 msgstr ""
 "Compassion Svizzera è il ramo nazionale di Compassion International. "
 "Attraverso la sponsorizzazione individuale e la collaborazione con oltre "
@@ -1504,6 +1506,11 @@ msgid "Crowdfunding participant"
 msgstr "Partecipante al crowdfunding"
 
 #. module: crowdfunding_compassion
+#: model:ir.model,name:crowdfunding_compassion.model_cms_form_crowdfunding_participant_update
+msgid "Crowdfunding participant update form"
+msgstr "Modulo di aggiornamento per i partecipanti alla raccolta fondi"
+
+#. module: crowdfunding_compassion
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_crm_event_compassion__crowdfunding_project_id
 msgid "Crowdfunding project"
 msgstr "Progetto di crowdfunding"
@@ -1522,6 +1529,11 @@ msgstr "Creazione guidata di un progetto di crowdfunding - Fase 2"
 #: model:ir.model,name:crowdfunding_compassion.model_cms_form_crowdfunding_project_step3
 msgid "Crowdfunding project creation wizard - Step 3"
 msgstr "Creazione guidata di un progetto di crowdfunding - Passo 3"
+
+#. module: crowdfunding_compassion
+#: model:ir.model,name:crowdfunding_compassion.model_cms_form_crowdfunding_project_update
+msgid "Crowdfunding project update form"
+msgstr "Modulo di aggiornamento del progetto di crowdfunding"
 
 #. module: crowdfunding_compassion
 #: model:base.automation,name:crowdfunding_compassion.check_project_done
@@ -2780,6 +2792,11 @@ msgid "Product Number Reached"
 msgstr "Numero di prodotto raggiunto"
 
 #. module: crowdfunding_compassion
+#: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_project__product_price
+msgid "Product Price"
+msgstr "Prezzo del prodotto"
+
+#. module: crowdfunding_compassion
 #: model:ir.model,name:crowdfunding_compassion.model_product_template
 msgid "Product Template"
 msgstr "Modello Prodotto"
@@ -2899,6 +2916,12 @@ msgstr "Ricerca rapida"
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_project__quotation_count
 msgid "Quotation Count"
 msgstr "Conteggio delle citazioni"
+
+#. module: crowdfunding_compassion
+#: code:addons/crowdfunding_compassion/models/crowdfunding_participant.py:0
+#, python-format
+msgid "Quote from %s %s"
+msgstr "Citazione da %s %s"
 
 #. module: crowdfunding_compassion
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_project__received_ratio
@@ -3231,6 +3254,11 @@ msgid "Tell the others what is inspiring you, why it matters to you."
 msgstr "Racconta agli altri cosa ti ispira e perché è importante per te."
 
 #. module: crowdfunding_compassion
+#: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_participant__thank_you_quote
+msgid "Thank You Quote"
+msgstr "Citazione di ringraziamento"
+
+#. module: crowdfunding_compassion
 #: model:mail.template,subject:crowdfunding_compassion.donation_successful_email_template
 msgid "Thank you for your generous donation!"
 msgstr "Grazie per la tua generosa donazione!"
@@ -3257,6 +3285,15 @@ msgstr "L'URL completo per accedere al documento attraverso il Sito Web "
 #: model_terms:website.page,arch_db:crowdfunding_compassion.projects_page
 msgid "The projects"
 msgstr "I progetti"
+
+#. module: crowdfunding_compassion
+#: code:addons/crowdfunding_compassion/models/crowdfunding_project.py:0
+#, python-format
+msgid ""
+"The video link must be from the 'www.youtube.com' or 'vimeo.com' domain only."
+msgstr ""
+"Il link del video deve provenire solo dal dominio 'www.youtube.com' o 'vimeo."
+"com'."
 
 #. module: crowdfunding_compassion
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.product_template_form_view_crowdfunding
@@ -3398,6 +3435,15 @@ msgid ""
 msgstr ""
 "Usa impatto grande se gli obiettivi del progetto devono essere visualizzati "
 "in termini di percentuale."
+
+#. module: crowdfunding_compassion
+#: model:ir.model.fields,help:crowdfunding_compassion.field_crowdfunding_participant__thank_you_quote
+msgid ""
+"Used in thank you letters for donations linked to an event and to this "
+"partner."
+msgstr ""
+"Utilizzato nelle lettere di ringraziamento per le donazioni legate a un "
+"evento e a questo partner."
 
 #. module: crowdfunding_compassion
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.crowdfunding_project_kanban_view
@@ -3657,16 +3703,6 @@ msgid "by"
 msgstr "da"
 
 #. module: crowdfunding_compassion
-#: model:ir.model,name:crowdfunding_compassion.model_cms_form_crowdfunding_participant_update
-msgid "cms.form.crowdfunding.participant.update"
-msgstr "cms.form.crowdfunding.participant.update"
-
-#. module: crowdfunding_compassion
-#: model:ir.model,name:crowdfunding_compassion.model_cms_form_crowdfunding_project_update
-msgid "cms.form.crowdfunding.project.update"
-msgstr "cms.form.crowdfunding.project.update"
-
-#. module: crowdfunding_compassion
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.faq_page_template
 #: model_terms:website.page,arch_db:crowdfunding_compassion.faq_page
 msgid "data protection"
@@ -3822,6 +3858,12 @@ msgstr "hanno"
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.project_donation_page
 msgid "| TOGETHER - Compassion Switzerland Fundraising"
 msgstr "| TOGETHER - Raccolta fondi di Compassion Svizzera"
+
+#~ msgid "cms.form.crowdfunding.participant.update"
+#~ msgstr "cms.form.crowdfunding.participant.update"
+
+#~ msgid "cms.form.crowdfunding.project.update"
+#~ msgstr "cms.form.crowdfunding.project.update"
 
 #~ msgid ""
 #~ "<span>\n"

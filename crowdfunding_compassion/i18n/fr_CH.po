@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Compassion Odoo 14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-01 13:47+0000\n"
+"POT-Creation-Date: 2025-02-11 10:33+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1300,9 +1300,11 @@ msgstr "Compassion Svizzera"
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.layout
 msgid ""
 "Compassion Switzerland is the national branch of Compassion International. "
-"Through individual sponsorship and in collaboration with more than 8,000 "
-"local churches, we support more than 2 million of the world's poorest "
-"children in 29 countries."
+"Through\n"
+"                                    individual sponsorship and in "
+"collaboration with more than 8,000 local churches, we\n"
+"                                    support more than 2 million of the "
+"world's poorest children in 29 countries."
 msgstr ""
 "Compassion Suisse est la branche locale de Compassion International. A "
 "travers le parrainage individuel et en collaboration avec quelque 8600 "
@@ -1522,6 +1524,11 @@ msgid "Crowdfunding participant"
 msgstr "Crowdfunding participant"
 
 #. module: crowdfunding_compassion
+#: model:ir.model,name:crowdfunding_compassion.model_cms_form_crowdfunding_participant_update
+msgid "Crowdfunding participant update form"
+msgstr "Formulaire de mise à jour pour les participants TOGETHER"
+
+#. module: crowdfunding_compassion
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_crm_event_compassion__crowdfunding_project_id
 msgid "Crowdfunding project"
 msgstr "Crowdfunding project"
@@ -1540,6 +1547,11 @@ msgstr "Assistant de création de projet de crowdfunding - Étape 2"
 #: model:ir.model,name:crowdfunding_compassion.model_cms_form_crowdfunding_project_step3
 msgid "Crowdfunding project creation wizard - Step 3"
 msgstr "Assistant de création de projet de crowdfunding - Étape 3"
+
+#. module: crowdfunding_compassion
+#: model:ir.model,name:crowdfunding_compassion.model_cms_form_crowdfunding_project_update
+msgid "Crowdfunding project update form"
+msgstr "Formulaire de mise à jour du projet TOGETHER"
 
 #. module: crowdfunding_compassion
 #: model:base.automation,name:crowdfunding_compassion.check_project_done
@@ -2800,6 +2812,11 @@ msgid "Product Number Reached"
 msgstr "Product Number Reached"
 
 #. module: crowdfunding_compassion
+#: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_project__product_price
+msgid "Product Price"
+msgstr "Prix du produit"
+
+#. module: crowdfunding_compassion
 #: model:ir.model,name:crowdfunding_compassion.model_product_template
 msgid "Product Template"
 msgstr "Modèle d'article"
@@ -2919,6 +2936,12 @@ msgstr "Recherche rapide"
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_project__quotation_count
 msgid "Quotation Count"
 msgstr "Nombre de Devis"
+
+#. module: crowdfunding_compassion
+#: code:addons/crowdfunding_compassion/models/crowdfunding_participant.py:0
+#, python-format
+msgid "Quote from %s %s"
+msgstr "Citation de %s %s"
 
 #. module: crowdfunding_compassion
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_project__received_ratio
@@ -3250,6 +3273,11 @@ msgstr ""
 "cœur ?"
 
 #. module: crowdfunding_compassion
+#: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_participant__thank_you_quote
+msgid "Thank You Quote"
+msgstr "Citation"
+
+#. module: crowdfunding_compassion
 #: model:mail.template,subject:crowdfunding_compassion.donation_successful_email_template
 msgid "Thank you for your generous donation!"
 msgstr ""
@@ -3279,6 +3307,15 @@ msgstr "L'URL complète afin d'accéder au document à travers le site web."
 #: model_terms:website.page,arch_db:crowdfunding_compassion.projects_page
 msgid "The projects"
 msgstr "Les projets"
+
+#. module: crowdfunding_compassion
+#: code:addons/crowdfunding_compassion/models/crowdfunding_project.py:0
+#, python-format
+msgid ""
+"The video link must be from the 'www.youtube.com' or 'vimeo.com' domain only."
+msgstr ""
+"Le lien vidéo doit provenir uniquement du domaine 'www.youtube.com' ou "
+"'vimeo.com'."
 
 #. module: crowdfunding_compassion
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.product_template_form_view_crowdfunding
@@ -3420,6 +3457,15 @@ msgid ""
 msgstr ""
 "Use large impact if the project goals should be displayed in terms of "
 "percentage."
+
+#. module: crowdfunding_compassion
+#: model:ir.model.fields,help:crowdfunding_compassion.field_crowdfunding_participant__thank_you_quote
+msgid ""
+"Used in thank you letters for donations linked to an event and to this "
+"partner."
+msgstr ""
+"Utilisé dans les lettres de remerciement pour les dons liés à un événement "
+"et à ce partenaire."
 
 #. module: crowdfunding_compassion
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.crowdfunding_project_kanban_view
@@ -3678,16 +3724,6 @@ msgid "by"
 msgstr "par"
 
 #. module: crowdfunding_compassion
-#: model:ir.model,name:crowdfunding_compassion.model_cms_form_crowdfunding_participant_update
-msgid "cms.form.crowdfunding.participant.update"
-msgstr "cms.form.crowdfunding.participant.update"
-
-#. module: crowdfunding_compassion
-#: model:ir.model,name:crowdfunding_compassion.model_cms_form_crowdfunding_project_update
-msgid "cms.form.crowdfunding.project.update"
-msgstr "cms.form.crowdfunding.project.update"
-
-#. module: crowdfunding_compassion
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.faq_page_template
 #: model_terms:website.page,arch_db:crowdfunding_compassion.faq_page
 msgid "data protection"
@@ -3844,6 +3880,12 @@ msgstr "ont été"
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.project_donation_page
 msgid "| TOGETHER - Compassion Switzerland Fundraising"
 msgstr "| TOGETHER - Compassion Suisse Fundraising"
+
+#~ msgid "cms.form.crowdfunding.participant.update"
+#~ msgstr "cms.form.crowdfunding.participant.update"
+
+#~ msgid "cms.form.crowdfunding.project.update"
+#~ msgstr "cms.form.crowdfunding.project.update"
 
 #~ msgid ""
 #~ "<span>\n"

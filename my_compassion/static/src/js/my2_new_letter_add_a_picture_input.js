@@ -127,9 +127,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const removeBtn = Object.assign(document.createElement('button'), {
-            className: 'btn btn-danger remove-attachment-button',
-            innerHTML: 'X'
+            className: 'btn btn-danger remove-attachment-button text-center',
+            innerHTML: '×'
         });
+
 
         fileDiv.append(preview, fileName, removeBtn);
         return fileDiv;

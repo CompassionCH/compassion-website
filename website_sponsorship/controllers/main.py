@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from random import randint
 
-from werkzeug.exceptions import BadRequest, Gone, NotFound
+from werkzeug.exceptions import Gone, NotFound
 
 from odoo import http
 from odoo.http import request
@@ -13,7 +13,7 @@ class WebsiteChild(http.Controller):
 
     @http.route(
         [
-            "/children/",
+            "/children",
             "/children/page/<int:page>",
             "/children/<string:random>",
         ],
@@ -28,6 +28,7 @@ class WebsiteChild(http.Controller):
             ("is_published", "=", True),
             ("state", "in", child_obj._available_states()),
             ("hold_id.expiration_date", ">", datetime.now()),
+            ("hold_id.state", "=", "active"),
             "|",
             ("website_reservation_date", "=", False),
             "&",
@@ -170,8 +171,19 @@ class WebsiteChild(http.Controller):
             .sudo()
             .search([("child_id", "=", child_id), ("state", "=", "draft")], limit=1)
         )
+        is_done = not contract.is_first_sponsorship
         if not contract:
-            raise BadRequest()
+            contract = (
+                request.env["recurring.contract"]
+                .sudo()
+                .search([("child_id", "=", child_id)], limit=1)
+            )
+            if not contract:
+                raise NotFound()
+            # If the contract is not in draft state, we assume it has been
+            # completed and the sponsorship is done.
+            is_done = True
+
         contract_partner = contract.correspondent_id
         child = contract.child_id
         main_languages = request.env["res.lang"].sudo().search([])
@@ -200,7 +212,7 @@ class WebsiteChild(http.Controller):
                 "main_languages": main_languages,
                 "payment_modes": payment_modes,
                 "origins": origins,
-                "done": kwargs.get("done", not contract.is_first_sponsorship),
+                "done": kwargs.get("done", is_done),
                 "face_reveal": kwargs.get("face_reveal"),
             },
         )

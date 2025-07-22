@@ -16,7 +16,7 @@
     />
         <t
       t-set="inbound_flight"
-      t-value="registration.flight_ids.filtered(lambda r: r.flight_type == 'inbound')"
+      t-value="registration.flight_ids.filtered(lambda r: r.flight_type == 'return')"
     />
         <span
       class="hidden"
@@ -46,8 +46,8 @@
         <t t-call="muskathlon.flight_details">
             <t t-set="form_id">outbound_flight_form</t>
         </t>
-        <h3>Return flight</h3>
-        <t t-call="muskathlon.flight_details">
+        <h3 t-if="outbound_flight">Return flight</h3>
+        <t t-if="outbound_flight" t-call="muskathlon.flight_details">
             <t t-set="form_id">return_flight_form</t>
         </t>
     </template>

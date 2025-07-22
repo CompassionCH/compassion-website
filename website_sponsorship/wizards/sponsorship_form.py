@@ -118,7 +118,17 @@ class WebsiteSponsorship(models.TransientModel):
         if self.contract_id:
             # Filter unchanged values
             c_vals = self.contract_id.read(res.keys())[0]
-            write_blacklist = ["child_id", "partner_id", "correspondent_id", "type"]
+            write_blacklist = [
+                "child_id",
+                "partner_id",
+                "correspondent_id",
+                "type",
+                "origin_id",
+                "ambassador_id",
+                "campaign_id",
+                "medium_id",
+                "source_id",
+            ]
             res = {
                 key: val
                 for key, val in res.items()

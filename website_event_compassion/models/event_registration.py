@@ -11,6 +11,7 @@ import logging
 
 from odoo import SUPERUSER_ID, _, api, fields, models
 from odoo.http import request
+from odoo.tools import index_exists
 from odoo.tools.mimetypes import guess_mimetype
 
 from odoo.addons.website.models.website import slugify as slug
@@ -72,7 +73,6 @@ class EventRegistration(models.Model):
         domain="['|', ('event_type_ids', '=', False),"
         "      ('event_type_ids', '=', event_type_id)]",
         group_expand="_read_group_stage_ids",
-        default=lambda r: r._default_stage(),
         readonly=False,
     )
     stage_date = fields.Date(default=fields.Date.today, copy=False)
@@ -101,7 +101,9 @@ class EventRegistration(models.Model):
     host_url = fields.Char(compute="_compute_host_url")
     sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
     event_name = fields.Char(related="event_id.name", tracking=True)
-    profile_picture = fields.Binary(readonly=False, string="Profile picture")
+    profile_picture = fields.Image(
+        readonly=False, string="Profile picture", max_width=500, max_height=500
+    )
     profile_name = fields.Char()
     ambassador_quote = fields.Text()
     criminal_record = fields.Binary(
@@ -144,6 +146,16 @@ class EventRegistration(models.Model):
         "website", related="compassion_event_id.website_id", store=True
     )
 
+    def _auto_init(self):
+        """This will speedup barometer computations"""
+        super()._auto_init()
+        if not index_exists(self.env.cr, "index_user_payment_event_contract"):
+            self.env.cr.execute(
+                """
+                CREATE INDEX index_user_payment_event_contract
+                ON account_move_line (user_id, payment_state, event_id, contract_id)"""
+            )
+
     ##########################################################################
     #                             FIELDS METHODS                             #
     ##########################################################################
@@ -178,6 +190,7 @@ class EventRegistration(models.Model):
                         ("user_id", "=", partner.id),
                         ("payment_state", "=", "paid"),
                         ("event_id", "=", compassion_event.id),
+                        ("contract_id", "=", False),
                     ]
                 )
             )
@@ -313,16 +326,9 @@ class EventRegistration(models.Model):
 
     @api.model
     def _default_stage(self):
-        type_id = self._context.get("default_event_type_id")
-        if type_id:
-            stage = self.env["event.registration.stage"].search(
-                ["|", ("event_type_ids", "=", type_id), ("event_type_ids", "=", False)],
-                limit=1,
-            )
-        else:
-            stage = self.env["event.registration.stage"].search(
-                [("event_type_ids", "=", False)], limit=1
-            )
+        stage = self.env["event.registration.stage"].search(
+            [("event_type_ids", "=", False)], limit=1
+        )
         return stage.id
 
     def _compute_incomplete_task_count(self):
@@ -372,6 +378,7 @@ class EventRegistration(models.Model):
                 [
                     ("line_ids.event_id", "=", event.id),
                     ("line_ids.user_id", "=", registration.partner_id.id),
+                    ("invoice_category", "!=", "sponsorship"),
                 ]
             )
 
@@ -403,6 +410,7 @@ class EventRegistration(models.Model):
                         "res_id": registration.id,
                         "datas": passport,
                         "name": name,
+                        "public": False,
                     }
                 )
             else:
@@ -459,28 +467,36 @@ class EventRegistration(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        record = super().create(vals_list)
-        for registration in record:
+        records = super().create(vals_list)
+        for registration in records:
+            # Copy image fields
             if registration.profile_picture:
                 registration.partner_id.image_1920 = registration.profile_picture
             if not registration.profile_name:
                 registration.profile_name = registration.partner_id.preferred_name
+            # Set default fundraising objective if none was set
+            event = records.event_id
+            if (
+                not registration.amount_objective
+                and event.participants_amount_objective
+            ):
+                registration.amount_objective = event.participants_amount_objective
+            if not registration.stage_id:
+                event_stages = registration.event_id.event_type_id.stage_ids
+                registration.stage_id = event_stages[:1] or self._default_stage()
+            # Set donation receipt preference
+            registration.partner_id.receive_ambassador_receipts = True
 
         # check the subtype note by default
         # for all the default follower of a new registration
-        self.mapped("message_follower_ids").write(
+        records.mapped("message_follower_ids").write(
             {"subtype_ids": [(4, self.env.ref("mail.mt_note").id)]}
         )
 
-        # Set default fundraising objective if none was set
-        event = record.event_id
-        if not record.amount_objective and event.participants_amount_objective:
-            record.amount_objective = event.participants_amount_objective
-
         # Automatically compute tasks and change stage if tasks are good
-        record._compute_tasks()
-        record.next_stage()
-        return record
+        records._compute_tasks()
+        records.next_stage()
+        return records
 
     ##########################################################################
     #                             PUBLIC METHODS                             #
@@ -568,6 +584,7 @@ class EventRegistration(models.Model):
             "domain": [
                 ("line_ids.event_id", "=", self.compassion_event_id.id),
                 ("line_ids.user_id", "=", self.partner_id.id),
+                ("invoice_category", "!=", "sponsorship"),
             ],
         }
 
@@ -597,14 +614,17 @@ class EventRegistration(models.Model):
                     }
                 )
                 order.order_line[0].event_id = registration.event_id.id
+
                 registration.write(
                     {
                         "sale_order_id": order.id,
                         "sale_order_line_id": order.order_line[0].id,
-                        "event_ticket_id": ticket.id,
                     }
                 )
+
                 order.action_confirm()
+
+                registration.write({"event_ticket_id": ticket.id})
         return True
 
     def create_trip_invoice(self):
@@ -696,8 +716,11 @@ class EventRegistration(models.Model):
                 registration.write({"stage_id": next_stage.id})
 
         # Send potential communications after stage transition
-        if stage_complete:
-            self.env["event.mail"].with_delay().run()
+        self.env["event.mail"].with_user(SUPERUSER_ID).with_delay(
+            priority=50,
+            channel="root.partner_communication",
+            identity_key="event.registration.mail_scheduler",
+        ).run()
         return True
 
     def _track_subtype(self, init_values):

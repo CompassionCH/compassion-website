@@ -7,11 +7,41 @@ document.addEventListener("DOMContentLoaded", function () {
     odoo.define("my_compassion", function (require) {
         "use strict";
 
+        // Import necessary modules (here we need the ToastService for notifications)
+        const ToastService = require("my_compassion.toast_service");
         const rpc = require("web.rpc");
 
         const form = document.querySelector("form");
         if (form) {
             form.addEventListener("submit", onSubmitLetter);
+        }
+        const letterInput = document.getElementById("letter-input");
+        const RE_EMOJI = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
+
+        if (letterInput) {
+            letterInput.addEventListener("input", function () {
+                const originalValue = letterInput.value;
+                const cleanedValue = originalValue.replace(RE_EMOJI, "");
+
+                if (originalValue !== cleanedValue) {
+                    let warning = document.getElementById("emoji-warning");
+                    if (!warning) {
+                        warning = document.createElement("div");
+                        warning.id = "emoji-warning";
+                       // TODO refactor the styling with a class from the theme when theme is ready
+                        warning.style.color = "red";
+                        warning.style.marginTop = "5px";
+                        letterInput.parentNode.appendChild(warning);
+                    }
+                    warning.textContent = "Emojis are not supported in letters.";
+                    letterInput.value = cleanedValue;
+                } else {
+                    const warning = document.getElementById("emoji-warning");
+                    if (warning) {
+                        warning.remove();
+                    }
+                }
+            });
         }
 
         /**
@@ -41,8 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     attachments
                 } = await collectFormData());
             } catch (error) {
-                // TODO enhance error display to the user
-                alert(error.message);
+                ToastService.error(error.message);
                 return;
             }
 
@@ -98,9 +127,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Remove the modal with the fake progress bar in case of error
                 if (timeoutId) clearTimeout(timeoutId);
                 $("#submitModal").modal("hide");
-                alert("Failed to create letter:" + error)
-                console.error("Failed to create letter: ", error);
-                // TODO: Show error message in UI
+                ToastService.error("An error occurred while processing your letter. Please try again or contact the support.");
                 return;
             }
         }
@@ -134,13 +161,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             // Validate inputs and throw error messages in case of missing value
-            // TODO instead of displaying an alert, display something with a better UI.
             if (!childId) {
-                throw new Error("Please select a child.");
+                throw new Error("Please select a child to write to.");
             }
 
             if (!templateId) {
-                throw new Error("Please select a template.");
+                throw new Error("Please select a template for your letter.");
             }
 
             if (!letterBody) {
@@ -183,7 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
             try {
                 return await Promise.all(filePromises);
             } catch (error) {
-                console.error("Failed to process attachments: ", error);
+                ToastService.error("An error occurred while processing attachments. Please try again or contact the support.");
                 return [];
             }
         }

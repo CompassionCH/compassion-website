@@ -285,7 +285,7 @@
                       t-foreach="description_lines"
                       t-as="description_line"
                     >
-                                            <span t-raw="description_line" />
+                                            <span t-esc="description_line" />
                                             <br />
                                         </t>
                                     </p>
@@ -296,6 +296,10 @@
                       height="400px"
                       t-att-src="project.presentation_video_embed"
                       frameborder="0"
+                    />
+                                        <script
+                      src="https://player.vimeo.com/api/player.js"
+                      t-if="'vimeo' in project.presentation_video"
                     />
                                     </t>
                                 </t>
@@ -308,7 +312,7 @@
                     class="text-primary my-4"
                   >Why do I engage in this project</h3>
                                     <p><t
-                      t-raw="participant.personal_motivation"
+                      t-esc="participant.personal_motivation"
                     /></p>
                                 </t>
 

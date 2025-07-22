@@ -75,7 +75,15 @@ class CrowdFundingWebsite(EventsController):
         sitemap=False,
     )
     def my_account_participants_update(self, participant, **kw):
-        values = {
-            "participant": participant,
-        }
-        return request.render("crowdfunding_compassion.edit_participation_form", values)
+        if (
+            request.env.user.partner_id.id == participant.partner_id.id
+            or request.env.user.has_group("base.group_system")
+        ):
+            values = {
+                "participant": participant,
+            }
+            return request.render(
+                "crowdfunding_compassion.edit_participation_form", values
+            )
+        else:
+            return request.redirect("/my/together")

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="_assets_primary_variables" inherit_id="website._assets_primary_variables" priority="1">
+        <xpath expr="//link[last()]" position="after">
+            <link rel="stylesheet" type="text/css" href="/theme_compassion_2025/static/src/css/custom_style.css" />
+        </xpath>
+    </template>
+    <template id="_assets_frontend_helpers" inherit_id="website.assets_frontend">
+        <xpath expr="//link[last()]" position="after">
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/primary_variables.scss"
+            />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/bootstrap_overridden.scss"
+            />
+        </xpath>
+    </template>
+    <template id="assets_frontend" name="My style" inherit_id="website.assets_frontend">
+        <xpath expr="link[last()]" position="after">
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/abstracts/_colors.scss"
+            />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/abstracts/images/_icons_variables.scss"
+            />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/abstracts/images/_pictograms_variables.scss"
+            />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/abstracts/_variables.scss"
+            />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/abstracts/_functions.scss"
+            />
+
+            <link rel="stylesheet" type="text/scss" href="/theme_compassion_2025/static/src/scss/base/_borders.scss" />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/base/_font-face.scss"
+            />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/base/_typography.scss"
+            />
+            <link rel="stylesheet" type="text/scss" href="/theme_compassion_2025/static/src/scss/base/_base.scss" />
+
+            <link rel="stylesheet" type="text/scss" href="/theme_compassion_2025/static/src/scss/layout/_layout.scss" />
+            <link rel="stylesheet" type="text/scss" href="/theme_compassion_2025/static/src/scss/layout/_grid.scss" />
+
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/components/_icons.scss"
+            />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/components/_pictograms.scss"
+            />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/components/_portrait.scss"
+            />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/components/_buttons.scss"
+            />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/components/_thread.scss"
+            />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/components/_title.scss"
+            />
+
+            <link rel="stylesheet"
+                  type="text/scss"
+                  href="/theme_compassion_2025/static/src/scss/components/_select.scss"
+            />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/components/_vignette.scss"
+            />
+        </xpath>
+    </template>
+</odoo>

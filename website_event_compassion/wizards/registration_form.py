@@ -7,7 +7,7 @@ class RegistrationForm(models.TransientModel):
     _description = "Event Registration Form (Edit)"
 
     registration_id = fields.Many2one("event.registration", required=True)
-    profile_picture = fields.Binary(
+    profile_picture = fields.Image(
         related="registration_id.profile_picture", readonly=False
     )
     profile_name = fields.Char(related="registration_id.profile_name", readonly=False)

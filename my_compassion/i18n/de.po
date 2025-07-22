@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Compassion Odoo 14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-14 07:38+0000\n"
+"POT-Creation-Date: 2024-12-19 05:40+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,17 +10,111 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#. module: my_compassion
+#: model:mail.template,body_html:my_compassion.signup_confirmation_set_password_email
+msgid ""
+"\n"
+"<div style=\"padding:0px;width:600px;margin:auto;background: #FFFFFF repeat "
+"top /100%;color:#777777\">\n"
+"    <table cellspacing=\"0\" cellpadding=\"0\" style=\"width:600px;border-"
+"collapse:collapse;background:inherit;color:inherit\">\n"
+"        <tbody><tr>\n"
+"            <td valign=\"center\" width=\"200\" style=\"padding:10px 10px "
+"10px 5px;font-size: 12px\">\n"
+"                <img src=\"/logo.png\" style=\"padding: 0px; margin: 0px; "
+"height: auto; width: 80px;\" alt=\"${user.company_id.name}\">\n"
+"            </td>\n"
+"        </tr></tbody>\n"
+"    </table>\n"
+"</div>\n"
+"<div style=\"padding:0px;width:600px;margin:auto;background: #FFFFFF repeat "
+"top /100%;color:#777777\">\n"
+"    <p>Dear ${object.partner_id.name},</p>\n"
+"    <p>You have recently created an account on Compassion.</p>\n"
+"    <p>To activate your account, please click the button below and set a "
+"password.</p>\n"
+"    <div style=\"text-align: center; margin-top: 16px;\">\n"
+"        <a href=\"${object.partner_id.signup_url}\" style=\"padding: 5px "
+"10px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:"
+"#875A7B; text-decoration: none; display: inline-block; margin-bottom: 0px; "
+"font-weight: 400; text-align: center; vertical-align: middle; cursor: "
+"pointer; white-space: nowrap; background-image: none; background-color: "
+"#875A7B; border: 1px solid #875A7B; border-radius:3px\">Activate my account</"
+"a>\n"
+"    </div>\n"
+"    <p>If you do not expect this, you can safely ignore this email.</p>\n"
+"    <p>Best regards,</p>\n"
+"</div>\n"
+"<div style=\"padding:0px;width:600px;margin:auto; margin-top: 10px; "
+"background: #fff repeat top /100%;color:#777777\">\n"
+"    ${user.signature | safe}\n"
+"    <p style=\"font-size: 11px; margin-top: 10px;\">\n"
+"        <strong>Sent by ${user.company_id.name} using <a href=\"www.odoo."
+"com\" style=\"text-decoration:none; color: #875A7B;\">Odoo</a></strong>\n"
+"    </p>\n"
+"</div>\n"
+"            "
+msgstr ""
+"<div>\n"
+"    % set partner = object.partner_id\n"
+"    % set plural = partner.title.plural or partner.title.id == 29\n"
+"\n"
+"    % if plural:\n"
+"        % set Du = 'Ihr'\n"
+"        % set du = 'ihr'\n"
+"        % set dein = 'ihr'\n"
+"        % set hast = 'habt'\n"
+"        % set kannst = 'könnt'\n"
+"        % set Mein = 'Unser'\n"
+"    % else:\n"
+"        % set Du = 'Du'\n"
+"        % set du = 'du'\n"
+"        % set dein = 'dein'\n"
+"        % set hast = 'hast'\n"
+"        % set kannst = 'kannst'\n"
+"        % set Mein = 'Mein'\n"
+"    % endif\n"
+"</div>\n"
+"<p>\n"
+"    ${partner.salutation}\n"
+"</p>\n"
+"<p>\n"
+"    ${Du} ${hast} soeben ${dein} MyCompassion-Profil kreiert, gratuliere!\n"
+"</p>\n"
+"<p>\n"
+"    Damit wir ${dein} Profil aktiveren können, klicke bitte auf den Link und "
+"lege ${dein} Passwort fest (es muss\n"
+"    mindestens 8 Zeichen haben).\n"
+"</p>\n"
+"<div style=\"margin:20px auto; text-align: center;\">\n"
+"\n"
+"    <a href=\"${object.partner_id.signup_url}\" style=\"padding: 12px 18px; "
+"font-size: 12px;\n"
+"     line-height: 18px; color: #FFFFFF; border-color:#0054A6; text-"
+"decoration: none; display: inline-block; margin-bottom: 0px; font-weight: "
+"400; text-align: center; vertical-align: middle; cursor: pointer; white-"
+"space: nowrap; background-image: none; background-color: #0054A6; border: "
+"1px solid #0054A6; border-radius:3px\" title=\"\">\n"
+"        ${Mein} Profil freischalten\n"
+"    </a>\n"
+"</div>\n"
+"<p>\n"
+"    Falls ${dein} Profil bereits aufgeschaltet ist, ${kannst} ${du} diese "
+"Nachricht ignorieren.\n"
+"</p>\n"
+"<p>\n"
+"    Liebe Grüsse\n"
+"</p>\n"
+"<p>\n"
+"     ${object.user_id.signature | safe}\n"
+"</p>"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_information_privacy_data
 msgid "(view agreement)"
 msgstr "(Vereinbarung anzeigen)"
-
-#. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.my_information_privacy_data
-msgid "Sign the Agreement"
-msgstr "Unterschreiben"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_children_gift_history
@@ -190,6 +284,12 @@ msgid "Age"
 msgstr "Alter"
 
 #. module: my_compassion
+#: code:addons/my_compassion/models/res_user.py:0
+#, python-format
+msgid "An error occurred."
+msgstr "Es ist ein Fehler aufgetreten."
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.letter_text_content
 msgid "Ask questions about his or her dreams for the future"
 msgstr "Frage nach den Zukunftsträumen"
@@ -203,6 +303,13 @@ msgstr "Geburtsdatum"
 #: model:ir.model.fields,field_description:my_compassion.field_correspondence_template__can_publish
 msgid "Can Publish"
 msgstr "Kann veröffentlichen"
+
+#. module: my_compassion
+#: code:addons/my_compassion/models/res_user.py:0
+#, python-format
+msgid "Cannot send email: the partner %s has no email address."
+msgstr ""
+"E-Mail kann nicht gesendet werden: Der Partner %s hat keine E-Mail-Adresse."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_information_personal
@@ -256,9 +363,22 @@ msgid "Common jobs"
 msgstr "Häufige Tätigkeiten"
 
 #. module: my_compassion
+#: code:addons/my_compassion/models/res_user.py:0
+#, python-format
+msgid "Communication configuration is missing."
+msgstr "Es fehlt eine Kommunikationskonfiguration."
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_children_info
 msgid "Community"
 msgstr "Gemeinschaft"
+
+#. module: my_compassion
+#: model:mail.template,subject:my_compassion.signup_confirmation_set_password_email
+msgid "Compassion account confirmation"
+msgstr ""
+"Aktivierung ${'ihres' if object.partner_id.title.plural or object.partner_id."
+"title.id == 29 else 'deines'} MyCompassion-Profils"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_children_info
@@ -380,6 +500,12 @@ msgid "Father/representative's job"
 msgstr "Arbeit des Vaters/Betreuers"
 
 #. module: my_compassion
+#: model:ir.model.fields.selection,name:my_compassion.selection__account_move__gender__f
+#: model:ir.model.fields.selection,name:my_compassion.selection__account_move_line__gender__f
+msgid "Female"
+msgstr "Weiblich"
+
+#. module: my_compassion
 #: model:ir.model,name:my_compassion.model_compassion_project
 msgid "Frontline Church Partner"
 msgstr "Frontline-Kirchenpartner"
@@ -493,12 +619,12 @@ msgstr "Briefe von"
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_children_letters
 msgid "Letters history"
-msgstr "Briefe"
+msgstr "Briefe Geschichte"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_children_info
 msgid "Location"
-msgstr "Veranstaltungsort"
+msgstr "Lagerort"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.login_layout
@@ -509,6 +635,12 @@ msgstr "Anmeldung"
 #: model_terms:ir.ui.view,arch_db:my_compassion.letter_text_content
 msgid "Make sure that any image you upload does not exceed 10Mb."
 msgstr "Bitte stelle sicher, dass dein Bild nicht 10 MB überschreitet."
+
+#. module: my_compassion
+#: model:ir.model.fields.selection,name:my_compassion.selection__account_move__gender__m
+#: model:ir.model.fields.selection,name:my_compassion.selection__account_move_line__gender__m
+msgid "Male"
+msgstr "Junge"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_information_personal
@@ -644,6 +776,11 @@ msgid "Project activities"
 msgstr "Aktivitäten im Kinderzentrum"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.override_error_message
+msgid "Registration failed. If the problem persists, please contact support."
+msgstr "Die Registrierung ist fehlgeschlagen. Wenn das Problem weiterhin besteht, wenden Sie sich bitte an den Support."
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.letter_actions
 msgid "Send"
 msgstr "Senden"
@@ -664,9 +801,22 @@ msgid "Sign Child Protection Charter"
 msgstr "Unterschreiben"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my_information_privacy_data
+msgid "Sign the Agreement"
+msgstr "Unterschreibe die Vereinbarung"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.register_layout
 msgid "Signup"
 msgstr "Registrieren"
+
+#. module: my_compassion
+#: model:partner.communication.config,name:my_compassion.user_account_confirmation
+#: model:utm.source,name:my_compassion.user_account_confirmation_utm_source
+msgid "Signup Account Confirmation"
+msgstr ""
+"Aktivierung ${'ihres' if object.partner_id.title.plural or object.partner_id."
+"title.id == 29 else 'deines'} MyCompassion-Profils"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.register_layout
@@ -733,6 +883,28 @@ msgid ""
 msgstr "Leider ist die Bilddatei zu gross. Bitte komprimiere die Grösse mit"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my_account.py:0
+#, python-format
+msgid "The new password and its confirmation must be identical."
+msgstr "Das neue Passwort und seine Bestätigung müssen übereinstimmen."
+
+#. module: my_compassion
+#: code:addons/my_compassion/controllers/my_account.py:0
+#, python-format
+msgid ""
+"The old password you provided is incorrect, your password was not changed."
+msgstr ""
+"Das alte Passwort, das sie eingegeben haben ist falsch, ihr Passwort wurde "
+"nicht geändert."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.letter_actions
+msgid "The text of your letter is empty. Please add some text and try again."
+msgstr ""
+"Der Text deines Briefes ist leer. Bitte füge etwas Text hinzu und versuche "
+"es erneut."
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.letter_text_content
 msgid "There are many easy-to-use solution to resize an image.<br/>for example"
 msgstr "Du kannst die Grösse des Bildes verkleinern, bspw. über "
@@ -763,14 +935,6 @@ msgstr ""
 "Bitte versuch es noch später und/oder restart dein Computer. <br/>\n"
 "Wenn der Fehler weiterhin besteht, kontaktiere uns auf info@compassion.ch, "
 "damit wir das Problem lösen können."
-
-#. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.letter_actions
-msgid ""
-"The text of your letter is empty. Please add some text and try again."
-msgstr ""
-"Der Text Deines Briefes ist leer."
-"Bitte füge Text hinzu und versuche es erneut."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_children_letters
@@ -883,6 +1047,19 @@ msgid "Writing guidelines"
 msgstr "Tipps zum Schreiben"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my_account.py:0
+#, python-format
+msgid "You cannot leave any password empty."
+msgstr "Sie können kein leeres Passwort setzen."
+
+#. module: my_compassion
+#: code:addons/my_compassion/models/res_user.py:0
+#, python-format
+msgid "You cannot perform this action on an archived user."
+msgstr ""
+"Du kannst diese Aktion nicht für einen archivierten Benutzer durchführen."
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.letter_text_content
 msgid "Your e-mail address"
 msgstr "Deine E-Mail Adresse"
@@ -928,3 +1105,22 @@ msgstr "punchi.me"
 #: model_terms:ir.ui.view,arch_db:my_compassion.sponsor_a_child
 msgid "this link"
 msgstr "Klicke hier, um eine Patenschaft zu beginnen"
+
+#~ msgid "No sponsor found with this reference. Please try again."
+#~ msgstr ""
+#~ "Für diese Referenz wurde kein Sponsor gefunden. Bitte versuche es erneut."
+
+#~ msgid "Put any known reference here for matching with your account..."
+#~ msgstr ""
+#~ "Gib hier alle bekannten Referenzen ein, um sie mit deinem Konto "
+#~ "abzugleichen..."
+
+#~ msgid ""
+#~ "The email address you entered is not the same as the one in the system. "
+#~ "Please try again."
+#~ msgstr ""
+#~ "Die E-Mail-Adresse, die du eingegeben hast, stimmt nicht mit der im "
+#~ "System überein. Bitte versuche es erneut."
+
+#~ msgid "Your sponsor or child reference"
+#~ msgstr "Dein Pate oder dein Kind - Referenznummer"

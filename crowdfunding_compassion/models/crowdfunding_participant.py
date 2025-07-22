@@ -114,9 +114,7 @@ class CrowdfundingParticipant(models.Model):
             lastname = details.partner_id.lastname
             html_vals = {
                 "img_alt": details.display_name,
-                "image_data": details.partner_id.with_context(
-                    bin_size=False
-                ).image_512.decode("utf-8"),
+                "image_url": details.profile_photo_url,
                 "text": details.personal_motivation.strip() or "",
                 "attribution": _("Quote from %s %s") % (firstname, lastname)
                 if details.personal_motivation.strip()
@@ -186,6 +184,7 @@ class CrowdfundingParticipant(models.Model):
                 path = (
                     f"web/content/crowdfunding.participant"
                     f"/{participant.id}/profile_photo"
+                    f"/{participant.partner_id.preferred_name}.jpg"
                 )
             elif title.name == "Mister":
                 path = "crowdfunding_compassion/static/src/img/guy.png"

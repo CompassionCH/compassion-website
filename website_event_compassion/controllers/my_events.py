@@ -25,15 +25,21 @@ class MyEventsController(CustomerPortal):
         website=True,
     )
     def my_registration(self, registration, edit_mode=False, **kwargs):
-        values = self._prepare_portal_layout_values()
-        values.update(
-            {
-                "registration": registration,
-                "donations": self.get_donations(registration),
-                "edit_mode": edit_mode,
-            }
-        )
-        return request.render("website_event_compassion.my_event_details", values)
+        if (
+            request.env.user.partner_id.id == registration.partner_id.id
+            or request.env.user.has_group("base.group_system")
+        ):
+            values = self._prepare_portal_layout_values()
+            values.update(
+                {
+                    "registration": registration,
+                    "donations": self.get_donations(registration),
+                    "edit_mode": edit_mode,
+                }
+            )
+            return request.render("website_event_compassion.my_event_details", values)
+        else:
+            return request.redirect("/my/events")
 
     def get_donations(self, registration):
         partner = registration.partner_id
@@ -47,6 +53,7 @@ class MyEventsController(CustomerPortal):
                     ("user_id", "=", partner.id),
                     ("payment_state", "=", "paid"),
                     ("event_id", "=", event.id),
+                    ("move_id.invoice_category", "=", "fund"),
                 ]
             )
         )
@@ -57,7 +64,12 @@ class MyEventsController(CustomerPortal):
                     "date": move_line.date,
                     "amount": str(move_line.price_total),
                     "currency": move_line.currency_id.symbol,
-                    "donor": move_line.partner_id.preferred_name,
+                    "donor firstname": move_line.partner_id.preferred_name or "",
+                    "donor lastname": move_line.partner_id.lastname
+                    if move_line.partner_id.preferred_name
+                    != move_line.partner_id.lastname
+                    else "",
+                    "donor email": move_line.partner_id.email or "",
                 }
             )
         donation_sponsorships = (
@@ -78,7 +90,12 @@ class MyEventsController(CustomerPortal):
                     "date": sponsorship.create_date.date(),
                     "amount": str(registration.event_id.sponsorship_donation_value),
                     "currency": event.currency_id.symbol,
-                    "donor": sponsorship.partner_id.preferred_name,
+                    "donor firstname": sponsorship.partner_id.preferred_name or "",
+                    "donor lastname": sponsorship.partner_id.lastname
+                    if sponsorship.partner_id.preferred_name
+                    != sponsorship.partner_id.lastname
+                    else "",
+                    "donor email": sponsorship.partner_id.email or "",
                 }
             )
         donations.sort(key=lambda x: x["date"], reverse=True)

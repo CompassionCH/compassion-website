@@ -113,6 +113,9 @@ class CrowdfundingProject(models.Model):
     owner_participant_id = fields.Many2one(
         "crowdfunding.participant", compute="_compute_owner_participant_id"
     )
+    owner_number_sponsorships_goal = fields.Integer()
+    owner_number_csp_goal = fields.Integer()
+    owner_product_number_goal = fields.Integer()
     participant_ids = fields.One2many(
         "crowdfunding.participant", "project_id", string="Participants", required=True
     )
@@ -143,6 +146,61 @@ class CrowdfundingProject(models.Model):
             if project.type == "individual" and len(project.participant_ids) > 1:
                 raise ValidationError(
                     _("Individual project can only have one participant.")
+                )
+
+    @api.constrains("presentation_video")
+    def _check_presentation_video(self):
+        if self.presentation_video:
+            parsed_url = urlparse.urlparse(self.presentation_video)
+            domain = parsed_url.netloc.lower()
+
+            if not (
+                domain == "youtube.com"
+                or domain.endswith(".youtube.com")
+                or domain == "vimeo.com"
+                or domain.endswith(".vimeo.com")
+            ):
+                raise ValidationError(
+                    _(
+                        "The video link must be from the 'www.youtube.com' "
+                        "or 'vimeo.com' domain only."
+                    )
+                )
+
+    @api.constrains("facebook_url")
+    def _check_facebook_url(self):
+        if self.facebook_url:
+            parsed_url = urlparse.urlparse(self.facebook_url)
+            domain = parsed_url.netloc.lower()
+
+            if not (domain == "facebook.com" or domain.endswith(".facebook.com")):
+                raise ValidationError(
+                    _("The facebook link must be from the 'facebook.com' domain only.")
+                )
+
+    @api.constrains("twitter_url")
+    def _check_twitter_url(self):
+        if self.twitter_url:
+            parsed_url = urlparse.urlparse(self.twitter_url)
+            domain = parsed_url.netloc.lower()
+
+            if not (domain == "x.com" or domain.endswith(".x.com")):
+                raise ValidationError(
+                    _("The X link must be from the 'x.com' domain only.")
+                )
+
+    @api.constrains("instagram_url")
+    def _check_instagram_url(self):
+        if self.instagram_url:
+            parsed_url = urlparse.urlparse(self.instagram_url)
+            domain = parsed_url.netloc.lower()
+
+            if not (domain == "instagram.com" or domain.endswith(".instagram.com")):
+                raise ValidationError(
+                    _(
+                        "The instagram link must be from the "
+                        "'instagram.com' domain only."
+                    )
                 )
 
     def _compute_description_short(self):
@@ -254,6 +312,9 @@ class CrowdfundingProject(models.Model):
                 participant = {
                     "partner_id": project.project_owner_id.id,
                     "project_id": project.id,
+                    "number_sponsorships_goal": project.owner_number_sponsorships_goal,
+                    "number_csp_goal": project.owner_number_csp_goal,
+                    "product_number_goal": project.owner_product_number_goal,
                 }
                 project.write({"participant_ids": [(0, 0, participant)]})
 
@@ -272,13 +333,19 @@ class CrowdfundingProject(models.Model):
                     ]
                 )
             elif "vimeo" in url_data.hostname and "video" not in url_data.path:
-                self.presentation_video_embed = "/".join(
-                    [
-                        url_data.scheme + "://player." + url_data.hostname,
-                        "video",
-                        url_data.path.lstrip("/"),
-                    ]
-                )
+                path_parts = url_data.path.split("/", 2)
+                if len(path_parts) > 1:
+                    self.presentation_video_embed = "/".join(
+                        [
+                            url_data.scheme + "://player." + url_data.hostname,
+                            "video",
+                            path_parts[1],
+                        ]
+                    )
+                    if len(path_parts) > 2:
+                        self.presentation_video_embed += "?h=" + path_parts[2]
+                else:
+                    self.presentation_video_embed = self.presentation_video
             else:
                 self.presentation_video_embed = self.presentation_video
         else:
