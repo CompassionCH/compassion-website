@@ -26,9 +26,12 @@
                       data-original-title=""
                       title=""
                       aria-describedby="tooltip760887"
-                    >More information about <span
+                    >
+                                            More information about
+                                            <span
                         t-esc="main_object.preferred_name"
-                      /></a>
+                      />
+                                        </a>
                                         <br />
                                     </p>
                                 </div>
@@ -40,7 +43,9 @@
                       data-original-title=""
                       title=""
                       aria-describedby="tooltip128007"
-                    >Choose another child</a>
+                    >
+                                            Choose another child
+                                        </a>
                                         <br />
                                     </p>
                                 </div>
@@ -54,11 +59,13 @@
             data-anchor="true"
           >
                         <div class="s_allow_columns container">
-                            <p style="text-align: center; ">With CHF <span
-                  id="sponsorship_amount"
-                >42</span>.- per month, you will release <span
-                  t-esc="main_object.preferred_name"
-                /> from poverty!</p>
+                            <p style="text-align: center; ">
+                                With CHF
+                                <span id="sponsorship_amount">42</span>
+                                .- per month, you will release
+                                <span t-esc="main_object.preferred_name" />
+                                from poverty!
+                            </p>
                         </div>
                     </section>
                     <div class="oe_structure" />
@@ -77,7 +84,6 @@
             </div>
         </t>
     </template>
-
     <template id="child_page_header">
         <section
       class="s_picture pt48 o_colored_level undefined o_cc o_cc4 pb0"
@@ -131,7 +137,6 @@
             </div>
         </section>
     </template>
-
     <template id="child_description">
         <section
       class="s_text_block o_colored_level o_cc o_cc1 pt16 pb0"
@@ -149,7 +154,10 @@
                 data-original-title=""
                 title=""
                 aria-describedby="tooltip760887"
-              >Sponsor <span t-esc="main_object.preferred_name" /></a>
+              >
+                                Sponsor
+                                <span t-esc="main_object.preferred_name" />
+                            </a>
                             <br />
                         </p>
                     </div>
@@ -161,7 +169,9 @@
                 data-original-title=""
                 title=""
                 aria-describedby="tooltip128007"
-              >Choose another child</a>
+              >
+                                Choose another child
+                            </a>
                             <br />
                         </p>
                     </div>
@@ -182,12 +192,10 @@
             </div>
         </section>
     </template>
-
     <template id="child_legend" name="Child legend">
         <t t-set="text_class" t-value="default_text_class or ''" />
         <t t-set="layout" t-value="default_layout or 'vertical'" />
         <div>
-
             <span class="fa fa-gift" />
             <figure class="figure">
                 <figcaption class="figure-caption">
@@ -210,12 +218,11 @@
       />
             <figure class="figure">
                 <figcaption class="figure-caption">
-                    <font style="" t-att-class="text_class"> <span
-              t-esc="child.get('boy')"
-            /></font>
+                    <font style="" t-att-class="text_class">
+                        <span t-esc="child.get('boy')" />
+                    </font>
                 </figcaption>
             </figure>
         </div>
     </template>
-
 </odoo>

@@ -83,9 +83,9 @@
                       t-foreach="request.env['res.partner.title'].sudo().search([('website_published', '=', True)])"
                       t-as="title"
                     >
-                                            <option t-att-value="title.id"><t
-                          t-esc="title.name"
-                        /></option>
+                                            <option t-att-value="title.id">
+                                                <t t-esc="title.name" />
+                                            </option>
                                         </t>
                                     </select>
                                 </div>
@@ -105,7 +105,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >Firstname</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <input
@@ -140,7 +140,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >Lastname</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <input
@@ -167,7 +167,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >Email</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <input
@@ -512,7 +512,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >Type of sponsorship</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <div
@@ -590,15 +590,16 @@
                         >
                                                     PLUS Sponsorship
                                                 </label>
-
-                            <a
+                                                <a
                           id="sponsorship_plus_info"
                           class="o_more_info_button mb-4 ml-2 rounded-circle bg-primary align-items-center justify-content-center o_not_editable text-white"
                           href="#"
                           title="More information"
                         >
-                                <i class="fa fa-question fa-1x" />
-                            </a>
+                                                    <i
+                            class="fa fa-question fa-1x"
+                          />
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -804,7 +805,9 @@
                 role="button"
                 class="btn btn-primary btn-lg s_website_form_send"
                 aria-describedby="tooltip17875"
-              >Submit</a>
+              >
+                                Submit
+                            </a>
                             <span id="s_website_form_result" />
                         </div>
                     </div>
@@ -812,7 +815,6 @@
             </div>
         </section>
     </template>
-
     <template id="sponsorship_plus_help">
         <div
       id="sponsorship_plus_help"
@@ -822,12 +824,16 @@
     >
             <i class="fa fa-2x fa-info-circle s_alert_icon" />
             <div class="s_alert_content">
-                <p>PLUS Sponsorship is an <b
-          >additional donation of CHF 8.00 per month</b>: it enables Compassion to finance projects to change the children's environment. The funds received under the Sponsorship Plus program contribute to a common fund and enable Compassion to support several projects each year.</p>
+                <p>
+                    PLUS Sponsorship is an
+                    <b>additional donation of CHF 8.00 per month</b>
+                    : it enables Compassion to finance projects to change the children's environment. The funds received
+                    under the Sponsorship Plus program contribute to a common fund and enable Compassion to support
+                    several projects each year.
+                </p>
             </div>
         </div>
     </template>
-
     <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
     <template
     id="acceptance_full"

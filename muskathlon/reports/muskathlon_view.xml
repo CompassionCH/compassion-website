@@ -16,7 +16,6 @@
             </tree>
         </field>
     </record>
-
     <record id="view_muskathlon_form" model="ir.ui.view">
         <field name="name">muskathlon.report.form</field>
         <field name="model">muskathlon.report</field>
@@ -45,7 +44,6 @@
             </form>
         </field>
     </record>
-
     <record id="view_muskathlon_search" model="ir.ui.view">
         <field name="name">muskathlon.report.search</field>
         <field name="model">muskathlon.report</field>
@@ -59,7 +57,6 @@
                 <field name="sent_to_4m" />
                 <field name="payment_mode_id" />
                 <field name="journal_id" />
-
                 <filter
           string="Not Paypal"
           name="group_not_paypal"
@@ -71,7 +68,6 @@
           name="group_not_sent_to_4m"
           domain="[('sent_to_4m', '=', False)]"
         />
-
                 <!-- group by -->
                 <filter
           string="Ambassador"
@@ -81,7 +77,6 @@
             </search>
         </field>
     </record>
-
     <!-- muskathlons report -->
     <record id="action_muskathlons_report" model="ir.actions.act_window">
         <field name="name">Muskathlons</field>
@@ -89,18 +84,16 @@
         <field name="view_mode">tree,form,graph</field>
         <field name="search_view_id" ref="view_muskathlon_search" />
     </record>
-
     <record id="view_muskathlon_report_graph" model="ir.ui.view">
-         <field name="name">muskathlon.report.graph</field>
-         <field name="model">muskathlon.report</field>
-         <field name="arch" type="xml">
-             <graph string="Muskathlon stats" type="bar">
-                 <field name="ambassador_id" type="row" />
-                 <field name="amount" type="measure" />
-             </graph>
-         </field>
+        <field name="name">muskathlon.report.graph</field>
+        <field name="model">muskathlon.report</field>
+        <field name="arch" type="xml">
+            <graph string="Muskathlon stats" type="bar">
+                <field name="ambassador_id" type="row" />
+                <field name="amount" type="measure" />
+            </graph>
+        </field>
     </record>
-
     <!-- muskathlon reports menu -->
     <menuitem
     id="menu_label_muskathlons"

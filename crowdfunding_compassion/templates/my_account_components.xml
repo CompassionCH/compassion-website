@@ -28,7 +28,9 @@
                                         <a
                       t-att-href="project.website_url"
                       target="_blank"
-                    ><t t-esc="project.name" /></a>
+                    >
+                                            <t t-esc="project.name" />
+                                        </a>
                                     </td>
                                     <td>
                                         <t t-esc="project.deadline" />
@@ -39,14 +41,9 @@
                                     <td t-if="project_active">
                                         <a
                       t-attf-href="/my/together/project/#{slug(project)}"
-                    >
-                                            Edit project
-                                        </a>
+                    >Edit project</a>
                                     </td>
-                                    <td t-else="">
-                                        -
-                                    </td>
-
+                                    <td t-else="">-</td>
                                     <td t-if="project_active">
                                         <a
                       t-attf-href="/my/together/participant/#{slug(project.owner_participant_id)}"
@@ -54,9 +51,7 @@
                                             Edit participation
                                         </a>
                                     </td>
-                                    <td t-else="">
-                                        -
-                                    </td>
+                                    <td t-else="">-</td>
                                 </tr>
                             </t>
                         </tbody>
@@ -64,7 +59,6 @@
                 </div>
             </div>
         </template>
-
         <template id="my_account_participation_board">
             <div class="row">
                 <div class="col-xs-12">
@@ -91,7 +85,11 @@
                                         <a
                       t-att-href="participation.website_url"
                       target="_blank"
-                    ><t t-esc="participation.project_id.name" /></a>
+                    >
+                                            <t
+                        t-esc="participation.project_id.name"
+                      />
+                                        </a>
                                     </td>
                                     <td>
                                         <t
@@ -105,9 +103,7 @@
                                             Edit participation
                                         </a>
                                     </td>
-                                    <td t-else="">
-                                        -
-                                    </td>
+                                    <td t-else="">-</td>
                                 </tr>
                             </t>
                         </tbody>
@@ -115,7 +111,6 @@
                 </div>
             </div>
         </template>
-
         <template id="my_account_donation_board">
             <div class="row">
                 <div class="col-12">
@@ -133,7 +128,6 @@
                                 <th>Date</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             <t t-foreach="donations" t-as="donation">
                                 <t
@@ -169,7 +163,6 @@
                 </div>
             </div>
         </template>
-
         <template id="my_account_donation_tbody">
             <tr>
                 <td>

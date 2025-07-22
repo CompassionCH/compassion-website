@@ -25,11 +25,11 @@
                     style="max-width: 250px;"
                   />
                                 </a>
-                                <h1
-                  style="text-align: center; "
-                >Thank you for sponsoring <span
-                    t-esc="main_object.preferred_name"
-                  />!</h1>
+                                <h1 style="text-align: center; ">
+                                    Thank you for sponsoring
+                                    <span t-esc="main_object.preferred_name" />
+                                    !
+                                </h1>
                             </div>
                         </div>
                     </div>
@@ -42,34 +42,41 @@
             data-snippet="s_text_block"
             data-name="Text"
           >
-                      <div class="container s_allow_columns">
-                        <p
-              >This seems to be your first sponsorship with Compassion. Do you have 5 minutes in order to review your preferences? Don't worry, you will be contacted later if you don't have time right now.</p>
-                          <div class="row">
-                              <div class="o_colored_level col-lg-6">
-                                  <p style="text-align: center;">
-                                      <a
+                        <div class="container s_allow_columns">
+                            <p>
+                                This seems to be your first sponsorship with Compassion. Do you have 5 minutes in order
+                                to review your preferences? Don't worry, you will be contacted later if you don't have
+                                time right now.
+                            </p>
+                            <div class="row">
+                                <div class="o_colored_level col-lg-6">
+                                    <p style="text-align: center;">
+                                        <a
                       id="step2-button"
                       href="#"
                       class="btn btn-primary w-100"
                       aria-describedby="tooltip760887"
-                    >Review my preferences now</a>
-                                      <br />
-                                  </p>
-                              </div>
-                              <div class="o_colored_level col-lg-6">
-                                  <p style="text-align: center; ">
-                                      <a
+                    >
+                                            Review my preferences now
+                                        </a>
+                                        <br />
+                                    </p>
+                                </div>
+                                <div class="o_colored_level col-lg-6">
+                                    <p style="text-align: center; ">
+                                        <a
                       id="do_later"
                       href="#"
                       class="btn btn-outline-primary w-100"
                       aria-describedby="tooltip128007"
-                    >I'll do this later</a>
-                                      <br />
-                                  </p>
-                              </div>
-                          </div>
-                      </div>
+                    >
+                                            I'll do this later
+                                        </a>
+                                        <br />
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </section>
                     <div class="oe_structure" />
                 </t>
@@ -79,13 +86,14 @@
           data-snippet="s_text_block"
           data-name="Text"
         >
-                  <div class="container s_allow_columns">
-                    <p
-              class="text-center"
-            >Can you imagine the enormous joy when our local employees are able to tell the child that he or she now has a sponsor on the other side of the world?
-                        <br />
-                        You will soon receive all documentation needed to start the sponsorship in your mailbox.</p>
-                  </div>
+                    <div class="container s_allow_columns">
+                        <p class="text-center">
+                            Can you imagine the enormous joy when our local employees are able to tell the child that he
+                            or she now has a sponsor on the other side of the world?
+                            <br />
+                            You will soon receive all documentation needed to start the sponsorship in your mailbox.
+                        </p>
+                    </div>
                 </section>
                 <t t-call="website_sponsorship.child_sponsorship_form">
                     <t t-set="step" t-value="2" />

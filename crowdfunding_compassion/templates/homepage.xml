@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
-
         <!-- ===  Homepage === -->
         <template id="homepage_template">
             <t t-call="crowdfunding_compassion.layout">
@@ -17,7 +16,7 @@
                 <section class="# py-5" id="#">
                     <div class="container">
                         <div class="center-block text-center">
-                             <h2
+                            <h2
                 class="display-4 text-secondary"
               >Compassion interactive project platform</h2>
                             <h3 class="py-4 text-secondary">
@@ -31,7 +30,9 @@
                                 <button
                   type="button"
                   class="btn btn-primary btn-lg text-uppercase mx-auto"
-                >Launch a project</button>
+                >
+                                    Launch a project
+                                </button>
                             </a>
                         </div>
                         <div class="row">
@@ -42,7 +43,6 @@
                 />
                             </div>
                         </div>
-
                         <div class="row text-center">
                             <t t-foreach="impact" t-as="fund">
                                 <div class="col">
@@ -56,14 +56,12 @@
                     height="100"
                     t-if="isinstance(impact[fund]['icon_image'], str)"
                   />
-
                                     <h4
                     class="display-2 count"
                     style="white-space: nowrap;"
                   >
                                         <t t-esc="impact[fund]['value']" />
                                     </h4>
-
                                     <h5 class="text-primary">
                                         <t t-esc="impact[fund]['text']" />
                                     </h5>
@@ -80,13 +78,11 @@
                                 <h2
                   class="subheading text-uppercase"
                 >How does it work</h2>
-
                                 <p class="text-white font-weight-normal h4">
                                     You're just 3 steps from the launch of your project
                                 </p>
                             </div>
                         </div>
-
                         <div class="row text-center">
                             <div class="col-md-4">
                                 <img
@@ -94,46 +90,47 @@
                   class="w-75 rounded-circle pb-4"
                   alt="Responsive image"
                 />
-
-                                <p class="font-weight-bold text-white h4">
-                                    1. Launch your project
-                                </p>
-
                                 <p
-                >Decide on the nature of your project (race, birthday, etc.), present it as well as your motivations. With this new project, not only do you have a new goal in front of you, but you also give your entourage the opportunity to get involved in a project that makes sense. In this way, you will bring more people together to make a difference in the fight against extreme poverty.</p>
+                  class="font-weight-bold text-white h4"
+                >1. Launch your project</p>
+                                <p>
+                                    Decide on the nature of your project (race, birthday, etc.), present it as well as
+                                    your motivations. With this new project, not only do you have a new goal in front of
+                                    you, but you also give your entourage the opportunity to get involved in a project
+                                    that makes sense. In this way, you will bring more people together to make a
+                                    difference in the fight against extreme poverty.
+                                </p>
                             </div>
-
                             <div class="col-md-4">
                                 <img
                   src="/crowdfunding_compassion/static/src/img/howdoesit2.jpg"
                   class="w-75 rounded-circle pb-4"
                   alt="Responsive image"
                 />
-
                                 <p
                   class="font-weight-bold text-white h4"
                 >2. Choose a fund for your impact</p>
-
-                                <p
-                >Concretely choose the cause you want to support with your project. Building safe toilets, ensuring the survival of mothers and their babies? Or find sponsors for children in extreme poverty?</p>
+                                <p>
+                                    Concretely choose the cause you want to support with your project. Building safe
+                                    toilets, ensuring the survival of mothers and their babies? Or find sponsors for
+                                    children in extreme poverty?
+                                </p>
                             </div>
-
                             <div class="col-md-4">
                                 <img
                   src="/crowdfunding_compassion/static/src/img/howdoesit3.jpg"
                   class="w-75 rounded-circle pb-4"
                   alt="Responsive image"
                 />
-
                                 <p
                   class="font-weight-bold text-white h4"
                 >3. Publish and start sending love</p>
-
-                                <p
-                >Make your project known around you! Share the link of your project on social networks, via WhatsApp or e-mail and motivate others to support you!</p>
+                                <p>
+                                    Make your project known around you! Share the link of your project on social
+                                    networks, via WhatsApp or e-mail and motivate others to support you!
+                                </p>
                             </div>
                         </div>
-
                         <div class="row text-center py-4">
                             <div class="col-md-12">
                                 <a href="/projects/create">
@@ -151,26 +148,24 @@
                                     <a
                     href="/projects?project_type=collective&amp;status=active"
                     class="white underline"
-                  >join an existing collective project</a>
+                  >
+                                        join an existing collective project
+                                    </a>
                                 </p>
                             </div>
                         </div>
                     </div>
                 </section>
-
-
                 <!-- Project section -->
                 <section class="container py-5">
                     <h2
             class="subheading bg-white text-center mb-5 text-uppercase text-primary"
           >Active projects</h2>
-
                     <div class="row">
                         <t t-foreach="projects" t-as="project">
                             <t t-call="crowdfunding_compassion.project_card" />
                         </t>
                     </div>
-
                     <div class="col text-center py-4">
                         <a href="/projects">
                             <button
@@ -180,8 +175,6 @@
                         </a>
                     </div>
                 </section>
-
-
                 <!-- Funds Presentation -->
                 <section>
                     <div class="funds">
@@ -192,9 +185,10 @@
             />
                         <h1
               class="bg-white container subheading funds__header-title text-primary"
-            >Your impact can do a lot</h1>
+            >
+                            Your impact can do a lot
+                        </h1>
                     </div>
-
                     <div class="container mb-5 pb-5">
                         <div class="row">
                             <t t-foreach="funds_description" t-as="fund">
@@ -222,7 +216,6 @@
                 </section>
             </t>
         </template>
-
         <!-- TODO Odoo creates automatically a "/" homepage but we cannot find the way to use it instead of creating another one -->
         <record id="homepage" model="website.page">
             <field name="name">Crowdfunding Homepage</field>

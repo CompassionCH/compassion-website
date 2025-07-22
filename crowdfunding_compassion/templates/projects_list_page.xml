@@ -19,19 +19,15 @@
                             You can join one of these projects and amplify its impact!
                             <br />
                             The countdown has begun.
-
                         </h2>
                     </div>
-
                     <div id="project_cards">
                         <div
               t-if="not (type == 'collective' and status=='active')"
             >
                             <h2
                 class="subheading text-primary text-center mb-5 mt-4 text-uppercase"
-              >
-                                The projects
-                            </h2>
+              >The projects</h2>
                         </div>
                         <div
               class="navbar navbar-expand-lg navbar-light justify-content-center my-3"
@@ -42,57 +38,63 @@
                 id="navbarSupportedContent"
               >
                                 <ul class="navbar-nav mr-auto">
-                                  <li
+                                    <li
                     t-att-class="'nav-item' if type is not None and status is not None else 'nav-item active'"
                   >
-                                    <a
+                                        <a
                       class="nav-link"
                       href="/projects"
                       t-att-style="'color: #005EB8 !important' if type is None and status == 'all' else 'color: #707070 !important'"
-                    >All</a>
-                                  </li>
-                                    <span class="navbar-text">
-                                         |
-                                      </span>
+                    >
+                                            All
+                                        </a>
+                                    </li>
+                                    <span class="navbar-text">|</span>
                                     <li
                     t-att-class="'nav-item' if type != 'collective' else 'nav-item active'"
                   >
-                                    <a
+                                        <a
                       class="nav-link"
                       t-attf-href="/projects?project_type=collective#{'&amp;status='+status if status else ''}"
                       t-att-style="'color: #005EB8 !important' if type == 'collective'else 'color: #707070 !important'"
-                    >Collective</a>
-                                  </li>
-                                  <li
+                    >
+                                            Collective
+                                        </a>
+                                    </li>
+                                    <li
                     t-att-class="'nav-item' if type != 'individual' else 'nav-item active'"
                   >
-                                    <a
+                                        <a
                       class="nav-link"
                       t-attf-href="/projects?project_type=individual#{'&amp;status='+status if status else ''}"
                       t-att-style="'color: #005EB8 !important' if type == 'individual' else 'color: #707070 !important'"
-                    >Individual</a>
-                                  </li>
-                                    <span class="navbar-text">
-                                         |
-                                      </span>
+                    >
+                                            Individual
+                                        </a>
+                                    </li>
+                                    <span class="navbar-text">|</span>
                                     <li
                     t-att-class="'nav-item' if status != 'active' else 'nav-item active'"
                   >
-                                    <a
+                                        <a
                       class="nav-link"
                       t-attf-href="/projects?status=active#{'&amp;type='+type if type else ''}"
                       t-att-style="'color: #005EB8 !important' if status == 'active' else 'color: #707070 !important'"
-                    >Active</a>
-                                  </li>
+                    >
+                                            Active
+                                        </a>
+                                    </li>
                                     <li
                     t-att-class="'nav-item' if status != 'finish' else 'nav-item active'"
                   >
-                                    <a
+                                        <a
                       class="nav-link"
                       t-attf-href="/projects?status=finish#{'&amp;type='+type if type else ''}"
                       t-att-style="'color: #005EB8 !important' if status == 'finish' else 'color: #707070 !important'"
-                    >Finished</a>
-                                  </li>
+                    >
+                                            Finished
+                                        </a>
+                                    </li>
                                 </ul>
                                 <form class="form-inline">
                                     <input
@@ -102,7 +104,7 @@
                     placeholder="Quick search"
                     aria-label="Quick search"
                   />
-                              </form>
+                                </form>
                             </div>
                         </div>
                         <div id="myTable" class="row">
@@ -116,11 +118,10 @@
                     <div class="projects_pager mt-2 mb-5">
                         <t t-call="website.pager" />
                     </div>
-<!--                TODO CO-3212 -->
+                    <!--                TODO CO-3212 -->
                 </section>
             </t>
         </template>
-
         <record id="projects_page" model="website.page">
             <field name="name">Projects</field>
             <field name="website_published">True</field>
