@@ -8,6 +8,7 @@
 
     Props:
     - letter (record): The related letter object.
+    - child (record): The child associated with the letter.
 -->
 
 
@@ -17,8 +18,7 @@
         <div class="position-relative d-flex shadow-sm rounded-4  h-100">
 
             <!-- Icon at the left -->
-            <div class="ml-2 mt-4 my2-envelope"
-                 t-att-class="'ml-2 mt-4 my2-envelope ' + ('envelope--blue' if letter.direction == 'Supporter To Beneficiary' else 'envelope--green')">
+            <div t-attf-class="ml-2 mt-4 my2-envelope {{ 'envelope--blue' if letter.direction != 'Supporter To Beneficiary' else 'envelope--green' }}">
                 <div class="env-body"></div>
                 <div class="env-flap"></div>
             </div>
@@ -29,9 +29,9 @@
                 <!-- Top row: Title (left) and Dropdown (right) -->
                 <div class="d-flex justify-content-between align-items-start mb-4">
                     <t t-set="label"
-                       t-value="'From ' + child.preferred_name if letter.direction == 'Supporter To Beneficiary' else 'To ' + child.preferred_name"/>
+                       t-value="'From ' + child.preferred_name if letter.direction != 'Supporter To Beneficiary' else 'To ' + child.preferred_name"/>
                     <t t-set="color_class"
-                       t-value="'text-core-blue' if letter.direction == 'Supporter To Beneficiary' else ''"/>
+                       t-value="'text-core-blue' if letter.direction != 'Supporter To Beneficiary' else ''"/>
 
                     <div t-attf-class="h5 #{color_class}">
                         <t t-esc="label"/>

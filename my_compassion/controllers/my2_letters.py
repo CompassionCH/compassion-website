@@ -6,6 +6,7 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+from lark.load_grammar import nr_deepcopy_tree
 from odoo.http import request
 from odoo import http
 from datetime import date
@@ -13,20 +14,69 @@ from datetime import date
 
 class MyCompassionCorrespondenceController(http.Controller):
 
-    @http.route(['/my2/children/letters', '/my2/children/letters/<int:child_id>'], type="http", auth="user",
+    @http.route(['/my2/children/letters', '/my2/children/letters/<int:child_id>'],
+                type="http", auth="user",
                 website=True, sitemap=False)
     def my2_render_child_letters_page(self, child_id=None, **kwargs):
         partner = request.env.user.partner_id
         children_sponsored_by_partner = partner.sponsorship_ids.child_id
         current_year = date.today().year
+        filter_child = next(
+            (c for c in children_sponsored_by_partner if c.id == child_id), None)
 
-        filter_child = next((c for c in children_sponsored_by_partner if c.id == child_id), None)
+        # Helper function to safely parse integers from query params
+        def safe_int(value, default):
+            try:
+                return int(value)
+            except (ValueError, TypeError):
+                return default
+        # Filtering params
+        page = safe_int(kwargs.get('page'), 1)
+        year_from = safe_int(kwargs.get('year_from'), 1900)
+        year_to = safe_int(kwargs.get('year_to'), current_year)
+        month_from = safe_int(kwargs.get('month_from'), 1)
+        month_to = safe_int(kwargs.get('month_to'), 12)
+        letter_type = kwargs.get('type')
+        sort_order = kwargs.get('sort', 'newest')
+        nr_filters_applied = 0
 
+        # Build filter date range
+        import calendar
+        last_day = calendar.monthrange(year_to, month_to)[1]
+        from_date = date(year_from, month_from, 1)
+        to_date = date(year_to, month_to, last_day)
+
+        # Build the domain of the filtering of the letters
         filter_domain = [("partner_id", "=", partner.id)]
+
         if filter_child:
             filter_domain.append(("child_id", "=", child_id))
+            nr_filters_applied += 1
+        filter_domain.append(("create_date", ">=", from_date))
+        filter_domain.append(("create_date", "<=", to_date))
+        if year_from > 1900 or year_to < current_year or month_from > 1 or month_to < 12:
+            nr_filters_applied += 1
+        if letter_type:
+            filter_domain.append(("direction", "=", letter_type))
+            nr_filters_applied += 1
+        order = "create_date DESC" if sort_order == "newest" else "create_date ASC"
+        if sort_order == "oldest":
+            nr_filters_applied += 1
 
-        letters = request.env['correspondence'].search(filter_domain, order="create_date DESC")
+        # Pagination setup
+        letters_per_page = 24
+        offset = (page - 1) * letters_per_page
+        total_letters = request.env['correspondence'].search_count(filter_domain)
+        total_pages = max(1, -(-total_letters // letters_per_page))
+
+        letters = request.env['correspondence'].search(
+            filter_domain,
+            order=order,
+            offset=offset,
+            limit=letters_per_page
+        )
+
+        # Fetch the filtered letters from the database
         letter_children_pairs = []
         for letter in letters:
             if letter.child_id:
@@ -40,38 +90,19 @@ class MyCompassionCorrespondenceController(http.Controller):
                 'filter_child': filter_child,
                 'current_year': current_year,
                 'children_list': children_sponsored_by_partner,
+                'current_page': page,
+                'total_pages': total_pages,
+                'filters': {
+                    'year_from': year_from,
+                    'year_to': year_to,
+                    'month_from': month_from,
+                    'month_to': month_to,
+                    'type': letter_type,
+                    'sort': sort_order,
+                },
+                'nr_filters_applied': nr_filters_applied
             }
         )
-
-
-@http.route('/my2/children/<int:child_id>/letters', type="http", auth="user",
-            website=True, sitemap=False)
-def my2_render_child_letters_page(self, child_id, **kwargs):
-    partner = request.env.user.partner_id
-    children_sponsored_by_partner = partner.sponsorship_ids.child_id
-
-    for child in children_sponsored_by_partner:
-        if child.id == child_id:
-            letters = request.env['correspondence'].search(
-                [
-                    ("partner_id", "=", partner.id),
-                    ("child_id", "=", child_id)
-                ],
-                order="create_date DESC"
-            )
-            current_year = date.today().year
-
-            return request.render(
-                'my_compassion.my2_child_letters_page',
-                {
-                    'child_id': child_id,
-                    'letters': letters,
-                    'child': child,
-                    'current_year': current_year,
-                    'children_list': children_sponsored_by_partner,
-                }
-            )
-
 
 @http.route('/my2/children/<int:child_id>/letter/new', type="http", auth="user",
             website=True, sitemap=False)
