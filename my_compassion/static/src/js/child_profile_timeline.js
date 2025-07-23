@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
         isLoading = true;
         loader.style.display = "block";
 
+
         fetch(`/my2/children/${childId}/timeline-batch`, {
             method: "POST",
             headers: {
