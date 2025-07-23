@@ -28,6 +28,69 @@ document.addEventListener("DOMContentLoaded", () => {
     let isLoading = false;      // Prevents multiple simultaneous requests
     let allLoaded = false;      // Flags when all content has been loaded
 
+    // --- Timeline animation logic (based on CodyHouse) ---
+    class VerticalTimeline {
+        constructor(element) {
+            this.element = element;
+            this.offset = 0.8;
+            this.updateBlocks(); // initialize references
+            this.hideBlocks();   // initial hide
+        }
+
+        updateBlocks() {
+            this.blocks = this.element.querySelectorAll(".cd-timeline__block");
+            this.images = this.element.querySelectorAll(".cd-timeline__img");
+            this.contents = this.element.querySelectorAll(".cd-timeline__content");
+        }
+
+        hideBlocks() {
+            if (!("classList" in document.documentElement)) return;
+            this.blocks.forEach((block, i) => {
+                if (block.getBoundingClientRect().top > window.innerHeight * this.offset) {
+                    this.images[i].classList.add("cd-timeline__img--hidden");
+                    this.contents[i].classList.add("cd-timeline__content--hidden");
+                }
+            });
+        }
+
+        showBlocks() {
+            if (!("classList" in document.documentElement)) return;
+            this.blocks.forEach((block, i) => {
+                if (
+                    this.contents[i].classList.contains("cd-timeline__content--hidden") &&
+                    block.getBoundingClientRect().top <= window.innerHeight * this.offset
+                ) {
+                    this.images[i].classList.add("cd-timeline__img--bounce-in");
+                    this.contents[i].classList.add("cd-timeline__content--bounce-in");
+                    this.images[i].classList.remove("cd-timeline__img--hidden");
+                    this.contents[i].classList.remove("cd-timeline__content--hidden");
+                }
+            });
+        }
+    }
+
+    const timelineInstance = new VerticalTimeline(timelineEl);
+
+    /**
+     * Scroll handler that triggers loading when user is near the bottom of the container.
+     * Can be tweaked to adjust the threshold for loading more data.
+     */
+    function onScroll() {
+        const scrollTop = scrollParent.scrollTop;
+        const scrollHeight = scrollParent.scrollHeight;
+        const clientHeight = scrollParent.clientHeight;
+
+        if (scrollTop + clientHeight >= scrollHeight - 100) {
+            loadMoreData();
+        }
+
+        // Animate visible timeline blocks
+        timelineInstance.showBlocks();
+    }
+
+    // Attach scroll listener to trigger infinite loading
+    scrollParent.addEventListener("scroll", onScroll);
+
     /**
      * Fetches the next batch of timeline entries via AJAX and appends them to the DOM.
      */
@@ -62,6 +125,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     container.insertAdjacentHTML("beforeend", html);
                     offset += limit;
                     allLoaded = !hasMore;
+
+                    // After inserting new HTML, re-scan and animate
+                    timelineInstance.updateBlocks();
+                    timelineInstance.hideBlocks();  // Mark hidden
+                    timelineInstance.showBlocks();  // Animate if in view
                 } else {
                     allLoaded = true;
                 }
@@ -75,20 +143,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    /**
-     * Scroll handler that triggers loading when user is near the bottom of the container.
-     * Can be tweaked to adjust the threshold for loading more data.
-     */
-    function onScroll() {
-        const scrollTop = scrollParent.scrollTop;
-        const scrollHeight = scrollParent.scrollHeight;
-        const clientHeight = scrollParent.clientHeight;
-
-        if (scrollTop + clientHeight >= scrollHeight - 100) {
-            loadMoreData();
-        }
-    }
-
-    // Attach scroll listener to trigger infinite loading
-    scrollParent.addEventListener("scroll", onScroll);
+    // Initial check (in case first blocks are already visible)
+    timelineInstance.showBlocks();
 });

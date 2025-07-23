@@ -26,6 +26,8 @@
     padding: 1.25em 0;
     padding: calc(1.25 * 1em) 0;
 }
+
+/* This is the vertical line that runs through the timeline */
 .cd-timeline__container::before {
     content: "";
     position: absolute;
@@ -35,6 +37,7 @@
     width: 4px;
     background-color: #ffffff;
 }
+
 @media (min-width: 64rem) {
     .cd-timeline__container::before {
         left: 50%;
@@ -177,7 +180,18 @@
         text-align: right;
     }
 }
-@media (min-width: 64rem) {
+
+/* TIMELINE ANIMATIONS based on Codyhouse's Vertical Timeline
+ * --------------------------------------------------
+ * The timeline elements are animated when they come into view.
+ * The animations are triggered by adding the classes
+ * 'cd-timeline__img--bounce-in' and 'cd-timeline__content--bounce-in'.
+ * Encapsulate in @media (min-width: 64rem) to the classes to apply the animations only on larger screens.
+ */
+
+/** Apply the animation only on desktop screens to prevent performance issues on mobile **/
+/** Remove the media query to apply the animation on all screens **/
+@media (max-width: 63.99rem) {
     .cd-timeline__img--hidden,
     .cd-timeline__content--hidden {
         visibility: hidden;
@@ -195,12 +209,15 @@
         animation-name: cd-bounce-2-inverse;
     }
 }
-/* TIMELINE ANIMATIONS
- * --------------------------------------------------
- * The timeline elements are animated when they come into view.
- * The animations are triggered by adding the classes
- * 'cd-timeline__img--bounce-in' and 'cd-timeline__content--bounce-in'.
- */
+
+/** Apply the animation on mobile if wanted **/
+/**@media (max-width: 63.99rem) {
+  .cd-timeline__content--bounce-in {
+    -webkit-animation-name: cd-bounce-2-inverse !important;
+    animation-name: cd-bounce-2-inverse !important;
+  }
+}**/
+
 @-webkit-keyframes cd-bounce-1 {
     0% {
         opacity: 0;
