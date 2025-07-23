@@ -7,7 +7,9 @@ document.addEventListener("DOMContentLoaded", function () {
         publicWidget.registry.ChildProfileTabs = publicWidget.Widget.extend({
             selector: ".child-related-information",
             events: {
-                "change #child-info-tabs-mobile": "_onMobileTabChange",
+                "change #child-info-tabs-mobile": function (e) {
+                    this._onMobileTabChange(e);
+                },
             },
 
             /**
@@ -34,6 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
              * @param {Event} ev
              */
             _onMobileTabChange: function (ev) {
+                console.info("Mobile tab changed:", ev.currentTarget.value);
                 const selectedTab = $(ev.currentTarget).val();
                 this.$('#child-info-tabs a[href="' + selectedTab + '"]').tab("show");
             },
