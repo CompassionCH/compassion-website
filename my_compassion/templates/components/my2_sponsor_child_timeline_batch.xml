@@ -40,14 +40,14 @@
 
                     <div class="cd-timeline__content text-component">
                         <p class="modal-title text-core-blue"><t t-esc="item.title"/></p>
-                        <p class="text-muted"><t t-esc="item.content"/></p>
+                        <t t-if="item.content"><p class="text-muted"><t t-esc="item.content"/></p></t>
 
                         <div class="flex justify-between items-center">
                             <span class="cd-timeline__date"><t t-esc="item.create_date_str"/></span>
                         </div>
                     </div> <!-- cd-timeline__content -->
                 </div> <!-- cd-timeline__block -->
-            </t>
+            </t> <!-- sponsorship_gift -->
             <t t-elif="item.model == 'correspondence'">
                 <div class="cd-timeline__block">
                     <div class="cd-timeline__img bg-core-blue">
@@ -56,14 +56,14 @@
 
                     <div class="cd-timeline__content text-component">
                         <p class="modal-title text-core-blue"><t t-esc="item.title"/></p>
-                        <p class="text-muted"><t t-esc="item.content"/></p>
+                        <t t-if="item.content"><p class="text-muted"><t t-esc="item.content"/></p></t>
 
                         <div class="flex justify-between items-center">
                             <span class="cd-timeline__date"><t t-esc="item.create_date_str"/></span>
                         </div>
                     </div> <!-- cd-timeline__content -->
                 </div> <!-- cd-timeline__block -->
-            </t>
+            </t> <!-- correspondence -->
             <t t-else="">
                 <div class="timeline-card d-flex">
                     This item type is not supported in the timeline.
