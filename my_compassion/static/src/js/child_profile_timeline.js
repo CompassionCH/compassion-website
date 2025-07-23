@@ -23,10 +23,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const loader = timelineEl.querySelector("#timeline-loader");
     const container = timelineEl.querySelector(".content-column");
 
-    let offset = 9;             // Initial offset for loading data
-    const limit = 9;            // Number of items to fetch per request
-    let isLoading = false;      // Prevents multiple simultaneous requests
-    let allLoaded = false;      // Flags when all content has been loaded
+    let offset = 9; // Initial offset for loading data
+    const limit = 9; // Number of items to fetch per request
+    let isLoading = false; // Prevents multiple simultaneous requests
+    let allLoaded = false; // Flags when all content has been loaded
 
     // --- Timeline animation logic (based on CodyHouse) ---
     class VerticalTimeline {
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
             this.element = element;
             this.offset = 0.8;
             this.updateBlocks(); // initialize references
-            this.hideBlocks();   // initial hide
+            this.hideBlocks(); // initial hide
         }
 
         updateBlocks() {
@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
         hideBlocks() {
             if (!("classList" in document.documentElement)) return;
             this.blocks.forEach((block, i) => {
+                if (i < 3) return;
                 if (block.getBoundingClientRect().top > window.innerHeight * this.offset) {
                     this.images[i].classList.add("cd-timeline__img--hidden");
                     this.contents[i].classList.add("cd-timeline__content--hidden");
@@ -100,7 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
         isLoading = true;
         loader.style.display = "block";
 
-
         fetch(`/my2/children/${childId}/timeline-batch`, {
             method: "POST",
             headers: {
@@ -128,8 +128,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     // After inserting new HTML, re-scan and animate
                     timelineInstance.updateBlocks();
-                    timelineInstance.hideBlocks();  // Mark hidden
-                    timelineInstance.showBlocks();  // Animate if in view
+                    timelineInstance.hideBlocks(); // Mark hidden
+                    timelineInstance.showBlocks(); // Animate if in view
                 } else {
                     allLoaded = true;
                 }

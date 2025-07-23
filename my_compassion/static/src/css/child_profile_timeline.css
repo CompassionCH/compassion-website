@@ -191,7 +191,7 @@
 
 /** Apply the animation only on desktop screens to prevent performance issues on mobile **/
 /** Remove the media query to apply the animation on all screens **/
-@media (max-width: 63.99rem) {
+@media (min-width: 64rem) {
     .cd-timeline__img--hidden,
     .cd-timeline__content--hidden {
         visibility: hidden;
