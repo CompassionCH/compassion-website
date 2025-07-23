@@ -1,4 +1,4 @@
-from odoo import fields, models, tools, api
+from odoo import fields, models, tools, api, _
 from odoo.tools import format_date
 
 '''
@@ -25,10 +25,10 @@ class CompassionSponsorChildTimeline(models.Model):
 
     # Title mapping for sponsorship gift types (see controller for usage)
     GIFT_TITLE_MAP = {
-        'Birthday': 'Birthday gift',
-        'General': 'General gift',
-        'Graduation/Final': 'Graduation/Final gift',
-        'Family Gift': 'Family gift',
+        'Birthday': _('Birthday gift'),
+        'General': _('General gift'),
+        'Graduation/Final': _('Graduation/Final gift'),
+        'Family Gift': _('Family gift')
     }
 
     '''
@@ -39,11 +39,11 @@ class CompassionSponsorChildTimeline(models.Model):
     def _compute_title(self):
         for record in self:
             if record.model == 'correspondence':
-                record.title = 'Wrote you a letter' if record.metadata == 'Beneficiary To Supporter' else 'Received your letter'
+                record.title = _('Wrote you a letter') if record.metadata == 'Beneficiary To Supporter' else _('Received your letter')
             elif record.model == 'sponsorship_gift':
                 record.title = next(
                     (v for k, v in CompassionSponsorChildTimeline.GIFT_TITLE_MAP.items() if k in record.metadata),
-                    'A gift')
+                    _('A gift'))
 
     '''
     Format the create_date field to a human-readable string.
@@ -64,6 +64,14 @@ class CompassionSponsorChildTimeline(models.Model):
 
     init() is not __init__() because it is called by the Odoo framework when the module is installed or updated to make
     a database operation
+    
+    WARNING:
+    Using a large integer offset (+ 1000000) to prevent ID clashes in a UNION is a common technique, 
+    but it can be brittle. If the correspondence table ever grows to have more than a million records, 
+    we will face ID collisions. For now and the current needs, this is acceptable.
+
+    For a more robust solution, we might consider using a composite key 
+    (e.g., by prefixing IDs with a string like 'correspondence-' and 'sponsorship_gift-').    
     '''
 
     def init(self):
