@@ -87,10 +87,10 @@ class MyCompassionChildrenController(http.Controller):
         website=True,
         sitemap=False,
     )
-    def my2_render_child_timeline_page(self, child_id, **kwargs):
+    def my2_render_child_timeline_page(self, child, **kwargs):
         """Renders the main timeline page with the initial batch of records."""
         try:
-            child = self._get_sponsored_child_and_check_access(child_id)
+            child = self._get_sponsored_child_and_check_access(child.id)
         except AccessError:
             return request.redirect("/my2/children/")
 
