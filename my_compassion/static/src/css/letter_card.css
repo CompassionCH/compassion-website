@@ -1,6 +1,6 @@
 /*
     This stylesheet concerns the my2_letter_card component
-    templates/components/my2_letter_card.js
+    templates/components/my2_letter_card.xml
 */
 
 /* Envelope icon */
@@ -38,4 +38,43 @@
   border-left: calc(var(--env-width) / 2) solid transparent;
   border-right: calc(var(--env-width) / 2) solid transparent;
   border-top: calc(var(--env-height) / 2) solid var(--color-flap);
+  transform-origin: top;
+}
+.my2-envelope .env-pocket {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: calc(var(--env-width) / 2) solid var(--color-env);
+    border-right: calc(var(--env-width) / 2) solid var(--color-env);
+    border-bottom: calc(var(--env-height) / 2) solid var(--color-env);
+    border-top: calc(var(--env-height) / 2) solid transparent;
+}
+.my2-envelope .env-letter {
+    position: absolute;
+    top: calc(var(--env-height)*0.05);
+    left: calc(var(--env-width)*0.05);
+    width: 0;
+    height: 0;
+    width: 90%;
+    height: 90%;
+    background-color: #fff;
+    border-radius: 4px;
+}
+
+/* Envelope animation */
+.open .env-flap {
+    transform: rotateX(180deg);
+    transition: transform .8s ease;
+    z-index: 2;
+}
+.open .env-letter {
+    transform: translateY(-30%);
+    transition: transform .4s ease .8s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}
+.open .env-pocket {
+    z-index: 3;
 }

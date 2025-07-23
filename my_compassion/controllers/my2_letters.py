@@ -6,10 +6,10 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from lark.load_grammar import nr_deepcopy_tree
 from odoo.http import request
 from odoo import http
 from datetime import date
+import calendar
 
 
 class MyCompassionCorrespondenceController(http.Controller):
@@ -41,7 +41,6 @@ class MyCompassionCorrespondenceController(http.Controller):
         nr_filters_applied = 0
 
         # Build filter date range
-        import calendar
         last_day = calendar.monthrange(year_to, month_to)[1]
         from_date = date(year_from, month_from, 1)
         to_date = date(year_to, month_to, last_day)

@@ -18,9 +18,15 @@
         <div class="position-relative d-flex shadow-sm rounded-4  h-100">
 
             <!-- Icon at the left -->
-            <div t-attf-class="ml-2 mt-4 my2-envelope {{ 'envelope--blue' if letter.direction != 'Supporter To Beneficiary' else 'envelope--green' }}">
-                <div class="env-body"></div>
-                <div class="env-flap"></div>
+            <div class="envelope">
+                <div id="envelope-{{ letter.uuid }}"
+                     t-attf-class="ml-2 mt-4 my2-envelope {{ 'envelope--blue' if letter.direction != 'Supporter To Beneficiary' else 'envelope--green' }}"
+                     t-attf-href="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf">
+                    <div class="env-body"></div>
+                    <div class="env-letter"></div>
+                    <div class="env-pocket"></div>
+                    <div class="env-flap"></div>
+                </div>
             </div>
 
             <!-- Text block at the right -->
@@ -40,13 +46,14 @@
                     <!-- Dots button & dropdown menu -->
                     <div class="dropdown">
                         <button class="btn btn-link p-0 border-0" type="button"
-                                id="dropdownMenuButton" data-toggle="dropdown"
+                                id="'dropdownMenuButton' + letter.id"
+                                data-toggle="dropdown"
                                 aria-expanded="false">
                             <span class="icon-dots-vertical"></span>
                         </button>
 
                         <div class="dropdown-menu border-low-black"
-                             aria-labelledby="dropdownMenuButton">
+                             aria-labelledby="'dropdownMenuButton' + letter.id">
                             <a class="dropdown-item d-flex align-items-center pt-0 pb-0 pl-3 pr-3"
                                t-attf-href="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf">
                                 Preview

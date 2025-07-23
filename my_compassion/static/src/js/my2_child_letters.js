@@ -4,8 +4,28 @@
  */
 
 document.addEventListener('DOMContentLoaded', function () {
-    const modal = document.getElementById('filterModal');
     const okBtn = document.getElementById('filterOkBtn');
+
+    // Letter animation
+    document.querySelectorAll('.my2-envelope').forEach(envelope => {
+        envelope.addEventListener('click', function() {
+            envelope.classList.add('open');
+            const letter = envelope.querySelector('.env-letter');
+
+            setTimeout(() => {
+                if (letter) {
+                    letter.style.zIndex = '3';
+                }
+            }, 800);
+
+            setTimeout(function() {
+                const href = envelope.getAttribute('href') || envelope.getAttribute('t-attf-href');
+                if (href) {
+                    window.location.href = href;
+                }
+            }, 1200);
+        });
+    });
 
     // Pagination: Next Page
     document.getElementById('nextPageBtn')?.addEventListener('click', () => {
