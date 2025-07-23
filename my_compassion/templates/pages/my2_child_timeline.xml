@@ -23,8 +23,9 @@
         <t t-call="website.layout">
             <div class="container">
                 <div class="content-column">
-                    <div class="d-flex flex-column flex-md-row pt-4">
-                        <!-- ### Portrait ### -->
+                    <!-- ### Child personal information ### -->
+                    <section class="d-flex flex-column flex-md-row pt-4">
+                        <!-- Portrait -->
                         <div class="child-details-container">
                             <t t-call="theme_compassion_2025.PortraitComponent">
                                 <t t-set="title" t-value="compassion_child.preferred_name"/>
@@ -36,7 +37,7 @@
 
                         <!-- Child info and buttons actions -->
                         <div class="d-flex flex-column flex-md-column-reverse">
-                            <!-- ### Action buttons ### -->
+                            <!-- Action buttons -->
                             <div class="child-action-buttons justify-content-md-start ml-md-3 pb-3 p-md-0">
                                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                     <t t-set="variant" t-value="'compact'"/>
@@ -54,14 +55,14 @@
                                 </t>
                             </div>
 
-                            <!-- ### Child personal information ### -->
+                            <!-- Child personal information -->
                             <div class="child-personal-information d-flex flex-column flex-grow-1 mt-md-3 ml-md-3">
                                 <div class="child-info-item d-flex align-items-center">
                                     <div class="frame bg-core-blue mr-2">
                                         <i class="icon icon-calendar-heart02 text-pure-white m-2"></i>
                                     </div>
                                     <!-- TODO: Handle language changes for birthday -->
-                                    <!-- TODO: Put that in the backend -->
+                                    <!-- TODO: Put that in the backend (maybe) -->
                                     <t t-set="day" t-value="compassion_child.birthdate.day"/>
                                     <t t-set="month" t-value="compassion_child.birthdate.strftime('%B')"/>
                                     <t t-set="suffix" t-value="'th'"/>
@@ -105,10 +106,10 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
                     <!-- ### Child related information (family, project and country) ### -->
-                    <div class="child-related-information tabs-component">
+                    <section class="child-related-information tabs-component">
                         <!-- Mobile Dropdown (Visible on small screens) -->
                         <div class="child-select d-block d-md-none">
                             <select class="form-control custom-select" id="child-info-tabs-mobile">
@@ -278,7 +279,7 @@
                                 </ul>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
                     <!-- ### Partner and child timeline title ### -->
                     <t t-call="theme_compassion_2025.TitleComponent">

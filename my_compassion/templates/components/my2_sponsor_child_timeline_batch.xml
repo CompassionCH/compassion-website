@@ -6,10 +6,13 @@
     This component is used to display a batch of timeline items related to a child sponsorship.
 
     Used in route:
-    - /my2/children/<int:child_id>/
+    - /my2/children/<model("compassion.child"):child>/
+
+    Check page:
+    - compassion_website.my_compassion2_child_timeline
 
     Injected data:
-    - items (list): list of items to display in the timeline, each item should have:
+    - records: list of items to display in the timeline, each item should have:
         - model (string): the model of the item (e.g., 'sponsorship_gift', 'correspondence').
         - title (string): title of the item.
         - content (string): content or description of the item.

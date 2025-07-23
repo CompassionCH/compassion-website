@@ -156,38 +156,3 @@ class MyCompassionChildrenController(http.Controller):
             "html": html,
             "has_more_records": has_more,
         }
-
-    @http.route(
-        '/my2/children/<model("compassion.child"):child>/details',
-        type="http",
-        auth="user",
-        website=True,
-        sitemap=False,
-    )
-    def my2_render_child_details_page(self, child, **kwargs):
-        partner = request.env.user.partner_id
-        children_sponsored_by_partner = partner.sponsorship_ids.child_id
-
-        if child in children_sponsored_by_partner:
-            breadcrumbs = [
-                {"name": "Children", "url": "/my2/children/", "active": False},
-                {
-                    "name": child.preferred_name,
-                    "url": "/my2/children/" + str(child.id),
-                    "active": False,
-                },
-                {
-                    "name": "Details",
-                    "url": "/my2/children/" + str(child.id) + "/details",
-                    "active": True,
-                },
-            ]
-
-            return request.render(
-                "my_compassion.my2_child_details_page",
-                {
-                    "compassion_child": child,
-                    "breadcrumbs": breadcrumbs,
-                },
-            )
-        raise NotFound()
