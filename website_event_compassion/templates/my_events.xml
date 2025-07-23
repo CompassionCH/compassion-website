@@ -6,8 +6,10 @@
         role="menuitem"
         class="dropdown-item"
         t-if="user_id.partner_id.registration_ids"
-      >My
-                Events</a>
+      >
+                My
+                Events
+            </a>
         </xpath>
     </template>
     <template id="my_events_list">
@@ -70,12 +72,12 @@
                       >amount_raised</t>
                                         </t>
                                     </div>
-
                                     <a
                     t-att-href="slug(registration)"
                     class="btn btn-primary o_default_snippet_text"
                   >
-                                        View details</a>
+                                        View details
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -99,20 +101,25 @@
             <div class="container my-5">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a
-                href="/my/events"
-              >My Events
-                        </a></li>
+                        <li class="breadcrumb-item">
+                            <a href="/my/events">My Events</a>
+                        </li>
                         <t t-if="not edit_mode">
                             <li
                 class="breadcrumb-item active"
                 aria-current="page"
-              ><t t-esc="additional_title" /></li>
+              >
+                                <t t-esc="additional_title" />
+                            </li>
                         </t>
                         <t t-else="">
-                            <li class="breadcrumb-item"><a
+                            <li class="breadcrumb-item">
+                                <a
                   t-attf-href="/my/events/#{slug(registration)}"
-                ><t t-esc="additional_title" /></a></li>
+                >
+                                    <t t-esc="additional_title" />
+                                </a>
+                            </li>
                         </t>
                         <li
               class="breadcrumb-item active"
@@ -171,10 +178,10 @@
                 </div>
                 <h3 class="mt-4" t-if="event.fundraising">
                     <span class="mr-2">Fundraising</span>
-            <a class="btn btn-primary mx-auto" href="fundraising">
-                <i class="fa fa-handshake-o" />
-                <span>Fundraising tools</span>
-            </a>
+                    <a class="btn btn-primary mx-auto" href="fundraising">
+                        <i class="fa fa-handshake-o" />
+                        <span>Fundraising tools</span>
+                    </a>
                 </h3>
                 <t
           t-call="website_event_compassion.event_barometer"
@@ -366,7 +373,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >Profile name</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <input
@@ -393,7 +400,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >My motto</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <textarea
@@ -420,7 +427,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >Registration</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <input
@@ -504,7 +511,9 @@
                 href="#"
                 role="button"
                 class="btn btn-primary btn-lg s_website_form_send o_default_snippet_text"
-              >Submit</a>
+              >
+                                Submit
+                            </a>
                             <span id="s_website_form_result" />
                         </div>
                     </div>

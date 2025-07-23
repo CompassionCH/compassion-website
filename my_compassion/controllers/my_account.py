@@ -496,6 +496,7 @@ class MyAccountController(CustomerPortal):
                 ("payment_state", "=", "not_paid"),
                 ("invoice_category", "=", "sponsorship"),
                 ("move_type", "=", "out_invoice"),
+                ("state", "=", "posted"),
                 ("amount_total", "!=", 0),
                 ("invoice_date", "<", fields.Date.to_string(in_one_month)),
             ]

@@ -14,7 +14,7 @@
         expr="//div[@name='event_type_communication']//div[@class='o_setting_left_pane']"
         position="before"
       >
-<!--                <div class="o_setting_right_pane"/>-->
+                <!--                <div class="o_setting_right_pane"/>-->
                 <div class="o_setting_right_pane">
                     <label for="medical_survey_id" />
                     <field name="medical_survey_id" />
@@ -28,10 +28,10 @@
         expr="//field[@name='event_type_mail_ids']//field[@name='template_id']"
         position="attributes"
       >
-                <attribute
-          name="attrs"
-        >{'required': [('notification_type', '=', 'mail')],
-                  'invisible': [('notification_type', '!=', 'communication')]}</attribute>
+                <attribute name="attrs">
+                    {'required': [('notification_type', '=', 'mail')],
+                  'invisible': [('notification_type', '!=', 'communication')]}
+                </attribute>
             </xpath>
             <xpath
         expr="//field[@name='event_type_mail_ids']//field[@name='template_id']"

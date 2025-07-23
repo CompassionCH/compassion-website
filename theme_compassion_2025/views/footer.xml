@@ -1,0 +1,129 @@
+<!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
+<odoo>
+    <template id="footer_2025" inherit_id="website.layout">
+        <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
+        <xpath expr="//div[@id='footer']" position="replace">
+            <div id="footer" class="bg-dark-blue">
+                <section>
+                    <div class="d-flex compassion-thread">
+                        <div class="h-100 w-25 bg-core-blue" />
+                        <div class="h-100 w-25 bg-high-pink" />
+                        <div class="h-100 w-25 bg-mid-orange" />
+                        <div class="h-100 w-25 bg-low-green" />
+                    </div>
+                </section>
+                <section class="pt48">
+                    <div class="container">
+                        <div class="row">
+                            <div class="pb24 d-flex flex-column flex-md-row justify-content-center col-lg-12">
+                                <div class="py-2 px-md-3">
+                                    <i class="icon-marker-pin01 bg-low-yellow mr-2" />
+                                    <a
+                                        class="text-pure-white"
+                                        href="https://www.google.com/maps/place/Compassion+Suisse/@46.7658158,6.6431887,789m/data=!3m2!1e3!4b1!4m6!3m5!1s0x478dcfbc3513dddb:0x4251dd20c57a7bc2!8m2!3d46.7658158!4d6.645769!16s%2Fg%2F11btlz91cp?entry=ttu&amp;g_ep=EgoyMDI1MDcxMy4wIKXMDSoASAFQAw%3D%3D"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        Compassion Suisse, Rue Galilée 3, 1400 Yverdon-les-Bains
+                                    </a>
+                                </div>
+                                <div class="py-2 px-md-3">
+                                    <i class="icon-phone bg-low-yellow mr-2" />
+                                    <a class="text-pure-white" href="tel:+41244342124">+41 (0)24 434 21 24</a>
+                                    <span>(Lu-Ven: 9.00-14.00)</span>
+                                </div>
+                                <div class="py-2 px-md-3">
+                                    <i class="icon-mail01 bg-low-yellow mr-2" />
+                                    <a class="text-pure-white" href="mailto:info@compassion.ch">info@compassion.ch</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="pt32">
+                    <div class="container">
+                        <div class="row align-middle">
+                            <div class="col-lg-6">
+                                <p>
+                                    Copyright ©
+                                    <span t-esc="datetime.datetime.now().year" />
+                                    Compassion Suisse
+                                </p>
+                            </div>
+                            <div class="d-flex flex-column flex-md-row justify-content-end col-lg-6">
+                                <div class="d-flex flex-row mb-md-0 mb-3">
+                                    <a class="mr-2 text-pure-white" href="#" target="_blank" rel="noopener noreferrer">
+                                        Policies
+                                    </a>
+                                    <span class="mr-2">|</span>
+                                    <a class="mr-2 text-pure-white" href="#" target="_blank" rel="noopener noreferrer">
+                                        Privacy and cookies
+                                    </a>
+                                    <span class="mr-2">|</span>
+                                    <a class="text-pure-white" href="#" target="_blank" rel="noopener noreferrer">
+                                        FAQ
+                                    </a>
+                                </div>
+                                <div class="ml-0 ml-md-3 d-flex flex-row">
+                                    <a
+                                        href="https://www.facebook.com/compassionschweiz"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="mr-3"
+                                    >
+                                        <i class="fa fa-facebook-official text-pure-white" />
+                                    </a>
+                                    <a
+                                        href="https://www.instagram.com/compassionswiss"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="mr-3"
+                                    >
+                                        <i class="fa fa-instagram text-pure-white" />
+                                    </a>
+                                    <a
+                                        href="https://www.youtube.com/channel/UChVNRRvihHG0AYPsdEFfasQ"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="mr-3"
+                                    >
+                                        <i class="fa fa-youtube-play text-pure-white" />
+                                    </a>
+                                    <a
+                                        href="https://vimeo.com/compassionswitzerland"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="mr-3"
+                                    >
+                                        <i class="fa fa-vimeo text-pure-white" />
+                                    </a>
+                                    <a
+                                        href="https://www.linkedin.com/company/compassion-schweiz-suisse-svizzera"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="mr-3"
+                                    >
+                                        <i class="fa fa-linkedin text-pure-white" />
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <div class="container">
+                        <div class="s_hr pb16" data-name="Separator">
+                            <hr
+                                class="w-100 mx-auto"
+                                style="border-top-width: 1px; border-top-style: solid; border-color: var(--600);"
+                            />
+                        </div>
+                    </div>
+                </section>
+                <section class="pb48">
+
+                </section>
+            </div>
+        </xpath>
+    </template>
+</odoo>

@@ -25,49 +25,43 @@ const template_id = document.getElementById("template_id");
 const generator_id = sessionStorage.getItem("generator_id");
 
 function selectTemplate(selected_template_id) {
-  // Change url to display selected template
-  const search_params = new URLSearchParams(window.location.search);
-  search_params.set("template_id", selected_template_id);
-  const url =
-    window.location.origin +
-    window.location.pathname +
-    "?" +
-    search_params.toString();
-  history.replaceState({}, document.title, url);
+    // Change url to display selected template
+    const search_params = new URLSearchParams(window.location.search);
+    search_params.set("template_id", selected_template_id);
+    const url = window.location.origin + window.location.pathname + "?" + search_params.toString();
+    history.replaceState({}, document.title, url);
 
-  // Convert HTMLCollection to an array to use forEach
-  const templateImagesArray = Array.from(template_images);
+    // Convert HTMLCollection to an array to use forEach
+    const templateImagesArray = Array.from(template_images);
 
-  // Unselect all
-  templateImagesArray.forEach((template_image) => {
-    template_image.classList.remove("border", "border-5", "border-primary");
-  });
+    // Unselect all
+    templateImagesArray.forEach((template_image) => {
+        template_image.classList.remove("border", "border-5", "border-primary");
+    });
 
-  // Select the one
-  const selected_template_image = document.getElementById(
-    "template-image-" + selected_template_id
-  );
-  selected_template_image.classList.add("border", "border-5", "border-primary");
+    // Select the one
+    const selected_template_image = document.getElementById("template-image-" + selected_template_id);
+    selected_template_image.classList.add("border", "border-5", "border-primary");
 
-  template_id.innerHTML = selected_template_id;
+    template_id.innerHTML = selected_template_id;
 }
 
 selectTemplate(template_id.innerHTML);
 
 function load_auto_text(child_id) {
-  const el = document.getElementById("auto_text_" + child_id);
-  if (el) {
-    letter_content.value = el.innerHTML;
-  }
+    const el = document.getElementById("auto_text_" + child_id);
+    if (el) {
+        letter_content.value = el.innerHTML;
+    }
 }
 load_auto_text(new URLSearchParams(window.location.search).get("child_id"));
 
 // Add listener on child change to load the auto text
 for (let i = 0; i < document.getElementsByClassName("child-card").length; i++) {
-  const child_card = child_cards[i];
-  child_card.addEventListener("click", function () {
-    load_auto_text(child_card.dataset.childid);
-  });
+    const child_card = child_cards[i];
+    child_card.addEventListener("click", function () {
+        load_auto_text(child_card.dataset.childid);
+    });
 }
 
 /**
@@ -78,23 +72,21 @@ for (let i = 0; i < document.getElementsByClassName("child-card").length; i++) {
  * asynchronous calls)
  */
 async function compressImage(image) {
-  const width = image.width;
-  const height = image.height;
+    const width = image.width;
+    const height = image.height;
 
-  // Calculate the width and height, constraining the proportions
-  const min_width = Math.min(width, max_size);
-  const min_height = Math.min(height, max_size);
-  const factor = Math.min(min_width / width, min_height / height);
+    // Calculate the width and height, constraining the proportions
+    const min_width = Math.min(width, max_size);
+    const min_height = Math.min(height, max_size);
+    const factor = Math.min(min_width / width, min_height / height);
 
-  // Resize the canvas and draw the image data into it
-  canvas.width = Math.floor(width * factor);
-  canvas.height = Math.floor(height * factor);
-  const ctx = canvas.getContext("2d");
-  ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    // Resize the canvas and draw the image data into it
+    canvas.width = Math.floor(width * factor);
+    canvas.height = Math.floor(height * factor);
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-  return await new Promise((resolve) =>
-    ctx.canvas.toBlob(resolve, "image/jpeg")
-  );
+    return await new Promise((resolve) => ctx.canvas.toBlob(resolve, "image/jpeg"));
 }
 
 /**
@@ -106,13 +98,13 @@ async function compressImage(image) {
  * @returns {Number} the index if found or -1, else
  */
 Array.prototype.indexOfFile = function (name, size, type) {
-  for (let i = 0; i < this.length; i++) {
-    const f = this[i];
-    if (f.name === name && f.size === size && f.type === type) {
-      return i;
+    for (let i = 0; i < this.length; i++) {
+        const f = this[i];
+        if (f.name === name && f.size === size && f.type === type) {
+            return i;
+        }
     }
-  }
-  return -1;
+    return -1;
 };
 
 /**
@@ -123,7 +115,7 @@ Array.prototype.indexOfFile = function (name, size, type) {
  * @returns {Boolean} true if the file is contained in the array or false
  */
 Array.prototype.containsFile = function (name, size, type) {
-  return this.indexOfFile(name, size, type) !== -1;
+    return this.indexOfFile(name, size, type) !== -1;
 };
 
 /**
@@ -133,11 +125,11 @@ Array.prototype.containsFile = function (name, size, type) {
  * @param type the type of the file
  */
 function removeFile(name, size, type) {
-  if (images_list.containsFile(name, size, type)) {
-    const index = images_list.indexOfFile(name, size, type);
-    images_list.splice(index, 1);
-    images_comp.splice(index, 1);
-  }
+    if (images_list.containsFile(name, size, type)) {
+        const index = images_list.indexOfFile(name, size, type);
+        images_list.splice(index, 1);
+        images_comp.splice(index, 1);
+    }
 }
 
 /**
@@ -147,18 +139,18 @@ function removeFile(name, size, type) {
  * @param type the type of the file
  */
 function removeImage(name, size, type) {
-  removeFile(name, size, type);
-  const img_elem = document.getElementById(`${name}_${size}_${type}`);
-  if (img_elem != null) {
-    img_elem.remove();
-  }
+    removeFile(name, size, type);
+    const img_elem = document.getElementById(`${name}_${size}_${type}`);
+    if (img_elem != null) {
+        img_elem.remove();
+    }
 }
 
 function displayAlert(id) {
-  $(`#${id}`).show("slow");
-  setTimeout(function () {
-    $(`#${id}`).hide("slow");
-  }, 7000);
+    $(`#${id}`).show("slow");
+    setTimeout(function () {
+        $(`#${id}`).hide("slow");
+    }, 7000);
 }
 
 /**
@@ -167,54 +159,51 @@ function displayAlert(id) {
  * @returns True iff the mimetype of the given file is image/jpeg
  */
 function isJPEGImage(image) {
-  return image.type.valueOf() === "image/jpeg";
+    return image.type.valueOf() === "image/jpeg";
 }
 
 /**
  * Display the images contained in new_images inside the HTML page
  */
 function displayImages() {
-  // We use the images stored in the new_images array
-  new_images.forEach((original_image) => {
-    if (original_image.size > hard_max_size_limit) {
-      displayAlert("image_too_large");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function (event) {
-      const image = new Image();
-      image.src = event.target.result;
-      image.onload = function (event) {
-        if (
-          original_image.size > resize_limit ||
-          !isJPEGImage(original_image)
-        ) {
-          compressImage(image).then((blob) => {
-            const compressReader = new FileReader();
-            compressReader.onload = function (t_event) {
-              // [T2038] the new image name is necessary because the backend uses the
-              // extension as a hint to detect the mimetype.
-              const new_name = isJPEGImage(original_image)
-                ? original_image.name
-                : original_image.name + ".jpg";
-              const final_data = {
-                name: new_name,
-                data: t_event.target.result.split(",")[1],
-              };
-              images_comp = images_comp.concat(final_data);
-            };
-            compressReader.readAsDataURL(blob);
-          });
-        } else {
-          const final_data = {
-            name: original_image.name,
-            data: image.src.split(",")[1],
-          };
-          images_comp = images_comp.concat(final_data);
+    // We use the images stored in the new_images array
+    new_images.forEach((original_image) => {
+        if (original_image.size > hard_max_size_limit) {
+            displayAlert("image_too_large");
+            return;
         }
 
-        image_display_table.innerHTML += `
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            const image = new Image();
+            image.src = event.target.result;
+            image.onload = function (event) {
+                if (original_image.size > resize_limit || !isJPEGImage(original_image)) {
+                    compressImage(image).then((blob) => {
+                        const compressReader = new FileReader();
+                        compressReader.onload = function (t_event) {
+                            // [T2038] the new image name is necessary because the backend uses the
+                            // extension as a hint to detect the mimetype.
+                            const new_name = isJPEGImage(original_image)
+                                ? original_image.name
+                                : original_image.name + ".jpg";
+                            const final_data = {
+                                name: new_name,
+                                data: t_event.target.result.split(",")[1],
+                            };
+                            images_comp = images_comp.concat(final_data);
+                        };
+                        compressReader.readAsDataURL(blob);
+                    });
+                } else {
+                    const final_data = {
+                        name: original_image.name,
+                        data: image.src.split(",")[1],
+                    };
+                    images_comp = images_comp.concat(final_data);
+                }
+
+                image_display_table.innerHTML += `
                     <div id="${original_image.name}_${original_image.size}_${original_image.type}" class="w-100">
                         <li class="embed-responsive-item p-2" style="position: relative;">
                             <span class="close close-image p-2" onclick="removeImage('${original_image.name}', ${original_image.size}, '${original_image.type}');">&times;</span>
@@ -222,12 +211,12 @@ function displayImages() {
                         </li>
                     </div>
                 `;
-      };
-    };
-    reader.readAsDataURL(original_image);
-  });
+            };
+        };
+        reader.readAsDataURL(original_image);
+    });
 
-  new_images = [];
+    new_images = [];
 }
 
 /**
@@ -235,20 +224,17 @@ function displayImages() {
  * @param event the event containing the file, among other things
  */
 function updateImageDisplay(event) {
-  const input_images = event.target.files;
+    const input_images = event.target.files;
 
-  Array.from(input_images).forEach((file) => {
-    const is_image = file.type.startsWith("image/");
+    Array.from(input_images).forEach((file) => {
+        const is_image = file.type.startsWith("image/");
 
-    if (
-      is_image &&
-      !images_list.containsFile(file.name, file.size, file.type)
-    ) {
-      new_images = new_images.concat(file);
-      images_list = images_list.concat(file);
-    }
-  });
-  displayImages();
+        if (is_image && !images_list.containsFile(file.name, file.size, file.type)) {
+            new_images = new_images.concat(file);
+            images_list = images_list.concat(file);
+        }
+    });
+    displayImages();
 }
 file_selector.addEventListener("change", updateImageDisplay);
 
@@ -257,15 +243,15 @@ file_selector.addEventListener("change", updateImageDisplay);
  * @param type the type of elements to start or stop loading
  */
 function startStopLoading(type) {
-  loading = !loading;
-  $("button").attr("disabled", loading);
-  if (loading) {
-    document.getElementById(`${type}_normal`).style.display = "none";
-    document.getElementById(`${type}_loading`).style.display = "";
-  } else {
-    document.getElementById(`${type}_loading`).style.display = "none";
-    document.getElementById(`${type}_normal`).style.display = "";
-  }
+    loading = !loading;
+    $("button").attr("disabled", loading);
+    if (loading) {
+        document.getElementById(`${type}_normal`).style.display = "none";
+        document.getElementById(`${type}_loading`).style.display = "";
+    } else {
+        document.getElementById(`${type}_loading`).style.display = "none";
+        document.getElementById(`${type}_normal`).style.display = "";
+    }
 }
 
 /**
@@ -275,60 +261,58 @@ function startStopLoading(type) {
  * we can send a letter directly if the user pressed the corresponding button
  */
 async function createLetter(mode = "preview") {
-  // Check if text is empty (and avoid sending the request if it is)
-  if (letter_content.value.length === 0) {
-    displayAlert("letter_text_empty_warning");
-    return;
-  }
-
-  startStopLoading(mode);
-  const params = new URLSearchParams(window.location.search);
-
-  const json_data = {
-    body: letter_content.value,
-    template_id: params.get("template_id"),
-    source: "mycompassion",
-    generator_id: generator_id,
-    csrf_token: odoo.csrf_token,
-  };
-  if (images_comp.length > 0) {
-    json_data.file_upl = images_comp;
-  }
-  // Send the json data to odoo using a post request
-  $.ajax({
-    url: `${window.location.origin}/my/letter/${params.get(
-      "child_id"
-    )}/${mode}`,
-    type: "POST",
-    contentType: "application/json",
-    data: JSON.stringify(json_data),
-    success: function (response, status) {
-      startStopLoading(mode);
-      if (status !== "success" || response.error !== undefined) {
-        displayAlert(`${mode}_error`);
+    // Check if text is empty (and avoid sending the request if it is)
+    if (letter_content.value.length === 0) {
+        displayAlert("letter_text_empty_warning");
         return;
-      }
-      if (mode === "preview") {
-        sessionStorage.setItem("generator_id", response.result.generator_id);
-        window.open(response.result.preview_url, "_blank");
-      } else if (mode === "send") {
-        // Empty images and text (to avoid duplicate)
-        letter_content.value = "";
-        // Here, the clone is necessary because looping on an array which is being
-        // modified is asking for trouble.
-        const old_images_list = JSON.parse(JSON.stringify(images_list));
-        old_images_list.forEach((image) => {
-          removeImage(image.name, image.size, image.type);
-        });
-        $("#view_my_letter").attr("href", response.result.preview_url);
-        $("#letter_sent_correctly").modal("show");
-        $(".christmas_action").toggleClass("d-none");
-        sessionStorage.removeItem("generator_id");
-      }
-    },
-    error: function (error) {
-      startStopLoading(mode);
-      displayAlert(`${mode}_error`);
-    },
-  });
+    }
+
+    startStopLoading(mode);
+    const params = new URLSearchParams(window.location.search);
+
+    const json_data = {
+        body: letter_content.value,
+        template_id: params.get("template_id"),
+        source: "mycompassion",
+        generator_id: generator_id,
+        csrf_token: odoo.csrf_token,
+    };
+    if (images_comp.length > 0) {
+        json_data.file_upl = images_comp;
+    }
+    // Send the json data to odoo using a post request
+    $.ajax({
+        url: `${window.location.origin}/my/letter/${params.get("child_id")}/${mode}`,
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(json_data),
+        success: function (response, status) {
+            startStopLoading(mode);
+            if (status !== "success" || response.error !== undefined) {
+                displayAlert(`${mode}_error`);
+                return;
+            }
+            if (mode === "preview") {
+                sessionStorage.setItem("generator_id", response.result.generator_id);
+                window.open(response.result.preview_url, "_blank");
+            } else if (mode === "send") {
+                // Empty images and text (to avoid duplicate)
+                letter_content.value = "";
+                // Here, the clone is necessary because looping on an array which is being
+                // modified is asking for trouble.
+                const old_images_list = JSON.parse(JSON.stringify(images_list));
+                old_images_list.forEach((image) => {
+                    removeImage(image.name, image.size, image.type);
+                });
+                $("#view_my_letter").attr("href", response.result.preview_url);
+                $("#letter_sent_correctly").modal("show");
+                $(".christmas_action").toggleClass("d-none");
+                sessionStorage.removeItem("generator_id");
+            }
+        },
+        error: function (error) {
+            startStopLoading(mode);
+            displayAlert(`${mode}_error`);
+        },
+    });
 }

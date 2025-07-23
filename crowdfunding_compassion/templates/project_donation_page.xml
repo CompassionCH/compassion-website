@@ -151,15 +151,21 @@
                         <h2
               class="text-center text-uppercase py-2"
               t-if="int(page) == 1"
-            >Choose which fundraiser you want to support</h2>
+            >
+                            Choose which fundraiser you want to support
+                        </h2>
                         <h2
               class="text-center text-uppercase py-2"
               t-if="int(page) == 2 and not skip_type_selection"
-            >Select your type of support</h2>
+            >
+                            Select your type of support
+                        </h2>
                         <h2
               class="text-center text-uppercase py-2"
               t-if="int(page) == 3 or (skip_type_selection and int(page) == 2)"
-            >Choose your donation amount</h2>
+            >
+                            Choose your donation amount
+                        </h2>
                     </section>
                     <!-- PAGE 1 - Participant selection-->
                     <section t-if="int(page) == 1">
@@ -360,7 +366,9 @@
                         />
                                                 <h4
                           class="text-primary text-center text-uppercase"
-                        >Sponsor a mum and her baby</h4>
+                        >
+                                                    Sponsor a mum and her baby
+                                                </h4>
                                                 <span
                           class="fake-btn my-3 text-uppercase"
                         >Select</span>
@@ -454,11 +462,14 @@
                                                         <label
                               class="custom-control-label"
                               for="is_anonymous"
-                            >Anonymous donation</label>
+                            >
+                                                            Anonymous donation
+                                                        </label>
                                                     </div>
-                                                    <p
-                            class="small-text"
-                          >I want to make an anonymous donation. My name will not be displayed on the project page.</p>
+                                                    <p class="small-text">
+                                                        I want to make an anonymous donation. My name will not be
+                                                        displayed on the project page.
+                                                    </p>
                                                     <div
                             class="custom-control custom-switch"
                           >
@@ -471,18 +482,23 @@
                                                         <label
                               class="custom-control-label"
                               for="opt_out"
-                            >Unsubscribe from e-mails</label>
+                            >
+                                                            Unsubscribe from e-mails
+                                                        </label>
                                                     </div>
-                                                    <p
-                            class="small-text"
-                          >I don't want to receive emails about the impact of my donation and the work of Compassion.</p>
+                                                    <p class="small-text">
+                                                        I don't want to receive emails about the impact of my donation
+                                                        and the work of Compassion.
+                                                    </p>
                                                 </div>
                                             </div>
                                             <div class="col-12">
                                                 <button
                           type="submit"
                           class="btn btn-white font-weight-bold btn-lg mb-2 w-100"
-                        >Donate Now</button>
+                        >
+                                                    Donate Now
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -507,24 +523,29 @@
               t-attf-href="#{project.website_url}/donation"
               t-if="int(page) == 2"
               class="btn btn-primary btn-lg mb-5 float-left text-uppercase"
-            >Previous step</a>
+            >
+                            Previous step
+                        </a>
                         <a
               id="a_step_02"
               t-attf-href="#{project.website_url}/donation?page=2"
               t-att-project="project.id"
               class="btn btn-primary btn-lg mb-5 float-left text-uppercase"
               t-if="int(page) == 3"
-            >Previous step</a>
+            >
+                            Previous step
+                        </a>
                         <a
               id="submit"
               class="btn btn-primary btn-lg mb-5 float-right text-uppercase"
               href="#"
-            >Next step</a>
+            >
+                            Next step
+                        </a>
                     </div>
                 </div>
             </t>
         </template>
-
         <!-- Displayed after successful payment by [EventsController] -->
         <template id="donation_successful" name="Crowdfunding donation success">
             <t t-call="crowdfunding_compassion.layout">

@@ -14,14 +14,15 @@
                     <div class="o_we_bg_filter" />
                     <div class="container s_allow_columns">
                         <h1 style="text-align: center;">
-                            <font
-                style="font-size: 62px; font-weight: bold;"
-              >You want to sponsor a child, thank you!</font>
+                            <font style="font-size: 62px; font-weight: bold;">
+                                You want to sponsor a child, thank you!
+                            </font>
                         </h1>
-                        <p
-              class="lead"
-              style="text-align: center;"
-            >It's hard to escape extreme poverty when you're born into it. That's why we support children in all areas of their lives. With CHF 42.- per month, you can free a child from extreme poverty.</p>
+                        <p class="lead" style="text-align: center;">
+                            It's hard to escape extreme poverty when you're born into it. That's why we support children
+                            in all areas of their lives. With CHF 42.- per month, you can free a child from extreme
+                            poverty.
+                        </p>
                     </div>
                 </section>
                 <div class="oe_structure" />
@@ -32,15 +33,17 @@
         >
                     <div class="container">
                         <div class="row d-lg-none align-items-center">
-                            <div class="col-6 ml-auto"><h3
-                  class="mb-0"
-                >Search children</h3></div>
+                            <div class="col-6 ml-auto">
+                                <h3 class="mb-0">Search children</h3>
+                            </div>
                             <div class="float-right mr-4">
                                 <button
                   name="search_mobile"
                   type="button"
                   class="btn btn-primary rounded-circle"
-                ><i class="fa fa-search" /></button>
+                >
+                                    <i class="fa fa-search" />
+                                </button>
                             </div>
                         </div>
                         <div class="row d-none d-lg-flex" name="search_inputs">
@@ -63,7 +66,7 @@
                                 <select name="age_group" class="form-control">
                                     <option
                     value=""
-                  >Select an age range </option>
+                  >Select an age range</option>
                                     <option value="0-3">0-3 years old</option>
                                     <option value="4-6">4-6 years old</option>
                                     <option value="7-10">7-10 years old</option>
@@ -89,7 +92,9 @@
                       />
                                             <option
                         t-att-value="fo.field_office_id"
-                      ><t t-esc="fo.country_name" /></option>
+                      >
+                                                <t t-esc="fo.country_name" />
+                                            </option>
                                         </t>
                                     </t>
                                 </select>
@@ -105,7 +110,9 @@
                                 <small
                   id="passwordHelpBlock"
                   class="form-text text-muted text-right"
-                >Search for children born on the same day</small>
+                >
+                                    Search for children born on the same day
+                                </small>
                             </div>
                         </div>
                         <div class="row d-none d-lg-flex" name="search_inputs">
@@ -116,7 +123,9 @@
                   class="btn btn-primary w-100 text-white"
                   name="random"
                   href="random"
-                >Choose for me</a>
+                >
+                                    Choose for me
+                                </a>
                             </div>
                             <div
                 class="text-center pb24 o_colored_level col-lg-3"
@@ -147,7 +156,8 @@
                                     <a
                     t-att-href="child.website_url + '/sponsor?' + request.httprequest.query_string.decode()"
                     class="o_no_style"
-                  ><img
+                  >
+                                        <img
                       t-att-src="child.website_image"
                       class="w-50 mx-auto my-auto"
                       alt="child picture"
@@ -155,15 +165,20 @@
                       data-original-title=""
                       title=""
                       aria-describedby="tooltip156301"
-                    /></a>
+                    />
+                                    </a>
                                     <a
                     t-att-href="child.website_url + '/sponsor?' + request.httprequest.query_string.decode()"
                     class="o_no_style"
-                  ><h4 t-field="child.preferred_name" /></a>
+                  >
+                                        <h4 t-field="child.preferred_name" />
+                                    </a>
                                     <a
                     t-att-href="child.website_url + '/sponsor?' + request.httprequest.query_string.decode()"
                     class="o_no_style"
-                  ><span t-field="child.website_legend" /></a>
+                  >
+                                        <span t-field="child.website_legend" />
+                                    </a>
                                 </div>
                             </t>
                         </div>
@@ -174,7 +189,6 @@
             </div>
         </t>
     </template>
-
     <template id="load_child_page" name="Child loader page">
         <t t-set="additional_title">Looking for a child...</t>
         <t t-call="website.layout">

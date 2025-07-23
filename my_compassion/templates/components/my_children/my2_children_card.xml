@@ -1,60 +1,73 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
     Description:
-    Displays a child's profile in a clickable card format. The card contains a picture on the left
-    and the child’s information on the right. Clicking the card redirects to the child’s timeline page.
-    If the related sponsorship is terminated, the card will have a different style.
+    Displays a child's profile.
+    If the related sponsorship is terminated, the card will have a different background.
+    The card contains the latest correspondance with the partner.
 
     Props:
     - sponsorship (record): The sponsorship related object.
+
 -->
 <odoo>
     <template id="my2_children_card_component" name="Children Card Component">
-        <link rel="stylesheet" href="/addons-compassion-switzerland/compassion-website/my_compassion/static/src/css/children_card.css"/>
-        <div t-att-class="'children-card w-100 children-card-terminated' if sponsorship.state == 'terminated' else 'children-card w-100'">
-            <div class="children-card-body">
-                <a t-attf-href="/my2/children/{{sponsorship.child_id.id}}">
-                    <div class="row align-items-center">
-                        <!-- Card Image Section (Left) -->
-                        <div class="col-4 text-center children-card-image-section">
-                            <img
-                                    class="img-circle img-responsive"
-                                    t-attf-src="/web/image/compassion.child/{{sponsorship.child_id.id}}/portrait"
-                                    alt="Child image"
-                            />
-                        </div>
-                        <!-- Card Text Section (Right) -->
-                        <div class="col-8 children-card-text-section h-100">
-                            <div class="text-right">
-                                <p class="children-card-status"><i
-                                        class="fa fa-envelope-o"/>
-                                    New letter available!</p>
-                            </div>
-                            <p class="children-card-title">
-                                <t t-esc="sponsorship.preferred_name"/>
-                            </p>
-                            <p class="children-card-age">
-                                <t t-esc="sponsorship.child_age"/> years old
-                            </p>
-                            <p class="children-card-country">
-                                <t t-esc="sponsorship.child_id.field_office_id.name"/>
-                            </p>
-                            <p class="children-card-local-id">
-                                <t t-esc="sponsorship.child_id.local_id"/>
-                            </p>
-                            <div class="text-right">
-                                <p class="children-card-last-contact">
-                                    <t t-if="sponsorship.state == 'terminated'">
-                                        Terminated
-                                    </t>
-                                    <t t-else="">
-                                        Last contact on 13.01.25
-                                    </t>
-                                </p>
-                            </div>
-                        </div>
+        <div t-att-class="'col-12 col-md-6 col-lg-4 text-center mb-3 mt-3'">
+            <div
+                t-att-class="'h-100 p-3 ' + ('bg-low-eggshell' if sponsorship.state == 'terminated' else 'bg-high-eggshell')"
+            >
+                <!-- Child Image -->
+                <img
+                    class="img-circle img-responsive mb-4 w-50"
+                    t-attf-src="/web/image/compassion.child/{{sponsorship.child_id.id}}/portrait"
+                    alt="Child image"
+                />
+                <!-- Child name -->
+                <div class="h2 mb-3">
+                    <t t-esc="sponsorship.preferred_name" />
+                </div>
+                <!-- Correspondence Status and info section -->
+                <div class="h5 mb-3">
+                    <t
+                        t-set="latest_correspondence"
+                        t-value="(latest_correspondences_by_child_id or {}).get(sponsorship.child_id.id)"
+                    />
+                    <t t-set="sponsorship_end_date" t-value="sponsorship.end_date" />
+                    <div class="mb-3 pl-3 pr-3">
+                        <span class="border-bottom border-2 border-high-orange">
+                            <t t-if="sponsorship_end_date">
+                                Sponsorship terminated on
+                                <t t-esc="sponsorship_end_date.strftime('%d %B %Y')" />
+                            </t>
+                            <t t-elif="latest_correspondence">
+                                Last contact
+                                <t t-esc="latest_correspondence.write_date.strftime('%d %B %Y')" />
+                            </t>
+                            <t t-else="">No correspondences</t>
+                        </span>
                     </div>
-                </a>
+                    <i class="icon-gift02 bg-low-yellow" />
+                    <t t-esc="sponsorship.child_age" />
+                    years old
+                    <i class="icon-user01 bg-low-yellow" />
+                    <t t-if="sponsorship.child_gender == 'M'">Male</t>
+                    <t t-elif="sponsorship.child_gender == 'F'">Female</t>
+                    <t t-else="">Not specified</t>
+                    <br />
+                    <i class="icon-map01 bg-low-yellow" />
+                    <t t-esc="sponsorship.child_id.field_office_id.name" />
+                </div>
+                <!-- Profile Button -->
+                <p class="mb-5 mt-3">
+                    <a t-attf-href="/my2/children/{{sponsorship.child_id.id}}">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variation" t-value="'filled'" />
+                            <t t-set="color" t-value="'mid-green'" />
+                            <t t-set="text_color" t-value="'white'" />
+                            <t t-set="variant" t-value="'default'" />
+                            <t t-set="label" t-value="'View profile'" />
+                        </t>
+                    </a>
+                </p>
             </div>
         </div>
     </template>

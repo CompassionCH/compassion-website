@@ -12,7 +12,6 @@
             </t>
         </xpath>
     </template>
-
     <template id="wizard_checkout" inherit_id="website_sale.address">
         <xpath
       expr="//a[@role='button'][@class='btn btn-secondary mb32']"
@@ -21,16 +20,14 @@
             <attribute name="class">d-none</attribute>
         </xpath>
     </template>
-
     <template id="cart" inherit_id="website_sale.cart">
-         <xpath
+        <xpath
       expr="//a[@role='button'][@class='btn btn-secondary mb32 d-none d-xl-inline-block']"
       position="attributes"
     >
             <attribute name="class">d-none</attribute>
         </xpath>
     </template>
-
     <template id="total" inherit_id="website_sale.total">
         <xpath expr="//tr[@id='order_total_untaxed']" position="attributes">
             <t t-if="not website_sale_order.amount_tax">
@@ -43,13 +40,11 @@
             </t>
         </xpath>
     </template>
-
     <template id="cart_summary" inherit_id="website_sale.cart_summary">
         <xpath expr="//th[1]" position="replace">
             <th class="border-top-0 td-img" />
         </xpath>
     </template>
-
     <template id="checkout" inherit_id="website_sale.checkout">
         <xpath
       expr="//a[@role='button'][@href='/shop/cart']"
@@ -58,7 +53,6 @@
             <attribute name="class">d-none</attribute>
         </xpath>
     </template>
-
     <template id="payment" inherit_id="website_sale.payment">
         <xpath expr="//t[@t-set='back_button_txt']" position="replace">
             <t t-set="back_button_txt">Back to summary</t>

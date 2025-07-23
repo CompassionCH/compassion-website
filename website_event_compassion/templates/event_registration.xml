@@ -26,10 +26,9 @@
     />
         <t groups="website.group_website_publisher">
             <div class="container-fluid px-lg-5">
-                <span
-          t-translation="off"
-          class="text-muted p-lg-5"
-        >You can translate here the thankyou message after registration:</span>
+                <span t-translation="off" class="text-muted p-lg-5">
+                    You can translate here the thankyou message after registration:
+                </span>
                 <span t-raw="action_done" />
             </div>
         </t>
@@ -70,8 +69,7 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >
-                                            Title</span>
+                    >Title</span>
                                     </label>
                                     <div class="col-sm">
                                         <select
@@ -91,7 +89,6 @@
                             </div>
                         </div>
                         <div class="row my-2">
-
                             <div
                 class="form-group s_website_form_field col-12 col-lg-6 s_website_form_model_required"
                 data-type="char"
@@ -107,11 +104,10 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >
-                                            Firstname</span>
+                    >Firstname</span>
                                         <span
                       class="s_website_form_mark"
-                    > *</span>
+                    >*</span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -139,11 +135,10 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >
-                                            Lastname</span>
+                    >Lastname</span>
                                         <span
                       class="s_website_form_mark"
-                    > *</span>
+                    >*</span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -171,11 +166,10 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >
-                                            Email</span>
+                    >Email</span>
                                         <span
                       class="s_website_form_mark"
-                    > *</span>
+                    >*</span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -203,11 +197,10 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >
-                                            Birthdate</span>
+                    >Birthdate</span>
                                         <span
                       class="s_website_form_mark"
-                    > *</span>
+                    >*</span>
                                     </label>
                                     <div class="col-sm">
                                         <div
@@ -251,8 +244,7 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >
-                                            Phone</span>
+                    >Phone</span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -279,8 +271,7 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >
-                                            Phone</span>
+                    >Phone</span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -307,8 +298,7 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >
-                                            Mobile</span>
+                    >Mobile</span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -335,11 +325,10 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >
-                                            Street</span>
+                    >Street</span>
                                         <span
                       class="s_website_form_mark"
-                    > *</span>
+                    >*</span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -367,11 +356,13 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >Postal
-                                            code</span>
+                    >
+                                            Postal
+                                            code
+                                        </span>
                                         <span
                       class="s_website_form_mark"
-                    > *</span>
+                    >*</span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -400,11 +391,10 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >
-                                            City</span>
+                    >City</span>
                                         <span
                       class="s_website_form_mark"
-                    > *</span>
+                    >*</span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -426,7 +416,6 @@
               class="row my-2"
               t-if="main_object.type in ('sport', 'tour')"
             >
-
                             <div
                 class="form-group s_website_form_field col-12 col-lg-6 s_website_form_model_required  "
                 data-type="char"
@@ -442,11 +431,13 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >Passport
-                                            name</span>
+                    >
+                                            Passport
+                                            name
+                                        </span>
                                         <span
                       class="s_website_form_mark"
-                    > *</span>
+                    >*</span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -480,11 +471,13 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >Passport
-                                            number</span>
+                    >
+                                            Passport
+                                            number
+                                        </span>
                                         <span
                       class="s_website_form_mark"
-                    > *</span>
+                    >*</span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -512,11 +505,13 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >Passport
-                                            expiration date</span>
+                    >
+                                            Passport
+                                            expiration date
+                                        </span>
                                         <span
                       class="s_website_form_mark"
-                    > *</span>
+                    >*</span>
                                     </label>
                                     <div class="col-sm">
                                         <div
@@ -561,11 +556,13 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >Emergency
-                                            contact name</span>
+                    >
+                                            Emergency
+                                            contact name
+                                        </span>
                                         <span
                       class="s_website_form_mark"
-                    > *</span>
+                    >*</span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -601,8 +598,10 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >Emergency
-                                            contact relation type</span>
+                    >
+                                            Emergency
+                                            contact relation type
+                                        </span>
                                     </label>
                                     <div class="col-sm">
                                         <select
@@ -611,7 +610,6 @@
                       id="o6dgjpsk1jmd0"
                       style=""
                     >
-
                                             <t
                         t-foreach="relation_types"
                         t-as="relation_type"
@@ -643,11 +641,13 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >Emergency
-                                            contact phone</span>
+                    >
+                                            Emergency
+                                            contact phone
+                                        </span>
                                         <span
                       class="s_website_form_mark"
-                    > *</span>
+                    >*</span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -676,7 +676,9 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >Share room with (other participant name)</span>
+                    >
+                                            Share room with (other participant name)
+                                        </span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -704,7 +706,9 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >I want a single room (extra fee)</span>
+                    >
+                                            I want a single room (extra fee)
+                                        </span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -717,7 +721,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <h3
               t-if="event.odoo_event_id.fundraising"
             >Your public profile</h3>
@@ -741,7 +744,7 @@
                     >Profile name</span>
                                         <span
                       class="s_website_form_mark"
-                    > *</span>
+                    >*</span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -771,11 +774,13 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >Profile
-                                            picture</span>
+                    >
+                                            Profile
+                                            picture
+                                        </span>
                                         <span
                       class="s_website_form_mark"
-                    > *</span>
+                    >*</span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -804,11 +809,13 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >My
-                                            motto</span>
+                    >
+                                            My
+                                            motto
+                                        </span>
                                         <span
                       class="s_website_form_mark"
-                    > *</span>
+                    >*</span>
                                     </label>
                                     <div class="col-sm">
                                         <textarea
@@ -845,8 +852,7 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >
-                                            Event</span>
+                    >Event</span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -873,8 +879,7 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >
-                                            Fundraising objective</span>
+                    >Fundraising objective</span>
                                     </label>
                                     <div class="col-sm">
                                         <input
@@ -901,8 +906,7 @@
                   >
                                         <span
                       class="s_website_form_label_content"
-                    >
-                                            Comments</span>
+                    >Comments</span>
                                     </label>
                                     <div class="col-sm">
                                         <textarea
@@ -936,7 +940,7 @@
                     />
                                         <span
                       class="s_website_form_mark"
-                    > *</span>
+                    >*</span>
                                     </label>
                                 </div>
                             </div>
@@ -951,7 +955,8 @@
                   role="button"
                   class="btn btn-primary btn-lg s_website_form_send o_default_snippet_text"
                 >
-                                    Register now</a>
+                                    Register now
+                                </a>
                                 <span id="s_website_form_result" />
                             </div>
                         </div>

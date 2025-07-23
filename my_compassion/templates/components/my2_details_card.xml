@@ -11,15 +11,15 @@
 -->
 <odoo>
     <template id="my2_details_card_component" name="Details Card Component">
-        <link rel="stylesheet" href="/my_compassion/static/src/css/details_card.css"/>
+        <link rel="stylesheet" href="/my_compassion/static/src/css/details_card.css" />
         <div class="details-card w-100">
             <div class="details-card-body">
                 <div class="row align-items-center">
                     <div class="col-12 h-100">
                         <p class="details-card-title">
-                            <t t-esc="card_title"/>
+                            <t t-esc="card_title" />
                         </p>
-                        <t t-raw="content"/>
+                        <t t-raw="content" />
                     </div>
                 </div>
             </div>

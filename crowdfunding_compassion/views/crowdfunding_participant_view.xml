@@ -30,7 +30,6 @@
                             <field name="number_sponsorships_goal" />
                             <field name="number_csp_goal" />
                         </group>
-
                         <group string="Promotion" name="participant_link">
                             <field name="facebook_url" widget="char" />
                             <field name="twitter_url" widget="char" />
@@ -77,7 +76,6 @@
             </form>
         </field>
     </record>
-
     <!-- Tree view -->
     <record id="view_crowdfunding_participant_tree" model="ir.ui.view">
         <field name="name">crowdfunding.participant.tree</field>
@@ -90,7 +88,6 @@
             </tree>
         </field>
     </record>
-
     <!-- Kanban view -->
     <record id="crowdfunding_participant_kanban_view" model="ir.ui.view">
         <field name="name">crowdfunding.participant.kanban</field>
@@ -148,6 +145,7 @@
                 class="o_kanban_image_fill_left d-none d-md-block"
                 t-attf-style="background-image:url('#{kanban_image('crowdfunding.participant', 'profile_photo', record.id.raw_value)}')"
               >
+
                             </div>
                             <div class="card-body oe_kanban_details">
                                 <h4
@@ -199,7 +197,6 @@
             </kanban>
         </field>
     </record>
-
     <!-- Search view -->
     <record id="crowdfunding_participant_search" model="ir.ui.view">
         <field name="name">crowdfunding.participant.search</field>
@@ -238,7 +235,6 @@
             </search>
         </field>
     </record>
-
     <!-- Action opening the views -->
     <record
     id="open_view_crowdfunding_participant_tree"
@@ -251,14 +247,12 @@
       name="context"
     >{'search_default_state_active':1, 'search_default_group_project': 1}</field>
     </record>
-
     <menuitem
     id="menu_event_crowdfunding"
     name="Crowdfunding"
     parent="event.event_main_menu"
     sequence="10"
   />
-
     <menuitem
     id="menu_crowdfunding_participant"
     parent="menu_event_crowdfunding"

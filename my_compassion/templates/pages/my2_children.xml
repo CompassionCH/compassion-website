@@ -13,56 +13,56 @@ Page: My Compassion 2 Children Page
 -->
 <odoo>
     <template id="my2_children_page" name="My Compassion 2 Children Page">
-        <link rel="stylesheet" href="/my_compassion/static/src/css/line-divider.css"/>
         <t t-call="website.layout">
             <div class="container">
                 <!-- Calling breadcrumb component -->
                 <t t-call="my_compassion.my2_breadcrumbs">
-                    <t t-set="breadcrumbs" t-value="breadcrumbs"/>
+                    <t t-set="breadcrumbs" t-value="breadcrumbs" />
                 </t>
-                <div class="row">
-                    <div class="col-12">
-                        <h1>Your sponsorships</h1>
-                    </div>
+                <!-- Title -->
+                <t t-call="theme_compassion_2025.TitleComponent">
+                    <t t-set="title_content" t-value="'Your sponsorships'" />
+                    <t t-set="title_size" t-value="'md'" />
+                    <t t-set="color" t-value="'core-blue'" />
+                    <t t-set="underline_color" t-value="'low-yellow'" />
+                    <t t-set="show_underline" t-value="True" />
+                    <t
+                        t-set="description"
+                        t-value="'Hearts grow stronger with each act of care through your sponsorship.'"
+                    />
+                </t>
+                <!-- NEW SPONSORSHIP BUTTON -->
+                <div class="row justify-content-center mb-3">
+                    <a t-attf-href="/my2/children/new_sponsorship">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variation" t-value="'filled'" />
+                            <t t-set="color" t-value="'low-blue'" />
+                            <t t-set="text_color" t-value="'white'" />
+                            <t t-set="variant" t-value="'default'" />
+                            <t t-set="label" t-value="'New sponsorship'" />
+                        </t>
+                    </a>
                 </div>
                 <!-- ACTIVE SPONSORSHIPS CHILDREN-->
-                <t t-foreach="sponsorship_ids" t-as="sponsorship">
-                    <t t-if="sponsorship.state == 'active'">
-                        <div class="row">
-                            <!-- Using children_card component -->
+                <div class="row g-4 mb-3">
+                    <t t-foreach="sponsorship_ids" t-as="sponsorship">
+                        <t t-if="sponsorship.state == 'active'">
                             <t t-call="my_compassion.my2_children_card_component">
-                                <!-- The data we are passing to the children_card_component -->
-                                <t t-set="sponsorship" t-value="sponsorship"/>
+                                <t t-set="sponsorship" t-value="sponsorship" />
                             </t>
-                        </div>
+                        </t>
                     </t>
-                </t>
-                <!-- + NEW SPONSORSHIP BUTTON & LINE DIVIDER -->
-                <div class="row">
-                    <div class="col-12">
-                        <button type="button" class="btn btn-block rounded btn-primary">
-                            <span class="fa font-weight-light">+</span>
-                            New Sponsorship
-                        </button>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="line-divider-container">
-                        <div class="line-divider"/>
-                    </div>
                 </div>
                 <!-- TERMINATED SPONSORSHIPS CHILDREN -->
-                <t t-foreach="sponsorship_ids" t-as="sponsorship">
-                    <t t-if="sponsorship.state == 'terminated'">
-                        <div class="row">
-                            <!-- Using card component -->
+                <div class="row g-4">
+                    <t t-foreach="sponsorship_ids" t-as="sponsorship">
+                        <t t-if="sponsorship.state == 'terminated'">
                             <t t-call="my_compassion.my2_children_card_component">
-                                <!-- The data we are passing to the children_card_component -->
-                                <t t-set="child_sponsorship" t-value="sponsorship"/>
+                                <t t-set="sponsorship" t-value="sponsorship" />
                             </t>
-                        </div>
+                        </t>
                     </t>
-                </t>
+                </div>
             </div>
         </t>
     </template>

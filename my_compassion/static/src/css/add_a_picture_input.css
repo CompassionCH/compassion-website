@@ -3,19 +3,14 @@
     templates/pages/my2_new_letter.xml
 */
 .file-upload-placeholder {
-    border: 0.25rem dashed var(--compassion-blue);
+    border: 0.2rem solid #11265e;
+    border-radius: 12px;
     position: relative;
     transition: all 0.2s ease;
 }
 
 .file-upload-placeholder:hover {
-    border: 0.25rem dashed #75b4ff;
-}
-
-/* Also change the plus square icon color on placeholder hover */
-.file-upload-placeholder:hover i {
-    color: #75b4ff !important;
-    transition: color 0.2s ease;
+    border: 0.25rem solid #1d42a5;
 }
 
 /* Stretches the input field to its parent container */

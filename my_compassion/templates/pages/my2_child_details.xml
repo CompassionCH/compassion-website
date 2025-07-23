@@ -6,7 +6,7 @@
     This page displays detailed information about a sponsored child.
 
     Used in route:
-    - /my2/children/<int:child_id>/details
+    - /my2/children/<model("compassion.child"):child>/details
 
     Injected Data:
     - compassion_child (record): The related child object.
@@ -52,10 +52,24 @@
                 <!-- Child Details Information -->
                 <div class="row mb-3">
                     <div class="col-12">
-                        <!-- Using children_details_information component -->
-                        <t t-call="my_compassion.my2_children_details_information_component">
-                            <!-- The data we are passing to the children_details_information_component -->
-                            <t t-set="compassion_child" t-value="compassion_child"/>
+                        <!-- Using details_card component -->
+                        <t t-call="my_compassion.my2_details_card_component">
+                            <!-- The data we are passing to the card_details component -->
+                            <t t-set="card_title" t-value="'General'" />
+                            <t t-set="content">
+                                <p>
+                                    <strong>Birthdate:</strong>
+                                    <t t-esc="compassion_child.birthdate" />
+                                </p>
+                                <p>
+                                    <strong>Hobby:</strong>
+                                    <t t-esc="compassion_child.hobby_ids[0].name" />
+                                </p>
+                                <p>
+                                    <strong>Education Level:</strong>
+                                    <t t-esc="compassion_child.education_level" />
+                                </p>
+                            </t>
                         </t>
                     </div>
                 </div>
