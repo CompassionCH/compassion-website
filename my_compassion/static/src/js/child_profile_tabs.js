@@ -36,7 +36,6 @@ document.addEventListener("DOMContentLoaded", function () {
              * @param {Event} ev
              */
             _onMobileTabChange: function (ev) {
-                console.info("Mobile tab changed:", ev.currentTarget.value);
                 const selectedTab = $(ev.currentTarget).val();
                 this.$('#child-info-tabs a[href="' + selectedTab + '"]').tab("show");
             },
