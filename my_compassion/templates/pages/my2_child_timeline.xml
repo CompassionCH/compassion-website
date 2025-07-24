@@ -302,31 +302,31 @@
                                     <t t-if="field_office.urban_water_access">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Urban population with drinking water access:</strong>
-                                            <t t-esc="f'{field_office.urban_water_access * 100:.0f}%'"/>
+                                            <t t-esc="'{:.0f}%'.format(field_office.urban_water_access * 100)"/>
                                         </li>
                                     </t>
                                     <t t-if="field_office.rural_water_access">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Rural population with drinking water access:</strong>
-                                            <t t-esc="f'{field_office.rural_water_access * 100:.0f}%'"/>
+                                            <t t-esc="'{:.0f}%'.format(field_office.rural_water_access * 100)"/>
                                         </li>
                                     </t>
                                     <t t-if="field_office.adult_literacy_rate">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Adult literacy rate:</strong>
-                                            <t t-esc="f'{field_office.adult_literacy_rate * 100:.0f}%'"/>
+                                            <t t-esc="'{:.0f}%'.format(field_office.adult_literacy_rate * 100)"/>
                                         </li>
                                     </t>
                                     <t t-if="field_office.infant_mortality_rate">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Infant mortality rate:</strong>
-                                            <t t-esc="f'{field_office.infant_mortality_rate * 100:.0f}%'"/>
+                                            <t t-esc="'{:.0f}%'.format(field_office.infant_mortality_rate * 100)"/>
                                         </li>
                                     </t>
                                     <t t-if="field_office.under_five_mortality_rate">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Under-five mortality rate:</strong>
-                                            <t t-esc="f'{field_office.under_five_mortality_rate * 100:.0f}%'"/>
+                                            <t t-esc="'{:.0f}%'.format(field_office.under_five_mortality_rate * 100)"/>
                                         </li>
                                     </t>
                                     <t t-if="field_office.religions">
@@ -338,7 +338,7 @@
                                      <t t-if="field_office.less_than_2_dollars_a_day">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Population living on less than $2/day:</strong>
-                                            <t t-esc="f'{field_office.less_than_2_dollars_a_day * 100:.0f}%'"/>
+                                            <t t-esc="'{:.0f}%'.format(field_office.less_than_2_dollars_a_day * 100 )"/>
                                         </li>
                                     </t>
                                 </ul>
