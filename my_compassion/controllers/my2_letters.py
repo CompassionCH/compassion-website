@@ -63,7 +63,7 @@ class MyCompassionCorrespondenceController(http.Controller):
             nr_filters_applied += 1
 
         # Pagination setup
-        letters_per_page = 24
+        letters_per_page = 12
         offset = (page - 1) * letters_per_page
         total_letters = request.env['correspondence'].search_count(filter_domain)
         total_pages = max(1, -(-total_letters // letters_per_page))

@@ -23,7 +23,12 @@
                      t-attf-class="ml-2 mt-4 my2-envelope {{ 'envelope--blue' if letter.direction != 'Supporter To Beneficiary' else 'envelope--green' }}"
                      t-attf-href="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf">
                     <div class="env-body"></div>
-                    <div class="env-letter"></div>
+                    <div class="env-letter">
+                        <!-- Letter preview -->
+                        <iframe t-attf-src="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf"
+                                type="application/pdf">
+                        </iframe>
+                    </div>
                     <div class="env-pocket"></div>
                     <div class="env-flap"></div>
                 </div>

@@ -61,6 +61,15 @@
     height: 90%;
     background-color: #fff;
     border-radius: 4px;
+    overflow: hidden;
+}
+/* Preview on the letter */
+.my2-envelope .env-letter iframe {
+    border: none;
+    transform: scale(0.1) translateY(-10%) translateX(-5%);
+    transform-origin: top left;
+    width: 1200%;
+    height: 1200%;
 }
 
 /* Envelope animation */
@@ -70,7 +79,7 @@
     z-index: 2;
 }
 .open .env-letter {
-    transform: translateY(-30%);
+    transform: translateY(-40%);
     transition: transform .4s ease .8s;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     z-index: 1;
