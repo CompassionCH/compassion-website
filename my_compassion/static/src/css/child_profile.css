@@ -53,6 +53,53 @@
     justify-content: center;
 }
 
+/* Tab container styling */
+.child-related-information .child-select {
+    border-bottom: none; /* Remove Bootstrap's default line */
+    position: relative;
+    z-index: 1; /* Ensure tabs render on top of the content pane */
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 250px;
+    margin: 0 auto; /* Ensures it's centered in its parent */
+}
+
+.child-select select {
+    /* Reset Bootstrap defaults */
+    border-radius: 25px;
+
+    /* Sizing and Layout */
+    height: 56px;
+    padding: 0 36px;
+
+    /* Typography */
+    font-size: 19px;
+    font-weight: 600; /* Demi-bold */
+    color: #000000 !important; /* Override default link color */
+
+    /* Colors and Transition for inactive state */
+    background-color: #fdb518;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.custom-select:focus {
+    background-color: #fdb518 !important;
+    border: none;
+    outline: none !important;
+    box-shadow: 0 0 0 0.2rem rgba(253, 181, 24, 0.5) !important; /* fdb518 with 50% opacity */
+}
+
+/* Style all options (uniformly) */
+.custom-select option {
+    background-color: #ffd257;
+    color: #000;
+}
+
+.custom-select {
+    border: 1px solid #fdb518 !important;
+}
+
 /* Style for each tab link */
 .child-related-information .nav-tabs .nav-link {
     /* Reset Bootstrap defaults */
@@ -124,5 +171,5 @@
 }
 
 .tab-item-title {
-    font-family: 'NeighbourSans DemiBold', sans-serif;
+    font-family: "NeighbourSans DemiBold", sans-serif;
 }

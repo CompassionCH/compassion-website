@@ -18,11 +18,14 @@
     <template id="my2_child_timeline_page" name="My Compassion 2 Child Timeline Page">
         <link rel="stylesheet"
                       href="/my_compassion/static/src/css/child_profile.css"/>
+        <link rel="stylesheet"
+                      href="/my_compassion/static/src/css/child_profile_timeline.css"/>
         <t t-call="website.layout">
             <div class="container">
                 <div class="content-column">
-                    <div class="d-flex flex-column flex-md-row pt-4">
-                        <!-- ### Portrait ### -->
+                    <!-- ### Child personal information ### -->
+                    <section class="d-flex flex-column flex-md-row pt-4">
+                        <!-- Portrait -->
                         <div class="child-details-container">
                             <t t-call="theme_compassion_2025.PortraitComponent">
                                 <t t-set="title" t-value="compassion_child.preferred_name"/>
@@ -34,7 +37,7 @@
 
                         <!-- Child info and buttons actions -->
                         <div class="d-flex flex-column flex-md-column-reverse">
-                            <!-- ### Action buttons ### -->
+                            <!-- Action buttons -->
                             <div class="child-action-buttons justify-content-md-start ml-md-3 pb-3 p-md-0">
                                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                     <t t-set="variant" t-value="'compact'"/>
@@ -52,14 +55,14 @@
                                 </t>
                             </div>
 
-                            <!-- ### Child personal information ### -->
+                            <!-- Child personal information -->
                             <div class="child-personal-information d-flex flex-column flex-grow-1 mt-md-3 ml-md-3">
                                 <div class="child-info-item d-flex align-items-center">
                                     <div class="frame bg-core-blue mr-2">
                                         <i class="icon icon-calendar-heart02 text-pure-white m-2"></i>
                                     </div>
                                     <!-- TODO: Handle language changes for birthday -->
-                                    <!-- TODO: Put that in the backend -->
+                                    <!-- TODO: Put that in the backend (maybe) -->
                                     <t t-set="day" t-value="compassion_child.birthdate.day"/>
                                     <t t-set="month" t-value="compassion_child.birthdate.strftime('%B')"/>
                                     <t t-set="suffix" t-value="'th'"/>
@@ -103,12 +106,12 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
                     <!-- ### Child related information (family, project and country) ### -->
-                    <div class="child-related-information tabs-component">
+                    <section class="child-related-information tabs-component">
                         <!-- Mobile Dropdown (Visible on small screens) -->
-                        <div class="d-block d-md-none mb-3">
+                        <div class="child-select d-block d-md-none">
                             <select class="form-control custom-select" id="child-info-tabs-mobile">
                                 <option value="#family-tab" selected="1">My Family</option>
                                 <option value="#project-tab">My Project</option>
@@ -119,13 +122,13 @@
                         <!-- Desktop Tabs (Visible on medium screens and up) -->
                         <ul class="nav nav-tabs d-none d-md-flex" id="child-info-tabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link"
+                                <a class="nav-link active"
                                    id="family-tab-link"
                                    data-toggle="tab"
                                    href="#family-tab"
                                    role="tab"
                                    aria-controls="family-tab"
-                                   aria-selected="false">
+                                   aria-selected="true">
                                     My Family
                                 </a>
                             </li>
@@ -141,13 +144,13 @@
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link active"
+                                <a class="nav-link"
                                    id="country-tab-link"
                                    data-toggle="tab"
                                    href="#country-tab"
                                    role="tab"
                                    aria-controls="country-tab"
-                                   aria-selected="true">
+                                   aria-selected="false">
                                     My Country
                                 </a>
                             </li>
@@ -156,7 +159,7 @@
                         <!-- Tab Content -->
                         <div class="tab-content" id="child-info-tabs-content">
                             <!-- FAMILY TAB CONTENT -->
-                            <div class="tab-pane fade" id="family-tab" role="tabpanel" aria-labelledby="family-tab-link">
+                            <div class="tab-pane fade show active" id="family-tab" role="tabpanel" aria-labelledby="family-tab-link">
                                 <div class="description-text">
                                     <p>
                                         I currently live in
@@ -263,7 +266,7 @@
                                 </ul>
                             </div>
                             <!-- COUNTRY TAB CONTENT -->
-                            <div class="tab-pane fade show active" id="country-tab" role="tabpanel" aria-labelledby="country-tab-link">
+                            <div class="tab-pane fade" id="country-tab" role="tabpanel" aria-labelledby="country-tab-link">
                                 <t t-set="field_office" t-value="compassion_child.field_office_id"/>
                                 <ul class="tab-items">
                                     <li class="tab-item">
@@ -299,31 +302,31 @@
                                     <t t-if="field_office.urban_water_access">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Urban population with drinking water access:</strong>
-                                            <t t-esc="f'{field_office.urban_water_access * 100:.0f}%'"/>
+                                            <t t-esc="'{:.0f}%'.format(field_office.urban_water_access * 100)"/>
                                         </li>
                                     </t>
                                     <t t-if="field_office.rural_water_access">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Rural population with drinking water access:</strong>
-                                            <t t-esc="f'{field_office.rural_water_access * 100:.0f}%'"/>
+                                            <t t-esc="'{:.0f}%'.format(field_office.rural_water_access * 100)"/>
                                         </li>
                                     </t>
                                     <t t-if="field_office.adult_literacy_rate">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Adult literacy rate:</strong>
-                                            <t t-esc="f'{field_office.adult_literacy_rate * 100:.0f}%'"/>
+                                            <t t-esc="'{:.0f}%'.format(field_office.adult_literacy_rate * 100)"/>
                                         </li>
                                     </t>
                                     <t t-if="field_office.infant_mortality_rate">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Infant mortality rate:</strong>
-                                            <t t-esc="f'{field_office.infant_mortality_rate * 100:.0f}%'"/>
+                                            <t t-esc="'{:.0f}%'.format(field_office.infant_mortality_rate * 100)"/>
                                         </li>
                                     </t>
                                     <t t-if="field_office.under_five_mortality_rate">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Under-five mortality rate:</strong>
-                                            <t t-esc="f'{field_office.under_five_mortality_rate * 100:.0f}%'"/>
+                                            <t t-esc="'{:.0f}%'.format(field_office.under_five_mortality_rate * 100)"/>
                                         </li>
                                     </t>
                                     <t t-if="field_office.religions">
@@ -335,13 +338,13 @@
                                      <t t-if="field_office.less_than_2_dollars_a_day">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Population living on less than $2/day:</strong>
-                                            <t t-esc="f'{field_office.less_than_2_dollars_a_day * 100:.0f}%'"/>
+                                            <t t-esc="'{:.0f}%'.format(field_office.less_than_2_dollars_a_day * 100 )"/>
                                         </li>
                                     </t>
                                 </ul>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
                     <!-- ### Partner and child timeline title ### -->
                     <t t-call="theme_compassion_2025.TitleComponent">
@@ -355,6 +358,24 @@
                     </t>
                 </div>
             </div>
+            <!-- ### Partner and child timeline component ### -->
+            <section class="cd-timeline js-cd-timeline" t-att-data-child-id="compassion_child.id">
+                <div class="cd-timeline__container">
+                    <div class="content-column">
+                        <t t-call="my_compassion.SponsorChildTimelineBatchComponent">
+                            <t t-set="records" t-value="records"></t>
+                        </t>
+                    </div>
+                </div> <!-- cd-timeline__container -->
+                <div id="timeline-loader" class="text-center py-5" style="display:none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            </section> <!-- cd-timeline -->
         </t>
+        <!-- Include Custom Javascript -->
+        <script type="text/javascript" src="/my_compassion/static/src/js/child_profile_tabs.js"/>
+        <script type="text/javascript" src="/my_compassion/static/src/js/child_profile_timeline.js"/>
     </template>
 </odoo>

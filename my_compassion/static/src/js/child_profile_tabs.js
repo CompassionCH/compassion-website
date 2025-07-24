@@ -1,3 +1,15 @@
+/**
+ * Responsive Child Profile Tabs Widget for Odoo
+ * ---------------------------------------------
+ * This widget manages responsive tab navigation for a child's profile page.
+ * It synchronizes a mobile dropdown selector with Bootstrap desktop tab navigation.
+ *
+ * Key Features:
+ * - Listens for tab changes on desktop to update the mobile dropdown
+ * - Listens for mobile dropdown changes and activates the corresponding desktop tab
+ * - Handles resizing scenarios where the user may switch between mobile and desktop views
+ * - Built using Odoo's public widget system (web.public.widget)
+ */
 document.addEventListener("DOMContentLoaded", function () {
     odoo.define("my_compassion.child_profile_tabs", function (require) {
         "use strict";
@@ -7,7 +19,9 @@ document.addEventListener("DOMContentLoaded", function () {
         publicWidget.registry.ChildProfileTabs = publicWidget.Widget.extend({
             selector: ".child-related-information",
             events: {
-                "change #child-info-tabs-mobile": "_onMobileTabChange",
+                "change #child-info-tabs-mobile": function (e) {
+                    this._onMobileTabChange(e);
+                },
             },
 
             /**

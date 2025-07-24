@@ -54,16 +54,15 @@
         # My Compassion 2 pages
         "templates/pages/my2_children.xml",
         "templates/pages/my2_child_timeline.xml",
-        "templates/pages/my2_child_details.xml",
         "templates/pages/my2_child_letters.xml",
         "templates/pages/my2_new_letter.xml",
         # My Compassion 2 components
         "templates/components/my_children/my2_children_card.xml",
         "templates/components/my_children/my2_children_profile.xml",
-        "templates/components/my2_details_card.xml",
         "templates/components/my2_letter_card.xml",
         "templates/components/my2_breadcrumbs.xml",
         "templates/components/my_children/my2_children_details_information.xml",
+        "templates/components/my2_sponsor_child_timeline_batch.xml",
     ],
     "depends": [
         "partner_communication_compassion",

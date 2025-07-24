@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Page: My Compassion 2 Child Timeline Batch Component
+
+    Description:
+    This component is used to display a batch of timeline items related to a child sponsorship.
+
+    Used in route:
+    - /my2/children/<model("compassion.child"):child>/
+
+    Check page:
+    - compassion_website.my_compassion2_child_timeline
+
+    Injected data:
+    - records: list of items to display in the timeline, each item should have:
+        - model (string): the model of the item (e.g., 'sponsorship_gift', 'correspondence').
+        - title (string): title of the item.
+        - content (string): content or description of the item.
+        - create_date (string): date when the item was created.
+        - pageable (object): pagination object if applicable, used for loading more items.
+        - additional fields as needed based on the model
+-->
+<odoo>
+    <template id="SponsorChildTimelineBatchComponent" name="My Compassion 2 Child Timeline Batch Component">
+        <t t-foreach="records" t-as="item">
+            <t t-if="item.model == 'sponsorship_gift'">
+                <div class="cd-timeline__block">
+                    <t t-if="item.title == 'Birthday gift'">
+                        <div class="cd-timeline__img bg-high-pink">
+                            <i class="pictogram pictogram-birthday-gift bg-low-black"></i>
+                        </div>
+                    </t>
+                    <t t-elif="item.title == 'Family gift'">
+                        <div class="cd-timeline__img bg-high-brown">
+                            <i class="pictogram pictogram-family-gift bg-low-black"></i>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="cd-timeline__img bg-high-brown">
+                            <i class="pictogram pictogram-gift-donation-general bg-low-black"></i>
+                        </div>
+                    </t>
+
+                    <div class="cd-timeline__content text-component">
+                        <p class="modal-title text-core-blue"><t t-esc="item.title"/></p>
+                        <t t-if="item.content"><p class="text-muted"><t t-esc="item.content"/></p></t>
+
+                        <div class="flex justify-between items-center">
+                            <span class="cd-timeline__date"><t t-esc="item.create_date_str"/></span>
+                        </div>
+                    </div> <!-- cd-timeline__content -->
+                </div> <!-- cd-timeline__block -->
+            </t> <!-- sponsorship_gift -->
+            <t t-elif="item.model == 'correspondence'">
+                <div class="cd-timeline__block">
+                    <div class="cd-timeline__img bg-core-blue">
+                        <i class="pictogram pictogram-letter-writing bg-pure-white"></i>
+                    </div> <!-- cd-timeline__img -->
+
+                    <div class="cd-timeline__content text-component">
+                        <p class="modal-title text-core-blue"><t t-esc="item.title"/></p>
+                        <t t-if="item.content"><p class="text-muted"><t t-esc="item.content"/></p></t>
+
+                        <div class="flex justify-between items-center">
+                            <span class="cd-timeline__date"><t t-esc="item.create_date_str"/></span>
+                        </div>
+                    </div> <!-- cd-timeline__content -->
+                </div> <!-- cd-timeline__block -->
+            </t> <!-- correspondence -->
+            <t t-else="">
+                <div class="timeline-card d-flex">
+                    This item type is not supported in the timeline.
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>
