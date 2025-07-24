@@ -23,8 +23,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const loader = timelineEl.querySelector("#timeline-loader");
     const container = timelineEl.querySelector(".content-column");
 
-    let offset = 9; // Initial offset for loading data
-    const limit = 9; // Number of items to fetch per request
+    const getLimitBasedOnContainer = () => {
+        const scrollContainer = document.querySelector("#wrapwrap");
+        const containerHeight = scrollContainer?.clientHeight || window.innerHeight;
+
+        if (containerHeight >= 1200) return 18;
+        if (containerHeight >= 900) return 12;
+        if (containerHeight >= 700) return 9;
+        return 6;
+    };
+
+    const limit = getLimitBasedOnContainer(); // Number of items to fetch per request
+    let offset = limit; // Initial offset for loading data
     let isLoading = false; // Prevents multiple simultaneous requests
     let allLoaded = false; // Flags when all content has been loaded
 
@@ -143,6 +153,16 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
+    function checkIfMoreDataNeeded() {
+        const scrollHeight = scrollParent.scrollHeight;
+        const clientHeight = scrollParent.clientHeight;
+
+        if (clientHeight <= scrollHeight + 100 && !allLoaded) {
+            loadMoreData();
+        }
+    }
+
     // Initial check (in case first blocks are already visible)
     timelineInstance.showBlocks();
+    checkIfMoreDataNeeded();
 });
