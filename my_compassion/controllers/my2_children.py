@@ -89,6 +89,10 @@ class MyCompassionChildrenController(http.Controller):
     )
     def my2_render_child_timeline_page(self, child, **kwargs):
         """Renders the main timeline page with the initial batch of records."""
+        try:
+            child = self._get_sponsored_child_and_check_access(child.id)
+        except AccessError:
+            return request.redirect("/my2/children/")
 
         offset = int(kwargs.get("offset", 0))
         limit = int(kwargs.get("limit", 9))
@@ -114,14 +118,19 @@ class MyCompassionChildrenController(http.Controller):
         )
 
     @http.route(
-        "/my2/children/<int:child_id>/timeline-batch",
+        '/my2/children/<model("compassion.child"):child>/timeline-batch',
         type="json",
         auth="user",
         website=True,
         sitemap=False,
     )
-    def my2_get_child_timeline_items(self, child_id, **kwargs):
+    def my2_get_child_timeline_items(self, child, **kwargs):
         """API endpoint for infinite scroll. Returns a rendered HTML snippet."""
+        try:
+            child = self._get_sponsored_child_and_check_access(child.id)
+        except AccessError:
+            # For an API, it's better to return an empty or error response than to redirect.
+            return request.make_response("", headers={"Content-Type": "text/html"})
 
         offset = int(kwargs.get("offset", 0))
         limit = int(kwargs.get("limit", 9))
