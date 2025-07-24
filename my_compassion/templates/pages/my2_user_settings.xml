@@ -12,6 +12,62 @@
 -->
 <odoo>
     <template id="my2_user_settings_page" name="My Compassion 2 User Settings Page">
-        ciao
+        <t t-call="website.layout">
+            <div class="container">
+
+                <ul class="nav nav-pills d-none d-md-flex col-12" id="UserSettingsTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="info-tab" data-bs-toggle="tab"
+                           href="#info" role="tab"
+                           aria-controls="info" aria-selected="true">Personal information</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="settings-tab" data-bs-toggle="tab"
+                           href="#settings" role="tab"
+                           aria-controls="settings" aria-selected="false">Account settings</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="privacy-tab" data-bs-toggle="tab"
+                           href="#privacy" role="tab"
+                           aria-controls="privacy" aria-selected="false">Privacy data</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="communication-tab" data-bs-toggle="tab"
+                           href="#communication" role="tab"
+                           aria-controls="communication" aria-selected="false">Communication settings</a>
+                    </li>
+                </ul>
+
+                <!-- Contenuto tab -->
+                <div class="tab-content d-none d-md-flex col-12" id="UserSettingsTabContent">
+                    <div class="tab-pane fade show active" id="info" role="tabpanel"
+                         aria-labelledby="personal-information">
+                        <div class="p-3 bg-light border rounded">
+                            Contenuto del Tab 1
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="settings" role="tabpanel"
+                         aria-labelledby="account-settings">
+                        <div class="p-3 bg-light border rounded">
+                            Contenuto del Tab 2
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="privacy" role="tabpanel"
+                         aria-labelledby="privacy-data">
+                        <div class="p-3 bg-light border rounded">
+                            Contenuto del Tab 3
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="communication" role="tabpanel"
+                         aria-labelledby="communication-settings">
+                        <div class="p-3 bg-light border rounded">
+                            Contenuto del Tab 4
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </t>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </template>
 </odoo>
