@@ -54,7 +54,9 @@ def _get_sponsorships(partner, state=None):
         )
 
         if state == "active":
-            can_show = is_active or not exit_communication_sent
+            can_show = is_active or (
+                sponsorship.state == "terminated" and not exit_communication_sent
+            )
         elif state == "terminated":
             can_show = exit_communication_sent
         elif state == "write":
