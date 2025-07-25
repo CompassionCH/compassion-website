@@ -35,9 +35,11 @@
 }
 
 // Loop through the list of pictograms and generate a unique class for each one.
-@each $pictogram in $pictograms { // No "var." prefix needed with @import
+@each $pictogram in $pictograms {
+    // No "var." prefix needed with @import
     // Convert "BibleGift" to ".pictogram-bible-gift"
-    .pictogram-#{to-kebab-case($pictogram)} { // No "func." prefix needed
+    .pictogram-#{to-kebab-case($pictogram)} {
+        // No "func." prefix needed
         // Set the specific SVG file for this class
         mask-image: url("/theme_compassion_2025/static/src/img/pictograms/#{$pictogram}.svg");
     }

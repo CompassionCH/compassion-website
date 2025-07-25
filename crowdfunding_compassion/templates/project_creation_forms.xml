@@ -32,7 +32,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >Name of your project</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <input
@@ -60,7 +60,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >Project description</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <textarea
@@ -88,7 +88,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >Deadline of project</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <div
@@ -116,9 +116,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <small class="form-text text-muted">
-                                        Indicate when your project should end.
-                                    </small>
+                                    <small
+                    class="form-text text-muted"
+                  >Indicate when your project should end.</small>
                                 </div>
                             </div>
                         </div>
@@ -174,7 +174,8 @@
                     id="o6h6y2bz59w"
                   />
                                     <small class="form-text text-muted">
-                                        Paste any video link that showcase your project (e.g. https://vimeo.com/jlkj34ek5)
+                                        Paste any video link that showcase your project (e.g.
+                                        https://vimeo.com/jlkj34ek5)
                                     </small>
                                 </div>
                             </div>
@@ -184,39 +185,48 @@
               data-type="selection"
               data-name="Field"
             >
-  <div class="row s_col_no_resize s_col_no_bgcolor">
-    <label
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label
                   class=" col-sm-auto s_website_form_label "
                   style="width: 200px"
                   for="projectType"
                 >
-      <span class="s_website_form_label_content">My project is</span>
-      <span class="s_website_form_mark"> *</span>
-    </label>
-    <div class="col-sm">
-      <select
+                                    <span
+                    class="s_website_form_label_content"
+                  >My project is</span>
+                                    <span class="s_website_form_mark">*</span>
+                                </label>
+                                <div class="col-sm">
+                                    <select
                     class="s_website_form_select_item form-select form-control"
                     id="projectType"
                     name="type"
                     data-name="type"
                     required="true"
                   >
-        <option value="individual">Individual</option>
-        <option value="collective">Collective</option>
-      </select>
-      <small class="form-text text-muted">
-        Choose if you are doing your project alone, or if you want to open it to other fundraisers (ie: collective sport projects)
-      </small>
-    </div>
-  </div>
-</div>
+                                        <option
+                      value="individual"
+                    >Individual</option>
+                                        <option
+                      value="collective"
+                    >Collective</option>
+                                    </select>
+                                    <small class="form-text text-muted">
+                                        Choose if you are doing your project alone, or if you want to open it to other
+                                        fundraisers (ie: collective sport projects)
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
                         <div
               class="form-group s_website_form_field col-12    "
               data-type="url"
               data-name="Field"
             >
-                            <p
-              >If there is any social media pages for your event, you can link them on the project page.</p>
+                            <p>
+                                If there is any social media pages for your event, you can link them on the project
+                                page.
+                            </p>
                             <div class="row s_col_no_resize s_col_no_bgcolor">
                                 <label
                   class="col-form-label col-sm-auto s_website_form_label "
@@ -302,7 +312,9 @@
                 data-original-title=""
                 title=""
                 aria-describedby="tooltip560669"
-              >Next</a>
+              >
+                                Next
+                            </a>
                             <span id="s_website_form_result" />
                         </div>
                     </div>
@@ -338,8 +350,10 @@
                         </div>
                         <div class="col-4">
                             <h3 class="text-primary">Sponsor children</h3>
-                            <p
-              >If you want to propose people to sponsor a child, please indicate the goal number in the box below.</p>
+                            <p>
+                                If you want to propose people to sponsor a child, please indicate the goal number in the
+                                box below.
+                            </p>
                         </div>
                         <div class="col-2">
                             <img
@@ -351,8 +365,10 @@
                             <h3
                 class="text-primary"
               >Sponsor mums and babies</h3>
-                            <p
-              >If you want to propose people to sponsor a mum and her baby, please indicate the goal number in the box below.</p>
+                            <p>
+                                If you want to propose people to sponsor a mum and her baby, please indicate the goal
+                                number in the box below.
+                            </p>
                         </div>
                         <div class="col col-2" />
                         <div class="col col-4 d-flex">
@@ -396,7 +412,6 @@
                             </label>
                         </div>
                         <hr class="text-primary my-5" />
-
                         <!-- If no cause is selected for the project we display the funds available. -->
                         <t t-if="not product">
                             <div class="row">
@@ -426,7 +441,6 @@
                           width="128px"
                         />
                                             </a>
-
                                             <div class="card-body">
                                                 <h3
                           class="text-primary card-title text-center"
@@ -482,7 +496,8 @@
                                                     <t
                             t-esc="int(fund.standard_price) * (1 if fund.impact_type == 'standard' else 100)"
                             class="white"
-                          />.-
+                          />
+                                                    .-
                                                 </p>
                                             </div>
                                         </div>
@@ -492,7 +507,6 @@
                                 <div class="col-sm-2" t-if="nb_fund &lt; 3" />
                             </div>
                         </t>
-
                         <!-- If a cause is set, it means a participant is joining and must only set his personal goal. -->
                         <t t-if="product">
                             <div class="col col-12 text-center">
@@ -534,9 +548,8 @@
                     t-esc="product.crowdfunding_quantity_singular"
                   />
                                     <span>is equivalent to CHF</span>
-                                    <span
-                    t-esc="int(product.standard_price)"
-                  />.-
+                                    <span t-esc="int(product.standard_price)" />
+                                    .-
                                 </p>
                             </div>
                         </t>
@@ -616,9 +629,9 @@
                     style=""
                   >
                                         <t t-foreach="funds" t-as="fund">
-                                            <option t-att-value="fund.id"><t
-                          t-esc="fund.name"
-                        /></option>
+                                            <option t-att-value="fund.id">
+                                                <t t-esc="fund.name" />
+                                            </option>
                                         </t>
                                     </select>
                                 </div>
@@ -639,7 +652,9 @@
                 data-original-title=""
                 title=""
                 aria-describedby="tooltip943360"
-              >Next</a>
+              >
+                                Next
+                            </a>
                             <span id="s_website_form_result" />
                         </div>
                     </div>
@@ -701,7 +716,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >Title</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <select
@@ -715,9 +730,9 @@
                       t-foreach="request.env['res.partner.title'].sudo().search([('website_published', '=', True)])"
                       t-as="title"
                     >
-                                            <option t-att-value="title.id"><t
-                          t-esc="title.name"
-                        /></option>
+                                            <option t-att-value="title.id">
+                                                <t t-esc="title.name" />
+                                            </option>
                                         </t>
                                     </select>
                                 </div>
@@ -737,7 +752,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >Firstname</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <input
@@ -768,7 +783,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >Lastname</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <input
@@ -827,7 +842,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >Email</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <input
@@ -895,7 +910,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >Phone</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <input
@@ -922,7 +937,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >Street</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <input
@@ -949,7 +964,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >Postal code</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <input
@@ -977,7 +992,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >City</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <input
@@ -1035,7 +1050,7 @@
                                     <span
                     class="s_website_form_label_content"
                   >Personal motivation</span>
-                                    <span class="s_website_form_mark"> *</span>
+                                    <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <textarea
@@ -1060,7 +1075,9 @@
                 href="#"
                 role="button"
                 class="btn btn-primary btn-lg s_website_form_send o_default_snippet_text"
-              >Submit</a>
+              >
+                                Submit
+                            </a>
                             <span id="s_website_form_result" />
                         </div>
                     </div>
@@ -1072,17 +1089,16 @@
               data-snippet="s_text_block"
             >
                             <div class="container">
-                                <h2 class="text-center"><span
-                    class="fa fa-check-circle"
-                  />
+                                <h2 class="text-center">
+                                    <span class="fa fa-check-circle" />
                                     Thank you for
                                     <span t-if="not project">launching</span>
                                     <span t-else="">joining</span>
                                     a project !
                                 </h2>
-                                <p class="text-center">
-                                    You will receive an email with all the necessary information.
-                                </p>
+                                <p
+                  class="text-center"
+                >You will receive an email with all the necessary information.</p>
                             </div>
                         </section>
                     </div>

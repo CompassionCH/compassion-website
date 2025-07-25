@@ -4,14 +4,20 @@
         <div t-attf-class="toast-notification {{ widget.type }}">
             <div class="toast-notification-header">
                 <div class="toast-notification-title">
-                    <t t-if="widget.type === 'success'"><i class="icon fa fa-check-circle-o" aria-hidden="true"></i></t>
-                    <t t-if="widget.type === 'danger'"><i class="icon fa fa-times-circle-o" aria-hidden="true"></i></t>
-                    <t t-if="widget.type === 'info'"><i class="icon fa fa-info-circle"></i></t>
-                    <strong t-esc="widget.title"></strong>
+                    <t t-if="widget.type === 'success'">
+                        <i class="icon fa fa-check-circle-o" aria-hidden="true" />
+                    </t>
+                    <t t-if="widget.type === 'danger'">
+                        <i class="icon fa fa-times-circle-o" aria-hidden="true" />
+                    </t>
+                    <t t-if="widget.type === 'info'">
+                        <i class="icon fa fa-info-circle" />
+                    </t>
+                    <strong t-esc="widget.title" />
                 </div>
             </div>
             <div class="toast-notification-content">
-                <span t-esc="widget.message"></span>
+                <span t-esc="widget.message" />
             </div>
         </div>
     </t>

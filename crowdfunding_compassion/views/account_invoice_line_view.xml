@@ -10,7 +10,6 @@
             </field>
         </field>
     </record>
-
     <record id="donation_tree_view" model="ir.ui.view">
         <field name="name">account.move.line.crowdfunding.tree</field>
         <field name="model">account.move.line</field>
@@ -21,14 +20,14 @@
         decoration-muted="parent_state in ('posted', 'cancel')"
         default_order="due_date desc"
       >
-               <field name="due_date" />
-               <field name="partner_id" />
-               <field name="user_id" />
-               <field name="quantity" sum="Total" />
-               <field name="price_subtotal" sum="Total" />
-               <field name="parent_state" />
-               <field name="payment_state" />
-               <field name="is_anonymous" />
+                <field name="due_date" />
+                <field name="partner_id" />
+                <field name="user_id" />
+                <field name="quantity" sum="Total" />
+                <field name="price_subtotal" sum="Total" />
+                <field name="parent_state" />
+                <field name="payment_state" />
+                <field name="is_anonymous" />
             </tree>
         </field>
     </record>

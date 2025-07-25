@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Component: SelectComponent
+
+    Description:
+    Renders a customizable dropdown/select menu with a divider and an icon.
+    The component includes a <select> element with optional dynamic options and
+    can be styled via CSS classes.
+
+    This component is useful for creating form inputs or filters where users
+    need to select an option from a predefined list.
+
+    Props:
+    - (t-raw): Placeholder for injecting <option> elements dynamically.
+    - CSS Classes:
+        - custom-select: Applied to the <select> element for custom styling.
+        - select-divider: Visual separator in the UI.
+        - select-icon: Displays a dropdown icon (chevron) styled in blue.
+-->
+<odoo>
+    <template id="SelectComponent">
+        <div class="SelectComponent">
+            <select t-attf-class="custom-select" t-att-name="name" t-att-id="id">
+                <t t-raw="0" />
+            </select>
+            <span class="select-divider" />
+            <span t-attf-class="select-icon text-core-blue icon-chevron-down">
+
+            </span>
+        </div>
+    </template>
+</odoo>

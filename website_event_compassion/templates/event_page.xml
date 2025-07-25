@@ -16,9 +16,9 @@
             <div class="o_we_bg_filter bg-black-50" />
             <div class="container s_allow_columns">
                 <h1 style="text-align: center;">
-                    <font style="font-size: 62px; font-weight: bold;"><span
-              t-field="main_object.name"
-            /></font>
+                    <font style="font-size: 62px; font-weight: bold;">
+                        <span t-field="main_object.name" />
+                    </font>
                 </h1>
                 <h4 class="text-center">
                     <t t-esc="start_date" />
@@ -35,7 +35,6 @@
             </div>
         </section>
     </template>
-
     <template id="event_barometer" name="Event barometer">
         <p
       t-att-class="barometer_title_class"
@@ -50,13 +49,16 @@
         aria-valuemax="100"
         t-attf-style="width: #{ barometer.amount_raised_percents }%;"
       >
+
             </div>
             <t t-if="amount_inside">
                 <div t-attf-class="progress-amount #{ barometer_amount_class }">
                     <t
             t-esc="barometer.amount_raised or 0"
             t-options="{'widget': 'integer'}"
-          />/<t
+          />
+                    /
+                    <t
             t-esc="barometer.amount_objective or 0"
             t-options="{'widget': 'integer'}"
           />
@@ -71,7 +73,9 @@
                 <t
           t-esc="barometer.amount_raised or 0"
           t-options="{'widget': 'integer'}"
-        />/<t
+        />
+                /
+                <t
           t-esc="barometer.amount_objective or 0"
           t-options="{'widget': 'integer'}"
         />
@@ -81,13 +85,11 @@
             </div>
         </t>
     </template>
-
     <template id="event_page" name="Event page">
         <t t-call="website.layout">
             <t t-set="additional_title" t-value="event.name" />
             <div id="wrap">
                 <t t-call="website_event_compassion.event_header" />
-
                 <!-- Event description -->
                 <div class="container-fluid event_compassion pl-lg-5">
                     <div class="row mb-4">
@@ -133,7 +135,9 @@
                                         <a
                       href="#event_registration_section"
                       class="btn btn-primary w-75"
-                    >Register now</a>
+                    >
+                                            Register now
+                                        </a>
                                     </t>
                                     <t t-else="">
                                         <t
@@ -141,16 +145,18 @@
                     >
                                             Registrations will open soon.
                                         </t>
-                                        <t t-else="">
-                                            Registrations are closed.
-                                        </t>
+                                        <t
+                      t-else=""
+                    >Registrations are closed.</t>
                                     </t>
                                 </p>
                                 <a
                   href="#compassion_event_participants"
                   class="btn btn-primary w-75"
                   t-if="event.odoo_event_id.fundraising"
-                >See participants</a>
+                >
+                                    See participants
+                                </a>
                             </div>
                             <div t-field="event.website_side_info" />
                         </div>
@@ -185,7 +191,6 @@
                 </div>
                 <div class="container" />
             </div>
-
         </t>
     </template>
 </odoo>

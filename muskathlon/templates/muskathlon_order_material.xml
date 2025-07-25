@@ -7,17 +7,17 @@
         <t t-call="portal.frontend_layout">
             <t t-set="event" t-value="main_object.compassion_event_id" />
             <t t-set="additional_title" t-value="event.name" />
-
             <div class="container my-5">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a
-                href="/my/events"
-              >My Events
-                        </a></li>
-                        <li class="breadcrumb-item"><a
-                t-attf-href="/my/events/#{slug(main_object)}"
-              ><t t-esc="additional_title" /></a></li>
+                        <li class="breadcrumb-item">
+                            <a href="/my/events">My Events</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a t-attf-href="/my/events/#{slug(main_object)}">
+                                <t t-esc="additional_title" />
+                            </a>
+                        </li>
                         <li
               class="breadcrumb-item active"
               aria-current="page"
@@ -27,8 +27,12 @@
                 <p
           class="css_non_editable_mode_hidden o_not_editable text-muted font-italic"
           translate="no"
-        >Put a custom introduction block here. Video, images, etc... It will be displayed on every Muskathlon event</p>
+        >
+                    Put a custom introduction block here. Video, images, etc... It will be displayed on every Muskathlon
+                    event
+                </p>
                 <div class="oe_structure">
+
                 </div>
                 <section
           class="s_text_image pt32 pb32 o_colored_level"
@@ -49,8 +53,10 @@
                             <div class="col-lg-6 pt16 pb16 o_colored_level">
                                 <h2
                 >Order free personalized Muskathlon flyers</h2>
-                                <p
-                >Hereby you can order personalized support flyers to distribute to your relatives (family, friends, colleagues...).</p>
+                                <p>
+                                    Hereby you can order personalized support flyers to distribute to your relatives
+                                    (family, friends, colleagues...).
+                                </p>
                                 <t t-call="muskathlon.order_material_form" />
                             </div>
                         </div>
@@ -65,10 +71,17 @@
                         <div class="row align-items-start">
                             <div class="col-lg-6 pt16 pb16 o_colored_level">
                                 <h2>Sponsorships - Order Childpacks</h2>
-                                <p
-                >A warm thank you for committing yourself with Compassion to release children from poverty through sponsorship!</p>
-                                <p><b
-                  >The seven childpacks are reserved for you. When someone decides to sponsor one of the children who has been your delegate, and sends the completed form to our office, the sponsorship will be credited to you.</b></p>
+                                <p>
+                                    A warm thank you for committing yourself with Compassion to release children from
+                                    poverty through sponsorship!
+                                </p>
+                                <p>
+                                    <b>
+                                        The seven childpacks are reserved for you. When someone decides to sponsor one
+                                        of the children who has been your delegate, and sends the completed form to our
+                                        office, the sponsorship will be credited to you.
+                                    </b>
+                                </p>
                                 <p>Don't hesitate to order new childpacks.</p>
                                 <t t-call="muskathlon.order_childpack_form" />
                             </div>
@@ -76,7 +89,10 @@
                                 <p
                   class="css_non_editable_mode_hidden o_not_editable text-muted font-italic"
                   translate="no"
-                >Put a custom resources block here. Video, images, documents, etc... It will be displayed on every Muskathlon event</p>
+                >
+                                    Put a custom resources block here. Video, images, documents, etc... It will be
+                                    displayed on every Muskathlon event
+                                </p>
                                 <div class="oe_structure" />
                                 <t
                   t-set="event"
@@ -115,7 +131,7 @@
                   t-if="event.website_my_sport_material != ''"
                   t-field="event.website_my_sport_material"
                 />
-                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -132,7 +148,6 @@
             <t t-set="form_type">childpack</t>
         </t>
     </template>
-
     <template id="muskathlon_order_generic_form">
         <section
       class="s_website_form pt16 pb16 o_colored_level"
@@ -283,7 +298,9 @@
                 href="#"
                 role="button"
                 class="btn btn-primary btn-lg s_website_form_send o_default_snippet_text"
-              >Submit</a>
+              >
+                                Submit
+                            </a>
                             <span id="s_website_form_result" />
                         </div>
                     </div>
@@ -295,14 +312,14 @@
               data-snippet="s_text_block"
             >
                             <div class="container">
-                                <h2 class="text-center"><span
-                    class="fa fa-check-circle"
-                  />
-                                    Thank You For Your Order</h2>
-                                <p
-                  class="text-center"
-                >Our team will prepare the material for you and it will be sent to you by postal mail wiithin the following days.<br
-                  />
+                                <h2 class="text-center">
+                                    <span class="fa fa-check-circle" />
+                                    Thank You For Your Order
+                                </h2>
+                                <p class="text-center">
+                                    Our team will prepare the material for you and it will be sent to you by postal mail
+                                    wiithin the following days.
+                                    <br />
                                 </p>
                             </div>
                         </section>

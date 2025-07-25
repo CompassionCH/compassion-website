@@ -6,11 +6,13 @@
     />
         <section id="event_donation_form" class="container py-4">
             <h3>I want to contribute with a donation</h3>
-            <p>Show your support to <t
-          t-esc="registration.profile_name"
-        /> with the
+            <p>
+                Show your support to
+                <t t-esc="registration.profile_name" />
+                with the
                 amount of
-                your choice.</p>
+                your choice.
+            </p>
             <form action="donation" method="post" enctype="multipart/form-data">
                 <input
           type="hidden"
@@ -30,8 +32,10 @@
               type="button"
               data-donation-value="10"
               t-translation="off"
-            ><t t-esc="currency" />
-                            10</button>
+            >
+                            <t t-esc="currency" />
+                            10
+                        </button>
                     </div>
                     <div class="col-12 col-md-3 mb-2 mb-md-0">
                         <button
@@ -39,8 +43,10 @@
               type="button"
               data-donation-value="25"
               t-translation="off"
-            ><t t-esc="currency" />
-                            25</button>
+            >
+                            <t t-esc="currency" />
+                            25
+                        </button>
                     </div>
                     <div class="col-12 col-md-3 mb-2 mb-md-0">
                         <button
@@ -48,8 +54,10 @@
               type="button"
               data-donation-value="50"
               t-translation="off"
-            ><t t-esc="currency" />
-                            50</button>
+            >
+                            <t t-esc="currency" />
+                            50
+                        </button>
                     </div>
                     <div class="col-12 col-md-3 mb-2 mb-md-0">
                         <button
@@ -57,10 +65,12 @@
               type="button"
               data-donation-value="100"
               t-translation="off"
-            ><t t-esc="currency" /> 100</button>
+            >
+                            <t t-esc="currency" />
+                            100
+                        </button>
                     </div>
                 </div>
-
                 <div class="d-flex my-3">
                     <span class="btn btn-outline-primary btn-lg">
                         <span t-esc="currency" />
@@ -75,9 +85,10 @@
             />
                     </span>
                 </div>
-                <div class="error alert alert-danger d-none" role="alert">
-                    Please enter an amount.
-                </div>
+                <div
+          class="error alert alert-danger d-none"
+          role="alert"
+        >Please enter an amount.</div>
                 <button
           type="submit"
           class="btn btn-secondary btn-lg mb-2"

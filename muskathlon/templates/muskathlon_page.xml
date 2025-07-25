@@ -24,9 +24,11 @@
                       class="sport_icon"
                       src="/muskathlon/static/src/data/biking.png"
                     />
-                                        <br /><span class="distance_km"><t
-                        t-esc="discipline.distance_km"
-                      />km</span>
+                                        <br />
+                                        <span class="distance_km">
+                                            <t t-esc="discipline.distance_km" />
+                                            km
+                                        </span>
                                     </td>
                                 </t>
                                 <t t-if="'Climbing' == discipline.sport">
@@ -35,9 +37,11 @@
                       class="sport_icon"
                       src="/muskathlon/static/src/data/climbing.png"
                     />
-                                        <br /><span class="distance_km"><t
-                        t-esc="discipline.distance_km"
-                      />km</span>
+                                        <br />
+                                        <span class="distance_km">
+                                            <t t-esc="discipline.distance_km" />
+                                            km
+                                        </span>
                                     </td>
                                 </t>
                                 <t t-if="'Running' == discipline.sport">
@@ -46,9 +50,11 @@
                       class="sport_icon"
                       src="/muskathlon/static/src/data/running.png"
                     />
-                                        <br /><span class="distance_km"><t
-                        t-esc="discipline.distance_km"
-                      />km</span>
+                                        <br />
+                                        <span class="distance_km">
+                                            <t t-esc="discipline.distance_km" />
+                                            km
+                                        </span>
                                     </td>
                                 </t>
                                 <t t-if="'Walking' == discipline.sport">
@@ -57,9 +63,11 @@
                       class="sport_icon walk"
                       src="/muskathlon/static/src/data/walking.png"
                     />
-                                        <br /><span class="distance_km"><t
-                        t-esc="discipline.distance_km"
-                      />km</span>
+                                        <br />
+                                        <span class="distance_km">
+                                            <t t-esc="discipline.distance_km" />
+                                            km
+                                        </span>
                                     </td>
                                 </t>
                             </span>

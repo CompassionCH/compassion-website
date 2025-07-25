@@ -22,8 +22,9 @@ Compassion Theme 2025
 
 |badge1| |badge2| |badge3|
 
-Compassion Theme based on the 2025 brand redesign of Compassion International
-and the guidelines provided by the Compassion UK for their website.
+Compassion Theme based on the 2025 brand redesign of Compassion
+International and the guidelines provided by the Compassion UK for their
+website.
 
 **Table of contents**
 
@@ -39,15 +40,6 @@ If you spotted it first, help us to smash it by providing a detailed and welcome
 `feedback <https://github.com/CompassionCH/compassion-website/issues/new?body=module:%20theme_compassion_2025%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
-
-UI/UX
-=======
-
-Using the 7:1 sass architecture, this theme provides a set of variables to customize the look and feel of the Compassion website.
-It includes variables for colors, fonts, and other design elements that align with the Compassion brand.
-As you go through the theme, you will find that there is no _main.scss file. That is normal. Odoo 14 does not allow the use
-of @import, so every file is defined in the assets.xml and compiled into a single file by odoo.
-Be careful when editing the files, as they are compiled in the order they are defined in the assets.xml file.
 
 Credits
 =======

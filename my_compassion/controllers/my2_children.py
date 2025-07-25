@@ -6,8 +6,6 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from werkzeug.exceptions import NotFound
-
 from odoo import http
 from odoo.exceptions import AccessError
 from odoo.http import request

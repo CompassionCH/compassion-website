@@ -10,7 +10,7 @@
                 <t t-foreach="breadcrumbs" t-as="crumb">
                     <li t-att-class="'breadcrumb-item active' if crumb.get('active') else 'breadcrumb-item'">
                         <a t-att-href="crumb.get('url')">
-                            <t t-esc="crumb.get('name')"/>
+                            <t t-esc="crumb.get('name')" />
                         </a>
                     </li>
                 </t>

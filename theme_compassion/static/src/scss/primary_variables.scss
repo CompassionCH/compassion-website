@@ -1,20 +1,23 @@
 @font-face {
-font-family: 'Neighbour Bold';
-src: url('/theme_compassion/static/src/fonts/NeighbourSans-Bold.woff2') format('woff2');
+  font-family: "Neighbour Bold";
+  src: url("/theme_compassion/static/src/fonts/NeighbourSans-Bold.woff2")
+    format("woff2");
 }
 @font-face {
-font-family: 'Neighbour ExtraBold';
-src: url('/theme_compassion/static/src/fonts/NeighbourSans-ExtraBold.woff2') format('woff2');
+  font-family: "Neighbour ExtraBold";
+  src: url("/theme_compassion/static/src/fonts/NeighbourSans-ExtraBold.woff2")
+    format("woff2");
 }
 @font-face {
-font-family: 'Neighbour Medium';
-src: url('/theme_compassion/static/src/fonts/NeighbourSans-Medium.woff2') format('woff2');
+  font-family: "Neighbour Medium";
+  src: url("/theme_compassion/static/src/fonts/NeighbourSans-Medium.woff2")
+    format("woff2");
 }
 @font-face {
-font-family: 'Neighbour Regular';
-src: url('/theme_compassion/static/src/fonts/NeighbourSans-Regular.woff2') format('woff2');
+  font-family: "Neighbour Regular";
+  src: url("/theme_compassion/static/src/fonts/NeighbourSans-Regular.woff2")
+    format("woff2");
 }
-
 
 //------------------------------------------------------------------------------
 // Colors
@@ -30,7 +33,7 @@ $o-color-palettes: (
     "o-color-5": #111111,
     "footer": 4,
     "copyright": 4,
-  ),
+  )
 );
 
 //------------------------------------------------------------------------------
@@ -53,18 +56,25 @@ $o-theme-font-configs: (
     "url": "Montserrat:300,300i,400,400i,700,700i",
   ),
   "Neighbour Bold": (
-    "family": ("Neighbour Bold"),
+    "family": (
+      "Neighbour Bold",
+    ),
   ),
   "Neighbour ExtraBold": (
-    "family": ("Neighbour ExtraBold"),
+    "family": (
+      "Neighbour ExtraBold",
+    ),
   ),
   "Neighbour Regular": (
-    "family": ("Neighbour Regular"),
+    "family": (
+      "Neighbour Regular",
+    ),
   ),
   "Neighbour Medium": (
-    "family": ("Neighbour Medium"),
+    "family": (
+      "Neighbour Medium",
+    ),
   ),
-
 );
 
 //------------------------------------------------------------------------------
@@ -90,5 +100,5 @@ $o-website-values-palettes: (
     "btn-font-size-lg": 2rem,
     "btn-padding-y-lg": 0.4rem,
     "btn-padding-x-lg": 2rem,
-  ),
+  )
 );
