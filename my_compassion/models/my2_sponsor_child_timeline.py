@@ -52,7 +52,7 @@ class CompassionSponsorChildTimeline(models.Model):
     @api.depends('create_date')
     def _compute_create_date(self):
         for record in self:
-            record.create_date_str = record.create_date.strftime('%d %B %Y')
+            record.create_date_str = format_date(self.env, record.create_date, date_format='d MMM yyyy')
 
     '''
     Initialize the view by creating or replacing it in the database.
