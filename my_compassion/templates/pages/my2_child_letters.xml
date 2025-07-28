@@ -79,14 +79,6 @@
                                         <div class="w-60">
                                             <t t-set="id" t-value="'monthDropdownFrom'" />
                                             <t t-set="name" t-value="'month_from'" />
-                                            <t
-                                                t-set="months"
-                                                t-value="[
-        (1, 'January'), (2, 'February'), (3, 'March'), (4, 'April'),
-        (5, 'May'), (6, 'June'), (7, 'July'), (8, 'August'),
-        (9, 'September'), (10, 'October'), (11, 'November'), (12, 'December')
-    ]"
-                                            />
                                             <t t-call="theme_compassion_2025.SelectComponent">
                                                 <option value="">Month</option>
                                                 <t t-foreach="months" t-as="month">
@@ -122,14 +114,6 @@
                                         <div class="w-60">
                                             <t t-set="id" t-value="'monthDropdownTo'" />
                                             <t t-set="name" t-value="'month'" />
-                                            <t
-                                                t-set="months"
-                                                t-value="[
-        (1, 'January'), (2, 'February'), (3, 'March'), (4, 'April'),
-        (5, 'May'), (6, 'June'), (7, 'July'), (8, 'August'),
-        (9, 'September'), (10, 'October'), (11, 'November'), (12, 'December')
-    ]"
-                                            />
                                             <t t-call="theme_compassion_2025.SelectComponent">
                                                 <option value="">Month</option>
                                                 <t t-foreach="months" t-as="month">
@@ -249,19 +233,14 @@
             </div>
             <!-- Letters -->
             <div id="lettersContainer" class="row mb-3">
-                <t t-foreach="letter_children_pairs" t-as="pair" t-foreach-index="i">
-                    <t t-set="letter" t-value="pair[0]" />
-                    <t t-set="child" t-value="pair[1]" />
+                <t t-foreach="letters" t-as="letter" t-foreach-index="i">
                     <div
                         class="col-12 col-md-6 col-lg-4 mb-3 mt-3 letter-card"
                         t-att-data-create_date="letter.create_date"
                         t-att-data-type="letter.direction"
                         t-att-data-index="i"
                     >
-                        <t t-call="my_compassion.my2_letter_card_component">
-                            <t t-set="letter" t-value="letter" />
-                            <t t-set="child" t-value="child" />
-                        </t>
+                        <t t-call="my_compassion.my2_letter_card_component" />
                     </div>
                 </t>
             </div>

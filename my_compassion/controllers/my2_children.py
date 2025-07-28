@@ -12,23 +12,17 @@ from odoo.http import request
 
 
 class MyCompassionChildrenController(http.Controller):
-    def _get_sponsored_child_and_check_access(self, child_id):
+    def _check_sponsored_child_access(self, child):
         """
         Private helper to securely fetch a sponsored child.
         Ensures the current user is a sponsor of the requested child.
-        :param child_id: The ID of the child to fetch.
-        :return: A recordset of the 'compassion.child'.
+        :param child: The requested child record to fetch.
         :raises: odoo.exceptions.AccessError if the user is not an active sponsor.
         """
-        partner = request.env.user.partner_id
-        child = partner.sponsorship_ids.filtered(
-            lambda s: s.child_id.id == child_id
-        ).mapped("child_id")
-        if not child:
+        if not request.env.user.partner_id.sponsorship_ids.mapped("child_id") & child:
             raise AccessError(
                 _("You are not authorized to view this child's information.")
             )
-        return child
 
     def _get_timeline_records(self, partner_id, child_id, offset=0, limit=9):
         """Private helper to fetch a paginated list of timeline records."""
@@ -88,7 +82,7 @@ class MyCompassionChildrenController(http.Controller):
     def my2_render_child_timeline_page(self, child, **kwargs):
         """Renders the main timeline page with the initial batch of records."""
         try:
-            child = self._get_sponsored_child_and_check_access(child.id)
+            self._check_sponsored_child_access(child)
         except AccessError:
             return request.redirect("/my2/children/")
 
@@ -125,7 +119,7 @@ class MyCompassionChildrenController(http.Controller):
     def my2_get_child_timeline_items(self, child, **kwargs):
         """API endpoint for infinite scroll. Returns a rendered HTML snippet."""
         try:
-            child = self._get_sponsored_child_and_check_access(child.id)
+            self._check_sponsored_child_access(child)
         except AccessError:
             # For an API, it's better to return an empty or error response
             # than to redirect.
