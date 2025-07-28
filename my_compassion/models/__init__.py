@@ -14,4 +14,5 @@ from . import (
     move,
     res_partner,
     res_user,
+    my2_sponsor_child_timeline,
 )

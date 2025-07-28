@@ -3,17 +3,11 @@
     <record id="view_muskathlon_events_thank_donation" model="ir.ui.view">
         <field name="name">crm.event.compassion.muskathlon.form</field>
         <field name="model">crm.event.compassion</field>
-        <field
-      name="inherit_id"
-      ref="website_event_compassion.view_muskathlon_event_website"
-    />
+        <field name="inherit_id" ref="website_event_compassion.view_muskathlon_event_website" />
         <field name="arch" type="xml">
             <notebook>
                 <field name="is_muskathlon" invisible="1" />
-                <page
-          string="Muskathlon website/portal"
-          attrs="{'invisible': [('is_muskathlon', '!=', True)]}"
-        >
+                <page string="Muskathlon website/portal" attrs="{'invisible': [('is_muskathlon', '!=', True)]}">
                     <group>
                         <group string="Registration">
                             <field name="sport_discipline_ids" />

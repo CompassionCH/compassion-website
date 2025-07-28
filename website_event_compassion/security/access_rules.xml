@@ -4,10 +4,7 @@
         <field name="name">Event website: Access Compassion event</field>
         <field name="model_id" ref="model_crm_event_compassion" />
         <field name="domain_force">[('website_published', '=', True)]</field>
-        <field
-      name="groups"
-      eval="[(4, ref('base.group_public')), (4, ref('base.group_portal'))]"
-    />
+        <field name="groups" eval="[(4, ref('base.group_public')), (4, ref('base.group_portal'))]" />
         <field name="perm_read" eval="True" />
         <field name="perm_write" eval="False" />
         <field name="perm_create" eval="False" />
@@ -17,10 +14,7 @@
         <field name="name">Event website: Access event participant</field>
         <field name="model_id" ref="model_event_registration" />
         <field name="domain_force">[('website_published', '=', True)]</field>
-        <field
-      name="groups"
-      eval="[(4, ref('base.group_public')), (4, ref('base.group_portal'))]"
-    />
+        <field name="groups" eval="[(4, ref('base.group_public')), (4, ref('base.group_portal'))]" />
         <field name="perm_read" eval="True" />
         <field name="perm_write" eval="False" />
         <field name="perm_create" eval="False" />
@@ -29,13 +23,8 @@
     <record id="res_partner_public" model="ir.rule">
         <field name="name">Event website: Access partners</field>
         <field name="model_id" ref="model_res_partner" />
-        <field
-      name="domain_force"
-    >[('registration_ids.website_published', '=', True)]</field>
-        <field
-      name="groups"
-      eval="[(4, ref('base.group_public')), (4, ref('base.group_portal'))]"
-    />
+        <field name="domain_force">[('registration_ids.website_published', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('base.group_public')), (4, ref('base.group_portal'))]" />
         <field name="perm_read" eval="True" />
         <field name="perm_write" eval="False" />
         <field name="perm_create" eval="False" />

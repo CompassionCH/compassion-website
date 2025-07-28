@@ -12,22 +12,11 @@ body {
     display: -webkit-flex;
     justify-content: center;
     width: 100%;
-    height: 100%;
-    position: relative;
 }
 
 body {
     max-width: 1920px;
-    padding-left: 16px;
-    padding-right: 16px;
-    font-family: "NeighbourSans Regular", sans-serif;
+    font-family: "NeighbourSans Regular", sans-serif !important;
     font-size: 16px;
     background-color: map-get($compassion-colors, "pure-white");
-
-    // Bootstrap "sm" breakpoint starts at 640px,
-    // so we create a media query for that to adds bigger gutters for larger screens as per the designer's request
-    @media (min-width: 640px) {
-        padding-left: 36px;
-        padding-right: 36px;
-    }
 }

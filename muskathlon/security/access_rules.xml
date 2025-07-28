@@ -4,9 +4,7 @@
         <record id="muskathlon_registration_public" model="ir.rule">
             <field name="name">Event Registration: Public</field>
             <field name="model_id" ref="model_event_registration" />
-            <field
-        name="domain_force"
-      >[('website_published', '=', True)]</field>
+            <field name="domain_force">[('website_published', '=', True)]</field>
             <field name="groups" eval="[(4, ref('base.group_public'))]" />
             <field name="perm_read" eval="True" />
             <field name="perm_write" eval="False" />
@@ -16,9 +14,7 @@
         <record id="muskathlon_registration_my" model="ir.rule">
             <field name="name">Event Registration: My Registrations</field>
             <field name="model_id" ref="model_event_registration" />
-            <field
-        name="domain_force"
-      >[('state', '!=', 'cancel'),('partner_id.user_ids', 'in', user.id)]</field>
+            <field name="domain_force">[('state', '!=', 'cancel'),('partner_id.user_ids', 'in', user.id)]</field>
             <field name="groups" eval="[(4, ref('base.group_portal'))]" />
             <field name="perm_read" eval="True" />
             <field name="perm_write" eval="True" />
@@ -28,9 +24,7 @@
         <record id="contracts_personal" model="ir.rule">
             <field name="name">Portal partner: access my sponsorships</field>
             <field name="model_id" ref="model_recurring_contract" />
-            <field
-        name="domain_force"
-      >[('partner_id.user_ids', 'in', user.id)]</field>
+            <field name="domain_force">[('partner_id.user_ids', 'in', user.id)]</field>
             <field name="groups" eval="[(4, ref('base.group_portal'))]" />
             <field name="perm_read" eval="True" />
             <field name="perm_write" eval="False" />
@@ -39,13 +33,8 @@
         </record>
         <record id="gmc_message_personal" model="ir.rule">
             <field name="name">Portal partner: create gmc message for me</field>
-            <field
-        name="model_id"
-        ref="message_center_compassion.model_gmc_message"
-      />
-            <field
-        name="domain_force"
-      >[('partner_id.user_ids', 'in', user.id)]</field>
+            <field name="model_id" ref="message_center_compassion.model_gmc_message" />
+            <field name="domain_force">[('partner_id.user_ids', 'in', user.id)]</field>
             <field name="groups" eval="[(4, ref('base.group_portal'))]" />
             <field name="perm_read" eval="True" />
             <field name="perm_write" eval="True" />

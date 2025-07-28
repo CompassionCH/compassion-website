@@ -33,5 +33,11 @@
             <field name="domain_force">[('is_church', '=', True)]</field>
             <field name="groups" eval="[(4, ref('base.group_portal'))]" />
         </record>
+        <record id="sponsorship_timeline_access_portal" model="ir.rule">
+            <field name="name">MyCompassion: sponsorship timeline access</field>
+            <field name="model_id" ref="model_sponsorship_timeline" />
+            <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]" />
+        </record>
     </data>
 </odoo>

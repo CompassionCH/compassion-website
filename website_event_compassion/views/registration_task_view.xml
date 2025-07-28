@@ -11,18 +11,12 @@
                         <field name="sequence" />
                         <field name="stage_id" />
                         <field name="website_published" />
+                        <field name="default_task_url" attrs="{'invisible': [('website_published', '=', False)]}" />
+                        <field name="open_new_tab" attrs="{'invisible': [('website_published', '=', False)]}" />
                         <field
-              name="default_task_url"
-              attrs="{'invisible': [('website_published', '=', False)]}"
-            />
-                        <field
-              name="open_new_tab"
-              attrs="{'invisible': [('website_published', '=', False)]}"
-            />
-                        <field
-              name="task_complete_on_click"
-              attrs="{'invisible': [('website_published', '=', False)]}"
-            />
+                            name="task_complete_on_click"
+                            attrs="{'invisible': [('website_published', '=', False)]}"
+                        />
                     </group>
                 </sheet>
             </form>
@@ -47,12 +41,7 @@
                 <field name="name" />
                 <field name="stage_id" />
                 <group expand="0" string="Group By">
-                    <filter
-            string="Registration stage"
-            name="stage_id"
-            domain="[]"
-            context="{'group_by':'stage_id'}"
-          />
+                    <filter string="Registration stage" name="stage_id" domain="[]" context="{'group_by':'stage_id'}" />
                 </group>
             </search>
         </field>
@@ -63,10 +52,10 @@
         <field name="view_mode">tree,form</field>
     </record>
     <menuitem
-    id="menu_registration_task"
-    name="Registration tasks"
-    sequence="3"
-    action="action_registration_task"
-    parent="event.menu_event_configuration"
-  />
+        id="menu_registration_task"
+        name="Registration tasks"
+        sequence="3"
+        action="action_registration_task"
+        parent="event.menu_event_configuration"
+    />
 </odoo>
