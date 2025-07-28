@@ -88,12 +88,22 @@
                                 <i class="icon-download01 ml-auto" />
                             </a>
                             <div class="dropdown-divider border-low-black" />
-                            <a class="dropdown-item d-flex align-items-center pt-0 pb-0 pl-3 pr-3" href="#">
+                            <a
+                                class="dropdown-item d-flex align-items-center pt-0 pb-0 pl-3 pr-3"
+                                t-attf-href="/my2/children/{{child.id}}/letter/new"
+                            >
                                 Reply
                                 <i class="icon-pencil02 ml-auto" />
                             </a>
                             <div class="dropdown-divider border-low-black" />
-                            <a class="dropdown-item d-flex align-items-center pt-0 pb-0 pl-3 pr-3" href="#">
+                            <a
+                                class="dropdown-item d-flex align-items-center pt-0 pb-0 pl-3 pr-3 js_share_letter"
+                                href="javascript:void(0);"
+                                t-att-data-share-url="request.httprequest.url_root + 'b2s_image?id=%s&amp;disposition=inline&amp;file_type=pdf' % letter.uuid"
+                                t-attf-data-share-title="Letter from #{child.preferred_name}"
+                                t-attf-data-share-text="Check out this letter from #{child.preferred_name}!"
+                                role="button"
+                            >
                                 Share
                                 <i class="icon-share06 ml-auto" />
                             </a>

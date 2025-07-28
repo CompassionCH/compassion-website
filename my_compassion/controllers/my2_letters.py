@@ -128,7 +128,10 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
     )
     def my2_render_new_letter_page(self, child, **kwargs):
         partner = request.env.user.partner_id
-        self._check_sponsored_child_access(child)
+        try:
+            self._check_sponsored_child_access(child)
+        except AccessError:
+            return request.redirect("/my2/children/")
         # Retrieve the letter templates
         templates = (
             request.env["correspondence.template"]
@@ -179,6 +182,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             child_id = int(post.get("child_id"))
             child = request.env["compassion.child"].browse(child_id)
             self._check_sponsored_child_access(child)
+            template_id = int(post.get("template_id"))
         except (AccessError, ValueError, TypeError):
             return {"error": "Something went wrong."}
 
@@ -197,7 +201,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 ]
             ),
             "body": post.get("letter_body"),
-            "template_id": int(post.get("template_id")),
+            "template_id": template_id,
             "image_ids": attachments,
             "source": post.get("source"),
         }

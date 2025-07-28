@@ -6,9 +6,9 @@
     <!-- Make all pages load global.css file -->
     <template id="my_compassion_assets" name="My Compassion 2.0 assets" inherit_id="website.assets_frontend">
         <xpath expr="." position="inside">
-            <script type="text/xml" src="/my_compassion/static/src/xml/toast_notification.xml" />
             <script type="text/javascript" src="/my_compassion/static/src/js/toast_notification.js" />
             <script type="text/javascript" src="/my_compassion/static/src/js/toast_service.js" />
+            <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_letters.js" />
             <link rel="stylesheet" href="/my_compassion/static/src/css/toast_notification.css" />
         </xpath>
         <!-- Loads files at the end of page -->
