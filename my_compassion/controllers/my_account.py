@@ -45,29 +45,20 @@ def _get_sponsorships(partner, state=None):
 
     :return: a recordset of recurring.contract of the given user
     """
-    env = request.env
-    end_reason_child_depart = env.ref("sponsorship_compassion.end_reason_depart")
 
     def filter_sponsorships(sponsorship):
         can_show = True
         is_active = sponsorship.state not in ["draft", "cancelled", "terminated"]
-        is_recent_terminated = (
-            sponsorship.state == "terminated"
-            and sponsorship.can_write_letter
-            and sponsorship.end_reason_id == end_reason_child_depart
-        )
         exit_communication_sent = (
             sponsorship.state == "terminated" and sponsorship.sds_state != "sub_waiting"
         )
 
         if state == "active":
-            can_show = is_active or is_recent_terminated and not exit_communication_sent
-        elif state == "terminated":
-            can_show = (
-                sponsorship.state == "terminated"
-                and not is_recent_terminated
-                or exit_communication_sent
+            can_show = is_active or (
+                sponsorship.state == "terminated" and not exit_communication_sent
             )
+        elif state == "terminated":
+            can_show = exit_communication_sent
         elif state == "write":
             can_show = sponsorship.can_write_letter
 
