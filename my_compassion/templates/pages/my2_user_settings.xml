@@ -17,8 +17,8 @@
         <t t-call="website.layout">
             <div class="container">
 
-                <!-- ### Child related information (family, project and country) ### -->
-                <section class="user_settings_tabs tabs-component">
+                <!-- Navigation tabs -->
+                <section class="user_settings_tabs tabs-component mt-4">
                     <!-- Mobile Dropdown (Visible on small screens) -->
                     <div class="settings_select d-block d-lg-none">
                         <select class="form-control custom-select"
@@ -82,103 +82,164 @@
                     </ul>
                 </section>
 
-
                 <!-- Tab content -->
-                <div class="tab-content d-block col-12"
+                <div class="tab-content d-block col-lg-8 col-md-12 col-sm-12 mx-auto"
                      id="UserSettingsTabContent">
                     <!-- Personal information panel -->
                     <div class="tab-pane fade show active" id="personal-information"
                          role="tabpanel"
                          aria-labelledby="personal-information">
-                        <div class="p-3 bg-pure-white">
+
+                        <div class="bg-pure-white">
+                            <!-- Reference -->
                             <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label" t-value="'title'"/>
-                                <t t-set="input_id" t-value="'title'"/>
-                                <t t-if="currently_editing_info">
-                                    <input id="title" type="text" name="title" t-att-class="'bg-high-orange' if not profile_edits_accepted_fields.get('title') and submitted_info_edited else ''"
-                                           t-att-value="partner.title.name if partner.title else ''" required=""/>
+                                <t t-set="label" t-value="'My reference'"/>
+                                <t t-set="input_id" t-value="'reference'"/>
+                                <t t-esc="partner.ref if partner.ref else ''"/>
+                            </t>
+                            <!-- Name Title (ex: Madam) -->
+                            <t t-if="currently_editing_info">
+                                <t t-call="theme_compassion_2025.FormFieldComponent">
+                                    <t t-set="label" t-value="'Title'"/>
+                                    <t t-set="input_id" t-value="'title'"/>
+                                    <div class="pl-0 pr-5 m-0 col-4">
+                                        <t t-call="theme_compassion_2025.SelectComponent">
+                                            <t t-set="id" t-value="'title'"/>
+                                            <t t-set="name"
+                                               t-value="'title_change'"/>
+                                            <t t-foreach="titles" t-as="t">
+                                                <option t-att-value="t.id"
+                                                        t-att-selected="partner.title.id == t.id">
+                                                    <t t-esc="t.name"/>
+                                                </option>
+                                            </t>
+                                        </t>
+                                    </div>
                                 </t>
-                                <t t-else="">
+                            </t>
+                            <t t-else="">
+                                <t t-call="theme_compassion_2025.FormFieldComponent">
+                                    <t t-set="label" t-value="'Title'"/>
+                                    <t t-set="input_id" t-value="'title'"/>
                                     <t t-esc="partner.title.name if partner.title else ''"/>
                                 </t>
                             </t>
+                            <!-- Surname and Name -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <t t-call="theme_compassion_2025.FormFieldComponent">
+                                        <t t-set="label" t-value="'Surname'"/>
+                                        <t t-set="input_id" t-value="'surname'"/>
+                                        <t t-if="currently_editing_info">
+                                            <input id="surname" type="text"
+                                                   name="surname"
+                                                   t-att-class="'border-high-orange' if not profile_edits_accepted_fields.get('surname') and submitted_info_edited else ''"
+                                                   t-att-value="partner.lastname if partner.lastname else ''"
+                                                   required=""/>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-esc="partner.lastname if partner.lastname else ''"/>
+                                        </t>
+                                    </t>
+                                </div>
+                                <div class="col-md-6">
+                                    <t t-call="theme_compassion_2025.FormFieldComponent">
+                                        <t t-set="label" t-value="'Name'"/>
+                                        <t t-set="input_id" t-value="'name'"/>
+                                        <t t-if="currently_editing_info">
+                                            <input id="name" type="text" name="name"
+                                                   t-att-class="'border-high-orange' if not profile_edits_accepted_fields.get('name') and submitted_info_edited else ''"
+                                                   t-att-value="partner.firstname if partner.firstname else ''"
+                                                   required=""/>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-esc="partner.firstname if partner.firstname else ''"/>
+                                        </t>
+                                    </t>
+                                </div>
+                            </div>
+                            <!-- City and ZIP -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <t t-call="theme_compassion_2025.FormFieldComponent">
+                                        <t t-set="label" t-value="'City'"/>
+                                        <t t-set="input_id" t-value="'city'"/>
+                                        <t t-if="currently_editing_info">
+                                            <input id="city" type="text" name="city"
+                                                   t-att-class="'border-high-orange' if not profile_edits_accepted_fields.get('city') and submitted_info_edited else ''"
+                                                   t-att-value="partner.city if partner.city else ''"
+                                                   required=""/>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-esc="partner.city if partner.city else ''"/>
+                                        </t>
+                                    </t>
+                                </div>
+                                <div class="col-md-6">
+                                    <t t-call="theme_compassion_2025.FormFieldComponent">
+                                        <t t-set="label" t-value="'Zip'"/>
+                                        <t t-set="input_id" t-value="'zip'"/>
+                                        <t t-if="currently_editing_info">
+                                            <input id="zip" type="text" name="zip"
+                                                   t-att-class="'border-mid-orange' if not profile_edits_accepted_fields.get('zip') and submitted_info_edited else ''"
+                                                   t-att-value="partner.zip if partner.zip else ''"
+                                                   required=""/>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-esc="partner.zip if partner.zip else ''"/>
+                                        </t>
+                                    </t>
+                                </div>
+                            </div>
+                            <!-- Address -->
                             <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label" t-value="'surname'"/>
-                                <t t-set="input_id" t-value="'surname'"/>
-                                <t t-if="currently_editing_info">
-                                    <input id="surname" type="text" name="surname" t-att-class="'bg-high-orange' if not profile_edits_accepted_fields.get('surname') and submitted_info_edited else ''"
-                                           t-att-value="partner.lastname if partner.lastname else ''" required=""/>
-                                </t>
-                                <t t-else="">
-                                    <t t-esc="partner.lastname if partner.lastname else ''"/>
-                                </t>
-                            </t>
-                            <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label" t-value="'name'"/>
-                                <t t-set="input_id" t-value="'name'"/>
-                                <t t-if="currently_editing_info">
-                                    <input id="name" type="text" name="name" t-att-class="'bg-high-orange' if not profile_edits_accepted_fields.get('name') and submitted_info_edited else ''"
-                                           t-att-value="partner.firstname if partner.firstname else ''" required=""/>
-                                </t>
-                                <t t-else="">
-                                    <t t-esc="partner.firstname if partner.firstname else ''"/>
-                                </t>
-                            </t>
-                            <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label" t-value="'address'"/>
+                                <t t-set="label" t-value="'Address'"/>
                                 <t t-set="input_id" t-value="'address'"/>
                                 <t t-if="currently_editing_info">
-                                    <input id="address" type="text" name="address" t-att-class="'bg-high-orange' if not profile_edits_accepted_fields.get('address') and submitted_info_edited else ''"
-                                           t-att-value="partner.street if partner.street else ''" required=""/>
+                                    <input id="address" type="text" name="address"
+                                           t-att-class="'border-high-orange' if not profile_edits_accepted_fields.get('address') and submitted_info_edited else ''"
+                                           t-att-value="partner.street if partner.street else ''"
+                                           required=""/>
                                 </t>
                                 <t t-else="">
                                     <t t-esc="partner.street if partner.street else ''"/>
                                 </t>
                             </t>
-                            <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label" t-value="'city'"/>
-                                <t t-set="input_id" t-value="'city'"/>
-                                <t t-if="currently_editing_info">
-                                    <input id="city" type="text" name="city" t-att-class="'bg-high-orange' if not profile_edits_accepted_fields.get('city') and submitted_info_edited else ''"
-                                           t-att-value="partner.city if partner.city else ''" required=""/>
-                                </t>
-                                <t t-else="">
-                                    <t t-esc="partner.city if partner.city else ''"/>
-                                </t>
-                            </t>
-                            <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label" t-value="'zip'"/>
-                                <t t-set="input_id" t-value="'zip'"/>
-                                <t t-if="currently_editing_info">
-                                    <input id="zip" type="text" name="zip" t-att-class="'bg-high-orange' if not profile_edits_accepted_fields.get('zip') and submitted_info_edited else ''"
-                                           t-att-value="partner.zip if partner.zip else ''" required=""/>
-                                </t>
-                                <t t-else="">
-                                    <t t-esc="partner.zip if partner.zip else ''"/>
-                                </t>
-                            </t>
-                            <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label" t-value="'phone'"/>
-                                <t t-set="input_id" t-value="'phone'"/>
-                                <t t-if="currently_editing_info">
-                                    <input id="phone" type="text" name="phone" t-att-class="'bg-high-orange' if not profile_edits_accepted_fields.get('phone') and submitted_info_edited else ''"
-                                           t-att-value="partner.phone if partner.phone else ''" required=""/>
-                                </t>
-                                <t t-else="">
-                                    <t t-esc="partner.phone if partner.phone else ''"/>
-                                </t>
-                            </t>
-                            <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label" t-value="'email'"/>
-                                <t t-set="input_id" t-value="'email'"/>
-                                <t t-if="currently_editing_info">
-                                    <input id="email" type="text" name="email" t-att-class="'bg-high-orange' if not profile_edits_accepted_fields.get('email') and submitted_info_edited else ''"
-                                           t-att-value="partner.email if partner.email else ''" required=""/>
-                                </t>
-                                <t t-else="">
-                                    <t t-esc="partner.email if partner.email else ''"/>
-                                </t>
-                            </t>
+                            <!-- Phone number and Email -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <t t-call="theme_compassion_2025.FormFieldComponent">
+                                        <t t-set="label" t-value="'Phone number'"/>
+                                        <t t-set="input_id" t-value="'phone'"/>
+                                        <t t-if="currently_editing_info">
+                                            <input id="phone" type="text"
+                                                   name="phone"
+                                                   t-att-class="'border-high-orange' if not profile_edits_accepted_fields.get('phone') and submitted_info_edited else ''"
+                                                   t-att-value="partner.phone if partner.phone else ''"
+                                                   required=""/>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-esc="partner.phone if partner.phone else ''"/>
+                                        </t>
+                                    </t>
+                                </div>
+                                <div class="col-md-6">
+                                    <t t-call="theme_compassion_2025.FormFieldComponent">
+                                        <t t-set="label" t-value="'Mail address'"/>
+                                        <t t-set="input_id" t-value="'email'"/>
+                                        <t t-if="currently_editing_info">
+                                            <input id="email" type="text"
+                                                   name="email"
+                                                   t-att-class="'border-high-orange' if not profile_edits_accepted_fields.get('email') and submitted_info_edited else ''"
+                                                   t-att-value="partner.email if partner.email else ''"
+                                                   required=""/>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-esc="partner.email if partner.email else ''"/>
+                                        </t>
+                                    </t>
+                                </div>
+                            </div>
                             <!-- Buttons to edit profile or save/cancel the modifications -->
                             <t t-if="currently_editing_info">
                                 <!-- Apply modifications button -->
@@ -188,7 +249,8 @@
                                         <t t-set="variation" t-value="'filled'"/>
                                         <t t-set="label" t-value="'Save settings'"/>
                                         <t t-set="color" t-value="'mid-green'"/>
-                                        <t t-set="text_color" t-value="'pure-white'"/>
+                                        <t t-set="text_color"
+                                           t-value="'pure-white'"/>
                                     </t>
                                 </a>
                                 <!-- Cancel modifications button -->
@@ -198,7 +260,8 @@
                                         <t t-set="variation" t-value="'filled'"/>
                                         <t t-set="label" t-value="'Cancel'"/>
                                         <t t-set="color" t-value="'low-orange'"/>
-                                        <t t-set="text_color" t-value="'pure-white'"/>
+                                        <t t-set="text_color"
+                                           t-value="'pure-white'"/>
                                     </t>
                                 </a>
 
@@ -209,26 +272,72 @@
                                     <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                         <t t-set="variant" t-value="'default'"/>
                                         <t t-set="variation" t-value="'filled'"/>
-                                        <t t-set="label" t-value="'Edit my profile'"/>
+                                        <t t-set="label"
+                                           t-value="'Edit my profile'"/>
                                         <t t-set="color" t-value="'core-blue'"/>
-                                        <t t-set="text_color" t-value="'pure-white'"/>
+                                        <t t-set="text_color"
+                                           t-value="'pure-white'"/>
                                     </t>
                                 </a>
                             </t>
                         </div>
                     </div>
+
                     <!-- Account settings panel -->
                     <div class="tab-pane fade" id="account-settings" role="tabpanel"
                          aria-labelledby="account-settings">
                         <div class="p-3 bg-pure-white">
-                            Contenuto del Tab 2
+                            ciao
                         </div>
                     </div>
                     <!-- Privacy data panel -->
                     <div class="tab-pane fade" id="privacy-data" role="tabpanel"
                          aria-labelledby="privacy-data">
-                        <div class="p-3 bg-pure-white">
-                            Contenuto del Tab 3
+                        <div class="p-3 bg-pure-white d-block col-lg-6 col-md-8 col-sm-12 mx-auto">
+                            <!-- Checkbox -->
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox"
+                                       value=""
+                                       id="flexCheckDefault"/>
+                                <label class="form-check-label"
+                                       for="flexCheckDefault">
+                                    I accept the legal terms and the privacy policy
+                                    conditions
+                                </label>
+                            </div>
+                            <!-- Text paragraph -->
+                            <div class="bg-high-blue border rounded-lg mb-3">
+                                <div class="p-3">
+                                    Compassion knows that children living in extreme
+                                    poverty are vulnerable. We put their protection
+                                    as
+                                    our number one priority. We ask our volunteering
+                                    friends and people that travel to visit their
+                                    sponsored child to sign a child protection
+                                    charter.
+                                    If you want to make a step further, you can sign
+                                    this document as well and show us that you share
+                                    our
+                                    values.
+                                    Compassion is also serious about the protection
+                                    of
+                                    your data. All your information is kept private
+                                    and
+                                    only used internally. You can sign or review our
+                                    data protection policy from here.
+                                </div>
+                            </div>
+                            <!-- Sign Child protection Charter Button -->
+                            <a t-att-href="'#'">
+                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                    <t t-set="variant" t-value="'default'"/>
+                                    <t t-set="variation" t-value="'filled'"/>
+                                    <t t-set="label"
+                                       t-value="'Sign Child protection Charter'"/>
+                                    <t t-set="color" t-value="'core-blue'"/>
+                                    <t t-set="text_color" t-value="'pure-white'"/>
+                                </t>
+                            </a>
                         </div>
                     </div>
                     <!-- Communication settings panel -->
@@ -239,11 +348,10 @@
                             Contenuto del Tab 4
                         </div>
                     </div>
-                </div>
 
+                </div>
             </div>
         </t>
-
         <script
                 type="text/javascript"
                 src="/my_compassion/static/src/js/my2_user_settings.js"
