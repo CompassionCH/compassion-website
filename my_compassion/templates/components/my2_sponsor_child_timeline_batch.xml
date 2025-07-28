@@ -27,50 +27,67 @@
                 <div class="cd-timeline__block">
                     <t t-if="item.title == 'Birthday gift'">
                         <div class="cd-timeline__img bg-high-pink">
-                            <i class="pictogram pictogram-birthday-gift bg-low-black"></i>
+                            <i class="pictogram pictogram-birthday-gift bg-low-black" />
                         </div>
                     </t>
                     <t t-elif="item.title == 'Family gift'">
                         <div class="cd-timeline__img bg-high-brown">
-                            <i class="pictogram pictogram-family-gift bg-low-black"></i>
+                            <i class="pictogram pictogram-family-gift bg-low-black" />
                         </div>
                     </t>
                     <t t-else="">
                         <div class="cd-timeline__img bg-high-brown">
-                            <i class="pictogram pictogram-gift-donation-general bg-low-black"></i>
+                            <i class="pictogram pictogram-gift-donation-general bg-low-black" />
                         </div>
                     </t>
-
                     <div class="cd-timeline__content text-component">
-                        <p class="modal-title text-core-blue"><t t-esc="item.title"/></p>
-                        <t t-if="item.content"><p class="text-muted"><t t-esc="item.content"/></p></t>
-
+                        <p class="modal-title text-core-blue">
+                            <t t-esc="item.title" />
+                        </p>
+                        <t t-if="item.content">
+                            <p class="text-muted">
+                                <t t-esc="item.content" />
+                            </p>
+                        </t>
                         <div class="flex justify-between items-center">
-                            <span class="cd-timeline__date"><t t-esc="item.create_date_str"/></span>
+                            <span class="cd-timeline__date">
+                                <t t-esc="item.create_date_str" />
+                            </span>
                         </div>
-                    </div> <!-- cd-timeline__content -->
-                </div> <!-- cd-timeline__block -->
-            </t> <!-- sponsorship_gift -->
+                    </div>
+                    <!-- cd-timeline__content -->
+                </div>
+                <!-- cd-timeline__block -->
+            </t>
+            <!-- sponsorship_gift -->
             <t t-elif="item.model == 'correspondence'">
                 <div class="cd-timeline__block">
                     <div class="cd-timeline__img bg-core-blue">
-                        <i class="pictogram pictogram-letter-writing bg-pure-white"></i>
-                    </div> <!-- cd-timeline__img -->
-
+                        <i class="pictogram pictogram-letter-writing bg-pure-white" />
+                    </div>
+                    <!-- cd-timeline__img -->
                     <div class="cd-timeline__content text-component">
-                        <p class="modal-title text-core-blue"><t t-esc="item.title"/></p>
-                        <t t-if="item.content"><p class="text-muted"><t t-esc="item.content"/></p></t>
-
+                        <p class="modal-title text-core-blue">
+                            <t t-esc="item.title" />
+                        </p>
+                        <t t-if="item.content">
+                            <p class="text-muted">
+                                <t t-esc="item.content" />
+                            </p>
+                        </t>
                         <div class="flex justify-between items-center">
-                            <span class="cd-timeline__date"><t t-esc="item.create_date_str"/></span>
+                            <span class="cd-timeline__date">
+                                <t t-esc="item.create_date_str" />
+                            </span>
                         </div>
-                    </div> <!-- cd-timeline__content -->
-                </div> <!-- cd-timeline__block -->
-            </t> <!-- correspondence -->
-            <t t-else="">
-                <div class="timeline-card d-flex">
-                    This item type is not supported in the timeline.
+                    </div>
+                    <!-- cd-timeline__content -->
                 </div>
+                <!-- cd-timeline__block -->
+            </t>
+            <!-- correspondence -->
+            <t t-else="">
+                <div class="timeline-card d-flex">This item type is not supported in the timeline.</div>
             </t>
         </t>
     </template>

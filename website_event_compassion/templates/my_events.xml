@@ -1,12 +1,7 @@
 <odoo>
     <template id="my_events_menu" inherit_id="my_compassion.my_account_menu">
         <xpath expr="//a[@href='/my/letter']" position="before">
-            <a
-        href="/my/events"
-        role="menuitem"
-        class="dropdown-item"
-        t-if="user_id.partner_id.registration_ids"
-      >
+            <a href="/my/events" role="menuitem" class="dropdown-item" t-if="user_id.partner_id.registration_ids">
                 My
                 Events
             </a>
@@ -20,62 +15,33 @@
                 <section class="mt-5 pb-5" id="events_compassion_list">
                     <div class="container">
                         <div class="card-deck">
-                            <div
-                t-foreach="registrations"
-                t-as="registration"
-                class="card"
-              >
-                                <t
-                  t-set="event"
-                  t-value="registration.compassion_event_id"
-                />
+                            <div t-foreach="registrations" t-as="registration" class="card">
+                                <t t-set="event" t-value="registration.compassion_event_id" />
                                 <a t-att-href="slug(registration)">
                                     <img
-                    t-att-src="event.website_image"
-                    alt=""
-                    class="card-img-top"
-                    loading="lazy"
-                    style="height: 30vh; object-fit: cover;"
-                  />
+                                        t-att-src="event.website_image"
+                                        alt=""
+                                        class="card-img-top"
+                                        loading="lazy"
+                                        style="height: 30vh; object-fit: cover;"
+                                    />
                                 </a>
                                 <div class="card-body">
-                                    <h5
-                    class="card-title"
-                    t-field="event.name"
-                  />
+                                    <h5 class="card-title" t-field="event.name" />
                                     <h6
-                    class="card-subtitle mb-2 text-muted"
-                    t-field="event.start_date"
-                    t-options="{'widget': 'date'}"
-                  />
-                                    <div
-                    class="card-text mb-2"
-                    t-if="registration.amount_objective"
-                  >
-                                        <t
-                      t-call="website_event_compassion.event_barometer"
-                    >
-                                            <t
-                        t-set="barometer"
-                        t-value="registration"
-                      />
-                                            <t
-                        t-set="amount_inside"
-                        t-value="False"
-                      />
-                                            <t
-                        t-set="barometer_title_class"
-                        t-value="False"
-                      />
-                                            <t
-                        t-set="barometer_amount_class"
-                      >amount_raised</t>
+                                        class="card-subtitle mb-2 text-muted"
+                                        t-field="event.start_date"
+                                        t-options="{'widget': 'date'}"
+                                    />
+                                    <div class="card-text mb-2" t-if="registration.amount_objective">
+                                        <t t-call="website_event_compassion.event_barometer">
+                                            <t t-set="barometer" t-value="registration" />
+                                            <t t-set="amount_inside" t-value="False" />
+                                            <t t-set="barometer_title_class" t-value="False" />
+                                            <t t-set="barometer_amount_class">amount_raised</t>
                                         </t>
                                     </div>
-                                    <a
-                    t-att-href="slug(registration)"
-                    class="btn btn-primary o_default_snippet_text"
-                  >
+                                    <a t-att-href="slug(registration)" class="btn btn-primary o_default_snippet_text">
                                         View details
                                     </a>
                                 </div>
@@ -89,15 +55,12 @@
     <template id="my_event_details">
         <t t-call="portal.frontend_layout">
             <t t-set="event" t-value="registration.event_id" />
-            <t
-        t-set="tasks"
-        t-value="registration.task_ids.filtered('task_id.website_published')"
-      />
+            <t t-set="tasks" t-value="registration.task_ids.filtered('task_id.website_published')" />
             <t t-set="additional_title" t-value="event.name" />
             <t
-        t-set="profile_picture"
-        t-value="'/web/image/event.registration/' + str(registration.id) + '/profile_picture'"
-      />
+                t-set="profile_picture"
+                t-value="'/web/image/event.registration/' + str(registration.id) + '/profile_picture'"
+            />
             <div class="container my-5">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
@@ -105,70 +68,55 @@
                             <a href="/my/events">My Events</a>
                         </li>
                         <t t-if="not edit_mode">
-                            <li
-                class="breadcrumb-item active"
-                aria-current="page"
-              >
+                            <li class="breadcrumb-item active" aria-current="page">
                                 <t t-esc="additional_title" />
                             </li>
                         </t>
                         <t t-else="">
                             <li class="breadcrumb-item">
-                                <a
-                  t-attf-href="/my/events/#{slug(registration)}"
-                >
+                                <a t-attf-href="/my/events/#{slug(registration)}">
                                     <t t-esc="additional_title" />
                                 </a>
                             </li>
                         </t>
                         <li
-              class="breadcrumb-item active"
-              aria-current="page"
-              t-if="edit_mode"
-              t-esc="edit_mode.title()"
-            />
+                            class="breadcrumb-item active"
+                            aria-current="page"
+                            t-if="edit_mode"
+                            t-esc="edit_mode.title()"
+                        />
                     </ol>
                 </nav>
                 <div class="row mt-4">
-                    <t
-            t-set="main_section"
-            t-value="event.fundraising or edit_mode or main_content"
-          />
-                    <div
-            t-attf-class="col-12 col-sm-#{'6' if tasks else '12'}"
-            name="main_section"
-            t-if="main_section"
-          >
+                    <t t-set="main_section" t-value="event.fundraising or edit_mode or main_content" />
+                    <div t-attf-class="col-12 col-sm-#{'6' if tasks else '12'}" name="main_section" t-if="main_section">
                         <t
-              t-call="website_event_compassion.my_profile_readonly"
-              t-if="event.fundraising and not edit_mode"
-            />
-                        <t
-              t-call="website_event_compassion.my_profile_edit"
-              t-if="edit_mode=='profile'"
-            />
+                            t-call="website_event_compassion.my_profile_readonly"
+                            t-if="event.fundraising and not edit_mode"
+                        />
+                        <t t-call="website_event_compassion.my_profile_edit" t-if="edit_mode=='profile'" />
                         <t t-raw="main_content" t-if="main_content" />
                     </div>
                     <div
-            t-attf-class="col-12 col-sm-#{'6' if main_section else '12'}"
-            t-if="tasks"
-            name="tasks_section"
-          >
+                        t-attf-class="col-12 col-sm-#{'6' if main_section else '12'}"
+                        t-if="tasks"
+                        name="tasks_section"
+                    >
                         <h3 class="d-inline align-text-top">Tasks</h3>
                         <span
-              class="badge badge-pill badge-primary d-inline ml-2"
-              t-if="registration.incomplete_task_count"
-              t-esc="registration.incomplete_task_count"
-              style="font-size: small"
-            />
+                            class="badge badge-pill badge-primary d-inline ml-2"
+                            t-if="registration.incomplete_task_count"
+                            t-esc="registration.incomplete_task_count"
+                            style="font-size: small"
+                        />
                         <div class="btn-group-vertical w-100 mt-4">
                             <t t-foreach="tasks" t-as="task">
                                 <a
-                  type="button"
-                  t-attf-class="btn btn-#{'secondary' if task.done else 'primary'}"
-                  t-attf-href="../tasks/#{slug(task)}"
-                  t-att-target="'_blank' if task.task_id.open_new_tab else '_self'"
-                >
+                                    type="button"
+                                    t-attf-class="btn btn-#{'secondary' if task.done else 'primary'}"
+                                    t-attf-href="../tasks/#{slug(task)}"
+                                    t-att-target="'_blank' if task.task_id.open_new_tab else '_self'"
+                                >
                                     <t t-esc="task.name" />
                                     <i t-if="task.done" class="fa fa-check" />
                                 </a>
@@ -183,55 +131,28 @@
                         <span>Fundraising tools</span>
                     </a>
                 </h3>
-                <t
-          t-call="website_event_compassion.event_barometer"
-          t-if="event.fundraising"
-        >
+                <t t-call="website_event_compassion.event_barometer" t-if="event.fundraising">
                     <t t-set="barometer" t-value="registration" />
                     <t t-set="amount_inside" t-value="True" />
                     <t t-set="barometer_title_class" t-value="False" />
-                    <t
-            t-set="barometer_amount_class"
-          >w-100 m-auto text-center</t>
+                    <t t-set="barometer_amount_class">w-100 m-auto text-center</t>
                     <t t-set="barometer_bg_class">shadow-sm h-100</t>
                 </t>
                 <div class="row my-4" t-if="donations">
-                    <div
-            class="col col-sm-2 col-md-2 col-lg-2 font-weight-bold"
-          >Date</div>
-                    <div
-            class="col col-sm-2 col-md-2 col-lg-2 font-weight-bold"
-          >Donor firstname</div>
-                    <div
-            class="col col-sm-2 col-md-2 col-lg-2 font-weight-bold"
-          >Donor lastname</div>
-                    <div
-            class="col col-sm-4 col-md-4 col-lg-4 font-weight-bold"
-          >Donor email</div>
-                    <div
-            class="col col-sm-2 col-md-2 col-lg-2 font-weight-bold"
-          >Amount</div>
+                    <div class="col col-sm-2 col-md-2 col-lg-2 font-weight-bold">Date</div>
+                    <div class="col col-sm-2 col-md-2 col-lg-2 font-weight-bold">Donor firstname</div>
+                    <div class="col col-sm-2 col-md-2 col-lg-2 font-weight-bold">Donor lastname</div>
+                    <div class="col col-sm-4 col-md-4 col-lg-4 font-weight-bold">Donor email</div>
+                    <div class="col col-sm-2 col-md-2 col-lg-2 font-weight-bold">Amount</div>
                     <t t-foreach="donations" t-as="donation">
+                        <div class="col col-sm-2 col-md-2 col-lg-2" t-esc="donation['date_str']" />
+                        <div class="col col-sm-2 col-md-2 col-lg-2" t-esc="donation['donor firstname']" />
+                        <div class="col col-sm-2 col-md-2 col-lg-2" t-esc="donation['donor lastname']" />
+                        <div class="col col-sm-4 col-md-4 col-lg-4" t-esc="donation['donor email']" />
                         <div
-              class="col col-sm-2 col-md-2 col-lg-2"
-              t-esc="donation['date_str']"
-            />
-                        <div
-              class="col col-sm-2 col-md-2 col-lg-2"
-              t-esc="donation['donor firstname']"
-            />
-                        <div
-              class="col col-sm-2 col-md-2 col-lg-2"
-              t-esc="donation['donor lastname']"
-            />
-                        <div
-              class="col col-sm-4 col-md-4 col-lg-4"
-              t-esc="donation['donor email']"
-            />
-                        <div
-              class="col col-sm-2 col-md-2 col-lg-2 text-right"
-              t-esc="donation['amount'] + ' ' + donation['currency']"
-            />
+                            class="col col-sm-2 col-md-2 col-lg-2 text-right"
+                            t-esc="donation['amount'] + ' ' + donation['currency']"
+                        />
                     </t>
                 </div>
             </div>
@@ -240,65 +161,53 @@
     <template id="my_profile_readonly">
         <h3>
             <span>My profile</span>
-            <a
-        class="btn btn-primary mx-auto"
-        href="profile"
-        t-if="registration.compassion_event_id.website_published"
-      >
+            <a class="btn btn-primary mx-auto" href="profile" t-if="registration.compassion_event_id.website_published">
                 <i class="fa fa-pencil" />
                 <span>Edit</span>
             </a>
             <a
-        class="btn btn-primary mx-auto"
-        t-attf-href="#{registration.website_id.get_base_url()}#{registration.website_url}"
-        t-if="registration.compassion_event_id.website_published"
-      >
+                class="btn btn-primary mx-auto"
+                t-attf-href="#{registration.website_id.get_base_url()}#{registration.website_url}"
+                t-if="registration.compassion_event_id.website_published"
+            >
                 <i class="fa fa-eye" />
                 <span>View</span>
             </a>
         </h3>
         <div id="profile_view">
             <img
-        t-att-src="profile_picture"
-        class="figure-img my-4 w-50"
-        alt=""
-        loading="lazy"
-        data-original-id="140127"
-        data-original-src="/theme_compassion/static/src/img/snippets/s_picture.jpg"
-        data-mimetype="image/jpeg"
-        data-original-title=""
-        title=""
-        aria-describedby="tooltip693698"
-      />
+                t-att-src="profile_picture"
+                class="figure-img my-4 w-50"
+                alt=""
+                loading="lazy"
+                data-original-id="140127"
+                data-original-src="/theme_compassion/static/src/img/snippets/s_picture.jpg"
+                data-mimetype="image/jpeg"
+                data-original-title=""
+                title=""
+                aria-describedby="tooltip693698"
+            />
             <div class="row">
                 <div class="col col-sm-6 col-md-4 col-lg-3">Profile name:</div>
-                <div
-          class="col col-sm-6 col-md-8 col-lg-9"
-          t-esc="registration.profile_name"
-        />
+                <div class="col col-sm-6 col-md-8 col-lg-9" t-esc="registration.profile_name" />
                 <div class="col col-sm-6 col-md-4 col-lg-3">My motto:</div>
-                <div
-          class="col col-sm-6 col-md-8 col-lg-9"
-          t-esc="registration.ambassador_quote"
-        />
-                <div
-          class="col col-sm-6 col-md-4 col-lg-3"
-        >Receive receipts:</div>
+                <div class="col col-sm-6 col-md-8 col-lg-9" t-esc="registration.ambassador_quote" />
+                <div class="col col-sm-6 col-md-4 col-lg-3">Receive receipts:</div>
                 <div class="col col-sm-6 col-md-4 col-lg-3 my-auto">
                     <input
-            type="checkbox"
-            name="receive_ambassador_receipts"
-            checked="checked"
-            t-if="registration.partner_id.receive_ambassador_receipts"
-            disabled="disabled"
-          />
+                        type="checkbox"
+                        name="receive_ambassador_receipts"
+                        checked="checked"
+                        t-if="registration.partner_id.receive_ambassador_receipts"
+                        disabled="disabled"
+                    />
                     <input
-            type="checkbox"
-            name="receive_ambassador_receipts"
-            t-if="not registration.partner_id.receive_ambassador_receipts"
-            readonly="1"
-            disabled="disabled"
-          />
+                        type="checkbox"
+                        name="receive_ambassador_receipts"
+                        t-if="not registration.partner_id.receive_ambassador_receipts"
+                        readonly="1"
+                        disabled="disabled"
+                    />
                 </div>
             </div>
         </div>
@@ -306,212 +215,178 @@
     <template id="my_profile_edit">
         <h3>My profile</h3>
         <span
-      id="form_values"
-      class="hidden"
-      data-for="event_registration_form"
-      t-att-data-values="{
+            id="form_values"
+            class="hidden"
+            data-for="event_registration_form"
+            t-att-data-values="{
                 'profile_name': registration.profile_name,
                 'registration_id': registration.id,
                 'ambassador_quote': registration.ambassador_quote,
                 }"
-    />
+        />
         <section
-      class="s_website_form pt16 pb16 o_colored_level"
-      data-vcss="001"
-      data-snippet="s_website_form"
-      data-name="Form"
-    >
+            class="s_website_form pt16 pb16 o_colored_level"
+            data-vcss="001"
+            data-snippet="s_website_form"
+            data-name="Form"
+        >
             <div class="container">
                 <form
-          id="event_registration_form"
-          action="/website_form/"
-          method="post"
-          enctype="multipart/form-data"
-          class="o_mark_required"
-          data-mark="*"
-          data-success-mode="redirect"
-          t-attf-data-success-page="/my/events/#{slug(registration)}"
-          data-model_name="event.registration.form"
-        >
+                    id="event_registration_form"
+                    action="/website_form/"
+                    method="post"
+                    enctype="multipart/form-data"
+                    class="o_mark_required"
+                    data-mark="*"
+                    data-success-mode="redirect"
+                    t-attf-data-success-page="/my/events/#{slug(registration)}"
+                    data-model_name="event.registration.form"
+                >
                     <div class="s_website_form_rows row s_col_no_bgcolor">
-                        <div
-              class="form-group s_website_form_field col-12    "
-              data-type="binary"
-              data-name="Field"
-            >
+                        <div class="form-group s_website_form_field col-12    " data-type="binary" data-name="Field">
                             <div class="row s_col_no_resize s_col_no_bgcolor">
-                                <label
-                  class="col-sm-auto s_website_form_label"
-                  style="width: 200px"
-                  for="oo6z1lsyc1z"
-                >
-                                    <span
-                    class="s_website_form_label_content"
-                  >Profile picture</span>
+                                <label class="col-sm-auto s_website_form_label" style="width: 200px" for="oo6z1lsyc1z">
+                                    <span class="s_website_form_label_content">Profile picture</span>
                                 </label>
                                 <div class="col-sm">
                                     <input
-                    type="file"
-                    class="form-control-file s_website_form_input"
-                    name="profile_picture"
-                    id="oo6z1lsyc1z"
-                  />
+                                        type="file"
+                                        class="form-control-file s_website_form_input"
+                                        name="profile_picture"
+                                        id="oo6z1lsyc1z"
+                                    />
                                 </div>
                             </div>
                         </div>
                         <div
-              class="form-group s_website_form_field col-12  s_website_form_model_required  "
-              data-type="char"
-              data-name="Field"
-            >
+                            class="form-group s_website_form_field col-12  s_website_form_model_required  "
+                            data-type="char"
+                            data-name="Field"
+                        >
                             <div class="row s_col_no_resize s_col_no_bgcolor">
                                 <label
-                  class="col-form-label col-sm-auto s_website_form_label "
-                  style="width: 200px"
-                  for="ou61cycwfny"
-                >
-                                    <span
-                    class="s_website_form_label_content"
-                  >Profile name</span>
+                                    class="col-form-label col-sm-auto s_website_form_label "
+                                    style="width: 200px"
+                                    for="ou61cycwfny"
+                                >
+                                    <span class="s_website_form_label_content">Profile name</span>
                                     <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <input
-                    type="text"
-                    class="form-control s_website_form_input"
-                    name="profile_name"
-                    required="true"
-                    id="ou61cycwfny"
-                  />
+                                        type="text"
+                                        class="form-control s_website_form_input"
+                                        name="profile_name"
+                                        required="true"
+                                        id="ou61cycwfny"
+                                    />
                                 </div>
                             </div>
                         </div>
                         <div
-              class="form-group s_website_form_field col-12  s_website_form_model_required  "
-              data-type="text"
-              data-name="Field"
-            >
+                            class="form-group s_website_form_field col-12  s_website_form_model_required  "
+                            data-type="text"
+                            data-name="Field"
+                        >
                             <div class="row s_col_no_resize s_col_no_bgcolor">
                                 <label
-                  class="col-form-label col-sm-auto s_website_form_label "
-                  style="width: 200px"
-                  for="otciu2zjufgr"
-                >
-                                    <span
-                    class="s_website_form_label_content"
-                  >My motto</span>
+                                    class="col-form-label col-sm-auto s_website_form_label "
+                                    style="width: 200px"
+                                    for="otciu2zjufgr"
+                                >
+                                    <span class="s_website_form_label_content">My motto</span>
                                     <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <textarea
-                    class="form-control s_website_form_input"
-                    name="ambassador_quote"
-                    required="true"
-                    id="otciu2zjufgr"
-                    rows="3"
-                  />
+                                        class="form-control s_website_form_input"
+                                        name="ambassador_quote"
+                                        required="true"
+                                        id="otciu2zjufgr"
+                                        rows="3"
+                                    />
                                 </div>
                             </div>
                         </div>
                         <div
-              class="form-group s_website_form_field col-12 s_website_form_dnone  "
-              data-type="char"
-              data-name="Field"
-            >
+                            class="form-group s_website_form_field col-12 s_website_form_dnone  "
+                            data-type="char"
+                            data-name="Field"
+                        >
                             <div class="row s_col_no_resize s_col_no_bgcolor">
                                 <label
-                  class="col-form-label col-sm-auto s_website_form_label "
-                  style="width: 200px"
-                  for="oh4y43y9th2l"
-                >
-                                    <span
-                    class="s_website_form_label_content"
-                  >Registration</span>
+                                    class="col-form-label col-sm-auto s_website_form_label "
+                                    style="width: 200px"
+                                    for="oh4y43y9th2l"
+                                >
+                                    <span class="s_website_form_label_content">Registration</span>
                                     <span class="s_website_form_mark">*</span>
                                 </label>
                                 <div class="col-sm">
                                     <input
-                    type="hidden"
-                    class="form-control s_website_form_input"
-                    name="registration_id"
-                    required="true"
-                    id="oh4y43y9th2l"
-                  />
+                                        type="hidden"
+                                        class="form-control s_website_form_input"
+                                        name="registration_id"
+                                        required="true"
+                                        id="oh4y43y9th2l"
+                                    />
                                 </div>
                             </div>
                         </div>
-                        <div
-              class="form-group s_website_form_field col-12 "
-              data-type="boolean"
-              data-name="Field"
-            >
+                        <div class="form-group s_website_form_field col-12 " data-type="boolean" data-name="Field">
                             <div class="row s_col_no_resize s_col_no_bgcolor">
                                 <label
-                  class="col-form-label col-sm-auto s_website_form_label "
-                  style="width: 200px"
-                  for="oh4y43y9th2lab"
-                >
-                                    <span
-                    class="s_website_form_label_content"
-                  >Receive receipts:</span>
+                                    class="col-form-label col-sm-auto s_website_form_label "
+                                    style="width: 200px"
+                                    for="oh4y43y9th2lab"
+                                >
+                                    <span class="s_website_form_label_content">Receive receipts:</span>
                                 </label>
                                 <div class="col-sm">
                                     <input
-                    type="checkbox"
-                    class="h-100"
-                    name="receive_ambassador_receipts"
-                    id="oh4y43y9th2lab"
-                    checked="checked"
-                    t-if="registration.partner_id.receive_ambassador_receipts"
-                  />
+                                        type="checkbox"
+                                        class="h-100"
+                                        name="receive_ambassador_receipts"
+                                        id="oh4y43y9th2lab"
+                                        checked="checked"
+                                        t-if="registration.partner_id.receive_ambassador_receipts"
+                                    />
                                     <input
-                    type="checkbox"
-                    class="h-100"
-                    name="receive_ambassador_receipts"
-                    id="oh4y43y9th2lab"
-                    t-if="not registration.partner_id.receive_ambassador_receipts"
-                  />
+                                        type="checkbox"
+                                        class="h-100"
+                                        name="receive_ambassador_receipts"
+                                        id="oh4y43y9th2lab"
+                                        t-if="not registration.partner_id.receive_ambassador_receipts"
+                                    />
                                 </div>
                             </div>
                         </div>
-                        <div
-              class="form-group s_website_form_field col-12    "
-              data-type="text"
-              data-name="Field"
-            >
+                        <div class="form-group s_website_form_field col-12    " data-type="text" data-name="Field">
                             <div class="row s_col_no_resize s_col_no_bgcolor">
                                 <label
-                  class="col-form-label col-sm-auto s_website_form_label "
-                  style="width: 200px"
-                  for="opesesohl01f"
-                >
-                                    <span
-                    class="s_website_form_label_content"
-                  >Comments</span>
+                                    class="col-form-label col-sm-auto s_website_form_label "
+                                    style="width: 200px"
+                                    for="opesesohl01f"
+                                >
+                                    <span class="s_website_form_label_content">Comments</span>
                                 </label>
                                 <div class="col-sm">
                                     <textarea
-                    class="form-control s_website_form_input"
-                    name="comments"
-                    id="opesesohl01f"
-                    rows="3"
-                  />
+                                        class="form-control s_website_form_input"
+                                        name="comments"
+                                        id="opesesohl01f"
+                                        rows="3"
+                                    />
                                 </div>
                             </div>
                         </div>
-                        <div
-              class="form-group col-12 s_website_form_submit"
-              data-name="Submit Button"
-            >
-                            <div
-                style="width: 200px;"
-                class="s_website_form_label"
-              />
+                        <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                            <div style="width: 200px;" class="s_website_form_label" />
                             <a
-                href="#"
-                role="button"
-                class="btn btn-primary btn-lg s_website_form_send o_default_snippet_text"
-              >
+                                href="#"
+                                role="button"
+                                class="btn btn-primary btn-lg s_website_form_send o_default_snippet_text"
+                            >
                                 Submit
                             </a>
                             <span id="s_website_form_result" />
