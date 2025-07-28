@@ -6,7 +6,7 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from odoo import http
+from odoo import _, http
 from odoo.exceptions import AccessError
 from odoo.http import request
 
@@ -26,14 +26,14 @@ class MyCompassionChildrenController(http.Controller):
         ).mapped("child_id")
         if not child:
             raise AccessError(
-                "You are not authorized to view this child's information."
+                _("You are not authorized to view this child's information.")
             )
         return child
 
     def _get_timeline_records(self, partner_id, child_id, offset=0, limit=9):
         """Private helper to fetch a paginated list of timeline records."""
         domain = [("child_id", "=", child_id), ("partner_id", "=", partner_id)]
-        timeline_model = request.env["compassion.sponsor_child_timeline"].sudo()
+        timeline_model = request.env["sponsorship.timeline"].sudo()
         total = timeline_model.search_count(domain)
         records = timeline_model.search(
             domain, order="create_date desc", offset=offset, limit=limit
@@ -106,7 +106,7 @@ class MyCompassionChildrenController(http.Controller):
                     {"name": "Children", "url": "/my2/children/", "active": False},
                     {
                         "name": child.preferred_name,
-                        "url": f"/my2/children/" + str(child.id),
+                        "url": "/my2/children/" + str(child.id),
                         "active": True,
                     },
                 ],
@@ -127,7 +127,8 @@ class MyCompassionChildrenController(http.Controller):
         try:
             child = self._get_sponsored_child_and_check_access(child.id)
         except AccessError:
-            # For an API, it's better to return an empty or error response than to redirect.
+            # For an API, it's better to return an empty or error response
+            # than to redirect.
             return request.make_response("", headers={"Content-Type": "text/html"})
 
         offset = int(kwargs.get("offset", 0))
