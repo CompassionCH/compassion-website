@@ -24,8 +24,21 @@
     - icon_color (string): Color of the icon
     - text_color (string): Color of the text
     - id (string, optional): The ID to be assigned to the button element.
+    - href (string, optional): The URL to link to. If provided, an 'a' tag will be rendered instead of a 'button'.
 -->
 <odoo>
+    <template id="ThemedButtonComponent_Content" name="Button Content">
+        <t t-if="icon">
+            <span t-attf-class="btn__icon btn__icon--#{variant} text-#{icon_color}">
+                <i t-att-class="icon" />
+            </span>
+        </t>
+        <t t-if="label">
+            <span>
+                <t t-esc="label" />
+            </span>
+        </t>
+    </template>
     <template id="ThemedButtonComponent" name="Button Component">
         <!-- Determine button style class border or background depending on the variation-->
         <t t-if="variation == 'hollow'">
@@ -37,17 +50,19 @@
         <t t-else="">
             <t t-set="style_class" t-value="'bg-black'" />
         </t>
-        <button t-att-id="id" t-attf-class="btn btn--#{variant}-#{variation} #{style_class} text-#{text_color}">
-            <t t-if="icon">
-                <span t-attf-class="btn__icon btn__icon--#{variant} text-#{icon_color}">
-                    <i t-att-class="icon" />
-                </span>
-            </t>
-            <t t-if="label">
-                <span>
-                    <t t-esc="label" />
-                </span>
-            </t>
-        </button>
+        <t t-if="href">
+            <a
+                t-att-href="href"
+                t-att-id="id"
+                t-attf-class="btn btn--#{variant}-#{variation} #{style_class} text-#{text_color}"
+            >
+                <t t-call="theme_compassion_2025.ThemedButtonComponent_Content" />
+            </a>
+        </t>
+        <t t-else="">
+            <button t-att-id="id" t-attf-class="btn btn--#{variant}-#{variation} #{style_class} text-#{text_color}">
+                <t t-call="theme_compassion_2025.ThemedButtonComponent_Content" />
+            </button>
+        </t>
     </template>
 </odoo>

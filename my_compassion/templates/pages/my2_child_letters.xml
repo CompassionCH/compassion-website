@@ -3,52 +3,282 @@
     Page: My Compassion 2 Child Letters Page
 
     Description:
-    This page displays all the letters associated with a sponsored child.
+    Displays letters for a specific sponsored child with filtering and sorting options.
 
     Used in route:
     - /my2/children/<model("compassion.child"):child>/letters
 
     Injected data:
-    - compassion_child (record): The related child object.
-    - letters (array of 'correspondence' records): The related sponsorship letters.
+    - compassion_child: the related child record
+    - letters: array of correspondence records
 -->
 <odoo>
     <template id="my2_child_letters_page" name="My Compassion 2 Child Letters Page">
+        <link rel="stylesheet" href="/my_compassion/static/src/css/child_letters.css" />
         <t t-call="website.layout">
             <div class="container">
-                <!-- Calling breadcrumb component -->
-                <t t-call="my_compassion.my2_breadcrumbs" />
-                <div class="row mb-2">
-                    <div class="col-12">
-                        <!-- Using children_profile component -->
-                        <t t-call="my_compassion.my2_children_profile_component">
-                            <!-- The data we are passing to the children_profile_component -->
-                            <t t-set="compassion_child" t-value="compassion_child" />
+                <!-- Title -->
+                <div class="mb-4">
+                    <t t-call="theme_compassion_2025.TitleComponent">
+                        <t t-set="title_content" t-value="'Your inbox'" />
+                        <t t-set="color" t-value="'core-blue'" />
+                        <t t-set="underline_color" t-value="'low-yellow'" />
+                        <t t-set="show_underline" t-value="True" />
+                        <t t-set="title_size" t-value="'md'" />
+                    </t>
+                </div>
+                <div class="text-center mb-3">
+                    <!-- Button for opening the filter modal -->
+                    <a id="filterToggleBtn" data-toggle="modal" data-target="#filterModal" class="ml-1">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variation" t-value="'hollow'" />
+                            <t t-set="color" t-value="'low-black'" />
+                            <t t-set="icon_color" t-value="'low-black'" />
+                            <t t-set="variant" t-value="'compact'" />
+                            <t t-set="icon" t-value="'icon-filter-lines'" />
+                            <t t-set="text_color" t-value="'low-black'" />
+                            <t t-set="label" t-value="str(nr_filters_applied) + ' filters applied'" />
                         </t>
+                    </a>
+                </div>
+                <!-- Filter modal -->
+                <div
+                    class="modal fade"
+                    id="filterModal"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="filterModalLabel"
+                    aria-hidden="true"
+                >
+                    <div class="modal-dialog modal-sm" role="document">
+                        <div class="modal-content border-0">
+                            <div class="text-center p-0 m-0">
+                                <h2 class="text-pure-white bg-low-blue pb-2 pt-3">Filter letters</h2>
+                                <!-- Filter form: date range -->
+                                <div class="pl-4 pr-4 pt-3">
+                                    <h3 class="text-low-blue">Children</h3>
+                                    <!-- Children dropdown -->
+                                    <div class="pb-2">
+                                        <t t-set="id" t-value="'childrenDropdown'" />
+                                        <t t-set="name" t-value="'child'" />
+                                        <t t-call="theme_compassion_2025.SelectComponent">
+                                            <option value="">Children</option>
+                                            <t t-foreach="children_list" t-as="child">
+                                                <option
+                                                    t-att-value="child.id"
+                                                    t-att-selected="'selected' if filter_child and filter_child.id == child.id else None"
+                                                >
+                                                    <t t-esc="child.preferred_name" />
+                                                </option>
+                                            </t>
+                                        </t>
+                                    </div>
+                                    <h3 class="text-low-blue">From</h3>
+                                    <div class="justify-content-between d-flex w-100 pb-2">
+                                        <!-- Month Dropdown (from)-->
+                                        <div class="w-60">
+                                            <t t-set="id" t-value="'monthDropdownFrom'" />
+                                            <t t-set="name" t-value="'month_from'" />
+                                            <t t-call="theme_compassion_2025.SelectComponent">
+                                                <option value="">Month</option>
+                                                <t t-foreach="months" t-as="month">
+                                                    <option
+                                                        t-att-value="month[0]"
+                                                        t-att-selected="'selected' if filters['month_from'] == month[0] else None"
+                                                    >
+                                                        <t t-esc="month[1]" />
+                                                    </option>
+                                                </t>
+                                            </t>
+                                        </div>
+                                        <!-- Year Dropdown (from) -->
+                                        <div class="w-30">
+                                            <t t-set="id" t-value="'yearDropdownFrom'" />
+                                            <t t-set="name" t-value="'year'" />
+                                            <t t-call="theme_compassion_2025.SelectComponent">
+                                                <option value="">Year</option>
+                                                <t t-foreach="range(current_year, 2015, -1)" t-as="year">
+                                                    <option
+                                                        t-att-value="year"
+                                                        t-att-selected="'selected' if filters['year_from'] == year else None"
+                                                    >
+                                                        <t t-esc="year" />
+                                                    </option>
+                                                </t>
+                                            </t>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-low-blue">To</h3>
+                                    <div class="justify-content-between d-flex w-100 pb-4">
+                                        <!-- Month Dropdown (to)-->
+                                        <div class="w-60">
+                                            <t t-set="id" t-value="'monthDropdownTo'" />
+                                            <t t-set="name" t-value="'month'" />
+                                            <t t-call="theme_compassion_2025.SelectComponent">
+                                                <option value="">Month</option>
+                                                <t t-foreach="months" t-as="month">
+                                                    <option
+                                                        t-att-value="month[0]"
+                                                        t-att-selected="'selected' if filters['month_to'] == month[0] else None"
+                                                    >
+                                                        <t t-esc="month[1]" />
+                                                    </option>
+                                                </t>
+                                            </t>
+                                        </div>
+                                        <!-- Year Dropdown (to) -->
+                                        <div class="w-30">
+                                            <t t-set="id" t-value="'yearDropdownTo'" />
+                                            <t t-set="name" t-value="'year'" />
+                                            <t t-call="theme_compassion_2025.SelectComponent">
+                                                <option value="">Year</option>
+                                                <t t-foreach="range(current_year, 2015, -1)" t-as="year">
+                                                    <option
+                                                        t-att-value="year"
+                                                        t-att-selected="'selected' if filters['year_to'] == year else None"
+                                                    >
+                                                        <t t-esc="year" />
+                                                    </option>
+                                                </t>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Filter type and sort options -->
+                                <div class="pl-5 pr-5 pb-5 pt-3">
+                                    <!-- Type filter: Received / Sent -->
+                                    <div
+                                        class="btn-group btn-group-toggle justify-content-between d-flex w-100 pb-3"
+                                        data-toggle="buttons"
+                                        id="filterTypeToggle"
+                                    >
+                                        <label
+                                            t-att-class="'btn btn-secondary btn-custom-toggle text-low-blue bg-pure-white border-low-blue border-left-pill w-50' + (' active' if filters['type'] == 'Beneficiary To Supporter' else '')"
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="type"
+                                                value="Beneficiary To Supporter"
+                                                t-att-checked="'checked' if filters['type'] == 'Beneficiary To Supporter' else None"
+                                            />
+                                            Received
+                                        </label>
+                                        <label
+                                            t-att-class="'btn btn-secondary btn-custom-toggle text-low-blue bg-pure-white border-low-blue border-right-pill w-50' + (' active' if filters['type'] == 'Supporter To Beneficiary' else '')"
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="type"
+                                                value="Supporter To Beneficiary"
+                                                t-att-checked="'checked' if filters['type'] == 'Supporter To Beneficiary' else None"
+                                            />
+                                            Sent
+                                        </label>
+                                    </div>
+                                    <!-- Sort order: Newest / Oldest -->
+                                    <div
+                                        class="btn-group btn-group-toggle justify-content-between d-flex w-100 pb-3"
+                                        data-toggle="buttons"
+                                        id="sortToggle"
+                                    >
+                                        <label
+                                            t-att-class="'btn btn-secondary btn-custom-toggle text-low-blue bg-pure-white border-low-blue border-left-pill w-50' + (' active' if filters['sort'] == 'newest' else '')"
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="sortOptions"
+                                                value="newest"
+                                                t-att-checked="'checked' if filters['sort'] == 'newest' else None"
+                                            />
+                                            Newest
+                                        </label>
+                                        <label
+                                            t-att-class="'btn btn-secondary btn-custom-toggle text-low-blue bg-pure-white border-low-blue border-right-pill w-50' + (' active' if filters['sort'] == 'oldest' else '')"
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="sortOptions"
+                                                value="oldest"
+                                                t-att-checked="'checked' if filters['sort'] == 'oldest' else None"
+                                            />
+                                            Oldest
+                                        </label>
+                                    </div>
+                                    <!-- Ok and cancel filter actions -->
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <a id="filterOkBtn" data-dismiss="modal">
+                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                                <t t-set="variation" t-value="'filled'" />
+                                                <t t-set="color" t-value="'mid-green'" />
+                                                <t t-set="text_color" t-value="'pure-white'" />
+                                                <t t-set="variant" t-value="'compact'" />
+                                                <t t-set="label" t-value="'Ok'" />
+                                            </t>
+                                        </a>
+                                        <a t-att-href="'/my2/children/letters'">
+                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                                <t t-set="variation" t-value="'filled'" />
+                                                <t t-set="color" t-value="'low-orange'" />
+                                                <t t-set="text_color" t-value="'pure-white'" />
+                                                <t t-set="variant" t-value="'compact'" />
+                                                <t t-set="label" t-value="'Cancel'" />
+                                            </t>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <!-- Filters -->
-                <div class="row mb-3">
-                    <div class="col-6 text-center">
-                        <button type="button" class="btn-compassion btn-compassion-white">
-                            <span>Filter From</span>
-                        </button>
+            </div>
+            <!-- Letters -->
+            <div id="lettersContainer" class="row mb-3">
+                <t t-foreach="letters" t-as="letter" t-foreach-index="i">
+                    <div
+                        class="col-12 col-md-6 col-lg-4 mb-3 mt-3 letter-card"
+                        t-att-data-create_date="letter.create_date"
+                        t-att-data-type="letter.direction"
+                        t-att-data-index="i"
+                    >
+                        <t t-call="my_compassion.my2_letter_card_component" />
                     </div>
-                    <div class="col-6 text-center">
-                        <button type="button" class="btn-compassion btn-compassion-white">
-                            <span>Filter To</span>
-                        </button>
-                    </div>
-                </div>
-                <!-- Letters -->
-                <t t-foreach="letters" t-as="letter">
-                    <div class="row">
-                        <!-- Using letter_card component -->
-                        <t t-call="my_compassion.my2_letter_card_component">
-                            <!-- The data we are passing to the letter_card_component -->
-                            <t t-set="letter" t-value="letter" />
+                </t>
+            </div>
+            <!-- Buttons for changing page -->
+            <div class="d-flex justify-content-center align-items-center mb-5">
+                <!-- Prev -->
+                <t t-if="current_page > 1">
+                    <a id="prevPageBtn">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variation" t-value="'hollow'" />
+                            <t t-set="color" t-value="'mid-blue'" />
+                            <t t-set="text_color" t-value="'low-black'" />
+                            <t t-set="variant" t-value="'compact'" />
+                            <t t-set="label" t-value="'Prev'" />
                         </t>
-                    </div>
+                    </a>
+                </t>
+                <!-- Page indicator -->
+                <span id="pageIndicator" class="p-2">
+                    Page
+                    <t t-esc="current_page" />
+                    of
+                    <t t-esc="total_pages" />
+                </span>
+                <!-- Next -->
+                <t t-if="current_page &lt; total_pages">
+                    <a id="nextPageBtn">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variation" t-value="'hollow'" />
+                            <t t-set="color" t-value="'mid-blue'" />
+                            <t t-set="text_color" t-value="'low-black'" />
+                            <t t-set="variant" t-value="'compact'" />
+                            <t t-set="label" t-value="'Next'" />
+                        </t>
+                    </a>
+                </t>
+                <t t-else="">
+                    <span class="disabled ps-3">Next</span>
                 </t>
             </div>
         </t>
