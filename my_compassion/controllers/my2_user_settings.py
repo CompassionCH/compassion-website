@@ -6,8 +6,9 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from odoo.http import request
 from odoo import http
+from odoo.http import request
+from datetime import date
 
 
 class MyCompassionUserController(http.Controller):
@@ -15,47 +16,72 @@ class MyCompassionUserController(http.Controller):
     @http.route('/my2/user_settings', type="http", auth="user", website=True, sitemap=False)
     def my2_render_user_settings_page(self, **kwargs):
         partner = request.env.user.partner_id
-        currently_editing_info = request.params.get('currently_editing_info') == 'true'
-        submitted_info_edited = request.params.get('submitted_info_edited') == 'true'
-        titles = request.env['res.partner.title'].sudo().search([('is_published', '=', True)])
+        params = request.params
+        titles = request.env['res.partner.title'].sudo().search(
+            [('is_published', '=', True)])
 
-        field_map = {
-            'title_change':     ('title', int),
-            'surname_change':   ('lastname', str),
-            'name_change':      ('firstname', str),
-            'city_change':      ('city', str),
-            'address_change':   ('street', str),
-            'zip_change':       ('zip', str),
-            'phone_change':     ('phone', str),
-            'email_change':     ('email', str),
+        # Flags
+        currently_editing_info = params.get('currently_editing_info') == 'true'
+        submitted_info_edited = params.get('submitted_info_edited') == 'true'
+        sign_confirm = params.get('sign_confirm') == 'true'
+
+        # Save child protection charter signature
+        if sign_confirm:
+            partner.write({'date_agreed_child_protection_charter': date.today()})
+
+        # Handle profile info update
+        profile_field_map = {
+            'title_change': ('title', int),
+            'surname_change': ('lastname', str),
+            'name_change': ('firstname', str),
+            'address_change': ('street', str),
+            'city_change': ('city', str),
+            'zip_change': ('zip', str),
+            'phone_change': ('phone', str),
+            'email_change': ('email', str),
         }
 
-        profile_edits_accepted_fields = {key.split('_')[0]: False for key in field_map}
-        update_values = {}
+        profile_edits_accepted = {key.split('_')[0]: False for key in profile_field_map}
+        profile_updates = {}
 
         if submitted_info_edited:
-            for param, (field_name, cast_type) in field_map.items():
-                raw_value = request.params.get(param, '').strip()
+            for param_key, (field_name, cast_type) in profile_field_map.items():
+                raw_value = params.get(param_key, '').strip()
                 if raw_value:
                     try:
-                        update_values[field_name] = cast_type(raw_value)
-                        profile_edits_accepted_fields[param.split('_')[0]] = True
+                        profile_updates[field_name] = cast_type(raw_value)
+                        profile_edits_accepted[param_key.split('_')[0]] = True
                     except (ValueError, TypeError):
-                        pass
+                        continue
 
-            if all(profile_edits_accepted_fields.values()):
-                partner.write(update_values)
+            if all(profile_edits_accepted.values()):
+                partner.write(profile_updates)
                 partner = request.env['res.partner'].browse(partner.id)
+            else:
+                currently_editing_info = True
 
-            currently_editing_info = not all(profile_edits_accepted_fields.values())
+        # Handle communication preferences
+        communication_fields = {
+            'tax_receipt_preference': params.get('tax_receipt_preference'),
+            'letter_delivery_preference': params.get('letter_delivery_preference'),
+            'photo_delivery_preference': params.get('photo_delivery_preference'),
+            'calendar': params.get('calendar'),
+            'birthday_reminder': params.get('birthday_reminder'),
+            'sponsorship_anniversary_card': params.get('sponsorship_anniversary_card'),
+        }
 
-        return request.render(
-            'my_compassion.my2_user_settings_page',
-            {
-                'partner': partner,
-                'currently_editing_info': currently_editing_info,
-                'submitted_info_edited': submitted_info_edited,
-                'profile_edits_accepted_fields': profile_edits_accepted_fields,
-                'titles': titles,
-            }
-        )
+        communication_updates = {}
+        for field, value in communication_fields.items():
+            if value is not None:
+                communication_updates[field] = value == 'true' if value in ['true', 'false'] else value
+
+        if communication_updates:
+            partner.write(communication_updates)
+
+        return request.render('my_compassion.my2_user_settings_page', {
+            'partner': partner,
+            'titles': titles,
+            'currently_editing_info': currently_editing_info,
+            'submitted_info_edited': submitted_info_edited,
+            'profile_edits_accepted_fields': profile_edits_accepted,
+        })
