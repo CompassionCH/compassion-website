@@ -14,7 +14,7 @@
 
 <odoo>
     <template id="FormFieldComponent" name="Form Field Component">
-        <div t-att-class="#{top_class}">
+        <div t-att-class="top_class">
             <label t-attf-for="#{input_id}"
                    class="text-core-blue body-small bold mb-1">
                 <t t-esc="label"/>
