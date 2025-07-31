@@ -25,6 +25,7 @@
     - text_color (string): Color of the text
     - id (string, optional): The ID to be assigned to the button element.
     - href (string, optional): The URL to link to. If provided, an 'a' tag will be rendered instead of a 'button'.
+    - radius (string, optional): Radius of the rounded corners: 'pill' (default) or 'small'
 -->
 <odoo>
     <template id="ThemedButtonComponent_Content" name="Button Content">
@@ -40,6 +41,9 @@
         </t>
     </template>
     <template id="ThemedButtonComponent" name="Button Component">
+        <!-- Default property values -->
+        <t t-set="radius" t-value="radius or 'pill'"/>
+
         <!-- Determine button style class border or background depending on the variation-->
         <t t-if="variation == 'hollow'">
             <t t-set="style_class" t-value="'border border-2 border-' + color" />
@@ -54,13 +58,14 @@
             <a
                 t-att-href="href"
                 t-att-id="id"
-                t-attf-class="btn btn--#{variant}-#{variation} #{style_class} text-#{text_color}"
+                t-attf-class="btn btn--#{variant}-#{variation} btn--radius-#{radius} #{style_class} text-#{text_color}"
             >
                 <t t-call="theme_compassion_2025.ThemedButtonComponent_Content" />
             </a>
         </t>
         <t t-else="">
-            <button t-att-id="id" t-attf-class="btn btn--#{variant}-#{variation} #{style_class} text-#{text_color}">
+            <button t-att-id="id" t-attf-class="btn btn--#{variant}-#{variation} btn--radius-#{radius}
+                                                #{style_class} text-#{text_color}">
                 <t t-call="theme_compassion_2025.ThemedButtonComponent_Content" />
             </button>
         </t>

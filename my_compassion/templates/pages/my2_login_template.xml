@@ -5,23 +5,78 @@
         <xpath expr="t" position="replace">
             <t t-set="no_footer" t-value="True" />
             <t t-call="website.layout">
-                <div class="container bg-high-blue my-auto">
+                <div class="container">
                     <div class="content-column">
-                        <div class="card text-center">
-                            <h5 class="card-header bg-core-blue">Sign in to myCompassion</h5>
-                            <div class="card-body">
-                                <t t-raw="0" />
-                            </div>
-                        </div>
+                        <t t-raw="0" />
                     </div>
                 </div>
             </t>
         </xpath>
     </template>
-    <!-- Login Form Customization TODO -->
-    <template id="my2_login_form" inherit_id="password_field" website_id="my_compassion.my2_website">
-        <xpath expr="//button[@type='submit']" position="attributes">
-            <attribute name="class">btn btn-link btn--impact-filled</attribute>
+
+    <!-- Login Form Customization -->
+    <template id="my2_login_form" inherit_id="web.login">
+        <xpath expr="t" position="replace">
+            <!-- Add javascript and css to the page -->
+            <script type="text/javascript" src="/my_compassion/static/src/js/my2_login.js"/>
+            <link rel="stylesheet" href="/my_compassion/static/src/css/my2_login.css"/>
+
+            <t t-call="web.login_layout">
+                <form class="my2-login-form">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                    <input type="text" placeholder="Email" name="login" class="form-control" id="login" required=""
+                           autofocus="" autocapitalize="off"/>
+
+                    <div class="password"/>
+
+                    <a t-if="reset_password_enabled" t-attf-href="/web/reset_password?{{ keep_query() }}"
+                       class="body-small bold text-core-blue">
+                        Forgot password?
+                    </a>
+
+                    <div class="d-flex flex-column align-items-stretch">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variant" t-value="'compact'"/>
+                            <t t-set="variation" t-value="'filled'"/>
+                            <t t-set="radius" t-value="'small'"/>
+                            <t t-set="label" t-value="'Login'"/>
+                            <t t-set="color" t-value="'core-blue'"/>
+                            <t t-set="icon_color" t-value="'pure-white'"/>
+                            <t t-set="text_color" t-value="'pure-white'"/>
+                        </t>
+                    </div>
+
+<!--                    <t t-if="debug">-->
+<!--                        <t t-call="theme_compassion_2025.ThemedButtonComponent">-->
+<!--                            <t t-set="variant" t-value="'compact'"/>-->
+<!--                            <t t-set="variation" t-value="'filled'"/>-->
+<!--                            <t t-set="radius" t-value="'small'"/>-->
+<!--                            <t t-set="label" t-value="'Log in as superuser'"/>-->
+<!--                            <t t-set="color" t-value="'core-blue'"/>-->
+<!--                            <t t-set="icon_color" t-value="'pure-white'"/>-->
+<!--                            <t t-set="text_color" t-value="'pure-white'"/>-->
+<!--                            <t t-set="href" t-value="'/web/become'"/>-->
+<!--                        </t>-->
+<!--                    </t>-->
+
+                    <div class="text-center body-small text-mid-grey">
+                        Don't have an account?
+                        <a t-if="signup_enabled" t-attf-href="/web/signup?{{ keep_query() }}"
+                           class="body-small bold text-core-blue">
+                            Create one now
+                        </a>
+                    </div>
+
+                    <div class="text-center body-small text-mid-grey">
+                        Need help?
+                        <a href="https://www.example.com"
+                           class="body-small bold text-core-blue">
+                            Contact us
+                        </a>
+                    </div>
+                </form>
+            </t>
         </xpath>
     </template>
     <!-- Signup Form Customization TODO -->
