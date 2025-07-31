@@ -269,15 +269,17 @@
                             <t t-else="">
                                 <!-- Edit profile button -->
                                 <a t-att-href="'/my2/user_settings?currently_editing_info=true'">
-                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                        <t t-set="variant" t-value="'default'"/>
-                                        <t t-set="variation" t-value="'filled'"/>
-                                        <t t-set="label"
-                                           t-value="'Edit my profile'"/>
-                                        <t t-set="color" t-value="'core-blue'"/>
-                                        <t t-set="text_color"
-                                           t-value="'pure-white'"/>
-                                    </t>
+                                    <div class="d-flex flex-column align-items-stretch">
+                                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                            <t t-set="variant" t-value="'default'"/>
+                                            <t t-set="variation" t-value="'filled'"/>
+                                            <t t-set="label"
+                                               t-value="'Edit my profile'"/>
+                                            <t t-set="color" t-value="'core-blue'"/>
+                                            <t t-set="text_color"
+                                               t-value="'pure-white'"/>
+                                        </t>
+                                    </div>
                                 </a>
                             </t>
                         </div>
@@ -286,8 +288,38 @@
                     <!-- Account settings panel -->
                     <div class="tab-pane fade" id="account-settings" role="tabpanel"
                          aria-labelledby="account-settings">
-                        <div class="p-3 bg-pure-white">
-                            ciao
+                        <div class="p-3 bg-pure-white d-block col-lg-6 col-md-8 col-sm-12 mx-auto">
+                            <t t-call="theme_compassion_2025.FormFieldComponent">
+                                <t t-set="label"
+                                   t-value="'Login MyCompassion'"/>
+                                <span>info@compassion.ch</span>
+                            </t>
+                            <a t-att-href="'/my2/user_settings'">
+                                <div class="d-flex flex-column align-items-stretch mb-3">
+                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                        <t t-set="variant" t-value="'default'"/>
+                                        <t t-set="variation" t-value="'filled'"/>
+                                        <t t-set="label"
+                                           t-value="'Edit account settings'"/>
+                                        <t t-set="color" t-value="'core-blue'"/>
+                                        <t t-set="text_color"
+                                           t-value="'pure-white'"/>
+                                    </t>
+                                </div>
+                            </a>
+                            <a t-att-href="'/my/security?redirect=/my/information'">
+                                <div class="d-flex flex-column align-items-stretch">
+                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                        <t t-set="variant" t-value="'default'"/>
+                                        <t t-set="variation" t-value="'filled'"/>
+                                        <t t-set="label"
+                                           t-value="'Change password'"/>
+                                        <t t-set="color" t-value="'core-blue'"/>
+                                        <t t-set="text_color"
+                                           t-value="'pure-white'"/>
+                                    </t>
+                                </div>
+                            </a>
                         </div>
                     </div>
                     <!-- Privacy data panel -->
@@ -319,14 +351,17 @@
                             <!-- Sign Child protection Charter Button -->
                             <div class="mb-3">
                                 <a t-att-href="'/child-protection-charter'">
-                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                        <t t-set="variant" t-value="'default'"/>
-                                        <t t-set="variation" t-value="'filled'"/>
-                                        <t t-set="label"
-                                           t-value="'Child protection Charter'"/>
-                                        <t t-set="color" t-value="'core-blue'"/>
-                                        <t t-set="text_color" t-value="'pure-white'"/>
-                                    </t>
+                                    <div class="d-flex flex-column align-items-stretch">
+                                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                            <t t-set="variant" t-value="'default'"/>
+                                            <t t-set="variation" t-value="'filled'"/>
+                                            <t t-set="label"
+                                               t-value="'Child protection Charter'"/>
+                                            <t t-set="color" t-value="'core-blue'"/>
+                                            <t t-set="text_color"
+                                               t-value="'pure-white'"/>
+                                        </t>
+                                    </div>
                                 </a>
                             </div>
                             <!-- Checkbox -->
@@ -464,16 +499,6 @@
                                     </option>
                                 </t>
                             </t>
-                            <a id="ApplyModificationsCommButton">
-                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                    <t t-set="variant" t-value="'default'"/>
-                                    <t t-set="variation" t-value="'filled'"/>
-                                    <t t-set="label" t-value="'Save settings'"/>
-                                    <t t-set="color" t-value="'mid-green'"/>
-                                    <t t-set="text_color"
-                                       t-value="'pure-white'"/>
-                                </t>
-                            </a>
                         </div>
                     </div>
 

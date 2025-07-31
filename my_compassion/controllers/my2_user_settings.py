@@ -13,7 +13,8 @@ from datetime import date
 
 class MyCompassionUserController(http.Controller):
 
-    @http.route('/my2/user_settings', type="http", auth="user", website=True, sitemap=False)
+    @http.route('/my2/user_settings', type="http", auth="user", website=True,
+                sitemap=False)
     def my2_render_user_settings_page(self, **kwargs):
         partner = request.env.user.partner_id
         params = request.params
@@ -60,24 +61,6 @@ class MyCompassionUserController(http.Controller):
             else:
                 currently_editing_info = True
 
-        # Handle communication preferences
-        communication_fields = {
-            'tax_receipt_preference': params.get('tax_receipt_preference'),
-            'letter_delivery_preference': params.get('letter_delivery_preference'),
-            'photo_delivery_preference': params.get('photo_delivery_preference'),
-            'calendar': params.get('calendar'),
-            'birthday_reminder': params.get('birthday_reminder'),
-            'sponsorship_anniversary_card': params.get('sponsorship_anniversary_card'),
-        }
-
-        communication_updates = {}
-        for field, value in communication_fields.items():
-            if value is not None:
-                communication_updates[field] = value == 'true' if value in ['true', 'false'] else value
-
-        if communication_updates:
-            partner.write(communication_updates)
-
         return request.render('my_compassion.my2_user_settings_page', {
             'partner': partner,
             'titles': titles,
@@ -85,3 +68,42 @@ class MyCompassionUserController(http.Controller):
             'submitted_info_edited': submitted_info_edited,
             'profile_edits_accepted_fields': profile_edits_accepted,
         })
+
+
+
+class MyCompassionUserController(http.Controller):
+
+    @http.route(
+        "/my2/user_settings/set_communication_settings",
+        type="json",
+        auth="user",
+        methods=["POST"],
+        sitemap=False,
+    )
+    def my2_set_partner_communication_settings(self, **post):
+        partner = request.env.user.partner_id
+
+        allowed_fields = {
+            'tax_receipt_preference',
+            'letter_delivery_preference',
+            'photo_delivery_preference',
+            'calendar',
+            'birthday_reminder',
+            'sponsorship_anniversary_card',
+        }
+
+        update_vals = {}
+
+        for field, value in post.items():
+            if field not in allowed_fields:
+                continue
+
+            if value in ['true', 'false']:
+                value = value == 'true'
+
+            update_vals[field] = value
+
+        if update_vals:
+            partner.write(update_vals)
+
+        return {}
