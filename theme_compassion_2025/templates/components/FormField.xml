@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!--
+    Component: Form Field Component
+
+    Description:
+    Displays a blue text with an empty form underneath
+
+    Props:
+    - label (string): The text seen on top of the component.
+    - input_id (string): ID of the linked input
+-->
+
+<odoo>
+    <template id="FormFieldComponent" name="Form Field Component">
+        <div class="my-3">
+            <div>
+                <label t-attf-for="#{input_id}"
+                       class="text-core-blue body-small bold mb-1">
+                    <t t-esc="label"/>
+                </label>
+            </div>
+            <div class="">
+                <t t-raw="0"/>
+            </div>
+        </div>
+    </template>
+</odoo>
