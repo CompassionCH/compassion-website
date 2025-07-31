@@ -3,6 +3,11 @@
     templates/pages/my2_user_settings.xml
 */
 
+/* Switch buttons on the communication settings panel */
+.custom-switch .custom-control-input:checked ~ .custom-control-label::before {
+  background-color: #0d6efd;
+}
+
 /* Tab container styling */
 .user_settings_tabs .nav-tabs {
     border-bottom: none; /* Remove Bootstrap's default line */

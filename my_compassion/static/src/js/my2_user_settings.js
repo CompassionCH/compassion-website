@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const url = new URL("/my2/user_settings", window.location.origin);
             url.searchParams.set("submitted_info_edited", true);
 
-            const fields = ["title", "surname", "name", "address", "city", "zip", "phone", "email"];
+            const fields = ["title", "surname", "name", "address", "city", "country_id", "zip", "phone", "email"];
 
             fields.forEach((field) => {
                 const value = document.getElementById(field)?.value?.trim();

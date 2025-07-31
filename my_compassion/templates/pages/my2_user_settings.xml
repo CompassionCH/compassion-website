@@ -31,7 +31,6 @@
                                 settings</option>
                         </select>
                     </div>
-
                     <!-- Desktop Tabs (Visible on medium screens and up) -->
                     <ul class="nav nav-tabs d-none d-lg-flex" id="user-settings-tabs"
                         role="tablist">
@@ -158,8 +157,37 @@
                                     </t>
                                 </div>
                             </div>
-                            <!-- City and ZIP -->
+                            <!-- Country & City -->
                             <div class="row">
+                                <div class="col-md-6">
+                                    <t t-if="currently_editing_info">
+                                        <t t-call="theme_compassion_2025.FormFieldComponent">
+                                            <t t-set="label" t-value="'Country'"/>
+                                            <t t-set="input_id" t-value="'country_id'"/>
+                                            <div class="pl-0 pr-2 m-0 col-7">
+                                                <t t-call="theme_compassion_2025.SelectComponent">
+                                                    <t t-set="id"
+                                                       t-value="'country_id'"/>
+                                                    <t t-set="name"
+                                                       t-value="'country_change'"/>
+                                                    <t t-foreach="countries" t-as="t">
+                                                        <option t-att-value="t.id"
+                                                                t-att-selected="partner.country_id.id == t.id">
+                                                            <t t-esc="t.name"/>
+                                                        </option>
+                                                    </t>
+                                                </t>
+                                            </div>
+                                        </t>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-call="theme_compassion_2025.FormFieldComponent">
+                                            <t t-set="label" t-value="'Country'"/>
+                                            <t t-set="input_id" t-value="'country_id'"/>
+                                            <t t-esc="partner.country_id.name if partner.country_id else ''"/>
+                                        </t>
+                                    </t>
+                                </div>
                                 <div class="col-md-6">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
                                         <t t-set="label" t-value="'City'"/>
@@ -175,36 +203,43 @@
                                         </t>
                                     </t>
                                 </div>
+                            </div>
+                            <!-- ZIP & Address -->
+                            <div class="row">
+                                <t t-if="partner.country_id.zip_required">
+                                    <div class="col-md-6">
+                                        <t t-call="theme_compassion_2025.FormFieldComponent">
+                                            <t t-set="label" t-value="'Zip'"/>
+                                            <t t-set="input_id" t-value="'zip'"/>
+                                            <t t-if="currently_editing_info">
+                                                <input id="zip" type="text" name="zip"
+                                                       t-att-class="'border-mid-orange' if not profile_edits_accepted_fields.get('zip') and submitted_info_edited else ''"
+                                                       t-att-value="partner.zip if partner.zip else ''"
+                                                       required=""/>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-esc="partner.zip if partner.zip else ''"/>
+                                            </t>
+                                        </t>
+                                    </div>
+                                </t>
                                 <div class="col-md-6">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label" t-value="'Zip'"/>
-                                        <t t-set="input_id" t-value="'zip'"/>
+                                        <t t-set="label" t-value="'Address'"/>
+                                        <t t-set="input_id" t-value="'address'"/>
                                         <t t-if="currently_editing_info">
-                                            <input id="zip" type="text" name="zip"
-                                                   t-att-class="'border-mid-orange' if not profile_edits_accepted_fields.get('zip') and submitted_info_edited else ''"
-                                                   t-att-value="partner.zip if partner.zip else ''"
+                                            <input id="address" type="text"
+                                                   name="address"
+                                                   t-att-class="'border-high-orange' if not profile_edits_accepted_fields.get('address') and submitted_info_edited else ''"
+                                                   t-att-value="partner.street if partner.street else ''"
                                                    required=""/>
                                         </t>
                                         <t t-else="">
-                                            <t t-esc="partner.zip if partner.zip else ''"/>
+                                            <t t-esc="partner.street if partner.street else ''"/>
                                         </t>
                                     </t>
                                 </div>
                             </div>
-                            <!-- Address -->
-                            <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label" t-value="'Address'"/>
-                                <t t-set="input_id" t-value="'address'"/>
-                                <t t-if="currently_editing_info">
-                                    <input id="address" type="text" name="address"
-                                           t-att-class="'border-high-orange' if not profile_edits_accepted_fields.get('address') and submitted_info_edited else ''"
-                                           t-att-value="partner.street if partner.street else ''"
-                                           required=""/>
-                                </t>
-                                <t t-else="">
-                                    <t t-esc="partner.street if partner.street else ''"/>
-                                </t>
-                            </t>
                             <!-- Phone number and Email -->
                             <div class="row">
                                 <div class="col-md-6">
@@ -367,7 +402,7 @@
                             <!-- Checkbox -->
                             <div>
                                 <t t-if="partner.date_agreed_child_protection_charter">
-                                    <span>Signing date: </span>
+                                    <span>Signing date:</span>
                                     <t
                                             t-esc="partner.get_date('date_agreed_child_protection_charter', 'date_short')"
                                     />
