@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8" ?>
-
 <!--
     Component: Form Field Component
 
@@ -11,14 +10,13 @@
     - input_id (string): ID of the linked input
     - top_class (string): class for the outer div element wrapping everything
 -->
-
 <odoo>
     <template id="FormFieldComponent" name="Form Field Component">
         <div t-att-class="top_class">
             <label t-att-for="input_id" class="text-core-blue body-small bold mb-1">
-                <t t-esc="label"/>
+                <t t-esc="label" />
             </label>
-            <t t-raw="0"/>
+            <t t-raw="0" />
         </div>
     </template>
 </odoo>

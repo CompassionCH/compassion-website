@@ -42,8 +42,7 @@
     </template>
     <template id="ThemedButtonComponent" name="Button Component">
         <!-- Default property values -->
-        <t t-set="radius" t-value="radius or 'pill'"/>
-
+        <t t-set="radius" t-value="radius or 'pill'" />
         <!-- Determine button style class border or background depending on the variation-->
         <t t-if="variation == 'hollow'">
             <t t-set="style_class" t-value="'border border-2 border-' + color" />
@@ -64,8 +63,11 @@
             </a>
         </t>
         <t t-else="">
-            <button t-att-id="id" t-attf-class="btn btn--#{variant}-#{variation} btn--radius-#{radius}
-                                                #{style_class} text-#{text_color}">
+            <button
+                t-att-id="id"
+                t-attf-class="btn btn--#{variant}-#{variation} btn--radius-#{radius}
+                                                #{style_class} text-#{text_color}"
+            >
                 <t t-call="theme_compassion_2025.ThemedButtonComponent_Content" />
             </button>
         </t>

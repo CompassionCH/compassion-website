@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <template id="signup_sponsor" inherit_id="auth_signup.fields">
+    <template
+        id="signup_sponsor"
+        inherit_id="auth_signup.fields"
+        name="Signup Privacy Policy"
+        website_id="website.default_website"
+    >
         <xpath expr="//div[@class='form-group field-confirm_password']" position="after">
             <input
                 type="checkbox"
