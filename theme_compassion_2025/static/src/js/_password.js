@@ -1,25 +1,25 @@
-odoo.define('theme_compassion_2025.password', function (require) {
-    'use strict';
+odoo.define("theme_compassion_2025.password", function (require) {
+    "use strict";
 
-    var publicWidget = require('web.public.widget');
+    var publicWidget = require("web.public.widget");
 
     publicWidget.registry.Password = publicWidget.Widget.extend({
-        template: 'theme_compassion_2025.PasswordComponent',
-        xmlDependencies: ['/theme_compassion_2025/static/src/xml/Password.xml'],
+        template: "theme_compassion_2025.PasswordComponent",
+        xmlDependencies: ["/theme_compassion_2025/static/src/xml/Password.xml"],
 
         events: {
-            'click .password-show-toggle': '_onTogglePasswordVisibility',
+            "click .password-show-toggle": "_onTogglePasswordVisibility",
         },
 
         /**
          * @override
          * @param {Widget} parent
          * @param {Object} options
-         * @param {boolean} [options.required=false] - Whether the input is mandatory.
+         * @param {Boolean} [options.required=false] - Whether the input is mandatory.
          */
         init: function (parent, options) {
             this._super.apply(this, arguments);
-            this.required = options && options.required || false;
+            this.required = (options && options.required) || false;
         },
 
         /**
@@ -27,14 +27,14 @@ odoo.define('theme_compassion_2025.password', function (require) {
          */
         start: function () {
             this.$passwordInput = this.$('input[type="password"]');
-            this.$toggleIcon = this.$('i.password-show-toggle');
+            this.$toggleIcon = this.$("i.password-show-toggle");
 
             return this._super.apply(this, arguments);
         },
 
-        //--------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
         // Handlers
-        //--------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
         /**
          * Toggles the visibility of the password in the input field and changes the icon.
@@ -46,8 +46,8 @@ odoo.define('theme_compassion_2025.password', function (require) {
             ev.preventDefault();
 
             const isPassword = this.$passwordInput.is('[type="password"]');
-            this.$passwordInput.attr('type', isPassword ? 'text' : 'password');
-            this.$toggleIcon.toggleClass('fa-eye-slash fa-eye');
+            this.$passwordInput.attr("type", isPassword ? "text" : "password");
+            this.$toggleIcon.toggleClass("fa-eye-slash fa-eye");
         },
     });
 

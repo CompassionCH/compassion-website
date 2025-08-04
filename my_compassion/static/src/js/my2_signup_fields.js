@@ -5,16 +5,18 @@ document.addEventListener("DOMContentLoaded", function (event) {
         var publicWidget = require("web.public.widget");
 
         publicWidget.registry.Login = publicWidget.Widget.extend({
-            selector: ".my2-login-form",
+            selector: ".my2-signup-fields",
 
             /**
              * @override
              */
             start: function () {
-                // Create password element
-                var passwordElement = this.$(".password");
-                this.password = new publicWidget.registry.Password(this);
-                this.password.replace(passwordElement);
+                // Create password elements
+
+                for (var $password of this.$(".password")) {
+                    var password = new publicWidget.registry.Password(this);
+                    password.replace($password);
+                }
 
                 return this._super.apply(this, arguments);
             },

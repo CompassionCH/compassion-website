@@ -39,6 +39,16 @@ $compassion-colors: (
 );
 
 /**
+ * Generate CSS custom properties (variables) for each color.
+ * This makes the colors available globally in any CSS file.
+ */
+:root {
+  @each $name, $color in $compassion-colors {
+    --#{$name}: #{$color};
+  }
+}
+
+/**
  * Generate CSS classes for each color in the compassion-colors map.
  * Add classes as needed during development, but ensure they are documented and used consistently.
  * Follow the pattern of Bootstrap for consistency (I prefer tailwind but odoo use bootstrap...)
