@@ -15,4 +15,5 @@ from . import (
     res_partner,
     res_user,
     my2_sponsor_child_timeline,
+    product_template,
 )

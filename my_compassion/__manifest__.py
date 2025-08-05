@@ -49,6 +49,7 @@
         "templates/signup.xml",
         "views/correspondence_template_view.xml",
         "views/partner_compassion_view.xml",
+        "views/product_view.xml",
         "data/signup_email_confirmation.xml",
         "data/communication_config.xml",
         # My Compassion 2 pages
