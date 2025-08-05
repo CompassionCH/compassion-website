@@ -69,8 +69,8 @@ class ProductTemplate(models.Model):
     )
 
     my_compassion_image = fields.Image(
-        max_width=800,
-        max_height=600,
+        max_width=1200,
+        max_height=900,
         required=True,
         help="Image of the fund/gift visible on the MyCompassion website",
     )
