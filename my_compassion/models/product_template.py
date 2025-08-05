@@ -95,7 +95,7 @@ class ProductTemplate(models.Model):
         "donation_id",
         string="Donation Impact",
         domain=[("type", "=", "after")],
-        context={"default_type": "before"},
+        context={"default_type": "after"},
         help="Lines for the donation impact displayed on the web page of the fund/gift",
     )
 
