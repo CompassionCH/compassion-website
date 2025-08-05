@@ -10,7 +10,6 @@ class ProductTemplate(models.Model):
 
     # General
     my_compassion_name = fields.Char(
-        required=True,
         translate=True,
         help="Name of the fund/gift visible on the MyCompassion website",
     )
@@ -58,12 +57,10 @@ class ProductTemplate(models.Model):
             ("were-most-needed", "Were Most Needed"),
         ],
         string="Pictogram",
-        required=True,
         help="Pictogram of the fund/gift visible on the MyCompassion website",
     )
 
     my_compassion_description = fields.Text(
-        required=True,
         translate=True,
         help="Description of the fund/gift visible on the MyCompassion website",
     )
@@ -71,7 +68,6 @@ class ProductTemplate(models.Model):
     my_compassion_image = fields.Image(
         max_width=1200,
         max_height=900,
-        required=True,
         help="Image of the fund/gift visible on the MyCompassion website",
     )
 
@@ -142,56 +138,3 @@ class ProductTemplate(models.Model):
     my_compassion_donation_quantity_high = fields.Integer(
         default=5, help="Highest quantity suggestion when making a donation"
     )
-
-
-class DonationImpactLine(models.Model):
-    """
-    Represents a single line item in an impact statement, either
-    describing the current situation or the impact of a donation.
-    """
-
-    _name = "donation.impact.line"
-    _description = "Donation Impact Line"
-    _order = "sequence, id"
-
-    donation_id = fields.Many2one(
-        "product.template",
-        string="Donation Reference",
-        required=True,
-        ondelete="cascade",
-    )
-
-    # Enables drag and drop reordering
-    sequence = fields.Integer(default=10)
-
-    description = fields.Char(string="Statement", translate=True, required=True)
-
-    type = fields.Selection(
-        [("before", "Current Situation"), ("after", "Donation Impact")],
-        string="Type",
-        required=True,
-        help="Used to distinguish between the two types.",
-    )
-
-
-class DonationInfoLine(models.Model):
-    """
-    Represents a single line item in an information statement.
-    """
-
-    _name = "donation.info.line"
-    _description = "Donation Information Line"
-    _order = "sequence, id"
-
-    donation_id = fields.Many2one(
-        "product.template",
-        string="Donation Reference",
-        required=True,
-        ondelete="cascade",
-    )
-
-    # Enables drag and drop reordering
-    sequence = fields.Integer(default=10)
-
-    title = fields.Char(string="Title", translate=True, required=True)
-    text = fields.Text(string="Text", translate=True, required=True)

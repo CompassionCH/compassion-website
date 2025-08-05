@@ -16,4 +16,6 @@ from . import (
     res_user,
     my2_sponsor_child_timeline,
     product_template,
+    my2_donation_info_line,
+    my2_donation_impact_line,
 )
