@@ -20,23 +20,27 @@
     <t t-name="theme_compassion_2025.RangeInputComponent">
         <!-- Component definition -->
         <div class="slider-container">
-            <div t-attf-class="slider-track bg-#{widget.trackColor}"/>
-            <div t-attf-class="slider-range bg-#{widget.rangeColor}"/>
-            <input type="range"
-                   t-att-min="widget.minValue"
-                   t-att-max="widget.maxValue"
-                   t-att-value="widget.minValue"
-                   t-attf-class="slider-low slider-thumb-#{widget.thumbColor}"/>
-            <input type="range"
-                   t-att-min="widget.minValue"
-                   t-att-max="widget.maxValue"
-                   t-att-value="widget.maxValue"
-                   t-attf-class="slider-high slider-thumb-#{widget.thumbColor}"/>
+            <div t-attf-class="slider-track bg-#{widget.trackColor}" />
+            <div t-attf-class="slider-range bg-#{widget.rangeColor}" />
+            <input
+                type="range"
+                t-att-min="widget.minValue"
+                t-att-max="widget.maxValue"
+                t-att-value="widget.minValue"
+                t-attf-class="slider-low slider-thumb-#{widget.thumbColor}"
+            />
+            <input
+                type="range"
+                t-att-min="widget.minValue"
+                t-att-max="widget.maxValue"
+                t-att-value="widget.maxValue"
+                t-attf-class="slider-high slider-thumb-#{widget.thumbColor}"
+            />
             <div t-attf-class="label-low text-#{widget.labelColor}">
-                <t t-esc="widget.initialLow"/>
+                <t t-esc="widget.initialLow" />
             </div>
             <div t-attf-class="label-high text-#{widget.labelColor}">
-                <t t-esc="widget.initialHigh"/>
+                <t t-esc="widget.initialHigh" />
             </div>
         </div>
     </t>

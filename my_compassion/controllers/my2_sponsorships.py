@@ -8,22 +8,24 @@
 ##############################################################################
 import random
 import uuid
-from datetime import datetime
 
 from werkzeug.exceptions import Gone, NotFound
 
 from odoo import fields, http
 from odoo.http import request
 
+from odoo.addons.website_sponsorship.controllers.main import WebsiteChild
 
-class MyCompassionSponsorshipsController(http.Controller):
+
+class MyCompassionSponsorshipsController(WebsiteChild):
     @http.route(
         "/my2/sponsorships", type="http", auth="public", website=True, sitemap=False
     )
     def my2_render_sponsorships_page(self, **kwargs):
         """
         Renders the sponsorships landing page.
-        return: An HTTP response containing a rendered template with the sponsorships landing page.
+        return: An HTTP response containing a rendered template with the
+        sponsorships landing page.
         """
         countries = request.env["compassion.field.office"].search(
             [("available_on_childpool", "=", True)]
@@ -47,7 +49,8 @@ class MyCompassionSponsorshipsController(http.Controller):
         """
         Fetches children available for sponsorship and renders them using the
         my_compassion.my2_sponsorships_results_content template.
-        return: An JSON response containing the rendered template html as well as the new children count and total hits.
+        return: An JSON response containing the rendered template html
+        as well as the new children count and total hits.
         """
         # The number of results to fetch per call
         limit = int(post.get("limit", 20))
@@ -159,7 +162,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
     def wizard_start(self, child, **kwargs):
         """
         Renders the new sponsorship wizard initial page.
-        return: An HTTP response containing a rendered template with the initial wizard page.
+        return: An HTTP response containing a rendered template
+        with the initial wizard page.
         """
         # Make sure child is available and reserve it for 5 minutes
         if child.state not in child._available_states():
@@ -193,7 +197,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
     )
     def wizard_step(self, **post):
         """
-        Takes a step (forward or backward) in the new sponsorship wizard and renders the new wizard content using the
+        Takes a step (forward or backward) in the new sponsorship wizard
+        and renders the new wizard content using the
         my_compassion.my2_new_sponsorship_wizard_form_content template.
         return: An JSON response containing the rendered template html.
         """
@@ -204,7 +209,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
         # Update the record
         self._update_wizard(wizard, post)
 
-        # Fetch available salutations, countries, payment methods, languages and lead sources
+        # Fetch available salutations, countries, payment methods,
+        # languages and lead sources
         titles = request.env["res.partner.title"].search([])
         countries = request.env["res.country"].search([])
         spoken_languages = (
@@ -216,8 +222,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
         lead_sources = request.env["recurring.contract.origin"].sudo().search([])
 
         # TODO: decide if we filter by website_published or not
-        # payment_methods = request.env["account.payment.mode"].sudo().search([("website_published", "=", True)])
-        # lead_sources = request.env["recurring.contract.origin"].sudo().search([("website_published", "=", True)])
+        # payment_methods = request.env["account.payment.mode"].sudo().search([("website_published", "=", True)]) # noqa: E501
+        # lead_sources = request.env["recurring.contract.origin"].sudo().search([("website_published", "=", True)]) # noqa: E501
 
         context = {
             "wizard": wizard,
@@ -244,7 +250,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
     )
     def sponsorship_wizard_submit(self, **post):
         """
-        Receives the wizard form submission and finalizes the new sponsorship, then redirect to the thank you page.
+        Receives the wizard form submission and finalizes the new sponsorship,
+        then redirect to the thank you page.
         return: A redirection to the thank you page.
         """
         # Fetch the wizard record from the database

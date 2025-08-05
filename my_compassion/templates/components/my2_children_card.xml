@@ -14,16 +14,11 @@
 <odoo>
     <template id="my2_children_card_component" name="Children Card Component">
         <!-- Default property values -->
-        <t t-set="show_sponsor_me" t-value="show_sponsor_me or False"/>
-
+        <t t-set="show_sponsor_me" t-value="show_sponsor_me or False" />
         <div class="children-card text-center mb-3 mt-3">
             <div class="p-4 d-flex flex-column align-items-center bg-high-eggshell">
                 <!-- Child Image -->
-                <img
-                    class="rounded-circle img-fluid mb-2"
-                    t-att-src="child.image_url"
-                    alt="Child image"
-                />
+                <img class="rounded-circle img-fluid mb-2" t-att-src="child.image_url" alt="Child image" />
                 <!-- TODO: maybe replace src with local image?
                      t-attf-src="/web/image/compassion.child/{{child.id}}/portrait"
                 -->

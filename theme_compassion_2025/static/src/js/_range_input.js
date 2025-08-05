@@ -1,24 +1,33 @@
-odoo.define('theme_compassion_2025.range_input', function (require) {
-    'use strict';
+odoo.define("theme_compassion_2025.range_input", function (require) {
+    "use strict";
 
-    var publicWidget = require('web.public.widget');
+    var publicWidget = require("web.public.widget");
 
     publicWidget.registry.RangeInput = publicWidget.Widget.extend({
-        template: 'theme_compassion_2025.RangeInputComponent',
-        xmlDependencies: ['/theme_compassion_2025/static/src/xml/RangeInput.xml'],
+        template: "theme_compassion_2025.RangeInputComponent",
+        xmlDependencies: ["/theme_compassion_2025/static/src/xml/RangeInput.xml"],
 
         events: {
-            'input .slider-low': '_slideLow',
-            'input .slider-high': '_slideHigh',
-            'change .slider-low, .slider-high': '_onRangeChange',
+            "input .slider-low": "_slideLow",
+            "input .slider-high": "_slideHigh",
+            "change .slider-low, .slider-high": "_onRangeChange",
         },
 
         /**
          * @override
          */
-        init(parent, minValue=0, maxValue=100, initialLow=null, initialHigh=null, minGap=0,
-             thumbColor='mid-yellow', labelColor='low-black', rangeColor='low-yellow', trackColor='low-eggshell')
-        {
+        init(
+            parent,
+            minValue = 0,
+            maxValue = 100,
+            initialLow = null,
+            initialHigh = null,
+            minGap = 0,
+            thumbColor = "mid-yellow",
+            labelColor = "low-black",
+            rangeColor = "low-yellow",
+            trackColor = "low-eggshell"
+        ) {
             this._super(parent);
             this.minValue = minValue;
             this.maxValue = maxValue;
@@ -39,10 +48,10 @@ odoo.define('theme_compassion_2025.range_input', function (require) {
             var def = this._super.apply(this, arguments);
 
             // Get references to widget elements
-            this.sliderLow = this.$('.slider-low')[0];
-            this.sliderHigh = this.$('.slider-high')[0];
-            this.labelLow = this.$('.label-low')[0];
-            this.labelHigh = this.$('.label-high')[0];
+            this.sliderLow = this.$(".slider-low")[0];
+            this.sliderHigh = this.$(".slider-high")[0];
+            this.labelLow = this.$(".label-low")[0];
+            this.labelHigh = this.$(".label-high")[0];
             this.sliderContainer = this.el;
 
             // Set initial values from attributes
@@ -104,8 +113,8 @@ odoo.define('theme_compassion_2025.range_input', function (require) {
         _updateLabelLow: function () {
             const value = this.getLow();
             this.labelLow.textContent = value;
-            const progressRatio = (value - this.minValue) / (this.maxValue - this.minValue)
-            this.sliderContainer.style.setProperty('--progress-ratio-low', progressRatio);
+            const progressRatio = (value - this.minValue) / (this.maxValue - this.minValue);
+            this.sliderContainer.style.setProperty("--progress-ratio-low", progressRatio);
         },
 
         /**
@@ -114,8 +123,8 @@ odoo.define('theme_compassion_2025.range_input', function (require) {
         _updateLabelHigh: function () {
             const value = this.getHigh();
             this.labelHigh.textContent = value;
-            const progressRatio = (value - this.minValue) / (this.maxValue - this.minValue)
-            this.sliderContainer.style.setProperty('--progress-ratio-high', progressRatio);
+            const progressRatio = (value - this.minValue) / (this.maxValue - this.minValue);
+            this.sliderContainer.style.setProperty("--progress-ratio-high", progressRatio);
         },
 
         /**
@@ -132,7 +141,7 @@ odoo.define('theme_compassion_2025.range_input', function (require) {
          * @private
          */
         _onRangeChange: function () {
-            this.trigger_up('range_changed', {
+            this.trigger_up("range_changed", {
                 low: this.getLow(),
                 high: this.getHigh(),
             });

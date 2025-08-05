@@ -12,11 +12,10 @@
 <odoo>
     <template id="RangeInputLoadingComponent" name="Range Input Loading Component">
         <!-- Default property values -->
-        <t t-set="color" t-value="color or 'low-eggshell'"/>
-
+        <t t-set="color" t-value="color or 'low-eggshell'" />
         <!-- Component definition -->
         <div class="slider-container">
-            <div t-attf-class="slider-track loading bg-#{color}"/>
+            <div t-attf-class="slider-track loading bg-#{color}" />
         </div>
     </template>
 </odoo>
