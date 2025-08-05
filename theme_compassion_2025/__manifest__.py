@@ -47,6 +47,7 @@
         "templates/components/FormField.xml",
         # Buttons
         "templates/components/buttons/ThemedButton.xml",
+        "templates/components/buttons/ToggleButton.xml",
     ],
     "images": ["static/description/compassion_screenshot.png"],
     "license": "LGPL-3",
