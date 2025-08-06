@@ -15,4 +15,5 @@ from . import (
     my2_children,
     my2_letters,
     my2_user,
+    my2_donations,
 )
