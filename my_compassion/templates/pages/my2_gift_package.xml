@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Page: My Compassion 2 Gift Package Page
+
+    Description:
+    This page displays the content of the user's gift package (cart).
+
+    Used in route:
+    - /my2/gift-package
+
+    Injected data:
+    - TODO
+-->
+<odoo>
+    <!-- GIFT PACKAGE PAGE -->
+    <template id="my2_gift_package_page" name="Gift Package Page">
+        <!-- Include js and stylesheet -->
+        <script type="text/javascript" src="/my_compassion/static/src/js/my2_gift_package.js" />
+        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_gift_package.css" />
+        <t t-call="website.layout">
+            <div class="container">
+                <div class="content-column">
+                    <!-- TODO: Add form action -->
+                    <form class="my2_gift_package_form" action="/my2/" method="POST">
+                        <div class="px-3 mt-4 d-flex flex-column align-items-center">
+                            <!-- TITLE -->
+                            <t t-call="theme_compassion_2025.TitleComponent">
+                                <t t-set="title_content" t-value="'Gift Package'" />
+                                <t t-set="color" t-value="'core-blue'" />
+                                <t t-set="show_underline" t-value="True" />
+                                <t t-set="underline_color" t-value="'low-yellow'" />
+                                <t t-set="icon" t-value="'gift02'" />
+                            </t>
+
+                            <!-- HELP -->
+                            <a href="https://www.example.com" class="body-large icon-help-circle text-mid-grey"/>
+
+                            <!-- DESCRIPTION -->
+                            <div class="mt-3 px-5 body-small text-center">
+                                Your donations will have an everlasting impact.
+                            </div>
+
+                            <!-- EMPTY CART -->
+                            <div class="mt-4 p-3 w-100 rounded-lg bg-high-pink text-low-pink text-center body-large bold">
+                                Your cart is empty
+                            </div>
+
+                            <!-- PAYMENT -->
+                            <div class="gift-package-payment-container mt-4 w-100">
+                                <div class="d-flex flex-column align-items-stretch">
+                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                        <t t-set="variant" t-value="'compact'" />
+                                        <t t-set="variation" t-value="'filled'" />
+                                        <t t-set="label" t-value="'Proceed to payment'" />
+                                        <t t-set="color" t-value="'dark-blue'" />
+                                        <t t-set="text_color" t-value="'pure-white'" />
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

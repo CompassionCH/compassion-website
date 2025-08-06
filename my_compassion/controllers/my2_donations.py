@@ -34,3 +34,21 @@ class MyCompassionDonationsController(http.Controller):
             "my_compassion.my2_donation_details_page",
             {"product": product},
         )
+
+    @http.route(
+        '/my2/gift-package',
+        type="http",
+        auth="user",
+        website=True,
+        sitemap=False,
+    )
+    def my2_render_gift_package_page(self, **kwargs):
+        """
+        Renders the gift package (cart) page.
+        return: An HTTP response containing a rendered template with the gift package page.
+        """
+
+        return request.render(
+            "my_compassion.my2_gift_package_page",
+            { },
+        )

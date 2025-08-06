@@ -9,11 +9,13 @@
     - show_underline (boolean): True/False to show underline.
     - underline_color (string): Color for the underline.
     - description (string): Optional text to display below the title/underline.
+    - icon (string): Optional icon to display before the title.
 -->
 <odoo>
     <template id="TitleComponent" name="Title Component">
         <div class="title-component">
             <h1 t-attf-class="title-heading title-size-#{title_size or 'md'} text-#{color}">
+                <i t-if="icon" t-attf-class="mt-n2 mr-2 icon-#{icon} text-#{underline_color}"/>
                 <t t-esc="title_content" />
             </h1>
             <t t-if="show_underline">
