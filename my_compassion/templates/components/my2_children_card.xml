@@ -8,6 +8,7 @@
     Props:                                                                  Default:
     - child (record): The child related object.                             [None]
     - show_sponsor_me (bool): Show sponsor me button.                       [False]
+    - show_status (bool): Show correspondence status.                       [True]
     - sponsorship_end_date (date): Display sponsorship end date.            [None]
     - latest_correspondence (date): Display latest correspondence date.     [None]
 -->
@@ -15,6 +16,8 @@
     <template id="my2_children_card_component" name="Children Card Component">
         <!-- Default property values -->
         <t t-set="show_sponsor_me" t-value="show_sponsor_me or False" />
+        <t t-set="show_status" t-value="not show_status == False" />
+
         <div class="children-card text-center mb-3 mt-3">
             <div class="p-4 d-flex flex-column align-items-center bg-high-eggshell">
                 <!-- Child Image -->
@@ -28,7 +31,7 @@
                 </div>
                 <!-- Correspondence Status and info section -->
                 <div class="body-small">
-                    <div class="mb-3 pl-3 pr-3">
+                    <div t-if="show_status" class="mb-3 pl-3 pr-3">
                         <span class="border-bottom border-2 border-high-orange">
                             <t t-if="sponsorship_end_date">
                                 Sponsorship terminated on

@@ -46,9 +46,20 @@
   right: calc((1 - var(--progress-ratio-high)) * (100% - var(--thumb-size)) + calc(var(--thumb-size) / 2));
 }
 
-.slider-low::-webkit-slider-thumb, .slider-high::-webkit-slider-thumb,
-.slider-low::-moz-range-thumb, .slider-high::-moz-range-thumb {
+/* For Chrome, Safari, Edge, Opera */
+.slider-low::-webkit-slider-thumb, .slider-high::-webkit-slider-thumb {
   -webkit-appearance: none;
+  appearance: none;
+  width: var(--thumb-size);
+  height: var(--thumb-size);
+  border-radius: 50%;
+  border: none;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* For Firefox */
+.slider-low::-moz-range-thumb, .slider-high::-moz-range-thumb {
   appearance: none;
   width: var(--thumb-size);
   height: var(--thumb-size);
