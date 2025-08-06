@@ -6,6 +6,8 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+from werkzeug.exceptions import NotFound
+
 from odoo import http
 from odoo.http import request
 
@@ -23,6 +25,10 @@ class MyCompassionDonationsController(http.Controller):
         Renders a donation details page for a specific donation (product).
         return: An HTTP response containing a rendered template with the donation details page.
         """
+
+        # Only renders pages for product that are activated for MyCompassion
+        if not product.activate_for_my_compassion:
+            raise NotFound()
 
         return request.render(
             "my_compassion.my2_donation_details_page",

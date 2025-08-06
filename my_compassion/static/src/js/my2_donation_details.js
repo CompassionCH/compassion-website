@@ -39,6 +39,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
             },
         });
 
-        return publicWidget.registry.Sponsorships;
+        return publicWidget.registry.DonationDetails;
     });
 });
