@@ -13,7 +13,10 @@ from odoo.http import request
 class MyCompassionDonationsController(http.Controller):
     @http.route(
         '/my2/donation-details/<model("product.template"):product>',
-        type="http", auth="user", website=True, sitemap=False
+        type="http",
+        auth="user",
+        website=True,
+        sitemap=False,
     )
     def my2_render_donation_details_page(self, product, **kwargs):
         """
@@ -23,5 +26,5 @@ class MyCompassionDonationsController(http.Controller):
 
         return request.render(
             "my_compassion.my2_donation_details_page",
-            { "product": product },
+            {"product": product},
         )

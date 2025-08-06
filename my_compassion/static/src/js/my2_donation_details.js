@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 if (this.$("input[name='suggested_amount']:checked").val() !== "custom") {
                     this.customAmountInput.hide();
                 }
-                this.customAmountInput.removeAttr('hidden');
+                this.customAmountInput.removeAttr("hidden");
 
                 return this._super.apply(this, arguments);
             },
