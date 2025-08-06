@@ -14,25 +14,27 @@
 <odoo>
     <!-- DONATION DETAILS PAGE -->
     <template id="my2_donation_details_page" name="Donation Details Page">
-        <!-- Include stylesheet -->
+        <!-- Include js and stylesheet -->
+        <script type="text/javascript" src="/my_compassion/static/src/js/my2_donation_details.js" />
         <link rel="stylesheet" href="/my_compassion/static/src/css/my2_donation_details.css"/>
 
         <t t-call="website.layout">
+            <!-- HEADER -->
+            <div class="content-column">
+                <div class="donation-details-header p-5 w-100 d-flex flex-column align-items-center"
+                     t-attf-style="--image_url: url('/web/image/#{product._name}/#{product.id}/my_compassion_image');">
+                    <h2 class="text-center text-pure-white">
+                        <t t-esc="product.my_compassion_name"/>
+                    </h2>
+                    <div class="mt-2 bg-pure-white"/>
+                    <i t-attf-class="pictogram-#{product.my_compassion_pictogram} mt-3 text-pure-white"/>
+                </div>
+            </div>
+
             <div class="container">
                 <!-- TODO: Add form action -->
-                <form action="/my2/" method="POST">
+                <form class="my2_donation_details_form" action="/my2/" method="POST">
                     <div class="content-column">
-                        <!-- HEADER -->
-                        <div class="donation-details-header p-5 w-100 d-flex flex-column align-items-center"
-                             t-attf-style="--image_url: url('/web/image/#{product._name}/#{product.id}/my_compassion_image');">
-                            <h2 class="text-center text-pure-white">
-                                <t t-esc="product.my_compassion_name"/>
-                            </h2>
-                            <div class="mt-2 bg-pure-white"/>
-                            <i t-attf-class="pictogram-#{product.my_compassion_pictogram} mt-3 text-pure-white"/>
-                        </div>
-
-                        <!-- TODO: modify content-column instead -->
                         <div class="px-3 d-flex flex-column align-items-center">
                             <!-- DESCRIPTION -->
                             <div class="mt-4 body-small bold text-center" t-field="product.my_compassion_description"/>
@@ -119,19 +121,34 @@
                                     <t t-set="label" t-value="'Suggested amounts'"/>
 
                                     <div class="mt-1 d-flex justify-content-between">
-                                        <div class="donation-suggested-amount">
+                                        <div class="donation-suggested-amount flex-grow-1">
                                             <input id="suggested-low" type="radio" name="suggested_amount" value="low"
                                                    checked=""/>
-                                            <label class="mb-0 w-100" for="suggested-low">CHF 15</label>
+                                            <label class="mb-0 w-100" for="suggested-low">
+                                                <t t-set="price" t-value="product.my_compassion_donation_quantity_low * product.list_price"/>
+                                                CHF
+                                                <t t-if="price % 1 == 0" t-esc="int(price)"/>
+                                                <t t-else="" t-esc="'{0:.2f}'.format(price)"/>
+                                            </label>
 
                                         </div>
-                                        <div class="donation-suggested-amount">
+                                        <div class="donation-suggested-amount mx-3 flex-grow-1">
                                             <input id="suggested-medium" type="radio" name="suggested_amount" value="medium"/>
-                                            <label class="mb-0 w-100" for="suggested-medium">CHF 50</label>
+                                            <label class="mb-0 w-100" for="suggested-medium">
+                                                <t t-set="price" t-value="product.my_compassion_donation_quantity_medium * product.list_price"/>
+                                                CHF
+                                                <t t-if="price % 1 == 0" t-esc="int(price)"/>
+                                                <t t-else="" t-esc="'{0:.2f}'.format(price)"/>
+                                            </label>
                                         </div>
-                                        <div class="donation-suggested-amount">
+                                        <div class="donation-suggested-amount flex-grow-1">
                                             <input id="suggested-high" type="radio" name="suggested_amount" value="high"/>
-                                            <label class="mb-0 w-100" for="suggested-high">CHF 100</label>
+                                            <label class="mb-0 w-100" for="suggested-high">
+                                                <t t-set="price" t-value="product.my_compassion_donation_quantity_high * product.list_price"/>
+                                                CHF
+                                                <t t-if="price % 1 == 0" t-esc="int(price)"/>
+                                                <t t-else="" t-esc="'{0:.2f}'.format(price)"/>
+                                            </label>
                                         </div>
                                     </div>
                                 </t>
@@ -139,9 +156,14 @@
                                 <t t-call="theme_compassion_2025.FormFieldComponent">
                                     <t t-set="top_class" t-value="'mt-3 w-100'"/>
                                     <t t-set="label" t-value="'Or enter your own amount'"/>
-                                    <t t-set="input_id" t-value="'custom-amount'"/>
+                                    <div class="donation-suggested-amount">
+                                        <input id="suggested-custom" type="radio" name="suggested_amount" value="custom"/>
+                                        <label class="mb-0 w-100" for="suggested-custom">
+                                            Custom amount
+                                        </label>
+                                    </div>
                                     <input id="custom-amount" type="text" name="custom_amount" placeholder="CHF"
-                                           class="form-control"/>
+                                           class="form-control mt-2" hidden=""/>
                                 </t>
 
                                 <div class="align-self-stretch my-4 d-flex flex-column align-items-stretch">
