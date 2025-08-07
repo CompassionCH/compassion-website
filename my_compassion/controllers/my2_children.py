@@ -99,6 +99,8 @@ class MyCompassionChildrenController(WebsiteChild):
         except AccessError:
             return request.redirect("/my2/children/")
 
+        access_scope = "sponsor" if child.state == "P" else "public"
+
         offset = int(kwargs.get("offset", 0))
         limit = int(kwargs.get("limit", 9))
         partner = request.env.user.partner_id
@@ -119,6 +121,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 ],
                 "records": records,
                 "has_more_records": total > offset + limit,
+                "access_scope": access_scope,
             },
         )
 
