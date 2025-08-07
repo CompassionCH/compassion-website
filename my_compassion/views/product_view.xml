@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="product_template_form_view" model="ir.ui.view">
+        <field name="name">product.product_template.my_compassion</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//notebook">
+                <page string="MyCompassion" name="my_compassion">
+                    <group>
+                        <field name="activate_for_my_compassion" string="Activate for MyCompassion" />
+                    </group>
+                    <group attrs="{'invisible': [('activate_for_my_compassion', '=', False)]}">
+                        <field
+                            name="my_compassion_name"
+                            string="Name"
+                            attrs="{'required': [('activate_for_my_compassion','=',True)]}"
+                        />
+                        <field
+                            name="my_compassion_pictogram"
+                            string="Pictogram"
+                            attrs="{'required': [('activate_for_my_compassion','=',True)]}"
+                        />
+                        <field
+                            name="my_compassion_description"
+                            string="Description"
+                            attrs="{'required': [('activate_for_my_compassion','=',True)]}"
+                        />
+                        <field
+                            name="my_compassion_image"
+                            string="Picture"
+                            attrs="{'required': [('activate_for_my_compassion','=',True)]}"
+                        />
+                    </group>
+                    <group
+                        string="Impact Statement"
+                        attrs="{'invisible': [('activate_for_my_compassion', '=', False)]}"
+                    >
+                        <field name="my_compassion_show_impact_statement" string="Show impact statement" />
+                        <field
+                            name="my_compassion_impact_before_ids"
+                            string="The reality..."
+                            attrs="{'invisible': [('my_compassion_show_impact_statement', '=', False)]}"
+                        >
+                            <tree string="Order Lines" editable="bottom">
+                                <field name="sequence" widget="handle" />
+                                <field name="description" />
+                            </tree>
+                        </field>
+                        <field
+                            name="my_compassion_impact_after_ids"
+                            string="With your help we can..."
+                            attrs="{'invisible': [('my_compassion_show_impact_statement', '=', False)]}"
+                        >
+                            <tree string="Order Lines" editable="bottom">
+                                <field name="sequence" widget="handle" />
+                                <field name="description" />
+                            </tree>
+                        </field>
+                    </group>
+                    <group string="Information" attrs="{'invisible': [('activate_for_my_compassion', '=', False)]}">
+                        <field name="my_compassion_show_info" string="Show information lines" />
+                        <field
+                            name="my_compassion_info_ids"
+                            string="How does it work?"
+                            attrs="{'invisible': [('my_compassion_show_info', '=', False)]}"
+                        >
+                            <tree string="Order Lines" editable="bottom">
+                                <field name="sequence" widget="handle" />
+                                <field name="title" />
+                                <field name="text" />
+                            </tree>
+                        </field>
+                    </group>
+                    <group string="Testimony" attrs="{'invisible': [('activate_for_my_compassion', '=', False)]}">
+                        <field name="my_compassion_show_testimony" string="Show testimony" />
+                        <field
+                            name="my_compassion_testimony_title"
+                            string="Testimony title"
+                            attrs="{'invisible': [('my_compassion_show_testimony', '=', False)],
+                                       'required': [('my_compassion_show_testimony','=',True)]}"
+                        />
+                        <field
+                            name="my_compassion_testimony_text"
+                            string="Testimony"
+                            attrs="{'invisible': [('my_compassion_show_testimony', '=', False)],
+                                       'required': [('my_compassion_show_testimony','=',True)]}"
+                        />
+                    </group>
+                    <group
+                        string="Suggested Donations"
+                        attrs="{'invisible': [('activate_for_my_compassion', '=', False)]}"
+                    >
+                        <field name="my_compassion_donation_quantity_low" string="Lowest suggested quantity" />
+                        <field name="my_compassion_donation_quantity_medium" string="Medium suggested quantity" />
+                        <field name="my_compassion_donation_quantity_high" string="High suggested quantity" />
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
