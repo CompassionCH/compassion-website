@@ -70,6 +70,7 @@
         "templates/components/my2_letter_card.xml",
         "templates/components/my2_breadcrumbs.xml",
         "templates/components/my2_sponsor_child_timeline_batch.xml",
+        "templates/components/my2_donation_item.xml",
     ],
     "depends": [
         "partner_communication_compassion",

@@ -1,0 +1,40 @@
+.donation-item-container {
+    border-left: 5px solid;
+    container-type: inline-size;
+    container-name: donation-item-container;
+    font-size: 18px;
+
+    .thumbnail {
+        width: 90px;
+        height: 90px;
+
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-image: var(--image_url);
+    }
+
+    .thumbnail.responsive-lg {
+        display: none;
+    }
+
+    .action-button {
+        cursor: pointer;
+    }
+
+    .action-button:hover span {
+        text-decoration: underline;
+    }
+}
+
+@container donation-item-container (width > 500px) {
+    .donation-item-container {
+        .thumbnail.responsive-sm {
+            display: none;
+        }
+
+        .thumbnail.responsive-lg {
+            display: block;
+        }
+    }
+}
