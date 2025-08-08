@@ -32,8 +32,9 @@
                 </div>
             </div>
             <div class="container">
-                <!-- TODO: Add form action -->
-                <form class="my2_donation_details_form" action="/my2/" method="POST">
+                <form class="my2_donation_details_form" t-attf-action="/my2/donation-details/submit" method="POST">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                    <input type="hidden" name="product_id" t-att-value="product.id" />
                     <div class="content-column">
                         <div class="px-3 d-flex flex-column align-items-center">
                             <!-- DESCRIPTION -->
@@ -173,6 +174,7 @@
                                 <t t-call="theme_compassion_2025.FormFieldComponent">
                                     <t t-set="top_class" t-value="'mt-3 w-100'" />
                                     <t t-set="label" t-value="'Or enter your own amount'" />
+                                    <t t-set="invalid_hint" t-value="'Please enter a valid amount.'" />
                                     <div class="donation-suggested-amount">
                                         <input
                                             id="suggested-custom"
@@ -191,11 +193,11 @@
                                         hidden=""
                                     />
                                 </t>
-                                <div class="align-self-stretch my-4 d-flex flex-column align-items-stretch">
+                                <div class="btn-submit align-self-stretch my-4 d-flex flex-column align-items-stretch">
                                     <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                         <t t-set="variant" t-value="'default'" />
                                         <t t-set="variation" t-value="'filled'" />
-                                        <t t-set="label" t-value="'Add &amp; checkout'" />
+                                        <t t-set="label" t-value="'Add &amp; check out'" />
                                         <t t-set="color" t-value="'mid-green'" />
                                         <t t-set="text_color" t-value="'pure-white'" />
                                     </t>

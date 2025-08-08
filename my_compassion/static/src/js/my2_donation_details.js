@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
             events: {
                 'change input[type="radio"][name="suggested_amount"]': "_onAmountChange",
+                "click .btn-submit": "_onSubmitClick",
             },
 
             /**
@@ -36,6 +37,54 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 } else {
                     this.customAmountInput.slideUp("fast");
                 }
+            },
+
+            /**
+             * Handles click events on the "Add & check out" button.
+             * @param {Event} ev
+             */
+            _onSubmitClick: function (ev) {
+                ev.preventDefault();
+
+                // Prevent double clicks
+                this.$(".btn").prop("disabled", true);
+
+                // Validate the form
+                if (!this._validateForm()) {
+                    this.$(".btn").prop("disabled", false);
+                    return; // Stop execution if validation fails
+                }
+
+                // Submit the form
+                this.$el.submit();
+            },
+
+            /**
+             * Validates the payment form.
+             * @returns {boolean} - True if valid, false otherwise.
+             */
+            _validateForm: function () {
+                var isValid = true;
+
+                // Remove previous error messages and styles
+                this.$("input.is-invalid").removeClass("is-invalid");
+
+                // Validate custom amount
+                if (this.$("input[name='suggested_amount']:checked").val() == "custom") {
+                    const $input = this.$('#custom-amount');
+                    const custom_amount = Number($input.val());
+
+                    console.log(custom_amount);
+
+                    // Check if the result is a finite number AND is greater than 0.
+                    // Number.isFinite() correctly handles NaN, Infinity, and -Infinity.
+                    if (!(Number.isFinite(custom_amount) && custom_amount > 0)) {
+                        isValid = false;
+                        $input.addClass("is-invalid");
+                    }
+                }
+
+                return isValid;
             },
         });
 
