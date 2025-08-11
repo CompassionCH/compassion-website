@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const selectedPane = document.querySelector(tabId);
             if (selectedPane) selectedPane.classList.add('show', 'active');
 
-            const selectedLink = document.querySelector(`a[href="${tabId}"]`);
+            const selectedLink = document.querySelector('a[href="${tabId}"]');
             if (selectedLink) {
                 selectedLink.classList.add('active');
                 selectedLink.setAttribute('aria-selected', 'true');
@@ -59,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (checkbox.checked) {
                 const url = new URL(window.location);
                 url.searchParams.set("sign_confirm", "true");
+                url.searchParams.set('current_tab', 'privacy data');
                 window.location.href = url.toString();
             }
         });
@@ -123,9 +124,9 @@ document.addEventListener("DOMContentLoaded", function () {
         // PERSONAL INFORMATION TAB
         // ------------------------
 
-        const applyButton = document.getElementById("ApplyModificationsInfoButton");
+        const applyButtonInfo = document.getElementById("ApplyModificationsInfoButton");
 
-        applyButton?.addEventListener("click", function (event) {
+        applyButtonInfo?.addEventListener("click", function (event) {
             event.preventDefault();
 
             const url = new URL("/my2/user_settings", window.location.origin);
@@ -136,11 +137,34 @@ document.addEventListener("DOMContentLoaded", function () {
             fields.forEach((field) => {
                 const value = document.getElementById(field)?.value?.trim();
                 if (value) {
-                    url.searchParams.set(`${field}_change`, value);
+                    url.searchParams.set('${field}_change', value);
                 }
             });
 
             // Redirect with updated query parameters
+            url.searchParams.set('current_tab', 'personal information');
+            window.location.href = url.toString();
+        });
+
+        // ------------------------
+        // ACCOUNT SETTINGS TAB
+        // ------------------------
+
+        const applyButtonAccount = document.getElementById("ApplyModificationsAccountButton");
+
+        applyButtonAccount?.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            const url = new URL("/my2/user_settings", window.location.origin);
+            url.searchParams.set('submitted_login_edited', true);
+
+            const new_login_email = document.getElementById("login")?.value?.trim();
+            if (new_login_email) {
+                url.searchParams.set('login_change', new_login_email);
+            }
+
+            // Redirect with updated query parameters
+            url.searchParams.set('current_tab', 'account settings');
             window.location.href = url.toString();
         });
     });

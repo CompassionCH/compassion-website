@@ -17,6 +17,7 @@ class MyCompassionUserController(http.Controller):
                 sitemap=False)
     def my2_render_user_settings_page(self, **kwargs):
         partner = request.env.user.partner_id
+        user = request.env.user
         params = request.params
         titles = request.env['res.partner.title'].sudo().search(
             [('is_published', '=', True)])
@@ -25,7 +26,10 @@ class MyCompassionUserController(http.Controller):
         # Flags
         currently_editing_info = params.get('currently_editing_info') == 'true'
         submitted_info_edited = params.get('submitted_info_edited') == 'true'
+        currently_editing_login = params.get('currently_editing_login') == 'true'
+        submitted_login_edited = params.get('submitted_login_edited') == 'true'
         sign_confirm = params.get('sign_confirm') == 'true'
+        current_tab = params.get('current_tab') or 'personal information'
 
         # Save child protection charter signature
         if sign_confirm:
@@ -43,6 +47,21 @@ class MyCompassionUserController(http.Controller):
             'phone_change': ('phone', str),
             'email_change': ('email', str),
         }
+
+        login_edit_accepted = False
+        if submitted_login_edited:
+            raw_value = params.get('login_change', '').strip()
+            if raw_value:
+                existing_user = request.env['res.users'].sudo().search([
+                    ('login', '=', raw_value),
+                    ('id', '!=', user.id)
+                ], limit=1)
+
+                if not existing_user:
+                    user.write({'login': raw_value})
+                    login_edit_accepted = True
+                    currently_editing_login = False
+
 
         profile_edits_accepted = {key.split('_')[0]: False for key in profile_field_map}
         profile_updates = {}
@@ -76,12 +95,16 @@ class MyCompassionUserController(http.Controller):
                 currently_editing_info = True
 
         return request.render('my_compassion.my2_user_settings_page', {
+            'user': user,
             'partner': partner,
             'titles': titles,
             'countries': countries,
             'currently_editing_info': currently_editing_info,
+            'currently_editing_login': currently_editing_login,
             'submitted_info_edited': submitted_info_edited,
             'profile_edits_accepted_fields': profile_edits_accepted,
+            'login_edit_accepted': login_edit_accepted,
+            'current_tab': current_tab,
         })
 
 

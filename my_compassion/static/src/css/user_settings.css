@@ -5,82 +5,70 @@
 
 /* Switch buttons on the communication settings panel */
 .custom-switch .custom-control-input:checked ~ .custom-control-label::before {
-  background-color: #0d6efd;
+    background-color: #0d6efd;
 }
 
 /* Tab container styling */
 .user_settings_tabs .nav-tabs {
-    border-bottom: none; /* Remove Bootstrap's default line */
+    border-bottom: none;
     position: relative;
-    z-index: 1; /* Ensure tabs render on top of the content pane */
+    z-index: 1;
     justify-content: center;
 }
 
-/* Tab container styling */
+/* Mobile Select container styling */
 .user_settings_tabs .settings_select {
-    border-bottom: none; /* Remove Bootstrap's default line */
     position: relative;
-    z-index: 1; /* Ensure tabs render on top of the content pane */
+    z-index: 1;
     display: flex;
     justify-content: center;
     width: 100%;
-    max-width: 250px;
-    margin: 0 auto; /* Ensures it's centered in its parent */
+    max-width: 300px;
+    margin: 0 auto;
 }
 
-.settings_select select {
-    /* Reset Bootstrap defaults */
+/* Mobile Select element styling */
+.settings_select .custom-select {
     border-radius: 25px;
-
-    /* Sizing and Layout */
-    height: 56px;
-    padding: 0 36px;
-
-    /* Typography */
+    height: 42px;
+    padding: 0 30px 0 20px;
     font-size: 19px;
-    font-weight: 600; /* Demi-bold */
-    color: #000000 !important; /* Override default link color */
-
-    /* Colors and Transition for inactive state */
+    font-weight: 600;
+    color: #000000 !important;
     background-color: #fdb518;
     transition: background-color 0.2s ease-in-out;
+    border: 1px solid #fdb518 !important;
 }
 
-.custom-select:focus {
+/* Mobile Select focus state */
+.settings_select .custom-select:focus {
     background-color: #fdb518 !important;
-    border: none;
     outline: none !important;
-    box-shadow: 0 0 0 0.2rem rgba(253, 181, 24, 0.5) !important; /* fdb518 with 50% opacity */
+    box-shadow: 0 0 0 0.2rem rgba(253, 181, 24, 0.5) !important;
 }
 
-/* Style all options (uniformly) */
-.custom-select option {
+/* Mobile Select options */
+.settings_select .custom-select option {
     background-color: #ffd257;
     color: #000;
 }
 
-/* Style for each tab link */
+/* Style for each desktop tab link */
 .user_settings_tabs .nav-tabs .nav-link {
-    /* Reset Bootstrap defaults */
     border: none;
     margin-bottom: 0;
-
-    /* Sizing and Layout */
     height: 42px;
     display: flex;
-    align-items: center; /* Vertically center the text */
-
-    /* Typography */
+    align-items: center;
     font-size: 15px;
-    font-weight: 600; /* Demi-bold */
-    color: #000000 !important; /* Override default link color */
-
-    /* Colors and Transition for inactive state */
+    font-weight: 600;
+    color: #000000 !important;
     background-color: #ffd257;
     transition: background-color 0.2s ease-in-out;
+    border-radius: 0; /* Default: no radius */
 }
 
-/* Active tab state */
+/* Active desktop tab state */
 .user_settings_tabs .nav-tabs .nav-link.active {
     background-color: #fdb518;
 }
@@ -89,12 +77,6 @@
 .user_settings_tabs .nav-tabs .nav-item:first-child .nav-link {
     border-top-left-radius: 25px;
     border-bottom-left-radius: 25px;
-}
-
-.user_settings_tabs .nav-tabs .nav-item .nav-link {
-    border-top-left-radius: 0rem;
-    border-bottom-left-radius: 0rem;
-    border-top-right-radius: 0rem;
 }
 
 .user_settings_tabs .nav-tabs .nav-item:last-child .nav-link {
