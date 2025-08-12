@@ -3,6 +3,30 @@
     templates/pages/my2_user_settings.xml
 */
 
+/* Hide elements meant for editing by default */
+.field-edit,
+.edit-mode {
+    display: none;
+}
+
+/* When the parent form has the 'is-editing' class, show the edit elements */
+.is-editing .field-edit,
+.is-editing .edit-mode {
+    display: block;
+}
+
+/* When in edit mode, hide the view-only elements */
+.is-editing .field-display,
+.is-editing .view-mode {
+    display: none;
+}
+
+/* Ensure anchor tags used as buttons behave correctly */
+.form-actions a {
+    cursor: pointer;
+    text-decoration: none;
+}
+
 /* Switch buttons on the communication settings panel */
 .custom-switch .custom-control-input:checked ~ .custom-control-label::before {
     background-color: #0d6efd;

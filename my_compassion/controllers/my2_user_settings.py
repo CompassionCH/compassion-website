@@ -13,135 +13,113 @@ from datetime import date
 
 class MyCompassionUserController(http.Controller):
 
-    @http.route('/my2/user_settings', type="http", auth="user", website=True,
-                sitemap=False)
-    def my2_render_user_settings_page(self, **kwargs):
+    @http.route('/my2/user_settings', type="http", auth="user", website=True)
+    def render_user_settings_page(self, **kwargs):
         partner = request.env.user.partner_id
-        user = request.env.user
-        params = request.params
+
+        # Pre-fetch data for the template's selection fields.
         titles = request.env['res.partner.title'].sudo().search(
             [('is_published', '=', True)])
         countries = request.env['res.country'].sudo().search([])
 
-        # Flags
-        currently_editing_info = params.get('currently_editing_info') == 'true'
-        submitted_info_edited = params.get('submitted_info_edited') == 'true'
-        currently_editing_login = params.get('currently_editing_login') == 'true'
-        submitted_login_edited = params.get('submitted_login_edited') == 'true'
-        sign_confirm = params.get('sign_confirm') == 'true'
-        current_tab = params.get('current_tab') or 'personal information'
-
-        # Save child protection charter signature
-        if sign_confirm:
-            partner.write({'date_agreed_child_protection_charter': date.today()})
-
-        # Handle profile info update
-        profile_field_map = {
-            'title_change': ('title', int),
-            'surname_change': ('lastname', str),
-            'name_change': ('firstname', str),
-            'zip_change': ('zip', str),
-            'country_id_change': ('country_id', int),
-            'address_change': ('street', str),
-            'city_change': ('city', str),
-            'phone_change': ('phone', str),
-            'email_change': ('email', str),
-        }
-
-        login_edit_accepted = False
-        if submitted_login_edited:
-            raw_value = params.get('login_change', '').strip()
-            if raw_value:
-                existing_user = request.env['res.users'].sudo().search([
-                    ('login', '=', raw_value),
-                    ('id', '!=', user.id)
-                ], limit=1)
-
-                if not existing_user:
-                    user.write({'login': raw_value})
-                    login_edit_accepted = True
-                    currently_editing_login = False
-
-
-        profile_edits_accepted = {key.split('_')[0]: False for key in profile_field_map}
-        profile_updates = {}
-
-        if submitted_info_edited:
-            for param_key, (field_name, cast_type) in profile_field_map.items():
-                raw_value = params.get(param_key, '').strip()
-                if raw_value:
-                    try:
-                        new_value = cast_type(raw_value)
-                        original_value = partner[field_name]
-
-                        if hasattr(original_value, 'id'):
-                            original_value = original_value.id
-
-                        if new_value != original_value:
-                            profile_updates[field_name] = new_value
-
-                        profile_edits_accepted[param_key.split('_')[0]] = True
-                    except (ValueError, TypeError):
-                        continue
-
-            if profile_updates.get('city') or profile_updates.get(
-                    'country_id') or profile_updates.get('zip'):
-                profile_updates["zip_id"] = False
-
-            if all(profile_edits_accepted.values()):
-                partner.write(profile_updates)
-                partner = request.env['res.partner'].browse(partner.id)
-            else:
-                currently_editing_info = True
+        # Determines which tab should be active when the page loads.
+        current_tab = kwargs.get('current_tab', 'personal-information')
 
         return request.render('my_compassion.my2_user_settings_page', {
-            'user': user,
+            'user': request.env.user,
             'partner': partner,
             'titles': titles,
             'countries': countries,
-            'currently_editing_info': currently_editing_info,
-            'currently_editing_login': currently_editing_login,
-            'submitted_info_edited': submitted_info_edited,
-            'profile_edits_accepted_fields': profile_edits_accepted,
-            'login_edit_accepted': login_edit_accepted,
             'current_tab': current_tab,
         })
 
-
-
-class MyCompassionUserController(http.Controller):
-
-    @http.route(
-        "/my2/user_settings/set_communication_settings",
-        type="json",
-        auth="user",
-        methods=["POST"],
-        sitemap=False,
-    )
-    def my2_set_partner_communication_settings(self, **post):
+    @http.route('/my2/user_settings/set_personal_info', type="json", auth="user",
+                methods=["POST"], website=True)
+    def set_personal_info(self, **post):
         partner = request.env.user.partner_id
-
+        # A whitelist of fields that are allowed to be updated through this endpoint.
         allowed_fields = {
-            'tax_receipt_preference',
-            'letter_delivery_preference',
-            'photo_delivery_preference',
-            'calendar',
-            'birthday_reminder',
-            'sponsorship_anniversary_card',
+            'title': int, 'lastname': str, 'firstname': str, 'street': str,
+            'city': str, 'country_id': int, 'zip': str, 'phone': str, 'email': str
+        }
+
+        vals_to_update = {}
+        errors = {}
+        # Iterate through submitted data and validate it against the allowed fields.
+        for field, value in post.items():
+            if field in allowed_fields:
+                try:
+                    clean_value = (value or '').strip()
+                    if clean_value:
+                        # Attempt to cast the value to its expected type (e.g., int, str).
+                        vals_to_update[field] = allowed_fields[field](clean_value)
+                    else:
+                        # If the value is empty, set it to False to clear it in the database.
+                        vals_to_update[field] = False
+                except (ValueError, TypeError):
+                    errors[field] = _("Invalid value for %s.") % field
+
+        if errors:
+            # If any errors were found, return them to the frontend. Do not update the record.
+            return {'success': False, 'errors': errors}
+
+        if vals_to_update:
+            # When an address component is changed, reset the linked zip_id
+            if any(k in vals_to_update for k in ['city', 'zip', 'country_id']):
+                vals_to_update['zip_id'] = False
+            partner.sudo().write(vals_to_update)
+
+        return {'success': True}
+
+    @http.route('/my2/user_settings/set_account_settings', type="json", auth="user",
+                methods=["POST"], website=True)
+    def set_account_settings(self, **post):
+        user = request.env.user
+        new_login = (post.get('login') or '').strip()
+
+        if not new_login:
+            return {'success': False, 'errors': {'login': _("Login cannot be empty.")}}
+
+        # Check if login is already taken by another user
+        if request.env['res.users'].sudo().search_count(
+                [('login', '=', new_login), ('id', '!=', user.id)]):
+            return {'success': False, 'errors': {
+                'login': _("This email is already used as a login by another user.")}}
+
+        user.sudo().write({'login': new_login})
+        return {'success': True}
+
+    @http.route("/my2/user_settings/agree_child_protection_charter", type="json",
+                auth="user", methods=["POST"])
+    def agree_child_protection_charter(self, **post):
+        request.env.user.partner_id.sudo().write({
+            'date_agreed_child_protection_charter': date.today()
+        })
+        return {'success': True}
+
+    @http.route("/my2/user_settings/set_communication_settings", type="json",
+                auth="user", methods=["POST"])
+    def set_partner_communication_settings(self, **post):
+        partner = request.env.user.partner_id
+        # A whitelist of allowed communication preference fields.
+        allowed_fields = {
+            'opt_out', 'tax_receipt_preference', 'letter_delivery_preference',
+            'photo_delivery_preference', 'calendar', 'birthday_reminder',
+            'sponsorship_anniversary_card'
         }
 
         update_vals = {}
-
         for field, value in post.items():
-            if field not in allowed_fields:
-                continue
-
-            if value in ['true', 'false']:
-                value = value == 'true'
-
-            update_vals[field] = value
+            if field in allowed_fields:
+                # Convert string booleans from JS
+                if isinstance(value, bool):
+                    update_vals[field] = value
+                elif str(value).lower() in ['true', 'false']:
+                    update_vals[field] = (str(value).lower() == 'true')
+                else:
+                    update_vals[field] = value
 
         if update_vals:
-            partner.write(update_vals)
+            partner.sudo().write(update_vals)
 
-        return {}
+        return {'success': True}

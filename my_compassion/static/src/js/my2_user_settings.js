@@ -1,171 +1,221 @@
+/**
+ * Handles the user settings page /my2/user_settings
+ *
+ * Is used in /templates/pages/my2_user_settings.xml
+ */
+
 /** @odoo-module **/
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
     odoo.define('my_compassion.user_settings', function (require) {
         "use strict";
 
         const rpc = require('web.rpc');
+        const Dialog = require('web.Dialog');
 
-        const mobileSelect = document.getElementById('user-settings-tabs-mobile');
-        const desktopTabs = document.getElementById('user-settings-tabs');
-        const tabContent = document.querySelectorAll('.tab-content .tab-pane');
-        const tabLinks = document.querySelectorAll('#user-settings-tabs .nav-link');
-        const checkbox = document.getElementById('flexCheckDefault');
+        /**
+         * Main setup function to initialize all event listeners.
+         */
+        function initializeUserSettings() {
+            initTabNavigation();
+            initCommunicationSettings();
+            initPrivacyForm();
 
-        // --------------
-        // TAB NAVIGATION
-        // --------------
-
-        // Activate selected tab by ID
-        function activateTab(tabId) {
-            tabContent.forEach(tab => tab.classList.remove('show', 'active'));
-            tabLinks.forEach(link => {
-                link.classList.remove('active');
-                link.setAttribute('aria-selected', 'false');
+            initFormHandler({
+                formId: 'personal-information-form',
+                editButtonId: 'EditInfoButton',
+                saveButtonId: 'ApplyModificationsInfoButton',
+                cancelButtonId: 'CancelModificationsInfoButton',
+                endpoint: '/my2/user_settings/set_personal_info',
+                fields: ['title', 'lastname', 'firstname', 'street', 'city', 'country_id', 'zip', 'phone', 'email']
             });
 
-            const selectedPane = document.querySelector(tabId);
-            if (selectedPane) selectedPane.classList.add('show', 'active');
+            initFormHandler({
+                formId: 'account-settings-form',
+                editButtonId: 'EditAccountButton',
+                saveButtonId: 'ApplyModificationsAccountButton',
+                cancelButtonId: 'CancelModificationsAccountButton',
+                endpoint: '/my2/user_settings/set_account_settings',
+                fields: ['login']
+            });
+        }
 
-            const selectedLink = document.querySelector('a[href="${tabId}"]');
-            if (selectedLink) {
-                selectedLink.classList.add('active');
-                selectedLink.setAttribute('aria-selected', 'true');
+        /**
+         * Handles the tab navigation logic for both mobile and desktop.
+         */
+        function initTabNavigation() {
+            const mobileSelect = document.getElementById('user-settings-tabs-mobile');
+            const desktopTabsContainer = document.getElementById('user-settings-tabs');
+            const tabPanes = document.querySelectorAll('.tab-content .tab-pane');
+            const tabLinks = document.querySelectorAll('#user-settings-tabs .nav-link');
+
+            const activateTab = (targetId) => {
+                tabPanes.forEach(pane => pane.classList.remove('show', 'active'));
+                tabLinks.forEach(link => link.classList.remove('active'));
+
+                const targetPane = document.querySelector(targetId);
+                const targetLink = document.querySelector(`a.nav-link[href="${targetId}"]`);
+
+                if (targetPane) targetPane.classList.add('show', 'active');
+                if (targetLink) targetLink.classList.add('active');
+                if (mobileSelect && mobileSelect.value !== targetId) mobileSelect.value = targetId;
+            };
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentTab = urlParams.get('current_tab');
+            if (currentTab) {
+                activateTab(`#${currentTab.replace(/\s+/g, '-')}`);
+            } else {
+                if (tabLinks.length) activateTab(tabLinks[0].getAttribute('href'));
             }
-        }
 
-        // Handle mobile tab select
-        mobileSelect?.addEventListener('change', function () {
-            activateTab(this.value);
-        });
-
-        // Initialize active tab on load
-        if (mobileSelect) {
-            activateTab(mobileSelect.value);
-        }
-
-        // Sync tab selection with mobile dropdown
-        tabLinks.forEach(link => {
-            link.addEventListener('click', function () {
-                if (mobileSelect) {
-                    mobileSelect.value = this.getAttribute('href');
+            desktopTabsContainer?.addEventListener('click', (e) => {
+                if (e.target.matches('a.nav-link')) {
+                    e.preventDefault();
+                    activateTab(e.target.getAttribute('href'));
                 }
             });
-        });
 
-        // ----------------
-        // PRIVACY DATA TAB
-        // ----------------
-        checkbox?.addEventListener("change", function () {
-            if (checkbox.checked) {
-                const url = new URL(window.location);
-                url.searchParams.set("sign_confirm", "true");
-                url.searchParams.set('current_tab', 'privacy data');
-                window.location.href = url.toString();
-            }
-        });
+            mobileSelect?.addEventListener('change', (e) => activateTab(e.target.value));
+        }
 
-        // --------------------------
-        // COMMUNICATION SETTINGS TAB
-        // --------------------------
+        /**
+         * Initializes the immediate-update logic for communication settings.
+         */
+    function initCommunicationSettings() {
+        const container = document.getElementById('communication-settings');
+        if (!container) return;
+        container.addEventListener('change', (e) => {
+            const target = e.target;
+            // Skip if the event is not on an input or select
+            if (!target.matches('input, select')) return;
+            let field = target.dataset.field;
+            let value;
 
-        const comm_settings_tab_fields = {
-            tax_preference_select: document.getElementById('tax_preference_select'),
-            letter_preference_select: document.getElementById('letter_preference_select'),
-            photo_preference_select: document.getElementById('photo_preference_select'),
-            calendarCheck: document.getElementById('calendarCheck'),
-            birthdaysCheck: document.getElementById('birthdaysCheck'),
-            anniversaryCheck: document.getElementById('anniversaryCheck'),
-        };
-
-        Object.entries(comm_settings_tab_fields).forEach(([key, element]) => {
-            if (!element) return;
-
-            const isCheckbox = element.tagName === 'INPUT' && element.type === 'checkbox';
-            const eventType = isCheckbox ? 'change' : 'input';
-
-            element.addEventListener(eventType, () => {
-                const rawValue = isCheckbox ? element.checked : element.value;
-                const value = typeof rawValue === 'boolean' ? String(rawValue) : rawValue;
-
-                const payload = {};
-                switch (key) {
-                    case 'tax_preference_select':
-                        payload.tax_receipt_preference = value;
-                        break;
+            if (!field && target.tagName === 'SELECT') {
+                switch (target.id) {
                     case 'letter_preference_select':
-                        payload.letter_delivery_preference = value;
+                        field = 'letter_delivery_preference';
                         break;
                     case 'photo_preference_select':
-                        payload.photo_delivery_preference = value;
+                        field = 'photo_delivery_preference';
                         break;
-                    case 'calendarCheck':
-                        payload.calendar = value;
+                    case 'tax_preference_select':
+                        field = 'tax_receipt_preference';
                         break;
-                    case 'birthdaysCheck':
-                        payload.birthday_reminder = value;
-                        break;
-                    case 'anniversaryCheck':
-                        payload.sponsorship_anniversary_card = value;
-                        break;
-                    default:
-                        return;
                 }
-
+            }
+            // Determine the value based on element type
+            if (target.type === 'checkbox') {
+                value = target.checked;
+                // Handle inverted logic for opt_out
+                if (field === 'opt_out') {
+                    value = !value;
+                }
+            } else {
+                value = target.value;
+            }
+            // If we have a field, send the update
+            if (field) {
                 rpc.query({
                     route: "/my2/user_settings/set_communication_settings",
-                    params: payload,
-                }).catch((err) => {
+                    params: { [field]: value },
+                }).catch(err => {
                     console.error("RPC Error:", err);
+                    Dialog.alert(null, "Could not save your changes. Please try again.");
                 });
-            });
+            }
         });
+    }
 
-        // ------------------------
-        // PERSONAL INFORMATION TAB
-        // ------------------------
-
-        const applyButtonInfo = document.getElementById("ApplyModificationsInfoButton");
-
-        applyButtonInfo?.addEventListener("click", function (event) {
-            event.preventDefault();
-
-            const url = new URL("/my2/user_settings", window.location.origin);
-            url.searchParams.set("submitted_info_edited", true);
-
-            const fields = ["title", "surname", "name", "address", "city", "country_id", "zip", "phone", "email"];
-
-            fields.forEach((field) => {
-                const value = document.getElementById(field)?.value?.trim();
-                if (value) {
-                    url.searchParams.set('${field}_change', value);
+        /**
+         * Initializes the child protection charter agreement checkbox.
+         */
+        function initPrivacyForm() {
+            const checkbox = document.getElementById('flexCheckDefault');
+            checkbox?.addEventListener('change', function () {
+                if (this.checked) {
+                    rpc.query({
+                        route: "/my2/user_settings/agree_child_protection_charter",
+                        params: {},
+                    }).then(() => {
+                        window.location.reload();
+                    }).catch(err => {
+                        console.error("RPC Error:", err);
+                        this.checked = false;
+                        Dialog.alert(null, "Could not save your confirmation. Please try again.");
+                    });
                 }
             });
+        }
 
-            // Redirect with updated query parameters
-            url.searchParams.set('current_tab', 'personal information');
-            window.location.href = url.toString();
-        });
+        /**
+         * Generic form handler for tabs with an "edit/save/cancel" workflow.
+         */
+        function initFormHandler({ formId, editButtonId, saveButtonId, cancelButtonId, endpoint, fields }) {
+            const form = document.getElementById(formId);
+            if (!form) return;
+            const editButton = document.getElementById(editButtonId);
+            const saveButton = document.getElementById(saveButtonId);
+            const cancelButton = document.getElementById(cancelButtonId);
+            if (!editButton || !saveButton || !cancelButton) return;
 
-        // ------------------------
-        // ACCOUNT SETTINGS TAB
-        // ------------------------
+            let originalValues = {};
 
-        const applyButtonAccount = document.getElementById("ApplyModificationsAccountButton");
+            const storeOriginalValues = () => {
+                fields.forEach(field => {
+                    const input = form.querySelector(`[name="${field}"]`);
+                    if (input) originalValues[field] = input.value;
+                });
+            };
 
-        applyButtonAccount?.addEventListener("click", function (event) {
-            event.preventDefault();
+            const restoreOriginalValues = () => {
+                fields.forEach(field => {
+                    const input = form.querySelector(`[name="${field}"]`);
+                    if (input && originalValues[field] !== undefined) {
+                        input.value = originalValues[field];
+                    }
+                });
+            };
 
-            const url = new URL("/my2/user_settings", window.location.origin);
-            url.searchParams.set('submitted_login_edited', true);
+            editButton.addEventListener('click', () => {
+                storeOriginalValues();
+                form.classList.add('is-editing');
+            });
 
-            const new_login_email = document.getElementById("login")?.value?.trim();
-            if (new_login_email) {
-                url.searchParams.set('login_change', new_login_email);
-            }
+            cancelButton.addEventListener('click', () => {
+                restoreOriginalValues();
+                form.classList.remove('is-editing');
+            });
 
-            // Redirect with updated query parameters
-            url.searchParams.set('current_tab', 'account settings');
-            window.location.href = url.toString();
-        });
+            saveButton.addEventListener('click', () => {
+                const payload = {};
+                fields.forEach(field => {
+                    const input = form.querySelector(`[name="${field}"]`);
+                    if (input) payload[field] = input.value;
+                });
+
+                rpc.query({ route: endpoint, params: payload }).then(response => {
+                    if (response.success) {
+                        fields.forEach(field => {
+                            const input = form.querySelector(`[name="${field}"]`);
+                            const displayEl = form.querySelector(`[data-display-for="${field}"]`);
+                            if (!input || !displayEl) return;
+
+                            displayEl.textContent = (input.tagName === 'SELECT')
+                                ? input.options[input.selectedIndex].text
+                                : input.value;
+                        });
+                        form.classList.remove('is-editing');
+                    } else {
+                        Dialog.alert(null, `Please correct the following errors:\n${Object.values(response.errors).join('\n')}`);
+                    }
+                }).catch(err => {
+                    console.error("RPC Error:", err);
+                    Dialog.alert(null, "An unexpected error occurred. Please try again later.");
+                });
+            });
+        }
+
+        initializeUserSettings();
     });
 });

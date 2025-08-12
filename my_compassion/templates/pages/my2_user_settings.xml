@@ -1,111 +1,66 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--
-    Page: My Compassion 2 User Settings Page
-
-    Description:
-
-    Used in route:
-    - /my2/user_settings
-
-    Injected data:
-
--->
 <odoo>
     <template id="my2_user_settings_page" name="My Compassion 2 User Settings Page">
-        <link rel="stylesheet"
-              href="/my_compassion/static/src/css/user_settings.css"/>
+        <link rel="stylesheet" href="/my_compassion/static/src/css/user_settings.css"/>
         <t t-call="website.layout">
-            <div class="container">
+            <div class="container my-4">
 
-                <!-- Navigation tabs -->
-                <section class="user_settings_tabs tabs-component mt-4">
-                    <!-- Mobile Dropdown (Visible on small screens) -->
-                    <div class="settings_select d-block d-lg-none">
-                        <select class="form-control custom-select"
-                                id="user-settings-tabs-mobile">
-                            <option value="#personal-information" selected="1">Personal
-                                informations</option>
-                            <option value="#account-settings">Account settings</option>
-                            <option value="#privacy-data">Privacy data</option>
+                <section class="user_settings_tabs mt-4">
+                    <!-- Mobile tabs navigation -->
+                    <div class="settings_select d-block d-lg-none mb-3">
+                        <select class="custom-select" id="user-settings-tabs-mobile">
+                            <option value="#personal-information">Personal
+                                Information</option>
+                            <option value="#account-settings">Account Settings</option>
+                            <option value="#privacy-data">Privacy Data</option>
                             <option value="#communication-settings">Communication
-                                settings</option>
+                                Settings</option>
                         </select>
                     </div>
-                    <!-- Desktop Tabs (Visible on medium screens and up) -->
+                    <!-- Tabs navigation -->
                     <ul class="nav nav-tabs d-none d-lg-flex" id="user-settings-tabs"
                         role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link active"
-                               id="personal-information-tab-link"
-                               data-toggle="tab"
-                               href="#personal-information"
-                               role="tab"
-                               aria-controls="personal-information"
-                               aria-selected="true">
-                                Personal informations
-                            </a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link"
-                               id="account-settings-tab-link"
-                               data-toggle="tab"
-                               href="#account-settings"
-                               role="tab"
-                               aria-controls="account-settings"
-                               aria-selected="false">
-                                Account settings
-                            </a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link"
-                               id="privacy-data-tab-link"
-                               data-toggle="tab"
-                               href="#privacy-data"
-                               role="tab"
-                               aria-controls="privacy-data"
-                               aria-selected="false">
-                                Privacy data
-                            </a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link"
-                               id="communication-settings-tab-link"
-                               data-toggle="tab"
-                               href="#communication-settings"
-                               role="tab"
-                               aria-controls="communication-settings"
-                               aria-selected="false">
-                                Communication settings
-                            </a>
-                        </li>
+                        <li class="nav-item" role="presentation"><a class="nav-link"
+                                                                    href="#personal-information"
+                                                                    role="tab">Personal
+                            Information</a></li>
+                        <li class="nav-item" role="presentation"><a class="nav-link"
+                                                                    href="#account-settings"
+                                                                    role="tab">Account
+                            Settings</a></li>
+                        <li class="nav-item" role="presentation"><a class="nav-link"
+                                                                    href="#privacy-data"
+                                                                    role="tab">Privacy
+                            Data</a></li>
+                        <li class="nav-item" role="presentation"><a class="nav-link"
+                                                                    href="#communication-settings"
+                                                                    role="tab">
+                            Communication Settings</a></li>
                     </ul>
                 </section>
-
-                <!-- Tab content -->
-                <div class="tab-content d-block col-lg-8 col-md-12 col-sm-12 mx-auto"
-                     id="UserSettingsTabContent">
-                    <!-- Personal information panel -->
-                    <div class="tab-pane fade show {{ 'active' if current_tab == 'personal information' else '' }}" id="personal-information"
-                         role="tabpanel"
-                         aria-labelledby="personal-information">
-
-                        <div class="bg-pure-white">
-                            <!-- Reference -->
+                <!-- Tabs content -->
+                <div class="tab-content pt-4" id="UserSettingsTabContent">
+                    <!-- Personal info tab -->
+                    <div class="tab-pane fade" id="personal-information"
+                         role="tabpanel">
+                        <div id="personal-information-form"
+                             class="bg-white p-4 rounded shadow-sm col-lg-8 col-md-12 col-sm-12 mx-auto">
                             <t t-call="theme_compassion_2025.FormFieldComponent">
                                 <t t-set="label" t-value="'My reference'"/>
-                                <t t-set="input_id" t-value="'reference'"/>
                                 <t t-esc="partner.ref if partner.ref else ''"/>
                             </t>
-                            <!-- Name Title (ex: Madam) -->
-                            <t t-if="currently_editing_info">
-                                <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label" t-value="'Title'"/>
-                                    <t t-set="input_id" t-value="'title'"/>
+                            <t t-call="theme_compassion_2025.FormFieldComponent">
+                                <t t-set="label" t-value="'Title'"/>
+                                <t t-set="input_id" t-value="'title'"/>
+                                <div class="field-display" data-display-for="title"><t
+                                        t-esc="partner.title.name or ''"/></div>
+                                <div class="field-edit">
                                     <div class="pl-0 pr-5 m-0 col-4">
                                         <t t-call="theme_compassion_2025.SelectComponent">
                                             <t t-set="id" t-value="'title'"/>
-                                            <t t-set="name"
-                                               t-value="'title_change'"/>
+                                            <t t-set="name" t-value="'title'"/>
+                                            <t t-set="attrs"
+                                               t-value="{'data-original-value': partner.title.id}"/>
                                             <t t-foreach="titles" t-as="t">
                                                 <option t-att-value="t.id"
                                                         t-att-selected="partner.title.id == t.id">
@@ -114,62 +69,57 @@
                                             </t>
                                         </t>
                                     </div>
-                                </t>
+                                </div>
                             </t>
-                            <t t-else="">
-                                <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label" t-value="'Title'"/>
-                                    <t t-set="input_id" t-value="'title'"/>
-                                    <t t-esc="partner.title.name if partner.title else ''"/>
-                                </t>
-                            </t>
-                            <!-- Surname and Name -->
                             <div class="row">
                                 <div class="col-md-6">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
                                         <t t-set="label" t-value="'Surname'"/>
-                                        <t t-set="input_id" t-value="'surname'"/>
-                                        <t t-if="currently_editing_info">
-                                            <input id="surname" type="text"
-                                                   name="surname"
-                                                   t-att-class="'border-high-orange' if not profile_edits_accepted_fields.get('surname') and submitted_info_edited else ''"
-                                                   t-att-value="partner.lastname if partner.lastname else ''"
-                                                   required=""/>
-                                        </t>
-                                        <t t-else="">
-                                            <t t-esc="partner.lastname if partner.lastname else ''"/>
-                                        </t>
+                                        <t t-set="input_id" t-value="'lastname'"/>
+                                        <div class="field-display"
+                                             data-display-for="lastname"><t
+                                                t-esc="partner.lastname or ''"/></div>
+                                        <div class="field-edit"><input type="text"
+                                                                       id="lastname"
+                                                                       name="lastname"
+                                                                       class="form-control"
+                                                                       t-att-value="partner.lastname"
+                                                                       t-att-data-original-value="partner.lastname"/></div>
                                     </t>
                                 </div>
                                 <div class="col-md-6">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
                                         <t t-set="label" t-value="'Name'"/>
-                                        <t t-set="input_id" t-value="'name'"/>
-                                        <t t-if="currently_editing_info">
-                                            <input id="name" type="text" name="name"
-                                                   t-att-class="'border-high-orange' if not profile_edits_accepted_fields.get('name') and submitted_info_edited else ''"
-                                                   t-att-value="partner.firstname if partner.firstname else ''"
-                                                   required=""/>
-                                        </t>
-                                        <t t-else="">
-                                            <t t-esc="partner.firstname if partner.firstname else ''"/>
-                                        </t>
+                                        <t t-set="input_id" t-value="'firstname'"/>
+                                        <div class="field-display"
+                                             data-display-for="firstname"><t
+                                                t-esc="partner.firstname or ''"/></div>
+                                        <div class="field-edit"><input type="text"
+                                                                       id="firstname"
+                                                                       name="firstname"
+                                                                       class="form-control"
+                                                                       t-att-value="partner.firstname"
+                                                                       t-att-data-original-value="partner.firstname"/></div>
                                     </t>
                                 </div>
                             </div>
-                            <!-- Country & City -->
                             <div class="row">
                                 <div class="col-md-6">
-                                    <t t-if="currently_editing_info">
-                                        <t t-call="theme_compassion_2025.FormFieldComponent">
-                                            <t t-set="label" t-value="'Country'"/>
-                                            <t t-set="input_id" t-value="'country_id'"/>
+                                    <t t-call="theme_compassion_2025.FormFieldComponent">
+                                        <t t-set="label" t-value="'Country'"/>
+                                        <t t-set="input_id" t-value="'country_id'"/>
+                                        <div class="field-display"
+                                             data-display-for="country_id"><t
+                                                t-esc="partner.country_id.name or ''"/></div>
+                                        <div class="field-edit">
                                             <div class="pl-0 pr-2 m-0 col-7">
                                                 <t t-call="theme_compassion_2025.SelectComponent">
                                                     <t t-set="id"
                                                        t-value="'country_id'"/>
                                                     <t t-set="name"
-                                                       t-value="'country_change'"/>
+                                                       t-value="'country_id'"/>
+                                                    <t t-set="attrs"
+                                                       t-value="{'data-original-value': partner.country_id.id}"/>
                                                     <t t-foreach="countries" t-as="t">
                                                         <option t-att-value="t.id"
                                                                 t-att-selected="partner.country_id.id == t.id">
@@ -178,409 +128,366 @@
                                                     </t>
                                                 </t>
                                             </div>
-                                        </t>
-                                    </t>
-                                    <t t-else="">
-                                        <t t-call="theme_compassion_2025.FormFieldComponent">
-                                            <t t-set="label" t-value="'Country'"/>
-                                            <t t-set="input_id" t-value="'country_id'"/>
-                                            <t t-esc="partner.country_id.name if partner.country_id else ''"/>
-                                        </t>
+                                        </div>
                                     </t>
                                 </div>
                                 <div class="col-md-6">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
                                         <t t-set="label" t-value="'City'"/>
                                         <t t-set="input_id" t-value="'city'"/>
-                                        <t t-if="currently_editing_info">
-                                            <input id="city" type="text" name="city"
-                                                   t-att-class="'border-high-orange' if not profile_edits_accepted_fields.get('city') and submitted_info_edited else ''"
-                                                   t-att-value="partner.city if partner.city else ''"
-                                                   required=""/>
-                                        </t>
-                                        <t t-else="">
-                                            <t t-esc="partner.city if partner.city else ''"/>
-                                        </t>
+                                        <div class="field-display"
+                                             data-display-for="city"><t
+                                                t-esc="partner.city or ''"/></div>
+                                        <div class="field-edit"><input type="text"
+                                                                       id="city"
+                                                                       name="city"
+                                                                       class="form-control"
+                                                                       t-att-value="partner.city"
+                                                                       t-att-data-original-value="partner.city"/></div>
                                     </t>
                                 </div>
                             </div>
-                            <!-- ZIP & Address -->
                             <div class="row">
                                 <t t-if="partner.country_id.zip_required">
                                     <div class="col-md-6">
                                         <t t-call="theme_compassion_2025.FormFieldComponent">
                                             <t t-set="label" t-value="'Zip'"/>
                                             <t t-set="input_id" t-value="'zip'"/>
-                                            <t t-if="currently_editing_info">
-                                                <input id="zip" type="text" name="zip"
-                                                       t-att-class="'border-mid-orange' if not profile_edits_accepted_fields.get('zip') and submitted_info_edited else ''"
-                                                       t-att-value="partner.zip if partner.zip else ''"
-                                                       required=""/>
-                                            </t>
-                                            <t t-else="">
-                                                <t t-esc="partner.zip if partner.zip else ''"/>
-                                            </t>
+                                            <div class="field-display"
+                                                 data-display-for="zip"><t
+                                                    t-esc="partner.zip or ''"/></div>
+                                            <div class="field-edit"><input type="text"
+                                                                           id="zip"
+                                                                           name="zip"
+                                                                           class="form-control"
+                                                                           t-att-value="partner.zip"
+                                                                           t-att-data-original-value="partner.zip"/></div>
                                         </t>
                                     </div>
                                 </t>
                                 <div class="col-md-6">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
                                         <t t-set="label" t-value="'Address'"/>
-                                        <t t-set="input_id" t-value="'address'"/>
-                                        <t t-if="currently_editing_info">
-                                            <input id="address" type="text"
-                                                   name="address"
-                                                   t-att-class="'border-high-orange' if not profile_edits_accepted_fields.get('address') and submitted_info_edited else ''"
-                                                   t-att-value="partner.street if partner.street else ''"
-                                                   required=""/>
-                                        </t>
-                                        <t t-else="">
-                                            <t t-esc="partner.street if partner.street else ''"/>
-                                        </t>
+                                        <t t-set="input_id" t-value="'street'"/>
+                                        <div class="field-display"
+                                             data-display-for="street"><t
+                                                t-esc="partner.street or ''"/></div>
+                                        <div class="field-edit"><input type="text"
+                                                                       id="street"
+                                                                       name="street"
+                                                                       class="form-control"
+                                                                       t-att-value="partner.street"
+                                                                       t-att-data-original-value="partner.street"/></div>
                                     </t>
                                 </div>
                             </div>
-                            <!-- Phone number and Email -->
                             <div class="row">
                                 <div class="col-md-6">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
                                         <t t-set="label" t-value="'Phone number'"/>
                                         <t t-set="input_id" t-value="'phone'"/>
-                                        <t t-if="currently_editing_info">
-                                            <input id="phone" type="text"
-                                                   name="phone"
-                                                   t-att-class="'border-high-orange' if not profile_edits_accepted_fields.get('phone') and submitted_info_edited else ''"
-                                                   t-att-value="partner.phone if partner.phone else ''"
-                                                   required=""/>
-                                        </t>
-                                        <t t-else="">
-                                            <t t-esc="partner.phone if partner.phone else ''"/>
-                                        </t>
+                                        <div class="field-display"
+                                             data-display-for="phone"><t
+                                                t-esc="partner.phone or ''"/></div>
+                                        <div class="field-edit"><input type="tel"
+                                                                       id="phone"
+                                                                       name="phone"
+                                                                       class="form-control"
+                                                                       t-att-value="partner.phone"
+                                                                       t-att-data-original-value="partner.phone"/></div>
                                     </t>
                                 </div>
                                 <div class="col-md-6">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
                                         <t t-set="label" t-value="'Mail address'"/>
                                         <t t-set="input_id" t-value="'email'"/>
-                                        <t t-if="currently_editing_info">
-                                            <input id="email" type="text"
-                                                   name="email"
-                                                   t-att-class="'border-high-orange' if not profile_edits_accepted_fields.get('email') and submitted_info_edited else ''"
-                                                   t-att-value="partner.email if partner.email else ''"
-                                                   required=""/>
-                                        </t>
-                                        <t t-else="">
-                                            <t t-esc="partner.email if partner.email else ''"/>
-                                        </t>
+                                        <div class="field-display"
+                                             data-display-for="email"><t
+                                                t-esc="partner.email or ''"/></div>
+                                        <div class="field-edit"><input type="email"
+                                                                       id="email"
+                                                                       name="email"
+                                                                       class="form-control"
+                                                                       t-att-value="partner.email"
+                                                                       t-att-data-original-value="partner.email"/></div>
                                     </t>
                                 </div>
                             </div>
-                            <!-- Buttons to edit profile or save/cancel the modifications -->
-                            <t t-if="currently_editing_info">
-                                <!-- Apply modifications button -->
-                                <a id="ApplyModificationsInfoButton">
-                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                        <t t-set="variant" t-value="'default'"/>
-                                        <t t-set="variation" t-value="'filled'"/>
-                                        <t t-set="label" t-value="'Save settings'"/>
-                                        <t t-set="color" t-value="'mid-green'"/>
-                                        <t t-set="text_color"
-                                           t-value="'pure-white'"/>
-                                    </t>
-                                </a>
-                                <!-- Cancel modifications button -->
-                                <a t-att-href="'/my2/user_settings'">
-                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                        <t t-set="variant" t-value="'default'"/>
-                                        <t t-set="variation" t-value="'filled'"/>
-                                        <t t-set="label" t-value="'Cancel'"/>
-                                        <t t-set="color" t-value="'low-orange'"/>
-                                        <t t-set="text_color"
-                                           t-value="'pure-white'"/>
-                                    </t>
-                                </a>
-
-                            </t>
-                            <t t-else="">
-                                <!-- Edit profile button -->
-                                <a t-att-href="'/my2/user_settings?currently_editing_info=true'">
-                                    <div class="d-flex flex-column align-items-stretch">
+                            <div class="form-actions mt-4">
+                                <div class="view-mode">
+                                    <a id="EditInfoButton">
+                                        <div class="d-flex flex-column align-items-stretch">
+                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                                <t t-set="variant"
+                                                   t-value="'default'"/><t
+                                                    t-set="variation"
+                                                    t-value="'filled'"/>
+                                                <t t-set="label"
+                                                   t-value="'Edit my profile'"/><t
+                                                    t-set="color"
+                                                    t-value="'core-blue'"/>
+                                                <t t-set="text_color"
+                                                   t-value="'pure-white'"/>
+                                            </t>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="edit-mode">
+                                    <a id="ApplyModificationsInfoButton"
+                                       class="d-inline-block me-2">
                                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                            <t t-set="variant" t-value="'default'"/>
-                                            <t t-set="variation" t-value="'filled'"/>
+                                            <t t-set="variant" t-value="'default'"/><t
+                                                t-set="variation" t-value="'filled'"/>
                                             <t t-set="label"
-                                               t-value="'Edit my profile'"/>
-                                            <t t-set="color" t-value="'core-blue'"/>
+                                               t-value="'Save settings'"/><t
+                                                t-set="color" t-value="'mid-green'"/>
                                             <t t-set="text_color"
                                                t-value="'pure-white'"/>
                                         </t>
-                                    </div>
-                                </a>
-                            </t>
+                                    </a>
+                                    <a id="CancelModificationsInfoButton"
+                                       class="d-inline-block">
+                                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                            <t t-set="variant" t-value="'default'"/><t
+                                                t-set="variation" t-value="'filled'"/>
+                                            <t t-set="label" t-value="'Cancel'"/><t
+                                                t-set="color" t-value="'low-orange'"/>
+                                            <t t-set="text_color"
+                                               t-value="'pure-white'"/>
+                                        </t>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- Account settings panel -->
-                    <div class="tab-pane fade {{ 'active' if current_tab == 'account settings' else '' }}" id="account-settings" role="tabpanel"
-                         aria-labelledby="account-settings">
-                        <div class="p-3 bg-pure-white d-block col-lg-6 col-md-8 col-sm-12 mx-auto">
+                    <!-- Account settings tab -->
+                    <div class="tab-pane fade" id="account-settings" role="tabpanel">
+                        <div id="account-settings-form"
+                             class="p-3 bg-pure-white d-block col-lg-6 col-md-8 col-sm-12 mx-auto">
                             <t t-call="theme_compassion_2025.FormFieldComponent">
                                 <t t-set="label" t-value="'Login MyCompassion'"/>
                                 <t t-set="input_id" t-value="'login'"/>
-                                <t t-if="currently_editing_login">
-                                    <input id="login" type="text"
-                                           name="login"
-                                           t-att-class="'border-high-orange' if not login_edit_accepted and submitted_login_edited else ''"
-                                           t-att-value="user.login if user.login else ''"
-                                           required=""/>
-                                </t>
-                                <t t-else="">
-                                    <t t-esc="user.login if user.login else ''"/>
-                                </t>
+                                <div class="field-display" data-display-for="login"><t
+                                        t-esc="user.login or ''"/></div>
+                                <div class="field-edit"><input type="email" id="login"
+                                                               name="login"
+                                                               class="form-control"
+                                                               t-att-value="user.login"
+                                                               t-att-data-original-value="user.login"/></div>
                             </t>
-                            <!-- Buttons to edit account settings or save/cancel the modifications -->
-                            <t t-if="currently_editing_login">
-                                <!-- Apply modifications button -->
-                                <a id="ApplyModificationsAccountButton">
-                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                        <t t-set="variant" t-value="'default'"/>
-                                        <t t-set="variation" t-value="'filled'"/>
-                                        <t t-set="label" t-value="'Save settings'"/>
-                                        <t t-set="color" t-value="'mid-green'"/>
-                                        <t t-set="text_color"
-                                           t-value="'pure-white'"/>
-                                    </t>
-                                </a>
-                                <!-- Cancel modifications button -->
-                                <a t-att-href="'/my2/user_settings'">
-                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                        <t t-set="variant" t-value="'default'"/>
-                                        <t t-set="variation" t-value="'filled'"/>
-                                        <t t-set="label" t-value="'Cancel'"/>
-                                        <t t-set="color" t-value="'low-orange'"/>
-                                        <t t-set="text_color"
-                                           t-value="'pure-white'"/>
-                                    </t>
-                                </a>
-
-                            </t>
-                            <t t-else="">
-                                <!-- Edit account settings button -->
-                                <a t-att-href="'/my2/user_settings?currently_editing_login=true'">
-                                    <div class="d-flex flex-column align-items-stretch mb-3">
+                            <div class="form-actions mt-4">
+                                <div class="view-mode">
+                                    <a id="EditAccountButton" class="d-block mb-3">
+                                        <div class="d-flex flex-column align-items-stretch">
+                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                                <t t-set="variant"
+                                                   t-value="'default'"/><t
+                                                    t-set="variation"
+                                                    t-value="'filled'"/>
+                                                <t t-set="label"
+                                                   t-value="'Edit account settings'"/><t
+                                                    t-set="color"
+                                                    t-value="'core-blue'"/>
+                                                <t t-set="text_color"
+                                                   t-value="'pure-white'"/>
+                                            </t>
+                                        </div>
+                                    </a>
+                                    <a href="/my/security?redirect=/my/information"
+                                       class="d-block">
+                                        <div class="d-flex flex-column align-items-stretch">
+                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                                <t t-set="variant"
+                                                   t-value="'default'"/><t
+                                                    t-set="variation"
+                                                    t-value="'filled'"/>
+                                                <t t-set="label"
+                                                   t-value="'Change password'"/><t
+                                                    t-set="color"
+                                                    t-value="'core-blue'"/>
+                                                <t t-set="text_color"
+                                                   t-value="'pure-white'"/>
+                                            </t>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="edit-mode">
+                                    <a id="ApplyModificationsAccountButton"
+                                       class="d-inline-block me-2">
                                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                            <t t-set="variant" t-value="'default'"/>
-                                            <t t-set="variation" t-value="'filled'"/>
+                                            <t t-set="variant" t-value="'default'"/><t
+                                                t-set="variation" t-value="'filled'"/>
                                             <t t-set="label"
-                                               t-value="'Edit account settings'"/>
-                                            <t t-set="color" t-value="'core-blue'"/>
+                                               t-value="'Save settings'"/><t
+                                                t-set="color" t-value="'mid-green'"/>
                                             <t t-set="text_color"
                                                t-value="'pure-white'"/>
                                         </t>
-                                    </div>
-                                </a>
-                                <a t-att-href="'/my/security?redirect=/my/information'">
-                                    <div class="d-flex flex-column align-items-stretch">
+                                    </a>
+                                    <a id="CancelModificationsAccountButton"
+                                       class="d-inline-block">
                                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                            <t t-set="variant" t-value="'default'"/>
-                                            <t t-set="variation" t-value="'filled'"/>
-                                            <t t-set="label"
-                                               t-value="'Change password'"/>
-                                            <t t-set="color" t-value="'core-blue'"/>
+                                            <t t-set="variant" t-value="'default'"/><t
+                                                t-set="variation" t-value="'filled'"/>
+                                            <t t-set="label" t-value="'Cancel'"/><t
+                                                t-set="color" t-value="'low-orange'"/>
                                             <t t-set="text_color"
                                                t-value="'pure-white'"/>
                                         </t>
-                                    </div>
-                                </a>
-                            </t>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <!-- Privacy data panel -->
-                    <div class="tab-pane fade {{ 'active' if current_tab == 'privacy data' else '' }}" id="privacy-data" role="tabpanel"
-                         aria-labelledby="privacy-data">
+                    <!-- Privacy data tab -->
+                    <div class="tab-pane fade" id="privacy-data" role="tabpanel">
                         <div class="p-3 bg-pure-white d-block col-lg-6 col-md-8 col-sm-12 mx-auto">
-                            <!-- Text paragraph -->
                             <div class="bg-high-blue border rounded-lg mb-3">
                                 <div class="p-3">
                                     Compassion knows that children living in extreme
-                                    poverty are vulnerable. We put their protection
-                                    as
-                                    our number one priority. We ask our volunteering
+                                    poverty are vulnerable.
+                                    We put their protection as our number one priority.
+                                    We ask our volunteering
                                     friends and people that travel to visit their
-                                    sponsored child to sign a child protection
-                                    charter.
-                                    If you want to make a step further, you can sign
-                                    this document as well and show us that you share
-                                    our
-                                    values.
-                                    Compassion is also serious about the protection
-                                    of
-                                    your data. All your information is kept private
-                                    and
-                                    only used internally. You can sign or review our
-                                    data protection policy from here.
+                                    sponsored child to sign a
+                                    child protection charter. If you want to make a step
+                                    further, you can sign
+                                    this document as well and show us that you share our
+                                    values. Compassion is
+                                    also serious about the protection of your data. All
+                                    your information is kept private and only used
+                                    internally. You can sign or review our data
+                                    protection policy from here.
                                 </div>
                             </div>
-                            <!-- Sign Child protection Charter Button -->
                             <div class="mb-3">
-                                <a t-att-href="'/child-protection-charter'">
+                                <a href="/child-protection-charter">
                                     <div class="d-flex flex-column align-items-stretch">
                                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                            <t t-set="variant" t-value="'default'"/>
-                                            <t t-set="variation" t-value="'filled'"/>
+                                            <t t-set="variant" t-value="'default'"/><t
+                                                t-set="variation" t-value="'filled'"/>
                                             <t t-set="label"
-                                               t-value="'Child protection Charter'"/>
-                                            <t t-set="color" t-value="'core-blue'"/>
+                                               t-value="'Child protection Charter'"/><t
+                                                t-set="color" t-value="'core-blue'"/>
                                             <t t-set="text_color"
                                                t-value="'pure-white'"/>
                                         </t>
                                     </div>
                                 </a>
                             </div>
-                            <!-- Checkbox -->
                             <div>
                                 <t t-if="partner.date_agreed_child_protection_charter">
                                     <span>Signing date:</span>
-                                    <t
-                                            t-esc="partner.get_date('date_agreed_child_protection_charter', 'date_short')"
-                                    />
+                                    <t t-esc="partner.get_date('date_agreed_child_protection_charter', 'date_short')"/>
                                 </t>
                                 <t t-else="">
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="checkbox"
-                                               value=""
                                                id="flexCheckDefault"/>
                                         <label class="form-check-label"
                                                for="flexCheckDefault">
                                             I accept the legal terms and the privacy
-                                            policy
-                                            conditions
+                                            policy conditions
                                         </label>
                                     </div>
                                 </t>
                             </div>
                         </div>
                     </div>
-                    <!-- Communication settings panel -->
+                    <!-- Communication settings tab -->
                     <div class="tab-pane fade" id="communication-settings"
-                         role="tabpanel"
-                         aria-labelledby="communication-settings">
+                         role="tabpanel">
                         <div class="p-3 bg-pure-white d-block col-lg-6 col-md-8 col-sm-12 mx-auto">
-                            <!-- Switches -->
                             <div class="custom-control custom-switch">
                                 <input type="checkbox" class="custom-control-input"
-                                       id="newsletterCheck"/>
+                                       id="newsletterCheck"
+                                       data-field="opt_out"
+                                       t-att-checked="not partner.opt_out"/>
                                 <label class="custom-control-label"
                                        for="newsletterCheck">
                                     I would like to receive the Compassion Newsletter
                                 </label>
                             </div>
-                            <div class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input"
-                                       id="calendarCheck"
-                                       t-att-checked="True if partner.calendar else None"/>
-                                <label class="custom-control-label" for="calendarCheck">
-                                    I would like to receive the Compassion Calendar
-                                </label>
-                            </div>
-                            <div class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input"
-                                       id="birthdaysCheck"
-                                       t-att-checked="True if partner.birthday_reminder else None"/>
-                                <label class="custom-control-label"
-                                       for="birthdaysCheck">
-                                    I would like to receive reminders of the children
-                                    birthdays
-                                </label>
-                            </div>
-                            <div class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input"
-                                       id="anniversaryCheck"
-                                       t-att-checked="True if partner.sponsorship_anniversary_card else None"/>
-                                <label class="custom-control-label"
-                                       for="anniversaryCheck">
-                                    I would like to receive the sponsorship anniversary
-                                    card
-                                </label>
-                            </div>
-                            <!-- Selects -->
-                            <!-- Letter delivery preference -->
+                            <div class="custom-control custom-switch"><input
+                                    type="checkbox" class="custom-control-input"
+                                    id="calendarCheck" data-field="calendar"
+                                    t-att-checked="partner.calendar"/><label
+                                    class="custom-control-label" for="calendarCheck">I
+                                would like to receive the Compassion
+                                Calendar</label></div>
+                            <div class="custom-control custom-switch"><input
+                                    type="checkbox" class="custom-control-input"
+                                    id="birthdaysCheck" data-field="birthday_reminder"
+                                    t-att-checked="partner.birthday_reminder"/><label
+                                    class="custom-control-label" for="birthdaysCheck">I
+                                would like to receive reminders of the children
+                                birthdays</label></div>
+                            <div class="custom-control custom-switch"><input
+                                    type="checkbox" class="custom-control-input"
+                                    id="anniversaryCheck"
+                                    data-field="sponsorship_anniversary_card"
+                                    t-att-checked="partner.sponsorship_anniversary_card"/><label
+                                    class="custom-control-label" for="anniversaryCheck">
+                                I would like to receive the sponsorship anniversary
+                                card</label></div>
                             <t t-call="theme_compassion_2025.FormFieldComponent">
                                 <t t-set="label"
                                    t-value="'Letter Delivery Preference'"/>
-                                <t t-set="id" t-value="'letter_preference_select'"/>
                                 <t t-call="theme_compassion_2025.SelectComponent">
-                                    <option t-att-value="'auto_digital'"
-                                            t-att-selected="'selected' if (partner.letter_delivery_preference == 'digital' or partner.letter_delivery_preference == 'auto_digital' or partner.letter_delivery_preference == 'auto_digital_only' or partner.letter_delivery_preference == 'digital_only') else None">
-                                        Email
-                                    </option>
-                                    <option t-att-value="'physical'"
-                                            t-att-selected="'selected' if partner.letter_delivery_preference == 'physical' else None">
-                                        Letter
-                                    </option>
-                                    <option t-att-value="'both'"
-                                            t-att-selected="'selected' if partner.letter_delivery_preference == 'both' else None">
-                                        Letter and Email
-                                    </option>
-                                    <option t-att-value="'none'"
-                                            t-att-selected="'selected' if (partner.letter_delivery_preference == 'none' or partner.letter_delivery_preference == 'SMS') else None">
-                                        None
-                                    </option>
+                                    <t t-set="id" t-value="'letter_preference_select'"/>
+                                    <option value="auto_digital"
+                                            t-att-selected="partner.letter_delivery_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']">
+                                        Email</option>
+                                    <option value="physical"
+                                            t-att-selected="partner.letter_delivery_preference == 'physical'">
+                                        Letter</option>
+                                    <option value="both"
+                                            t-att-selected="partner.letter_delivery_preference == 'both'">
+                                        Letter and Email</option>
+                                    <option value="none"
+                                            t-att-selected="partner.letter_delivery_preference in ['none', 'SMS']">
+                                        None</option>
                                 </t>
                             </t>
-                            <!-- Photo delivery preference -->
                             <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label"
-                                   t-value="'Photo Delivery Preference'"/>
-                                <t t-set="id" t-value="'photo_preference_select'"/>
+                                <t t-set="label" t-value="'Photo Delivery Preference'"/>
                                 <t t-call="theme_compassion_2025.SelectComponent">
-                                    <option t-att-value="'auto_digital'"
-                                            t-att-selected="'selected' if (partner.photo_delivery_preference == 'digital' or partner.photo_delivery_preference == 'auto_digital' or partner.photo_delivery_preference == 'auto_digital_only' or partner.photo_delivery_preference == 'digital_only') else None">
-                                        Email
-                                    </option>
-                                    <option t-att-value="'physical'"
-                                            t-att-selected="'selected' if partner.photo_delivery_preference == 'physical' else None">
-                                        Letter
-                                    </option>
-                                    <option t-att-value="'both'"
-                                            t-att-selected="'selected' if partner.photo_delivery_preference == 'both' else None">
-                                        Letter and Email
-                                    </option>
-                                    <option t-att-value="'none'"
-                                            t-att-selected="'selected' if (partner.photo_delivery_preference == 'none' or partner.photo_delivery_preference == 'SMS') else None">
-                                        None
-                                    </option>
+                                    <t t-set="id" t-value="'photo_preference_select'"/>
+                                    <option value="auto_digital"
+                                            t-att-selected="partner.photo_delivery_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']">
+                                        Email</option>
+                                    <option value="physical"
+                                            t-att-selected="partner.photo_delivery_preference == 'physical'">
+                                        Letter</option>
+                                    <option value="both"
+                                            t-att-selected="partner.photo_delivery_preference == 'both'">
+                                        Letter and Email</option>
+                                    <option value="none"
+                                            t-att-selected="partner.photo_delivery_preference in ['none', 'SMS']">
+                                        None</option>
                                 </t>
                             </t>
-                            <!-- Tax delivery preference -->
                             <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label"
-                                   t-value="'Tax Delivery Preference'"/>
-                                <t t-set="id" t-value="'tax_preference_select'"/>
+                                <t t-set="label" t-value="'Tax Delivery Preference'"/>
                                 <t t-call="theme_compassion_2025.SelectComponent">
-                                    <option t-att-value="'auto_digital'"
-                                            t-att-selected="'selected' if (partner.tax_receipt_preference == 'digital' or partner.tax_receipt_preference == 'auto_digital' or partner.tax_receipt_preference == 'auto_digital_only' or partner.tax_receipt_preference == 'digital_only') else None">
-                                        Email
-                                    </option>
-                                    <option t-att-value="'physical'"
-                                            t-att-selected="'selected' if partner.tax_receipt_preference == 'physical' else None">
-                                        Letter
-                                    </option>
-                                    <option t-att-value="'none'"
-                                            t-att-selected="'selected' if (partner.tax_receipt_preference == 'none' or partner.tax_receipt_preference == 'SMS') else None">
-                                        None
-                                    </option>
+                                    <t t-set="id" t-value="'tax_preference_select'"/>
+                                    <option value="auto_digital"
+                                            t-att-selected="partner.tax_receipt_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']">
+                                        Email</option>
+                                    <option value="physical"
+                                            t-att-selected="partner.tax_receipt_preference == 'physical'">
+                                        Letter</option>
+                                    <option value="none"
+                                            t-att-selected="partner.tax_receipt_preference in ['none', 'SMS']">
+                                        None</option>
                                 </t>
                             </t>
                         </div>
                     </div>
-
                 </div>
             </div>
         </t>
-        <script
-                type="text/javascript"
-                src="/my_compassion/static/src/js/my2_user_settings.js"
-        />
+        <script type="text/javascript"
+                src="/my_compassion/static/src/js/my2_user_settings.js"/>
     </template>
 </odoo>
