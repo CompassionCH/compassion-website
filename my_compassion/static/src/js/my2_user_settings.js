@@ -157,7 +157,6 @@ document.addEventListener("DOMContentLoaded", () => {
          * Generic form handler for tabs with an "edit/save/cancel" workflow.
          */
         function initFormHandler({ formId, editButtonId, saveButtonId, cancelButtonId, endpoint, fields }) {
-            console.log("CACCA")
             const form = document.getElementById(formId);
             const editButton = document.getElementById(editButtonId);
             const saveButton = document.getElementById(saveButtonId);

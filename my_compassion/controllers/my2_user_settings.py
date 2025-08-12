@@ -49,17 +49,14 @@ class MyCompassionUserController(http.Controller):
         # Iterate through submitted data and validate it against the allowed fields.
         for field, value in post.items():
             if field in allowed_fields:
-                try:
-                    clean_value = (value or '').strip()
-                    if not clean_value:
-                        errors[field] = "This field cannot be empty."
-                    else:
-                        try:
-                            vals_to_update[field] = allowed_fields[field](clean_value)
-                        except (ValueError, TypeError):
-                            errors[field] = "Invalid value for %s." % field
-                except (ValueError, TypeError):
-                    errors[field] = "Invalid value for %s." % field
+                clean_value = (value or '').strip()
+                if not clean_value:
+                    errors[field] = "This field cannot be empty."
+                else:
+                    try:
+                        vals_to_update[field] = allowed_fields[field](clean_value)
+                    except (ValueError, TypeError):
+                        errors[field] = "Invalid value for %s." % field
 
         if errors:
             # If any errors were found, return them to the frontend. Do not update the record.
