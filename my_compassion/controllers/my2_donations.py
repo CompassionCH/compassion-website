@@ -52,11 +52,6 @@ class MyCompassionDonationsController(http.Controller):
         then redirects to checkout (the gift package page).
         return: A redirection to the gift package page.
         """
-        logging.info("====================================")
-        logging.info(post)
-        logging.info("------------------------------------")
-        # {'product_id': '284', 'frequency': 'monthly', 'suggested_amount': 'custom', 'custom_amount': '100'}
-
         # Fetch the product record from the database
         product_template_id = int(post.get("product_id"))
         product_template = request.env["product.template"].sudo().browse(product_template_id)
@@ -76,7 +71,7 @@ class MyCompassionDonationsController(http.Controller):
             quantity = product_template.my_compassion_donation_quantity_high
         elif amount == 'custom':
             # TODO: can fail
-            custom_price = int(post.get('custom_amount'))
+            custom_price = float(post.get('custom_amount'))
             quantity = custom_price / product_template.list_price
         else:
             raise BadRequest()

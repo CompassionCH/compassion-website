@@ -12,6 +12,22 @@
     - order ('sales.order' record): The user's current order (cart content).
 -->
 <odoo>
+    <!-- HELP MODAL TABLE COLUMN -->
+    <template id="my2_gift_package_help_table_column" name="Gift Package Help Table Column">
+        <div t-attf-class="table-column d-flex flex-column #{top_class}">
+            <div class="table-cell tiny-text bold bg-light-green border-0 d-flex flex-column justify-content-center">
+                <t t-esc="title"/>
+            </div>
+            <t t-foreach="cells" t-as="cell">
+                <div class="table-cell super-tiny-text d-flex flex-column justify-content-center">
+                    <div>
+                        <t t-raw="cell.replace('*', '&lt;span class=\'body-small text-low-pink\'&gt;*&lt;/span&gt;')"/>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </template>
+
     <!-- GIFT PACKAGE CONTENT -->
     <template id="my2_gift_package_content" name="Gift Package Content">
         <!-- ONE-OFF GIFTS -->
@@ -52,7 +68,7 @@
 
         <!-- EMPTY CART -->
         <div t-if="len(order.order_line) == 0"
-             class="mt-4 p-3 w-100 rounded-lg bg-high-pink text-low-pink text-center body-large bold">
+             class="mt-5 w-100 text-mid-grey text-center body-large bold">
             Your gift package is empty
         </div>
 
@@ -93,6 +109,20 @@
                             <t t-set="text_color" t-value="'pure-white'" />
                         </t>
                     </div>
+                    <div class="mt-3 px-5 d-flex align-items-center">
+                        <img class="px-1 col-3" src="/my_compassion/static/src/img/mastercard.png"/>
+                        <img class="px-1 col-3" src="/my_compassion/static/src/img/visa.png"/>
+                        <img class="px-1 col-3" src="/my_compassion/static/src/img/twint.png"/>
+                        <img class="px-1 col-3" src="/my_compassion/static/src/img/post_finance.png"/>
+                    </div>
+                    <div class="mt-3 body-small bold text-mid-green text-center">
+                        <i class="mt-n1 icon-lock03"/>
+                        Secure checkout
+                    </div>
+                    <div class="mt-1 tiny-text text-mid-grey text-center">
+                        Learn more in our
+                        <a href="">Privacy Policy</a>.
+                    </div>
                 </t>
             </div>
         </div>
@@ -104,6 +134,94 @@
         <script type="text/javascript" src="/my_compassion/static/src/js/my2_gift_package.js" />
         <link rel="stylesheet" href="/my_compassion/static/src/css/my2_gift_package.css" />
         <t t-call="website.layout">
+            <!-- HELP MODAL -->
+            <div class="modal fade" id="help-modal" tabindex="-1" role="dialog"
+                 aria-labelledby="help-modal-title" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content border-0">
+                        <div class="modal-header border-0 bg-low-blue d-flex align-items-center justify-content-center">
+                            <h5 class="modal-title text-pure-white" id="help-modal-title">
+                                Giving limits
+                                <button type="button" class="mr-3 icon-x-circle text-pure-white"
+                                        data-dismiss="modal" aria-label="Close"/>
+                            </h5>
+                        </div>
+                        <div class="modal-body bg-light-blue tiny-text text-center">
+                            We want to ensure your gifts really do benefit children, families and communities in the
+                            long-term, which is why we put limits on the amount  that can be sent.
+                        </div>
+                        <div class="modal-body">
+                            <div class="tiny-text">
+                                Ultimately, we want to enable communities to support themselves. The last thing we want
+                                is to encourage a culture of dependency on gifts. Also, we don't want to overwhelm
+                                families or single them out for special treatment, which is why we have limits in place.
+                            </div>
+                            <div class="d-flex flex-column my-4">
+                                <!-- TABLE TITLE -->
+                                <div class="p-3 table-title col-12 bg-low-green tiny-text text-center text-pure-white">
+                                    Annual gift limits in Switzerland
+                                </div>
+                                <!-- COLUMNS -->
+                                <div class="d-flex">
+                                    <!-- TYPE -->
+                                    <t t-call="my_compassion.my2_gift_package_help_table_column">
+                                        <t t-set="top_class" t-value="'flex-grow-1'"/>
+                                        <t t-set="title" t-value="'Type'"/>
+                                        <t t-set="cells" t-value="[
+                                            'Birthday Gift*',
+                                            'General Gift*',
+                                            'Family Gift',
+                                            'Project Gift',
+                                            'Graduation/Final Gift**',
+                                        ]"/>
+                                    </t>
+                                    <!-- MIN -->
+                                    <t t-call="my_compassion.my2_gift_package_help_table_column">
+                                        <t t-set="title" t-value="'Min'"/>
+                                        <t t-set="cells" t-value="[
+                                            'CHF 10',
+                                            'CHF 10',
+                                            'CHF 25',
+                                            'CHF 50',
+                                            'CHF 25',
+                                        ]"/>
+                                    </t>
+                                    <!-- MAX -->
+                                    <t t-call="my_compassion.my2_gift_package_help_table_column">
+                                        <t t-set="title" t-value="'Max'"/>
+                                        <t t-set="cells" t-value="[
+                                            'CHF 150',
+                                            'CHF 150',
+                                            'CHF 1\'100',
+                                            'CHF 15\'000',
+                                            'CHF 3\'000',
+                                        ]"/>
+                                    </t>
+                                </div>
+                                <!-- NOTES -->
+                                <div class="px-3 pt-1 super-tiny-text text-low-pink">
+                                   *A child gift (birthday or general) can be given twice a year with an annual total of
+                                    $300.<br/>**Available in the child's final year of the program.
+                                </div>
+                            </div>
+                            <div class="tiny-text">
+                                If you'd like to make a large donation to support the work of  Compassion, please get in
+                                touch with us directly and we can suggest how  your donation can make the greatest
+                                impact.
+                            </div>
+                            <div class="mt-4 tiny-text">
+                                <i class="mr-1 icon-phone body-small"/>
+                                <a href="tel:+41244342124" class="text-low-black">+41 (0)24 434 21 24</a>
+                                (Lu-Ven: 9.00-14.00)
+                            </div>
+                            <div class="mt-2 tiny-text">
+                                <i class="mr-1 icon-mail01 body-small"/>
+                                <a href="mailto:info@compassion.ch" class="text-low-black">info@compassion.ch</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="container">
                 <div class="content-column">
                     <!-- TODO: Add form action -->
@@ -119,7 +237,8 @@
                             </t>
 
                             <!-- HELP -->
-                            <a href="https://www.example.com" class="body-large icon-help-circle text-mid-grey"/>
+                            <button type="button" class="body-large icon-help-circle text-mid-grey"
+                                    data-toggle="modal" data-target="#help-modal"/>
 
                             <!-- DESCRIPTION -->
                             <div class="mt-3 px-4 body-small text-center">
@@ -127,7 +246,7 @@
                             </div>
 
                             <!-- GIFT PACKAGE CONTENT -->
-                            <div id="gift-package-content-wrapper" class="w-100 d-flex flex-column align-items-stretch">
+                            <div id="gift-package-content-wrapper" class="mb-4 w-100 d-flex flex-column align-items-stretch">
                                 <!-- RENDER INITIAL CONTENT -->
                                 <t t-call="my_compassion.my2_gift_package_content"/>
                             </div>
