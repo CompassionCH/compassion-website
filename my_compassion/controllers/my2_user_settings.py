@@ -77,7 +77,8 @@ class MyCompassionUserController(http.Controller):
                         errors[field] = "Invalid value for %s." % field
 
         if errors:
-            # If any errors were found, return them to the frontend. Do not update the record.
+            # If any errors were found, return them to the frontend,
+            # do not update the record.
             return {"success": False, "errors": errors}
 
         if vals_to_update:
