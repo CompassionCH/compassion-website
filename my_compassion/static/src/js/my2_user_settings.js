@@ -6,19 +6,19 @@
 
 /** @odoo-module **/
 document.addEventListener("DOMContentLoaded", () => {
-    odoo.define('my_compassion.user_settings', function (require) {
+    odoo.define("my_compassion.user_settings", function (require) {
         "use strict";
 
-        const rpc = require('web.rpc');
-        const Dialog = require('web.Dialog');
+        const rpc = require("web.rpc");
+        const Dialog = require("web.Dialog");
 
         /**
          * Main setup function to initialize all event listeners.
          */
         function initializeUserSettings() {
             // Hides the error messages of the select components
-            document.querySelectorAll('.invalid-hint').forEach(hint => {
-                hint.style.display = 'none';
+            document.querySelectorAll(".invalid-hint").forEach((hint) => {
+                hint.style.display = "none";
             });
 
             initTabNavigation();
@@ -26,21 +26,21 @@ document.addEventListener("DOMContentLoaded", () => {
             initPrivacyForm();
 
             initFormHandler({
-                formId: 'personal-information-form',
-                editButtonId: 'EditInfoButton',
-                saveButtonId: 'ApplyModificationsInfoButton',
-                cancelButtonId: 'CancelModificationsInfoButton',
-                endpoint: '/my2/user_settings/set_personal_info',
-                fields: ['title', 'lastname', 'firstname', 'street', 'city', 'country_id', 'zip', 'phone', 'email']
+                formId: "personal-information-form",
+                editButtonId: "EditInfoButton",
+                saveButtonId: "ApplyModificationsInfoButton",
+                cancelButtonId: "CancelModificationsInfoButton",
+                endpoint: "/my2/user_settings/set_personal_info",
+                fields: ["title", "lastname", "firstname", "street", "city", "country_id", "zip", "phone", "email"],
             });
 
             initFormHandler({
-                formId: 'account-settings-form',
-                editButtonId: 'EditAccountButton',
-                saveButtonId: 'ApplyModificationsAccountButton',
-                cancelButtonId: 'CancelModificationsAccountButton',
-                endpoint: '/my2/user_settings/set_account_settings',
-                fields: ['login']
+                formId: "account-settings-form",
+                editButtonId: "EditAccountButton",
+                saveButtonId: "ApplyModificationsAccountButton",
+                cancelButtonId: "CancelModificationsAccountButton",
+                endpoint: "/my2/user_settings/set_account_settings",
+                fields: ["login"],
             });
         }
 
@@ -48,107 +48,109 @@ document.addEventListener("DOMContentLoaded", () => {
          * Handles the tab navigation logic for both mobile and desktop.
          */
         function initTabNavigation() {
-            const mobileSelect = document.getElementById('user-settings-tabs-mobile');
-            const desktopTabsContainer = document.getElementById('user-settings-tabs');
-            const tabPanes = document.querySelectorAll('.tab-content .tab-pane');
-            const tabLinks = document.querySelectorAll('#user-settings-tabs .nav-link');
+            const mobileSelect = document.getElementById("user-settings-tabs-mobile");
+            const desktopTabsContainer = document.getElementById("user-settings-tabs");
+            const tabPanes = document.querySelectorAll(".tab-content .tab-pane");
+            const tabLinks = document.querySelectorAll("#user-settings-tabs .nav-link");
 
             const activateTab = (targetId) => {
-                tabPanes.forEach(pane => pane.classList.remove('show', 'active'));
-                tabLinks.forEach(link => link.classList.remove('active'));
+                tabPanes.forEach((pane) => pane.classList.remove("show", "active"));
+                tabLinks.forEach((link) => link.classList.remove("active"));
 
                 const targetPane = document.querySelector(targetId);
                 const targetLink = document.querySelector(`a.nav-link[href="${targetId}"]`);
 
-                if (targetPane) targetPane.classList.add('show', 'active');
-                if (targetLink) targetLink.classList.add('active');
+                if (targetPane) targetPane.classList.add("show", "active");
+                if (targetLink) targetLink.classList.add("active");
                 if (mobileSelect && mobileSelect.value !== targetId) mobileSelect.value = targetId;
             };
 
             const urlParams = new URLSearchParams(window.location.search);
-            const currentTab = urlParams.get('current_tab');
+            const currentTab = urlParams.get("current_tab");
             if (currentTab) {
-                activateTab(`#${currentTab.replace(/\s+/g, '-')}`);
+                activateTab(`#${currentTab.replace(/\s+/g, "-")}`);
             } else {
-                if (tabLinks.length) activateTab(tabLinks[0].getAttribute('href'));
+                if (tabLinks.length) activateTab(tabLinks[0].getAttribute("href"));
             }
 
-            desktopTabsContainer?.addEventListener('click', (e) => {
-                if (e.target.matches('a.nav-link')) {
+            desktopTabsContainer?.addEventListener("click", (e) => {
+                if (e.target.matches("a.nav-link")) {
                     e.preventDefault();
-                    activateTab(e.target.getAttribute('href'));
+                    activateTab(e.target.getAttribute("href"));
                 }
             });
 
-            mobileSelect?.addEventListener('change', (e) => activateTab(e.target.value));
+            mobileSelect?.addEventListener("change", (e) => activateTab(e.target.value));
         }
 
         /**
          * Initializes the immediate-update logic for communication settings.
          */
-    function initCommunicationSettings() {
-        const container = document.getElementById('communication-settings');
-        if (!container) return;
-        container.addEventListener('change', (e) => {
-            const target = e.target;
-            // Skip if the event is not on an input or select
-            if (!target.matches('input, select')) return;
-            let field = target.dataset.field;
-            let value;
+        function initCommunicationSettings() {
+            const container = document.getElementById("communication-settings");
+            if (!container) return;
+            container.addEventListener("change", (e) => {
+                const target = e.target;
+                // Skip if the event is not on an input or select
+                if (!target.matches("input, select")) return;
+                let field = target.dataset.field;
+                let value;
 
-            if (!field && target.tagName === 'SELECT') {
-                switch (target.id) {
-                    case 'letter_preference_select':
-                        field = 'letter_delivery_preference';
-                        break;
-                    case 'photo_preference_select':
-                        field = 'photo_delivery_preference';
-                        break;
-                    case 'tax_preference_select':
-                        field = 'tax_receipt_preference';
-                        break;
+                if (!field && target.tagName === "SELECT") {
+                    switch (target.id) {
+                        case "letter_preference_select":
+                            field = "letter_delivery_preference";
+                            break;
+                        case "photo_preference_select":
+                            field = "photo_delivery_preference";
+                            break;
+                        case "tax_preference_select":
+                            field = "tax_receipt_preference";
+                            break;
+                    }
                 }
-            }
-            // Determine the value based on element type
-            if (target.type === 'checkbox') {
-                value = target.checked;
-                // Handle inverted logic for opt_out
-                if (field === 'opt_out') {
-                    value = !value;
+                // Determine the value based on element type
+                if (target.type === "checkbox") {
+                    value = target.checked;
+                    // Handle inverted logic for opt_out
+                    if (field === "opt_out") {
+                        value = !value;
+                    }
+                } else {
+                    value = target.value;
                 }
-            } else {
-                value = target.value;
-            }
-            // If we have a field, send the update
-            if (field) {
-                rpc.query({
-                    route: "/my2/user_settings/set_communication_settings",
-                    params: { [field]: value },
-                }).catch(err => {
-                    console.error("RPC Error:", err);
-                    Dialog.alert(null, "Could not save your changes. Please try again.");
-                });
-            }
-        });
-    }
+                // If we have a field, send the update
+                if (field) {
+                    rpc.query({
+                        route: "/my2/user_settings/set_communication_settings",
+                        params: { [field]: value },
+                    }).catch((err) => {
+                        console.error("RPC Error:", err);
+                        Dialog.alert(null, "Could not save your changes. Please try again.");
+                    });
+                }
+            });
+        }
 
         /**
          * Initializes the child protection charter agreement checkbox.
          */
         function initPrivacyForm() {
-            const checkbox = document.getElementById('flexCheckDefault');
-            checkbox?.addEventListener('change', function () {
+            const checkbox = document.getElementById("flexCheckDefault");
+            checkbox?.addEventListener("change", function () {
                 if (this.checked) {
                     rpc.query({
                         route: "/my2/user_settings/agree_child_protection_charter",
                         params: {},
-                    }).then(() => {
-                        window.location.reload();
-                    }).catch(err => {
-                        console.error("RPC Error:", err);
-                        this.checked = false;
-                        Dialog.alert(null, "Could not save your confirmation. Please try again.");
-                    });
+                    })
+                        .then(() => {
+                            window.location.reload();
+                        })
+                        .catch((err) => {
+                            console.error("RPC Error:", err);
+                            this.checked = false;
+                            Dialog.alert(null, "Could not save your confirmation. Please try again.");
+                        });
                 }
             });
         }
@@ -163,18 +165,23 @@ document.addEventListener("DOMContentLoaded", () => {
             const cancelButton = document.getElementById(cancelButtonId);
 
             if (!form || !editButton || !saveButton || !cancelButton) {
-                console.warn(`Handler not initialized for ${formId}. Missing element:`, {form, editButton, saveButton, cancelButton});
+                console.warn(`Handler not initialized for ${formId}. Missing element:`, {
+                    form,
+                    editButton,
+                    saveButton,
+                    cancelButton,
+                });
                 return;
             }
 
             let originalValues = {};
 
             const clearErrors = () => {
-                form.querySelectorAll('.is-invalid').forEach(input => {
-                    input.classList.remove('is-invalid');
+                form.querySelectorAll(".is-invalid").forEach((input) => {
+                    input.classList.remove("is-invalid");
                 });
-                form.querySelectorAll('.invalid-hint').forEach(hint => {
-                    hint.style.display = 'none';
+                form.querySelectorAll(".invalid-hint").forEach((hint) => {
+                    hint.style.display = "none";
                 });
             };
 
@@ -182,13 +189,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 for (const fieldName in errors) {
                     const input = form.querySelector(`[name="${fieldName}"]`);
                     if (input) {
-                        input.classList.add('is-invalid');
-                        const container = input.closest('.form-field-container');
+                        input.classList.add("is-invalid");
+                        const container = input.closest(".form-field-container");
                         if (container) {
-                            const hintEl = container.querySelector('.invalid-hint');
+                            const hintEl = container.querySelector(".invalid-hint");
                             if (hintEl) {
                                 hintEl.textContent = errors[fieldName];
-                                hintEl.style.display = 'block';
+                                hintEl.style.display = "block";
                             }
                         }
                     }
@@ -196,14 +203,14 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
             const storeOriginalValues = () => {
-                fields.forEach(field => {
+                fields.forEach((field) => {
                     const input = form.querySelector(`[name="${field}"]`);
                     if (input) originalValues[field] = input.value;
                 });
             };
 
             const restoreOriginalValues = () => {
-                fields.forEach(field => {
+                fields.forEach((field) => {
                     const input = form.querySelector(`[name="${field}"]`);
                     if (input && originalValues[field] !== undefined) {
                         input.value = originalValues[field];
@@ -211,47 +218,48 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             };
 
-            editButton.addEventListener('click', () => {
+            editButton.addEventListener("click", () => {
                 storeOriginalValues();
                 clearErrors();
-                form.classList.add('is-editing');
+                form.classList.add("is-editing");
             });
 
-            cancelButton.addEventListener('click', () => {
+            cancelButton.addEventListener("click", () => {
                 restoreOriginalValues();
                 clearErrors();
-                form.classList.remove('is-editing');
+                form.classList.remove("is-editing");
             });
 
-            saveButton.addEventListener('click', () => {
+            saveButton.addEventListener("click", () => {
                 clearErrors();
                 const payload = {};
-                fields.forEach(field => {
+                fields.forEach((field) => {
                     const input = form.querySelector(`[name="${field}"]`);
                     if (input) payload[field] = input.value;
                 });
 
-                rpc.query({ route: endpoint, params: payload }).then(response => {
-                    if (response.success) {
-                        fields.forEach(field => {
-                            const input = form.querySelector(`[name="${field}"]`);
-                            const displayEl = form.querySelector(`[data-display-for="${field}"]`);
-                            if (!input || !displayEl) return;
+                rpc.query({ route: endpoint, params: payload })
+                    .then((response) => {
+                        if (response.success) {
+                            fields.forEach((field) => {
+                                const input = form.querySelector(`[name="${field}"]`);
+                                const displayEl = form.querySelector(`[data-display-for="${field}"]`);
+                                if (!input || !displayEl) return;
 
-                            displayEl.textContent = (input.tagName === 'SELECT')
-                                ? input.options[input.selectedIndex].text
-                                : input.value;
-                        });
-                        form.classList.remove('is-editing');
-                    } else {
-                        if (response.errors) {
-                            showErrors(response.errors);
+                                displayEl.textContent =
+                                    input.tagName === "SELECT" ? input.options[input.selectedIndex].text : input.value;
+                            });
+                            form.classList.remove("is-editing");
+                        } else {
+                            if (response.errors) {
+                                showErrors(response.errors);
+                            }
                         }
-                    }
-                }).catch(err => {
-                    console.error("RPC Error:", err);
-                    Dialog.alert(null, "An unexpected error occurred. Please try again later.");
-                });
+                    })
+                    .catch((err) => {
+                        console.error("RPC Error:", err);
+                        Dialog.alert(null, "An unexpected error occurred. Please try again later.");
+                    });
             });
         }
 
