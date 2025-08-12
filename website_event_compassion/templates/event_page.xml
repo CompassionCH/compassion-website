@@ -3,22 +3,22 @@
     <template id="event_header" name="Compassion event header">
         <!-- Full width banner -->
         <section
-      class="s_cover parallax s_parallax_is_fixed bg-black-50 py-250 o_colored_level"
-      data-scroll-background-ratio="1"
-      data-snippet="s_cover"
-      data-name="Cover"
-      style=""
-    >
+            class="s_cover parallax s_parallax_is_fixed bg-black-50 py-250 o_colored_level"
+            data-scroll-background-ratio="1"
+            data-snippet="s_cover"
+            data-name="Cover"
+            style=""
+        >
             <span
-        class="s_parallax_bg oe_img_bg"
-        t-attf-style="background-image: url('#{main_object.website_image}'); background-position: 50% 0;"
-      />
+                class="s_parallax_bg oe_img_bg"
+                t-attf-style="background-image: url('#{main_object.website_image}'); background-position: 50% 0;"
+            />
             <div class="o_we_bg_filter bg-black-50" />
             <div class="container s_allow_columns">
                 <h1 style="text-align: center;">
-                    <font style="font-size: 62px; font-weight: bold;"><span
-              t-field="main_object.name"
-            /></font>
+                    <font style="font-size: 62px; font-weight: bold;">
+                        <span t-field="main_object.name" />
+                    </font>
                 </h1>
                 <h4 class="text-center">
                     <t t-esc="start_date" />
@@ -27,78 +27,52 @@
                         <t t-esc="end_date" />
                     </t>
                 </h4>
-                <div
-          class="lead"
-          style="text-align: center;"
-          t-field="main_object.website_intro"
-        />
+                <div class="lead" style="text-align: center;" t-field="main_object.website_intro" />
             </div>
         </section>
     </template>
-
     <template id="event_barometer" name="Event barometer">
-        <p
-      t-att-class="barometer_title_class"
-      t-if="barometer_title_class"
-    >Funds raised</p>
+        <p t-att-class="barometer_title_class" t-if="barometer_title_class">Funds raised</p>
         <div t-attf-class="progress #{barometer_bg_class}">
             <div
-        class="progress-bar"
-        role="progressbar"
-        t-attf-aria-valuenow="#{ barometer.amount_raised_percents }"
-        aria-valuemin="0"
-        aria-valuemax="100"
-        t-attf-style="width: #{ barometer.amount_raised_percents }%;"
-      >
+                class="progress-bar"
+                role="progressbar"
+                t-attf-aria-valuenow="#{ barometer.amount_raised_percents }"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                t-attf-style="width: #{ barometer.amount_raised_percents }%;"
+            >
+
             </div>
             <t t-if="amount_inside">
                 <div t-attf-class="progress-amount #{ barometer_amount_class }">
-                    <t
-            t-esc="barometer.amount_raised or 0"
-            t-options="{'widget': 'integer'}"
-          />/<t
-            t-esc="barometer.amount_objective or 0"
-            t-options="{'widget': 'integer'}"
-          />
-                    <span
-            t-field="barometer.sudo().company_id.currency_id.symbol"
-          />
+                    <t t-esc="barometer.amount_raised or 0" t-options="{'widget': 'integer'}" />
+                    /
+                    <t t-esc="barometer.amount_objective or 0" t-options="{'widget': 'integer'}" />
+                    <span t-field="barometer.sudo().company_id.currency_id.symbol" />
                 </div>
             </t>
         </div>
         <t t-if="not amount_inside">
             <div t-attf-class="#{ barometer_amount_class }">
-                <t
-          t-esc="barometer.amount_raised or 0"
-          t-options="{'widget': 'integer'}"
-        />/<t
-          t-esc="barometer.amount_objective or 0"
-          t-options="{'widget': 'integer'}"
-        />
-                <span
-          t-field="barometer.sudo().company_id.currency_id.symbol"
-        />
+                <t t-esc="barometer.amount_raised or 0" t-options="{'widget': 'integer'}" />
+                /
+                <t t-esc="barometer.amount_objective or 0" t-options="{'widget': 'integer'}" />
+                <span t-field="barometer.sudo().company_id.currency_id.symbol" />
             </div>
         </t>
     </template>
-
     <template id="event_page" name="Event page">
         <t t-call="website.layout">
             <t t-set="additional_title" t-value="event.name" />
             <div id="wrap">
                 <t t-call="website_event_compassion.event_header" />
-
                 <!-- Event description -->
                 <div class="container-fluid event_compassion pl-lg-5">
                     <div class="row mb-4">
                         <div class="col-md-5 col-lg-4 max-width-xl-372">
-                            <div
-                name="dates_container"
-                class="pt32 pb16 container d-flex"
-              >
-                                <div
-                  class="text-uppercase font-weight-bold"
-                >Date</div>
+                            <div name="dates_container" class="pt32 pb16 container d-flex">
+                                <div class="text-uppercase font-weight-bold">Date</div>
                                 <div class="same-line ml-2">
                                     <t t-esc="start_date" />
                                     <t t-if="end_date != start_date">
@@ -108,84 +82,63 @@
                                 </div>
                             </div>
                             <div class="container">
-                                <div
-                  t-if="event.odoo_event_id.fundraising"
-                  class="mb-4"
-                >
-                                    <t
-                    t-call="website_event_compassion.event_barometer"
-                  >
+                                <div t-if="event.odoo_event_id.fundraising" class="mb-4">
+                                    <t t-call="website_event_compassion.event_barometer">
                                         <t t-set="barometer" t-value="event" />
-                                        <t
-                      t-set="amount_inside"
-                      t-value="False"
-                    />
-                                        <t
-                      t-set="barometer_title_class"
-                    >font-weight-bold text-uppercase</t>
+                                        <t t-set="amount_inside" t-value="False" />
+                                        <t t-set="barometer_title_class">font-weight-bold text-uppercase</t>
                                         <t t-set="barometer_amount_class" />
                                     </t>
                                 </div>
                                 <p t-if="event.odoo_event_id">
                                     <t
-                    t-if="event.odoo_event_id.registration_open and not event.odoo_event_id.registration_full"
-                  >
-                                        <a
-                      href="#event_registration_section"
-                      class="btn btn-primary w-75"
-                    >Register now</a>
+                                        t-if="event.odoo_event_id.registration_open and not event.odoo_event_id.registration_full"
+                                    >
+                                        <a href="#event_registration_section" class="btn btn-primary w-75">
+                                            Register now
+                                        </a>
                                     </t>
                                     <t t-else="">
-                                        <t
-                      t-if="event.odoo_event_id.registration_not_started"
-                    >
+                                        <t t-if="event.odoo_event_id.registration_not_started">
                                             Registrations will open soon.
                                         </t>
-                                        <t t-else="">
-                                            Registrations are closed.
-                                        </t>
+                                        <t t-else="">Registrations are closed.</t>
                                     </t>
                                 </p>
                                 <a
-                  href="#compassion_event_participants"
-                  class="btn btn-primary w-75"
-                  t-if="event.odoo_event_id.fundraising"
-                >See participants</a>
+                                    href="#compassion_event_participants"
+                                    class="btn btn-primary w-75"
+                                    t-if="event.odoo_event_id.fundraising"
+                                >
+                                    See participants
+                                </a>
                             </div>
                             <div t-field="event.website_side_info" />
                         </div>
-                        <div
-              class="col-md-6 offset-md-1 col-lg-8 offset-lg-0 my-auto"
-            >
-                            <div
-                class="mb16"
-                t-field="event.website_description"
-              />
+                        <div class="col-md-6 offset-md-1 col-lg-8 offset-lg-0 my-auto">
+                            <div class="mb16" t-field="event.website_description" />
                             <!-- Participants list -->
                             <div
-                t-call="website_event_compassion.event_participants_list"
-                t-if="event.odoo_event_id.fundraising"
-                class="container"
-              />
+                                t-call="website_event_compassion.event_participants_list"
+                                t-if="event.odoo_event_id.fundraising"
+                                class="container"
+                            />
                         </div>
                     </div>
                 </div>
                 <div class="oe_structure" />
                 <div
-          id="event_registration_section"
-          class="my-5 py-5 bg-secondary"
-          t-if="event.odoo_event_id.registration_open and not event.odoo_event_id.registration_full"
-        >
+                    id="event_registration_section"
+                    class="my-5 py-5 bg-secondary"
+                    t-if="event.odoo_event_id.registration_open and not event.odoo_event_id.registration_full"
+                >
                     <div class="container-fluid pl-lg-5">
                         <h1 class="pl-lg-5 text-uppercase">Register now</h1>
                     </div>
-                    <t
-            t-call="website_event_compassion.event_registration_form"
-          />
+                    <t t-call="website_event_compassion.event_registration_form" />
                 </div>
                 <div class="container" />
             </div>
-
         </t>
     </template>
 </odoo>

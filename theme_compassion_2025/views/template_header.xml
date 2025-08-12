@@ -17,10 +17,10 @@
         <!-- Add a linebreak with colors after the navbar -->
         <xpath expr="//nav[@data-name='Navbar']" position="after">
             <div class="d-flex compassion-thread">
-                <div class="h-100 w-25 bg-core-blue"></div>
-                <div class="h-100 w-25 bg-high-pink"></div>
-                <div class="h-100 w-25 bg-mid-orange"></div>
-                <div class="h-100 w-25 bg-low-green"></div>
+                <div class="h-100 w-25 bg-core-blue" />
+                <div class="h-100 w-25 bg-high-pink" />
+                <div class="h-100 w-25 bg-mid-orange" />
+                <div class="h-100 w-25 bg-low-green" />
             </div>
         </xpath>
         <!-- Make the main menu in the center -->
@@ -30,7 +30,6 @@
         <xpath expr="//div[@id='top_menu_collapse']" position="before">
             <div class="flex-grow-1" />
         </xpath>
-
         <!-- Move the login button out of the main menu and adapt its style -->
         <xpath expr="//t[@t-call='portal.placeholder_user_sign_in']" position="replace" />
         <xpath expr="//t[@t-call='portal.user_dropdown']" position="replace" />
@@ -52,12 +51,10 @@
             </a>
         </xpath>
     </template>
-
     <!-- Remove the contact us button from the header -->
     <template id="header_contactus" inherit_id="website.template_header_default_oe_structure_header_default_1">
         <xpath expr="//div[@id='oe_structure_header_default_1']" position="replace" />
     </template>
-
     <!-- Improve the language selector in the header -->
     <template id="language_selector" inherit_id="portal.language_selector">
         <xpath expr="//button" position="attributes">
@@ -70,7 +67,6 @@
             <attribute name="class">align-middle d-none d-sm-inline</attribute>
         </xpath>
     </template>
-
     <!-- Improve the user dropdown in the header -->
     <template id="user_dropdown" inherit_id="portal.user_dropdown">
         <xpath expr="//img" position="attributes">

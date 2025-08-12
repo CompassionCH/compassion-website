@@ -2,43 +2,46 @@
 
 /* CSS Variables */
 :root {
-    --compassion-blue: #005EB8;
+    --compassion-blue: #005eb8;
 }
 
 /* Regular */
 @font-face {
-    font-family: 'Montserrat';
-    src: url('/my_compassion/static/src/fonts/Montserrat-Regular.ttf') format('truetype');
+    font-family: "Montserrat";
+    src: url("/my_compassion/static/src/fonts/Montserrat-Regular.ttf") format("truetype");
     font-weight: 400;
     font-style: normal;
 }
 
 /* Bold */
 @font-face {
-    font-family: 'Montserrat';
-    src: url('/my_compassion/static/src/fonts/Montserrat-Bold.ttf') format('truetype');
+    font-family: "Montserrat";
+    src: url("/my_compassion/static/src/fonts/Montserrat-Bold.ttf") format("truetype");
     font-weight: 700;
     font-style: normal;
 }
 
 /* Italic */
 @font-face {
-    font-family: 'Montserrat';
-    src: url('/my_compassion/static/src/fonts/Montserrat-Italic.ttf') format('truetype');
+    font-family: "Montserrat";
+    src: url("/my_compassion/static/src/fonts/Montserrat-Italic.ttf") format("truetype");
     font-weight: 400;
     font-style: italic;
 }
 
 /* Light */
 @font-face {
-    font-family: 'Montserrat';
-    src: url('/my_compassion/static/src/fonts/Montserrat-Light.ttf') format('truetype');
+    font-family: "Montserrat";
+    src: url("/my_compassion/static/src/fonts/Montserrat-Light.ttf") format("truetype");
     font-weight: 300;
     font-style: normal;
 }
 
+/** TODO: Remove this line and then remove the '!important'
+          in the theme 2025 _base.scss file for the applying of the font
+*/
 body {
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
 }
 
 /* Set the text responsiveness behaviour, so we can use 'rem' values in the project */
@@ -79,9 +82,9 @@ h1 {
 
 /* Blue Button with White Text */
 .btn-compassion-blue {
-    background-color: #005EB8;
+    background-color: #005eb8;
     color: #ffffff;
-    border-color: #005EB8;
+    border-color: #005eb8;
 }
 
 .btn-compassion-blue:hover {
@@ -92,16 +95,15 @@ h1 {
 /* White Button with Blue Text */
 .btn-compassion-white {
     background-color: #ffffff;
-    color: #005EB8;
-    border-color: #005EB8;
+    color: #005eb8;
+    border-color: #005eb8;
 }
 
 .btn-compassion-white:hover {
-    background-color: #E6F4FF;
-    color: #003F87;
-    border-color: #003F87;
+    background-color: #e6f4ff;
+    color: #003f87;
+    border-color: #003f87;
 }
-
 
 /* Active (click or tap) effect: Shrinks the card slightly to simulate pressing. */
 .btn-compassion:active {

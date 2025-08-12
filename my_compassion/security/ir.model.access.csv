@@ -7,3 +7,6 @@ read_child_portal,MyCompassion: Child read access,child_compassion.model_compass
 write_contract_portal,MyCompassion: Contract write access,sponsorship_compassion.model_recurring_contract,base.group_portal,1,1,0,0
 write_contract_group_portal,MyCompassion: Contract group write access,sponsorship_compassion.model_recurring_contract_group,base.group_portal,1,1,0,0
 contract_line_portal,MyCompassion: Contract line full access,sponsorship_compassion.model_recurring_contract_line,base.group_portal,1,1,1,1
+access_sponsorship_timeline_all,Sponsorship Timeline read access,model_sponsorship_timeline,base.group_user,1,0,0,0
+access_donation_impact_line,donation.impact.line,model_donation_impact_line,base.group_user,1,1,1,1
+access_donation_info_line,donation.info.line,model_donation_info_line,base.group_user,1,1,1,1

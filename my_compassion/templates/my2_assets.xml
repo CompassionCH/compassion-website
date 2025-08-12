@@ -4,35 +4,23 @@
 -->
 <odoo>
     <!-- Make all pages load global.css file -->
-    <template
-            id="my_compassion_assets"
-            name="My Compassion 2.0 assets"
-            inherit_id="website.assets_frontend"
-    >
+    <template id="my_compassion_assets" name="My Compassion 2.0 assets" inherit_id="website.assets_frontend">
         <xpath expr="." position="inside">
-            <script type="text/xml" src="/my_compassion/static/src/xml/toast_notification.xml"/>
-            <script type="text/javascript" src="/my_compassion/static/src/js/toast_notification.js"/>
-            <script type="text/javascript" src="/my_compassion/static/src/js/toast_service.js"/>
-            <link rel="stylesheet" href="/my_compassion/static/src/css/toast_notification.css"/>
+            <script type="text/javascript" src="/my_compassion/static/src/js/toast_notification.js" />
+            <script type="text/javascript" src="/my_compassion/static/src/js/toast_service.js" />
+            <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_letters.js" />
+            <link rel="stylesheet" href="/my_compassion/static/src/css/toast_notification.css" />
         </xpath>
         <!-- Loads files at the end of page -->
         <xpath expr="//script[last()]" position="after">
-            <link
-                    href="/my_compassion/static/src/css/global.css"
-                    rel="stylesheet"
-                    type="text/css"
-            />
+            <link href="/my_compassion/static/src/css/global.css" rel="stylesheet" type="text/css" />
         </xpath>
     </template>
-    
     <!-- Add a meta instruction in all page's header -->
-    <template id="my_compassion_meta"
-              name="Add custom meta"
-              inherit_id="website.layout"
-    >
+    <template id="my_compassion_meta" name="Add custom meta" inherit_id="website.layout">
         <!-- Adds the mobile first optimization in the head of every page -->
         <xpath expr="//head/meta[last()]" position="after">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         </xpath>
     </template>
 </odoo>

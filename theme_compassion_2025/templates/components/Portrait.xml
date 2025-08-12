@@ -20,16 +20,14 @@
     <template id="PortraitComponent" name="Portrait Component">
         <div class="portrait-container">
             <div t-attf-class="portrait-frame portrait-frame-size-#{size or 'medium'}">
-                <img
-                    class="portrait-image"
-                    t-att-src="src"
-                    t-att-alt="alt"
-                />
+                <img class="portrait-image" t-att-src="src" t-att-alt="alt" />
             </div>
             <t t-if="title">
-                <p class="portrait-title">
-                    <t t-esc="title"/>
-                </p>
+                <div>
+                    <p class="portrait-title pb-md-0 mb-md-0">
+                        <t t-esc="title" />
+                    </p>
+                </div>
             </t>
         </div>
     </template>

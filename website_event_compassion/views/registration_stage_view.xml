@@ -9,11 +9,7 @@
                     <group>
                         <field name="name" />
                         <field name="sequence" />
-                        <field
-              name="event_type_ids"
-              options="{'limit': 12}"
-              widget="many2many_tags"
-            />
+                        <field name="event_type_ids" options="{'limit': 12}" widget="many2many_tags" />
                         <field name="registration_state" />
                         <field name="duration" />
                         <field name="fold" />
@@ -47,28 +43,21 @@
                 <field name="name" />
                 <field name="event_type_ids" />
                 <group expand="0" string="Group By">
-                    <filter
-            string="Event type"
-            name="event_type"
-            domain="[]"
-            context="{'group_by':'event_type_ids'}"
-          />
+                    <filter string="Event type" name="event_type" domain="[]" context="{'group_by':'event_type_ids'}" />
                 </group>
             </search>
         </field>
     </record>
-
     <record id="action_registration_stage" model="ir.actions.act_window">
         <field name="name">Registration stage</field>
         <field name="res_model">event.registration.stage</field>
         <field name="view_mode">tree,form</field>
     </record>
-
     <menuitem
-    id="menu_registration_stage"
-    name="Registration stages"
-    sequence="2"
-    action="action_registration_stage"
-    parent="event.menu_event_configuration"
-  />
+        id="menu_registration_stage"
+        name="Registration stages"
+        sequence="2"
+        action="action_registration_stage"
+        parent="event.menu_event_configuration"
+    />
 </odoo>

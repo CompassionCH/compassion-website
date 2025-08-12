@@ -1,9 +1,9 @@
 // Define a new module in Odoo called 'my_compassion.toast_notification'
-odoo.define('my_compassion.toast_notification', function (require) {
+odoo.define("my_compassion.toast_notification", function (require) {
     "use strict";
 
     // Import the base Widget class from Odoo's web framework
-    const Widget = require('web.Widget');
+    const Widget = require("web.Widget");
 
     // Create a new widget class by extending the base Widget
     const ToastNotification = Widget.extend({
@@ -11,10 +11,10 @@ odoo.define('my_compassion.toast_notification', function (require) {
         // This template should be defined in the XML file specified in xmlDependencies
         // The template will be used to create the HTML structure of the toast notification
         // See also the my2_assets.xml file for the template definition
-        template: 'my_compassion.toast_notification_component',
+        template: "my_compassion.toast_notification_component",
 
         // Include the XML file where the template is defined
-        xmlDependencies: ['/my_compassion/static/src/xml/toast_notification.xml'],
+        xmlDependencies: ["/my_compassion/static/src/xml/toast_notification.xml"],
 
         /**
          * Widget constructor
@@ -25,7 +25,7 @@ odoo.define('my_compassion.toast_notification', function (require) {
             // Set default values if not provided
             this.message = options.message || "Default message";
             this.title = options.title || "Notification";
-            this.type = options.type || "info";  // Defines the style: success, danger, info, etc.
+            this.type = options.type || "info"; // Defines the style: success, danger, info, etc.
 
             // Call the parent constructor
             this._super(parent, options);
@@ -36,7 +36,7 @@ odoo.define('my_compassion.toast_notification', function (require) {
          */
         start: function () {
             // Dismiss when the close button is clicked
-            this.$('.close').on('click', () => this.destroy());
+            this.$(".close").on("click", () => this.destroy());
 
             // The average reading time for a toast is around 5 seconds + 1 second per 120 characters
             // so, automatically remove the toast after 6 seconds

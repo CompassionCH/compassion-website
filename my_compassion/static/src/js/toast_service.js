@@ -1,7 +1,7 @@
 // TODO manage translations of Toast messages
 
 // Define a new Odoo module called 'my_compassion.toast_service'
-odoo.define('my_compassion.toast_service', function (require) {
+odoo.define("my_compassion.toast_service", function (require) {
     "use strict";
 
     // Import the custom Toast notification widget
@@ -17,12 +17,12 @@ odoo.define('my_compassion.toast_service', function (require) {
          * @param {string} msg - The message body
          * @param {string} title - Optional title (defaults to 'Info')
          */
-        info(msg, title = 'Info') {
+        info(msg, title = "Info") {
             new Toast(null, {
                 title,
                 message: msg,
-                type: 'info' // Bootstrap-style class for errors
-            }).appendTo($('body')); // Appended to body to ensure visibility
+                type: "info", // Bootstrap-style class for errors
+            }).appendTo($("body")); // Appended to body to ensure visibility
         },
 
         /**
@@ -30,12 +30,12 @@ odoo.define('my_compassion.toast_service', function (require) {
          * @param {string} msg - The message body
          * @param {string} title - Optional title (defaults to 'Success')
          */
-        success(msg, title = 'Success') {
+        success(msg, title = "Success") {
             new Toast(null, {
                 title,
                 message: msg,
-                type: 'success'
-            }).appendTo($('body'));
+                type: "success",
+            }).appendTo($("body"));
         },
 
         /**
@@ -43,12 +43,12 @@ odoo.define('my_compassion.toast_service', function (require) {
          * @param {string} msg - The message body
          * @param {string} title - Optional title (defaults to 'Warning')
          */
-        warning(msg, title = 'Warning') {
+        warning(msg, title = "Warning") {
             new Toast(null, {
                 title,
                 message: msg,
-                type: 'warning'
-            }).appendTo($('body'));
+                type: "warning",
+            }).appendTo($("body"));
         },
 
         /**
@@ -56,13 +56,13 @@ odoo.define('my_compassion.toast_service', function (require) {
          * @param {string} msg - The message body
          * @param {string} title - Optional title (defaults to 'Error')
          */
-        error(msg, title = 'Error') {
+        error(msg, title = "Error") {
             new Toast(null, {
                 title,
                 message: msg,
-                type: 'danger'
-            }).appendTo($('body'));
-        }
+                type: "danger",
+            }).appendTo($("body"));
+        },
     };
 
     // Return the ToastService so it can be used in other modules

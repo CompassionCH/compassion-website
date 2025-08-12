@@ -1,18 +1,22 @@
 @font-face {
-font-family: 'Neighbour Bold';
-src: url('/theme_muskathlon/static/src/fonts/NeighbourSans-Bold.woff2') format('woff2');
+  font-family: "Neighbour Bold";
+  src: url("/theme_muskathlon/static/src/fonts/NeighbourSans-Bold.woff2")
+    format("woff2");
 }
 @font-face {
-font-family: 'Neighbour ExtraBold';
-src: url('/theme_muskathlon/static/src/fonts/NeighbourSans-ExtraBold.woff2') format('woff2');
+  font-family: "Neighbour ExtraBold";
+  src: url("/theme_muskathlon/static/src/fonts/NeighbourSans-ExtraBold.woff2")
+    format("woff2");
 }
 @font-face {
-font-family: 'Neighbour Medium';
-src: url('/theme_muskathlon/static/src/fonts/NeighbourSans-Medium.woff2') format('woff2');
+  font-family: "Neighbour Medium";
+  src: url("/theme_muskathlon/static/src/fonts/NeighbourSans-Medium.woff2")
+    format("woff2");
 }
 @font-face {
-font-family: 'Neighbour Regular';
-src: url('/theme_muskathlon/static/src/fonts/NeighbourSans-Regular.woff2') format('woff2');
+  font-family: "Neighbour Regular";
+  src: url("/theme_muskathlon/static/src/fonts/NeighbourSans-Regular.woff2")
+    format("woff2");
 }
 
 //------------------------------------------------------------------------------
@@ -50,19 +54,26 @@ $o-theme-font-configs: (
     ),
     "url": "Play:400",
   ),
- "Neighbour Bold": (
-    "family": ("Neighbour Bold"),
+  "Neighbour Bold": (
+    "family": (
+      "Neighbour Bold",
+    ),
   ),
   "Neighbour ExtraBold": (
-    "family": ("Neighbour ExtraBold"),
+    "family": (
+      "Neighbour ExtraBold",
+    ),
   ),
   "Neighbour Regular": (
-    "family": ("Neighbour Regular"),
+    "family": (
+      "Neighbour Regular",
+    ),
   ),
   "Neighbour Medium": (
-    "family": ("Neighbour Medium"),
+    "family": (
+      "Neighbour Medium",
+    ),
   ),
-
 );
 
 //------------------------------------------------------------------------------
@@ -79,6 +90,6 @@ $o-website-values-palettes: (
     "header-template": "hamburger",
     "hamburger-type": "off-canvas",
     "hamburger-position": "left",
-    "footer-template": "links",
+    "footer-template": "links"
   ),
 );

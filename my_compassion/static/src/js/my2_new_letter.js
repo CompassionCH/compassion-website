@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (!warning) {
                         warning = document.createElement("div");
                         warning.id = "emoji-warning";
-                       // TODO refactor the styling with a class from the theme when theme is ready
+                        // TODO refactor the styling with a class from the theme when theme is ready
                         warning.style.color = "red";
                         warning.style.marginTop = "5px";
                         letterInput.parentNode.appendChild(warning);
@@ -59,17 +59,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Get the button that triggered the form submission (either Preview or Submit)
             const submitButton = event.submitter;
-            const mode = submitButton.getAttribute("data-mode");
+            const mode = $(submitButton).data("custom");
 
             // Collect the form data
             let childId, templateId, letterBody, attachments;
             try {
-                ({
-                    childId,
-                    templateId,
-                    letterBody,
-                    attachments
-                } = await collectFormData());
+                ({ childId, templateId, letterBody, attachments } = await collectFormData());
             } catch (error) {
                 ToastService.error(error.message);
                 return;
@@ -83,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 source: "mycompassion",
                 csrf_token: odoo.csrf_token,
                 attachments: attachments,
-                mode: mode
+                mode: mode,
             };
 
             let fakeProgressPromise;
@@ -92,10 +87,12 @@ document.addEventListener("DOMContentLoaded", function () {
             // If the mode is 'send', show a modal with a fake progress bar
             if (mode === "send") {
                 // Show the modal and prevents the user to be able to close the modal
-                $("#submitModal").modal({
-                    backdrop: 'static',
-                    keyboard: false
-                }).modal('show');
+                $("#submitModal")
+                    .modal({
+                        backdrop: "static",
+                        keyboard: false,
+                    })
+                    .modal("show");
 
                 const progressControl = showFakeProgress();
                 fakeProgressPromise = progressControl.promise;
@@ -114,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }),
                     // If no fake progress is needed (in preview mode),
                     // use Promise.resolve() to ensure Promise.race always has a valid promise.
-                    fakeProgressPromise || Promise.resolve()
+                    fakeProgressPromise || Promise.resolve(),
                 ]);
 
                 const result = await rpcPromise;
@@ -122,12 +119,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 // (Yes this is an anti-pattern, I'm sorry, I need to rush)
                 if (fakeProgressPromise) await fakeProgressPromise;
                 await handleResponse(mode, result, childId);
-
             } catch (error) {
                 // Remove the modal with the fake progress bar in case of error
                 if (timeoutId) clearTimeout(timeoutId);
                 $("#submitModal").modal("hide");
-                ToastService.error("An error occurred while processing your letter. Please try again or contact the support.");
+                ToastService.error(
+                    "An error occurred while processing your letter. Please try again or contact the support."
+                );
                 return;
             }
         }
@@ -159,7 +157,6 @@ document.addEventListener("DOMContentLoaded", function () {
             // TODO handle in a clean way encoding potential issue with a throw new Error
             const attachments = await encodeAttachments(fileInput.files);
 
-
             // Validate inputs and throw error messages in case of missing value
             if (!childId) {
                 throw new Error("Please select a child to write to.");
@@ -170,10 +167,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             if (!letterBody) {
-                throw new Error("Please write something in your letter")
+                throw new Error("Please write something in your letter");
             }
 
-            return {childId, templateId, letterBody, attachments};
+            return { childId, templateId, letterBody, attachments };
         }
 
         /**
@@ -209,7 +206,9 @@ document.addEventListener("DOMContentLoaded", function () {
             try {
                 return await Promise.all(filePromises);
             } catch (error) {
-                ToastService.error("An error occurred while processing attachments. Please try again or contact the support.");
+                ToastService.error(
+                    "An error occurred while processing attachments. Please try again or contact the support."
+                );
                 return [];
             }
         }
@@ -237,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "Applying the template…",
                 "Adding your text…",
                 "Adding your attachments…",
-                "Finalizing…"
+                "Finalizing…",
             ];
 
             let currentStep = 0;
@@ -264,7 +263,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 updateProgress();
             });
 
-            return {promise, timeoutId};
+            return { promise, timeoutId };
         }
 
         /**
@@ -281,7 +280,7 @@ document.addEventListener("DOMContentLoaded", function () {
         function submitLetterRPC(data) {
             return rpc.query({
                 route: "/my2/children/letter/new",
-                params: data
+                params: data,
             });
         }
 
@@ -302,7 +301,7 @@ document.addEventListener("DOMContentLoaded", function () {
          */
         async function handleResponse(mode, result, childId) {
             if (mode === "send") {
-                window.location.href = `/my2/children/${childId}/letters?new_letter_generator_id=${result.generator_id}`;
+                window.location.href = `/my2/children/letters/${childId}?new_letter_generator_id=${result.generator_id}`;
             } else if (mode === "preview") {
                 document.getElementById("previewImage").src = result.preview_url;
                 $("#previewModal").modal("show");

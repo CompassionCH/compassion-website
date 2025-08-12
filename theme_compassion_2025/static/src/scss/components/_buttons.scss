@@ -10,20 +10,20 @@
 // =====================
 
 @mixin button-base($height, $padding-x, $font-size, $font-family, $font-weight) {
-  height: $height;
-  padding: 0 $padding-x;
-  font-size: $font-size;
-  font-family: $font-family, sans-serif;
-  font-weight: $font-weight;
-  border-radius: 25px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0; // handled by icon variant
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  line-height: 1;
+    height: $height;
+    padding: 0 $padding-x;
+    font-size: $font-size;
+    font-family: $font-family, sans-serif;
+    font-weight: $font-weight;
+    border-radius: 25px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0; // handled by icon variant
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    line-height: 1;
 }
 
 // =====================
@@ -31,44 +31,52 @@
 // =====================
 
 .btn {
-  &--default-filled {
-    @include button-base(48px, 32px, 17px, 'NeighbourSans Medium', 500);
-    background-color: #000;
-    color: #fff;
-  }
+    &--default-filled {
+        @include button-base(48px, 32px, 17px, "NeighbourSans Medium", 500);
+        background-color: #000;
+        color: #fff;
+    }
 
-  &--default-hollow {
-    @extend .btn--default-filled;
-    background-color: transparent;
-    border: 2px solid #000;
-    color: #000;
-  }
+    &--default-hollow {
+        @extend .btn--default-filled;
+        background-color: transparent;
+        border: 2px solid #000;
+        color: #000;
+    }
 
-  &--impact-filled {
-    @include button-base(56px, 36px, 19px, 'NeighbourSans DemiBold', 600);
-    background-color: #000;
-    color: #fff;
-  }
+    &--impact-filled {
+        @include button-base(56px, 36px, 19px, "NeighbourSans DemiBold", 600);
+        background-color: #000;
+        color: #fff;
+    }
 
-  &--impact-hollow {
-    @extend .btn--impact-filled;
-    background-color: transparent;
-    border: 2px solid #000;
-    color: #000;
-  }
+    &--impact-hollow {
+        @extend .btn--impact-filled;
+        background-color: transparent;
+        border: 2px solid #000;
+        color: #000;
+    }
 
-  &--compact-filled {
-    @include button-base(42px, 24px, 16px, 'NeighbourSans Medium', 500);
-    background-color: #000;
-    color: #fff;
-  }
+    &--compact-filled {
+        @include button-base(42px, 24px, 16px, "NeighbourSans Medium", 500);
+        background-color: #000;
+        color: #fff;
+    }
 
-  &--compact-hollow {
-    @extend .btn--compact-filled;
-    background-color: transparent;
-    border: 2px solid #000;
-    color: #000;
-  }
+    &--compact-hollow {
+        @extend .btn--compact-filled;
+        background-color: transparent;
+        border: 2px solid #000;
+        color: #000;
+    }
+
+    &--radius-pill {
+        border-radius: 25px;
+    }
+
+    &--radius-small {
+        border-radius: 12px;
+    }
 }
 
 // =====================
@@ -76,22 +84,22 @@
 // =====================
 
 .btn__icon {
-  width: 24px;
-  height: 24px;
-  display: inline-block;
+    width: 24px;
+    height: 24px;
+    display: inline-block;
 
-  &--compact {
-    margin-right: 6px;
-    margin-left: -6px; // to simulate extra left padding
-  }
+    &--compact {
+        margin-right: 6px;
+        margin-left: -6px; // to simulate extra left padding
+    }
 
-  &--default {
-    margin-right: 8px;
-    margin-left: -8px;
-  }
+    &--default {
+        margin-right: 8px;
+        margin-left: -8px;
+    }
 
-  &--impact {
-    margin-right: 10px;
-    margin-left: -10px;
-  }
+    &--impact {
+        margin-right: 10px;
+        margin-left: -10px;
+    }
 }

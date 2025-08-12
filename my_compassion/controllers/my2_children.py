@@ -6,13 +6,35 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+from odoo import _, http
+from odoo.exceptions import AccessError
 from odoo.http import request
-from odoo import http
 
 
 class MyCompassionChildrenController(http.Controller):
+    def _check_sponsored_child_access(self, child):
+        """
+        Private helper to securely fetch a sponsored child.
+        Ensures the current user is a sponsor of the requested child.
+        :param child: The requested child record to fetch.
+        :raises: odoo.exceptions.AccessError if the user is not an active sponsor.
+        """
+        if not request.env.user.partner_id.sponsorship_ids.mapped("child_id") & child:
+            raise AccessError(
+                _("You are not authorized to view this child's information.")
+            )
 
-    @http.route('/my2/children/', type="http", auth="user", website=True, sitemap=False)
+    def _get_timeline_records(self, partner_id, child_id, offset=0, limit=9):
+        """Private helper to fetch a paginated list of timeline records."""
+        domain = [("child_id", "=", child_id), ("partner_id", "=", partner_id)]
+        timeline_model = request.env["sponsorship.timeline"].sudo()
+        total = timeline_model.search_count(domain)
+        records = timeline_model.search(
+            domain, order="create_date desc", offset=offset, limit=limit
+        )
+        return records, total
+
+    @http.route("/my2/children/", type="http", auth="user", website=True, sitemap=False)
     def my2_render_children_page(self, **kwargs):
         """
         Renders the children page related to the logged-in user's sponsorships.
@@ -20,57 +42,110 @@ class MyCompassionChildrenController(http.Controller):
         """
         partner = request.env.user.partner_id
 
+        # To keep a list of the latest correspondence with each sponsored child:
+        latest_corr_by_child = {}
+        correspondences_table = request.env["correspondence"].sudo()
+
+        received_correspondences = correspondences_table.search(
+            [
+                ("partner_id", "=", partner.id),
+                ("direction", "=", "Beneficiary To Supporter"),
+            ],
+            order="create_date desc",
+        )
+
+        for corr in received_correspondences:
+            child_id = corr.child_id.id
+            if child_id not in latest_corr_by_child:
+                latest_corr_by_child[child_id] = corr
+
         breadcrumbs = [
-            {'name': 'Children', 'url': '/my2/children/', 'active': True},
+            {"name": "Children", "url": "/my2/children/", "active": True},
         ]
 
         return request.render(
-            'my_compassion.my2_children_page',
+            "my_compassion.my2_children_page",
             {
-                'sponsorship_ids': partner.sponsorship_ids,
-                'breadcrumbs': breadcrumbs,
-            }
+                "sponsorship_ids": partner.sponsorship_ids,
+                "latest_correspondences_by_child_id": latest_corr_by_child,
+                "breadcrumbs": breadcrumbs,
+            },
         )
 
-    @http.route('/my2/children/<int:child_id>', type="http", auth="user", website=True, sitemap=False)
-    def my2_render_child_timeline_page(self, child_id, **kwargs):
+    @http.route(
+        '/my2/children/<model("compassion.child"):child>',
+        type="http",
+        auth="user",
+        website=True,
+        sitemap=False,
+    )
+    def my2_render_child_timeline_page(self, child, **kwargs):
+        """Renders the main timeline page with the initial batch of records."""
+        try:
+            self._check_sponsored_child_access(child)
+        except AccessError:
+            return request.redirect("/my2/children/")
+
+        offset = int(kwargs.get("offset", 0))
+        limit = int(kwargs.get("limit", 9))
         partner = request.env.user.partner_id
-        children_sponsored_by_partner = partner.sponsorship_ids.child_id
 
-        for child in children_sponsored_by_partner:
-            if child.id == child_id:
+        records, total = self._get_timeline_records(partner.id, child.id, offset, limit)
 
-                breadcrumbs = [
-                    {'name': 'Children', 'url': '/my2/children/', 'active': False},
-                    {'name': child.preferred_name, 'url': '/my2/children/' + str(child_id), 'active': True},
-                ]
-
-                return request.render(
-                    'my_compassion.my2_child_timeline_page',
+        return request.render(
+            "my_compassion.my2_child_timeline_page",
+            {
+                "compassion_child": child,
+                "breadcrumbs": [
+                    {"name": "Children", "url": "/my2/children/", "active": False},
                     {
-                        'compassion_child': child,
-                        'breadcrumbs': breadcrumbs,
-                    }
-                )
+                        "name": child.preferred_name,
+                        "url": "/my2/children/" + str(child.id),
+                        "active": True,
+                    },
+                ],
+                "records": records,
+                "has_more_records": total > offset + limit,
+            },
+        )
 
-    @http.route('/my2/children/<int:child_id>/details', type="http", auth="user", website=True, sitemap=False)
-    def my2_render_child_details_page(self, child_id, **kwargs):
+    @http.route(
+        '/my2/children/<model("compassion.child"):child>/timeline-batch',
+        type="json",
+        auth="user",
+        website=True,
+        sitemap=False,
+    )
+    def my2_get_child_timeline_items(self, child, **kwargs):
+        """API endpoint for infinite scroll. Returns a rendered HTML snippet."""
+        try:
+            self._check_sponsored_child_access(child)
+        except AccessError:
+            # For an API, it's better to return an empty or error response
+            # than to redirect.
+            return request.make_response("", headers={"Content-Type": "text/html"})
+
+        offset = int(kwargs.get("offset", 0))
+        limit = int(kwargs.get("limit", 9))
+
         partner = request.env.user.partner_id
-        children_sponsored_by_partner = partner.sponsorship_ids.child_id
 
-        for child in children_sponsored_by_partner:
-            if child.id == child_id:
+        records, total = self._get_timeline_records(partner.id, child.id, offset, limit)
+        has_more = total > offset + limit
 
-                breadcrumbs = [
-                    {'name': 'Children', 'url': '/my2/children/', 'active': False},
-                    {'name': child.preferred_name, 'url': '/my2/children/' + str(child_id), 'active': False},
-                    {'name': 'Details', 'url': '/my2/children/' + str(child_id) + '/details', 'active': True},
-                ]
+        html = (
+            request.env["ir.ui.view"]._render_template(
+                "my_compassion.SponsorChildTimelineBatchComponent",
+                {
+                    "records": records,
+                    "has_more_records": has_more,
+                },
+            )
+            if records
+            else ""
+        )
 
-                return request.render(
-                    'my_compassion.my2_child_details_page',
-                    {
-                        'compassion_child': child,
-                        'breadcrumbs': breadcrumbs,
-                    }
-                )
+        return {
+            "html": html,
+            "has_more_records": has_more,
+        }

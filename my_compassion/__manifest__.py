@@ -38,10 +38,10 @@
     "data": [
         "security/access_rules.xml",
         "security/ir.model.access.csv",
-
+        # My Compassion 2 data
+        "data/my2_website.xml",
         # My compassion 2 assets, needs to be placed before others
         "templates/my2_assets.xml",
-
         "templates/my_account_components.xml",
         "templates/my_account_personal_info.xml",
         "templates/my_account_donations.xml",
@@ -51,24 +51,22 @@
         "templates/signup.xml",
         "views/correspondence_template_view.xml",
         "views/partner_compassion_view.xml",
+        "views/product_view.xml",
         "data/signup_email_confirmation.xml",
         "data/communication_config.xml",
-
         # My Compassion 2 pages
         "templates/pages/my2_children.xml",
         "templates/pages/my2_child_timeline.xml",
-        "templates/pages/my2_child_details.xml",
         "templates/pages/my2_child_letters.xml",
         "templates/pages/my2_dashboard.xml",
         "templates/pages/my2_new_letter.xml",
         "templates/pages/my2_user_settings.xml",
-
+        "templates/pages/my2_login_template.xml",
         # My Compassion 2 components
         "templates/components/my2_children_card.xml",
-        "templates/components/my2_children_profile.xml",
-        "templates/components/my2_details_card.xml",
         "templates/components/my2_letter_card.xml",
         "templates/components/my2_breadcrumbs.xml",
+        "templates/components/my2_sponsor_child_timeline_batch.xml",
     ],
     "depends": [
         "partner_communication_compassion",

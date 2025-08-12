@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <!--
     Component: Title Component with optional underline
     Related SCSS directives defined in: theme_compassion_2025/static/src/scss/components/_title.scss
@@ -14,14 +14,14 @@
     <template id="TitleComponent" name="Title Component">
         <div class="title-component">
             <h1 t-attf-class="title-heading title-size-#{title_size or 'md'} text-#{color}">
-                <t t-esc="title_content"/>
+                <t t-esc="title_content" />
             </h1>
             <t t-if="show_underline">
-                <div t-attf-class="title-underline text-#{underline_color}"></div>
+                <div t-attf-class="title-underline text-#{underline_color}" />
             </t>
             <t t-if="description">
                 <p class="title-description">
-                    <t t-esc="description"/>
+                    <t t-esc="description" />
                 </p>
             </t>
         </div>

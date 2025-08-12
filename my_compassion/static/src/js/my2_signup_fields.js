@@ -1,0 +1,27 @@
+document.addEventListener("DOMContentLoaded", function (event) {
+    odoo.define("my_compassion.login", function (require) {
+        "use strict";
+
+        var publicWidget = require("web.public.widget");
+
+        publicWidget.registry.Login = publicWidget.Widget.extend({
+            selector: ".my2-signup-fields",
+
+            /**
+             * @override
+             */
+            start: function () {
+                // Create password elements
+
+                for (var $password of this.$(".password")) {
+                    var password = new publicWidget.registry.Password(this);
+                    password.replace($password);
+                }
+
+                return this._super.apply(this, arguments);
+            },
+        });
+
+        return publicWidget.registry.Sponsorships;
+    });
+});
