@@ -16,6 +16,11 @@ document.addEventListener("DOMContentLoaded", () => {
          * Main setup function to initialize all event listeners.
          */
         function initializeUserSettings() {
+            // Hides the error messages of the select components
+            document.querySelectorAll('.invalid-hint').forEach(hint => {
+                hint.style.display = 'none';
+            });
+
             initTabNavigation();
             initCommunicationSettings();
             initPrivacyForm();
@@ -152,14 +157,44 @@ document.addEventListener("DOMContentLoaded", () => {
          * Generic form handler for tabs with an "edit/save/cancel" workflow.
          */
         function initFormHandler({ formId, editButtonId, saveButtonId, cancelButtonId, endpoint, fields }) {
+            console.log("CACCA")
             const form = document.getElementById(formId);
-            if (!form) return;
             const editButton = document.getElementById(editButtonId);
             const saveButton = document.getElementById(saveButtonId);
             const cancelButton = document.getElementById(cancelButtonId);
-            if (!editButton || !saveButton || !cancelButton) return;
+
+            if (!form || !editButton || !saveButton || !cancelButton) {
+                console.warn(`Handler not initialized for ${formId}. Missing element:`, {form, editButton, saveButton, cancelButton});
+                return;
+            }
 
             let originalValues = {};
+
+            const clearErrors = () => {
+                form.querySelectorAll('.is-invalid').forEach(input => {
+                    input.classList.remove('is-invalid');
+                });
+                form.querySelectorAll('.invalid-hint').forEach(hint => {
+                    hint.style.display = 'none';
+                });
+            };
+
+            const showErrors = (errors) => {
+                for (const fieldName in errors) {
+                    const input = form.querySelector(`[name="${fieldName}"]`);
+                    if (input) {
+                        input.classList.add('is-invalid');
+                        const container = input.closest('.form-field-container');
+                        if (container) {
+                            const hintEl = container.querySelector('.invalid-hint');
+                            if (hintEl) {
+                                hintEl.textContent = errors[fieldName];
+                                hintEl.style.display = 'block';
+                            }
+                        }
+                    }
+                }
+            };
 
             const storeOriginalValues = () => {
                 fields.forEach(field => {
@@ -179,15 +214,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
             editButton.addEventListener('click', () => {
                 storeOriginalValues();
+                clearErrors();
                 form.classList.add('is-editing');
             });
 
             cancelButton.addEventListener('click', () => {
                 restoreOriginalValues();
+                clearErrors();
                 form.classList.remove('is-editing');
             });
 
             saveButton.addEventListener('click', () => {
+                clearErrors();
                 const payload = {};
                 fields.forEach(field => {
                     const input = form.querySelector(`[name="${field}"]`);
@@ -207,7 +245,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         });
                         form.classList.remove('is-editing');
                     } else {
-                        Dialog.alert(null, `Please correct the following errors:\n${Object.values(response.errors).join('\n')}`);
+                        if (response.errors) {
+                            showErrors(response.errors);
+                        }
                     }
                 }).catch(err => {
                     console.error("RPC Error:", err);

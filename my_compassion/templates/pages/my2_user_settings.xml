@@ -44,34 +44,41 @@
                     <div class="tab-pane fade" id="personal-information"
                          role="tabpanel">
                         <div id="personal-information-form"
-                             class="bg-white p-4 rounded shadow-sm col-lg-8 col-md-12 col-sm-12 mx-auto">
-                            <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label" t-value="'My reference'"/>
-                                <t t-esc="partner.ref if partner.ref else ''"/>
-                            </t>
-                            <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label" t-value="'Title'"/>
-                                <t t-set="input_id" t-value="'title'"/>
-                                <div class="field-display" data-display-for="title"><t
-                                        t-esc="partner.title.name or ''"/></div>
-                                <div class="field-edit">
-                                    <div class="pl-0 pr-5 m-0 col-4">
-                                        <t t-call="theme_compassion_2025.SelectComponent">
-                                            <t t-set="id" t-value="'title'"/>
-                                            <t t-set="name" t-value="'title'"/>
-                                            <t t-set="attrs"
-                                               t-value="{'data-original-value': partner.title.id}"/>
-                                            <t t-foreach="titles" t-as="t">
-                                                <option t-att-value="t.id"
-                                                        t-att-selected="partner.title.id == t.id">
-                                                    <t t-esc="t.name"/>
-                                                </option>
-                                            </t>
-                                        </t>
+                             class="p-3 bg-pure-white col-lg-6 col-md-12 col-sm-12 mx-auto">
+                            <div class="mb-3">
+                                <t t-call="theme_compassion_2025.FormFieldComponent">
+                                    <t t-set="label" t-value="'My reference'"/>
+                                    <div>
+                                        <t t-esc="partner.ref if partner.ref else ''"/>
                                     </div>
-                                </div>
-                            </t>
-                            <div class="row">
+                                </t>
+                            </div>
+                            <div class="mb-3">
+                                <t t-call="theme_compassion_2025.FormFieldComponent">
+                                    <t t-set="label" t-value="'Title'"/>
+                                    <t t-set="input_id" t-value="'title'"/>
+                                    <div class="field-display"
+                                         data-display-for="title"><t
+                                            t-esc="partner.title.name or ''"/></div>
+                                    <div class="field-edit">
+                                        <div class="pl-0 pr-5 m-0 col-4">
+                                            <t t-call="theme_compassion_2025.SelectComponent">
+                                                <t t-set="id" t-value="'title'"/>
+                                                <t t-set="name" t-value="'title'"/>
+                                                <t t-set="attrs"
+                                                   t-value="{'data-original-value': partner.title.id}"/>
+                                                <t t-foreach="titles" t-as="t">
+                                                    <option t-att-value="t.id"
+                                                            t-att-selected="partner.title.id == t.id">
+                                                        <t t-esc="t.name"/>
+                                                    </option>
+                                                </t>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="row mb-3">
                                 <div class="col-md-6">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
                                         <t t-set="label" t-value="'Surname'"/>
@@ -103,7 +110,7 @@
                                     </t>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row mb-3">
                                 <div class="col-md-6">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
                                         <t t-set="label" t-value="'Country'"/>
@@ -147,7 +154,7 @@
                                     </t>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row mb-3">
                                 <t t-if="partner.country_id.zip_required">
                                     <div class="col-md-6">
                                         <t t-call="theme_compassion_2025.FormFieldComponent">
@@ -181,7 +188,7 @@
                                     </t>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row mb-2">
                                 <div class="col-md-6">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
                                         <t t-set="label" t-value="'Phone number'"/>
@@ -263,7 +270,7 @@
                     <!-- Account settings tab -->
                     <div class="tab-pane fade" id="account-settings" role="tabpanel">
                         <div id="account-settings-form"
-                             class="p-3 bg-pure-white d-block col-lg-6 col-md-8 col-sm-12 mx-auto">
+                             class="p-3 bg-pure-white d-block col-lg-4 col-md-8 col-sm-12 mx-auto">
                             <t t-call="theme_compassion_2025.FormFieldComponent">
                                 <t t-set="label" t-value="'Login MyCompassion'"/>
                                 <t t-set="input_id" t-value="'login'"/>
@@ -341,7 +348,7 @@
                     </div>
                     <!-- Privacy data tab -->
                     <div class="tab-pane fade" id="privacy-data" role="tabpanel">
-                        <div class="p-3 bg-pure-white d-block col-lg-6 col-md-8 col-sm-12 mx-auto">
+                        <div class="p-3 bg-pure-white d-block col-lg-4 col-md-8 col-sm-12 mx-auto">
                             <div class="bg-high-blue border rounded-lg mb-3">
                                 <div class="p-3">
                                     Compassion knows that children living in extreme
@@ -397,8 +404,8 @@
                     <!-- Communication settings tab -->
                     <div class="tab-pane fade" id="communication-settings"
                          role="tabpanel">
-                        <div class="p-3 bg-pure-white d-block col-lg-6 col-md-8 col-sm-12 mx-auto">
-                            <div class="custom-control custom-switch">
+                        <div class="p-3 bg-pure-white d-block col-lg-4 col-md-8 col-sm-12 mx-auto">
+                            <div class="custom-control custom-switch mb-2">
                                 <input type="checkbox" class="custom-control-input"
                                        id="newsletterCheck"
                                        data-field="opt_out"
@@ -408,21 +415,21 @@
                                     I would like to receive the Compassion Newsletter
                                 </label>
                             </div>
-                            <div class="custom-control custom-switch"><input
+                            <div class="custom-control custom-switch  mb-2"><input
                                     type="checkbox" class="custom-control-input"
                                     id="calendarCheck" data-field="calendar"
                                     t-att-checked="partner.calendar"/><label
                                     class="custom-control-label" for="calendarCheck">I
                                 would like to receive the Compassion
                                 Calendar</label></div>
-                            <div class="custom-control custom-switch"><input
+                            <div class="custom-control custom-switch  mb-2"><input
                                     type="checkbox" class="custom-control-input"
                                     id="birthdaysCheck" data-field="birthday_reminder"
                                     t-att-checked="partner.birthday_reminder"/><label
                                     class="custom-control-label" for="birthdaysCheck">I
                                 would like to receive reminders of the children
                                 birthdays</label></div>
-                            <div class="custom-control custom-switch"><input
+                            <div class="custom-control custom-switch  mb-3"><input
                                     type="checkbox" class="custom-control-input"
                                     id="anniversaryCheck"
                                     data-field="sponsorship_anniversary_card"
@@ -430,43 +437,50 @@
                                     class="custom-control-label" for="anniversaryCheck">
                                 I would like to receive the sponsorship anniversary
                                 card</label></div>
-                            <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label"
-                                   t-value="'Letter Delivery Preference'"/>
-                                <t t-call="theme_compassion_2025.SelectComponent">
-                                    <t t-set="id" t-value="'letter_preference_select'"/>
-                                    <option value="auto_digital"
-                                            t-att-selected="partner.letter_delivery_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']">
-                                        Email</option>
-                                    <option value="physical"
-                                            t-att-selected="partner.letter_delivery_preference == 'physical'">
-                                        Letter</option>
-                                    <option value="both"
-                                            t-att-selected="partner.letter_delivery_preference == 'both'">
-                                        Letter and Email</option>
-                                    <option value="none"
-                                            t-att-selected="partner.letter_delivery_preference in ['none', 'SMS']">
-                                        None</option>
+                            <div class="mb-3">
+                                <t t-call="theme_compassion_2025.FormFieldComponent">
+                                    <t t-set="label"
+                                       t-value="'Letter Delivery Preference'"/>
+                                    <t t-call="theme_compassion_2025.SelectComponent">
+                                        <t t-set="id"
+                                           t-value="'letter_preference_select'"/>
+                                        <option value="auto_digital"
+                                                t-att-selected="partner.letter_delivery_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']">
+                                            Email</option>
+                                        <option value="physical"
+                                                t-att-selected="partner.letter_delivery_preference == 'physical'">
+                                            Letter</option>
+                                        <option value="both"
+                                                t-att-selected="partner.letter_delivery_preference == 'both'">
+                                            Letter and Email</option>
+                                        <option value="none"
+                                                t-att-selected="partner.letter_delivery_preference in ['none', 'SMS']">
+                                            None</option>
+                                    </t>
                                 </t>
-                            </t>
-                            <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label" t-value="'Photo Delivery Preference'"/>
-                                <t t-call="theme_compassion_2025.SelectComponent">
-                                    <t t-set="id" t-value="'photo_preference_select'"/>
-                                    <option value="auto_digital"
-                                            t-att-selected="partner.photo_delivery_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']">
-                                        Email</option>
-                                    <option value="physical"
-                                            t-att-selected="partner.photo_delivery_preference == 'physical'">
-                                        Letter</option>
-                                    <option value="both"
-                                            t-att-selected="partner.photo_delivery_preference == 'both'">
-                                        Letter and Email</option>
-                                    <option value="none"
-                                            t-att-selected="partner.photo_delivery_preference in ['none', 'SMS']">
-                                        None</option>
+                            </div>
+                            <div class="mb-3">
+                                <t t-call="theme_compassion_2025.FormFieldComponent">
+                                    <t t-set="label"
+                                       t-value="'Photo Delivery Preference'"/>
+                                    <t t-call="theme_compassion_2025.SelectComponent">
+                                        <t t-set="id"
+                                           t-value="'photo_preference_select'"/>
+                                        <option value="auto_digital"
+                                                t-att-selected="partner.photo_delivery_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']">
+                                            Email</option>
+                                        <option value="physical"
+                                                t-att-selected="partner.photo_delivery_preference == 'physical'">
+                                            Letter</option>
+                                        <option value="both"
+                                                t-att-selected="partner.photo_delivery_preference == 'both'">
+                                            Letter and Email</option>
+                                        <option value="none"
+                                                t-att-selected="partner.photo_delivery_preference in ['none', 'SMS']">
+                                            None</option>
+                                    </t>
                                 </t>
-                            </t>
+                            </div>
                             <t t-call="theme_compassion_2025.FormFieldComponent">
                                 <t t-set="label" t-value="'Tax Delivery Preference'"/>
                                 <t t-call="theme_compassion_2025.SelectComponent">

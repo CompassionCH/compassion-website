@@ -9,6 +9,7 @@
 from odoo import http
 from odoo.http import request
 from datetime import date
+from odoo.exceptions import ValidationError
 
 
 class MyCompassionUserController(http.Controller):
@@ -50,14 +51,15 @@ class MyCompassionUserController(http.Controller):
             if field in allowed_fields:
                 try:
                     clean_value = (value or '').strip()
-                    if clean_value:
-                        # Attempt to cast the value to its expected type (e.g., int, str).
-                        vals_to_update[field] = allowed_fields[field](clean_value)
+                    if not clean_value:
+                        errors[field] = "This field cannot be empty."
                     else:
-                        # If the value is empty, set it to False to clear it in the database.
-                        vals_to_update[field] = False
+                        try:
+                            vals_to_update[field] = allowed_fields[field](clean_value)
+                        except (ValueError, TypeError):
+                            errors[field] = "Invalid value for %s." % field
                 except (ValueError, TypeError):
-                    errors[field] = _("Invalid value for %s.") % field
+                    errors[field] = "Invalid value for %s." % field
 
         if errors:
             # If any errors were found, return them to the frontend. Do not update the record.
@@ -67,7 +69,11 @@ class MyCompassionUserController(http.Controller):
             # When an address component is changed, reset the linked zip_id
             if any(k in vals_to_update for k in ['city', 'zip', 'country_id']):
                 vals_to_update['zip_id'] = False
-            partner.sudo().write(vals_to_update)
+            try:
+                partner.sudo().write(vals_to_update)
+            except ValidationError as e:
+                if 'email' in vals_to_update:
+                    return {'success': False, 'errors': {'email': e.args[0]}}
 
         return {'success': True}
 
@@ -78,13 +84,13 @@ class MyCompassionUserController(http.Controller):
         new_login = (post.get('login') or '').strip()
 
         if not new_login:
-            return {'success': False, 'errors': {'login': _("Login cannot be empty.")}}
+            return {'success': False, 'errors': {'login': "Login cannot be empty."}}
 
         # Check if login is already taken by another user
         if request.env['res.users'].sudo().search_count(
                 [('login', '=', new_login), ('id', '!=', user.id)]):
             return {'success': False, 'errors': {
-                'login': _("This email is already used as a login by another user.")}}
+                'login': "This email is already used as a login by another user."}}
 
         user.sudo().write({'login': new_login})
         return {'success': True}
