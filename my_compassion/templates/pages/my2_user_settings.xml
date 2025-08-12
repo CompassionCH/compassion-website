@@ -1,4 +1,25 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!--
+
+Page: My Compassion 2 User Settings Page
+
+Description:
+This page allows authenticated users to view and update their personal information,
+account login details, privacy consents, and communication preferences.
+It is organized into multiple tabs (Personal Information, Account Settings, Privacy Data,
+Communication Settings) and supports both view and edit modes with inline forms.
+
+Used in route:
+- /my2/user_settings/
+
+Injected data:
+- user (res.users record): The authenticated user.
+- partner (res.partner record): Partner linked to the user, containing personal and contact details.
+- titles (recordset of res.partner.title): Published title options for selection.
+- countries (recordset of res.country): List of available countries for address fields.
+- current_tab (string): The tab to display as active when the page loads.
+
+-->
 <odoo>
     <template id="my2_user_settings_page" name="My Compassion 2 User Settings Page">
         <link rel="stylesheet" href="/my_compassion/static/src/css/user_settings.css"/>
