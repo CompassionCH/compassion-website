@@ -1,0 +1,10 @@
+
+.form-field-container {
+    .invalid-hint {
+        display: none;
+    }
+
+    &:has(.is-invalid) .invalid-hint {
+        display: block;
+    }
+}
