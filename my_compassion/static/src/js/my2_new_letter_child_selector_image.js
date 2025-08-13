@@ -74,6 +74,33 @@ function onChildSelect(event) {
     if (mountedComponent) {
         mountedComponent.setSelectedChildId(childId); // Call the method on the component instance
     }
+
+    const letterInput = document.getElementById("letter-input");
+    if (letterInput) {
+        letterInput.value = "";
+    }
+
+    const attachmentsInput = document.getElementById("letter-attachments");
+    if (attachmentsInput) {
+        attachmentsInput.value = "";
+    }
+
+    const uploadedFilesContainer = document.getElementById("uploaded-files-container");
+    if (uploadedFilesContainer) {
+        uploadedFilesContainer.innerHTML = "";
+    }
+
+    const selectedTemplate = document.getElementById("selected-template");
+    if (selectedTemplate) {
+        selectedTemplate.remove();
+    }
+
+    const childDropdown = document.getElementById("child-dropdown");
+    if (childDropdown) {
+        childDropdown.value = childId;
+    }
+
+    window.location.href = `/my2/children/letters/new?child_id=${childId}`;
 }
 
 /**
