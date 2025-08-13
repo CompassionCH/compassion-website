@@ -50,11 +50,11 @@ Page: My Compassion 2 Fund Page
                     <t t-foreach="product_funds" t-as="product_fund">
                         <div class="col-sm my-3 flex-grow-0">
                             <t t-call="theme_compassion_2025.VignetteComponent">
-                                <t t-set="image" t-value="'/theme_compassion_2025/static/src/img/snippets/s_image_text.jpg'"/>
+                                <t t-set="image" t-value="website.image_url(product_fund, 'my_compassion_image')"/>
                                 <t t-set="title" t-value="product_fund.my_compassion_name" />
                                 <t t-set="icon" t-value="'pictogram-' + product_fund.my_compassion_pictogram" />
-                                <t t-set="color" t-value="'high-brown'" />
-                                <t t-set="bg_color" t-value="'low-brown'" />
+                                <t t-set="color" t-value="'pure-white'" />
+                                <t t-set="bg_color" t-value="product_fund.my_compassion_color" />
                             </t>
                         </div>
                     </t>
