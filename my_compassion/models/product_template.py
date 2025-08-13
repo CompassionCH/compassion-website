@@ -1,4 +1,7 @@
 from odoo import fields, models
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class ProductTemplate(models.Model):
@@ -20,6 +23,41 @@ class ProductTemplate(models.Model):
     my_compassion_name = fields.Char(
         translate=True,
         help="Name of the fund/gift visible on the MyCompassion website",
+    )
+
+    my_compassion_color = fields.Selection(
+        [
+            ('core-blue', 'Core Blue'),
+            ('dark-blue', 'Dark Blue'),
+            ('low-blue', 'Low Blue'),
+            ('mid-blue', 'Mid Blue'),
+            ('high-blue', 'High Blue'),
+            ('low-green', 'Low Green'),
+            ('mid-green', 'Mid Green'),
+            ('high-green', 'High Green'),
+            ('low-yellow', 'Low Yellow'),
+            ('mid-yellow', 'Mid Yellow'),
+            ('high-yellow', 'High Yellow'),
+            ('low-pink', 'Low Pink'),
+            ('mid-pink', 'Mid Pink'),
+            ('high-pink', 'High Pink'),
+            ('low-orange', 'Low Orange'),
+            ('mid-orange', 'Mid Orange'),
+            ('high-orange', 'High Orange'),
+            ('low-brown', 'Low Brown'),
+            ('mid-brown', 'Mid Brown'),
+            ('high-brown', 'High Brown'),
+            ('low-black', 'Low Black'),
+            ('off-black', 'Off Black'),
+            ('low-grey', 'Low Grey'),
+            ('mid-grey', 'Mid Grey'),
+            ('low-eggshell', 'Low Eggshell'),
+            ('mid-eggshell', 'Mid Eggshell'),
+            ('high-eggshell', 'High Eggshell'),
+            ('pure-white', 'Pure White'),
+        ],
+        string="Color",
+        help="Thematic color of the fund/gift visible on the MyCompassion website",
     )
 
     my_compassion_pictogram = fields.Selection(
