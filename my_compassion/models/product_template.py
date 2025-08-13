@@ -9,6 +9,14 @@ class ProductTemplate(models.Model):
     )
 
     # General
+    my_compassion_donation_type = fields.Selection(
+        [
+            ("fund", "Fund"),
+            ("gift", "Gift"),
+        ],
+        string="Donation Type",
+    )
+
     my_compassion_name = fields.Char(
         translate=True,
         help="Name of the fund/gift visible on the MyCompassion website",
