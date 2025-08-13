@@ -124,22 +124,31 @@ document.addEventListener("DOMContentLoaded", function () {
              *   @property {string} letterBody - The body text of the letter.
              *   @property {Array<{filename: string, content: string}>} attachments - The list of base64-encoded attachments.
              */
+
             _collectFormData: async function () {
                 const childId = this.$("#child-dropdown").val();
                 const letterBody = this.$("#letter-input").val();
-                const templateId = this.$("#selected-template").attr("data-template-id") || null;
+                const selectedTemplateImage = document.getElementById("selected-template");
+                let templateId = this.$("#selected-template").attr("data-template-id") || null;
+                if (!templateId) {
+                    const draftTemplate = document.getElementById("draft-template-id");
+                    templateId = draftTemplate ? draftTemplate.value : null;
+                }
                 const fileInput = this.$("#letter-attachments")[0];
-                const attachments = await this._encodeAttachments(fileInput.files);
+                const generatorId = this.$("input[name='generator_id']").val();
 
                 if (!childId) throw new Error("Please select a child to write to.");
                 if (!templateId) throw new Error("Please select a template for your letter.");
                 if (!letterBody) throw new Error("Please write something in your letter.");
+
+                const attachments = await this._encodeAttachments(fileInput.files);
 
                 return {
                     child_id: childId,
                     template_id: templateId,
                     letter_body: letterBody,
                     attachments: attachments,
+                    generator_id: generatorId,
                 };
             },
 
@@ -215,6 +224,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 } else if (mode === "preview") {
                     $("#previewImage").attr("src", result.preview_url);
                     $("#previewModal").modal("show");
+                } else if (mode === "save_draft") {
+                    ToastService.success(result.message || "Draft saved!");
                 }
             },
         });
