@@ -20,4 +20,12 @@ class MyCompassionFundController(http.Controller):
         (sponsor, donor or volunteer).
         return: An HTTP response containing a rendered template with the dashboard.
         """
-        return request.render("my_compassion.my2_fund_page", {})
+        product_funds = request.env['product.template'].search([
+            ('activate_for_my_compassion', '=', True),
+            ('my_compassion_donation_type', '=', 'fund'),
+        ])
+        return request.render(
+            "my_compassion.my2_fund_page",
+            {
+                'product_funds': product_funds,
+            })

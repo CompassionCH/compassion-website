@@ -45,29 +45,20 @@ Page: My Compassion 2 Fund Page
                         <t t-set="description" t-value="'Make a difference and bring hope to children living in extreme poverty.'" />
                     </t>
                 </div>
-                <!-- VIGNETTES AND ACTIONS
+                <!-- VIGNETTES AND ACTIONS -->
                 <div class="dashboard-grid row mb-4 justify-content-center">
-                    <t t-call="my_compassion.DashboardGridItem">
-                        <t t-call="theme_compassion_2025.VignetteComponent">
-                            <t
-                                t-set="image"
-                                t-value="'/theme_compassion_2025/static/src/img/snippets/s_image_text.jpg'"
-                            />
-                            <t t-set="title" t-value="'My donations'" />
-                            <t t-set="icon" t-value="'pictogram-gift-donation-general'" />
-                            <t t-set="color" t-value="'high-brown'" />
-                            <t t-set="bg_color" t-value="'low-brown'" />
-                        </t>
-                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                            <t t-set="variant" t-value="'default'" />
-                            <t t-set="variation" t-value="'filled'" />
-                            <t t-set="label" t-value="'Make a gift of compassion'" />
-                            <t t-set="icon" t-value="'pictogram-letter-writing'" />
-                            <t t-set="color" t-value="'mid-brown'" />
-                            <t t-set="icon_color" t-value="'high-brown'" />
-                            <t t-set="text_color" t-value="'pure-white'" />
-                        </t>
+                    <t t-foreach="product_funds" t-as="product_fund">
+                        <div class="col-sm my-3 flex-grow-0">
+                            <t t-call="theme_compassion_2025.VignetteComponent">
+                                <t t-set="image" t-value="'/theme_compassion_2025/static/src/img/snippets/s_image_text.jpg'"/>
+                                <t t-set="title" t-value="product_fund.my_compassion_name" />
+                                <t t-set="icon" t-value="'pictogram-' + product_fund.my_compassion_pictogram" />
+                                <t t-set="color" t-value="'high-brown'" />
+                                <t t-set="bg_color" t-value="'low-brown'" />
+                            </t>
+                        </div>
                     </t>
+                    <!-- VIGNETTES AND ACTIONS
                     <t t-call="my_compassion.DashboardGridItem">
                         <t t-call="theme_compassion_2025.VignetteComponent">
                             <t
@@ -123,8 +114,8 @@ Page: My Compassion 2 Fund Page
                             <t t-set="icon_color" t-value="'low-green'" />
                             <t t-set="text_color" t-value="'pure-white'" />
                         </t>
-                    </t>
-                </div>-->
+                    </t>-->
+                </div>
             </div>
         </t>
     </template>
