@@ -6,7 +6,8 @@
                     <div class="content-column">
                         <!-- Main title of the page-->
                         <t t-call="theme_compassion_2025.TitleComponent">
-                            <t t-set="title_content" t-value="'My donations and documents'"/>
+                            <t t-set="title_content"
+                               t-value="'My donations and documents'"/>
                             <t t-set="title_size" t-value="'md'"/>
                             <t t-set="color" t-value="'core-blue'"/>
                             <t t-set="show_underline" t-value="True"/>
@@ -14,27 +15,33 @@
                         </t>
                         <div>
                             <div class="mt-4 mb-4" t-if="invoices_per_day">
-                                <h3 id="tax_title text-dark-blue">My donation details</h3>
+                                <h3 id="tax_title text-dark-blue">My donation
+                                    details</h3>
                                 <div class="d-flex flex-column">
                                     <!-- Allows the partner to download its tax receipt for a selected year -->
-                                    <form id="tax_receipt_form" action="/my/download/tax_receipt" class="mb-3">
+                                    <form id="tax_receipt_form"
+                                          action="/my/download/tax_receipt"
+                                          class="mb-3">
                                         <div class="d-flex flex-row align-items-end">
                                             <t t-call="theme_compassion_2025.FormFieldComponent">
-                                                <t t-set="label" t-value="'Tax receipt'"/>
+                                                <t t-set="label"
+                                                   t-value="'Tax receipt'"/>
                                                 <t t-set="top_class" t-value="'mr-2'"/>
                                                 <input
-                                                    type="text"
-                                                    class="d-none"
-                                                    id="last_complete_year"
-                                                    t-att-value="last_completed_tax_receipt"
+                                                        type="text"
+                                                        class="d-none"
+                                                        id="last_complete_year"
+                                                        t-att-value="last_completed_tax_receipt"
                                                 />
                                                 <t t-call="theme_compassion_2025.SelectComponent">
                                                     <t t-set="name" t-value="'year'"/>
                                                     <t t-set="id" t-value="'year'"/>
-                                                    <option t-att-value="current_year" selected="selected">
-                                                        <t t-esc="current_year" />
+                                                    <option t-att-value="current_year"
+                                                            selected="selected">
+                                                        <t t-esc="current_year"/>
                                                     </option>
-                                                    <t t-foreach="range(int(current_year) - 1, first_year - 1, -1)" t-as="fiscal_year">
+                                                    <t t-foreach="range(int(current_year) - 1, first_year - 1, -1)"
+                                                       t-as="fiscal_year">
                                                         <option t-att-value="fiscal_year">
                                                             <t t-esc="fiscal_year"/>
                                                         </option>
@@ -43,10 +50,13 @@
                                             </t>
                                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                                 <t t-set="variant" t-value="'compact'"/>
-                                                <t t-set="variation" t-value="'filled'"/>
-                                                <t t-set="icon" t-value="'icon-download01'"/>
+                                                <t t-set="variation"
+                                                   t-value="'filled'"/>
+                                                <t t-set="icon"
+                                                   t-value="'icon-download01'"/>
                                                 <t t-set="color" t-value="'dark-blue'"/>
-                                                <t t-set="icon_color" t-value="'low-yellow'"/>
+                                                <t t-set="icon_color"
+                                                   t-value="'low-yellow'"/>
                                             </t>
                                         </div>
                                     </form>
@@ -54,12 +64,12 @@
                                         <t t-set="key_value_items" t-value="[
                                             ('Payment mode', group.payment_mode_id.name),
                                             ('Payment frequency', str(group.advance_billing_months) + ' ' + group.translate('recurring_unit')),
-                                        ]" />
+                                        ]"/>
 
                                         <t t-foreach="key_value_items" t-as="item">
                                             <t t-call="theme_compassion_2025.FormFieldComponent">
-                                                <t t-set="label" t-value="item[0]" />
-                                                <p><t t-esc="item[1]" /></p>
+                                                <t t-set="label" t-value="item[0]"/>
+                                                <p><t t-esc="item[1]"/></p>
                                             </t>
                                         </t>
                                     </t>
@@ -69,11 +79,13 @@
                         <div>
                             <h3 class="text-dark-blue">My sponsorship</h3>
                             <t t-foreach="sponsorships_by_group" t-as="group">
-                                <t t-set="sponsorships" t-value="group_value[0]" />
-                                <t t-set="total_amount" t-value="group_value[1]" />
+                                <t t-set="sponsorships" t-value="group_value[0]"/>
+                                <t t-set="total_amount" t-value="group_value[1]"/>
 
-                                <p>You currently have <b><t t-esc="len(sponsorships)" /></b> active sponsorship
-                                    for a total of <b><t t-esc="total_amount" />/ mo</b>.
+                                <p>You currently have <b><t
+                                        t-esc="len(sponsorships)"/></b> active
+                                    sponsorship
+                                    for a total of <b><t t-esc="total_amount"/>/ mo</b>.
                                 </p>
                                 <p>
                                     A payment slip is available for download for each of
@@ -82,6 +94,35 @@
                             </t>
                             <!-- TODO Add the cards from the donation basket -->
                         </div><!-- MY SPONSORSHIP -->
+                        <div class="my-4">
+                            <h3 class="text-dark-blue">Donations history</h3>
+                            <t t-if="invoices_per_day">
+                                <div class="row font-weight-bold py-2 d-none d-md-flex">
+                                    <div class="col-md-3 text-core-blue">Date</div>
+                                    <div class="col-md-6 text-core-blue">Details of donation</div>
+                                    <div class="col-md-3 text-right text-core-blue">Amount</div>
+                                </div>
+                                <t t-foreach="invoices_per_day" t-as="invoice_group">
+                                    <div class="row mb-3">
+                                        <div class="col-md-3">
+                                            <span t-esc="invoice_group['last_payment']"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <span t-esc="invoice_group['description']"/>
+                                        </div>
+                                        <div class="col-md-3 text-right">
+                                            <span t-esc="invoice_group['amount']"/>
+                                        </div>
+                                    </div>
+                                </t>
+                                <div class="mt-3">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <p class="mt-3">No donation history found.</p>
+                            </t>
+                        </div>
                     </div>
                 </div>
             </t>
