@@ -65,64 +65,153 @@
                                             ('Payment mode', group.payment_mode_id.name),
                                             ('Payment frequency', str(group.advance_billing_months) + ' ' + group.translate('recurring_unit')),
                                         ]"/>
-
-                                        <t t-foreach="key_value_items" t-as="item">
-                                            <t t-call="theme_compassion_2025.FormFieldComponent">
-                                                <t t-set="label" t-value="item[0]"/>
-                                                <p><t t-esc="item[1]"/></p>
+                                        <div class="row">
+                                            <t t-foreach="key_value_items" t-as="item">
+                                                <div class="col">
+                                                    <t t-call="theme_compassion_2025.FormFieldComponent">
+                                                        <t t-set="label"
+                                                           t-value="item[0]"/>
+                                                        <p><t t-esc="item[1]"/></p>
+                                                    </t>
+                                                </div>
                                             </t>
-                                        </t>
+                                        </div>
                                     </t>
                                 </div>
                             </div>
                         </div><!-- MY DONATION DETAILS -->
                         <div>
                             <h3 class="text-dark-blue">My sponsorship</h3>
-                            <t t-foreach="sponsorships_by_group" t-as="group">
-                                <t t-set="sponsorships" t-value="group_value[0]"/>
-                                <t t-set="total_amount" t-value="group_value[1]"/>
+                            <t t-foreach="sponsorships_by_group.items()"
+                               t-as="group_data">
+                                <t t-set="group" t-value="group_data[0]"/>
+                                <t t-set="sponsorships" t-value="group_data[1][0]"/>
+                                <t t-set="total_amount" t-value="group_data[1][1]"/>
 
-                                <p>You currently have <b><t
+                                <p>
+                                    You currently have <b><t
                                         t-esc="len(sponsorships)"/></b> active
-                                    sponsorship
-                                    for a total of <b><t t-esc="total_amount"/>/ mo</b>.
+                                    sponsorship(s) for a total of <b><t
+                                        t-esc="total_amount"/></b>.
                                 </p>
                                 <p>
                                     A payment slip is available for download for each of
                                     your sponsored children.
                                 </p>
+
+                                <div class="row">
+                                    <t t-foreach="sponsorships" t-as="sponsorship">
+                                        <div class="col-12 col-md-6 col-lg-6 mb-4">
+                                            <t t-set="primary_button_data" t-value="{
+                        'label': 'See profile',
+                        'action': 'link',
+                        'href': '/my2/children/' + str(sponsorship.child_id.id),
+                        'color': 'low-blue'
+                    }"/>
+                                            <t t-set="secondary_buttons_data" t-value="[
+                        {
+                            'icon': 'download01',
+                            'color': 'mid-yellow',
+                            'action': 'link',
+                            'href': '/my/sponsorship/edit/' + str(sponsorship.id)
+                        }
+                    ]"/>
+                                            <t t-call="my_compassion.DonationItemComponent">
+                                                <t t-set="name"
+                                                   t-value="sponsorship.child_id.preferred_name"/>
+                                                <t t-set="image"
+                                                   t-attf-value="/web/image/compassion.child/{{sponsorship.child_id.id}}/portrait"/>
+                                                <t t-set="price"
+                                                   t-value="sponsorship.total_amount"/>
+                                                <t t-set="primary_button"
+                                                   t-value="primary_button_data"/>
+                                                <t t-set="monthly" t-value="True"/>
+                                                <t t-set="secondary_buttons"
+                                                   t-value="secondary_buttons_data"/>
+                                                <t t-set="bg_color"
+                                                   t-value="'high-blue'"/>
+                                                <t t-set="accent_color"
+                                                   t-value="'low-blue'"/>
+                                                <t t-set="title_color"
+                                                   t-value="'low-blue'"/>
+                                                <t t-set="price_color"
+                                                   t-value="'low-blue'"/>
+                                            </t>
+                                        </div>
+                                    </t>
+                                </div>
                             </t>
-                            <!-- TODO Add the cards from the donation basket -->
                         </div><!-- MY SPONSORSHIP -->
-                        <div class="my-4">
+                        <div class="mb-4">
                             <h3 class="text-dark-blue">Donations history</h3>
                             <t t-if="invoices_per_day">
-                                <div class="row font-weight-bold py-2 d-none d-md-flex">
-                                    <div class="col-md-3 text-core-blue">Date</div>
-                                    <div class="col-md-6 text-core-blue">Details of donation</div>
-                                    <div class="col-md-3 text-right text-core-blue">Amount</div>
+                                <div class="row font-weight-bold mb-2">
+                                    <div class="col text-core-blue">Date</div>
+                                    <div class="col text-core-blue">Details of
+                                        donation</div>
+                                    <div class="col text-right text-core-blue">
+                                        Amount</div>
                                 </div>
                                 <t t-foreach="invoices_per_day" t-as="invoice_group">
                                     <div class="row mb-3">
-                                        <div class="col-md-3">
+                                        <div class="col">
                                             <span t-esc="invoice_group['last_payment']"/>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col">
                                             <span t-esc="invoice_group['description']"/>
                                         </div>
-                                        <div class="col-md-3 text-right">
+                                        <div class="col text-right">
                                             <span t-esc="invoice_group['amount']"/>
                                         </div>
                                     </div>
                                 </t>
-                                <div class="mt-3">
-                                    <t t-call="website.pager"/>
+                                <!-- Pager -->
+                                <div class="d-flex justify-content-center align-items-center mb-5">
+                                    <!-- Prev -->
+                                    <t t-if="current_page > 1">
+                                        <a id="prevPageBtn"
+                                           t-att-href="previous_page_url">
+                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                                <t t-set="variation"
+                                                   t-value="'hollow'"/>
+                                                <t t-set="color" t-value="'mid-blue'"/>
+                                                <t t-set="text_color"
+                                                   t-value="'low-black'"/>
+                                                <t t-set="variant" t-value="'compact'"/>
+                                                <t t-set="label" t-value="'Prev'"/>
+                                            </t>
+                                        </a>
+                                    </t>
+                                    <!-- Page indicator -->
+                                    <span id="pageIndicator" class="p-2">
+                                        Page
+                                        <t t-esc="current_page"/>
+                                        of
+                                        <t t-esc="total_pages"/>
+                                    </span>
+                                    <!-- Next -->
+                                    <t t-if="current_page &lt; total_pages">
+                                        <a id="nextPageBtn" t-att-href="next_page_url">
+                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                                <t t-set="variation"
+                                                   t-value="'hollow'"/>
+                                                <t t-set="color" t-value="'mid-blue'"/>
+                                                <t t-set="text_color"
+                                                   t-value="'low-black'"/>
+                                                <t t-set="variant" t-value="'compact'"/>
+                                                <t t-set="label" t-value="'Next'"/>
+                                            </t>
+                                        </a>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="disabled ps-3">Next</span>
+                                    </t>
                                 </div>
                             </t>
                             <t t-else="">
-                                <p class="mt-3">No donation history found.</p>
+                                <p class="mb-3">No donation history found.</p>
                             </t>
-                        </div>
+                        </div><!-- DONATION HISTORY -->
                     </div>
                 </div>
             </t>

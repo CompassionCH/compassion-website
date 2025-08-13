@@ -62,6 +62,7 @@
         "templates/pages/my2_new_letter.xml",
         "templates/pages/my2_login_template.xml",
         # My Compassion 2 components
+        "templates/components/my2_donation_item.xml",
         "templates/components/my2_children_card.xml",
         "templates/components/my2_letter_card.xml",
         "templates/components/my2_breadcrumbs.xml",

@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import math
 from odoo import _, fields
 
 from odoo.http import local_redirect, request, route
@@ -6,6 +7,7 @@ from odoo.addons.portal.controllers.portal import CustomerPortal
 
 # Avoids fetching too many donations in the portal
 HISTORY_LIMIT = 1000
+
 
 def _get_sponsorships(partner, state=None):
     """
@@ -20,12 +22,12 @@ def _get_sponsorships(partner, state=None):
         can_show = True
         is_active = sponsorship.state not in ["draft", "cancelled", "terminated"]
         exit_communication_sent = (
-            sponsorship.state == "terminated" and sponsorship.sds_state != "sub_waiting"
+                sponsorship.state == "terminated" and sponsorship.sds_state != "sub_waiting"
         )
 
         if state == "active":
             can_show = is_active or (
-                sponsorship.state == "terminated" and not exit_communication_sent
+                    sponsorship.state == "terminated" and not exit_communication_sent
             )
         elif state == "terminated":
             can_show = exit_communication_sent
@@ -44,8 +46,8 @@ def _get_sponsorships(partner, state=None):
 class MyDonationController(CustomerPortal):
     @route(
         [
-            "/my2/donations",
-            "/my2/donations/page/<int:invoice_page>",
+            "/my2/my-donations",
+            "/my2/my-donations/page/<int:invoice_page>",
         ],
         type="http",
         auth="user",
@@ -78,8 +80,13 @@ class MyDonationController(CustomerPortal):
             orderby="last_payment desc",
             limit=HISTORY_LIMIT,
         )
+        invoice_count = len(all_invoices)
+        total_pages = math.ceil(invoice_count / invoice_per_page)
+        next_page_url = f"/my2/donations/page/{invoice_page + 1}"
+        previous_page_url = f"/my2/donations/page/{invoice_page - 1}"
         offset = (invoice_page - 1) * invoice_per_page
-        invoices_per_day = all_invoices[offset : offset + invoice_per_page]
+        invoices_per_day = all_invoices[offset: offset + invoice_per_page]
+
         for invoice_group in invoices_per_day:
             # Agrement data for displaying all invoices
             invoices = move_obj.search(invoice_group["__domain"])
@@ -117,21 +124,16 @@ class MyDonationController(CustomerPortal):
             sponsorships_by_group[g] = (sponsorships, f"{total:,d} {currency}")
 
         values = self._prepare_portal_layout_values()
-        pager = request.website.pager(
-            url=request.httprequest.path.partition("/page/")[0],
-            total=len(all_invoices),
-            page=invoice_page,
-            step=invoice_per_page,
-            url_args=kw,
-        )
-
 
         values.update(
             {
                 "partner": partner,
                 "sponsorships_by_group": sponsorships_by_group,
                 "invoices_per_day": invoices_per_day,
-                "pager": pager,
+                "current_page": invoice_page,
+                "total_pages": total_pages,
+                "next_page_url": next_page_url,
+                "previous_page_url": previous_page_url,
                 "due_invoices": due_invoices,
             }
         )
