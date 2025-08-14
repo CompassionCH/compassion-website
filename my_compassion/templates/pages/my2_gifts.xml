@@ -47,14 +47,14 @@ Page: My Compassion 2 Fund Page
                 </div>
                 <!-- VIGNETTES AND ACTIONS -->
                 <div class="dashboard-grid row mb-4 justify-content-center">
-                    <t t-foreach="product_funds" t-as="product_fund">
+                    <t t-foreach="my_compassion_gifts" t-as="my_compassion_gift">
                         <div class="col-sm my-3 flex-grow-0">
                             <t t-call="theme_compassion_2025.VignetteComponent">
-                                <t t-set="image" t-value="website.image_url(product_fund, 'my_compassion_image')"/>
-                                <t t-set="title" t-value="product_fund.my_compassion_name" />
-                                <t t-set="icon" t-value="'pictogram-' + product_fund.my_compassion_pictogram" />
+                                <t t-set="image" t-value="website.image_url(my_compassion_gift, 'my_compassion_image')"/>
+                                <t t-set="title" t-value="my_compassion_gift.my_compassion_name" />
+                                <t t-set="icon" t-value="'pictogram-' + my_compassion_gift.my_compassion_pictogram" />
                                 <t t-set="color" t-value="'pure-white'" />
-                                <t t-set="bg_color" t-value="product_fund.my_compassion_color" />
+                                <t t-set="bg_color" t-value="my_compassion_gift.my_compassion_color" />
                             </t>
                         </div>
                     </t>
