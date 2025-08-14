@@ -7,7 +7,7 @@ Page: My Compassion 2 Dashboard Page
     Depending on the user role (sponsor, donator or volunteer), the view displays different information and content.
 
     Used in route:
-    - /my2/dashboard/
+    - /my2/dashboard
 
     Injected data:
     - TODO
@@ -58,6 +58,7 @@ Page: My Compassion 2 Dashboard Page
                             <t t-set="icon" t-value="'pictogram-gift-donation-general'" />
                             <t t-set="color" t-value="'high-brown'" />
                             <t t-set="bg_color" t-value="'low-brown'" />
+                            <t t-set="href" t-value="'/my2/my-donations'" />
                         </t>
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variant" t-value="'default'" />
@@ -67,6 +68,7 @@ Page: My Compassion 2 Dashboard Page
                             <t t-set="color" t-value="'mid-brown'" />
                             <t t-set="icon_color" t-value="'high-brown'" />
                             <t t-set="text_color" t-value="'pure-white'" />
+                            <t t-set="href" t-value="'/my2/gifts'" />
                         </t>
                     </t>
                     <t t-call="my_compassion.DashboardGridItem">
@@ -83,6 +85,7 @@ Page: My Compassion 2 Dashboard Page
                             <t t-set="icon" t-value="'pictogram-child-sponsorship'" />
                             <t t-set="color" t-value="'pure-white'" />
                             <t t-set="bg_color" t-value="'core-blue'" />
+                            <t t-set="href" t-value="'/my2/children'" />
                         </t>
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variant" t-value="'default'" />
@@ -92,6 +95,7 @@ Page: My Compassion 2 Dashboard Page
                             <t t-set="color" t-value="'low-green'" />
                             <t t-set="icon_color" t-value="'low-green'" />
                             <t t-set="text_color" t-value="'low-green'" />
+                            <t t-set="href" t-value="'/my2/children/letters'" />
                         </t>
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variant" t-value="'default'" />
@@ -101,6 +105,7 @@ Page: My Compassion 2 Dashboard Page
                             <t t-set="color" t-value="'core-blue'" />
                             <t t-set="icon_color" t-value="'low-yellow'" />
                             <t t-set="text_color" t-value="'pure-white'" />
+                            <t t-set="href" t-value="'/my2/children/letters/new'" />
                         </t>
                     </t>
                     <t t-call="my_compassion.DashboardGridItem">
@@ -114,6 +119,7 @@ Page: My Compassion 2 Dashboard Page
                             <t t-set="icon" t-value="'pictogram-local-empowerment-partnership'" />
                             <t t-set="color" t-value="'low-green'" />
                             <t t-set="bg_color" t-value="'high-green'" />
+                            <t t-set="href" t-value="'/my2/volunteering'" />
                         </t>
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variant" t-value="'default'" />
@@ -123,6 +129,7 @@ Page: My Compassion 2 Dashboard Page
                             <t t-set="color" t-value="'mid-green'" />
                             <t t-set="icon_color" t-value="'low-green'" />
                             <t t-set="text_color" t-value="'pure-white'" />
+                            <t t-set="href" t-value="'https://translate.compassion.ch'" />
                         </t>
                     </t>
                 </div>

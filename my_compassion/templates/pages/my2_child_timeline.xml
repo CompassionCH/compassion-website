@@ -47,7 +47,7 @@
                                     <t t-set="text_color" t-value="'core-blue'" />
                                     <t
                                         t-set="href"
-                                        t-value="'/my2/children/' + str(compassion_child.id) + '/letter/new'"
+                                        t-value="'/my2/children/letters/new' + '?child_id=' + str(compassion_child.id)"
                                     />
                                 </t>
                                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
@@ -56,6 +56,10 @@
                                     <t t-set="label" t-value="'Give a gift'" />
                                     <t t-set="color" t-value="'core-blue'" />
                                     <t t-set="text_color" t-value="'core-blue'" />
+                                    <t
+                                        t-set="href"
+                                        t-value="'/my2/gifts' + '?type=gift&amp;child_id=' + str(compassion_child.id)"
+                                    />
                                 </t>
                             </div>
                             <!-- Child personal information -->

@@ -34,7 +34,7 @@ class MyCompassionChildrenController(http.Controller):
         )
         return records, total
 
-    @http.route("/my2/children/", type="http", auth="user", website=True, sitemap=False)
+    @http.route("/my2/children", type="http", auth="user", website=True, sitemap=False)
     def my2_render_children_page(self, **kwargs):
         """
         Renders the children page related to the logged-in user's sponsorships.
@@ -59,16 +59,11 @@ class MyCompassionChildrenController(http.Controller):
             if child_id not in latest_corr_by_child:
                 latest_corr_by_child[child_id] = corr
 
-        breadcrumbs = [
-            {"name": "Children", "url": "/my2/children/", "active": True},
-        ]
-
         return request.render(
             "my_compassion.my2_children_page",
             {
                 "sponsorship_ids": partner.sponsorship_ids,
                 "latest_correspondences_by_child_id": latest_corr_by_child,
-                "breadcrumbs": breadcrumbs,
             },
         )
 
@@ -96,14 +91,6 @@ class MyCompassionChildrenController(http.Controller):
             "my_compassion.my2_child_timeline_page",
             {
                 "compassion_child": child,
-                "breadcrumbs": [
-                    {"name": "Children", "url": "/my2/children/", "active": False},
-                    {
-                        "name": child.preferred_name,
-                        "url": "/my2/children/" + str(child.id),
-                        "active": True,
-                    },
-                ],
                 "records": records,
                 "has_more_records": total > offset + limit,
             },

@@ -12,7 +12,7 @@ from odoo.http import request
 
 class MyCompassionUserController(http.Controller):
     @http.route(
-        "/my2/dashboard/", type="http", auth="user", website=True, sitemap=False
+        "/my2/dashboard", type="http", auth="user", website=True, sitemap=False
     )
     def my2_render_dashboard_page(self, **kwargs):
         """
