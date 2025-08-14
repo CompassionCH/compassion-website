@@ -133,7 +133,7 @@
                                                 <t t-set="secondary_buttons"
                                                    t-value="secondary_buttons_data"/>
                                                 <t t-set="bg_color"
-                                                   t-value="'high-blue'"/>
+                                                   t-value="'light-blue'"/>
                                                 <t t-set="accent_color"
                                                    t-value="'low-blue'"/>
                                                 <t t-set="title_color"
@@ -144,6 +144,37 @@
                                         </div>
                                     </t>
                                 </div>
+                            </t>
+                        </div>
+                        <!-- DUE INVOICES -->
+                        <div class="mb-4 mt-4">
+                            <h3 class="text-dark-blue">Open contributions</h3>
+                            <p>Your latest payments may not already be taken into account.</p>
+                            <t t-if="due_invoices">
+                                <div class="row font-weight-bold mb-2">
+                                    <div class="col text-core-blue">Month</div>
+                                    <div class="col text-core-blue">Child</div>
+                                    <div class="col text-right text-core-blue">
+                                        Amount</div>
+                                </div>
+                                <t t-foreach="due_invoices" t-as="invoice">
+                                    <t t-set="children" t-value="invoice.invoice_line_ids.mapped('contract_id.child_id')" />
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <t t-esc="invoice.get_date('invoice_date', 'MMMM yyyy').title()"/>
+                                        </div>
+                                        <div class="col">
+                                            <t t-esc="children.get_list('preferred_name', 3, children.get_number())"/>
+                                        </div>
+                                        <div class="col text-right">
+                                            <t t-esc="int(invoice.amount_total)"/>
+                                            <t t-esc="invoice.currency_id.name"/>
+                                        </div>
+                                    </div>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <p class="mb-3">No due invoices.</p>
                             </t>
                         </div>
                         <!-- DONATION HISTORY -->

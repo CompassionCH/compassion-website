@@ -1,22 +1,18 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 import math
 from odoo import _, fields
 
 from odoo.http import local_redirect, request, route
 from odoo.addons.portal.controllers.portal import CustomerPortal
+from odoo.osv import expression
 
-# Avoids fetching too many donations in the portal
+# Prevents fetching too many records in the portal.
 HISTORY_LIMIT = 300
 
 
 def _get_sponsorships(partner, state=None):
-    """
-    Find all the sponsorships of the given user.
-    There is the possibility to fetch either only active sponsorships or only those
-    that are terminated / cancelled. By default, all sponsorships are returned
-
-    :return: a recordset of recurring.contract of the given user
-    """
+    """Finds all sponsorships for a partner, with custom state filtering."""
 
     def filter_sponsorships(sponsorship):
         can_show = True
@@ -25,10 +21,12 @@ def _get_sponsorships(partner, state=None):
                 sponsorship.state == "terminated" and sponsorship.sds_state != "sub_waiting"
         )
 
+        # 'active' includes sponsorships pending final communication.
         if state == "active":
             can_show = is_active or (
                     sponsorship.state == "terminated" and not exit_communication_sent
             )
+        # 'terminated' only shows sponsorships after final communication is sent.
         elif state == "terminated":
             can_show = exit_communication_sent
         elif state == "write":
@@ -54,14 +52,7 @@ class MyDonationController(CustomerPortal):
         website=True,
     )
     def my_donations(self, invoice_page=1, invoice_per_page=12, **kw):
-        """
-        The route to the donations and invoicing page
-        :param invoice_page: index of the invoice pagination
-        :param invoice_per_page: the number of invoices to display per page
-        :param form_id: the id of the filled form or None
-        :param kw: additional optional arguments
-        :return: a redirection to a webpage
-        """
+        """Renders the 'My Donations' portal page with invoices and sponsorships."""
         partner = request.env.user.partner_id
 
         invoice_search_criteria = [
@@ -72,7 +63,7 @@ class MyDonationController(CustomerPortal):
         ]
 
         move_obj = request.env["account.move"].sudo()
-        # invoice to show for the given pagination index
+        # Group paid invoices by day for display and pagination.
         all_invoices = move_obj.read_group(
             invoice_search_criteria,
             ["amount_total"],
@@ -87,18 +78,34 @@ class MyDonationController(CustomerPortal):
         offset = (invoice_page - 1) * invoice_per_page
         invoices_per_day = all_invoices[offset: offset + invoice_per_page]
 
-        for invoice_group in invoices_per_day:
-            # Agrement data for displaying all invoices
-            invoices = move_obj.search(invoice_group["__domain"])
-            invoice_group["description"] = invoices.get_my_account_display_name()
-            invoice_group["last_payment"] = invoices[0].get_date(
-                "last_payment", "d MMM yyyy"
-            )
-            invoice_group["amount"] = (
-                f"{int(invoice_group['amount_total']):,d} "
-                f"{invoices[0].currency_id.name}"
-            )
+        # Fetch all invoice records for the current page in a single search.
+        all_domains = [g["__domain"] for g in invoices_per_day]
+        combined_domain = expression.OR(all_domains)
+        all_invoices_records = move_obj.search(combined_domain)
 
+        # Helper to map the fetched records back to their original groups.
+        def domain_key(domain):
+            return tuple(sorted(map(tuple, domain)))
+
+        invoices_by_domain = {}
+        for domain in all_domains:
+            key = domain_key(domain)
+            invoices_by_domain[key] = all_invoices_records.filtered_domain(domain)
+
+        # Populate display data for each invoice group.
+        for invoice_group in invoices_per_day:
+            invoices = invoices_by_domain[domain_key(invoice_group["__domain"])]
+            if invoices:
+                invoice_group["description"] = invoices.get_my_account_display_name()
+                invoice_group["last_payment"] = invoices[0].get_date(
+                    "last_payment", "d MMM yyyy"
+                )
+                invoice_group["amount"] = (
+                    f"{int(invoice_group['amount_total']):,d} "
+                    f"{invoices[0].currency_id.name}"
+                )
+
+        # Fetch outstanding invoices that are due within 30 days.
         in_one_month = datetime.today() + timedelta(days=30)
         due_invoices = move_obj.search(
             [
@@ -112,11 +119,10 @@ class MyDonationController(CustomerPortal):
             ]
         )
 
+        # Fetch and group active sponsorships for display.
         active_sponsorships = _get_sponsorships(partner, state="active")
         currency = active_sponsorships.mapped("pricelist_id.currency_id")[:1].name
 
-        # Dict of groups mapped to their sponsorships, and total amount
-        # {group: (<sponsorships recordset>, total_amount string), ...}
         sponsorships_by_group = {}
         for g in active_sponsorships.mapped("group_id"):
             sponsorships = active_sponsorships.filtered(lambda s, g=g: s.group_id == g)
@@ -124,7 +130,6 @@ class MyDonationController(CustomerPortal):
             sponsorships_by_group[g] = (sponsorships, f"{total:,d} {currency}")
 
         values = self._prepare_portal_layout_values()
-
         values.update(
             {
                 "partner": partner,
