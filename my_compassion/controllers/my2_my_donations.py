@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
-from datetime import datetime, timedelta
 import math
-from odoo import _, fields
+from datetime import datetime, timedelta
 
-from odoo.http import local_redirect, request, route
-from odoo.addons.portal.controllers.portal import CustomerPortal
+from odoo import fields
+from odoo.http import request, route
 from odoo.osv import expression
+
+from odoo.addons.portal.controllers.portal import CustomerPortal
 
 # Prevents fetching too many records in the portal.
 HISTORY_LIMIT = 300
@@ -18,13 +18,13 @@ def _get_sponsorships(partner, state=None):
         can_show = True
         is_active = sponsorship.state not in ["draft", "cancelled", "terminated"]
         exit_communication_sent = (
-                sponsorship.state == "terminated" and sponsorship.sds_state != "sub_waiting"
+            sponsorship.state == "terminated" and sponsorship.sds_state != "sub_waiting"
         )
 
         # 'active' includes sponsorships pending final communication.
         if state == "active":
             can_show = is_active or (
-                    sponsorship.state == "terminated" and not exit_communication_sent
+                sponsorship.state == "terminated" and not exit_communication_sent
             )
         # 'terminated' only shows sponsorships after final communication is sent.
         elif state == "terminated":
@@ -76,7 +76,7 @@ class MyDonationController(CustomerPortal):
         next_page_url = f"/my2/my-donations/page/{invoice_page + 1}"
         previous_page_url = f"/my2/my-donations/page/{invoice_page - 1}"
         offset = (invoice_page - 1) * invoice_per_page
-        invoices_per_day = all_invoices[offset: offset + invoice_per_page]
+        invoices_per_day = all_invoices[offset : offset + invoice_per_page]
 
         # Fetch all invoice records for the current page in a single search.
         all_domains = [g["__domain"] for g in invoices_per_day]
