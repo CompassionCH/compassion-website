@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Get the button that triggered the form submission (either Preview or Submit)
             const submitButton = event.submitter;
-            const mode = submitButton.getAttribute("data-mode");
+            const mode = $(submitButton).data("custom");
 
             // Collect the form data
             let childId, templateId, letterBody, attachments;
@@ -301,7 +301,7 @@ document.addEventListener("DOMContentLoaded", function () {
          */
         async function handleResponse(mode, result, childId) {
             if (mode === "send") {
-                window.location.href = `/my2/children/${childId}/letters?new_letter_generator_id=${result.generator_id}`;
+                window.location.href = `/my2/children/letters/${childId}?new_letter_generator_id=${result.generator_id}`;
             } else if (mode === "preview") {
                 document.getElementById("previewImage").src = result.preview_url;
                 $("#previewModal").modal("show");
