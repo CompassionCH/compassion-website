@@ -1,18 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
-        <template id="my_account_donations_details" name="My Account Donations Details">
+        <template id="my2_my_donations_page" name="My Account Donations Details">
             <t t-call="website.layout">
                 <div class="container">
                     <div class="content-column">
-                        <!-- Main title of the page-->
-                        <t t-call="theme_compassion_2025.TitleComponent">
-                            <t t-set="title_content"
-                               t-value="'My donations and documents'"/>
-                            <t t-set="title_size" t-value="'md'"/>
-                            <t t-set="color" t-value="'core-blue'"/>
-                            <t t-set="show_underline" t-value="True"/>
-                            <t t-set="underline_color" t-value="'low-yellow'"/>
-                        </t>
+                        <!-- TITLE-->
+                        <div class="mb-5">
+                            <t t-call="theme_compassion_2025.TitleComponent">
+                                <t t-set="title_content"
+                                   t-value="'My donations and documents'"/>
+                                <t t-set="title_size" t-value="'md'"/>
+                                <t t-set="color" t-value="'core-blue'"/>
+                                <t t-set="show_underline" t-value="True"/>
+                                <t t-set="underline_color" t-value="'low-yellow'"/>
+                            </t>
+                        </div>
+                        <!-- MY DONATION DETAILS -->
                         <div>
                             <div class="mt-4 mb-4" t-if="invoices_per_day">
                                 <h3 id="tax_title text-dark-blue">My donation
@@ -79,9 +83,10 @@
                                     </t>
                                 </div>
                             </div>
-                        </div><!-- MY DONATION DETAILS -->
+                        </div>
+                        <!-- MY SPONSORSHIP -->
                         <div>
-                            <h3 class="text-dark-blue">My sponsorship</h3>
+                            <h3 class="text-dark-blue">My sponsorships</h3>
                             <t t-foreach="sponsorships_by_group.items()"
                                t-as="group_data">
                                 <t t-set="group" t-value="group_data[0]"/>
@@ -92,9 +97,8 @@
                                     You currently have <b><t
                                         t-esc="len(sponsorships)"/></b> active
                                     sponsorship(s) for a total of <b><t
-                                        t-esc="total_amount"/></b>.
-                                </p>
-                                <p>
+                                        t-esc="total_amount"/>/mo</b>.
+                                    <br/>
                                     A payment slip is available for download for each of
                                     your sponsored children.
                                 </p>
@@ -113,7 +117,7 @@
                             'icon': 'download01',
                             'color': 'mid-yellow',
                             'action': 'link',
-                            'href': '/my/sponsorship/edit/' + str(sponsorship.id)
+                            'href': '/my/download/gift_bvr?child_id=' + str(sponsorship.child_id.id),
                         }
                     ]"/>
                                             <t t-call="my_compassion.DonationItemComponent">
@@ -141,8 +145,9 @@
                                     </t>
                                 </div>
                             </t>
-                        </div><!-- MY SPONSORSHIP -->
-                        <div class="mb-4">
+                        </div>
+                        <!-- DONATION HISTORY -->
+                        <div class="mb-4 mt-4">
                             <h3 class="text-dark-blue">Donations history</h3>
                             <t t-if="invoices_per_day">
                                 <div class="row font-weight-bold mb-2">
@@ -211,7 +216,7 @@
                             <t t-else="">
                                 <p class="mb-3">No donation history found.</p>
                             </t>
-                        </div><!-- DONATION HISTORY -->
+                        </div>
                     </div>
                 </div>
             </t>

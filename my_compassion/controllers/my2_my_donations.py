@@ -6,7 +6,7 @@ from odoo.http import local_redirect, request, route
 from odoo.addons.portal.controllers.portal import CustomerPortal
 
 # Avoids fetching too many donations in the portal
-HISTORY_LIMIT = 1000
+HISTORY_LIMIT = 300
 
 
 def _get_sponsorships(partner, state=None):
@@ -82,8 +82,8 @@ class MyDonationController(CustomerPortal):
         )
         invoice_count = len(all_invoices)
         total_pages = math.ceil(invoice_count / invoice_per_page)
-        next_page_url = f"/my2/donations/page/{invoice_page + 1}"
-        previous_page_url = f"/my2/donations/page/{invoice_page - 1}"
+        next_page_url = f"/my2/my-donations/page/{invoice_page + 1}"
+        previous_page_url = f"/my2/my-donations/page/{invoice_page - 1}"
         offset = (invoice_page - 1) * invoice_per_page
         invoices_per_day = all_invoices[offset: offset + invoice_per_page]
 
@@ -137,4 +137,4 @@ class MyDonationController(CustomerPortal):
                 "due_invoices": due_invoices,
             }
         )
-        return request.render("my_compassion.my_account_donations_details", values)
+        return request.render("my_compassion.my2_my_donations_page", values)
