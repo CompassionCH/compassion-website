@@ -121,7 +121,9 @@ class MyDonationController(CustomerPortal):
 
         # Fetch and group active sponsorships for display.
         active_sponsorships = _get_sponsorships(partner, state="active")
-        currency = active_sponsorships.mapped("pricelist_id.currency_id")[:1].name
+        currency = (
+            (active_sponsorships.mapped("pricelist_id.currency_id")[:1]).name or ""
+        )
 
         sponsorships_by_group = {}
         for g in active_sponsorships.mapped("group_id"):

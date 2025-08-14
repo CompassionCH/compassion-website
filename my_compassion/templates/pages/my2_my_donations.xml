@@ -18,7 +18,7 @@
                         <!-- MY DONATION DETAILS -->
                         <div>
                             <div class="mt-4 mb-4" t-if="invoices_per_day">
-                                <h3 id="tax_title text-dark-blue">
+                                <h3 id="tax_title" class="text-dark-blue">
                                     My donation
                                     details
                                 </h3>
@@ -38,9 +38,6 @@
                                                 <t t-call="theme_compassion_2025.SelectComponent">
                                                     <t t-set="name" t-value="'year'" />
                                                     <t t-set="id" t-value="'year'" />
-                                                    <option t-att-value="current_year" selected="selected">
-                                                        <t t-esc="current_year" />
-                                                    </option>
                                                     <t
                                                         t-foreach="range(int(current_year) - 1, first_year - 1, -1)"
                                                         t-as="fiscal_year"
@@ -134,7 +131,7 @@
                                                 <t t-set="name" t-value="sponsorship.child_id.preferred_name" />
                                                 <t
                                                     t-set="image"
-                                                    t-attf-value="/web/image/compassion.child/{{sponsorship.child_id.id}}/portrait"
+                                                    t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait"
                                                 />
                                                 <t t-set="price" t-value="sponsorship.total_amount" />
                                                 <t t-set="primary_button" t-value="primary_button_data" />
@@ -245,7 +242,7 @@
                                         </a>
                                     </t>
                                     <t t-else="">
-                                        <span class="disabled ps-3">Next</span>
+                                        <span class="disabled pl-3">Next</span>
                                     </t>
                                 </div>
                             </t>
