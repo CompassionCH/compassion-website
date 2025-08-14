@@ -17,7 +17,7 @@
         - Impact is used for buttons that have a strong call to action, e.g., 'Donate Now'
         - Compact is used for buttons that are smaller and more subtle or when space is limited
         - Default is used for standard buttons
-    - variation (string): Variation of the button, e.g., 'hollow' or 'filled'
+    - variation (string): Variation of the button, e.g., 'hollow', 'filled' or 'outlined'
     - label (string): Text to display on the button
     - icon (string): FontAwesome icon class to display on the button
     - color (string): Color of the button
@@ -50,6 +50,9 @@
         </t>
         <t t-elif="variation == 'filled'">
             <t t-set="style_class" t-value="'bg-' + color" />
+        </t>
+        <t t-elif="variation == 'outlined'">
+            <t t-set="style_class" t-value="'bg-transparent border border-2 border-' + color"/>
         </t>
         <t t-else="">
             <t t-set="style_class" t-value="'bg-black'" />

@@ -16,7 +16,7 @@ Page: My Compassion 2 Gifts Page
 <odoo>
     <!-- GIFTS DASHBOARD -->
     <template id="my2_fund_page" name="My Compassion 2 Fund Page">
-        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_fund.css" />
+        <link rel="stylesheet" href="/addons-compassion-switzerland/compassion-website/my_compassion/static/src/css/my2_gifts.css" />
         <t t-call="website.layout">
             <div class="container">
                 <!-- BANNER -->
@@ -35,7 +35,7 @@ Page: My Compassion 2 Gifts Page
                     </t>
                 </div>
                 <!-- VIGNETTES AND ACTIONS -->
-                <div class="dashboard-grid row mb-4 justify-content-center">
+                <div class="row mb-4 justify-content-center">
                     <t t-foreach="my_compassion_gifts" t-as="my_compassion_gift">
                         <div class="col-sm my-3 flex-grow-0">
                             <t t-call="theme_compassion_2025.VignetteComponent">
