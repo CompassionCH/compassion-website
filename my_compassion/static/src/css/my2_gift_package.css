@@ -11,55 +11,14 @@
     transform: scale(0);
 }
 
-#help-modal {
-    .modal-header {
+#edit-donation-modal {
+    .modal-body {
         position: relative;
-
-        button {
-            position: absolute;
-            right: 0;
-        }
     }
 
-    .table-title {
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-    }
-
-    .table-column {
-        &:first-child {
-            .table-cell {
-                border-left: 1px solid var(--light-grey);
-
-                &:last-child {
-                    border-bottom-left-radius: 10px;
-                }
-            }
-        }
-
-        &:last-child {
-            .table-cell {
-                border-right: 1px solid var(--light-grey);
-
-                &:last-child {
-                    border-bottom-right-radius: 10px;
-                }
-            }
-        }
-    }
-
-    .table-cell {
-        height: 2.2rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        border-bottom: 1px solid var(--light-grey);
-    }
-
-    .super-tiny-text {
-        font-size: 12px;
-    }
-
-    a {
-        text-decoration: underline;
+    .btn-close {
+        position: absolute;
+        top: 0;
+        right: 0;
     }
 }

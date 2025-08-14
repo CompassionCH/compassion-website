@@ -19,31 +19,33 @@
     - image (string): Item image src.                                                        -required-
     - price (float): Item price.                                                             -required-
     - primary_button (dict): Primary button with custom action (see Button).                 -required-
+    - recipient (string): Item recipient.                                                    [none]
     - title_color (string): Color of the title.                                              [dark-blue]
     - accent_color (string): Color of the left border accent.                                [dark-blue]
     - price_color (string): Color of the price.                                              [dark-blue]
+    - recipient_color (string): Color of the recipient.                                      [dark-blue]
     - bg_color (string): Background color.                                                   [high-blue]
     - monthly (bool): Whether the price is paid monthly.                                     [False]
-    - secondary_buttons (list[dict]): Secondary buttons with custom actions (see Button).    [[]]
+    - secondary_buttons (list[dict]): Secondary buttons with custom actions (see Button).    [none]
     - top_class (string): Classes to add to the top element of the item.                     [none]
 -->
 <odoo>
     <!-- DONATION ITEM BUTTON -->
     <template id="DonationItemButton" name="Donation Item Button">
-        <t t-set="color" t-value="button.get('color') or 'dark-blue'"/>
-
-        <t t-if="button.get('action') == 'link'" t-set="onclick" t-valuef="location.href='#{button.get('href')}'"/>
-        <t t-elif="button.get('action') == 'event'" t-set="onclick"
-           t-valuef="this.dispatchEvent(new CustomEvent('#{button.get('custom_event')}', {bubbles: true, detail: #{button.get('detail')}}))"/>
-
+        <t t-set="color" t-value="button.get('color') or 'dark-blue'" />
+        <t t-if="button.get('action') == 'link'" t-set="onclick" t-valuef="location.href='#{button.get('href')}'" />
+        <t
+            t-elif="button.get('action') == 'event'"
+            t-set="onclick"
+            t-valuef="this.dispatchEvent(new CustomEvent('#{button.get('custom_event')}', {bubbles: true, detail: #{button.get('detail')}}))"
+        />
         <div t-attf-class="action-button #{button_top_class}" t-att-onclick="onclick">
-            <i t-if="button.get('icon')" t-attf-class="tiny-text icon-#{button.get('icon')} text-#{color}"/>
+            <i t-if="button.get('icon')" t-attf-class="tiny-text icon-#{button.get('icon')} text-#{color}" />
             <span t-if="button.get('label')" t-attf-class="tiny-text bold text-#{color}">
-                <t t-esc="button.get('label')"/>
+                <t t-esc="button.get('label')" />
             </span>
         </div>
     </template>
-
     <!-- DONATION ITEM COMPONENT -->
     <template id="DonationItemComponent" name="Donation Item Component">
         <!-- Default property values -->
@@ -53,37 +55,48 @@
         <t t-set="bg_color" t-value="bg_color or 'high-blue'" />
         <t t-set="monthly" t-value="monthly == True" />
         <t t-set="secondary_buttons" t-value="secondary_buttons or []" />
-
         <!-- Estimate component minimum width -->
-        <t t-set="min_width" t-valuef="#{300 + 24 * len(secondary_buttons)}px"/>
-
+        <t t-set="min_width" t-valuef="#{300 + 24 * len(secondary_buttons)}px" />
         <!-- Component definition -->
-        <div t-attf-class="donation-item-container p-2 d-flex rounded-lg bg-#{bg_color} border-#{accent_color} #{top_class}"
-             t-attf-style="min-width: #{min_width}">
-            <div class="thumbnail responsive-lg mr-2 flex-shrink-0 rounded-lg"
-                 t-attf-style="--image_url: url('#{image}');"/>
+        <div
+            t-attf-class="donation-item-container p-2 d-flex rounded-lg bg-#{bg_color} border-#{accent_color} #{top_class}"
+            t-attf-style="min-width: #{min_width}"
+        >
+            <div
+                class="thumbnail responsive-lg mr-2 flex-shrink-0 rounded-lg"
+                t-attf-style="--image_url: url('#{image}');"
+            />
             <div class="w-100 d-flex flex-column justify-content-between">
                 <div class="d-flex align-items-start">
-                    <div class="thumbnail responsive-sm mr-2 flex-shrink-0 rounded-lg"
-                         t-attf-style="--image_url: url('#{image}');"/>
-                    <div t-attf-class="flex-grow-1 text-#{title_color} body-large bold">
-                        <t t-esc="name"/>
+                    <div
+                        class="thumbnail responsive-sm mr-2 flex-shrink-0 rounded-lg"
+                        t-attf-style="--image_url: url('#{image}');"
+                    />
+                    <div class="flex-grow-1 d-flex flex-column">
+                        <div t-attf-class="text-#{title_color} body-large bold">
+                            <t t-esc="name" />
+                        </div>
+                        <div t-if="recipient" t-attf-class="text-#{recipient_color} body-small bold">
+                            To
+                            <t t-esc="recipient" />
+                        </div>
                     </div>
-                    <!-- Add spacer -->
                     <t t-foreach="secondary_buttons" t-as="button">
                         <t t-call="my_compassion.DonationItemButton">
-                            <t t-set="button_top_class" t-value="'ml-2'"/>
+                            <t t-set="button_top_class" t-value="'ml-2'" />
                         </t>
                     </t>
                 </div>
                 <div class="mt-2 d-flex justify-content-between">
                     <t t-call="my_compassion.DonationItemButton">
-                        <t t-set="button" t-value="primary_button"/>
+                        <t t-set="button" t-value="primary_button" />
                     </t>
-
                     <div t-attf-class="text-#{price_color} ">
                         CHF
-                        <t t-if="price % 1 == 0" t-esc="int(price)" /><t t-else="" t-esc="'{0:.2f}'.format(price)" />.-<t t-if="monthly">/mo.</t>
+                        <t t-if="price % 1 == 0" t-esc="int(price)" />
+                        <t t-else="" t-esc="'{0:.2f}'.format(price)" />
+                        .-
+                        <t t-if="monthly">/mo.</t>
                     </div>
                 </div>
             </div>

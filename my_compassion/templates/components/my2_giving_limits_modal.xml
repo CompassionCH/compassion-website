@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Component: Giving Limits Modal
+
+    Description:
+    A modal to explain what the giving limits are.
+
+    Props:                                                                                       Default:
+    - limits (list[gift.threshold.settings]): The price limits for different donations types.    -required-
+    - modal_id (string): The id of the modal element.                                            ['giving-limits-modal']
+-->
+<odoo>
+    <!-- GIVING LIMITS MODAL COMPONENT -->
+    <template id="GivingLimitsModalComponent" name="Giving Limits Modal Component">
+        <!-- Default property values -->
+        <t t-set="modal_id" t-value="modal_id or 'giving-limits-modal'" />
+        <!-- Include stylesheet -->
+        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_giving_limits_modal.css" />
+        <div
+            class="modal fade giving-limits-modal"
+            t-att-id="modal_id"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="help-modal-title"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content border-0">
+                    <div class="modal-header border-0 bg-low-blue d-flex align-items-center justify-content-center">
+                        <h5 class="modal-title text-pure-white">
+                            Giving limits
+                            <button
+                                type="button"
+                                class="mr-3 icon-x-circle text-pure-white"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                            />
+                        </h5>
+                    </div>
+                    <div class="modal-body bg-light-blue tiny-text text-center">
+                        We want to ensure your gifts really do benefit children, families and communities in the
+                        long-term, which is why we put limits on the amount  that can be sent.
+                    </div>
+                    <div class="modal-body">
+                        <div class="tiny-text">
+                            Ultimately, we want to enable communities to support themselves. The last thing we want
+                            is to encourage a culture of dependency on gifts. Also, we don't want to overwhelm
+                            families or single them out for special treatment, which is why we have limits in place.
+                        </div>
+                        <div class="d-flex flex-column my-4">
+                            <!-- TABLE TITLE -->
+                            <div class="p-3 table-title col-12 bg-low-green tiny-text text-center text-pure-white">
+                                Annual gift limits in Switzerland
+                            </div>
+                            <!-- COLUMNS -->
+                            <div class="d-flex">
+                                <!-- TYPE -->
+                                <t t-call="my_compassion.my2_gift_package_help_table_column">
+                                    <t t-set="top_class" t-value="'flex-grow-1'" />
+                                    <t t-set="title" t-value="'Type'" />
+                                    <t
+                                        t-set="cells"
+                                        t-value="[
+                                        (limit.sponsorship_gift_type + ' Gift' if limit.sponsorship_gift_type else limit.gift_type) +
+                                        ('*' if limit.yearly_threshold and limit.gift_frequency == 2 else
+                                         '**' if not limit.yearly_threshold and limit.gift_frequency == 1 else '')
+                                        for limit in limits
+                                    ]"
+                                    />
+                                </t>
+                                <!-- MIN -->
+                                <t t-call="my_compassion.my2_gift_package_help_table_column">
+                                    <t t-set="title" t-value="'Min'" />
+                                    <t
+                                        t-set="cells"
+                                        t-value="[
+                                        'CHF {:g}'.format(limit.min_amount)
+                                        for limit in limits
+                                    ]"
+                                    />
+                                </t>
+                                <!-- MAX -->
+                                <t t-call="my_compassion.my2_gift_package_help_table_column">
+                                    <t t-set="title" t-value="'Max'" />
+                                    <t
+                                        t-set="cells"
+                                        t-value="[
+                                        'CHF {:,g}'.format(limit.max_amount)
+                                        for limit in limits
+                                    ]"
+                                    />
+                                </t>
+                            </div>
+                            <!-- NOTES -->
+                            <div class="px-3 pt-1 super-tiny-text text-low-pink">
+                                *A child gift can be given twice a year.
+                                <br />
+                                **Available in the child's final year of the program.
+                            </div>
+                        </div>
+                        <div class="tiny-text">
+                            If you'd like to make a large donation to support the work of  Compassion, please get in
+                            touch with us directly and we can suggest how  your donation can make the greatest
+                            impact.
+                        </div>
+                        <div class="mt-4 tiny-text">
+                            <i class="mr-1 icon-phone body-small" />
+                            <a href="tel:+41244342124" class="text-low-black">+41 (0)24 434 21 24</a>
+                            (Lu-Ven: 9.00-14.00)
+                        </div>
+                        <div class="mt-2 tiny-text">
+                            <i class="mr-1 icon-mail01 body-small" />
+                            <a href="mailto:info@compassion.ch" class="text-low-black">info@compassion.ch</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>

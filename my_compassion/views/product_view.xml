@@ -12,6 +12,11 @@
                     </group>
                     <group attrs="{'invisible': [('activate_for_my_compassion', '=', False)]}">
                         <field
+                            name="my_compassion_donation_type"
+                            string="Donation type"
+                            attrs="{'required': [('activate_for_my_compassion','=',True)]}"
+                        />
+                        <field
                             name="my_compassion_name"
                             string="Name"
                             attrs="{'required': [('activate_for_my_compassion','=',True)]}"
