@@ -13,21 +13,6 @@
     - limits ('gift.threshold.settings' records): The giving limits.
 -->
 <odoo>
-    <!-- HELP MODAL TABLE COLUMN -->
-    <template id="my2_gift_package_help_table_column" name="Gift Package Help Table Column">
-        <div t-attf-class="table-column d-flex flex-column #{top_class}">
-            <div class="table-cell tiny-text bold bg-light-green border-0 d-flex flex-column justify-content-center">
-                <t t-esc="title" />
-            </div>
-            <t t-foreach="cells" t-as="cell">
-                <div class="table-cell super-tiny-text d-flex flex-column justify-content-center">
-                    <div>
-                        <t t-raw="cell.replace('*', '&lt;span class=\'body-small text-low-pink\'&gt;*&lt;/span&gt;')" />
-                    </div>
-                </div>
-            </t>
-        </div>
-    </template>
     <!-- GIFT PACKAGE CONTENT -->
     <template id="my2_gift_package_content" name="Gift Package Content">
         <!-- ONE-TIME GIFTS -->

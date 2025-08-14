@@ -10,6 +10,21 @@
     - modal_id (string): The id of the modal element.                                            ['giving-limits-modal']
 -->
 <odoo>
+    <!-- GIVING LIMITS MODAL TABLE COLUMN -->
+    <template id="my2_giving_limits_modal_table_column" name="Gift Package Help Table Column">
+        <div t-attf-class="table-column d-flex flex-column #{top_class}">
+            <div class="table-cell tiny-text bold bg-light-green border-0 d-flex flex-column justify-content-center">
+                <t t-esc="title" />
+            </div>
+            <t t-foreach="cells" t-as="cell">
+                <div class="table-cell super-tiny-text d-flex flex-column justify-content-center">
+                    <div>
+                        <t t-raw="cell.replace('*', '&lt;span class=\'body-small text-low-pink\'&gt;*&lt;/span&gt;')" />
+                    </div>
+                </div>
+            </t>
+        </div>
+    </template>
     <!-- GIVING LIMITS MODAL COMPONENT -->
     <template id="GivingLimitsModalComponent" name="Giving Limits Modal Component">
         <!-- Default property values -->
@@ -55,7 +70,7 @@
                             <!-- COLUMNS -->
                             <div class="d-flex">
                                 <!-- TYPE -->
-                                <t t-call="my_compassion.my2_gift_package_help_table_column">
+                                <t t-call="my_compassion.my2_giving_limits_modal_table_column">
                                     <t t-set="top_class" t-value="'flex-grow-1'" />
                                     <t t-set="title" t-value="'Type'" />
                                     <t
@@ -69,7 +84,7 @@
                                     />
                                 </t>
                                 <!-- MIN -->
-                                <t t-call="my_compassion.my2_gift_package_help_table_column">
+                                <t t-call="my_compassion.my2_giving_limits_modal_table_column">
                                     <t t-set="title" t-value="'Min'" />
                                     <t
                                         t-set="cells"
@@ -80,7 +95,7 @@
                                     />
                                 </t>
                                 <!-- MAX -->
-                                <t t-call="my_compassion.my2_gift_package_help_table_column">
+                                <t t-call="my_compassion.my2_giving_limits_modal_table_column">
                                     <t t-set="title" t-value="'Max'" />
                                     <t
                                         t-set="cells"
