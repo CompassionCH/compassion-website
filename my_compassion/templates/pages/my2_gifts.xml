@@ -52,9 +52,12 @@ Page: My Compassion 2 Fund Page
                             <t t-call="theme_compassion_2025.VignetteComponent">
                                 <t t-set="image" t-value="website.image_url(my_compassion_gift, 'my_compassion_image')"/>
                                 <t t-set="title" t-value="my_compassion_gift.my_compassion_name" />
+                                <!--<t t-set="subtitle" t-value="'Learn more and donate'" />-->
                                 <t t-set="icon" t-value="'pictogram-' + my_compassion_gift.my_compassion_pictogram" />
                                 <t t-set="color" t-value="'pure-white'" />
                                 <t t-set="bg_color" t-value="my_compassion_gift.my_compassion_color" />
+                                <t t-set="href" t-value="'https://www.google.com/'" />
+                                <t t-set="learn_more_text" t-value="'Learn more and donate'" />
                             </t>
                         </div>
                     </t>

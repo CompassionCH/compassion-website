@@ -44,7 +44,17 @@
                         </t>
                     </div>
                 </div>
-            </a>
+           </a>
+            <t t-if="learn_more_href or learn_more_text">
+                <a t-att-href="learn_more_href or href" t-attf-class="text-decoration-none text-#{color}">
+                    <div t-attf-class="card-footer d-flex justify-content-start align-items-center pt-0 border-top-0 bg-#{bg_color}">
+                        <span class="pl-3">
+                            <t t-esc="learn_more_text or 'Learn More'"/>
+                        </span>
+                        <i t-attf-class="#{learn_more_icon or 'icon-chevron-right'} ml-2 text-#{color}" />
+                    </div>
+                </a>
+            </t>
         </div>
     </template>
 </odoo>
