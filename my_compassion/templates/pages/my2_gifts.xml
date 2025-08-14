@@ -6,9 +6,9 @@ Page: My Compassion 2 Gifts Page
     - TODO
 
     Used in route:
-    - /my2/gifts/
+    - /my2/gifts/ (default)
     - /my2/gifts/?type=gift
-    - /my2/gifts/?type=fund
+    - /my2/gifts/?type=fund (same as /my2/gifts/)
 
     Injected data:
     - TODO
@@ -19,6 +19,11 @@ Page: My Compassion 2 Gifts Page
         <link rel="stylesheet" href="/my_compassion/static/src/css/my2_fund.css" />
         <t t-call="website.layout">
             <div class="container">
+                <!-- BANNER -->
+                <div class="mt-4">
+                    <t t-call="theme_compassion_2025.BannerComponent">
+                    </t>
+                </div>
                 <!-- TITLE -->
                 <div class="mt-4">
                     <t t-call="theme_compassion_2025.TitleComponent">
