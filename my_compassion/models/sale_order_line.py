@@ -1,7 +1,7 @@
 from odoo import fields, models
 
 
-class ProductTemplate(models.Model):
+class SalesOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     frequency = fields.Selection(

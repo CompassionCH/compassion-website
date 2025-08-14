@@ -6,6 +6,8 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+import logging
+
 from werkzeug.exceptions import BadRequest, NotFound
 
 from odoo import http
@@ -48,7 +50,10 @@ class MyCompassionDonationsController(http.Controller):
         then redirects to checkout (the gift package page).
         """
         # Fetch the product record from the database
-        product_template_id = int(post.get("product_id"))
+        try:
+            product_template_id = int(post.get("product_id"))
+        except (ValueError, TypeError):
+            raise BadRequest()
         product_template = (
             request.env["product.template"].sudo().browse(product_template_id)
         )
@@ -87,7 +92,7 @@ class MyCompassionDonationsController(http.Controller):
         Edits a donation from the user's gift package.
         """
         # Fetch the order line record from the database
-        order_line_id = int(post.get("order_line_id"))
+        order_line_id = post.get("order_line_id")
         order_line = request.env["sale.order.line"].sudo().browse(order_line_id)
 
         # Make sure the order line exists
@@ -219,7 +224,10 @@ class MyCompassionDonationsController(http.Controller):
                 * product_template.list_price
             )
         elif amount == "custom":
-            price = float(post.get("custom_amount"))
+            try:
+                price = float(post.get("custom_amount"))
+            except (ValueError, TypeError):
+                raise BadRequest()
             # Make sure price is strictly positive
             if price <= 0:
                 raise BadRequest()
