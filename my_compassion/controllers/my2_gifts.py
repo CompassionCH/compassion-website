@@ -14,18 +14,23 @@ class MyCompassionFundController(http.Controller):
     @http.route(
         "/my2/gifts/", type="http", auth="user", website=True, sitemap=False
     )
-    def my2_render_fund_page(self, **kwargs):
+    def render_donation_page(self, type='fund', **kwargs):
         """
-        Renders the dashboard page according to the logged-in user's role
-        (sponsor, donor or volunteer).
-        return: An HTTP response containing a rendered template with the dashboard.
+              Renders a page of donation opportunities (Funds or Gifts).
+              :param donation_type: 'fund' or 'gift', defaults to 'fund'.
         """
-        my_compassion_gifts = request.env['product.template'].search([
+        if type not in ('fund', 'gift'):
+            type = 'fund'
+
+        domain = [
             ('activate_for_my_compassion', '=', True),
-            ('my_compassion_donation_type', '=', 'fund'),
-        ])
+            ('my_compassion_donation_type', '=', type),
+        ]
+
+        my_compassion_gifts = request.env['product.template'].search(domain)
         return request.render(
             "my_compassion.my2_fund_page",
             {
                 'my_compassion_gifts': my_compassion_gifts,
+                'type': type,
             })

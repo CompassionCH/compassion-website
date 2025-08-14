@@ -38,11 +38,11 @@ Page: My Compassion 2 Fund Page
                 <!-- TITLE -->
                 <div class="mt-4">
                     <t t-call="theme_compassion_2025.TitleComponent">
-                        <t t-set="title_content" t-value="'Gift of compassion'" />
+                        <t t-set="title_content" t-value="'Gift to your sponsored children' if type == 'gift' else 'Gift of compassion'"/>
                         <t t-set="color" t-value="'core-blue'" />
                         <t t-set="show_underline" t-value="true" />
                         <t t-set="underline_color" t-value="'low-yellow'" />
-                        <t t-set="description" t-value="'Make a difference and bring hope to children living in extreme poverty.'" />
+                        <t t-set="description" t-value="'Send a gift to your sponsored child and Compassion staff from their local  church will support them in purchasing something they really need.' if donation_type == 'gift' else 'Make a difference and bring hope to children living in extreme poverty.'"/>
                     </t>
                 </div>
                 <!-- VIGNETTES AND ACTIONS -->
@@ -52,7 +52,6 @@ Page: My Compassion 2 Fund Page
                             <t t-call="theme_compassion_2025.VignetteComponent">
                                 <t t-set="image" t-value="website.image_url(my_compassion_gift, 'my_compassion_image')"/>
                                 <t t-set="title" t-value="my_compassion_gift.my_compassion_name" />
-                                <!--<t t-set="subtitle" t-value="'Learn more and donate'" />-->
                                 <t t-set="icon" t-value="'pictogram-' + my_compassion_gift.my_compassion_pictogram" />
                                 <t t-set="color" t-value="'pure-white'" />
                                 <t t-set="bg_color" t-value="my_compassion_gift.my_compassion_color" />
