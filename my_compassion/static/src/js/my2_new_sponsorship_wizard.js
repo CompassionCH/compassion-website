@@ -1,3 +1,11 @@
+/*
+ * Handle the new sponsorship wizard. It handles users actions such as
+ * step navigation (next/previous), form validation, dynamic content
+ * loading, and communication with the server via API calls to process the
+ * sponsorship application.
+ *
+ * Used in /templates/pages/my2_new_sponsorship_wizard.xml
+ * ------------------------------------------------------------------------------- */
 document.addEventListener("DOMContentLoaded", function (event) {
     odoo.define("my_compassion.new_sponsorship_wizard", function (require) {
         "use strict";

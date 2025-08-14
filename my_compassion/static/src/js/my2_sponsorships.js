@@ -1,3 +1,8 @@
+/*
+ * Handles child pool filtering functionalities
+ *
+ * Used in /templates/pages/my2_sponsorships.xml
+ */
 document.addEventListener("DOMContentLoaded", function (event) {
     odoo.define("my_compassion.sponsorships", function (require) {
         "use strict";
