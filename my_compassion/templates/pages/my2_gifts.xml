@@ -33,11 +33,11 @@ Page: My Compassion 2 Gifts Page
                 <!-- TITLE -->
                 <div class="mt-4">
                     <t t-call="theme_compassion_2025.TitleComponent">
-                        <t t-set="title_content" t-value="page_content['title']"/>
+                        <t t-set="title_content" t-value="page_content['title']" />
                         <t t-set="color" t-value="'core-blue'" />
                         <t t-set="show_underline" t-value="true" />
                         <t t-set="underline_color" t-value="'low-yellow'" />
-                        <t t-set="description" t-value="page_content['description']"/>
+                        <t t-set="description" t-value="page_content['description']" />
                     </t>
                 </div>
                 <!-- VIGNETTES AND ACTIONS -->
@@ -45,7 +45,10 @@ Page: My Compassion 2 Gifts Page
                     <t t-foreach="my_compassion_gifts" t-as="my_compassion_gift">
                         <div class="col-sm my-3 flex-grow-0">
                             <t t-call="theme_compassion_2025.VignetteComponent">
-                                <t t-set="image" t-value="website.image_url(my_compassion_gift, 'my_compassion_image')"/>
+                                <t
+                                    t-set="image"
+                                    t-value="website.image_url(my_compassion_gift, 'my_compassion_image')"
+                                />
                                 <t t-set="title" t-value="my_compassion_gift.my_compassion_name" />
                                 <t t-set="icon" t-value="'pictogram-' + my_compassion_gift.my_compassion_pictogram" />
                                 <t t-set="color" t-value="'pure-white'" />

@@ -26,7 +26,9 @@
             <a t-att-href="href" class="text-decoration-none h-100">
                 <div class="d-flex flex-column h-100">
                     <img t-att-src="image" class="card-img-top flex-grow-1" />
-                    <div t-attf-class="card-body h-25 py-2 flex-grow-0 d-flex bg-#{bg_color} #{learn_more_text and 'rounded-0' or ''}">
+                    <div
+                        t-attf-class="card-body h-25 py-2 flex-grow-0 d-flex bg-#{bg_color} #{learn_more_text and 'rounded-0' or ''}"
+                    >
                         <div t-attf-class="d-flex flex-column justify-content-center flex-grow-1">
                             <div class="pl-3">
                                 <h3 t-attf-class="card-title m-0 text-#{color}">
@@ -47,9 +49,11 @@
             </a>
             <t t-if="learn_more_text">
                 <a t-att-href="href" t-attf-class="text-decoration-none text-#{color}">
-                    <div t-attf-class="card-footer d-flex justify-content-start align-items-center pt-0 border-top-0 bg-#{bg_color}">
+                    <div
+                        t-attf-class="card-footer d-flex justify-content-start align-items-center pt-0 border-top-0 bg-#{bg_color}"
+                    >
                         <span class="pl-3">
-                            <t t-esc="learn_more_text"/>
+                            <t t-esc="learn_more_text" />
                         </span>
                         <i t-attf-class="#{learn_more_icon or 'icon-chevron-right'} ml-2 text-#{color}" />
                     </div>

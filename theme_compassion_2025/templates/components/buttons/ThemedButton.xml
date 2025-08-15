@@ -52,7 +52,10 @@
             <t t-set="style_class" t-value="'bg-' + color" />
         </t>
         <t t-elif="variation == 'outlined'">
-            <t t-set="style_class" t-value="'bg-' + color + ' border border-2 border-' + text_color + ' text-' + color + '-hover'"/>
+            <t
+                t-set="style_class"
+                t-value="'bg-' + color + ' border border-2 border-' + text_color + ' text-' + color + '-hover'"
+            />
         </t>
         <t t-else="">
             <t t-set="style_class" t-value="'bg-black'" />
