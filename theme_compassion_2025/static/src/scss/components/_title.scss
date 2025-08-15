@@ -6,7 +6,17 @@
     */
 
 .title-component {
-    text-align: center;
+        @media (max-width: $breakpoint-sm) {
+            &--align-sm-left {
+                text-align: left;
+            }
+            &--align-sm-center {
+                text-align: center;
+            }
+            &--align-sm-right {
+                text-align: right;
+            }
+    }
 
     // The main <h1> element
     .title-heading {
@@ -33,6 +43,10 @@
         // Uses margin-left/right: auto for centering
         margin: 10px auto 15px;
     }
+}
 
-    // Optional description text
+@media (max-width: $breakpoint-sm) {
+    .title-component-sm-left-alignment {
+        text-align: left !important;
+    }
 }
