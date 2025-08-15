@@ -1,11 +1,12 @@
 ##############################################################################
 #
 #    Copyright (C) 2025 Compassion CH (http://www.compassion.ch)
-#    @author: Nathan Felber <nfelber@compassion.ch>
+#    @author: Elias Keller <ekeller@compassion.ch>
 #
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+
 from odoo import http
 from odoo.http import request
 from urllib.parse import urljoin

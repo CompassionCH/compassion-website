@@ -11,7 +11,7 @@ Page: My Compassion 2 Gifts Page
     - /my2/gifts/?type=fund (same as /my2/gifts/)
 
     Injected data:
-    - TODO
+    - my_compassion_gifts (array of 'my_compassion_gift' records): all the gifts of this typ (gift/fund) available.
 -->
 <odoo>
     <!-- GIFTS DASHBOARD -->
@@ -26,6 +26,7 @@ Page: My Compassion 2 Gifts Page
                         <t t-set="text" t-value="page_content['banner_text']" />
                         <t t-set="btn_text" t-value="page_content['banner_btn_text']" />
                         <t t-set="btn_link" t-value="page_content['banner_btn_link']" />
+                        <t t-set="pictogram" t-value="'centre-gift'" />
                     </t>
                 </div>
                 <!-- TITLE -->
