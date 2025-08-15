@@ -31,8 +31,8 @@ odoo.define("theme_compassion_2025.range_input", function (require) {
             this._super(parent);
             this.minValue = minValue;
             this.maxValue = maxValue;
-            this.initialLow = initialLow ?? minValue;
-            this.initialHigh = initialHigh ?? maxValue;
+            this.initialLow = initialLow !== null && initialLow !== undefined ? initialLow : minValue;
+            this.initialHigh = initialHigh !== null && initialHigh !== undefined ? initialHigh : maxValue;
             this.minGap = minGap;
             this.thumbColor = thumbColor;
             this.labelColor = labelColor;
