@@ -23,8 +23,8 @@
             </div>
             <div class="d-flex flex-column align-items-start pb-4">
                 <t t-call="theme_compassion_2025.TitleComponent">
-                    <t t-set="title_content" t-value="'Gift of compassion'"/>
-                    <t t-set="color" t-value="'pure-white'" />
+                    <t t-set="title_content" t-value="title"/>
+                    <t t-set="color" t-value="text_color or 'pure-white'" />
                 </t>
                 <p class="text-pure-white">
                     <t t-esc="text"/>
