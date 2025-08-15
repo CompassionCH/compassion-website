@@ -22,6 +22,9 @@ Page: My Compassion 2 Gifts Page
                 <!-- BANNER -->
                 <div class="mt-4">
                     <t t-call="theme_compassion_2025.BannerComponent">
+                        <t t-set="text" t-value="'Every child deserves a secure home, safe water and medicine to keep them healthy. That’s why when poverty places a child in critical need, we take action.'" />
+                        <t t-set="btn_link" t-value="'/my2/gifts/?type=fund'" />
+                        <t t-set="btn_text" t-value="'Send a gift'" />
                     </t>
                 </div>
                 <!-- TITLE -->
