@@ -20,4 +20,8 @@ class MyCompassionUserController(http.Controller):
         (sponsor, donor or volunteer).
         return: An HTTP response containing a rendered template with the dashboard.
         """
-        return request.render("my_compassion.my2_dashboard_page", {})
+
+        return request.render(
+            "my_compassion.my2_dashboard_page",
+            {},
+        )

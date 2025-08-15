@@ -49,6 +49,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         month_to = safe_int(kwargs.get("month_to"), 12)
         letter_type = kwargs.get("type")
         sort_order = kwargs.get("sort", "newest")
+        unread_filter = kwargs.get("unread")
         nr_filters_applied = 0
 
         # Build filter date range
@@ -68,6 +69,11 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 child = None
         filter_domain.append(("create_date", ">=", from_date))
         filter_domain.append(("create_date", "<=", to_date))
+
+        if unread_filter == "true":
+            filter_domain.append(("email_read", "=", False))
+            nr_filters_applied += 1
+
         if (
             year_from > 1900
             or year_to < current_year
@@ -88,7 +94,13 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         total_letters = request.env["correspondence"].search_count(filter_domain)
         total_pages = max(1, -(-total_letters // letters_per_page))
 
-        letters = request.env["correspondence"].search(
+        # Without the context here the letters are marked as read by just
+        # iterating trough them in the xml.
+        correspondence_model = request.env["correspondence"].with_context(
+            tracking_disable=True
+        )
+
+        letters = correspondence_model.search(
             filter_domain, order=order, offset=offset, limit=letters_per_page
         )
 
@@ -120,7 +132,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         )
 
     @http.route(
-        '/my2/children/<model("compassion.child"):child>/letter/new',
+        "/my2/children/<model('compassion.child'):child>/letter/new",
         type="http",
         auth="user",
         website=True,
