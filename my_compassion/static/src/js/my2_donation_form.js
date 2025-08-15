@@ -7,7 +7,7 @@ odoo.define("my_compassion.donation_form", function (require) {
         selector: ".my2_donation_form",
 
         events: {
-            'change input[type="radio"][name="suggested_amount"]': "_onAmountChange",
+            "change .suggested-amount": "_onAmountChange",
             "click .btn-submit": "_onSubmitClick",
         },
 
@@ -17,7 +17,7 @@ odoo.define("my_compassion.donation_form", function (require) {
         start: function () {
             this.customAmountInput = this.$("#custom-amount");
 
-            if (this.$("input[name='suggested_amount']:checked").val() !== "custom") {
+            if (this.$(".suggested-amount:checked").val() !== "custom") {
                 this.customAmountInput.hide();
             }
             this.customAmountInput.removeAttr("hidden");
@@ -56,9 +56,9 @@ odoo.define("my_compassion.donation_form", function (require) {
             this.$el.trigger(this.$(".btn-submit").data("submission-event"), [
                 {
                     product_id: this.$("[name='product_id']").val(),
-                    frequency: this.$("[name='frequency']:checked").val(),
+                    frequency: this.$(".donation-frequency input:checked").val(),
                     recipient: this.$("[name='recipient']").val(),
-                    suggested_amount: this.$("[name='suggested_amount']:checked").val(),
+                    suggested_amount: this.$(".suggested-amount:checked").val(),
                     custom_amount: this.$("[name='custom_amount']").val(),
                 },
             ]);
@@ -81,7 +81,7 @@ odoo.define("my_compassion.donation_form", function (require) {
             }
 
             // Validate custom amount
-            if (this.$("input[name='suggested_amount']:checked").val() == "custom") {
+            if (this.$(".suggested-amount:checked").val() == "custom") {
                 const $input = this.$("#custom-amount");
                 const custom_amount = Number($input.val());
 

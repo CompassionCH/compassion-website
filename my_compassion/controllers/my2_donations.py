@@ -211,6 +211,43 @@ class MyCompassionDonationsController(http.Controller):
         return {"html": html_content}
 
     @http.route(
+        "/my2/gift-package/add",
+        type="http",
+        auth="user",
+        website=True,
+        sitemap=False,
+    )
+    def my2_render_add_a_gift_page(self, **kwargs):
+        """
+        Renders the add a gift page to quickly add a gift to the gift package.
+        return: An HTTP response containing a rendered template with the add a gift page.
+        """
+        # Exclude fund donation that are already in the user's gift package
+        order = request.website.sale_get_order(force_create=True)
+        product_template_ids_in_cart = order.order_line.product_id.product_tmpl_id.ids
+        products = request.env["product.template"].search(
+            [
+                "&",
+                ("activate_for_my_compassion", "=", True),
+                "|",
+                ("my_compassion_donation_type", "=", "gift"),
+                ("id", "not in", product_template_ids_in_cart),
+            ]
+        )
+
+        sponsorships = request.env.user.partner_id.sponsorship_ids
+        limits = request.env["gift.threshold.settings"].sudo().search([])
+
+        return request.render(
+            "my_compassion.my2_add_a_gift_page",
+            {
+                "products": products,
+                "sponsorships": sponsorships,
+                "limits": limits,
+            },
+        )
+
+    @http.route(
         "/my2/gifts/thankyou",
         type="http",
         auth="public",

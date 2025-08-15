@@ -14,7 +14,7 @@
     - default_frequency (string): The default frequency.                                             ['one_time']
     - default_suggested_amount (string): The default suggested amount.                               ['low']
     - default_custom_amount (float): The default custom amount.                                      [none]
-    - radio_id (string): Base id for radio inputs (to avoid collisions).                             ['donation']
+    - base_name (string): Base name for radio inputs (to avoid collisions).                          ['donation']
     - top_class (string): Classes to add to the top element of the item.                             [none]
 -->
 <odoo>
@@ -25,9 +25,7 @@
         <t t-set="submission_event" t-value="submission_event or 'donation-form:submit'" />
         <t t-set="default_frequency" t-value="default_frequency or 'one_time'" />
         <t t-set="default_suggested_amount" t-value="default_suggested_amount or 'low'" />
-        <t t-set="radio_id" t-value="radio_id or 'donation'" />
-        <!-- Include stylesheet -->
-        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_donation_form.css" />
+        <t t-set="base_name" t-value="base_name or 'donation'" />
         <div t-attf-class="my2_donation_form donation-inputs-container w-100 d-flex flex-column #{top_class}">
             <input type="hidden" name="product_id" t-att-value="product.id" />
             <t t-set="top_class" t-value="None" />
@@ -40,7 +38,7 @@
             </t>
             <!-- DONATION FREQUENCY -->
             <t t-call="theme_compassion_2025.ToggleButtonComponent">
-                <t t-set="name" t-value="'frequency'" />
+                <t t-set="name" t-valuef="'#{base_name}_frequency'" />
                 <t
                     t-set="options"
                     t-value="[
@@ -49,7 +47,7 @@
                 ]"
                 />
                 <t t-set="default" t-value="default_frequency" />
-                <t t-set="top_class" t-value="'mt-3 align-self-center'" />
+                <t t-set="top_class" t-value="'mt-3 align-self-center donation-frequency'" />
             </t>
             <!-- TO -->
             <t t-if="product.my_compassion_donation_type == 'gift'" t-call="theme_compassion_2025.FormFieldComponent">
@@ -75,13 +73,14 @@
                 <div class="mt-1 d-flex justify-content-between">
                     <div class="donation-suggested-amount flex-grow-1">
                         <input
-                            t-attf-id="#{radio_id}-suggested-low"
+                            t-attf-id="#{base_name}-suggested-low"
                             type="radio"
-                            name="suggested_amount"
+                            t-attf-name="#{base_name}_suggested_amount"
                             value="low"
                             t-att-checked="default_suggested_amount == 'low'"
+                            class="suggested-amount"
                         />
-                        <label class="mb-0 w-100" t-attf-for="#{radio_id}-suggested-low">
+                        <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-low">
                             <t
                                 t-set="price"
                                 t-value="product.my_compassion_donation_quantity_low * product.list_price"
@@ -93,13 +92,14 @@
                     </div>
                     <div class="donation-suggested-amount mx-3 flex-grow-1">
                         <input
-                            t-attf-id="#{radio_id}-suggested-medium"
+                            t-attf-id="#{base_name}-suggested-medium"
                             type="radio"
-                            name="suggested_amount"
+                            t-attf-name="#{base_name}_suggested_amount"
                             value="medium"
                             t-att-checked="default_suggested_amount == 'medium'"
+                            class="suggested-amount"
                         />
-                        <label class="mb-0 w-100" t-attf-for="#{radio_id}-suggested-medium">
+                        <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-medium">
                             <t
                                 t-set="price"
                                 t-value="product.my_compassion_donation_quantity_medium * product.list_price"
@@ -111,13 +111,14 @@
                     </div>
                     <div class="donation-suggested-amount flex-grow-1">
                         <input
-                            t-attf-id="#{radio_id}-suggested-high"
+                            t-attf-id="#{base_name}-suggested-high"
                             type="radio"
-                            name="suggested_amount"
+                            t-attf-name="#{base_name}_suggested_amount"
                             value="high"
                             t-att-checked="default_suggested_amount == 'high'"
+                            class="suggested-amount"
                         />
-                        <label class="mb-0 w-100" t-attf-for="#{radio_id}-suggested-high">
+                        <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-high">
                             <t
                                 t-set="price"
                                 t-value="product.my_compassion_donation_quantity_high * product.list_price"
@@ -135,13 +136,14 @@
                 <t t-set="invalid_hint" t-value="'Please enter a valid amount.'" />
                 <div class="donation-suggested-amount">
                     <input
-                        t-attf-id="#{radio_id}-suggested-custom"
+                        t-attf-id="#{base_name}-suggested-custom"
                         type="radio"
-                        name="suggested_amount"
+                        t-attf-name="#{base_name}_suggested_amount"
                         value="custom"
                         t-att-checked="default_suggested_amount == 'custom'"
+                        class="suggested-amount"
                     />
-                    <label class="mb-0 w-100" t-attf-for="#{radio_id}-suggested-custom">Custom amount</label>
+                    <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-custom">Custom amount</label>
                 </div>
                 <input
                     id="custom-amount"
