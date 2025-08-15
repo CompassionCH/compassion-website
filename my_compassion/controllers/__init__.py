@@ -16,4 +16,5 @@ from . import (
     my2_letters,
     my2_user,
     my2_gifts,
+    my2_sponsorships,
 )

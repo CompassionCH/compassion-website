@@ -46,6 +46,7 @@
         "templates/components/Select.xml",
         "templates/components/FormField.xml",
         "templates/components/Banner.xml",
+        "templates/components/RangeInputLoading.xml",
         # Buttons
         "templates/components/buttons/ThemedButton.xml",
     ],

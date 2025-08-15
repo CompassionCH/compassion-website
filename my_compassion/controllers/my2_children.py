@@ -10,8 +10,10 @@ from odoo import _, http
 from odoo.exceptions import AccessError
 from odoo.http import request
 
+from odoo.addons.website_sponsorship.controllers.main import WebsiteChild
 
-class MyCompassionChildrenController(http.Controller):
+
+class MyCompassionChildrenController(WebsiteChild):
     def _check_sponsored_child_access(self, child):
         """
         Private helper to securely fetch a sponsored child.
@@ -19,10 +21,21 @@ class MyCompassionChildrenController(http.Controller):
         :param child: The requested child record to fetch.
         :raises: odoo.exceptions.AccessError if the user is not an active sponsor.
         """
-        if not request.env.user.partner_id.sponsorship_ids.mapped("child_id") & child:
-            raise AccessError(
-                _("You are not authorized to view this child's information.")
-            )
+        if child.state == "N":
+            reservation_uuid = self._get_reservation_uuid()
+            if (
+                not child.website_published
+                or not child.is_available_for_web_sponsorship(reservation_uuid)
+            ):
+                raise AccessError(_("This child is not available for sponsorship."))
+        if child.state == "P":
+            if (
+                not request.env.user.partner_id.sponsorship_ids.mapped("child_id")
+                & child
+            ):
+                raise AccessError(
+                    _("You are not authorized to view this child's information.")
+                )
 
     def _get_timeline_records(self, partner_id, child_id, offset=0, limit=9):
         """Private helper to fetch a paginated list of timeline records."""
@@ -75,7 +88,7 @@ class MyCompassionChildrenController(http.Controller):
     @http.route(
         '/my2/children/<model("compassion.child"):child>',
         type="http",
-        auth="user",
+        auth="public",
         website=True,
         sitemap=False,
     )
@@ -86,6 +99,8 @@ class MyCompassionChildrenController(http.Controller):
         except AccessError:
             return request.redirect("/my2/children/")
 
+        access_scope = "sponsor" if child.state == "P" else "public"
+
         offset = int(kwargs.get("offset", 0))
         limit = int(kwargs.get("limit", 9))
         partner = request.env.user.partner_id
@@ -95,7 +110,7 @@ class MyCompassionChildrenController(http.Controller):
         return request.render(
             "my_compassion.my2_child_timeline_page",
             {
-                "compassion_child": child,
+                "compassion_child": child.sudo(),
                 "breadcrumbs": [
                     {"name": "Children", "url": "/my2/children/", "active": False},
                     {
@@ -106,6 +121,7 @@ class MyCompassionChildrenController(http.Controller):
                 ],
                 "records": records,
                 "has_more_records": total > offset + limit,
+                "access_scope": access_scope,
             },
         )
 

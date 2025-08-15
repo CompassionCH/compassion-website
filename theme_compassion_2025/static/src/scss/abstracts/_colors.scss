@@ -127,4 +127,13 @@ $compassion-colors: (
             background-color: $color !important;
         }
     }
+
+    // Slider style
+    .slider-thumb-#{$name}::-webkit-slider-thumb {
+      background-color: $color !important;
+    }
+
+    .slider-thumb-#{$name}::-moz-range-thumb {
+      background-color: $color !important;
+    }
 }
