@@ -28,6 +28,7 @@
                 </t>
                 <p class="text-pure-white">Every child deserves a secure home, safe water and medicine to keep them healthy. That’s why when poverty places a child in critical need, we take action.</p>
                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                    <t t-set="href" t-value="'/my2/gifts/?type=gift'" />
                     <t t-set="label" t-value="'Send a gift'" />
                     <t t-set="text_color" t-value="'pure-white'" />
                     <t t-set="color" t-value="'low-blue'" />
