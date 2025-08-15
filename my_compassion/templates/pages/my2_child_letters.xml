@@ -146,6 +146,34 @@
                                 </div>
                                 <!-- Filter type and sort options -->
                                 <div class="pl-5 pr-5 pb-5 pt-3">
+                                    <div
+                                        class="btn-group btn-group-toggle justify-content-between d-flex w-100 pb-3"
+                                        data-toggle="buttons"
+                                        id="unreadToggle"
+                                    >
+                                        <label
+                                            t-att-class="'btn btn-secondary btn-custom-toggle text-low-blue bg-pure-white border-low-blue border-left-pill w-50' + (' active' if filters['sort'] == 'unread' else '')"
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="unreadOptions"
+                                                value="unread"
+                                                t-att-checked="'checked' if filters['sort'] == 'unread' else None"
+                                            />
+                                            Unread
+                                        </label>
+                                        <label
+                                            t-att-class="'btn btn-secondary btn-custom-toggle text-low-blue bg-pure-white border-low-blue border-right-pill w-50' + (' active' if filters['sort'] == 'all' else '')"
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="unreadOptions"
+                                                value="all"
+                                                t-att-checked="'checked' if filters['sort'] == 'all' else None"
+                                            />
+                                            All letters
+                                        </label>
+                                    </div>
                                     <!-- Type filter: Received / Sent -->
                                     <div
                                         class="btn-group btn-group-toggle justify-content-between d-flex w-100 pb-3"

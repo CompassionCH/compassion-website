@@ -11,7 +11,7 @@ from datetime import date
 
 import babel
 
-from odoo import http
+from odoo import http, fields
 from odoo.exceptions import AccessError
 from odoo.http import request
 
@@ -48,6 +48,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         month_to = self._safe_int(kwargs.get("month_to"), 12)
         letter_type = kwargs.get("type")
         sort_order = kwargs.get("sort", "newest")
+        unread_filter = kwargs.get("unread", "all")
         nr_filters_applied = 0
         child_id = self._safe_int(kwargs.get("child_id"), None)
         child = request.env["compassion.child"].browse(child_id)
@@ -67,8 +68,14 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 nr_filters_applied += 1
             except AccessError:
                 child = None
+
         filter_domain.append(("create_date", ">=", from_date))
         filter_domain.append(("create_date", "<=", to_date))
+
+        if unread_filter == "unread":
+            filter_domain.append(("email_read", "=", False))
+            nr_filters_applied += 1
+
         if (
             year_from > 1900
             or year_to < current_year
@@ -76,10 +83,13 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             or month_to < 12
         ):
             nr_filters_applied += 1
+
         if letter_type:
             filter_domain.append(("direction", "=", letter_type))
             nr_filters_applied += 1
+
         order = "create_date DESC" if sort_order == "newest" else "create_date ASC"
+
         if sort_order == "oldest":
             nr_filters_applied += 1
 
@@ -114,11 +124,22 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                     "month_to": month_to,
                     "type": letter_type,
                     "sort": sort_order,
+                    "unread": unread_filter,
                 },
                 "nr_filters_applied": nr_filters_applied,
                 "months": months,
             },
         )
+
+    @http.route('/my2/children/<model("compassion.child"):child>/letters/<model("correspondence"):correspondence>/mark_read',
+                type='json', auth='user', methods=['POST'])
+    def mark_letter_as_read(self, child, correspondence):
+        letter = request.env['correspondence'].search([('id', '=', correspondence.id)], limit=1)
+        if letter.exists() and letter.child_id == child.id and letter.partner_id.id == request.env.user.partner_id.id:
+            if not letter.email_read:  # only set if not already read
+                letter.email_read = fields.Datetime.now()
+            return {'status': 'success'}
+        return {'status': 'error', 'message': 'Not found or unauthorized'}
 
     @http.route(
         '/my2/children/letters/new',
