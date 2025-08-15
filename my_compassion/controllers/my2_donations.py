@@ -6,7 +6,6 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-import logging
 
 from werkzeug.exceptions import BadRequest, NotFound
 
