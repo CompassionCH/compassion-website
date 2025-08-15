@@ -66,7 +66,10 @@
                         <i class="pictogram pictogram-letter-writing bg-pure-white" />
                     </div>
                     <!-- cd-timeline__img -->
-                    <div class="cd-timeline__content text-component">
+                    <a
+                        class="cd-timeline__content text-component"
+                        t-att-href="'/b2s_image?id=' + item.record_id + '&amp;disposition=inline&amp;file_type=pdf'"
+                    >
                         <p class="modal-title text-core-blue">
                             <t t-esc="item.title" />
                         </p>
@@ -80,14 +83,17 @@
                                 <t t-esc="item.create_date_str" />
                             </span>
                         </div>
-                    </div>
+                    </a>
                     <!-- cd-timeline__content -->
                 </div>
                 <!-- cd-timeline__block -->
             </t>
             <!-- correspondence -->
             <t t-else="">
-                <div class="timeline-card d-flex">This item type is not supported in the timeline.</div>
+                <div class="timeline-card d-flex">
+                    This item type is not supported in the
+                    timeline.
+                </div>
             </t>
         </t>
     </template>
