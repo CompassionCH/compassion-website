@@ -115,4 +115,18 @@ $compassion-colors: (
         background-color: $color !important;
         color: #fff !important;
     }
+
+    .btn--default-outlined.border-#{$name},
+    .btn--impact-outlined.border-#{$name},
+    .btn--compact-outlined.border-#{$name} {
+
+        // Add a transition for a smooth effect on the base state
+        transition: all 0.2s ease-in-out;
+
+        // Define the hover state
+        &:hover {
+            background-color: $color !important;
+            color: map-get($compassion-colors, "low-blue") !important;
+        }
+    }
 }

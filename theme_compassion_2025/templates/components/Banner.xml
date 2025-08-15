@@ -17,7 +17,7 @@
 -->
 <odoo>
     <template id="BannerComponent" name="Banner Component">
-        <div class="d-flex bg-low-blue p-2">
+        <div class="d-flex bg-low-blue p-2 rounded">
             <div class="p-2">
                 <i t-attf-class="pictogram-centre-gift text-pure-white h1" />
             </div>
@@ -30,7 +30,7 @@
                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                     <t t-set="label" t-value="'Send a gift'" />
                     <t t-set="text_color" t-value="'pure-white'" />
-                    <t t-set="color" t-value="'pure-white'" />
+                    <t t-set="color" t-value="'low-blue'" />
                     <t t-set="variation" t-value="'outlined'" />
                     <t t-set="variant" t-value="'compact'" />
                 </t>
