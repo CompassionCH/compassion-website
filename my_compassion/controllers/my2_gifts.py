@@ -12,7 +12,7 @@ from odoo.http import request
 from urllib.parse import urljoin
 
 
-class MyCompassionFundController(http.Controller):
+class MyCompassionGiftController(http.Controller):
     @http.route(
         "/my2/gifts/", type="http", auth="user", website=True, sitemap=False
     )
@@ -53,7 +53,7 @@ class MyCompassionFundController(http.Controller):
 
         my_compassion_gifts = request.env['product.template'].search(domain)
         return request.render(
-            "my_compassion.my2_fund_page",
+            "my_compassion.my2_gifts_page",
             {
                 'my_compassion_gifts': my_compassion_gifts,
                 'page_content': page_content,

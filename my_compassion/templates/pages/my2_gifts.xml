@@ -3,7 +3,9 @@
 Page: My Compassion 2 Gifts Page
 
     Description:
-    - TODO
+    - This page displays all gifts available for the user, categorized into gifts and funds.
+    - It includes a banner, title, and a grid of vignettes representing each gift.
+    - Each vignette includes an image, title, and icon, and links to the respective gift or fund page.
 
     Used in route:
     - /my2/gifts/ (default)
@@ -15,7 +17,7 @@ Page: My Compassion 2 Gifts Page
 -->
 <odoo>
     <!-- GIFTS DASHBOARD -->
-    <template id="my2_fund_page" name="My Compassion 2 Fund Page">
+    <template id="my2_gifts_page" name="My Compassion 2 Gifts Page">
         <link rel="stylesheet" href="/addons-compassion-switzerland/compassion-website/my_compassion/static/src/css/my2_gifts.css" />
         <t t-call="website.layout">
             <div class="container">
@@ -49,7 +51,7 @@ Page: My Compassion 2 Gifts Page
                                 <t t-set="icon" t-value="'pictogram-' + my_compassion_gift.my_compassion_pictogram" />
                                 <t t-set="color" t-value="'pure-white'" />
                                 <t t-set="bg_color" t-value="my_compassion_gift.my_compassion_color" />
-                                <t t-set="learn_more_text" t-value="'Learn more and donate'" />
+                               <!-- <t t-set="learn_more_text" t-value="'Learn more and donate'" />-->
                             </t>
                         </div>
                     </t>
