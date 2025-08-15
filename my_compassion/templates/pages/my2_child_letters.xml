@@ -53,7 +53,10 @@
                     <div class="modal-dialog modal-sm" role="document">
                         <div class="modal-content border-0">
                             <div class="text-center p-0 m-0">
-                                <h2 class="text-pure-white bg-low-blue pb-2 pt-3">Filter letters</h2>
+                                <h2 class="text-pure-white bg-low-blue pb-2 pt-3">
+                                    Filter
+                                    letters
+                                </h2>
                                 <!-- Filter form: date range -->
                                 <div class="pl-4 pr-4 pt-3">
                                     <h3 class="text-low-blue">Children</h3>
@@ -146,6 +149,34 @@
                                 </div>
                                 <!-- Filter type and sort options -->
                                 <div class="pl-5 pr-5 pb-5 pt-3">
+                                    <div
+                                        class="btn-group btn-group-toggle justify-content-between d-flex w-100 pb-3"
+                                        data-toggle="buttons"
+                                        id="unreadToggle"
+                                    >
+                                        <label
+                                            t-att-class="'btn btn-secondary btn-custom-toggle text-low-blue bg-pure-white border-low-blue border-left-pill w-50' + (' active' if unread == 'true' else '')"
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="unreadOptions"
+                                                value="unread"
+                                                t-att-checked="'checked' if unread == 'true' else None"
+                                            />
+                                            Unread
+                                        </label>
+                                        <label
+                                            t-att-class="'btn btn-secondary btn-custom-toggle text-low-blue bg-pure-white border-low-blue border-right-pill w-50' + (' active' if unread != 'true' else '')"
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="unreadOptions"
+                                                value="read"
+                                                t-att-checked="'checked' if unread != 'true' else None"
+                                            />
+                                            All
+                                        </label>
+                                    </div>
                                     <!-- Type filter: Received / Sent -->
                                     <div
                                         class="btn-group btn-group-toggle justify-content-between d-flex w-100 pb-3"
@@ -283,7 +314,7 @@
                 </t>
             </div>
             <!-- JavaScript logic for highlighting new letters -->
-            <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_letters_card_behavior.js" />
+            <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_letters.js" />
         </t>
     </template>
 </odoo>
