@@ -34,7 +34,7 @@
                         </t>
                     </div>
                 </div>
-                <form class="col-12 col-md-10 col-lg-8 mx-auto">
+                <form id="new_letter_form" class="col-12 col-md-10 col-lg-8 mx-auto">
                     <div class="row align-items-center mb-3">
                         <div class="col-7">
                             <div class="form-group">
@@ -123,7 +123,10 @@
                     <div class="form-group">
                         <div class="d-flex justify-content-between">
                             <label class="text-core-blue" for="letter-input">Text</label>
-                            <label class="text-core-blue" for="letter-input">page 0/15</label>
+                            <label class="text-core-blue" for="letter-input">
+                                page
+                                0/15
+                            </label>
                         </div>
                         <textarea id="letter-input" class="form-control" rows="10" />
                     </div>
@@ -141,7 +144,10 @@
                                 <div class="text-center p-3">
                                     <i class="icon-image-plus fa-2x text-dark-blue mb-3" />
                                     <br />
-                                    <span class="text-mid-grey">supported format: jpeg,</span>
+                                    <span class="text-mid-grey">
+                                        supported format:
+                                        jpeg,
+                                    </span>
                                     <br />
                                     <span class="text-mid-grey">png, webp</span>
                                     <br />
@@ -225,7 +231,8 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Feedback Modal for when the user submitted the letter -->
+                    <!-- Feedback Modal for when the user submitted the letter.
+                    Where the progress-bar is inserted -->
                     <div
                         class="modal fade"
                         id="submitModal"
@@ -237,15 +244,7 @@
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content text-center p-4">
                                 <div class="modal-body">
-                                    <div class="progress mb-3">
-                                        <div
-                                            class="progress-bar progress-bar-striped progress-bar-animated"
-                                            role="progressbar"
-                                            style="width: 0%"
-                                            id="progressBar"
-                                        />
-                                    </div>
-                                    <p id="progressText" class="mb-0">Starting...</p>
+                                    <div id="progress-bar-div" />
                                 </div>
                             </div>
                         </div>
