@@ -202,6 +202,36 @@ class MyCompassionDonationsController(http.Controller):
 
         return {"html": html_content}
 
+    @http.route(
+        "/my2/gifts/thankyou",
+        type="http",
+        auth="user",
+        website=True,
+        sitemap=False,
+    )
+    def my2_gifts_thank_you_page(self, **kwargs):
+        sale_order_id = int(kwargs.get("sale_order_id", 0))
+        if not sale_order_id:
+            raise NotFound("Sale order ID has not been found")
+
+        # TODO: add the partner_id check here to make sure the user is allowed to see this order
+        sale_order = (
+            request.env["sale.order"]
+            .sudo()
+            .search(
+                [
+                    ("id", "=", sale_order_id),
+                ]
+            )
+        )
+
+        return request.render(
+            "my_compassion.my2_gifts_thank_you_page",
+            {
+                "sale_order": sale_order,
+            },
+        )
+
     @staticmethod
     def _extract_donation_order_line_fields(product_template, post):
         # Compute quantity

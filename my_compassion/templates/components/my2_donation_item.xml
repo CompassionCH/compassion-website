@@ -88,8 +88,8 @@
                         </t>
                     </t>
                 </div>
-                <div class="mt-2 d-flex justify-content-between">
-                    <t t-call="my_compassion.DonationItemButton">
+                <div t-attf-class="mt-2 d-flex justify-content-#{'between' if primary_button else 'end'}">
+                    <t t-if="primary_button" t-call="my_compassion.DonationItemButton">
                         <t t-set="button" t-value="primary_button" />
                     </t>
                     <div t-attf-class="text-#{price_color} ">
