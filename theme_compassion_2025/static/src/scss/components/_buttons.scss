@@ -37,8 +37,21 @@
         color: #fff;
     }
 
+    &--default-filled-icon-only {
+        @include button-base(48px, 12px, 17px, "NeighbourSans Medium", 500);
+        background-color: #000;
+        color: #fff;
+    }
+
     &--default-hollow {
         @extend .btn--default-filled;
+        background-color: transparent;
+        border: 2px solid #000;
+        color: #000;
+    }
+
+    &--default-hollow-icon-only {
+        @extend .btn--default-filled-icon-only;
         background-color: transparent;
         border: 2px solid #000;
         color: #000;
@@ -50,8 +63,21 @@
         color: #fff;
     }
 
+    &--impact-filled-icon-only {
+        @include button-base(56px, 12px, 19px, "NeighbourSans DemiBold", 600);
+        background-color: #000;
+        color: #fff;
+    }
+
     &--impact-hollow {
         @extend .btn--impact-filled;
+        background-color: transparent;
+        border: 2px solid #000;
+        color: #000;
+    }
+
+    &--impact-hollow-icon-only {
+        @extend .btn--impact-filled-icon-only;
         background-color: transparent;
         border: 2px solid #000;
         color: #000;
@@ -63,8 +89,21 @@
         color: #fff;
     }
 
+    &--compact-filled-icon-only {
+        @include button-base(42px, 12px, 16px, "NeighbourSans Medium", 500);
+        background-color: #000;
+        color: #fff;
+    }
+
     &--compact-hollow {
         @extend .btn--compact-filled;
+        background-color: transparent;
+        border: 2px solid #000;
+        color: #000;
+    }
+
+    &--compact-hollow-icon-only {
+        @extend .btn--compact-filled-icon-only;
         background-color: transparent;
         border: 2px solid #000;
         color: #000;

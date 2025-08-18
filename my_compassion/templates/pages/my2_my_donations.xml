@@ -121,7 +121,7 @@
                                                 t-value="[
                         {
                             'icon': 'download01',
-                            'color': 'mid-yellow',
+                            'color': 'low-yellow',
                             'action': 'link',
                             'href': '/my/download/gift_bvr?child_id=' + str(sponsorship.child_id.id),
                         }
@@ -148,41 +148,45 @@
                             </t>
                         </div>
                         <!-- DUE INVOICES -->
-                        <div class="mb-4 mt-4">
-                            <h3 class="text-dark-blue">Open contributions</h3>
-                            <p>
-                                Your latest payments may not already be taken into
-                                account.
-                            </p>
-                            <t t-if="due_invoices">
-                                <div class="row font-weight-bold mb-2">
-                                    <div class="col text-core-blue">Month</div>
-                                    <div class="col text-core-blue">Child</div>
-                                    <div class="col text-right text-core-blue">Amount</div>
-                                </div>
-                                <t t-foreach="due_invoices" t-as="invoice">
-                                    <t
-                                        t-set="children"
-                                        t-value="invoice.invoice_line_ids.mapped('contract_id.child_id')"
-                                    />
-                                    <div class="row mb-3">
-                                        <div class="col">
-                                            <t t-esc="invoice.get_date('invoice_date', 'MMMM yyyy').title()" />
-                                        </div>
-                                        <div class="col">
-                                            <t t-esc="children.get_list('preferred_name', 3, children.get_number())" />
-                                        </div>
-                                        <div class="col text-right">
-                                            <t t-esc="int(invoice.amount_total)" />
-                                            <t t-esc="invoice.currency_id.name" />
-                                        </div>
+                        <t t-if="due_invoices">
+                            <div class="mb-4 mt-4">
+                                <h3 class="text-dark-blue">Open contributions</h3>
+                                <p>
+                                    Your latest payments may not already be taken into
+                                    account.
+                                </p>
+                                <t t-if="due_invoices">
+                                    <div class="row font-weight-bold mb-2">
+                                        <div class="col text-core-blue">Month</div>
+                                        <div class="col text-core-blue">Child</div>
+                                        <div class="col text-right text-core-blue">Amount</div>
                                     </div>
+                                    <t t-foreach="due_invoices" t-as="invoice">
+                                        <t
+                                            t-set="children"
+                                            t-value="invoice.invoice_line_ids.mapped('contract_id.child_id')"
+                                        />
+                                        <div class="row mb-3">
+                                            <div class="col">
+                                                <t t-esc="invoice.get_date('invoice_date', 'MMMM yyyy').title()" />
+                                            </div>
+                                            <div class="col">
+                                                <t
+                                                    t-esc="children.get_list('preferred_name', 3, children.get_number())"
+                                                />
+                                            </div>
+                                            <div class="col text-right">
+                                                <t t-esc="int(invoice.amount_total)" />
+                                                <t t-esc="invoice.currency_id.name" />
+                                            </div>
+                                        </div>
+                                    </t>
                                 </t>
-                            </t>
-                            <t t-else="">
-                                <p class="mb-3">No due invoices.</p>
-                            </t>
-                        </div>
+                                <t t-else="">
+                                    <p class="mb-3">No due invoices.</p>
+                                </t>
+                            </div>
+                        </t>
                         <!-- DONATION HISTORY -->
                         <div class="mb-4 mt-4">
                             <h3 class="text-dark-blue">Donations history</h3>
