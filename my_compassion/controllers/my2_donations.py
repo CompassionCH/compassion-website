@@ -214,13 +214,13 @@ class MyCompassionDonationsController(http.Controller):
         if not sale_order_id:
             raise NotFound("Sale order ID has not been found")
 
-        # TODO: add the partner_id check here to make sure the user is allowed to see this order
         sale_order = (
             request.env["sale.order"]
             .sudo()
             .search(
                 [
                     ("id", "=", sale_order_id),
+                    ("partner_id", "=", request.env.user.partner_id.id),
                 ]
             )
         )
