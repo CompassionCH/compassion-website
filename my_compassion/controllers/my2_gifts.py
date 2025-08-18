@@ -14,7 +14,7 @@ from odoo.http import request
 
 
 class MyCompassionGiftController(http.Controller):
-    @http.route("/my2/gifts/", type="http", auth="user", website=True, sitemap=False)
+    @http.route("/my2/gifts", type="http", auth="user", website=True, sitemap=False)
     def render_donation_page(self, type="fund", **kwargs):
         """
         Renders a page of donation opportunities (Funds or Gifts).

@@ -6,16 +6,17 @@
     */
 
 .title-component {
-        @media (max-width: $breakpoint-sm) {
-            &--align-sm-left {
-                text-align: left;
-            }
-            &--align-sm-center {
-                text-align: center;
-            }
-            &--align-sm-right {
-                text-align: right;
-            }
+    text-align: center;
+    @media (max-width: $breakpoint-sm) {
+        &--align-sm-left {
+            text-align: left;
+        }
+        &--align-sm-center {
+            text-align: center;
+        }
+        &--align-sm-right {
+            text-align: right;
+        }
     }
 
     // The main <h1> element

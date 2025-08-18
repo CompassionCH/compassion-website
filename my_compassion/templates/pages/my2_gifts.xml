@@ -21,17 +21,17 @@ Page: My Compassion 2 Gifts Page
         <t t-call="website.layout">
             <div class="container">
                 <!-- BANNER -->
-                <div class="mt-4">
+                <div class="content-column mt-4">
                     <t t-call="theme_compassion_2025.BannerComponent">
                         <t t-set="title" t-value="page_content['banner_title']" />
                         <t t-set="text" t-value="page_content['banner_text']" />
                         <t t-set="btn_text" t-value="page_content['banner_btn_text']" />
                         <t t-set="btn_link" t-value="page_content['banner_btn_link']" />
-                        <t t-set="pictogram" t-value="'centre-gift'" />
+                        <t t-set="pictogram" t-value="'gift-donation-general'" />
                     </t>
                 </div>
                 <!-- TITLE -->
-                <div class="mt-4">
+                <div class="content-column mt-4">
                     <t t-call="theme_compassion_2025.TitleComponent">
                         <t t-set="title_content" t-value="page_content['title']" />
                         <t t-set="color" t-value="'core-blue'" />
