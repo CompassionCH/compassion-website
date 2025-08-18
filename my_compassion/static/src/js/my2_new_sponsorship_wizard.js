@@ -103,6 +103,31 @@ document.addEventListener("DOMContentLoaded", function (event) {
                         }
                     }
                 });
+
+                 this.$("input[phone_number]:visible").each(function () {
+                    var $input = $(this);
+                    if ($input.hasClass("is-invalid")) {
+                        return;
+                    }
+
+                    var phoneRegex = /^\+?(\d[\d\s-]{5,}\d)$/;
+
+                    if (!phoneRegex.test($input.val())) {
+                        isValid = false;
+                        $input.addClass("is-invalid");
+
+                        var $errorHint = $(
+                            '<div class="input-invalid-hint text-mid-orange tiny-text mb-1">Please enter a valid phone number.</div>'
+                        );
+
+                        var $select_container = $input.parent(".SelectComponent");
+                        if ($select_container.length > 0) {
+                            $select_container.before($errorHint);
+                        } else {
+                            $input.before($errorHint);
+                        }
+                    }
+                });
                 return isValid;
             },
 
