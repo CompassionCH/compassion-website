@@ -17,7 +17,13 @@ document.addEventListener("DOMContentLoaded", function (event) {
             selector: ".new-sponsorship-wizard-form",
             events: {
                 "click .btn-next, .btn-previous, .btn-finish": "_onStepClick",
+                "blur input[email]:visible": "_onEmailBlur",
+                "blur input[phone_number]:visible": "_onPhoneNumberBlur",
             },
+
+            // ====================================================================
+            // Event Handlers
+            // ====================================================================
 
             /**
              * Handles the click on "Next" or "Previous" buttons.
@@ -70,6 +76,24 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     );
             },
 
+             /**
+             * Event handler for when the email input loses focus.
+             */
+            _onEmailBlur: function (ev) {
+                this._validateEmail($(ev.currentTarget));
+            },
+
+            /**
+             * Event handler for when the phone input loses focus.
+             */
+            _onPhoneNumberBlur: function (ev) {
+                this._validatePhoneNumber($(ev.currentTarget));
+            },
+
+            // ====================================================================
+            // Validation Logic
+            // ====================================================================
+
             /**
              * Validates required fields in the current step.
              * @returns {boolean} - True if valid, false otherwise.
@@ -104,58 +128,78 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     }
                 });
 
-                 this.$("input[phone_number]:visible").each(function () {
-                    var $input = $(this);
-                    if ($input.hasClass("is-invalid")) {
-                        return;
-                    }
-
-                    var phoneRegex = /^\+?(\d[\d\s-]{5,}\d)$/;
-
-                    if (!phoneRegex.test($input.val())) {
+                // validate email fields
+                this.$("input[email]:visible").each(function (i, el) {
+                    if (!this._validateEmail($(el))) {
                         isValid = false;
-                        $input.addClass("is-invalid");
-
-                        var $errorHint = $(
-                            '<div class="input-invalid-hint text-mid-orange tiny-text mb-1">Please enter a valid phone number.</div>'
-                        );
-
-                        var $select_container = $input.parent(".SelectComponent");
-                        if ($select_container.length > 0) {
-                            $select_container.before($errorHint);
-                        } else {
-                            $input.before($errorHint);
-                        }
                     }
-                });
+                }.bind(this));
 
-                this.$("input[email]:visible").each(function () {
-                    var $input = $(this);
-                    if ($input.hasClass("is-invalid")) {
-                        return;
-                    }
-
-                    var phoneRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-                    if (!phoneRegex.test($input.val())) {
+                // validate phone number fields
+                this.$("input[phone_number]:visible").each(function (i, el) {
+                    if (!this._validatePhoneNumber($(el))) {
                         isValid = false;
-                        $input.addClass("is-invalid");
-
-                        var $errorHint = $(
-                            '<div class="input-invalid-hint text-mid-orange tiny-text mb-1">Please enter a valid email address.</div>'
-                        );
-
-                        var $select_container = $input.parent(".SelectComponent");
-                        if ($select_container.length > 0) {
-                            $select_container.before($errorHint);
-                        } else {
-                            $input.before($errorHint);
-                        }
                     }
-                });
+                }.bind(this));
 
                 return isValid;
             },
+
+            /**
+             * Validates a single email field for format.
+             * @param {jQuery} $input - The jQuery object for the input field.
+             * @returns {boolean}
+             */
+            _validateEmail: function($input) {
+                if (!$input.val()) {
+                    return true;
+                }
+
+                var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+                $input.siblings('.input-invalid-hint').remove();
+                $input.removeClass('is-invalid');
+
+                if (!emailRegex.test($input.val())) {
+                    $input.addClass("is-invalid");
+                    var $errorHint = $(
+                        '<div class="input-invalid-hint text-mid-orange tiny-text mb-1">Please enter a valid email address.</div>'
+                    );
+                    $input.before($errorHint);
+                    return false;
+                }
+                return true;
+            },
+
+            /**
+             * Validates a single phone number field for format.
+             * @param {jQuery} $input - The jQuery object for the input field.
+             * @returns {boolean}
+             */
+            _validatePhoneNumber: function($input) {
+                if (!$input.val()) {
+                    return true;
+                }
+
+                var phoneRegex = /^\+?(\d[\d\s-]{5,}\d)$/;
+
+                $input.siblings('.input-invalid-hint').remove();
+                $input.removeClass('is-invalid');
+
+                if (!phoneRegex.test($input.val())) {
+                    $input.addClass("is-invalid");
+                    var $errorHint = $(
+                        '<div class="input-invalid-hint text-mid-orange tiny-text mb-1">Please enter a valid phone number.</div>'
+                    );
+                    $input.before($errorHint);
+                    return false;
+                }
+                return true;
+            },
+
+            // ====================================================================
+            // Helper Functions
+            // ====================================================================
 
             /**
              * Helper to convert form data array to a key-value object.
