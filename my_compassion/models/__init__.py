@@ -12,6 +12,7 @@ from . import (
     contract_group,
     correspondence_template,
     move,
+    my2_new_sponsorship_wizard,
     res_partner,
     res_user,
     my2_sponsor_child_timeline,

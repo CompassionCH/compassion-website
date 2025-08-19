@@ -20,7 +20,7 @@
 <odoo>
     <template id="SelectComponent">
         <div class="SelectComponent">
-            <select t-attf-class="custom-select" t-att-name="name" t-att-id="id">
+            <select t-attf-class="custom-select" t-att-name="name" t-att-id="id" t-att-required="required">
                 <t t-raw="0" />
             </select>
             <span class="select-divider" />
