@@ -12,7 +12,7 @@
 -->
 <odoo>
     <template id="FormFieldComponent" name="Form Field Component">
-        <div t-att-class="top_class">
+        <div t-attf-class="form-field-component #{top_class or ''}">
             <label t-att-for="input_id" class="text-core-blue body-small bold mb-1">
                 <t t-esc="label" />
             </label>

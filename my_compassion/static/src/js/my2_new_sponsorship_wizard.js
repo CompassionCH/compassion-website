@@ -98,7 +98,23 @@ document.addEventListener("DOMContentLoaded", function (event) {
              * Validates required fields in the current step.
              * @returns {boolean} - True if valid, false otherwise.
              */
-            _validateForm: function () {
+             _validateForm: function () {
+                var isValid = true;
+
+                // Finde alle FormField-Komponenten im aktuellen Schritt
+                this.$(".form-field-component:visible").each(function () {
+                    // Odoo hängt die Widget-Instanz an die DOM-Element-Daten an
+                    var fieldWidget = $(this).data("widget");
+
+                    // Rufe die öffentliche validate() Methode unseres neuen Widgets auf
+                    if (fieldWidget && !fieldWidget.validate()) {
+                        isValid = false;
+                    }
+                });
+
+                return isValid;
+            }
+            /*_validateForm: function () {
                 var isValid = true;
                 // Remove previous error messages and styles
                 this.$(".input-invalid-hint").remove();
@@ -126,21 +142,20 @@ document.addEventListener("DOMContentLoaded", function (event) {
                             $input.before($errorHint);
                         }
                     }
-                });
+                });*/
 
-                // validate email fields
-                this.$("input[email]:visible").each(function (i, el) {
-                    if (!this._validateEmail($(el))) {
-                        isValid = false;
-                    }
-                }.bind(this));
+                var fieldsToFurtherValidate = [
+                    {selector: "input[email]:visible", validator: this._validateEmail},
+                    {selector: "input[phone_number]:visible", validator: this._validatePhoneNumber}
+                ];
 
-                // validate phone number fields
-                this.$("input[phone_number]:visible").each(function (i, el) {
-                    if (!this._validatePhoneNumber($(el))) {
-                        isValid = false;
-                    }
-                }.bind(this));
+                fieldsToFurtherValidate.forEach(function (fieldType) {
+                    this.$(fieldType.selector).each(function (i, el) {
+                        if (!fieldType.validator.call(this, $(el))) {
+                            isValid = false;
+                        }
+                    }.bind(this));
+                }, this);
 
                 return isValid;
             },
