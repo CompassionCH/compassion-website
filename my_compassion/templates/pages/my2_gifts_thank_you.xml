@@ -38,7 +38,7 @@ Page: My Compassion 2 Thank you Page
                                 t-set="one_time_order_lines"
                                 t-value="sale_order.order_line.filtered(lambda line: line.frequency == 'one_time')"
                             />
-                            <h3 t-if="len(one_time_order_lines) &gt;= 1" class="mt-5 mb-0 text-mid-green text-center">
+                            <h3 t-if="one_time_order_lines" class="mt-5 mb-0 text-mid-green text-center">
                                 One-time gifts
                             </h3>
                             <t t-foreach="one_time_order_lines" t-as="line">
