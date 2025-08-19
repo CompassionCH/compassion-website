@@ -18,7 +18,7 @@
     - name (string): Item name.                                                              -required-
     - image (string): Item image src.                                                        -required-
     - price (float): Item price.                                                             -required-
-    - primary_button (dict): Primary button with custom action (see Button).                 -required-
+    - primary_button (dict): Primary button with custom action (see Button).                 [none]
     - recipient (string): Item recipient.                                                    [none]
     - title_color (string): Color of the title.                                              [dark-blue]
     - accent_color (string): Color of the left border accent.                                [dark-blue]
@@ -88,8 +88,8 @@
                         </t>
                     </t>
                 </div>
-                <div class="mt-2 d-flex justify-content-between">
-                    <t t-call="my_compassion.DonationItemButton">
+                <div t-attf-class="mt-2 d-flex justify-content-#{'between' if primary_button else 'end'}">
+                    <t t-if="primary_button" t-call="my_compassion.DonationItemButton">
                         <t t-set="button" t-value="primary_button" />
                     </t>
                     <div t-attf-class="text-#{price_color} ">

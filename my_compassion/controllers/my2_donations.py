@@ -202,6 +202,26 @@ class MyCompassionDonationsController(http.Controller):
 
         return {"html": html_content}
 
+    @http.route(
+        "/my2/gifts/thankyou",
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def my2_gifts_thank_you_page(self, **kwargs):
+        sale_order_id = request.session.get('sale_last_order_id')
+        if sale_order_id:
+            sale_order = request.env['sale.order'].sudo().browse(sale_order_id)
+            current_partner = request.env.user.partner_id
+            # Check that the order belongs to the current user
+            if sale_order.partner_id == current_partner:
+                return request.render(
+                    "my_compassion.my2_gifts_thank_you_page",
+                    {"sale_order": sale_order},
+                )
+        return request.redirect('/my2/dashboard')
+
     @staticmethod
     def _extract_donation_order_line_fields(product_template, post):
         # Compute quantity

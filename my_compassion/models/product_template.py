@@ -54,6 +54,7 @@ class ProductTemplate(models.Model):
             ("letter-writing", "Letter Writing"),
             ("local-empowerment-partnership", "Local Empowerment Partnership"),
             ("location-pin", "Location Pin"),
+            ("love", "Love"),
             ("mothers-and-babies", "Mothers And Babies"),
             ("neighbourhood", "Neighbourhood"),
             ("physical", "Physical"),
