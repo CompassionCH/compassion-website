@@ -121,17 +121,23 @@ class MyCompassionDonationsController(http.Controller):
         return: An HTTP response containing a rendered template with the gift
         package page.
         """
-        # Get the current sales order
+        # Get the current sales order and register it as last order
+        # (usually done in a confirmation step that we don't have)
         order = request.website.sale_get_order()
+        request.session["sale_last_order_id"] = order.id
 
         # Fetch gift thresholds
         limits = request.env["gift.threshold.settings"].sudo().search([])
+
+        # Fetch acquirer
+        acquirer = self._get_payment_acquirer()
 
         return request.render(
             "my_compassion.my2_gift_package_page",
             {
                 "order": order,
                 "limits": limits,
+                "acquirer": acquirer,
             },
         )
 
@@ -205,7 +211,10 @@ class MyCompassionDonationsController(http.Controller):
             },
         )
 
-        return {"html": html_content}
+        return {
+            "html": html_content,
+            "is_order_empty": len(order.order_line) == 0,
+        }
 
     @http.route(
         "/my2/gift-package/add",
@@ -256,13 +265,10 @@ class MyCompassionDonationsController(http.Controller):
         sale_order_id = request.session.get("sale_last_order_id")
         if sale_order_id:
             sale_order = request.env["sale.order"].sudo().browse(sale_order_id)
-            current_partner = request.env.user.partner_id
-            # Check that the order belongs to the current user
-            if sale_order.partner_id == current_partner:
-                return request.render(
-                    "my_compassion.my2_gifts_thank_you_page",
-                    {"sale_order": sale_order},
-                )
+            return request.render(
+                "my_compassion.my2_gifts_thank_you_page",
+                {"sale_order": sale_order},
+            )
         return request.redirect("/my2/dashboard")
 
     @staticmethod
@@ -303,3 +309,11 @@ class MyCompassionDonationsController(http.Controller):
             order_line_fields["gift_recipient_id"] = post.get("recipient")
 
         return order_line_fields
+
+    @staticmethod
+    def _get_payment_acquirer():
+        return (
+            http.request.env["payment.acquirer"]
+            .sudo()
+            .search([("provider", "=", "postfinance")], limit=1)
+        )
