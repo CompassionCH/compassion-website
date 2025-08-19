@@ -52,8 +52,8 @@ class MyCompassionDonationsController(http.Controller):
         # Fetch the product record from the database
         try:
             product_template_id = int(post.get("product_id"))
-        except (ValueError, TypeError) as e:
-            raise BadRequest() from e
+        except (ValueError, TypeError):
+            raise BadRequest()
         product_template = (
             request.env["product.template"].sudo().browse(product_template_id)
         )
@@ -91,17 +91,12 @@ class MyCompassionDonationsController(http.Controller):
         """
         Edits a donation from the user's gift package.
         """
-        # Retrieve current user's cart
+        # Fetch the order line record from the user's cart
         order = request.website.sale_get_order()
-
-        # Get the order to be edited
-        try:
-            order_line_id = int(post.get("order_line_id"))
-        except (ValueError, TypeError) as e:
-            raise BadRequest() from e
+        order_line_id = post.get("order_line_id")
+        order_line = order and order.order_line.filtered(lambda l: l.id == order_line_id)
 
         # Make sure the order line exists
-        order_line = order.order_line.filtered(lambda line: line.id == order_line_id)
         if not order_line:
             raise NotFound()
 
@@ -255,9 +250,9 @@ class MyCompassionDonationsController(http.Controller):
         sitemap=False,
     )
     def my2_gifts_thank_you_page(self, **kwargs):
-        sale_order_id = request.session.get("sale_last_order_id")
+        sale_order_id = request.session.get('sale_last_order_id')
         if sale_order_id:
-            sale_order = request.env["sale.order"].sudo().browse(sale_order_id)
+            sale_order = request.env['sale.order'].sudo().browse(sale_order_id)
             current_partner = request.env.user.partner_id
             # Check that the order belongs to the current user
             if sale_order.partner_id == current_partner:
@@ -265,29 +260,14 @@ class MyCompassionDonationsController(http.Controller):
                     "my_compassion.my2_gifts_thank_you_page",
                     {"sale_order": sale_order},
                 )
-        return request.redirect("/my2/dashboard")
+        return request.redirect('/my2/dashboard')
 
     @staticmethod
     def _extract_donation_order_line_fields(product_template, post):
         # Compute quantity
         price = 0
         amount = post.get("suggested_amount")
-        if amount == "low":
-            price = (
-                product_template.my_compassion_donation_quantity_low
-                * product_template.list_price
-            )
-        elif amount == "medium":
-            price = (
-                product_template.my_compassion_donation_quantity_medium
-                * product_template.list_price
-            )
-        elif amount == "high":
-            price = (
-                product_template.my_compassion_donation_quantity_high
-                * product_template.list_price
-            )
-        elif amount == "custom":
+        if amount == "custom":
             try:
                 price = float(post.get("custom_amount"))
             except (ValueError, TypeError) as e:
@@ -296,7 +276,15 @@ class MyCompassionDonationsController(http.Controller):
             if price <= 0:
                 raise BadRequest()
         else:
-            raise BadRequest()
+            quantities = {
+                "low": product_template.my_compassion_donation_quantity_low,
+                "medium": product_template.my_compassion_donation_quantity_medium,
+                "high": product_template.my_compassion_donation_quantity_high,
+            }
+            quantity = quantities.get(amount)
+            if not quantity:
+                raise BadRequest()
+            price = quantity * product_template.list_price
 
         # Get frequency
         frequency = post.get("frequency")

@@ -75,7 +75,8 @@ odoo.define("my_compassion.donation_form", function (require) {
             this.$("input.is-invalid").removeClass("is-invalid");
 
             // Validate recipient
-            if (this.$('select[name="recipient"]').find(":selected").val() === "") {
+            const $recipient = this.$('select[name="recipient"]');
+            if ($recipient.length && $recipient.find(":selected").val() === "") {
                 isValid = false;
                 this.$('select[name="recipient"]').addClass("is-invalid");
             }
