@@ -131,7 +131,11 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                     <t t-set="top_class" t-value="'my-3'" />
                     <t t-set="label" t-value="'Phone number'" />
                     <t t-set="input_id" t-value="'phone'" />
-                    <input id="phone" type="tel" name="phone" t-att-value="wizard.phone" required="" phone_number=""/>
+                    <input id="phone" type="tel" name="phone" t-att-value="wizard.phone"
+                           required="required"
+                           data-validate-type="phone"
+                           data-error-required="This field is required."
+                           data-error-format="Please enter a valid phone number." />
                 </t>
                 <!-- Street -->
                 <div class="d-flex">
