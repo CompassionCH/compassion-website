@@ -40,6 +40,7 @@
         "security/ir.model.access.csv",
         # My Compassion 2 data
         "data/my2_website.xml",
+        "data/my2_website_redirect.xml",
         # My compassion 2 assets, needs to be placed before others
         "templates/my2_assets.xml",
         "templates/my_account_components.xml",
@@ -77,6 +78,7 @@
         "templates/components/my2_donation_product.xml",
         "templates/components/my2_donation_form.xml",
         "templates/components/my2_giving_limits_modal.xml",
+        "templates/components/my2_checkout.xml",
     ],
     "depends": [
         "partner_communication_compassion",

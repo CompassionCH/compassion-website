@@ -82,7 +82,7 @@ odoo.define("my_compassion.donation_form", function (require) {
             }
 
             // Validate custom amount
-            if (this.$(".suggested-amount:checked").val() == "custom") {
+            if (this.$(".suggested-amount:checked").val() === "custom") {
                 const $input = this.$("#custom-amount");
                 const custom_amount = Number($input.val());
 

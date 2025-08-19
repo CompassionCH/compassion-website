@@ -13,20 +13,24 @@ Page: My Compassion 2 Thank you Page
 -->
 <odoo>
     <template id="my2_gifts_thank_you_page" name="My Compassion 2 Thank you Page">
+        <!-- Include stylesheet -->
+        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_gifts_thank_you.css" />
         <t t-call="website.layout">
             <div class="container">
                 <div class="content-column">
                     <div class="mt-3 d-flex justify-content-center align-items-center">
-                        <i class="pictogram pictogram-love bg-low-yellow text-center display-1" />
+                        <h1 class="mb-0">
+                            <i class="pictogram pictogram-love bg-low-yellow text-center" />
+                        </h1>
                     </div>
-                    <div class="px-3 mt-4 d-flex flex-column align-items-center">
+                    <div class="px-3 d-flex flex-column align-items-center">
                         <!-- TITLE -->
                         <t t-call="theme_compassion_2025.TitleComponent">
                             <t t-set="title_content" t-value="'Thank you'" />
                             <t t-set="color" t-value="'core-blue'" />
                             <t t-set="show_underline" t-value="True" />
                             <t t-set="underline_color" t-value="'low-yellow'" />
-                            <t t-set="description" t-value="'Thank you for your generous donation!'" />
+                            <t t-set="description" t-value="'Your generosity changes lives.'" />
                         </t>
                         <!-- GIFT PACKAGE CONTENT -->
                         <div
@@ -38,9 +42,6 @@ Page: My Compassion 2 Thank you Page
                                 t-set="one_time_order_lines"
                                 t-value="sale_order.order_line.filtered(lambda line: line.frequency == 'one_time')"
                             />
-                            <h3 t-if="one_time_order_lines" class="mt-5 mb-0 text-mid-green text-center">
-                                One-time gifts
-                            </h3>
                             <t t-foreach="one_time_order_lines" t-as="line">
                                 <t t-call="my_compassion.DonationItemComponent">
                                     <t t-set="top_class" t-valuef="mt-3 donation-item donation-item-#{line.id}" />
@@ -67,9 +68,6 @@ Page: My Compassion 2 Thank you Page
                                 t-set="monthly_order_lines"
                                 t-value="sale_order.order_line.filtered(lambda line: line.frequency == 'monthly')"
                             />
-                            <h3 t-if="monthly_order_lines" class="mt-5 mb-0 text-dark-blue text-center">
-                                Monthly gifts
-                            </h3>
                             <t t-foreach="monthly_order_lines" t-as="line">
                                 <t t-call="my_compassion.DonationItemComponent">
                                     <t t-set="top_class" t-valuef="mt-3 donation-item donation-item-#{line.id}" />
@@ -91,6 +89,20 @@ Page: My Compassion 2 Thank you Page
                                         t-valuef="/web/image/#{line.product_template_id._name}/#{line.product_template_id.id}/my_compassion_image"
                                     />
                                 </t>
+                            </t>
+                        </div>
+                        <!-- BACK TO HOME PAGE  -->
+                        <div
+                            class="gifts-thank-you-buttons-container w-100 mt-3 mb-5
+                                    d-flex flex-column align-items-stretch"
+                        >
+                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                <t t-set="variant" t-value="'compact'" />
+                                <t t-set="variation" t-value="'filled'" />
+                                <t t-set="label" t-value="'Back to dashboard'" />
+                                <t t-set="color" t-value="'dark-blue'" />
+                                <t t-set="text_color" t-value="'pure-white'" />
+                                <t t-set="href" t-value="'/my2/dashboard'" />
                             </t>
                         </div>
                     </div>
