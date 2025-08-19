@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             initTabNavigation();
             initCommunicationSettings();
-            initPrivacyForm();
+            initAgreementsForm();
 
             initFormHandler({
                 formId: "personal-information-form",
@@ -63,6 +63,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (targetPane) targetPane.classList.add("show", "active");
                 if (targetLink) targetLink.classList.add("active");
                 if (mobileSelect && mobileSelect.value !== targetId) mobileSelect.value = targetId;
+
+                const url = new URL(window.location);
+                url.searchParams.set("current_tab", targetId.substring(1));
+                window.history.pushState({}, '', url);
             };
 
             const urlParams = new URLSearchParams(window.location.search);
@@ -133,27 +137,56 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         /**
-         * Initializes the child protection charter agreement checkbox.
-         */
-        function initPrivacyForm() {
-            const checkbox = document.getElementById("flexCheckDefault");
-            checkbox?.addEventListener("change", function () {
-                if (this.checked) {
-                    rpc.query({
-                        route: "/my2/user_settings/agree_child_protection_charter",
-                        params: {},
-                    })
-                        .then(() => {
-                            window.location.reload();
-                        })
-                        .catch((err) => {
-                            console.error("RPC Error:", err);
-                            this.checked = false;
-                            Dialog.alert(null, "Could not save your confirmation. Please try again.");
-                        });
-                }
+ * Attaches a standardized event listener to an agreement checkbox.
+ * When checked, it calls a specific RPC route.
+ */
+
+        function attachAgreementListener(checkbox, route) {
+    checkbox.addEventListener("change", function () {
+        // Only proceed if the checkbox is being checked
+        if (!this.checked) return;
+
+        rpc.query({ route, params: {} })
+            .then(() => {
+                window.location.reload();
+            })
+            .catch((err) => {
+                console.error("RPC Error:", err);
+                this.checked = false; // Revert the checkbox state on error
+                Dialog.alert(null, "Could not save your confirmation. Please try again.");
             });
+    });
+    }
+
+        /**
+         * Initializes the privacy checkbox.
+         */
+function initAgreementsForm() {
+    const signButton = document.getElementById("SignLegalAgreementButton");
+    const checkbox = document.getElementById("LegalAgreementCheck");
+
+    if (!signButton || !checkbox) {
+        return;
+    }
+
+    signButton.addEventListener("click", () => {
+        if (checkbox.checked) {
+            rpc.query({
+                route: "/my2/user_settings/agree_data_protection",
+                params: {},
+            })
+            .then(() => {
+                window.location.reload();
+            })
+            .catch((err) => {
+                console.error("RPC Error:", err);
+                Dialog.alert(null, "Could not save your confirmation. Please try again.");
+            });
+        } else {
+            Dialog.alert(null, "You must check the box to accept the legal terms and privacy policy before signing.");
         }
+    });
+}
 
         /**
          * Generic form handler for tabs with an "edit/save/cancel" workflow.

@@ -27,7 +27,7 @@ class MyCompassionUserController(http.Controller):
         countries = request.env["res.country"].sudo().search([])
 
         # Determines which tab should be active when the page loads.
-        current_tab = kwargs.get("current_tab", "personal-information")
+        current_tab = request.params.get("current_tab", "personal-information")
 
         return request.render(
             "my_compassion.my2_user_settings_page",
@@ -109,9 +109,10 @@ class MyCompassionUserController(http.Controller):
 
         # Check if login is already taken by another user
         if (
-            request.env["res.users"]
-            .sudo()
-            .search_count([("login", "=", new_login), ("id", "!=", user.id)])
+                request.env["res.users"]
+                        .sudo()
+                        .search_count(
+                    [("login", "=", new_login), ("id", "!=", user.id)])
         ):
             return {
                 "success": False,
@@ -124,14 +125,14 @@ class MyCompassionUserController(http.Controller):
         return {"success": True}
 
     @http.route(
-        "/my2/user_settings/agree_child_protection_charter",
+        "/my2/user_settings/agree_data_protection",
         type="json",
         auth="user",
         methods=["POST"],
     )
-    def agree_child_protection_charter(self, **post):
+    def agree_data_protection(self, **post):
         request.env.user.partner_id.sudo().write(
-            {"date_agreed_child_protection_charter": date.today()}
+            {"legal_agreement_date": date.today()}
         )
         return {"success": True}
 
