@@ -35,8 +35,6 @@ odoo.define("my_compassion.form_field_validator", function (require) {
         }
     }
 
-    console.log("RangeInput component loaded");
-
     publicWidget.registry.FormFieldValidator = publicWidget.Widget.extend({
         selector: ".form-field-component",
         events: {
