@@ -1,3 +1,20 @@
+/*
+ * Form Field Validator Widget
+ *
+ * Provides client-side validation for form fields inside
+ * `.form-field-component` wrappers. It validates:
+ *   - required fields
+ *   - email format
+ *   - phone number format
+ *
+ * Features:
+ *   - Displays inline error messages below/above inputs
+ *   - Marks invalid fields with the `is-invalid` class
+ *   - Appends an asterisk (*) to required field labels
+ *
+ *
+ * -------------------------------------------------------------------------------
+ */
 odoo.define("my_compassion.form_field_validator", function (require) {
     "use strict";
 
@@ -35,8 +52,8 @@ odoo.define("my_compassion.form_field_validator", function (require) {
         },
 
         /**
-         * Die start-Methode wird aufgerufen, nachdem das DOM-Element des Widgets
-         * gerendert und verfügbar ist. Dies ist der richtige Ort für DOM-Manipulationen.
+         * The start method is called after the widget's DOM element
+         * has been rendered and is available. This is the right place for DOM manipulations.
          */
         start: function () {
             this._super.apply(this, arguments);
@@ -60,15 +77,16 @@ odoo.define("my_compassion.form_field_validator", function (require) {
                 format: this.$input.data("error-format") || this.config?.defaultErrorMessage
             };
         },
+
         /**
-         * Validiert das Feld, wenn der Fokus verlassen wird.
+         * Validates the field when it loses focus.
          */
         _onBlur: function () {
             this.validate();
         },
 
         /**
-         * Die zentrale Validierungsfunktion. Kann auch von aussen aufgerufen werden.
+         * The central validation function. Can also be called externally.
          * @returns {boolean}
          */
         validate: function () {
@@ -91,7 +109,7 @@ odoo.define("my_compassion.form_field_validator", function (require) {
         },
 
         /**
-         * Zeigt eine Fehlermeldung an.
+         * Displays an error message.
          */
         _showError: function (message) {
             this.$input.addClass("is-invalid");
@@ -106,7 +124,7 @@ odoo.define("my_compassion.form_field_validator", function (require) {
         },
 
         /**
-         * Entfernt bestehende Fehlermeldungen.
+         * Removes existing error messages.
          */
         _clearError: function () {
             this.$el.find(".input-invalid-hint").remove();
