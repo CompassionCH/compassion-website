@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         publicWidget.registry.NewSponsorshipWizard = publicWidget.Widget.extend({
             selector: ".new-sponsorship-wizard-form",
             events: {
-                "click .btn-next, .btn-previous, .btn-finish": "_onStepClick"
+                "click .btn-next, .btn-previous, .btn-finish": "_onStepClick",
             },
 
             /**
@@ -56,8 +56,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
                             if (data.html) {
                                 var $newContent = $(data.html);
                                 this.$(".new-sponsorship-wizard-form-content").empty().append($newContent);
-                                this.trigger_up('widgets_start_request', {
-                                    $target: $newContent
+                                this.trigger_up("widgets_start_request", {
+                                    $target: $newContent,
                                 });
                                 $("html, body").animate({ scrollTop: 0 }, "slow");
                             }
@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
              * Validates required fields in the current step.
              * @returns {boolean} - True if valid, false otherwise.
              */
-             _validateForm: function () {
+            _validateForm: function () {
                 var isValid = true;
 
                 this.$(".form-field-component:visible").each(function () {
