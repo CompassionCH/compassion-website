@@ -67,7 +67,7 @@ Page: My Compassion 2 Thank you Page
                                 t-set="monthly_order_lines"
                                 t-value="sale_order.order_line.filtered(lambda line: line.frequency == 'monthly')"
                             />
-                            <h3 t-if="len(monthly_order_lines) &gt;= 1" class="mt-5 mb-0 text-dark-blue text-center">
+                            <h3 t-if="monthly_order_lines" class="mt-5 mb-0 text-dark-blue text-center">
                                 Monthly gifts
                             </h3>
                             <t t-foreach="monthly_order_lines" t-as="line">
