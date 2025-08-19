@@ -16,9 +16,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         publicWidget.registry.NewSponsorshipWizard = publicWidget.Widget.extend({
             selector: ".new-sponsorship-wizard-form",
             events: {
-                "click .btn-next, .btn-previous, .btn-finish": "_onStepClick",
-                "blur input[email]:visible": "_onEmailBlur",
-                "blur input[phone_number]:visible": "_onPhoneNumberBlur",
+                "click .btn-next, .btn-previous, .btn-finish": "_onStepClick"
             },
 
             // ====================================================================
@@ -61,7 +59,19 @@ document.addEventListener("DOMContentLoaded", function (event) {
                         function (data) {
                             // Replace the form's inner content with the new step's HTML
                             if (data.html) {
+                            /*
                                 $(".new-sponsorship-wizard-form-content").html(data.html);
+                                $("html, body").animate({ scrollTop: 0 }, "slow");*/
+                                var $newContent = $(data.html);
+                                this.$(".new-sponsorship-wizard-form-content").empty().append($newContent);
+
+                                // DIES IST DER ENTSCHEIDENDE SCHRITT:
+                                // Odoo anweisen, alle Widgets innerhalb des neuen Inhalts zu starten.
+                                this.trigger_up('widgets_start_request', {
+                                    $target: $newContent
+                                });
+
+                                // Scrolle nach oben
                                 $("html, body").animate({ scrollTop: 0 }, "slow");
                             }
                             // Re-enable buttons
@@ -74,20 +84,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
                             this.$(".btn").prop("disabled", false);
                         }.bind(this)
                     );
-            },
-
-             /**
-             * Event handler for when the email input loses focus.
-             */
-            _onEmailBlur: function (ev) {
-                this._validateEmail($(ev.currentTarget));
-            },
-
-            /**
-             * Event handler for when the phone input loses focus.
-             */
-            _onPhoneNumberBlur: function (ev) {
-                this._validatePhoneNumber($(ev.currentTarget));
             },
 
             // ====================================================================
@@ -113,105 +109,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 });
 
                 return isValid;
-            }
-            /*_validateForm: function () {
-                var isValid = true;
-                // Remove previous error messages and styles
-                this.$(".input-invalid-hint").remove();
-                this.$("input.is-invalid").removeClass("is-invalid");
-
-                // Find all required inputs within the current step that are visible
-                this.$("input[required]:visible, select[required]:visible").each(function () {
-                    var $input = $(this);
-                    if (!$input.val()) {
-                        isValid = false;
-                        // Add the 'is-invalid' class
-                        $input.addClass("is-invalid");
-
-                        // Add a small text hint above the input field
-                        var $errorHint = $(
-                            '<div class="input-invalid-hint text-mid-orange tiny-text mb-1">This field is required.</div>'
-                        );
-                        var $select_container = $input.parent(".SelectComponent");
-
-                        if ($select_container.length > 0) {
-                            // If the input is a select component, place the hint before the container
-                            $select_container.before($errorHint);
-                        } else {
-                            // Otherwise, it's a standard input, so place the hint before the input itself
-                            $input.before($errorHint);
-                        }
-                    }
-                });*/
-
-                var fieldsToFurtherValidate = [
-                    {selector: "input[email]:visible", validator: this._validateEmail},
-                    {selector: "input[phone_number]:visible", validator: this._validatePhoneNumber}
-                ];
-
-                fieldsToFurtherValidate.forEach(function (fieldType) {
-                    this.$(fieldType.selector).each(function (i, el) {
-                        if (!fieldType.validator.call(this, $(el))) {
-                            isValid = false;
-                        }
-                    }.bind(this));
-                }, this);
-
-                return isValid;
             },
-
-            /**
-             * Validates a single email field for format.
-             * @param {jQuery} $input - The jQuery object for the input field.
-             * @returns {boolean}
-             */
-            _validateEmail: function($input) {
-                if (!$input.val()) {
-                    return true;
-                }
-
-                var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-                $input.siblings('.input-invalid-hint').remove();
-                $input.removeClass('is-invalid');
-
-                if (!emailRegex.test($input.val())) {
-                    $input.addClass("is-invalid");
-                    var $errorHint = $(
-                        '<div class="input-invalid-hint text-mid-orange tiny-text mb-1">Please enter a valid email address.</div>'
-                    );
-                    $input.before($errorHint);
-                    return false;
-                }
-                return true;
-            },
-
-            /**
-             * Validates a single phone number field for format.
-             * @param {jQuery} $input - The jQuery object for the input field.
-             * @returns {boolean}
-             */
-            _validatePhoneNumber: function($input) {
-                if (!$input.val()) {
-                    return true;
-                }
-
-                var phoneRegex = /^\+?(\d[\d\s-]{5,}\d)$/;
-
-                $input.siblings('.input-invalid-hint').remove();
-                $input.removeClass('is-invalid');
-
-                if (!phoneRegex.test($input.val())) {
-                    $input.addClass("is-invalid");
-                    var $errorHint = $(
-                        '<div class="input-invalid-hint text-mid-orange tiny-text mb-1">Please enter a valid phone number.</div>'
-                    );
-                    $input.before($errorHint);
-                    return false;
-                }
-                return true;
-            },
-
             // ====================================================================
             // Helper Functions
             // ====================================================================
