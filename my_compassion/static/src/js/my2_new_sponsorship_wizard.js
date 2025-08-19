@@ -19,10 +19,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 "click .btn-next, .btn-previous, .btn-finish": "_onStepClick"
             },
 
-            // ====================================================================
-            // Event Handlers
-            // ====================================================================
-
             /**
              * Handles the click on "Next" or "Previous" buttons.
              * @param {Event} ev
@@ -57,21 +53,12 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 })
                     .then(
                         function (data) {
-                            // Replace the form's inner content with the new step's HTML
                             if (data.html) {
-                            /*
-                                $(".new-sponsorship-wizard-form-content").html(data.html);
-                                $("html, body").animate({ scrollTop: 0 }, "slow");*/
                                 var $newContent = $(data.html);
                                 this.$(".new-sponsorship-wizard-form-content").empty().append($newContent);
-
-                                // DIES IST DER ENTSCHEIDENDE SCHRITT:
-                                // Odoo anweisen, alle Widgets innerhalb des neuen Inhalts zu starten.
                                 this.trigger_up('widgets_start_request', {
                                     $target: $newContent
                                 });
-
-                                // Scrolle nach oben
                                 $("html, body").animate({ scrollTop: 0 }, "slow");
                             }
                             // Re-enable buttons
@@ -85,10 +72,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
                         }.bind(this)
                     );
             },
-
-            // ====================================================================
-            // Validation Logic
-            // ====================================================================
 
             /**
              * Validates required fields in the current step.
@@ -110,9 +93,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
                 return isValid;
             },
-            // ====================================================================
-            // Helper Functions
-            // ====================================================================
 
             /**
              * Helper to convert form data array to a key-value object.
