@@ -80,12 +80,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
              _validateForm: function () {
                 var isValid = true;
 
-                // Finde alle FormField-Komponenten im aktuellen Schritt
                 this.$(".form-field-component:visible").each(function () {
-                    // Odoo hängt die Widget-Instanz an die DOM-Element-Daten an
                     var fieldWidget = $(this).data("widget");
 
-                    // Rufe die öffentliche validate() Methode unseres neuen Widgets auf
                     if (fieldWidget && !fieldWidget.validate()) {
                         isValid = false;
                     }
