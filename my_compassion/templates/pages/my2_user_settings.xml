@@ -22,7 +22,7 @@ Injected data:
 -->
 <odoo>
     <template id="my2_user_settings_page" name="My Compassion 2 User Settings Page">
-        <link rel="stylesheet" href="/my_compassion/static/src/css/user_settings.css"/>
+        <link rel="stylesheet" href="/my_compassion/static/src/css/user_settings.css" />
         <t t-call="website.layout">
             <div class="container my-4">
                 <section class="user_settings_tabs mt-4">
@@ -42,8 +42,7 @@ Injected data:
                         </select>
                     </div>
                     <!-- Tabs navigation -->
-                    <ul class="nav nav-tabs d-none d-lg-flex" id="user-settings-tabs"
-                        role="tablist">
+                    <ul class="nav nav-tabs d-none d-lg-flex" id="user-settings-tabs" role="tablist">
                         <li class="nav-item" role="presentation">
                             <a class="nav-link" href="#personal-information" role="tab">
                                 Personal
@@ -63,48 +62,45 @@ Injected data:
                             </a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link" href="#communication-settings"
-                               role="tab">Communication Settings</a>
+                            <a class="nav-link" href="#communication-settings" role="tab">Communication Settings</a>
                         </li>
                     </ul>
                 </section>
                 <!-- Tabs content -->
                 <div class="tab-content pt-4" id="UserSettingsTabContent">
                     <!-- Personal info tab -->
-                    <div class="tab-pane fade" id="personal-information"
-                         role="tabpanel">
+                    <div class="tab-pane fade" id="personal-information" role="tabpanel">
                         <div
-                                id="personal-information-form"
-                                class="p-3 bg-pure-white col-lg-6 col-md-12 col-sm-12 mx-auto"
+                            id="personal-information-form"
+                            class="p-3 bg-pure-white col-lg-6 col-md-12 col-sm-12 mx-auto"
                         >
                             <div class="mb-3">
                                 <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label" t-value="'My reference'"/>
+                                    <t t-set="label" t-value="'My reference'" />
                                     <div>
-                                        <t t-esc="partner.ref if partner.ref else ''"/>
+                                        <t t-esc="partner.ref if partner.ref else ''" />
                                     </div>
                                 </t>
                             </div>
                             <div class="mb-3">
                                 <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label" t-value="'Title'"/>
-                                    <t t-set="input_id" t-value="'title'"/>
+                                    <t t-set="label" t-value="'Title'" />
+                                    <t t-set="input_id" t-value="'title'" />
                                     <div class="field-display" data-display-for="title">
-                                        <t t-esc="partner.title.name or ''"/>
+                                        <t t-esc="partner.title.name or ''" />
                                     </div>
                                     <div class="field-edit">
                                         <div class="pl-0 pr-5 m-0 col-4">
                                             <t t-call="theme_compassion_2025.SelectComponent">
-                                                <t t-set="id" t-value="'title'"/>
-                                                <t t-set="name" t-value="'title'"/>
-                                                <t t-set="attrs"
-                                                   t-value="{'data-original-value': partner.title.id}"/>
+                                                <t t-set="id" t-value="'title'" />
+                                                <t t-set="name" t-value="'title'" />
+                                                <t t-set="attrs" t-value="{'data-original-value': partner.title.id}" />
                                                 <t t-foreach="titles" t-as="t">
                                                     <option
-                                                            t-att-value="t.id"
-                                                            t-att-selected="partner.title.id == t.id"
+                                                        t-att-value="t.id"
+                                                        t-att-selected="partner.title.id == t.id"
                                                     >
-                                                        <t t-esc="t.name"/>
+                                                        <t t-esc="t.name" />
                                                     </option>
                                                 </t>
                                             </t>
@@ -115,40 +111,38 @@ Injected data:
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label" t-value="'Name'"/>
-                                        <t t-set="input_id" t-value="'firstname'"/>
-                                        <div class="field-display"
-                                             data-display-for="firstname">
-                                            <t t-esc="partner.firstname or ''"/>
+                                        <t t-set="label" t-value="'Name'" />
+                                        <t t-set="input_id" t-value="'firstname'" />
+                                        <div class="field-display" data-display-for="firstname">
+                                            <t t-esc="partner.firstname or ''" />
                                         </div>
                                         <div class="field-edit">
                                             <input
-                                                    type="text"
-                                                    id="firstname"
-                                                    name="firstname"
-                                                    class="form-control"
-                                                    t-att-value="partner.firstname"
-                                                    t-att-data-original-value="partner.firstname"
+                                                type="text"
+                                                id="firstname"
+                                                name="firstname"
+                                                class="form-control"
+                                                t-att-value="partner.firstname"
+                                                t-att-data-original-value="partner.firstname"
                                             />
                                         </div>
                                     </t>
                                 </div>
                                 <div class="col-md-6">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label" t-value="'Surname'"/>
-                                        <t t-set="input_id" t-value="'lastname'"/>
-                                        <div class="field-display"
-                                             data-display-for="lastname">
-                                            <t t-esc="partner.lastname or ''"/>
+                                        <t t-set="label" t-value="'Surname'" />
+                                        <t t-set="input_id" t-value="'lastname'" />
+                                        <div class="field-display" data-display-for="lastname">
+                                            <t t-esc="partner.lastname or ''" />
                                         </div>
                                         <div class="field-edit">
                                             <input
-                                                    type="text"
-                                                    id="lastname"
-                                                    name="lastname"
-                                                    class="form-control"
-                                                    t-att-value="partner.lastname"
-                                                    t-att-data-original-value="partner.lastname"
+                                                type="text"
+                                                id="lastname"
+                                                name="lastname"
+                                                class="form-control"
+                                                t-att-value="partner.lastname"
+                                                t-att-data-original-value="partner.lastname"
                                             />
                                         </div>
                                     </t>
@@ -156,27 +150,26 @@ Injected data:
                             </div>
                             <div class="mb-3">
                                 <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label" t-value="'Country'"/>
-                                    <t t-set="input_id" t-value="'country_id'"/>
-                                    <div class="field-display"
-                                         data-display-for="country_id">
-                                        <t t-esc="partner.country_id.name or ''"/>
+                                    <t t-set="label" t-value="'Country'" />
+                                    <t t-set="input_id" t-value="'country_id'" />
+                                    <div class="field-display" data-display-for="country_id">
+                                        <t t-esc="partner.country_id.name or ''" />
                                     </div>
                                     <div class="field-edit">
                                         <div class="pl-0 pr-2 m-0 col-7">
                                             <t t-call="theme_compassion_2025.SelectComponent">
-                                                <t t-set="id" t-value="'country_id'"/>
-                                                <t t-set="name" t-value="'country_id'"/>
+                                                <t t-set="id" t-value="'country_id'" />
+                                                <t t-set="name" t-value="'country_id'" />
                                                 <t
-                                                        t-set="attrs"
-                                                        t-value="{'data-original-value': partner.country_id.id}"
+                                                    t-set="attrs"
+                                                    t-value="{'data-original-value': partner.country_id.id}"
                                                 />
                                                 <t t-foreach="countries" t-as="t">
                                                     <option
-                                                            t-att-value="t.id"
-                                                            t-att-selected="partner.country_id.id == t.id"
+                                                        t-att-value="t.id"
+                                                        t-att-selected="partner.country_id.id == t.id"
                                                     >
-                                                        <t t-esc="t.name"/>
+                                                        <t t-esc="t.name" />
                                                     </option>
                                                 </t>
                                             </t>
@@ -188,20 +181,19 @@ Injected data:
                                 <t t-if="partner.country_id.zip_required">
                                     <div class="col-md-6">
                                         <t t-call="theme_compassion_2025.FormFieldComponent">
-                                            <t t-set="label" t-value="'Zip'"/>
-                                            <t t-set="input_id" t-value="'zip'"/>
-                                            <div class="field-display"
-                                                 data-display-for="zip">
-                                                <t t-esc="partner.zip or ''"/>
+                                            <t t-set="label" t-value="'Zip'" />
+                                            <t t-set="input_id" t-value="'zip'" />
+                                            <div class="field-display" data-display-for="zip">
+                                                <t t-esc="partner.zip or ''" />
                                             </div>
                                             <div class="field-edit">
                                                 <input
-                                                        type="text"
-                                                        id="zip"
-                                                        name="zip"
-                                                        class="form-control"
-                                                        t-att-value="partner.zip"
-                                                        t-att-data-original-value="partner.zip"
+                                                    type="text"
+                                                    id="zip"
+                                                    name="zip"
+                                                    class="form-control"
+                                                    t-att-value="partner.zip"
+                                                    t-att-data-original-value="partner.zip"
                                                 />
                                             </div>
                                         </t>
@@ -209,20 +201,19 @@ Injected data:
                                 </t>
                                 <div class="col-md-6">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label" t-value="'City'"/>
-                                        <t t-set="input_id" t-value="'city'"/>
-                                        <div class="field-display"
-                                             data-display-for="city">
-                                            <t t-esc="partner.city or ''"/>
+                                        <t t-set="label" t-value="'City'" />
+                                        <t t-set="input_id" t-value="'city'" />
+                                        <div class="field-display" data-display-for="city">
+                                            <t t-esc="partner.city or ''" />
                                         </div>
                                         <div class="field-edit">
                                             <input
-                                                    type="text"
-                                                    id="city"
-                                                    name="city"
-                                                    class="form-control"
-                                                    t-att-value="partner.city"
-                                                    t-att-data-original-value="partner.city"
+                                                type="text"
+                                                id="city"
+                                                name="city"
+                                                class="form-control"
+                                                t-att-value="partner.city"
+                                                t-att-data-original-value="partner.city"
                                             />
                                         </div>
                                     </t>
@@ -230,20 +221,19 @@ Injected data:
                             </div>
                             <div class="mb-3">
                                 <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label" t-value="'Address'"/>
-                                    <t t-set="input_id" t-value="'street'"/>
-                                    <div class="field-display"
-                                         data-display-for="street">
-                                        <t t-esc="partner.street or ''"/>
+                                    <t t-set="label" t-value="'Address'" />
+                                    <t t-set="input_id" t-value="'street'" />
+                                    <div class="field-display" data-display-for="street">
+                                        <t t-esc="partner.street or ''" />
                                     </div>
                                     <div class="field-edit">
                                         <input
-                                                type="text"
-                                                id="street"
-                                                name="street"
-                                                class="form-control"
-                                                t-att-value="partner.street"
-                                                t-att-data-original-value="partner.street"
+                                            type="text"
+                                            id="street"
+                                            name="street"
+                                            class="form-control"
+                                            t-att-value="partner.street"
+                                            t-att-data-original-value="partner.street"
                                         />
                                     </div>
                                 </t>
@@ -251,40 +241,38 @@ Injected data:
                             <div class="row mb-2">
                                 <div class="col-md-6">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label" t-value="'Phone number'"/>
-                                        <t t-set="input_id" t-value="'phone'"/>
-                                        <div class="field-display"
-                                             data-display-for="phone">
-                                            <t t-esc="partner.phone or ''"/>
+                                        <t t-set="label" t-value="'Phone number'" />
+                                        <t t-set="input_id" t-value="'phone'" />
+                                        <div class="field-display" data-display-for="phone">
+                                            <t t-esc="partner.phone or ''" />
                                         </div>
                                         <div class="field-edit">
                                             <input
-                                                    type="tel"
-                                                    id="phone"
-                                                    name="phone"
-                                                    class="form-control"
-                                                    t-att-value="partner.phone"
-                                                    t-att-data-original-value="partner.phone"
+                                                type="tel"
+                                                id="phone"
+                                                name="phone"
+                                                class="form-control"
+                                                t-att-value="partner.phone"
+                                                t-att-data-original-value="partner.phone"
                                             />
                                         </div>
                                     </t>
                                 </div>
                                 <div class="col-md-6">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label" t-value="'Mail address'"/>
-                                        <t t-set="input_id" t-value="'email'"/>
-                                        <div class="field-display"
-                                             data-display-for="email">
-                                            <t t-esc="partner.email or ''"/>
+                                        <t t-set="label" t-value="'Mail address'" />
+                                        <t t-set="input_id" t-value="'email'" />
+                                        <div class="field-display" data-display-for="email">
+                                            <t t-esc="partner.email or ''" />
                                         </div>
                                         <div class="field-edit">
                                             <input
-                                                    type="email"
-                                                    id="email"
-                                                    name="email"
-                                                    class="form-control"
-                                                    t-att-value="partner.email"
-                                                    t-att-data-original-value="partner.email"
+                                                type="email"
+                                                id="email"
+                                                name="email"
+                                                class="form-control"
+                                                t-att-value="partner.email"
+                                                t-att-data-original-value="partner.email"
                                             />
                                         </div>
                                     </t>
@@ -295,39 +283,32 @@ Injected data:
                                     <a id="EditInfoButton">
                                         <div class="d-flex flex-column align-items-stretch">
                                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                <t t-set="variant" t-value="'default'"/>
-                                                <t t-set="variation"
-                                                   t-value="'filled'"/>
-                                                <t t-set="label"
-                                                   t-value="'Edit my profile'"/>
-                                                <t t-set="color" t-value="'core-blue'"/>
-                                                <t t-set="text_color"
-                                                   t-value="'pure-white'"/>
+                                                <t t-set="variant" t-value="'default'" />
+                                                <t t-set="variation" t-value="'filled'" />
+                                                <t t-set="label" t-value="'Edit my profile'" />
+                                                <t t-set="color" t-value="'core-blue'" />
+                                                <t t-set="text_color" t-value="'pure-white'" />
                                             </t>
                                         </div>
                                     </a>
                                 </div>
                                 <div class="edit-mode">
-                                    <a id="ApplyModificationsInfoButton"
-                                       class="d-inline-block me-2">
+                                    <a id="ApplyModificationsInfoButton" class="d-inline-block me-2">
                                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                            <t t-set="variant" t-value="'default'"/>
-                                            <t t-set="variation" t-value="'filled'"/>
-                                            <t t-set="label" t-value="'Save settings'"/>
-                                            <t t-set="color" t-value="'mid-green'"/>
-                                            <t t-set="text_color"
-                                               t-value="'pure-white'"/>
+                                            <t t-set="variant" t-value="'default'" />
+                                            <t t-set="variation" t-value="'filled'" />
+                                            <t t-set="label" t-value="'Save settings'" />
+                                            <t t-set="color" t-value="'mid-green'" />
+                                            <t t-set="text_color" t-value="'pure-white'" />
                                         </t>
                                     </a>
-                                    <a id="CancelModificationsInfoButton"
-                                       class="d-inline-block">
+                                    <a id="CancelModificationsInfoButton" class="d-inline-block">
                                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                            <t t-set="variant" t-value="'default'"/>
-                                            <t t-set="variation" t-value="'filled'"/>
-                                            <t t-set="label" t-value="'Cancel'"/>
-                                            <t t-set="color" t-value="'low-orange'"/>
-                                            <t t-set="text_color"
-                                               t-value="'pure-white'"/>
+                                            <t t-set="variant" t-value="'default'" />
+                                            <t t-set="variation" t-value="'filled'" />
+                                            <t t-set="label" t-value="'Cancel'" />
+                                            <t t-set="color" t-value="'low-orange'" />
+                                            <t t-set="text_color" t-value="'pure-white'" />
                                         </t>
                                     </a>
                                 </div>
@@ -337,23 +318,23 @@ Injected data:
                     <!-- Account settings tab -->
                     <div class="tab-pane fade" id="account-settings" role="tabpanel">
                         <div
-                                id="account-settings-form"
-                                class="p-3 bg-pure-white d-block col-lg-4 col-md-8 col-sm-12 mx-auto"
+                            id="account-settings-form"
+                            class="p-3 bg-pure-white d-block col-lg-4 col-md-8 col-sm-12 mx-auto"
                         >
                             <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label" t-value="'Login MyCompassion'"/>
-                                <t t-set="input_id" t-value="'login'"/>
+                                <t t-set="label" t-value="'Login MyCompassion'" />
+                                <t t-set="input_id" t-value="'login'" />
                                 <div class="field-display" data-display-for="login">
-                                    <t t-esc="user.login or ''"/>
+                                    <t t-esc="user.login or ''" />
                                 </div>
                                 <div class="field-edit">
                                     <input
-                                            type="email"
-                                            id="login"
-                                            name="login"
-                                            class="form-control"
-                                            t-att-value="user.login"
-                                            t-att-data-original-value="user.login"
+                                        type="email"
+                                        id="login"
+                                        name="login"
+                                        class="form-control"
+                                        t-att-value="user.login"
+                                        t-att-data-original-value="user.login"
                                     />
                                 </div>
                             </t>
@@ -362,54 +343,46 @@ Injected data:
                                     <a id="EditAccountButton" class="d-block mb-3">
                                         <div class="d-flex flex-column align-items-stretch">
                                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                <t t-set="variant" t-value="'default'"/>
-                                                <t t-set="variation"
-                                                   t-value="'filled'"/>
-                                                <t t-set="label"
-                                                   t-value="'Edit account settings'"/>
-                                                <t t-set="color" t-value="'core-blue'"/>
-                                                <t t-set="text_color"
-                                                   t-value="'pure-white'"/>
+                                                <t t-set="variant" t-value="'default'" />
+                                                <t t-set="variation" t-value="'filled'" />
+                                                <t t-set="label" t-value="'Edit account settings'" />
+                                                <t t-set="color" t-value="'core-blue'" />
+                                                <t t-set="text_color" t-value="'pure-white'" />
                                             </t>
                                         </div>
                                     </a>
-                                    <a href="/my/security?redirect=/my/information"
-                                       class="d-block text-decoration-none">
+                                    <a
+                                        href="/my/security?redirect=/my/information"
+                                        class="d-block text-decoration-none"
+                                    >
                                         <div class="d-flex flex-column align-items-stretch">
                                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                <t t-set="variant" t-value="'default'"/>
-                                                <t t-set="variation"
-                                                   t-value="'filled'"/>
-                                                <t t-set="label"
-                                                   t-value="'Change password'"/>
-                                                <t t-set="color" t-value="'core-blue'"/>
-                                                <t t-set="text_color"
-                                                   t-value="'pure-white'"/>
+                                                <t t-set="variant" t-value="'default'" />
+                                                <t t-set="variation" t-value="'filled'" />
+                                                <t t-set="label" t-value="'Change password'" />
+                                                <t t-set="color" t-value="'core-blue'" />
+                                                <t t-set="text_color" t-value="'pure-white'" />
                                             </t>
                                         </div>
                                     </a>
                                 </div>
                                 <div class="edit-mode">
-                                    <a id="ApplyModificationsAccountButton"
-                                       class="d-inline-block me-2">
+                                    <a id="ApplyModificationsAccountButton" class="d-inline-block me-2">
                                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                            <t t-set="variant" t-value="'default'"/>
-                                            <t t-set="variation" t-value="'filled'"/>
-                                            <t t-set="label" t-value="'Save settings'"/>
-                                            <t t-set="color" t-value="'mid-green'"/>
-                                            <t t-set="text_color"
-                                               t-value="'pure-white'"/>
+                                            <t t-set="variant" t-value="'default'" />
+                                            <t t-set="variation" t-value="'filled'" />
+                                            <t t-set="label" t-value="'Save settings'" />
+                                            <t t-set="color" t-value="'mid-green'" />
+                                            <t t-set="text_color" t-value="'pure-white'" />
                                         </t>
                                     </a>
-                                    <a id="CancelModificationsAccountButton"
-                                       class="d-inline-block">
+                                    <a id="CancelModificationsAccountButton" class="d-inline-block">
                                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                            <t t-set="variant" t-value="'default'"/>
-                                            <t t-set="variation" t-value="'filled'"/>
-                                            <t t-set="label" t-value="'Cancel'"/>
-                                            <t t-set="color" t-value="'low-orange'"/>
-                                            <t t-set="text_color"
-                                               t-value="'pure-white'"/>
+                                            <t t-set="variant" t-value="'default'" />
+                                            <t t-set="variation" t-value="'filled'" />
+                                            <t t-set="label" t-value="'Cancel'" />
+                                            <t t-set="color" t-value="'low-orange'" />
+                                            <t t-set="text_color" t-value="'pure-white'" />
                                         </t>
                                     </a>
                                 </div>
@@ -431,7 +404,7 @@ Injected data:
                                     further, you can sign
                                     this document as well and show us that you share our
                                     values.
-                                    <br></br>
+                                    <br />
                                     Compassion is
                                     also serious about the protection of your data. All
                                     your information is kept private and only used
@@ -443,23 +416,24 @@ Injected data:
                                 <h5>Child protection charter</h5>
                                 <t t-if="partner.date_agreed_child_protection_charter">
                                     <span>Signing date:</span>
-                                    <t t-esc="partner.get_date('date_agreed_child_protection_charter', 'date_short')"/>
-                                    <a href="/child-protection-charter">(view
-                                        agreement)</a>
+                                    <t t-esc="partner.get_date('date_agreed_child_protection_charter', 'date_short')" />
+                                    <a href="/child-protection-charter">
+                                        (view
+                                        agreement)
+                                    </a>
                                 </t>
                                 <t t-else="">
-                                    <a href="/partner/child-protection-charter?redirect=/my2/user_settings?current_tab=privacy-data"
-                                       class="text-decoration-none">
+                                    <a
+                                        href="/partner/child-protection-charter?redirect=/my2/user_settings?current_tab=privacy-data"
+                                        class="text-decoration-none"
+                                    >
                                         <div class="d-flex flex-column align-items-stretch">
                                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                <t t-set="variant" t-value="'default'"/>
-                                                <t t-set="variation"
-                                                   t-value="'filled'"/>
-                                                <t t-set="label"
-                                                   t-value="'Sign Child protection Charter'"/>
-                                                <t t-set="color" t-value="'core-blue'"/>
-                                                <t t-set="text_color"
-                                                   t-value="'pure-white'"/>
+                                                <t t-set="variant" t-value="'default'" />
+                                                <t t-set="variation" t-value="'filled'" />
+                                                <t t-set="label" t-value="'Sign Child protection Charter'" />
+                                                <t t-set="color" t-value="'core-blue'" />
+                                                <t t-set="text_color" t-value="'pure-white'" />
                                             </t>
                                         </div>
                                     </a>
@@ -469,34 +443,27 @@ Injected data:
                                 <h5>Data protection and legal agreement</h5>
                                 <t t-if="partner.legal_agreement_date">
                                     <span>Signing date:</span>
-                                    <t t-esc="partner.get_date('legal_agreement_date', 'date_short')"/>
-                                    <a href="/legal" target="_blank">(view
-                                        agreement)</a>
+                                    <t t-esc="partner.get_date('legal_agreement_date', 'date_short')" />
+                                    <a href="/legal" target="_blank">
+                                        (view
+                                        agreement)
+                                    </a>
                                 </t>
-                                <t t-else=""
-                                   enctype="application/x-www-form-urlencoded">
+                                <t t-else="" enctype="application/x-www-form-urlencoded">
                                     <div class="form-check mb-2">
-                                        <input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                id="LegalAgreementCheck"
-                                        />
-                                        <label class="form-check-label"
-                                               for="LegalAgreementCheck">
-                                            <t t-call="website_legal_page.acceptance_full"/>
+                                        <input class="form-check-input" type="checkbox" id="LegalAgreementCheck" />
+                                        <label class="form-check-label" for="LegalAgreementCheck">
+                                            <t t-call="website_legal_page.acceptance_full" />
                                         </label>
                                     </div>
                                     <div class="d-flex flex-column align-items-stretch">
                                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                            <t t-set="id" t-value="'SignLegalAgreementButton'"/>
-                                            <t t-set="variant" t-value="'default'"/>
-                                            <t t-set="variation"
-                                               t-value="'filled'"/>
-                                            <t t-set="label"
-                                               t-value="'Sign the agreement'"/>
-                                            <t t-set="color" t-value="'core-blue'"/>
-                                            <t t-set="text_color"
-                                               t-value="'pure-white'"/>
+                                            <t t-set="id" t-value="'SignLegalAgreementButton'" />
+                                            <t t-set="variant" t-value="'default'" />
+                                            <t t-set="variation" t-value="'filled'" />
+                                            <t t-set="label" t-value="'Sign the agreement'" />
+                                            <t t-set="color" t-value="'core-blue'" />
+                                            <t t-set="text_color" t-value="'pure-white'" />
                                         </t>
                                     </div>
                                 </t>
@@ -504,29 +471,27 @@ Injected data:
                         </div>
                     </div>
                     <!-- Communication settings tab -->
-                    <div class="tab-pane fade" id="communication-settings"
-                         role="tabpanel">
+                    <div class="tab-pane fade" id="communication-settings" role="tabpanel">
                         <div class="p-3 bg-pure-white d-block col-lg-4 col-md-8 col-sm-12 mx-auto">
                             <div class="custom-control custom-switch mb-2">
                                 <input
-                                        type="checkbox"
-                                        class="custom-control-input"
-                                        id="newsletterCheck"
-                                        data-field="opt_out"
-                                        t-att-checked="not partner.opt_out"
+                                    type="checkbox"
+                                    class="custom-control-input"
+                                    id="newsletterCheck"
+                                    data-field="opt_out"
+                                    t-att-checked="not partner.opt_out"
                                 />
-                                <label class="custom-control-label"
-                                       for="newsletterCheck">
+                                <label class="custom-control-label" for="newsletterCheck">
                                     I would like to receive the Compassion Newsletter
                                 </label>
                             </div>
                             <div class="custom-control custom-switch  mb-2">
                                 <input
-                                        type="checkbox"
-                                        class="custom-control-input"
-                                        id="calendarCheck"
-                                        data-field="calendar"
-                                        t-att-checked="partner.calendar"
+                                    type="checkbox"
+                                    class="custom-control-input"
+                                    id="calendarCheck"
+                                    data-field="calendar"
+                                    t-att-checked="partner.calendar"
                                 />
                                 <label class="custom-control-label" for="calendarCheck">
                                     I
@@ -536,14 +501,13 @@ Injected data:
                             </div>
                             <div class="custom-control custom-switch  mb-2">
                                 <input
-                                        type="checkbox"
-                                        class="custom-control-input"
-                                        id="birthdaysCheck"
-                                        data-field="birthday_reminder"
-                                        t-att-checked="partner.birthday_reminder"
+                                    type="checkbox"
+                                    class="custom-control-input"
+                                    id="birthdaysCheck"
+                                    data-field="birthday_reminder"
+                                    t-att-checked="partner.birthday_reminder"
                                 />
-                                <label class="custom-control-label"
-                                       for="birthdaysCheck">
+                                <label class="custom-control-label" for="birthdaysCheck">
                                     I
                                     would like to receive reminders of the children
                                     birthdays
@@ -551,46 +515,43 @@ Injected data:
                             </div>
                             <div class="custom-control custom-switch  mb-3">
                                 <input
-                                        type="checkbox"
-                                        class="custom-control-input"
-                                        id="anniversaryCheck"
-                                        data-field="sponsorship_anniversary_card"
-                                        t-att-checked="partner.sponsorship_anniversary_card"
+                                    type="checkbox"
+                                    class="custom-control-input"
+                                    id="anniversaryCheck"
+                                    data-field="sponsorship_anniversary_card"
+                                    t-att-checked="partner.sponsorship_anniversary_card"
                                 />
-                                <label class="custom-control-label"
-                                       for="anniversaryCheck">
+                                <label class="custom-control-label" for="anniversaryCheck">
                                     I would like to receive the sponsorship anniversary
                                     card
                                 </label>
                             </div>
                             <div class="mb-3">
                                 <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label"
-                                       t-value="'Letter Delivery Preference'"/>
+                                    <t t-set="label" t-value="'Letter Delivery Preference'" />
                                     <t t-call="theme_compassion_2025.SelectComponent">
-                                        <t t-set="id"
-                                           t-value="'letter_preference_select'"/>
+                                        <t t-set="id" t-value="'letter_preference_select'" />
                                         <option
-                                                value="auto_digital"
-                                                t-att-selected="partner.letter_delivery_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']"
+                                            value="auto_digital"
+                                            t-att-selected="partner.letter_delivery_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']"
                                         >
                                             Email
                                         </option>
                                         <option
-                                                value="physical"
-                                                t-att-selected="partner.letter_delivery_preference == 'physical'"
+                                            value="physical"
+                                            t-att-selected="partner.letter_delivery_preference == 'physical'"
                                         >
                                             Letter
                                         </option>
                                         <option
-                                                value="both"
-                                                t-att-selected="partner.letter_delivery_preference == 'both'"
+                                            value="both"
+                                            t-att-selected="partner.letter_delivery_preference == 'both'"
                                         >
                                             Letter and Email
                                         </option>
                                         <option
-                                                value="none"
-                                                t-att-selected="partner.letter_delivery_preference in ['none', 'SMS']"
+                                            value="none"
+                                            t-att-selected="partner.letter_delivery_preference in ['none', 'SMS']"
                                         >
                                             None
                                         </option>
@@ -599,32 +560,30 @@ Injected data:
                             </div>
                             <div class="mb-3">
                                 <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label"
-                                       t-value="'Photo Delivery Preference'"/>
+                                    <t t-set="label" t-value="'Photo Delivery Preference'" />
                                     <t t-call="theme_compassion_2025.SelectComponent">
-                                        <t t-set="id"
-                                           t-value="'photo_preference_select'"/>
+                                        <t t-set="id" t-value="'photo_preference_select'" />
                                         <option
-                                                value="auto_digital"
-                                                t-att-selected="partner.photo_delivery_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']"
+                                            value="auto_digital"
+                                            t-att-selected="partner.photo_delivery_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']"
                                         >
                                             Email
                                         </option>
                                         <option
-                                                value="physical"
-                                                t-att-selected="partner.photo_delivery_preference == 'physical'"
+                                            value="physical"
+                                            t-att-selected="partner.photo_delivery_preference == 'physical'"
                                         >
                                             Letter
                                         </option>
                                         <option
-                                                value="both"
-                                                t-att-selected="partner.photo_delivery_preference == 'both'"
+                                            value="both"
+                                            t-att-selected="partner.photo_delivery_preference == 'both'"
                                         >
                                             Letter and Email
                                         </option>
                                         <option
-                                                value="none"
-                                                t-att-selected="partner.photo_delivery_preference in ['none', 'SMS']"
+                                            value="none"
+                                            t-att-selected="partner.photo_delivery_preference in ['none', 'SMS']"
                                         >
                                             None
                                         </option>
@@ -632,24 +591,24 @@ Injected data:
                                 </t>
                             </div>
                             <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label" t-value="'Tax Delivery Preference'"/>
+                                <t t-set="label" t-value="'Tax Delivery Preference'" />
                                 <t t-call="theme_compassion_2025.SelectComponent">
-                                    <t t-set="id" t-value="'tax_preference_select'"/>
+                                    <t t-set="id" t-value="'tax_preference_select'" />
                                     <option
-                                            value="auto_digital"
-                                            t-att-selected="partner.tax_receipt_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']"
+                                        value="auto_digital"
+                                        t-att-selected="partner.tax_receipt_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']"
                                     >
                                         Email
                                     </option>
                                     <option
-                                            value="physical"
-                                            t-att-selected="partner.tax_receipt_preference == 'physical'"
+                                        value="physical"
+                                        t-att-selected="partner.tax_receipt_preference == 'physical'"
                                     >
                                         Letter
                                     </option>
                                     <option
-                                            value="none"
-                                            t-att-selected="partner.tax_receipt_preference in ['none', 'SMS']"
+                                        value="none"
+                                        t-att-selected="partner.tax_receipt_preference in ['none', 'SMS']"
                                     >
                                         None
                                     </option>
@@ -660,7 +619,6 @@ Injected data:
                 </div>
             </div>
         </t>
-        <script type="text/javascript"
-                src="/my_compassion/static/src/js/my2_user_settings.js"/>
+        <script type="text/javascript" src="/my_compassion/static/src/js/my2_user_settings.js" />
     </template>
 </odoo>

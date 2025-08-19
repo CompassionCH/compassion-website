@@ -109,10 +109,9 @@ class MyCompassionUserController(http.Controller):
 
         # Check if login is already taken by another user
         if (
-                request.env["res.users"]
-                        .sudo()
-                        .search_count(
-                    [("login", "=", new_login), ("id", "!=", user.id)])
+            request.env["res.users"]
+            .sudo()
+            .search_count([("login", "=", new_login), ("id", "!=", user.id)])
         ):
             return {
                 "success": False,
@@ -131,9 +130,7 @@ class MyCompassionUserController(http.Controller):
         methods=["POST"],
     )
     def agree_data_protection(self, **post):
-        request.env.user.partner_id.sudo().write(
-            {"legal_agreement_date": date.today()}
-        )
+        request.env.user.partner_id.sudo().write({"legal_agreement_date": date.today()})
         return {"success": True}
 
     @http.route(

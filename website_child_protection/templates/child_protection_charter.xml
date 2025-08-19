@@ -20,8 +20,10 @@
                     are tired but we could expect a teenager to manage their emotions
                     even when they are very tired.)
                 </li>
-                <li>I will engage in age-appropriate communication with
-                    beneficiaries.</li>
+                <li>
+                    I will engage in age-appropriate communication with
+                    beneficiaries.
+                </li>
                 <li>
                     I will engage in activities with beneficiaries only in open or
                     visible places, and in the event that an
@@ -144,16 +146,15 @@
             </ul>
         </div>
     </template>
-    <template id="child_protection_charter_page"
-              name="Child Protection Charter Agreement">
+    <template id="child_protection_charter_page" name="Child Protection Charter Agreement">
         <t t-call="website.layout">
             <div class="content-column" id="wrap">
                 <div class="oe_structure">
                     <section
-                            class="s_title parallax s_parallax_is_fixed pt24 pb24"
-                            data-vcss="001"
-                            data-snippet="s_title"
-                            data-scroll-background-ratio="1"
+                        class="s_title parallax s_parallax_is_fixed pt24 pb24"
+                        data-vcss="001"
+                        data-snippet="s_title"
+                        data-scroll-background-ratio="1"
                     >
                         <div class="container">
                             <h1 class="text-primary">Child Protection Charter</h1>
@@ -161,13 +162,13 @@
                     </section>
                 </div>
                 <section
-                        class="s_text_block pt32 pb32 o_colored_level"
-                        data-snippet="s_text_block"
-                        data-name="Text"
-                        style=""
+                    class="s_text_block pt32 pb32 o_colored_level"
+                    data-snippet="s_text_block"
+                    data-name="Text"
+                    style=""
                 >
                     <div class="s_allow_columns container">
-                        <t t-call="website_child_protection.child_protection_charter_text"/>
+                        <t t-call="website_child_protection.child_protection_charter_text" />
                         <p>
                             I acknowledge that I have read and fully understood the
                             content of the Child Protection
@@ -181,39 +182,39 @@
                 </section>
                 <!-- Form Section -->
                 <span
-                        class="hidden"
-                        data-for="child_protection_form"
-                        t-att-data-values="{'partner_uuid': partner_uuid}"
+                    class="hidden"
+                    data-for="child_protection_form"
+                    t-att-data-values="{'partner_uuid': partner_uuid}"
                 />
                 <section
-                        class="s_website_form pt16 pb16 o_colored_level"
-                        data-vcss="001"
-                        data-snippet="s_website_form"
-                        data-name="Form"
+                    class="s_website_form pt16 pb16 o_colored_level"
+                    data-vcss="001"
+                    data-snippet="s_website_form"
+                    data-name="Form"
                 >
                     <div class="container">
                         <form
-                                id="child_protection_form"
-                                action="/website_form/"
-                                method="post"
-                                enctype="multipart/form-data"
-                                class="o_mark_required"
-                                data-mark="*"
-                                data-success-mode="redirect"
-                                t-attf-data-success-page="/partner/#{partner_uuid}/child-protection-charter#{'?redirect=' + redirect if redirect else ''}"
-                                data-model_name="cms.form.partner.child.protection.charter"
+                            id="child_protection_form"
+                            action="/website_form/"
+                            method="post"
+                            enctype="multipart/form-data"
+                            class="o_mark_required"
+                            data-mark="*"
+                            data-success-mode="redirect"
+                            t-attf-data-success-page="/partner/#{partner_uuid}/child-protection-charter#{'?redirect=' + redirect if redirect else ''}"
+                            data-model_name="cms.form.partner.child.protection.charter"
                         >
                             <div class="s_website_form_rows row s_col_no_bgcolor">
                                 <div
-                                        class="form-group s_website_form_field col-12  s_website_form_model_required  "
-                                        data-type="boolean"
-                                        data-name="Field"
+                                    class="form-group s_website_form_field col-12  s_website_form_model_required  "
+                                    data-type="boolean"
+                                    data-name="Field"
                                 >
                                     <div class="row s_col_no_resize s_col_no_bgcolor">
                                         <label
-                                                class="col-sm-auto s_website_form_label"
-                                                style="width: 200px"
-                                                for="partner_uuid"
+                                            class="col-sm-auto s_website_form_label"
+                                            style="width: 200px"
+                                            for="partner_uuid"
                                         >
                                             <span class="s_website_form_label_content">
                                                 Check to agree to this charter
@@ -222,116 +223,112 @@
                                         </label>
                                         <div class="col-sm">
                                             <input
-                                                    type="checkbox"
-                                                    value="Yes"
-                                                    class="s_website_form_input"
-                                                    name="agreed"
-                                                    required="true"
-                                                    id="agreed"
+                                                type="checkbox"
+                                                value="Yes"
+                                                class="s_website_form_input"
+                                                name="agreed"
+                                                required="true"
+                                                id="agreed"
                                             />
                                         </div>
                                     </div>
                                 </div>
                                 <div
-                                        class="form-group s_website_form_field col-12  s_website_form_model_required  s_website_form_dnone"
-                                        data-type="hidden"
-                                        data-name="Field"
+                                    class="form-group s_website_form_field col-12  s_website_form_model_required  s_website_form_dnone"
+                                    data-type="hidden"
+                                    data-name="Field"
                                 >
                                     <div class="row s_col_no_resize s_col_no_bgcolor">
                                         <label
-                                                class="col-form-label col-sm-auto s_website_form_label "
-                                                style="width: 200px"
-                                                for="agreed"
+                                            class="col-form-label col-sm-auto s_website_form_label "
+                                            style="width: 200px"
+                                            for="agreed"
                                         >
-                                            <span class="s_website_form_label_content">
-                                                UUID</span>
+                                            <span class="s_website_form_label_content">UUID</span>
                                         </label>
                                         <div class="col-sm">
                                             <input
-                                                    type="hidden"
-                                                    class="form-control s_website_form_input"
-                                                    name="partner_uuid"
-                                                    id="partner_uuid"
+                                                type="hidden"
+                                                class="form-control s_website_form_input"
+                                                name="partner_uuid"
+                                                id="partner_uuid"
                                             />
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group col-12 s_website_form_submit"
-                                     data-name="Submit Button">
-                                    <div style="width: 200px;"
-                                         class="s_website_form_label"/>
+                                <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                    <div style="width: 200px;" class="s_website_form_label" />
                                     <a
-                                            href="#"
-                                            role="button"
-                                            class="btn btn-primary btn-lg s_website_form_send o_default_snippet_text"
+                                        href="#"
+                                        role="button"
+                                        class="btn btn-primary btn-lg s_website_form_send o_default_snippet_text"
                                     >
                                         Submit
                                     </a>
-                                    <span id="s_website_form_result"/>
+                                    <span id="s_website_form_result" />
                                 </div>
                             </div>
                         </form>
                     </div>
                 </section>
-                <div class="oe_structure mt-2"/>
+                <div class="oe_structure mt-2" />
             </div>
         </t>
     </template>
     <!-- Confirmation page -->
     <template
-            id="child_protection_charter_confirmation_page"
-            name="Child Protection Charter Agreement Confirmation Page"
+        id="child_protection_charter_confirmation_page"
+        name="Child Protection Charter Agreement Confirmation Page"
     >
         <t t-call="website.layout">
             <div id="wrap">
                 <div class="oe_structure">
                     <section
-                            class="s_title parallax s_parallax_is_fixed bg-black-50 pt24 pb24 o_colored_level"
-                            data-vcss="001"
-                            data-snippet="s_title"
-                            data-scroll-background-ratio="1"
-                            data-name="Title"
+                        class="s_title parallax s_parallax_is_fixed bg-black-50 pt24 pb24 o_colored_level"
+                        data-vcss="001"
+                        data-snippet="s_title"
+                        data-scroll-background-ratio="1"
+                        data-name="Title"
                     >
                         <span
-                                class="s_parallax_bg oe_img_bg"
-                                style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"
+                            class="s_parallax_bg oe_img_bg"
+                            style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"
                         />
-                        <div class="o_we_bg_filter bg-black-50"/>
+                        <div class="o_we_bg_filter bg-black-50" />
                         <div class="container">
                             <h1>Child Protection Charter</h1>
                         </div>
                     </section>
                 </div>
                 <section
-                        class="s_banner parallax s_parallax_is_fixed pt96 pb96 o_colored_level o_full_screen_height"
-                        data-scroll-background-ratio="1"
-                        data-snippet="s_banner"
-                        data-name="Banner"
+                    class="s_banner parallax s_parallax_is_fixed pt96 pb96 o_colored_level o_full_screen_height"
+                    data-scroll-background-ratio="1"
+                    data-snippet="s_banner"
+                    data-name="Banner"
                 >
                     <span
-                            class="s_parallax_bg oe_img_bg"
-                            style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"
+                        class="s_parallax_bg oe_img_bg"
+                        style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"
                     />
                     <div class="container">
                         <div class="row s_nb_column_fixed">
                             <div
-                                    class="col-lg-6 jumbotron rounded o_cc o_cc1 pt32 pb32 o_colored_level"
-                                    data-name="Box"
+                                class="col-lg-6 jumbotron rounded o_cc o_cc1 pt32 pb32 o_colored_level"
+                                data-name="Box"
                             >
                                 <h1>Thank you!</h1>
                                 <p class="lead">
                                     We successfully received your agreement to the Child
                                     Protection Charter.
                                 </p>
-                                <a t-att-href="redirect"
-                                   class="btn btn-primary mb-2 o_default_snippet_text">
+                                <a t-att-href="redirect" class="btn btn-primary mb-2 o_default_snippet_text">
                                     Continue
                                 </a>
                             </div>
                         </div>
                     </div>
                 </section>
-                <div class="oe_structure"/>
+                <div class="oe_structure" />
             </div>
         </t>
     </template>
@@ -339,7 +336,7 @@
         <t t-call="website.layout">
             <div id="wrap">
                 <div class="container my-5">
-                    <t t-call="website_child_protection.child_protection_charter_text"/>
+                    <t t-call="website_child_protection.child_protection_charter_text" />
                 </div>
             </div>
         </t>

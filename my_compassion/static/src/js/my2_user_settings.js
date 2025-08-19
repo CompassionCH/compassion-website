@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const url = new URL(window.location);
                 url.searchParams.set("current_tab", targetId.substring(1));
-                window.history.pushState({}, '', url);
+                window.history.pushState({}, "", url);
             };
 
             const urlParams = new URLSearchParams(window.location.search);
@@ -137,56 +137,59 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         /**
- * Attaches a standardized event listener to an agreement checkbox.
- * When checked, it calls a specific RPC route.
- */
+         * Attaches a standardized event listener to an agreement checkbox.
+         * When checked, it calls a specific RPC route.
+         */
 
         function attachAgreementListener(checkbox, route) {
-    checkbox.addEventListener("change", function () {
-        // Only proceed if the checkbox is being checked
-        if (!this.checked) return;
+            checkbox.addEventListener("change", function () {
+                // Only proceed if the checkbox is being checked
+                if (!this.checked) return;
 
-        rpc.query({ route, params: {} })
-            .then(() => {
-                window.location.reload();
-            })
-            .catch((err) => {
-                console.error("RPC Error:", err);
-                this.checked = false; // Revert the checkbox state on error
-                Dialog.alert(null, "Could not save your confirmation. Please try again.");
+                rpc.query({ route, params: {} })
+                    .then(() => {
+                        window.location.reload();
+                    })
+                    .catch((err) => {
+                        console.error("RPC Error:", err);
+                        this.checked = false; // Revert the checkbox state on error
+                        Dialog.alert(null, "Could not save your confirmation. Please try again.");
+                    });
             });
-    });
-    }
+        }
 
         /**
          * Initializes the privacy checkbox.
          */
-function initAgreementsForm() {
-    const signButton = document.getElementById("SignLegalAgreementButton");
-    const checkbox = document.getElementById("LegalAgreementCheck");
+        function initAgreementsForm() {
+            const signButton = document.getElementById("SignLegalAgreementButton");
+            const checkbox = document.getElementById("LegalAgreementCheck");
 
-    if (!signButton || !checkbox) {
-        return;
-    }
+            if (!signButton || !checkbox) {
+                return;
+            }
 
-    signButton.addEventListener("click", () => {
-        if (checkbox.checked) {
-            rpc.query({
-                route: "/my2/user_settings/agree_data_protection",
-                params: {},
-            })
-            .then(() => {
-                window.location.reload();
-            })
-            .catch((err) => {
-                console.error("RPC Error:", err);
-                Dialog.alert(null, "Could not save your confirmation. Please try again.");
+            signButton.addEventListener("click", () => {
+                if (checkbox.checked) {
+                    rpc.query({
+                        route: "/my2/user_settings/agree_data_protection",
+                        params: {},
+                    })
+                        .then(() => {
+                            window.location.reload();
+                        })
+                        .catch((err) => {
+                            console.error("RPC Error:", err);
+                            Dialog.alert(null, "Could not save your confirmation. Please try again.");
+                        });
+                } else {
+                    Dialog.alert(
+                        null,
+                        "You must check the box to accept the legal terms and privacy policy before signing."
+                    );
+                }
             });
-        } else {
-            Dialog.alert(null, "You must check the box to accept the legal terms and privacy policy before signing.");
         }
-    });
-}
 
         /**
          * Generic form handler for tabs with an "edit/save/cancel" workflow.
