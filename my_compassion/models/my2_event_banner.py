@@ -7,43 +7,35 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from odoo import models, fields
+from email.policy import default
+
+from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 class EventBanner(models.Model):
     _name = 'my_compassion.event_banner'
     _description = 'MyCompassion Event Banner'
 
-    name = fields.Char(
-        string='Name',
+    banner_title = fields.Char(
         required=True,
-        help="Internal identification for the banner."
     )
-    text = fields.Html(
-        string='Banner Text',
+
+    banner_description = fields.Text(
         required=True,
-        help="The message to be displayed on the banner. Can contain HTML."
     )
+
     start_date = fields.Datetime(
-        string='Start Date',
         default=fields.Datetime.now,
-        help="The date and time when the banner should start being visible."
+        required=True,
     )
+
     end_date = fields.Datetime(
-        string='End Date',
-        help="The date and time when the banner should stop being visible. "
-             "Leave empty for the banner to be visible indefinitely."
+        required=True,
     )
-    target_pages = fields.Many2many(
-        'website.page',
-        string='Target Pages',
-        help="Select the specific pages where this banner should appear. "
-             "If empty, it will not appear on any page."
-    )
+
     is_active = fields.Boolean(
         string='Active',
         default=True,
-        help="Check this box to make the banner active. "
-             "Uncheck to disable it without deleting it."
     )
 
     pictogram = fields.Selection(
@@ -88,9 +80,10 @@ class EventBanner(models.Model):
             ("water-and-sanitation", "Water And Sanitation"),
             ("were-most-needed", "Were Most Needed"),
         ],
+        required=True,
     )
 
-    color = fields.Selection(
+    pictogram_color = fields.Selection(
         [
             ("core-blue", "Core Blue"),
             ("dark-blue", "Dark Blue"),
@@ -121,9 +114,87 @@ class EventBanner(models.Model):
             ("high-eggshell", "High Eggshell"),
             ("pure-white", "Pure White"),
         ],
+        default="low-blue",
+        required=True,
+    )
+
+    background_color = fields.Selection(
+        [
+            ("core-blue", "Core Blue"),
+            ("dark-blue", "Dark Blue"),
+            ("low-blue", "Low Blue"),
+            ("mid-blue", "Mid Blue"),
+            ("high-blue", "High Blue"),
+            ("low-green", "Low Green"),
+            ("mid-green", "Mid Green"),
+            ("high-green", "High Green"),
+            ("low-yellow", "Low Yellow"),
+            ("mid-yellow", "Mid Yellow"),
+            ("high-yellow", "High Yellow"),
+            ("low-pink", "Low Pink"),
+            ("mid-pink", "Mid Pink"),
+            ("high-pink", "High Pink"),
+            ("low-orange", "Low Orange"),
+            ("mid-orange", "Mid Orange"),
+            ("high-orange", "High Orange"),
+            ("low-brown", "Low Brown"),
+            ("mid-brown", "Mid Brown"),
+            ("high-brown", "High Brown"),
+            ("low-black", "Low Black"),
+            ("off-black", "Off Black"),
+            ("low-grey", "Low Grey"),
+            ("mid-grey", "Mid Grey"),
+            ("low-eggshell", "Low Eggshell"),
+            ("mid-eggshell", "Mid Eggshell"),
+            ("high-eggshell", "High Eggshell"),
+            ("pure-white", "Pure White"),
+        ],
+        default="high-blue",
         required=True,
         string="Color",
-        help="The background color of the banner."
+    )
+
+    button_color = fields.Selection(
+        [
+            ("core-blue", "Core Blue"),
+            ("dark-blue", "Dark Blue"),
+            ("low-blue", "Low Blue"),
+            ("mid-blue", "Mid Blue"),
+            ("high-blue", "High Blue"),
+            ("low-green", "Low Green"),
+            ("mid-green", "Mid Green"),
+            ("high-green", "High Green"),
+            ("low-yellow", "Low Yellow"),
+            ("mid-yellow", "Mid Yellow"),
+            ("high-yellow", "High Yellow"),
+            ("low-pink", "Low Pink"),
+            ("mid-pink", "Mid Pink"),
+            ("high-pink", "High Pink"),
+            ("low-orange", "Low Orange"),
+            ("mid-orange", "Mid Orange"),
+            ("high-orange", "High Orange"),
+            ("low-brown", "Low Brown"),
+            ("mid-brown", "Mid Brown"),
+            ("high-brown", "High Brown"),
+            ("low-black", "Low Black"),
+            ("off-black", "Off Black"),
+            ("low-grey", "Low Grey"),
+            ("mid-grey", "Mid Grey"),
+            ("low-eggshell", "Low Eggshell"),
+            ("mid-eggshell", "Mid Eggshell"),
+            ("high-eggshell", "High Eggshell"),
+            ("pure-white", "Pure White"),
+        ],
+        default="mid-yellow",
+        required=True,
+    )
+
+    target_pages = fields.Many2many(
+        'website.page',
+        string='Target Pages',
+        required=True,
+        help="Select the specific pages where this banner should appear. "
+             "If empty, it will not appear on any page."
     )
 
     button_action = fields.Char(
@@ -131,3 +202,11 @@ class EventBanner(models.Model):
         help="URL to redirect to when a button on the banner is clicked. "
              "Leave empty for no button."
     )
+
+    @api.constrains('start_date', 'end_date')
+    def _check_dates(self):
+        """ Ensures that the end date is not before the start date. """
+        for banner in self:
+            if banner.start_date and banner.end_date and banner.start_date > banner.end_date:
+                raise ValidationError("The end date must be after the start date.")
+

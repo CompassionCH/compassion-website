@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Vue Liste (Tree) pour les bannières -->
+    <!-- List View -->
     <record id="view_my_compassion_event_banner_tree" model="ir.ui.view">
         <field name="name">my_compassion.event_banner.tree</field>
         <field name="model">my_compassion.event_banner</field>
         <field name="arch" type="xml">
             <tree string="Event Banners">
-                <field name="name"/>
+                <field name="banner_title"/>
                 <field name="is_active"/>
                 <field name="start_date"/>
                 <field name="end_date"/>
-                <field name="color"/>
             </tree>
         </field>
     </record>
 
-    <!-- Vue Formulaire pour les bannières -->
+    <!-- Form -->
     <record id="view_my_compassion_event_banner_form" model="ir.ui.view">
         <field name="name">my_compassion.event_banner.form</field>
         <field name="model">my_compassion.event_banner</field>
@@ -25,7 +24,7 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="name"/>
+                            <field name="banner_title"/>
                             <field name="is_active"/>
                         </group>
                         <group>
@@ -33,13 +32,21 @@
                             <field name="end_date"/>
                         </group>
                     </group>
-                    <group string="Content &amp; Appearance">
-                        <field name="text" nolabel="1" placeholder="Your banner message..."/>
-                        <field name="color"/>
-                        <field name="pictogram"/>
-                        <field name="button_action" placeholder="e.g., /my/children"/>
+                    <group>
+                        <field name="banner_description"/>
                     </group>
-                    <group string="Display Rules">
+                    <group string="Appearance">
+                        <group>
+                            <field name="pictogram" />
+                            <field name="pictogram_color" />
+                        </group>
+                        <group>
+                            <field name="background_color" />
+                            <field name="button_color" />
+                        </group>
+                    </group>
+                    <group string="Appearance">
+                        <field name="button_action" placeholder="e.g., /my/children"/>
                         <field name="target_pages" widget="many2many_tags" placeholder="Select pages where the banner should appear..."/>
                     </group>
                 </sheet>
@@ -54,12 +61,12 @@
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Create a new event banner to display important messages on the website.
+                Create a new event banner.
             </p>
         </field>
     </record>
 
-    <!-- Élément de Menu -->
+    <!-- Menu Item -->
     <menuitem
         id="menu_my_compassion_event_banner"
         name="Event Banners"
