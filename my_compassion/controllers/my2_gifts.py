@@ -30,15 +30,15 @@ class MyCompassionGiftController(http.Controller):
             page_content = {
                 "title": "Gift to your sponsored children",
                 "description": (
-                    "Send a gift to your sponsored child and Compassion staff from their "
-                    "local church will support them in purchasing something they really "
-                    "need."
+                    "Send a gift to your sponsored child and Compassion staff from "
+                    "their local church will support them in purchasing something "
+                    "they really need."
                 ),
                 "banner_title": "Gift of compassion",
                 "banner_text": (
-                    "Every child deserves a secure home, safe water and medicine to keep "
-                    "them healthy. That’s why when poverty places a child in critical "
-                    "need, we take action."
+                    "Every child deserves a secure home, safe water and medicine to "
+                    "keep them healthy. That’s why when poverty places a child in "
+                    "critical need, we take action."
                 ),
                 "banner_btn_text": "Send a gift",
                 "banner_btn_link": urljoin(
@@ -55,9 +55,9 @@ class MyCompassionGiftController(http.Controller):
                 ),
                 "banner_title": "Give to your sponsored children",
                 "banner_text": (
-                    "Send a gift to your sponsored child. Compassion staff from their "
-                    "local church will support them in purchasing something they really "
-                    "need."
+                    "Send a gift to your sponsored child. Compassion staff from "
+                    "their local church will support them in purchasing something "
+                    "they really need."
                 ),
                 "banner_btn_text": "Send a gift",
                 "banner_btn_link": urljoin(
