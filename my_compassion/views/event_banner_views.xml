@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vue Liste (Tree) pour les bannières -->
+    <record id="view_my_compassion_event_banner_tree" model="ir.ui.view">
+        <field name="name">my_compassion.event_banner.tree</field>
+        <field name="model">my_compassion.event_banner</field>
+        <field name="arch" type="xml">
+            <tree string="Event Banners">
+                <field name="name"/>
+                <field name="is_active"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="color"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire pour les bannières -->
+    <record id="view_my_compassion_event_banner_form" model="ir.ui.view">
+        <field name="name">my_compassion.event_banner.form</field>
+        <field name="model">my_compassion.event_banner</field>
+        <field name="arch" type="xml">
+            <form string="Event Banner">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+                    </group>
+                    <group string="Content &amp; Appearance">
+                        <field name="text" nolabel="1" placeholder="Your banner message..."/>
+                        <field name="color"/>
+                        <field name="pictogram"/>
+                        <field name="button_action" placeholder="e.g., /my/children"/>
+                    </group>
+                    <group string="Display Rules">
+                        <field name="target_pages" widget="many2many_tags" placeholder="Select pages where the banner should appear..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action de la fenêtre -->
+    <record id="action_my_compassion_event_banner" model="ir.actions.act_window">
+        <field name="name">Event Banners</field>
+        <field name="res_model">my_compassion.event_banner</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new event banner to display important messages on the website.
+            </p>
+        </field>
+    </record>
+
+    <!-- Élément de Menu -->
+    <menuitem
+        id="menu_my_compassion_event_banner"
+        name="Event Banners"
+        parent="website.menu_website_configuration"
+        action="action_my_compassion_event_banner"
+        sequence="100"/>
+
+</odoo>

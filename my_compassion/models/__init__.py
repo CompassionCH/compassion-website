@@ -19,4 +19,5 @@ from . import (
     product_template,
     my2_donation_info_line,
     my2_donation_impact_line,
+    my2_event_banner,
 )

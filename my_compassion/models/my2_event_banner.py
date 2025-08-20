@@ -45,29 +45,89 @@ class EventBanner(models.Model):
         help="Check this box to make the banner active. "
              "Uncheck to disable it without deleting it."
     )
+
+    pictogram = fields.Selection(
+        [
+            ("advocacy", "Advocacy"),
+            ("bible-gift", "Bible Gift"),
+            ("birthday-gift", "Birthday Gift"),
+            ("buildings-city", "Buildings City"),
+            ("buildings-house", "Buildings House"),
+            ("buildings-neighbourhood", "Buildings Neighbourhood"),
+            ("buildings-rural", "Buildings Rural"),
+            ("centre-gift", "Centre Gift"),
+            ("child-focused", "Child Focused"),
+            ("child-sponsorship", "Child Sponsorship"),
+            ("children", "Children"),
+            ("christ-centred", "Christ Centred"),
+            ("christmas-gift", "Christmas Gift"),
+            ("church-based", "Church Based"),
+            ("cognitive-brain", "Cognitive Brain"),
+            ("critical-needs", "Critical Needs"),
+            ("disaster-relief", "Disaster Relief"),
+            ("education-and-training", "Education And Training"),
+            ("family", "Family"),
+            ("family-gift", "Family Gift"),
+            ("food", "Food"),
+            ("gift-donation-general", "Gift Donation General"),
+            ("globe-global", "Globe Global"),
+            ("health", "Health"),
+            ("highly-vulnerable-children", "Highly Vulnerable Children"),
+            ("income-generation", "Income Generation"),
+            ("infrastructure", "Infrastructure"),
+            ("letter-writing", "Letter Writing"),
+            ("local-empowerment-partnership", "Local Empowerment Partnership"),
+            ("location-pin", "Location Pin"),
+            ("mothers-and-babies", "Mothers And Babies"),
+            ("neighbourhood", "Neighbourhood"),
+            ("physical", "Physical"),
+            ("socio-emotional", "Socio Emotional"),
+            ("spiritual", "Spiritual"),
+            ("unsponsored-children", "Unsponsored Children"),
+            ("virus", "Virus"),
+            ("water-and-sanitation", "Water And Sanitation"),
+            ("were-most-needed", "Were Most Needed"),
+        ],
+    )
+
     color = fields.Selection(
         [
-            ('primary', 'Primary'),
-            ('secondary', 'Secondary'),
-            ('success', 'Success'),
-            ('danger', 'Danger'),
-            ('warning', 'Warning'),
-            ('info', 'Info'),
-            ('light', 'Light'),
-            ('dark', 'Dark'),
+            ("core-blue", "Core Blue"),
+            ("dark-blue", "Dark Blue"),
+            ("low-blue", "Low Blue"),
+            ("mid-blue", "Mid Blue"),
+            ("high-blue", "High Blue"),
+            ("low-green", "Low Green"),
+            ("mid-green", "Mid Green"),
+            ("high-green", "High Green"),
+            ("low-yellow", "Low Yellow"),
+            ("mid-yellow", "Mid Yellow"),
+            ("high-yellow", "High Yellow"),
+            ("low-pink", "Low Pink"),
+            ("mid-pink", "Mid Pink"),
+            ("high-pink", "High Pink"),
+            ("low-orange", "Low Orange"),
+            ("mid-orange", "Mid Orange"),
+            ("high-orange", "High Orange"),
+            ("low-brown", "Low Brown"),
+            ("mid-brown", "Mid Brown"),
+            ("high-brown", "High Brown"),
+            ("low-black", "Low Black"),
+            ("off-black", "Off Black"),
+            ("low-grey", "Low Grey"),
+            ("mid-grey", "Mid Grey"),
+            ("low-eggshell", "Low Eggshell"),
+            ("mid-eggshell", "Mid Eggshell"),
+            ("high-eggshell", "High Eggshell"),
+            ("pure-white", "Pure White"),
         ],
-        string='Color',
-        default='primary',
         required=True,
+        string="Color",
         help="The background color of the banner."
     )
+
     button_action = fields.Char(
         string='Button Action URL',
         help="URL to redirect to when a button on the banner is clicked. "
              "Leave empty for no button."
     )
-    pictogram = fields.Char(
-        string='Pictogram (Font Awesome)',
-        help="Enter a Font Awesome class for a pictogram, e.g., 'fa-heart'."
-    )
-
