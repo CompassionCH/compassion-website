@@ -189,12 +189,18 @@ class EventBanner(models.Model):
         required=True,
     )
 
-    target_pages = fields.Many2many(
-        'website.page',
-        string='Target Pages',
+    #target_pages = fields.Many2many(
+    #    'website.page',
+    #    string='Target Pages',
+    #    required=True,
+    #    help="Select the specific pages where this banner should appear. "
+    #         "If empty, it will not appear on any page."
+    #)
+
+    target_pages = fields.Text(
+        string='Target Paths',
         required=True,
-        help="Select the specific pages where this banner should appear. "
-             "If empty, it will not appear on any page."
+        help="Tragen Sie einen URL-Pfad pro Zeile ein. Beispiel:\n/my/dashboard\n/my/children"
     )
 
     button_action = fields.Char(
@@ -210,3 +216,12 @@ class EventBanner(models.Model):
             if banner.start_date and banner.end_date and banner.start_date > banner.end_date:
                 raise ValidationError("The end date must be after the start date.")
 
+    def name_get(self):
+        """
+           Generates the display name for the banners.
+           Format: ‘Banner Title’
+        """
+        result = []
+        for banner in self:
+            result.append((banner.id, banner.banner_title))
+        return result

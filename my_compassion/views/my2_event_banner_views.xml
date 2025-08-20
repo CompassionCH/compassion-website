@@ -2,7 +2,7 @@
 <odoo>
 
     <!-- List View -->
-    <record id="view_my_compassion_event_banner_tree" model="ir.ui.view">
+    <record id="view_my2_compassion_event_banner_tree" model="ir.ui.view">
         <field name="name">my_compassion.event_banner.tree</field>
         <field name="model">my_compassion.event_banner</field>
         <field name="arch" type="xml">
@@ -16,7 +16,7 @@
     </record>
 
     <!-- Form -->
-    <record id="view_my_compassion_event_banner_form" model="ir.ui.view">
+    <record id="view_my2_compassion_event_banner_form" model="ir.ui.view">
         <field name="name">my_compassion.event_banner.form</field>
         <field name="model">my_compassion.event_banner</field>
         <field name="arch" type="xml">
@@ -47,15 +47,16 @@
                     </group>
                     <group string="Appearance">
                         <field name="button_action" placeholder="e.g., /my/children"/>
-                        <field name="target_pages" widget="many2many_tags" placeholder="Select pages where the banner should appear..."/>
+                         <field name="target_pages" placeholder=" Separate multiple URLs with a semicolon (;) e.g. /my2/dashboard;/my2/gits"/>
+                        <!--<field name="target_pages" widget="many2many_tags" placeholder="Select pages where the banner should appear..."/> -->
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
 
-    <!-- Action de la fenêtre -->
-    <record id="action_my_compassion_event_banner" model="ir.actions.act_window">
+    <!-- Window action -->
+    <record id="action_my2_compassion_event_banner" model="ir.actions.act_window">
         <field name="name">Event Banners</field>
         <field name="res_model">my_compassion.event_banner</field>
         <field name="view_mode">tree,form</field>
@@ -68,10 +69,10 @@
 
     <!-- Menu Item -->
     <menuitem
-        id="menu_my_compassion_event_banner"
+        id="menu_my2_compassion_event_banner"
         name="Event Banners"
         parent="website.menu_website_configuration"
-        action="action_my_compassion_event_banner"
+        action="action_my2_compassion_event_banner"
         sequence="100"/>
 
 </odoo>
