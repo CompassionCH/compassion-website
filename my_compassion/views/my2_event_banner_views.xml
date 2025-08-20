@@ -55,11 +55,30 @@
         </field>
     </record>
 
+    <!-- HINZUGEFÜGT: Suchansicht mit benutzerdefiniertem Filter -->
+    <record id="view_my2_compassion_event_banner_search" model="ir.ui.view">
+        <field name="name">my_compassion.event_banner.search</field>
+        <field name="model">my_compassion.event_banner</field>
+        <field name="arch" type="xml">
+            <search string="Search Event Banners">
+                <field name="banner_title" string="Banner Title"/>
+                <separator/>
+                <filter string="Currently Active Banners" name="currently_active"
+                        domain="[('is_active', '=', True),
+                                 ('start_date', '&lt;=', now),
+                                 '|',
+                                 ('end_date', '=', False),
+                                 ('end_date', '&gt;=', now)]"/>
+            </search>
+        </field>
+    </record>
+
     <!-- Window action -->
     <record id="action_my2_compassion_event_banner" model="ir.actions.act_window">
         <field name="name">Event Banners</field>
         <field name="res_model">my_compassion.event_banner</field>
         <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_my2_compassion_event_banner_search"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create a new event banner.
