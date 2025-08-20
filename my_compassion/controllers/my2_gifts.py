@@ -39,10 +39,7 @@ class MyCompassionGiftController(http.Controller):
                     "That’s why when poverty places a child in critical need, we take action."
                 ),
                 "banner_btn_text": "Send a gift",
-                "banner_btn_link": urljoin(
-                    base_url,
-                    "/my2/gifts/?type=fund"
-                ),
+                "banner_btn_link": urljoin(base_url, "/my2/gifts/?type=fund"),
             }
         else:
             page_content = {
@@ -56,10 +53,7 @@ class MyCompassionGiftController(http.Controller):
                     "support them in purchasing something they really need."
                 ),
                 "banner_btn_text": "Send a gift",
-                "banner_btn_link": urljoin(
-                    base_url,
-                    "/my2/gifts/?type=gift"
-                ),
+                "banner_btn_link": urljoin(base_url, "/my2/gifts/?type=gift"),
             }
 
         domain = [
