@@ -51,6 +51,7 @@
         "templates/login_template.xml",
         "templates/signup.xml",
         "views/correspondence_template_view.xml",
+        "views/my2_event_banner_views.xml",
         "views/partner_compassion_view.xml",
         "views/product_view.xml",
         "data/signup_email_confirmation.xml",
@@ -94,6 +95,7 @@
         "website_crm_privacy_policy",  # OCA/website
         "auth_signup_verify_email",  # OCA/server-auth
         "queue_job",
+        "theme_compassion_2025",
     ],
     "demo": [],
     "installable": True,
