@@ -45,6 +45,7 @@
         "templates/components/Vignette.xml",
         "templates/components/Select.xml",
         "templates/components/FormField.xml",
+        "templates/components/RangeInputLoading.xml",
         # Buttons
         "templates/components/buttons/ThemedButton.xml",
     ],

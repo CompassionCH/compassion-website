@@ -131,7 +131,13 @@
                     <div class="row mb-3">
                         <div class="col-12">
                             <div class="file-upload-placeholder">
-                                <input type="file" class="file-upload-input" id="letter-attachments" multiple="true" />
+                                <input
+                                    type="file"
+                                    class="file-upload-input"
+                                    id="letter-attachments"
+                                    multiple="true"
+                                    accept="image/*"
+                                />
                                 <div class="text-center p-3">
                                     <i class="icon-image-plus fa-2x text-dark-blue mb-3" />
                                     <br />
@@ -178,7 +184,7 @@
                                 <t t-set="icon" t-value="'icon-eye'" />
                                 <t t-set="color" t-value="'dark-blue'" />
                                 <t t-set="text_color" t-value="'pure_white'" />
-                                <t t-set="mode" t-value="'preview'" />
+                                <t t-set="data_custom" t-value="'preview'" />
                             </t>
                         </div>
                         <div class="col-6 text-right ">
@@ -189,7 +195,7 @@
                                 <t t-set="icon" t-value="'icon-send01'" />
                                 <t t-set="color" t-value="'dark-blue'" />
                                 <t t-set="text_color" t-value="'pure_white'" />
-                                <t t-set="mode" t-value="'send'" />
+                                <t t-set="data_custom" t-value="'send'" />
                             </t>
                         </div>
                     </div>
