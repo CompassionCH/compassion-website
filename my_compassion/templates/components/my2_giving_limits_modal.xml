@@ -125,7 +125,9 @@
                         </div>
                         <div class="mt-2 tiny-text">
                             <i class="mr-1 icon-mail01 body-small" />
-                            <a href="mailto:info@compassion.ch" class="text-low-black">info@compassion.ch</a>
+                            <a t-attf-href="mailto:#{request.env.company.email}" class="text-low-black">
+                                <t t-esc="request.env.company.email" />
+                            </a>
                         </div>
                     </div>
                 </div>

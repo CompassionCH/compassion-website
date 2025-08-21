@@ -90,11 +90,17 @@ class MyCompassionDonationsController(http.Controller):
         """
         Edits a donation from the user's gift package.
         """
-        # Fetch the order line record from the database
-        order_line_id = post.get("order_line_id")
-        order_line = request.env["sale.order.line"].sudo().browse(order_line_id)
+        # Retrieve current user's cart
+        order = request.website.sale_get_order()
+
+        # Get the order to be edited
+        try:
+            order_line_id = int(post.get("order_line_id"))
+        except (ValueError, TypeError):
+            raise BadRequest()
 
         # Make sure the order line exists
+        order_line = order.order_line.filtered(lambda line: line.id == order_line_id)
         if not order_line:
             raise NotFound()
 
@@ -210,9 +216,9 @@ class MyCompassionDonationsController(http.Controller):
         sitemap=False,
     )
     def my2_gifts_thank_you_page(self, **kwargs):
-        sale_order_id = request.session.get('sale_last_order_id')
+        sale_order_id = request.session.get("sale_last_order_id")
         if sale_order_id:
-            sale_order = request.env['sale.order'].sudo().browse(sale_order_id)
+            sale_order = request.env["sale.order"].sudo().browse(sale_order_id)
             current_partner = request.env.user.partner_id
             # Check that the order belongs to the current user
             if sale_order.partner_id == current_partner:
@@ -220,7 +226,7 @@ class MyCompassionDonationsController(http.Controller):
                     "my_compassion.my2_gifts_thank_you_page",
                     {"sale_order": sale_order},
                 )
-        return request.redirect('/my2/dashboard')
+        return request.redirect("/my2/dashboard")
 
     @staticmethod
     def _extract_donation_order_line_fields(product_template, post):
