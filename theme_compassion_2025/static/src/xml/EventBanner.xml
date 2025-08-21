@@ -12,46 +12,21 @@
 -->
 <templates>
   <t t-name="theme_compassion_2025.EventBannerComponent">
-      <!--
-        <div class="bg-primary text-white d-flex justify-content-around align-items-center mt-4 mx-4 p-3 rounded">
-              <div class="d-flex align-items-center">
-                <p>pictogram</p>
-              </div>
+      <div class="event-banner bg-primary text-white mt-3 px-5 py-2 rounded">
+          <div class="row no-gutters align-items-center">
+            <div class="col-12 col-md-1 d-flex align-items-center justify-content-center">
+                <i class="h1 mb-0 pictogram-children text-pure-white"/>
+            </div>
 
-              <div class="d-flex flex-column justify-content-center bg-secondary text-white px-3 py-2 rounded">
-                <h1>title</h1>
-                <p>description</p>
-              </div>
-
-              <div class="d-flex align-items-center bg-success text-white px-3 py-2 rounded">
-                <a href="#" class="btn btn-light btn-sm mr-3">button</a>
-                <button type="button" class="btn btn-link text-white p-0" aria-label="Close">x</button>
-              </div>
-        </div>-->
-      <div class="event-banner bg-primary text-white mt-4 mx-4 px-4 py-3 rounded">
-  <div class="row no-gutters align-items-center bg-secondary">
-    <!-- Links: Piktogramm (schmal) -->
-    <div class="col-12 col-md-1 d-flex align-items-center mb-2 mb-md-0 bg-success">
-      <!-- Beispiel-Icon -->
-      <i class="fa fa-info-circle mr-2"></i>
-      <span class="d-none d-md-inline">pictogram</span>
-    </div>
-
-    <!-- Mitte: Titel & Beschreibung (deutlich größer) -->
-    <div class="col-12 col-md-9 bg-danger">
-      <h1 class="h5 mb-1">title</h1>
-      <p class="mb-0">description</p>
-    </div>
-
-    <!-- Rechts: Button & Close (mittel) -->
-    <div class="col-12 col-md-2 d-flex align-items-center justify-content-md-end mt-2 mt-md-0 bg-warning">
-      <a href="#" class="btn btn-light btn-sm mr-3">button</a>
-      <!-- Close als Link-Button, gut sichtbar auf dunkel -->
-      <button type="button" class="btn btn-link text-white p-0" aria-label="Close">
-        x
-      </button>
-    </div>
-  </div>
-</div>
+            <div class="col-12 col-md-9">
+              <p class="h3 font-weight-bold mb-1">Chrismas Appeal 2025</p>
+              <p class="mb-0">Discover a love worth sharing. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut</p>
+            </div>
+            <div class="col-12 col-md-2 d-flex justify-content-md-around align-items-md-center">
+              <a href="#" class="btn btn-light btn-sm mr-3">button</a>
+                <i href="#" class="h5 mb-0 icon-x-circle cursor-pointer text-pure-white"/>
+            </div>
+          </div>
+        </div>
     </t>
 </templates>

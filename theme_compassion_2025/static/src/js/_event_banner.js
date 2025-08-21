@@ -28,7 +28,7 @@ odoo.define('theme_compassion_2025.event_banner', function (require) {
 
             const bannerHtml = qweb.render('theme_compassion_2025.EventBannerComponent', banner);
             const $banner = $(bannerHtml);
-            $('main').prepend($banner);
+            $('main .container').first().prepend($banner);
             $banner.on('click', '.js_close_banner', onCloseBanner);
             $banner.slideDown();
         }).catch(function (e) {
