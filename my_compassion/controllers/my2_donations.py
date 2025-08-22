@@ -52,8 +52,8 @@ class MyCompassionDonationsController(http.Controller):
         # Fetch the product record from the database
         try:
             product_template_id = int(post.get("product_id"))
-        except (ValueError, TypeError):
-            raise BadRequest()
+        except (ValueError, TypeError) as e:
+            raise BadRequest() from e
         product_template = (
             request.env["product.template"].sudo().browse(product_template_id)
         )
@@ -94,7 +94,9 @@ class MyCompassionDonationsController(http.Controller):
         # Fetch the order line record from the user's cart
         order = request.website.sale_get_order()
         order_line_id = post.get("order_line_id")
-        order_line = order and order.order_line.filtered(lambda l: l.id == order_line_id)
+        order_line = order and order.order_line.filtered(
+            lambda line: line.id == order_line_id
+        )
 
         # Make sure the order line exists
         if not order_line:
@@ -215,7 +217,8 @@ class MyCompassionDonationsController(http.Controller):
     def my2_render_add_a_gift_page(self, **kwargs):
         """
         Renders the add a gift page to quickly add a gift to the gift package.
-        return: An HTTP response containing a rendered template with the add a gift page.
+        return: An HTTP response containing a rendered template with the add a
+        gift page.
         """
         # Exclude fund donation that are already in the user's gift package
         order = request.website.sale_get_order(force_create=True)
@@ -250,9 +253,9 @@ class MyCompassionDonationsController(http.Controller):
         sitemap=False,
     )
     def my2_gifts_thank_you_page(self, **kwargs):
-        sale_order_id = request.session.get('sale_last_order_id')
+        sale_order_id = request.session.get("sale_last_order_id")
         if sale_order_id:
-            sale_order = request.env['sale.order'].sudo().browse(sale_order_id)
+            sale_order = request.env["sale.order"].sudo().browse(sale_order_id)
             current_partner = request.env.user.partner_id
             # Check that the order belongs to the current user
             if sale_order.partner_id == current_partner:
@@ -260,7 +263,7 @@ class MyCompassionDonationsController(http.Controller):
                     "my_compassion.my2_gifts_thank_you_page",
                     {"sale_order": sale_order},
                 )
-        return request.redirect('/my2/dashboard')
+        return request.redirect("/my2/dashboard")
 
     @staticmethod
     def _extract_donation_order_line_fields(product_template, post):
