@@ -24,7 +24,8 @@ class MyCompassionDonationsController(http.Controller):
     def my2_render_donation_details_page(self, product, **kwargs):
         """
         Renders a donation details page for a specific donation (product).
-        return: An HTTP response containing a rendered template with the donation details page.
+        return: An HTTP response containing a rendered template with the donation
+        details page.
         """
         sponsorships = request.env.user.partner_id.sponsorship_ids
 
@@ -51,8 +52,8 @@ class MyCompassionDonationsController(http.Controller):
         # Fetch the product record from the database
         try:
             product_template_id = int(post.get("product_id"))
-        except (ValueError, TypeError):
-            raise BadRequest()
+        except (ValueError, TypeError) as e:
+            raise BadRequest() from e
         product_template = (
             request.env["product.template"].sudo().browse(product_template_id)
         )
@@ -96,8 +97,8 @@ class MyCompassionDonationsController(http.Controller):
         # Get the order to be edited
         try:
             order_line_id = int(post.get("order_line_id"))
-        except (ValueError, TypeError):
-            raise BadRequest()
+        except (ValueError, TypeError) as e:
+            raise BadRequest() from e
 
         # Make sure the order line exists
         order_line = order.order_line.filtered(lambda line: line.id == order_line_id)
@@ -120,7 +121,8 @@ class MyCompassionDonationsController(http.Controller):
     def my2_render_gift_package_page(self, **kwargs):
         """
         Renders the gift package (cart) page.
-        return: An HTTP response containing a rendered template with the gift package page.
+        return: An HTTP response containing a rendered template with the gift
+        package page.
         """
         # Get the current sales order
         order = request.website.sale_get_order()
@@ -251,8 +253,8 @@ class MyCompassionDonationsController(http.Controller):
         elif amount == "custom":
             try:
                 price = float(post.get("custom_amount"))
-            except (ValueError, TypeError):
-                raise BadRequest()
+            except (ValueError, TypeError) as e:
+                raise BadRequest() from e
             # Make sure price is strictly positive
             if price <= 0:
                 raise BadRequest()
