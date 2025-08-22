@@ -1,4 +1,28 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!--
+Page: My Compassion 2 Donations Page
+
+    Description:
+    This page allows users to view their donation information.
+    It provides access to tax receipts by year, displays current sponsorships with payment details,
+    lists open (due) invoices, and shows a paginated history of past donations.
+
+    Used in route:
+    - /my2/my-donations/
+    - /my2/my-donations/page/<int:invoice_page>
+
+    Injected data:
+    - invoices_per_day (list of dict): Grouped donations by date with description and amount.
+    - due_invoices: Outstanding invoices not yet paid.
+    - sponsorships_by_group (dict): Sponsorships grouped by payment mode with total monthly amounts.
+    - current_year: Current calendar year.
+    - first_year: The earliest available year with a tax receipt.
+    - last_completed_tax_receipt: The last year for which a tax receipt is available.
+    - current_page (int): Current page number for donation history.
+    - total_pages (int): Total number of pages in donation history.
+    - previous_page_url (str): URL for the previous donation history page.
+    - next_page_url (str): URL for the next donation history page.
+-->
 <odoo>
     <data>
         <template id="my2_my_donations_page" name="My Account Donations Details">
@@ -6,7 +30,7 @@
                 <div class="container">
                     <div class="content-column">
                         <!-- TITLE-->
-                        <div class="mb-5">
+                        <div class="my-5">
                             <t t-call="theme_compassion_2025.TitleComponent">
                                 <t t-set="title_content" t-value="'My donations and documents'" />
                                 <t t-set="title_size" t-value="'md'" />
@@ -29,12 +53,6 @@
                                             <t t-call="theme_compassion_2025.FormFieldComponent">
                                                 <t t-set="label" t-value="'Tax receipt'" />
                                                 <t t-set="top_class" t-value="'mr-2'" />
-                                                <input
-                                                    type="text"
-                                                    class="d-none"
-                                                    id="last_complete_year"
-                                                    t-att-value="last_completed_tax_receipt"
-                                                />
                                                 <t t-call="theme_compassion_2025.SelectComponent">
                                                     <t t-set="name" t-value="'year'" />
                                                     <t t-set="id" t-value="'year'" />
@@ -90,27 +108,28 @@
                                 <t t-set="total_amount" t-value="group_data[1][1]" />
                                 <p>
                                     You currently have
-                                    <b>
+                                    <span class="body-small bold">
                                         <t t-esc="len(sponsorships)" />
-                                    </b>
+                                    </span>
                                     active
                                     sponsorship(s) for a total of
-                                    <b>
+                                    <span class="body-small bold">
                                         <t t-esc="total_amount" />
                                         /mo
-                                    </b>
+                                    </span>
                                     .
                                     <br />
                                     A payment slip is available for download for each of
                                     your sponsored children.
                                 </p>
-                                <div class="row">
+
                                     <t t-foreach="sponsorships" t-as="sponsorship">
-                                        <div class="col-12 col-md-6 col-lg-6 mb-4">
+                                        <div class="mb-4">
                                             <t
                                                 t-set="primary_button_data"
                                                 t-value="{
                         'label': 'See profile',
+                        'pictogram': 'child-sponsorship',
                         'action': 'link',
                         'href': '/my2/children/' + str(sponsorship.child_id.id),
                         'color': 'low-blue'
@@ -121,7 +140,7 @@
                                                 t-value="[
                         {
                             'icon': 'download01',
-                            'color': 'low-yellow',
+                            'color': 'mid-yellow',
                             'action': 'link',
                             'href': '/my/download/gift_bvr?child_id=' + str(sponsorship.child_id.id),
                         }
@@ -144,49 +163,46 @@
                                             </t>
                                         </div>
                                     </t>
-                                </div>
+
                             </t>
                         </div>
                         <!-- DUE INVOICES -->
-                        <t t-if="due_invoices">
-                            <div class="mb-4 mt-4">
-                                <h3 class="text-dark-blue">Open contributions</h3>
-                                <p>
-                                    Your latest payments may not already be taken into
-                                    account.
-                                </p>
-                                <t t-if="due_invoices">
-                                    <div class="row font-weight-bold mb-2">
-                                        <div class="col text-core-blue">Month</div>
-                                        <div class="col text-core-blue">Child</div>
-                                        <div class="col text-right text-core-blue">Amount</div>
-                                    </div>
-                                    <t t-foreach="due_invoices" t-as="invoice">
-                                        <t
+                        <div class="mb-4 mt-4">
+                            <h3 class="text-dark-blue">Open contributions</h3>
+                            <p>
+                                Your latest payments may not already be taken into
+                                account.
+                            </p>
+                            <t t-if="due_invoices">
+                                <div class="row mb-2">
+                                    <div class="col text-core-blue body-small-bold">Month</div>
+                                    <div class="col text-core-blue body-small-bold">Child</div>
+                                    <div class="col text-right text-core-blue body-small-bold">
+                                        Amount</div>
+                                </div>
+                                <t t-foreach="due_invoices" t-as="invoice">
+                                    <t
                                             t-set="children"
                                             t-value="invoice.invoice_line_ids.mapped('contract_id.child_id')"
-                                        />
-                                        <div class="row mb-3">
-                                            <div class="col">
-                                                <t t-esc="invoice.get_date('invoice_date', 'MMMM yyyy').title()" />
-                                            </div>
-                                            <div class="col">
-                                                <t
-                                                    t-esc="children.get_list('preferred_name', 3, children.get_number())"
-                                                />
-                                            </div>
-                                            <div class="col text-right">
-                                                <t t-esc="int(invoice.amount_total)" />
-                                                <t t-esc="invoice.currency_id.name" />
-                                            </div>
+                                    />
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <t t-esc="invoice.get_date('invoice_date', 'MMMM yyyy').title()"/>
                                         </div>
-                                    </t>
+                                        <div class="col">
+                                            <t t-esc="children.get_list('preferred_name', 3, children.get_number())"/>
+                                        </div>
+                                        <div class="col text-right">
+                                            <t t-esc="int(invoice.amount_total)"/>
+                                            <t t-esc="invoice.currency_id.name"/>
+                                        </div>
+                                    </div>
                                 </t>
-                                <t t-else="">
-                                    <p class="mb-3">No due invoices.</p>
-                                </t>
-                            </div>
-                        </t>
+                            </t>
+                            <t t-else="">
+                                <p class="mb-3">No due invoices.</p>
+                            </t>
+                        </div>
                         <!-- DONATION HISTORY -->
                         <div class="mb-4 mt-4">
                             <h3 class="text-dark-blue">Donations history</h3>

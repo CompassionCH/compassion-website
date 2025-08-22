@@ -64,19 +64,19 @@ class MyDonationController(CustomerPortal):
 
         move_obj = request.env["account.move"].sudo()
         # Group paid invoices by day for display and pagination.
-        all_invoices = move_obj.read_group(
+        offset = (invoice_page - 1) * invoice_per_page
+        invoice_count = move_obj.search_count(invoice_search_criteria)
+        total_pages = math.ceil(invoice_count / invoice_per_page)
+        invoices_per_day = move_obj.read_group(
             invoice_search_criteria,
             ["amount_total"],
             ["last_payment:day"],
             orderby="last_payment desc",
-            limit=HISTORY_LIMIT,
+            offset=offset,
+            limit=invoice_per_page,
         )
-        invoice_count = len(all_invoices)
-        total_pages = math.ceil(invoice_count / invoice_per_page)
         next_page_url = f"/my2/my-donations/page/{invoice_page + 1}"
         previous_page_url = f"/my2/my-donations/page/{invoice_page - 1}"
-        offset = (invoice_page - 1) * invoice_per_page
-        invoices_per_day = all_invoices[offset : offset + invoice_per_page]
 
         # Fetch all invoice records for the current page in a single search.
         all_domains = [g["__domain"] for g in invoices_per_day]
@@ -134,7 +134,6 @@ class MyDonationController(CustomerPortal):
         values = self._prepare_portal_layout_values()
         values.update(
             {
-                "partner": partner,
                 "sponsorships_by_group": sponsorships_by_group,
                 "invoices_per_day": invoices_per_day,
                 "current_page": invoice_page,
