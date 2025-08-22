@@ -1,7 +1,7 @@
 odoo.define('theme_compassion_2025.event_banner', function (require) {
     'use strict';
 
-    var ajax = require('web.ajax');
+    var rpc = require('web.rpc');
 
     $(function () {
         function onCloseBanner(ev) {
@@ -16,12 +16,11 @@ odoo.define('theme_compassion_2025.event_banner', function (require) {
             $banner.slideUp(function () { $banner.remove(); });
         }
 
-        ajax.jsonRpc('/my2/active-event-banners', 'call', {}).then(function (res) {
+       rpc.query({route: '/my2/active-event-banners', params: {},}).then(function (res) {
             if (!res || !res.html) return;
             const $banner = $(res.html);
-             // Wrapper erstellen, Banner hineinpacken
-              const $wrap = $('<div class="event-banner-wrap"></div>').append($banner);
 
+              const $wrap = $('<div class="event-banner-wrap"></div>').append($banner);
               const $container = $('main .container').first();
               $container.prepend($wrap);
 
