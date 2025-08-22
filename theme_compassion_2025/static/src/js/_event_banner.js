@@ -38,8 +38,13 @@ odoo.define('theme_compassion_2025.event_banner', function (require) {
                     return;
                 }
                 const $banner = $(it.html);
-                const id = it.id || $banner.data('banner-id');
+                const id = it.id;
 
+                const key = 'dismissedBanners';
+                const list = JSON.parse(localStorage.getItem(key) || '[]');
+                if (list.includes(id)) {
+                    return;
+                }
 
                 const $wrap = $('<div class="event-banner-wrap"></div>').append($banner);
                 $container.prepend($wrap);
@@ -52,17 +57,23 @@ odoo.define('theme_compassion_2025.event_banner', function (require) {
         },
 
         _dismiss(id) {
-          /*const list = JSON.parse(localStorage.getItem('dismissedBanners') || '[]');
-          if (!list.includes(id)) { list.push(id); localStorage.setItem('dismissedBanners', JSON.stringify(list)); }*/
-
+            const key = 'dismissedBanners';
+            const list = JSON.parse(localStorage.getItem(key) || '[]');
+            if (!list.includes(id)) {
+              list.push(id);
+              localStorage.setItem(key, JSON.stringify(list));
+            }
         },
 
         _onClose(ev) {
             ev.preventDefault();
             const $banner = $(ev.currentTarget).closest('.event-banner');
-            const id = $banner.data('banner-id');
             const $wrap = $banner.closest('.event-banner-wrap');
+            const id = $banner.data("id");
+
             $wrap.removeClass('is-open').css('max-height', 0).one('transitionend', () => $wrap.remove());
+
+            this._dismiss(id);
         },
     });
 
