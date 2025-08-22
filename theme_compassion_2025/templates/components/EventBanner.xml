@@ -9,51 +9,46 @@
     - pictogram: The Font Awesome icon class (e.g., 'children').
     - text: The main message of the banner.
     - button_action: The URL for the button (if any).
-    return {
-                '': banner.pictogram_color,
-                'button_color': banner.button_color,
-                'target_pages': banner.target_pages,
-                'button_action': banner.button_action,
-            }
 
 -->
 <odoo>
-  <template id="EventBannerComponent" name="Event Banner Component">
-    <div t-att-data-banner-id="id"
-         t-attf-class="event-banner #{bg_class} text-#{text_class} mt-3 px-5 py-2 rounded-lg">
-      <div class="row no-gutters align-items-center">
-        <div class="col-12 col-md-1 d-flex align-items-center justify-content-center">
-          <t t-if="pictogram">
-            <i t-attf-class="display-4 mb-0 pictogram-#{pictogram} text-#{pictogram_color}"/>
-          </t>
+    <template id="EventBannerComponent" name="Event Banner Component">
+        <div t-att-data-banner-id="id"
+        t-attf-class="event-banner bg-#{background_color} text-low-black mt-3 px-5 py-2 rounded-lg">
+            <div class="row no-gutters align-items-center">
+
+                <div class="col-12 col-md-1 d-flex align-items-center justify-content-center">
+                    <i t-attf-class="display-4 mb-0 pictogram-#{pictogram} text-#{pictogram_color}"/>
+                </div>
+
+                <div class="col-12 col-md-9">
+                    <p class="h3 font-weight-bold mb-1 text-low-black">
+                        <t t-esc="title"/>
+                    </p>
+                    <p class="mb-0 text-low-black">
+                        <t t-esc="description"/>
+                    </p>
+                </div>
+
+                <div class="col-12 col-md-2 d-flex justify-content-md-around align-items-md-center">
+                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                        <t t-set="variant" t-value="'default'"/>
+                        <t t-set="variation" t-value="'filled'"/>
+                        <t t-set="label" t-value="button_label or 'Learn more'"/>
+                        <t t-set="href"  t-value="button_action"/>
+                        <t t-set="color" t-value="button_color"/>
+                        <t t-set="text_color" t-value="button_text_color or 'dark'"/>
+                        <t t-set="radius" t-value="'pill'"/>
+                        <t t-set="href" t-value="button_action" />
+                        <t t-set="text_color" t-value="'pure-white'" />
+                    </t>
+                    <!-- Refactor after Icon Button is merged -->
+                    <i href="#" t-attf-class="h3 mb-0 icon-x-circle cursor-pointer text-#{button_color}"/>
+                </div>
+
+            </div>
         </div>
 
-        <div class="col-12 col-md-9">
-          <p class="h3 font-weight-bold mb-1 text-low-black">
-              <t t-esc="title"/>
-          </p>
-          <p class="mb-0 text-low-black">
-              <t t-esc="description"/>
-          </p>
-        </div>
-
-        <div class="col-12 col-md-2 d-flex justify-content-md-around align-items-md-center">
-          <t t-if="button_action">
-            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-              <t t-set="variant" t-value="'default'"/>
-              <t t-set="variation" t-value="'filled'"/>
-              <t t-set="label" t-value="button_label or 'Mehr erfahren'"/>
-              <t t-set="href"  t-value="button_action"/>
-              <t t-set="color" t-value="button_color or 'light'"/>
-              <t t-set="text_color" t-value="button_text_color or 'dark'"/>
-              <t t-set="radius" t-value="'pill'"/>
-            </t>
-          </t>
-
-          <i href="#" class="h5 mb-0 icon-x-circle cursor-pointer text-pure-white"/>
-        </div>
-      </div>
-    </div>
-  </template>
+    </template>
 </odoo>
 
