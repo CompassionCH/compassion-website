@@ -6,7 +6,14 @@
     */
 
 // =====================
-// Mixin for Button Types
+// Variables
+// =====================
+$btn-bg: #000;
+$btn-color: #fff;
+$btn-border-color: #000;
+
+// =====================
+// Mixins
 // =====================
 
 @mixin button-base($height, $padding-x, $font-size, $font-family, $font-weight) {
@@ -19,11 +26,27 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0; // handled by icon variant
     border: none;
     cursor: pointer;
     text-decoration: none;
     line-height: 1;
+}
+
+@mixin button-variant($height, $padding-x, $font-size, $font-family, $font-weight, $icon-only: false, $filled: true) {
+    @include button-base($height, $padding-x, $font-size, $font-family, $font-weight);
+
+    @if $filled {
+        background-color: $btn-bg;
+        color: $btn-color;
+    } @else {
+        background-color: transparent;
+        border: 2px solid $btn-border-color;
+        color: $btn-border-color;
+    }
+
+    @if $icon-only {
+        padding: 0 12px; // override for icon-only
+    }
 }
 
 // =====================
@@ -31,91 +54,27 @@
 // =====================
 
 .btn {
-    &--default-filled {
-        @include button-base(48px, 32px, 17px, "NeighbourSans Medium", 500);
-        background-color: #000;
-        color: #fff;
-    }
+    // Default
+    &--default-filled            { @include button-variant(48px, 32px, 17px, "NeighbourSans Medium", 500, false, true); }
+    &--default-filled-icon-only  { @include button-variant(48px, 32px, 17px, "NeighbourSans Medium", 500, true,  true); }
+    &--default-hollow            { @include button-variant(48px, 32px, 17px, "NeighbourSans Medium", 500, false, false); }
+    &--default-hollow-icon-only  { @include button-variant(48px, 32px, 17px, "NeighbourSans Medium", 500, true,  false); }
 
-    &--default-filled-icon-only {
-        @include button-base(48px, 12px, 17px, "NeighbourSans Medium", 500);
-        background-color: #000;
-        color: #fff;
-    }
+    // Impact
+    &--impact-filled             { @include button-variant(56px, 36px, 19px, "NeighbourSans DemiBold", 600, false, true); }
+    &--impact-filled-icon-only   { @include button-variant(56px, 36px, 19px, "NeighbourSans DemiBold", 600, true,  true); }
+    &--impact-hollow             { @include button-variant(56px, 36px, 19px, "NeighbourSans DemiBold", 600, false, false); }
+    &--impact-hollow-icon-only   { @include button-variant(56px, 36px, 19px, "NeighbourSans DemiBold", 600, true,  false); }
 
-    &--default-hollow {
-        @extend .btn--default-filled;
-        background-color: transparent;
-        border: 2px solid #000;
-        color: #000;
-    }
+    // Compact
+    &--compact-filled            { @include button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, false, true); }
+    &--compact-filled-icon-only  { @include button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, true,  true); }
+    &--compact-hollow            { @include button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, false, false); }
+    &--compact-hollow-icon-only  { @include button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, true,  false); }
 
-    &--default-hollow-icon-only {
-        @extend .btn--default-filled-icon-only;
-        background-color: transparent;
-        border: 2px solid #000;
-        color: #000;
-    }
-
-    &--impact-filled {
-        @include button-base(56px, 36px, 19px, "NeighbourSans DemiBold", 600);
-        background-color: #000;
-        color: #fff;
-    }
-
-    &--impact-filled-icon-only {
-        @include button-base(56px, 12px, 19px, "NeighbourSans DemiBold", 600);
-        background-color: #000;
-        color: #fff;
-    }
-
-    &--impact-hollow {
-        @extend .btn--impact-filled;
-        background-color: transparent;
-        border: 2px solid #000;
-        color: #000;
-    }
-
-    &--impact-hollow-icon-only {
-        @extend .btn--impact-filled-icon-only;
-        background-color: transparent;
-        border: 2px solid #000;
-        color: #000;
-    }
-
-    &--compact-filled {
-        @include button-base(42px, 24px, 16px, "NeighbourSans Medium", 500);
-        background-color: #000;
-        color: #fff;
-    }
-
-    &--compact-filled-icon-only {
-        @include button-base(42px, 12px, 16px, "NeighbourSans Medium", 500);
-        background-color: #000;
-        color: #fff;
-    }
-
-    &--compact-hollow {
-        @extend .btn--compact-filled;
-        background-color: transparent;
-        border: 2px solid #000;
-        color: #000;
-    }
-
-    &--compact-hollow-icon-only {
-        @extend .btn--compact-filled-icon-only;
-        background-color: transparent;
-        border: 2px solid #000;
-        color: #000;
-    }
-
-    &--radius-pill {
-        border-radius: 25px;
-    }
-
-    &--radius-small {
-        border-radius: 12px;
-    }
+    // Radius modifiers
+    &--radius-pill  { border-radius: 25px; }
+    &--radius-small { border-radius: 12px; }
 }
 
 // =====================
@@ -127,18 +86,7 @@
     height: 24px;
     display: inline-block;
 
-    &--compact {
-        margin-right: 6px;
-        margin-left: -6px; // to simulate extra left padding
-    }
-
-    &--default {
-        margin-right: 8px;
-        margin-left: -8px;
-    }
-
-    &--impact {
-        margin-right: 10px;
-        margin-left: -10px;
-    }
+    &--compact { margin-right: 6px;  margin-left: -6px; }
+    &--default { margin-right: 8px;  margin-left: -8px; }
+    &--impact  { margin-right: 10px; margin-left: -10px; }
 }

@@ -30,20 +30,21 @@
 -->
 <odoo>
     <template id="ThemedButtonComponent_Content" name="Button Content">
-        <t t-if="icon and not label">
-            <span t-attf-class="btn__icon text-#{icon_color}">
-                <i t-att-class="icon" />
-            </span>
-        </t>
-        <t t-else="">
-            <span t-attf-class="btn__icon btn__icon--#{variant} text-#{icon_color} d-none">
-                <i class="fa fa-fw fa-circle" />
-            </span>
-        </t>
+        <!--
+            if icon and no label: icon only button
+            if icon and label: icon + label button
+            if no icon and label: label only button
+            => the classes are adjusted accordingly
+        -->
+        <span t-attf-class="btn__icon #{'btn__icon--' + variant if (label or not icon) else ''}
+        text-#{icon_color}
+        #{'d-none' if (not icon and label) else ''}"
+        >
+            <i t-att-class="icon"/>
+        </span>
+
         <t t-if="label">
-            <span>
-                <t t-esc="label" />
-            </span>
+            <span><t t-esc="label"/></span>
         </t>
     </template>
     <template id="ThemedButtonComponent" name="Button Component">
