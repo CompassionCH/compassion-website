@@ -7,6 +7,7 @@
 
     Button:                                                                                  Default:
     - icon (string): The button icon.                                                        [none]
+    - pictogram (string): The button pictogram.                                              [none]
     - label (string): The button label.                                                      [none]
     - color (string): The button color.                                                      [dark-blue]
     - action (string): Either 'link' or 'event'.                                             [none]
@@ -40,7 +41,8 @@
             t-valuef="this.dispatchEvent(new CustomEvent('#{button.get('custom_event')}', {bubbles: true, detail: #{button.get('detail')}}))"
         />
         <div t-attf-class="action-button #{button_top_class}" t-att-onclick="onclick">
-            <i t-if="button.get('icon')" t-attf-class="body-small icon-#{button.get('icon')} text-#{color}" />
+            <i t-if="button.get('icon')" t-attf-class="tiny-text icon-#{button.get('icon')} text-#{color}" />
+            <i t-if="button.get('pictogram')" t-attf-class="tiny-text pictogram-#{button.get('pictogram')} text-#{color}" />
             <span t-if="button.get('label')" t-attf-class="tiny-text bold text-#{color}">
                 <t t-esc="button.get('label')" />
             </span>
