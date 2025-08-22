@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Component: ToggleButton
+
+    Description:
+    Displays a segmented control with multiple mutually-exclusive options.
+
+    Props:                                                                                 Default:
+    - name (string): Name of the input.                                                    -required-
+    - options (list[(value: string, label: string)]): A list of (value, label) options.    -required-
+    - default (string): Value of the option selected by default.                           [0]
+    - color (string): Primary color of the toggle button.                                  [dark-blue]
+    - radio_id (string): Base id for radio inputs (to avoid collisions).                   ['toggle']
+    - top_class (string): Classes to add to the top container.                             ['']
+-->
+<odoo>
+    <template id="ToggleButtonComponent" name="Toggle Button Component">
+        <!-- Default property values -->
+        <t t-set="default" t-value="default or 0" />
+        <t t-set="color" t-value="color or 'dark-blue'" />
+        <t t-set="radio_id" t-value="radio_id or 'toggle'" />
+        <t t-set="top_class" t-value="top_class or ''" />
+        <!-- Component definition -->
+        <div t-attf-class="toggle-button-container d-flex #{top_class}" t-attf-style="--color: var(--#{color});">
+            <t t-foreach="options" t-as="option">
+                <t t-set="value" t-value="option[0]" />
+                <t t-set="label" t-value="option[1]" />
+                <div class="toggle-button">
+                    <input
+                        t-attf-id="#{radio_id}-#{value}"
+                        type="radio"
+                        t-att-name="name"
+                        t-att-value="value"
+                        t-att-checked="value == default"
+                    />
+                    <label t-attf-for="#{radio_id}-#{value}" class="mb-0 px-4 body-small">
+                        <t t-esc="label" />
+                    </label>
+                </div>
+            </t>
+        </div>
+    </template>
+</odoo>
