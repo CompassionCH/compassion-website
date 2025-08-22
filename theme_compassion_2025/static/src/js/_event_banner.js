@@ -3,7 +3,6 @@ odoo.define('theme_compassion_2025.event_banner', function (require) {
 
     const publicWidget = require('web.public.widget');
     const rpc = require('web.rpc');
-    console.log('Event Banner loaded');
 
     publicWidget.registry.EventBanner = publicWidget.Widget.extend({
         selector: 'main',
@@ -33,12 +32,12 @@ odoo.define('theme_compassion_2025.event_banner', function (require) {
             const dismissed = JSON.parse(localStorage.getItem('dismissedBanners') || '[]');
             const $container = $('main .container').first();
 
-            items.slice().reverse().forEach(it => {
-                if (!it || !it.html) {
+            items.slice().reverse().forEach(item => {
+                if (!item || !item.html) {
                     return;
                 }
-                const $banner = $(it.html);
-                const id = it.id;
+                const $banner = $(item.html);
+                const id = item.id;
 
                 const key = 'dismissedBanners';
                 const list = JSON.parse(localStorage.getItem(key) || '[]');

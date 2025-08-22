@@ -14,14 +14,26 @@
 <odoo>
     <template id="EventBannerComponent" name="Event Banner Component">
         <div t-att-data-id="id"
-        t-attf-class="event-banner bg-#{background_color} text-low-black mt-3 px-5 py-2 rounded-lg">
+        t-attf-class="event-banner bg-#{background_color} text-low-black mt-3 px-3 py-3 px-md-5 rounded-lg">
             <div class="row no-gutters align-items-center">
 
-                <div class="col-12 col-md-1 d-flex align-items-center justify-content-center">
+                <!-- Mobile Close Button and Pictogram Centered -->
+                <div class="col-12 d-md-none mb-2">
+                    <div class="d-flex align-items-start">
+                        <i href="#" t-attf-class="invisible h3 mb-0 icon-x-circle"/>
+                    <div class="flex-fill d-flex justify-content-center">
+                        <i t-attf-class="display-4 mb-0 pictogram-#{pictogram} text-#{pictogram_color}"/>
+                    </div>
+                        <i href="#" t-attf-class="action-close h3 mb-0 icon-x-circle cursor-pointer text-#{button_color}"/>
+                  </div>
+                </div>
+
+                <!-- Desktop Pictogram and Content -->
+                <div class="col-12 col-md-1 d-none d-md-flex align-items-center justify-content-center">
                     <i t-attf-class="display-4 mb-0 pictogram-#{pictogram} text-#{pictogram_color}"/>
                 </div>
 
-                <div class="col-12 col-md-9">
+                <div class="col-12 col-md-9 d-flex flex-column align-items-center text-center align-items-md-start text-md-left">
                     <p class="h3 font-weight-bold mb-1 text-low-black">
                         <t t-esc="title"/>
                     </p>
@@ -30,7 +42,7 @@
                     </p>
                 </div>
 
-                <div class="col-12 col-md-2 d-flex justify-content-md-around align-items-md-center">
+                <div class="col-12 col-md-2 d-flex justify-content-center justify-content-md-around align-items-md-center mt-3 mt-md-0">
                     <t t-call="theme_compassion_2025.ThemedButtonComponent">
                         <t t-set="variant" t-value="'default'"/>
                         <t t-set="variation" t-value="'filled'"/>
@@ -43,7 +55,7 @@
                         <t t-set="text_color" t-value="'pure-white'" />
                     </t>
                     <!-- Refactor after Icon Button is merged -->
-                    <i href="#" t-attf-class="action-close h3 mb-0 icon-x-circle cursor-pointer text-#{button_color}"/>
+                    <i href="#" t-attf-class="action-close h3 d-none d-md-inline mb-0 icon-x-circle cursor-pointer text-#{button_color}"/>
                 </div>
 
             </div>
