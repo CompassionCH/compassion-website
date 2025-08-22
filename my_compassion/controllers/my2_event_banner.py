@@ -59,7 +59,6 @@ class MyCompassionEventBannerController(http.Controller):
                 'is_active': banner.is_active,
                 'pictogram': banner.pictogram or '',
                 'pictogram_color': banner.pictogram_color ,
-
                 'background_color': banner.background_color ,
                 'button_color': banner.button_color ,
                 'target_pages': banner.target_pages ,

@@ -3,6 +3,8 @@ odoo.define('theme_compassion_2025.event_banner', function (require) {
 
     var rpc = require('web.rpc');
 
+    console.log("event banner loaded");
+
     $(function () {
         function onCloseBanner(ev) {
             ev.preventDefault();
@@ -16,30 +18,37 @@ odoo.define('theme_compassion_2025.event_banner', function (require) {
             $banner.slideUp(function () { $banner.remove(); });
         }
 
-       rpc.query({
-       route: '/my2/active-event-banners',
-       params: {
-            current_page_route: window.location.pathname
-        }
-       }).then(function (res) {
-            if (!res || !res.html) return;
-            const $banner = $(res.html);
+        rpc.query({
+            route: '/my2/active-event-banners',
+            params: { current_page_route: window.location.pathname }
+        }).then(function (eventBanners) {
+            if (!eventBanners || !eventBanners.length) {
+                return;
+            }
 
-              const $wrap = $('<div class="event-banner-wrap"></div>').append($banner);
-              const $container = $('main .container').first();
-              $container.prepend($wrap);
+            const $container = $('main .container').first();
 
-              const targetHeight= $banner.outerHeight(true);
+            eventBanners.slice().reverse().forEach((eventBanner) => {
+                if (!eventBanner || !eventBanner.html) {
+                    return;
+                }
+                const $eventBanner = $(eventBanner.html);
+                const id = eventBanner.id;
 
-              requestAnimationFrame(() => {
-                $wrap.css('max-height', targetHeight + 'px');
-                $wrap.addClass('is-open');
-              });
 
-            $banner.on('click', '.js_close_banner', onCloseBanner);
-            $banner.slideDown();
-        }).catch(function (e) {
-            console.warn('Event banner failed', e);
-        });
+                const $wrap = $('<div class="event-banner-wrap"></div>').append($eventBanner);
+                $container.prepend($wrap);
+
+                const targetHeight = $eventBanner.outerHeight(true);
+                requestAnimationFrame(() => {
+                    $wrap.css('max-height', targetHeight + 'px').addClass('is-open');
+                });
+
+                /*$wrap.on('click', '.js_close_banner', function (ev) {
+                    ev.preventDefault();
+                    closeBanner($wrap, eventBanner.id);
+                });*/
+            });
+        }).catch(console.warn);
     });
 });
