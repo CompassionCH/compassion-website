@@ -189,13 +189,13 @@ class EventBanner(models.Model):
         required=True,
     )
 
-    #target_pages = fields.Many2many(
-    #    'website.page',
-    #    string='Target Pages',
-    #    required=True,
-    #    help="Select the specific pages where this banner should appear. "
-    #         "If empty, it will not appear on any page."
-    #)
+    #   target_pages = fields.Many2many(
+    #       'website.page',
+    #       string='Target Pages',
+    #       required=True,
+    #       help="Select the specific pages where this banner should appear. "
+    #            "If empty, it will not appear on any page."
+    #   )
 
     target_pages = fields.Text(
         string='Target Paths',

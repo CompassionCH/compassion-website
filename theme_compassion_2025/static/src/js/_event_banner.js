@@ -16,7 +16,12 @@ odoo.define('theme_compassion_2025.event_banner', function (require) {
             $banner.slideUp(function () { $banner.remove(); });
         }
 
-       rpc.query({route: '/my2/active-event-banners', params: {},}).then(function (res) {
+       rpc.query({
+       route: '/my2/active-event-banners',
+       params: {
+            current_page_route: window.location.pathname
+        }
+       }).then(function (res) {
             if (!res || !res.html) return;
             const $banner = $(res.html);
 
