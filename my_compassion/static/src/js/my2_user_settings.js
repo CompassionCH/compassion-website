@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 saveButtonId: "ApplyModificationsInfoButton",
                 cancelButtonId: "CancelModificationsInfoButton",
                 endpoint: "/my2/user_settings/set_personal_info",
-                fields: ["title", "lastname", "firstname", "street", "city", "country_id", "zip", "phone", "email"],
+                fields: ["title", "lastname", "firstname", "street", "city", "country_id", "zip", "phone", "mobile", "email"],
             });
 
             initFormHandler({

@@ -58,6 +58,7 @@ class MyCompassionUserController(http.Controller):
             "city": str,
             "country_id": int,
             "zip": str,
+            "mobile": str,
             "phone": str,
             "email": str,
         }
