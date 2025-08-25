@@ -1,10 +1,10 @@
 document.addEventListener("DOMContentLoaded", function (event) {
-    odoo.define("my_compassion.login", function (require) {
+    odoo.define("my_compassion.signup", function (require) {
         "use strict";
 
         var publicWidget = require("web.public.widget");
 
-        publicWidget.registry.Login = publicWidget.Widget.extend({
+        publicWidget.registry.SignupFields = publicWidget.Widget.extend({
             selector: ".my2-signup-fields",
 
             /**
@@ -22,6 +22,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
             },
         });
 
-        return publicWidget.registry.Sponsorships;
+        return publicWidget.registry.SignupFields;
     });
 });
