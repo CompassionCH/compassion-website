@@ -20,21 +20,28 @@
                                     <i class="icon-marker-pin01 bg-low-yellow mr-2" />
                                     <a
                                         class="text-pure-white"
-                                        href="https://www.google.com/maps/place/Compassion+Suisse/@46.7658158,6.6431887,789m/data=!3m2!1e3!4b1!4m6!3m5!1s0x478dcfbc3513dddb:0x4251dd20c57a7bc2!8m2!3d46.7658158!4d6.645769!16s%2Fg%2F11btlz91cp?entry=ttu&amp;g_ep=EgoyMDI1MDcxMy4wIKXMDSoASAFQAw%3D%3D"
+                                        t-if="res_company.partner_id.contact_address"
+                                        t-att-href="'https://www.google.com/maps/search/' + res_company.partner_id.contact_address.replace(' ', '+')"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
-                                        Compassion Suisse, Rue Galilée 3, 1400 Yverdon-les-Bains
+                                        <span t-esc="res_company.partner_id.contact_address" />
+                                    </a>
+                                </div>
+                                <div class="py-2 px-md-3" t-if="res_company.phone">
+                                    <i class="icon-phone bg-low-yellow mr-2" />
+                                    <a
+                                        class="text-pure-white"
+                                        t-att-href="'tel:' + res_company.phone.replace('(0)', '').replace(' ', '').replace('(', '').replace(')', '')"
+                                    >
+                                        <span t-esc="res_company.phone" />
                                     </a>
                                 </div>
                                 <div class="py-2 px-md-3">
-                                    <i class="icon-phone bg-low-yellow mr-2" />
-                                    <a class="text-pure-white" href="tel:+41244342124">+41 (0)24 434 21 24</a>
-                                    <span>(Lu-Ven: 9.00-14.00)</span>
-                                </div>
-                                <div class="py-2 px-md-3">
                                     <i class="icon-mail01 bg-low-yellow mr-2" />
-                                    <a class="text-pure-white" href="mailto:info@compassion.ch">info@compassion.ch</a>
+                                    <a class="text-pure-white" t-att-href="'mailto:' + res_company.email">
+                                        <span t-esc="res_company.email" />
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -47,7 +54,7 @@
                                 <p>
                                     Copyright ©
                                     <span t-esc="datetime.datetime.now().year" />
-                                    Compassion Suisse
+                                    <span t-esc="res_company.name" />
                                 </p>
                             </div>
                             <div class="d-flex flex-column flex-md-row justify-content-end col-lg-6">
