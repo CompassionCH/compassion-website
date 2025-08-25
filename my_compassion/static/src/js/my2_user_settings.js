@@ -31,7 +31,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 saveButtonId: "ApplyModificationsInfoButton",
                 cancelButtonId: "CancelModificationsInfoButton",
                 endpoint: "/my2/user_settings/set_personal_info",
-                fields: ["title", "lastname", "firstname", "street", "city", "country_id", "zip", "phone", "mobile", "email"],
+                fields: [
+                    "title",
+                    "lastname",
+                    "firstname",
+                    "street",
+                    "city",
+                    "country_id",
+                    "zip",
+                    "phone",
+                    "mobile",
+                    "email",
+                ],
             });
 
             initFormHandler({
@@ -109,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             field = "photo_delivery_preference";
                             break;
                         case "tax_preference_select":
-                            field = "tax_receipt_preference";
+                            field = "tax_certificate";
                             break;
                     }
                 }

@@ -145,7 +145,7 @@ class MyCompassionUserController(http.Controller):
         # A whitelist of allowed communication preference fields.
         allowed_fields = {
             "opt_out",
-            "tax_receipt_preference",
+            "tax_certificate",
             "letter_delivery_preference",
             "photo_delivery_preference",
             "calendar",
