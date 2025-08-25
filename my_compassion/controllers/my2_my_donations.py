@@ -7,9 +7,6 @@ from odoo.osv import expression
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
 
-# Prevents fetching too many records in the portal.
-HISTORY_LIMIT = 300
-
 
 def _get_sponsorships(partner, state=None):
     """Finds all sponsorships for a partner, with custom state filtering."""
@@ -42,18 +39,17 @@ def _get_sponsorships(partner, state=None):
 
 
 class MyDonationController(CustomerPortal):
-    @route(
-        [
-            "/my2/my-donations",
-            "/my2/my-donations/page/<int:invoice_page>",
-        ],
-        type="http",
-        auth="user",
-        website=True,
-    )
+
+    @route(['/my2/my-donations', '/my2/my-donations/page/<int:invoice_page>'],
+           type='http', auth="user", website=True)
     def my_donations(self, invoice_page=1, invoice_per_page=12, **kw):
-        """Renders the 'My Donations' portal page with invoices and sponsorships."""
+        """
+        This is the original method for loading the full page.
+        Its logic has been restored to its original state.
+        """
         partner = request.env.user.partner_id
+        values = self._prepare_portal_layout_values()
+        move_obj = request.env["account.move"].sudo()
 
         invoice_search_criteria = [
             ("partner_id", "=", partner.id),
@@ -61,9 +57,6 @@ class MyDonationController(CustomerPortal):
             ("move_type", "=", "out_invoice"),
             ("amount_total", "!=", 0),
         ]
-
-        move_obj = request.env["account.move"].sudo()
-        # Group paid invoices by day for display and pagination.
         offset = (invoice_page - 1) * invoice_per_page
         invoice_count = move_obj.search_count(invoice_search_criteria)
         total_pages = math.ceil(invoice_count / invoice_per_page)
@@ -144,3 +137,59 @@ class MyDonationController(CustomerPortal):
             }
         )
         return request.render("my_compassion.my2_my_donations_page", values)
+
+    @route('/my2/my-donations/history', type='json', auth="user", methods=['POST'],
+           website=True)
+    def my_donations_history(self, page=1, per_page=12, **kw):
+        """
+        This is the NEW route for AJAX calls.
+        It now renders a specific part of the main page template.
+        """
+        partner = request.env.user.partner_id
+
+        # --- This logic to get the data remains the same ---
+        # (Duplicated logic for fetching Donation History)
+        move_obj = request.env["account.move"].sudo()
+        search_criteria = [
+            ("partner_id", "=", partner.id), ("payment_state", "=", "paid"),
+            ("move_type", "=", "out_invoice"), ("amount_total", "!=", 0),
+        ]
+        offset = (page - 1) * per_page
+        invoice_count = move_obj.search_count(search_criteria)
+        total_pages = math.ceil(invoice_count / per_page)
+        invoices_per_day = move_obj.read_group(
+            search_criteria, ["amount_total"], ["last_payment:day"],
+            orderby="last_payment desc", offset=offset, limit=per_page
+        )
+        all_domains = [g["__domain"] for g in invoices_per_day]
+        if all_domains:
+            combined_domain = expression.OR(all_domains)
+            all_invoices_records = move_obj.search(combined_domain)
+
+            def domain_key(domain):
+                return tuple(sorted(map(tuple, domain)))
+
+            invoices_by_domain = {domain_key(d): all_invoices_records.filtered_domain(d)
+                                  for d in all_domains}
+            for group in invoices_per_day:
+                invoices = invoices_by_domain[domain_key(group["__domain"])]
+                if invoices:
+                    group["description"] = invoices.get_my_account_display_name()
+                    group["last_payment"] = invoices[0].get_date("last_payment",
+                                                                 "d MMM yyyy")
+                    group[
+                        "amount"] = f"{int(group['amount_total']):,d} {invoices[0].currency_id.name}"
+
+        history_data = {
+            "invoices_per_day": invoices_per_day,
+            "current_page": page,
+            "total_pages": total_pages,
+        }
+
+        html = request.env['ir.qweb']._render(
+            'my_compassion.my2_my_donations_page',
+            values=history_data,
+            render_xpath="//div[@id='donation_history_container']"
+        )
+
+        return {'html': html}
