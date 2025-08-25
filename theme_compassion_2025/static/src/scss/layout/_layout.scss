@@ -12,12 +12,12 @@
 .container {
     max-width: $max-site-width !important;
     margin: 0 auto;
-    padding-left: $gutter-sm;
-    padding-right: $gutter-sm;
+    padding-left: 0px;
+    padding-right: 0px;
 
-    @media (min-width: $breakpoint-sm) {
-        padding-left: $gutter-lg;
-        padding-right: $gutter-lg;
+    @media (max-width: $breakpoint-sm) {
+        padding-left: $gutter-sm;
+        padding-right: $gutter-sm;
     }
 
     &--header {

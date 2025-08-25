@@ -20,7 +20,7 @@
         <link rel="stylesheet" href="/my_compassion/static/src/css/my2_donation_details.css" />
         <t t-call="website.layout">
             <!-- HEADER -->
-            <div class="content-column">
+            <div class="single-column">
                 <div
                     class="donation-details-header p-5 w-100 d-flex flex-column align-items-center"
                     t-attf-style="--image_url: url('/web/image/#{product._name}/#{product.id}/my_compassion_image');"
@@ -33,7 +33,7 @@
                 </div>
             </div>
             <div class="container">
-                <div class="content-column">
+                <div class="single-column">
                     <div class="my2_donation_details px-3 d-flex flex-column align-items-center">
                         <!-- DESCRIPTION -->
                         <div class="mt-4 body-small bold text-center" t-field="product.my_compassion_description" />

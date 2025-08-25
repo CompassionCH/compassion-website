@@ -11,7 +11,7 @@ from datetime import date
 
 import babel
 
-from odoo import http, fields
+from odoo import fields, http
 from odoo.exceptions import AccessError
 from odoo.http import request
 
@@ -131,21 +131,29 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             },
         )
 
-    @http.route('/my2/children/<model("compassion.child"):child>/'
-                'letters/<model("correspondence"):correspondence>/mark_read',
-                type='json', auth='user', methods=['POST'])
+    @http.route(
+        '/my2/children/<model("compassion.child"):child>/'
+        'letters/<model("correspondence"):correspondence>/mark_read',
+        type="json",
+        auth="user",
+        methods=["POST"],
+    )
     def mark_letter_as_read(self, child, correspondence):
-        letter = request.env['correspondence'].search([('id', '=', correspondence.id)], limit=1)
-        if (letter.exists() and
-                letter.child_id == child.id and
-                letter.partner_id.id == request.env.user.partner_id.id):
+        letter = request.env["correspondence"].search(
+            [("id", "=", correspondence.id)], limit=1
+        )
+        if (
+            letter.exists()
+            and letter.child_id == child.id
+            and letter.partner_id.id == request.env.user.partner_id.id
+        ):
             if not letter.email_read:  # only set if not already read
                 letter.email_read = fields.Datetime.now()
-            return {'status': 'success'}
-        return {'status': 'error', 'message': 'Not found or unauthorized'}
+            return {"status": "success"}
+        return {"status": "error", "message": "Not found or unauthorized"}
 
     @http.route(
-        '/my2/children/letters/new',
+        "/my2/children/letters/new",
         type="http",
         auth="user",
         website=True,
