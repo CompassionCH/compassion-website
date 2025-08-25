@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Page: My Compassion 2 Thank you Page
+
+    Description:
+    This page display a thank you message after a user has completed a donation process
+
+    Used in route:
+    - /my2/gifts/thankyou
+
+    Injected data:
+    - sale_order: The sale order object containing the details of the donation
+-->
+<odoo>
+    <template id="my2_gifts_thank_you_page" name="My Compassion 2 Thank you Page">
+        <t t-call="website.layout">
+            <div class="container">
+                <div class="content-column">
+                    <div class="mt-3 d-flex justify-content-center align-items-center">
+                        <i class="pictogram pictogram-love bg-low-yellow text-center display-1" />
+                    </div>
+                    <div class="px-3 mt-4 d-flex flex-column align-items-center">
+                        <!-- TITLE -->
+                        <t t-call="theme_compassion_2025.TitleComponent">
+                            <t t-set="title_content" t-value="'Thank you'" />
+                            <t t-set="color" t-value="'core-blue'" />
+                            <t t-set="show_underline" t-value="True" />
+                            <t t-set="underline_color" t-value="'low-yellow'" />
+                            <t t-set="description" t-value="'Thank you for your generous donation!'" />
+                        </t>
+                        <!-- GIFT PACKAGE CONTENT -->
+                        <div
+                            id="gift-package-content-wrapper"
+                            class="mb-4 w-100 d-flex flex-column align-items-stretch"
+                        >
+                            <!-- ONE-TIME GIFTS -->
+                            <t
+                                t-set="one_time_order_lines"
+                                t-value="sale_order.order_line.filtered(lambda line: line.frequency == 'one_time')"
+                            />
+                            <h3 t-if="one_time_order_lines" class="mt-5 mb-0 text-mid-green text-center">
+                                One-time gifts
+                            </h3>
+                            <t t-foreach="one_time_order_lines" t-as="line">
+                                <t t-call="my_compassion.DonationItemComponent">
+                                    <t t-set="top_class" t-valuef="mt-3 donation-item donation-item-#{line.id}" />
+                                    <t t-set="name" t-value="line.product_template_id.my_compassion_name" />
+                                    <t
+                                        t-if="line.is_gift"
+                                        t-set="recipient"
+                                        t-value="line.gift_recipient_id.preferred_name"
+                                    />
+                                    <t t-set="title_color" t-value="'low-black'" />
+                                    <t t-set="accent_color" t-value="'mid-green'" />
+                                    <t t-set="price_color" t-value="'low-green'" />
+                                    <t t-set="recipient_color" t-value="'low-green'" />
+                                    <t t-set="bg_color" t-value="'mid-eggshell'" />
+                                    <t t-set="price" t-value="line.price_total" />
+                                    <t
+                                        t-set="image"
+                                        t-valuef="/web/image/#{line.product_template_id._name}/#{line.product_template_id.id}/my_compassion_image"
+                                    />
+                                </t>
+                            </t>
+                            <!-- MONTHLY GIFTS -->
+                            <t
+                                t-set="monthly_order_lines"
+                                t-value="sale_order.order_line.filtered(lambda line: line.frequency == 'monthly')"
+                            />
+                            <h3 t-if="monthly_order_lines" class="mt-5 mb-0 text-dark-blue text-center">
+                                Monthly gifts
+                            </h3>
+                            <t t-foreach="monthly_order_lines" t-as="line">
+                                <t t-call="my_compassion.DonationItemComponent">
+                                    <t t-set="top_class" t-valuef="mt-3 donation-item donation-item-#{line.id}" />
+                                    <t t-set="name" t-value="line.product_template_id.my_compassion_name" />
+                                    <t
+                                        t-if="line.is_gift"
+                                        t-set="recipient"
+                                        t-value="line.gift_recipient_id.preferred_name"
+                                    />
+                                    <t t-set="title_color" t-value="'dark-blue'" />
+                                    <t t-set="accent_color" t-value="'dark-blue'" />
+                                    <t t-set="price_color" t-value="'dark-blue'" />
+                                    <t t-set="recipient_color" t-value="'dark-blue'" />
+                                    <t t-set="bg_color" t-value="'light-blue'" />
+                                    <t t-set="price" t-value="line.price_total" />
+                                    <t t-set="monthly" t-value="True" />
+                                    <t
+                                        t-set="image"
+                                        t-valuef="/web/image/#{line.product_template_id._name}/#{line.product_template_id.id}/my_compassion_image"
+                                    />
+                                </t>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

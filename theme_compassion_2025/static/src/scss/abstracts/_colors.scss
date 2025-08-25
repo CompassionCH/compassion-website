@@ -36,6 +36,11 @@ $compassion-colors: (
     "mid-eggshell": #f7f0eb,
     "high-eggshell": #fcf8f4,
     "pure-white": #ffffff,
+
+    // Not part of the core design guidelines
+    "light-blue": #e9effd,
+    "light-green": #edf6dc,
+    "light-grey": #e6e6e6,
 );
 
 /**
@@ -114,5 +119,14 @@ $compassion-colors: (
     .btn-outline-#{$name}:hover {
         background-color: $color !important;
         color: #fff !important;
+    }
+
+    // Slider style
+    .slider-thumb-#{$name}::-webkit-slider-thumb {
+      background-color: $color !important;
+    }
+
+    .slider-thumb-#{$name}::-moz-range-thumb {
+      background-color: $color !important;
     }
 }

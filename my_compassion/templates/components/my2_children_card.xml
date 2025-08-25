@@ -3,36 +3,34 @@
     Description:
     Displays a child's profile.
     If the related sponsorship is terminated, the card will have a different background.
-    The card contains the latest correspondance with the partner.
+    The card contains the latest correspondence with the partner.
 
-    Props:
-    - sponsorship (record): The sponsorship related object.
-
+    Props:                                                                  Default:
+    - child (record): The child related object.                             [None]
+    - show_sponsor_me (bool): Show sponsor me button.                       [False]
+    - show_status (bool): Show correspondence status.                       [True]
+    - sponsorship_end_date (date): Display sponsorship end date.            [None]
+    - latest_correspondence (date): Display latest correspondence date.     [None]
 -->
 <odoo>
     <template id="my2_children_card_component" name="Children Card Component">
-        <div t-att-class="'col-12 col-md-6 col-lg-4 text-center mb-3 mt-3'">
-            <div
-                t-att-class="'h-100 p-3 ' + ('bg-low-eggshell' if sponsorship.state == 'terminated' else 'bg-high-eggshell')"
-            >
+        <!-- Default property values -->
+        <t t-set="show_sponsor_me" t-value="show_sponsor_me or False" />
+        <t t-set="show_status" t-value="not show_status == False" />
+        <div class="children-card text-center mb-3 mt-3">
+            <div class="p-4 d-flex flex-column align-items-center bg-high-eggshell">
                 <!-- Child Image -->
-                <img
-                    class="img-circle img-responsive mb-4 w-50"
-                    t-attf-src="/web/image/compassion.child/{{sponsorship.child_id.id}}/portrait"
-                    alt="Child image"
-                />
+                <img class="rounded-circle img-fluid mb-2" t-att-src="child.image_url" alt="Child image" />
+                <!-- TODO: maybe replace src with local image?
+                     t-attf-src="/web/image/compassion.child/{{child.id}}/portrait"
+                -->
                 <!-- Child name -->
                 <div class="h2 mb-3">
-                    <t t-esc="sponsorship.preferred_name" />
+                    <t t-esc="child.preferred_name" />
                 </div>
                 <!-- Correspondence Status and info section -->
-                <div class="h5 mb-3">
-                    <t
-                        t-set="latest_correspondence"
-                        t-value="(latest_correspondences_by_child_id or {}).get(sponsorship.child_id.id)"
-                    />
-                    <t t-set="sponsorship_end_date" t-value="sponsorship.end_date" />
-                    <div class="mb-3 pl-3 pr-3">
+                <div class="body-small">
+                    <div t-if="show_status" class="mb-3 pl-3 pr-3">
                         <span class="border-bottom border-2 border-high-orange">
                             <t t-if="sponsorship_end_date">
                                 Sponsorship terminated on
@@ -45,29 +43,44 @@
                             <t t-else="">No correspondences</t>
                         </span>
                     </div>
-                    <i class="icon-gift02 bg-low-yellow" />
-                    <t t-esc="sponsorship.child_age" />
-                    years old
-                    <i class="icon-user01 bg-low-yellow" />
-                    <t t-if="sponsorship.child_gender == 'M'">Male</t>
-                    <t t-elif="sponsorship.child_gender == 'F'">Female</t>
-                    <t t-else="">Not specified</t>
-                    <br />
-                    <i class="icon-map01 bg-low-yellow" />
-                    <t t-esc="sponsorship.child_id.field_office_id.name" />
+                    <div class="mb-2">
+                        <i class="icon-gift02 bg-low-yellow mx-1" />
+                        <t t-esc="child.age" />
+                        years old
+                        <i class="icon-user01 bg-low-yellow mx-1" />
+                        <t t-if="child.gender == 'M'">Male</t>
+                        <t t-elif="child.gender == 'F'">Female</t>
+                        <t t-else="">Not specified</t>
+                    </div>
+                    <div class="mb-3">
+                        <i class="icon-map01 bg-low-yellow mx-1" />
+                        <t t-esc="child.field_office_id.name" />
+                    </div>
                 </div>
                 <!-- Profile Button -->
-                <p class="mb-5 mt-3">
-                    <a t-attf-href="/my2/children/{{sponsorship.child_id.id}}">
+                <div class="mb-2">
+                    <a t-attf-href="/my2/children/{{child.id}}">
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variation" t-value="'filled'" />
                             <t t-set="color" t-value="'mid-green'" />
                             <t t-set="text_color" t-value="'white'" />
-                            <t t-set="variant" t-value="'default'" />
+                            <t t-set="variant" t-value="'compact'" />
                             <t t-set="label" t-value="'View profile'" />
                         </t>
                     </a>
-                </p>
+                </div>
+                <!-- Sponsor me Button-->
+                <div t-if="show_sponsor_me" class="mt-1 mb-2">
+                    <a t-attf-href="/my2/new-sponsorship/{{child.id}}">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variation" t-value="'filled'" />
+                            <t t-set="color" t-value="'dark-blue'" />
+                            <t t-set="text_color" t-value="'white'" />
+                            <t t-set="variant" t-value="'compact'" />
+                            <t t-set="label" t-value="'Sponsor me'" />
+                        </t>
+                    </a>
+                </div>
             </div>
         </div>
     </template>
