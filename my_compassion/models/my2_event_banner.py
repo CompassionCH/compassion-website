@@ -7,7 +7,7 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from email.policy import default
+from urllib.parse import urlparse
 
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
@@ -277,7 +277,6 @@ class EventBanner(models.Model):
     )
 
     button_action_url = fields.Char(
-        required=True,
         help="URL as button action. Leave empty for no button.",
         placeholder="e.g., https://www.google.com/"
     )
@@ -288,6 +287,19 @@ class EventBanner(models.Model):
         for banner in self:
             if banner.start_date and banner.end_date and banner.start_date > banner.end_date:
                 raise ValidationError("The end date must be after the start date.")
+
+    @api.constrains('button_action_url')
+    def _check_button_action_url(self):
+        allowed = {'http', 'https'}
+        for banner in self:
+            action_url = (banner.button_action_url or '').strip()
+
+            if not action_url:
+               continue
+
+            parsed = urlparse(action_url)
+            if parsed.scheme not in allowed or not parsed.netloc:
+                raise ValidationError("Invalid button action URL. Please enter a valid http(s) URL (e.g., https://example.com).")
 
     def name_get(self):
         """
