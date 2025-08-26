@@ -2,8 +2,6 @@ document.addEventListener("DOMContentLoaded", function () {
     odoo.define('my_compassion.donations_pager_simple', function (require) {
         'use strict';
 
-        console.log('HELLO.');
-
         var rpc = require('web.rpc');
 
         function updateHistory(page) {
@@ -20,7 +18,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     page: page,
                 },
             }).then(function (result) {
-                console.log('i got back' + result);
 
                 if (result.html) {
                     historyContainer.outerHTML = result.html;
@@ -42,7 +39,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     updateHistory(page);
                 }
             } else if (nextBtn) {
-                console.log('Success! The "Next" button was identified.');
                 event.preventDefault();
                 const page = nextBtn.dataset.page;
                 if (page) {

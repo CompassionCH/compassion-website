@@ -120,8 +120,17 @@ class MyDonationController(CustomerPortal):
 
         sponsorships_by_group = {}
         for g in active_sponsorships.mapped("group_id"):
+            print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+            print(
+                "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+            print(
+                "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+            print(
+                "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+            print(g)
             sponsorships = active_sponsorships.filtered(lambda s, g=g: s.group_id == g)
             total = int(sum(sponsorships.mapped("total_amount")))
+
             sponsorships_by_group[g] = (sponsorships, f"{total:,d} {currency}")
 
         values = self._prepare_portal_layout_values()
@@ -138,6 +147,7 @@ class MyDonationController(CustomerPortal):
         )
         return request.render("my_compassion.my2_my_donations_page", values)
 
+
     @route('/my2/my-donations/history', type='json', auth="user", methods=['POST'],
            website=True)
     def my_donations_history(self, page=1, per_page=12, **kw):
@@ -147,14 +157,13 @@ class MyDonationController(CustomerPortal):
         """
         partner = request.env.user.partner_id
 
-        # --- This logic to get the data remains the same ---
-        # (Duplicated logic for fetching Donation History)
         move_obj = request.env["account.move"].sudo()
         search_criteria = [
             ("partner_id", "=", partner.id), ("payment_state", "=", "paid"),
             ("move_type", "=", "out_invoice"), ("amount_total", "!=", 0),
         ]
-        offset = (page - 1) * per_page
+
+        offset = (int(page) - 1) * per_page
         invoice_count = move_obj.search_count(search_criteria)
         total_pages = math.ceil(invoice_count / per_page)
         invoices_per_day = move_obj.read_group(
@@ -171,6 +180,7 @@ class MyDonationController(CustomerPortal):
 
             invoices_by_domain = {domain_key(d): all_invoices_records.filtered_domain(d)
                                   for d in all_domains}
+
             for group in invoices_per_day:
                 invoices = invoices_by_domain[domain_key(group["__domain"])]
                 if invoices:
@@ -180,16 +190,22 @@ class MyDonationController(CustomerPortal):
                     group[
                         "amount"] = f"{int(group['amount_total']):,d} {invoices[0].currency_id.name}"
 
+                    invoices_by_domain = {}
+                    for domain in all_domains:
+                        key = domain_key(domain)
+                        invoices_by_domain[key] = all_invoices_records.filtered_domain(
+                            domain)
+
+
         history_data = {
             "invoices_per_day": invoices_per_day,
-            "current_page": page,
-            "total_pages": total_pages,
+            "current_page": int(page),
+            "total_pages": int(total_pages),
         }
 
         html = request.env['ir.qweb']._render(
-            'my_compassion.my2_my_donations_page',
+            'my_compassion.my2_donations_history_content',
             values=history_data,
-            render_xpath="//div[@id='donation_history_container']"
         )
 
         return {'html': html}

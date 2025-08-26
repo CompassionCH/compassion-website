@@ -21,6 +21,7 @@
     - price (float): Item price.                                                             -required-
     - primary_button (dict): Primary button with custom action (see Button).                 [none]
     - recipient (string): Item recipient.                                                    [none]
+    - subtext (string): Text under name and recipient.                                       [none]
     - title_color (string): Color of the title.                                              [dark-blue]
     - accent_color (string): Color of the left border accent.                                [dark-blue]
     - price_color (string): Color of the price.                                              [dark-blue]
@@ -81,6 +82,9 @@
                         <div t-if="recipient" t-attf-class="text-#{recipient_color} body-small bold">
                             To
                             <t t-esc="recipient" />
+                        </div>
+                        <div t-if="subtext" t-attf-class="text-#{subtext_color} body-small bold">
+                            <t t-esc="subtext" />
                         </div>
                     </div>
                     <t t-foreach="secondary_buttons" t-as="button">
