@@ -23,24 +23,24 @@ odoo.define("my_compassion.form_field_validator", function (require) {
     var validationConfig = {
         email: {
             regex: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-            defaultErrorMessage: "Please enter a valid email address."
+            defaultErrorMessage: "Please enter a valid email address.",
         },
         phone: {
             regex: /^\+?(\d[\d\s-]{5,}\d)$/,
-            defaultErrorMessage: "Please enter a valid phone number."
+            defaultErrorMessage: "Please enter a valid phone number.",
         },
         required: {
             suffix: '<span class="text-mid-orange">*</span>',
-            defaultErrorMessage: "This field is required."
-        }
-    }
+            defaultErrorMessage: "This field is required.",
+        },
+    };
 
     publicWidget.registry.FormFieldValidator = publicWidget.Widget.extend({
         selector: ".form-field-component",
         events: {
-          "blur input": "_onBlur",
-          "change select": "_onBlur",
-          "blur select": "_onBlur",
+            "blur input": "_onBlur",
+            "change select": "_onBlur",
+            "blur select": "_onBlur",
         },
 
         init: function () {
@@ -69,10 +69,9 @@ odoo.define("my_compassion.form_field_validator", function (require) {
                 this.config = validationConfig[this.validationType];
             }
 
-
             this.errorMessages = {
                 required: this.$input.data("error-required") || validationConfig.required.defaultErrorMessage,
-                format: this.$input.data("error-format") || this.config?.defaultErrorMessage
+                format: this.$input.data("error-format") || this.config?.defaultErrorMessage,
             };
         },
 
@@ -96,7 +95,7 @@ odoo.define("my_compassion.form_field_validator", function (require) {
                 return false;
             }
 
-             if (this.validationType && value && this.config.regex) {
+            if (this.validationType && value && this.config.regex) {
                 if (!this.config.regex.test(value)) {
                     this._showError(this.errorMessages.format);
                     return false;
