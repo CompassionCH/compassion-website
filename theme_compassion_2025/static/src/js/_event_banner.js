@@ -71,7 +71,6 @@ odoo.define('theme_compassion_2025.event_banner', function (require) {
 
             $wrap.on('transitionend', onEnd);
           });
-
         },
 
         _dismiss(id) {
