@@ -47,10 +47,36 @@ odoo.define('theme_compassion_2025.event_banner', function (require) {
 
                 const $wrap = $('<div class="event-banner-wrap"></div>').append($banner);
                 $container.prepend($wrap);
-                const targetH = $banner.outerHeight(true);
+                const targetBannerHeight = $banner.outerHeight(true);
 
                 requestAnimationFrame(() => {
-                    $wrap.css('max-height', targetH + 'px').addClass('is-open');
+                  // 1) Startzustand sicherstellen
+                  $wrap.css('max-height', 0);
+
+                  // 2) Reflow erzwingen, damit die folgende Änderung animiert
+                  // eslint-disable-next-line no-unused-expressions
+                  $wrap[0].offsetHeight;
+
+                  // 3) Zielhöhe setzen + Klasse (für die Opacity/Transform des Inhalts)
+                  $wrap.addClass('is-open');
+                  $wrap.css('max-height', targetBannerHeight + 'px');
+
+                  // 4) Nach Ende der max-height-Transition freigeben (nur Wrapper + richtige Eigenschaft)
+                  const onEnd = (e) => {
+                    const prop = e.originalEvent ? e.originalEvent.propertyName : e.propertyName;
+                    if (e.target !== $wrap[0] || prop !== 'max-height') return;
+                    $wrap.off('transitionend', onEnd);
+                    $wrap.css('max-height', 'none'); // => keine Obergrenze mehr, Resize egal
+                  };
+                  $wrap.on('transitionend', onEnd);
+
+                  // 5) Fallback, falls kein transitionend kommt (z. B. 350ms + Puffer)
+                  setTimeout(() => {
+                    if ($wrap.css('max-height') !== 'none') {
+                      $wrap.off('transitionend', onEnd);
+                      $wrap.css('max-height', 'none');
+                    }
+                  }, 500);
                 });
             });
         },
@@ -65,14 +91,25 @@ odoo.define('theme_compassion_2025.event_banner', function (require) {
         },
 
         _onClose(ev) {
-            ev.preventDefault();
-            const $banner = $(ev.currentTarget).closest('.event-banner');
-            const $wrap = $banner.closest('.event-banner-wrap');
-            const id = $banner.data("id");
+          ev.preventDefault();
+          const $banner = $(ev.currentTarget).closest('.event-banner');
+          const $wrap   = $banner.closest('.event-banner-wrap');
+          const id      = $banner.data('id'); // (oder data('banner-id') wenn du umstellst)
 
-            $wrap.removeClass('is-open').css('max-height', 0).one('transitionend', () => $wrap.remove());
+          // Wenn freigegeben: aktuelle Höhe fixieren, damit die Transition sichtbar ist
+          if ($wrap.css('max-height') === 'none') {
+            $wrap.css('max-height', $banner.outerHeight(true) + 'px');
+            // Reflow, damit der folgende Wechsel auf 0 sicher animiert
+            // eslint-disable-next-line no-unused-expressions
+            $wrap[0].offsetHeight;
+          }
 
-            this._dismiss(id);
+          requestAnimationFrame(() => {
+            $wrap.removeClass('is-open').css('max-height', 0)
+                 .one('transitionend', () => $wrap.remove());
+          });
+
+          this._dismiss(id);
         },
     });
 
