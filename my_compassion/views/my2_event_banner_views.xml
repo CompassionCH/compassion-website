@@ -22,33 +22,39 @@
         <field name="arch" type="xml">
             <form string="Event Banner">
                 <sheet>
-                    <group>
+                    <group string="Content">
                         <group>
                             <field name="banner_title"/>
+                            <field name="banner_description"/>
+                        </group>
+                        <group>
+                            <field name="pictogram" />
+                            <field name="button_text" />
+                        </group>
+
+                    </group>
+                    <group string="Appearance">
+                        <group>
+                            <field name="banner_background_color" />
+                            <field name="banner_text_color" />
+                            <field name="pictogram_color" />
+                        </group>
+                        <group>
+                            <field name="button_background_color" />
+                            <field name="button_text_color" />
+                        </group>
+                    </group>
+                    <group string="Configuration">
+                        <group>
+                            <field name="button_action_url" />
+                            <field name="target_pages" placeholder=" Separate multiple URLs with a semicolon (;) e.g. /my2/dashboard;/my2/gits"/>
+                            <!--<field name="target_pages" widget="many2many_tags" placeholder="Select pages where the banner should appear..."/> -->
                             <field name="is_active"/>
                         </group>
                         <group>
                             <field name="start_date"/>
                             <field name="end_date"/>
                         </group>
-                    </group>
-                    <group>
-                        <field name="banner_description"/>
-                    </group>
-                    <group string="Appearance">
-                        <group>
-                            <field name="pictogram" />
-                            <field name="pictogram_color" />
-                        </group>
-                        <group>
-                            <field name="background_color" />
-                            <field name="button_color" />
-                        </group>
-                    </group>
-                    <group string="Appearance">
-                        <field name="button_action" placeholder="e.g., /my/children"/>
-                         <field name="target_pages" placeholder=" Separate multiple URLs with a semicolon (;) e.g. /my2/dashboard;/my2/gits"/>
-                        <!--<field name="target_pages" widget="many2many_tags" placeholder="Select pages where the banner should appear..."/> -->
                     </group>
                 </sheet>
             </form>

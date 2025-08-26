@@ -52,12 +52,12 @@ class MyCompassionEventBannerController(http.Controller):
         for banner in banners:
             values = {
                 'id': banner.id,
-                'title': banner.banner_title or '',
-                'description': banner.banner_description or '',
+                'title': banner.banner_title,
+                'description': banner.banner_description,
                 'start_date': banner.start_date,
                 'end_date': banner.end_date,
                 'is_active': banner.is_active,
-                'pictogram': banner.pictogram or '',
+                'pictogram': banner.pictogram,
                 'pictogram_color': banner.pictogram_color ,
                 'background_color': banner.background_color ,
                 'button_color': banner.button_color ,

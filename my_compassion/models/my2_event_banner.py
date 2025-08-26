@@ -24,6 +24,42 @@ class EventBanner(models.Model):
         required=True,
     )
 
+    banner_text_color = fields.Selection(
+        [
+            ("core-blue", "Core Blue"),
+            ("dark-blue", "Dark Blue"),
+            ("low-blue", "Low Blue"),
+            ("mid-blue", "Mid Blue"),
+            ("high-blue", "High Blue"),
+            ("low-green", "Low Green"),
+            ("mid-green", "Mid Green"),
+            ("high-green", "High Green"),
+            ("low-yellow", "Low Yellow"),
+            ("mid-yellow", "Mid Yellow"),
+            ("high-yellow", "High Yellow"),
+            ("low-pink", "Low Pink"),
+            ("mid-pink", "Mid Pink"),
+            ("high-pink", "High Pink"),
+            ("low-orange", "Low Orange"),
+            ("mid-orange", "Mid Orange"),
+            ("high-orange", "High Orange"),
+            ("low-brown", "Low Brown"),
+            ("mid-brown", "Mid Brown"),
+            ("high-brown", "High Brown"),
+            ("low-black", "Low Black"),
+            ("off-black", "Off Black"),
+            ("low-grey", "Low Grey"),
+            ("mid-grey", "Mid Grey"),
+            ("low-eggshell", "Low Eggshell"),
+            ("mid-eggshell", "Mid Eggshell"),
+            ("high-eggshell", "High Eggshell"),
+            ("pure-white", "Pure White"),
+        ],
+        default="low-black",
+        required=True,
+    )
+
+
     start_date = fields.Datetime(
         default=fields.Datetime.now,
         required=True,
@@ -118,7 +154,7 @@ class EventBanner(models.Model):
         required=True,
     )
 
-    background_color = fields.Selection(
+    banner_background_color = fields.Selection(
         [
             ("core-blue", "Core Blue"),
             ("dark-blue", "Dark Blue"),
@@ -151,10 +187,48 @@ class EventBanner(models.Model):
         ],
         default="high-blue",
         required=True,
-        string="Color",
+    )
+    button_text = fields.Char(
+        default="Learn more",
+        required=True,
     )
 
-    button_color = fields.Selection(
+    button_text_color = fields.Selection(
+        [
+            ("core-blue", "Core Blue"),
+            ("dark-blue", "Dark Blue"),
+            ("low-blue", "Low Blue"),
+            ("mid-blue", "Mid Blue"),
+            ("high-blue", "High Blue"),
+            ("low-green", "Low Green"),
+            ("mid-green", "Mid Green"),
+            ("high-green", "High Green"),
+            ("low-yellow", "Low Yellow"),
+            ("mid-yellow", "Mid Yellow"),
+            ("high-yellow", "High Yellow"),
+            ("low-pink", "Low Pink"),
+            ("mid-pink", "Mid Pink"),
+            ("high-pink", "High Pink"),
+            ("low-orange", "Low Orange"),
+            ("mid-orange", "Mid Orange"),
+            ("high-orange", "High Orange"),
+            ("low-brown", "Low Brown"),
+            ("mid-brown", "Mid Brown"),
+            ("high-brown", "High Brown"),
+            ("low-black", "Low Black"),
+            ("off-black", "Off Black"),
+            ("low-grey", "Low Grey"),
+            ("mid-grey", "Mid Grey"),
+            ("low-eggshell", "Low Eggshell"),
+            ("mid-eggshell", "Mid Eggshell"),
+            ("high-eggshell", "High Eggshell"),
+            ("pure-white", "Pure White"),
+        ],
+        default="pure-white",
+        required=True,
+    )
+
+    button_background_color = fields.Selection(
         [
             ("core-blue", "Core Blue"),
             ("dark-blue", "Dark Blue"),
@@ -198,15 +272,14 @@ class EventBanner(models.Model):
     #   )
 
     target_pages = fields.Text(
-        string='Target Paths',
         required=True,
         help="Tragen Sie einen URL-Pfad pro Zeile ein. Beispiel:\n/my/dashboard\n/my/children"
     )
 
-    button_action = fields.Char(
-        string='Button Action URL',
-        help="URL to redirect to when a button on the banner is clicked. "
-             "Leave empty for no button."
+    button_action_url = fields.Char(
+        required=True,
+        help="URL as button action. Leave empty for no button.",
+        placeholder="e.g., https://www.google.com/"
     )
 
     @api.constrains('start_date', 'end_date')
