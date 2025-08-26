@@ -9,8 +9,10 @@
 ##############################################################################
 from urllib.parse import urlparse
 
+from urllib.parse import urlparse
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
+from odoo.http import request, root
 
 class EventBanner(models.Model):
     _name = 'my_compassion.event_banner'
@@ -281,6 +283,53 @@ class EventBanner(models.Model):
         placeholder="e.g., https://www.google.com/"
     )
 
+    controller_route = fields.Selection(
+        selection=[],
+        string='Target Controller Route',
+        help="Wähle eine Controller-Route (aus @http.route mit website=True)."
+    )
+
+
+    def name_get(self):
+        """
+           Generates the display name for the banners.
+           Format: ‘Banner Title’
+        """
+        result = []
+        for banner in self:
+            result.append((banner.id, banner.banner_title))
+        return result
+
+
+    @api.model
+    def _get_controller_routes(self, public_only=True):
+        if not request or not getattr(request, 'httprequest', None):
+            return []
+
+        router = root.get_db_router(self.env.cr.dbname)
+        paths = set()
+
+        for rule in router.iter_rules():
+            routing = getattr(rule.endpoint, 'routing', {})
+            if routing.get('website') and routing.get('type') == 'http':
+                if rule.rule.startswith('/my2/'):
+                    paths.add(rule.rule)
+        return sorted(paths)
+
+    @api.model
+    def fields_get(self, allfields=None, attributes=None):
+        res = super().fields_get(allfields=allfields, attributes=attributes)
+
+        try:
+            if 'controller_route' in res:
+                choices = [(p, p) for p in self._get_controller_routes(public_only=True)]
+                if choices:
+                    res['controller_route']['selection'] = choices
+        except Exception:
+            # Niemals den Registry-Load sprengen
+            pass
+        return res
+
     @api.constrains('start_date', 'end_date')
     def _check_dates(self):
         """ Ensures that the end date is not before the start date. """
@@ -301,12 +350,3 @@ class EventBanner(models.Model):
             if parsed.scheme not in allowed or not parsed.netloc:
                 raise ValidationError("Invalid button action URL. Please enter a valid http(s) URL (e.g., https://example.com).")
 
-    def name_get(self):
-        """
-           Generates the display name for the banners.
-           Format: ‘Banner Title’
-        """
-        result = []
-        for banner in self:
-            result.append((banner.id, banner.banner_title))
-        return result
