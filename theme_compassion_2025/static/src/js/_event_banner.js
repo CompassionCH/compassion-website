@@ -49,36 +49,29 @@ odoo.define('theme_compassion_2025.event_banner', function (require) {
                 $container.prepend($wrap);
                 const targetBannerHeight = $banner.outerHeight(true);
 
-                requestAnimationFrame(() => {
-                  // 1) Startzustand sicherstellen
-                  $wrap.css('max-height', 0);
-
-                  // 2) Reflow erzwingen, damit die folgende Änderung animiert
-                  // eslint-disable-next-line no-unused-expressions
-                  $wrap[0].offsetHeight;
-
-                  // 3) Zielhöhe setzen + Klasse (für die Opacity/Transform des Inhalts)
-                  $wrap.addClass('is-open');
-                  $wrap.css('max-height', targetBannerHeight + 'px');
-
-                  // 4) Nach Ende der max-height-Transition freigeben (nur Wrapper + richtige Eigenschaft)
-                  const onEnd = (e) => {
-                    const prop = e.originalEvent ? e.originalEvent.propertyName : e.propertyName;
-                    if (e.target !== $wrap[0] || prop !== 'max-height') return;
-                    $wrap.off('transitionend', onEnd);
-                    $wrap.css('max-height', 'none'); // => keine Obergrenze mehr, Resize egal
-                  };
-                  $wrap.on('transitionend', onEnd);
-
-                  // 5) Fallback, falls kein transitionend kommt (z. B. 350ms + Puffer)
-                  setTimeout(() => {
-                    if ($wrap.css('max-height') !== 'none') {
-                      $wrap.off('transitionend', onEnd);
-                      $wrap.css('max-height', 'none');
-                    }
-                  }, 500);
-                });
+                this._openAnimation($wrap, targetBannerHeight);
             });
+        },
+
+        _openAnimation($wrap, targetBannerHeight) {
+          requestAnimationFrame(() => {
+            $wrap.css('max-height', 0);
+            $wrap[0].offsetHeight;
+            $wrap.addClass('is-open');
+            $wrap.css('max-height', targetBannerHeight + 'px');
+
+            const onEnd = (e) => {
+                const prop = e.originalEvent ? e.originalEvent.propertyName : e.propertyName;
+                if (e.target !== $wrap[0] || prop !== 'max-height') {
+                    return;
+                }
+                $wrap.off('transitionend', onEnd);
+                $wrap.css('max-height', 'none');
+            };
+
+            $wrap.on('transitionend', onEnd);
+          });
+
         },
 
         _dismiss(id) {
@@ -94,23 +87,23 @@ odoo.define('theme_compassion_2025.event_banner', function (require) {
           ev.preventDefault();
           const $banner = $(ev.currentTarget).closest('.event-banner');
           const $wrap   = $banner.closest('.event-banner-wrap');
-          const id      = $banner.data('id'); // (oder data('banner-id') wenn du umstellst)
+          const id      = $banner.data('id');
 
-          // Wenn freigegeben: aktuelle Höhe fixieren, damit die Transition sichtbar ist
-          if ($wrap.css('max-height') === 'none') {
-            $wrap.css('max-height', $banner.outerHeight(true) + 'px');
-            // Reflow, damit der folgende Wechsel auf 0 sicher animiert
-            // eslint-disable-next-line no-unused-expressions
-            $wrap[0].offsetHeight;
-          }
-
-          requestAnimationFrame(() => {
-            $wrap.removeClass('is-open').css('max-height', 0)
-                 .one('transitionend', () => $wrap.remove());
-          });
-
+          this._closeAnimation($wrap, $banner);
           this._dismiss(id);
         },
+
+        _closeAnimation($wrap, $banner) {
+            if ($wrap.css('max-height') === 'none') {
+                $wrap.css('max-height', $banner.outerHeight(true) + 'px');
+                $wrap[0].offsetHeight;
+            }
+
+            requestAnimationFrame(() => {
+                $wrap.removeClass('is-open').css('max-height', 0)
+                .one('transitionend', () => $wrap.remove());
+            });
+        }
     });
 
     return publicWidget.registry.EventBanner;
