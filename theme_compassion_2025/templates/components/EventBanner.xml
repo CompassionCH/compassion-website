@@ -33,7 +33,7 @@
                     <i t-attf-class="display-4 mb-0 pictogram-#{pictogram} text-#{pictogram_color}"/>
                 </div>
 
-                <div class="col-12 col-md-9 d-flex flex-column align-items-center text-center align-items-md-start text-md-left">
+                <div class="col-12 col-md-7 col-lg-8 col-xl-9 d-flex flex-column align-items-center text-center align-items-md-start text-md-left">
                     <p class="h3 font-weight-bold mb-1 text-low-black">
                         <t t-esc="title"/>
                     </p>
@@ -42,7 +42,7 @@
                     </p>
                 </div>
 
-                <div class="col-12 col-md-2 d-flex justify-content-center justify-content-md-around align-items-md-center mt-3 mt-md-0">
+                <div class="col-12 col-md-4 col-lg-3 col-xl-2 d-flex justify-content-center justify-content-md-around align-items-md-center mt-3 mt-md-0">
                     <t t-call="theme_compassion_2025.ThemedButtonComponent">
                         <t t-set="variant" t-value="'default'"/>
                         <t t-set="variation" t-value="'filled'"/>
