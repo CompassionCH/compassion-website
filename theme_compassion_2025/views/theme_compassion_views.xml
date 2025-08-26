@@ -1,29 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
-        <!-- Menu items -->
-        <menuitem id="menu_theme_compassion" name="Theme Compassion" parent="website.menu_website_configuration" />
-        <menuitem
-            id="menu_theme_compassion_colors"
-            name="Colors"
-            action="action_theme_compassion_colors"
-            parent="theme_compassion_2025.menu_theme_compassion"
-            sequence="10"
-        />
-        <menuitem
-            id="menu_theme_compassion_icons"
-            name="Icons"
-            action="action_theme_compassion_icons"
-            parent="theme_compassion_2025.menu_theme_compassion"
-            sequence="15"
-        />
-        <menuitem
-            id="menu_theme_compassion_pictograms"
-            name="Pictograms"
-            action="action_theme_compassion_pictograms"
-            parent="theme_compassion_2025.menu_theme_compassion"
-            sequence="20"
-        />
         <!-- theme.compassion.colors views -->
         <record id="view_theme_compassion_colors_form" model="ir.ui.view">
             <field name="name">theme.compassion.colors.form</field>
@@ -120,5 +97,28 @@
             <field name="res_model">theme.compassion.pictograms</field>
             <field name="view_mode">tree,form</field>
         </record>
+        <!-- Menu items -->
+        <menuitem id="menu_theme_compassion" name="Theme Compassion" parent="website.menu_website_configuration" />
+        <menuitem
+                id="menu_theme_compassion_colors"
+                name="Colors"
+                action="action_theme_compassion_colors"
+                parent="theme_compassion_2025.menu_theme_compassion"
+                sequence="10"
+        />
+        <menuitem
+                id="menu_theme_compassion_icons"
+                name="Icons"
+                action="action_theme_compassion_icons"
+                parent="theme_compassion_2025.menu_theme_compassion"
+                sequence="15"
+        />
+        <menuitem
+                id="menu_theme_compassion_pictograms"
+                name="Pictograms"
+                action="action_theme_compassion_pictograms"
+                parent="theme_compassion_2025.menu_theme_compassion"
+                sequence="20"
+        />
     </data>
 </odoo>
