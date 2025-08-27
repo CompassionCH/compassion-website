@@ -265,29 +265,50 @@ class EventBanner(models.Model):
         required=True,
     )
 
-    #   target_pages = fields.Many2many(
-    #       'website.page',
-    #       string='Target Pages',
-    #       required=True,
-    #       help="Select the specific pages where this banner should appear. "
-    #            "If empty, it will not appear on any page."
-    #   )
-
-    target_pages = fields.Text(
-        required=True,
-        help="Tragen Sie einen URL-Pfad pro Zeile ein. Beispiel:\n/my/dashboard\n/my/children"
-    )
-
     button_action_url = fields.Char(
         help="URL as button action. Leave empty for no button.",
         placeholder="e.g., https://www.google.com/"
     )
 
-    controller_route = fields.Selection(
-        selection=[],
-        string='Target Controller Route',
-        help="Wähle eine Controller-Route (aus @http.route mit website=True)."
+    target_pages = fields.Text(
+        required=True
     )
+
+    target_pages_display = fields.Html(
+        compute='_compute_target_pages_display',
+        sanitize=False,
+        string='Target Pages'
+    )
+
+
+    def action_pick_routes(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'my2.route.selector',
+            'view_mode': 'form',
+            'view_id': self.env.ref('my_compassion.view_my2_route_selector_form').id,
+            'target': 'new',
+            'context': {
+                'default_target_model': self._name,
+                'default_target_id': self.id,
+                'default_target_field': 'target_pages',
+            },
+        }
+
+
+    @api.depends('target_pages')
+    def _compute_target_pages_display(self):
+        for rec in self:
+            parts = [p.strip() for p in (rec.target_pages or '').split(';') if p.strip()]
+            if parts:
+                rec.target_pages_display = (
+                    '<ul class="o_route_list">'
+                    + ''.join(f'<li><code>{p}</code></li>' for p in parts)
+                    + '</ul>'
+                )
+            else:
+                rec.target_pages_display = '<span class="text-muted">No pages selected</span>'
 
 
     def name_get(self):
@@ -301,34 +322,29 @@ class EventBanner(models.Model):
         return result
 
 
-    @api.model
-    def _get_controller_routes(self, public_only=True):
-        if not request or not getattr(request, 'httprequest', None):
-            return []
-
-        router = root.get_db_router(self.env.cr.dbname)
-        paths = set()
-
-        for rule in router.iter_rules():
-            routing = getattr(rule.endpoint, 'routing', {})
-            if routing.get('website') and routing.get('type') == 'http':
-                if rule.rule.startswith('/my2/'):
-                    paths.add(rule.rule)
-        return sorted(paths)
-
-    @api.model
-    def fields_get(self, allfields=None, attributes=None):
-        res = super().fields_get(allfields=allfields, attributes=attributes)
-
-        try:
-            if 'controller_route' in res:
-                choices = [(p, p) for p in self._get_controller_routes(public_only=True)]
-                if choices:
-                    res['controller_route']['selection'] = choices
-        except Exception:
-            # Niemals den Registry-Load sprengen
-            pass
-        return res
+    #@api.model
+    #def _get_controller_routes(self, public_only=True):
+    #    if not request or not getattr(request, 'httprequest', None):
+    #        return []
+#
+    #    router = root.get_db_router(self.env.cr.dbname)
+    #    paths = set()
+#
+    #    for rule in router.iter_rules():
+    #        routing = getattr(rule.endpoint, 'routing', {})
+    #        if routing.get('website') and routing.get('type') == 'http':
+    #            if rule.rule.startswith('/my2/'):
+    #                paths.add(rule.rule)
+    #    return sorted(paths)
+#
+    #@api.model
+    #def fields_get(self, allfields=None, attributes=None):
+    #    res = super().fields_get(allfields=allfields, attributes=attributes)
+#
+    #    """ Dynamically sets target_pages options from controller routes during HTTP requests; otherwise leaves them empty. """
+    #    if res.get('target_pages', {}).get('type') == 'selection' and  request and getattr(request, 'httprequest', None):
+    #        res['target_pages']['selection']  = [(p, p) for p in self._get_controller_routes()]
+    #    return res
 
     @api.constrains('start_date', 'end_date')
     def _check_dates(self):
@@ -339,6 +355,7 @@ class EventBanner(models.Model):
 
     @api.constrains('button_action_url')
     def _check_button_action_url(self):
+        """ Ensures that the button action URL is valid if provided. """
         allowed = {'http', 'https'}
         for banner in self:
             action_url = (banner.button_action_url or '').strip()

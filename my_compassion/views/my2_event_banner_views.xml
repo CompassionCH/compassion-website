@@ -47,15 +47,23 @@
                     <group string="Configuration">
                         <group>
                             <field name="button_action_url" />
-                            <field name="target_pages" placeholder=" Separate multiple URLs with a semicolon (;) e.g. /my2/dashboard;/my2/gits"/>
                             <!--<field name="target_pages" widget="many2many_tags" placeholder="Select pages where the banner should appear..."/> -->
                             <field name="is_active"/>
-                            <field name="controller_route" />
+
                         </group>
                         <group>
                             <field name="start_date"/>
                             <field name="end_date"/>
                         </group>
+                    </group>
+                     <group string="Target Pages">
+                        <field name="target_pages_display" widget="html" nolabel="1" readonly="1"/>
+                        <field name="target_pages" invisible="1" readonly="1"/>
+                        <button name="action_pick_routes"
+                            type="object"
+                            string="Select Target Pages"
+                            class="btn btn-secondary oe_edit_only"
+                            icon="fa-sitemap"/>
                     </group>
                 </sheet>
             </form>
