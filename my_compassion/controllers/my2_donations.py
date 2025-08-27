@@ -91,17 +91,14 @@ class MyCompassionDonationsController(http.Controller):
         """
         Edits a donation from the user's gift package.
         """
-        # Retrieve current user's cart
+        # Fetch the order line record from the user's cart
         order = request.website.sale_get_order()
-
-        # Get the order to be edited
-        try:
-            order_line_id = int(post.get("order_line_id"))
-        except (ValueError, TypeError) as e:
-            raise BadRequest() from e
+        order_line_id = post.get("order_line_id")
+        order_line = order and order.order_line.filtered(
+            lambda line: line.id == order_line_id
+        )
 
         # Make sure the order line exists
-        order_line = order.order_line.filtered(lambda line: line.id == order_line_id)
         if not order_line:
             raise NotFound()
 
@@ -211,6 +208,44 @@ class MyCompassionDonationsController(http.Controller):
         return {"html": html_content}
 
     @http.route(
+        "/my2/gift-package/add",
+        type="http",
+        auth="user",
+        website=True,
+        sitemap=False,
+    )
+    def my2_render_add_a_gift_page(self, **kwargs):
+        """
+        Renders the add a gift page to quickly add a gift to the gift package.
+        return: An HTTP response containing a rendered template with the add a
+        gift page.
+        """
+        # Exclude fund donation that are already in the user's gift package
+        order = request.website.sale_get_order(force_create=True)
+        product_template_ids_in_cart = order.order_line.product_id.product_tmpl_id.ids
+        products = request.env["product.template"].search(
+            [
+                "&",
+                ("activate_for_my_compassion", "=", True),
+                "|",
+                ("my_compassion_donation_type", "=", "gift"),
+                ("id", "not in", product_template_ids_in_cart),
+            ]
+        )
+
+        sponsorships = request.env.user.partner_id.sponsorship_ids
+        limits = request.env["gift.threshold.settings"].sudo().search([])
+
+        return request.render(
+            "my_compassion.my2_add_a_gift_page",
+            {
+                "products": products,
+                "sponsorships": sponsorships,
+                "limits": limits,
+            },
+        )
+
+    @http.route(
         "/my2/gifts/thankyou",
         type="http",
         auth="public",
@@ -235,22 +270,7 @@ class MyCompassionDonationsController(http.Controller):
         # Compute quantity
         price = 0
         amount = post.get("suggested_amount")
-        if amount == "low":
-            price = (
-                product_template.my_compassion_donation_quantity_low
-                * product_template.list_price
-            )
-        elif amount == "medium":
-            price = (
-                product_template.my_compassion_donation_quantity_medium
-                * product_template.list_price
-            )
-        elif amount == "high":
-            price = (
-                product_template.my_compassion_donation_quantity_high
-                * product_template.list_price
-            )
-        elif amount == "custom":
+        if amount == "custom":
             try:
                 price = float(post.get("custom_amount"))
             except (ValueError, TypeError) as e:
@@ -259,7 +279,15 @@ class MyCompassionDonationsController(http.Controller):
             if price <= 0:
                 raise BadRequest()
         else:
-            raise BadRequest()
+            quantities = {
+                "low": product_template.my_compassion_donation_quantity_low,
+                "medium": product_template.my_compassion_donation_quantity_medium,
+                "high": product_template.my_compassion_donation_quantity_high,
+            }
+            quantity = quantities.get(amount)
+            if not quantity:
+                raise BadRequest()
+            price = quantity * product_template.list_price
 
         # Get frequency
         frequency = post.get("frequency")
