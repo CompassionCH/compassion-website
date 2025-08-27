@@ -44,7 +44,10 @@
         />
         <div t-attf-class="action-button #{button_top_class}" t-att-onclick="onclick">
             <i t-if="button.get('icon')" t-attf-class="tiny-text icon-#{button.get('icon')} text-#{color}" />
-            <i t-if="button.get('pictogram')" t-attf-class="tiny-text pictogram-#{button.get('pictogram')} text-#{color}" />
+            <i
+                t-if="button.get('pictogram')"
+                t-attf-class="tiny-text pictogram-#{button.get('pictogram')} text-#{color}"
+            />
             <span t-if="button.get('label')" t-attf-class="tiny-text bold text-#{color}">
                 <t t-esc="button.get('label')" />
             </span>
