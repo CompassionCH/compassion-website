@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
             rpc.query({
                 route: '/my2/my-donations/history',
                 params: {
-                    page: page,
+                    invoice_page: page,
                 },
             }).then(function (result) {
 

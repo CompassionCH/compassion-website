@@ -27,7 +27,8 @@
     - price_color (string): Color of the price.                                              [dark-blue]
     - recipient_color (string): Color of the recipient.                                      [dark-blue]
     - bg_color (string): Background color.                                                   [high-blue]
-    - monthly (bool): Whether the price is paid monthly.                                     [False]
+    - monthly (bool): Whether the price is paid monthly (with abbreviation).                 [False]
+    - monthly_noabbr (bool): Whether the price is paid monthly (no abbreviation).            [False]
     - secondary_buttons (list[dict]): Secondary buttons with custom actions (see Button).    [none]
     - top_class (string): Classes to add to the top element of the item.                     [none]
 -->
@@ -57,6 +58,7 @@
         <t t-set="price_color" t-value="price_color or 'dark-blue'" />
         <t t-set="bg_color" t-value="bg_color or 'high-blue'" />
         <t t-set="monthly" t-value="monthly == True" />
+        <t t-set="monthly_noabbr" t-value="monthly_noabbr == True" />
         <t t-set="secondary_buttons" t-value="secondary_buttons or []" />
         <!-- Estimate component minimum width -->
         <t t-set="min_width" t-valuef="#{300 + 24 * len(secondary_buttons)}px" />
@@ -102,7 +104,10 @@
                         <t t-if="price % 1 == 0" t-esc="int(price)" />
                         <t t-else="" t-esc="'{0:.2f}'.format(price)" />
                         .-
-                        <t t-if="monthly">/mo.</t>
+                        <t t-if="monthly">/ mo.</t>
+                        <t t-else="">
+                            <t t-if="monthly_noabbr">/ month</t>
+                        </t>
                     </div>
                 </div>
             </div>

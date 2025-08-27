@@ -3,25 +3,28 @@
 Page: My Compassion 2 Donations Page
 
     Description:
-    This page allows users to view their donation information.
-    It provides access to tax receipts by year, displays current sponsorships with payment details,
-    lists open (due) invoices, and shows a paginated history of past donations.
+    This page allows users to manage and review their donations and sponsorships.
+    It provides:
+      - Access to tax receipts by fiscal year.
+      - A list of active sponsorships with monthly cost summaries and payment slip downloads.
+      - A section showing open (unpaid) invoices related to sponsorships.
+      - A paginated donation history with amount and beneficiary details.
 
-    Used in route:
+    Used in routes:
     - /my2/my-donations/
     - /my2/my-donations/page/<int:invoice_page>
+    - /my2/my-donations/history (JSON endpoint for history updates)
 
     Injected data:
-    - invoices_per_day (list of dict): Grouped donations by date with description and amount.
-    - due_invoices: Outstanding invoices not yet paid.
-    - sponsorships_by_group (dict): Sponsorships grouped by payment mode with total monthly amounts.
-    - current_year: Current calendar year.
-    - first_year: The earliest available year with a tax receipt.
-    - last_completed_tax_receipt: The last year for which a tax receipt is available.
-    - current_page (int): Current page number for donation history.
-    - total_pages (int): Total number of pages in donation history.
-    - previous_page_url (str): URL for the previous donation history page.
-    - next_page_url (str): URL for the next donation history page.
+    - active_sponsorships (recordset): Sponsorships in active state for the logged-in partner.
+    - tot_cost_per_frequency (dict): Total sponsorship cost grouped by frequency and currency.
+    - due_invoices (recordset): Outstanding invoices not yet paid.
+    - paid_invoices_subset (recordset): Subset of paid invoices for donation history.
+    - current_page (int): Current donation history page number.
+    - total_pages (int): Total number of donation history pages.
+
+    Notes:
+    - Currently only the monthly payments are available but in the future this page should address also the other frequencies
 -->
 <odoo>
     <data>
@@ -43,7 +46,7 @@ Page: My Compassion 2 Donations Page
                         </div>
                         <!-- MY DONATION DETAILS -->
                         <div>
-                            <div class="mt-4 mb-4" t-if="invoices_per_day">
+                            <div class="mt-4 mb-4">
                                 <h3 id="tax_title" class="text-dark-blue">
                                     My donation
                                     details
@@ -83,57 +86,35 @@ Page: My Compassion 2 Donations Page
                                             </t>
                                         </div>
                                     </form>
-                                    <t t-foreach="sponsorships_by_group" t-as="group">
-                                        <t
-                                                t-set="key_value_items"
-                                                t-value="[
-                                            ('Payment mode', group.payment_mode_id.name),
-                                            ('Payment frequency', str(group.advance_billing_months) + ' ' + group.translate('recurring_unit')),
-                                        ]"
-                                        />
-                                        <div class="row">
-                                            <t t-foreach="key_value_items" t-as="item">
-                                                <div class="col">
-                                                    <t t-call="theme_compassion_2025.FormFieldComponent">
-                                                        <t t-set="label"
-                                                           t-value="item[0]"/>
-                                                        <p>
-                                                            <t t-esc="item[1]"/>
-                                                        </p>
-                                                    </t>
-                                                </div>
-                                            </t>
-                                        </div>
-                                    </t>
                                 </div>
                             </div>
                         </div>
-                        <!-- MY SPONSORSHIP -->
+                        <!-- MY SPONSORSHIPS -->
                         <div>
                             <h3 class="text-dark-blue">My sponsorships</h3>
-                            <t t-foreach="sponsorships_by_group.items()"
-                               t-as="group_data">
-                                <t t-set="group" t-value="group_data[0]"/>
-                                <t t-set="sponsorships" t-value="group_data[1][0]"/>
-                                <t t-set="total_amount" t-value="group_data[1][1]"/>
-                                <p>
-                                    You currently have
+                            <p>
+                                You currently have
+                                <span class="body-small bold">
+                                    <t t-esc="len(active_sponsorships)"/>
+                                </span>
+                                active
+                                sponsorship(s) for a total of
+                                <!-- Currently only the monthly payments are available
+                                 but in the future this should address also the other frequencies-->
+                                <t t-if="1 in tot_cost_per_frequency">
                                     <span class="body-small bold">
-                                        <t t-esc="len(sponsorships)"/>
+                                        <t t-esc="tot_cost_per_frequency[1][1]"/>
+                                        <t t-esc="int(tot_cost_per_frequency[1][0])"/>
+                                        / month.
                                     </span>
-                                    active
-                                    sponsorship(s) for a total of
-                                    <span class="body-small bold">
-                                        <t t-esc="total_amount"/>
-                                        /mo
-                                    </span>
-                                    .
-                                    <br/>
-                                    A payment slip is available for download for each of
-                                    your sponsored children.
-                                </p>
-
-                                <t t-foreach="sponsorships" t-as="sponsorship">
+                                </t>
+                                <br/>
+                                A payment slip is available for download for each of
+                                your sponsored children.
+                            </p>
+                            <t t-foreach="active_sponsorships"
+                               t-as="sponsorship">
+                                <t t-if="sponsorship">
                                     <div class="mb-4">
                                         <t
                                                 t-set="primary_button_data"
@@ -164,12 +145,12 @@ Page: My Compassion 2 Donations Page
                                                     t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait"
                                             />
                                             <t t-set="subtext"
-                                               t-value="sponsorships.payment_mode_id.display_name"/>
+                                               t-value="sponsorship.payment_mode_id.display_name"/>
                                             <t t-set="price"
                                                t-value="sponsorship.total_amount"/>
                                             <t t-set="primary_button"
                                                t-value="primary_button_data"/>
-                                            <t t-set="monthly" t-value="True"/>
+                                            <t t-set="monthly_noabbr" t-value="True"/>
                                             <t t-set="secondary_buttons"
                                                t-value="secondary_buttons_data"/>
                                             <t t-set="bg_color" t-value="'light-blue'"/>
@@ -182,7 +163,6 @@ Page: My Compassion 2 Donations Page
                                         </t>
                                     </div>
                                 </t>
-
                             </t>
                         </div>
                         <!-- DUE INVOICES -->
@@ -241,7 +221,7 @@ Page: My Compassion 2 Donations Page
             <div id="donation_history_container">
                 <div class="mb-4 mt-4">
                     <h3 class="text-dark-blue">Donations history</h3>
-                    <t t-if="invoices_per_day or current_page">
+                    <t t-if="paid_invoices_subset or current_page">
                         <div class="row font-weight-bold mb-2">
                             <div class="col text-core-blue">Date</div>
                             <div class="col text-core-blue">
@@ -253,17 +233,22 @@ Page: My Compassion 2 Donations Page
                             </div>
                         </div>
                         <div id="donation_history_rows">
-                            <t t-foreach="invoices_per_day"
-                               t-as="invoice_group">
+                            <t t-foreach="paid_invoices_subset"
+                               t-as="invoice">
+                                <t
+                                        t-set="children"
+                                        t-value="invoice.invoice_line_ids.mapped('contract_id.child_id')"
+                                />
                                 <div class="row mb-3">
                                     <div class="col">
-                                        <span t-esc="invoice_group['last_payment']"/>
+                                        <span t-esc="invoice.last_payment"/>
                                     </div>
                                     <div class="col">
-                                        <span t-esc="invoice_group['description']"/>
+                                        <t t-esc="children.get_list('preferred_name', 3, children.get_number())"/>
                                     </div>
                                     <div class="col text-right">
-                                        <span t-esc="invoice_group['amount']"/>
+                                        <span t-esc="int(invoice.amount_total)"/>
+                                        <span t-esc="invoice.currency_id.display_name"/>
                                     </div>
                                 </div>
                             </t>
@@ -319,6 +304,5 @@ Page: My Compassion 2 Donations Page
                 </div>
             </div>
         </template>
-
     </data>
 </odoo>
