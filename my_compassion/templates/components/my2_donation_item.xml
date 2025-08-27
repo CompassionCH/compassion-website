@@ -64,13 +64,13 @@
             t-attf-style="min-width: #{min_width}"
         >
             <div
-                class="thumbnail responsive-lg mr-2 flex-shrink-0 rounded-lg"
+                class="thumbnail responsive-lg mr-3 flex-shrink-0 rounded-lg"
                 t-attf-style="--image_url: url('#{image}');"
             />
             <div class="w-100 d-flex flex-column justify-content-between">
                 <div class="d-flex align-items-start">
                     <div
-                        class="thumbnail responsive-sm mr-2 flex-shrink-0 rounded-lg"
+                        class="thumbnail responsive-sm mr-3 flex-shrink-0 rounded-lg"
                         t-attf-style="--image_url: url('#{image}');"
                     />
                     <div class="flex-grow-1 d-flex flex-column">
@@ -94,10 +94,11 @@
                     </t>
                     <div t-attf-class="text-#{price_color} ">
                         CHF
-                        <t t-if="price % 1 == 0" t-esc="int(price)" />
-                        <t t-else="" t-esc="'{0:.2f}'.format(price)" />
-                        .-
-                        <t t-if="monthly">/mo.</t>
+                        <t t-if="price % 1 == 0" t-set="price" t-value="'{0}.-'.format(int(price))" />
+                        <t t-else="" t-set="price" t-value="'{0:.2f}'.format(price)" />
+                        <t t-if="monthly" t-set="monthly" t-value="'/mo.'" />
+                        <t t-else="" t-set="monthly" t-value="''" />
+                        <t t-esc="price + monthly" />
                     </div>
                 </div>
             </div>
