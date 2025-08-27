@@ -10,7 +10,6 @@ class My2RouteSelector(models.TransientModel):
     target_id    = fields.Integer(required=True, readonly=True)
     target_field = fields.Char(required=True, readonly=True)
 
-    # Suchfeld (macht den View-Parse glücklich und dient als Filter)
     route_filter = fields.Char(string="Filter", default='')
 
     option_ids = fields.Many2many(
@@ -19,40 +18,57 @@ class My2RouteSelector(models.TransientModel):
         string='Routes'
     )
 
+    def _reload_self_action(self):
+        """Open/reload the same wizard record in-place (keeps modal open)."""
+        self.ensure_one()
+        view = self.env.ref('my_compassion.view_my2_route_selector_form')
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': self._name,
+            'res_id': self.id,
+            'view_mode': 'form',
+            'view_id': view.id,
+            'target': 'new',
+            'context': dict(self._context),
+        }
+
+
     @api.model
     def create(self, vals):
         rec = super().create(vals)
-        rec._populate_options()
+        paths = rec._get_controller_routes()
+        rec._populate_options(paths)
         rec._preselect_from_target()
         return rec
 
+
     @api.onchange('route_filter')
     def _onchange_route_filter(self):
-        return {'domain': {'option_ids': [('selector_id', '=', self.id),
-                                          ('name', 'ilike', self.route_filter or '')]}}
+        domain = [('selector_id', '=', self.id)]
+        if self.route_filter:
+            domain.append(('name', 'ilike', self.route_filter))
+        return {'domain': {'option_ids': domain}}
 
-    # ---- helpers ----
-    def _scan_routes(self, public_only=True):
+    def _get_controller_routes(self):
         if not request or not getattr(request, 'httprequest', None):
             return []
+
         router = root.get_db_router(self.env.cr.dbname)
         paths = set()
+
         for rule in router.iter_rules():
             routing = getattr(rule.endpoint, 'routing', {})
             if routing.get('website') and routing.get('type') == 'http':
-                if '<' in rule.rule or '>' in rule.rule:
-                    continue
-                if rule.rule.startswith(('/web/', '/longpolling/', '/website/static/')):
-                    continue
-                if public_only and routing.get('auth') not in (None, 'public'):
-                    continue
-                paths.add(rule.rule)
+                if rule.rule.startswith('/my2/'):
+                    paths.add(rule.rule)
+
         return sorted(paths)
 
-    def _populate_options(self):
-        self.ensure_one()
+
+    def _populate_options(self, paths=None):
+        if paths is None:
+            paths = []
         Opt = self.env['my2.route.option']
-        paths = self._scan_routes(public_only=True)
         if paths:
             Opt.create([{'selector_id': self.id, 'name': p, 'path': p} for p in paths])
 
@@ -61,19 +77,19 @@ class My2RouteSelector(models.TransientModel):
         rec = self.env[self.target_model].browse(self.target_id).exists()
         if not rec:
             return
-        wanted = {p.strip() for p in (getattr(rec, self.target_field, '') or '').split(';') if p.strip()}
-        if not wanted:
-            return
-        pick = self.option_ids.filtered(lambda o: o.path in wanted)
-        if pick:
-            self.option_ids = [(6, 0, pick.ids)]
 
-    def action_select_all_filtered(self):
-        self.ensure_one()
-        Opt = self.env['my2.route.option']
-        to_add = Opt.search([('selector_id', '=', self.id),
-                             ('name', 'ilike', self.route_filter or '')])
-        self.option_ids = [(6, 0, (self.option_ids | to_add).ids)]
+        raw_target_pages = getattr(rec, self.target_field, '') or ''
+        selected = [p for p in raw_target_pages.split(';') if p]
+
+        if not selected:
+            return
+
+        Option = self.env['my2.route.option']
+        pick = Option.search([
+            ('selector_id', '=', self.id),
+            ('path', 'in', selected),
+        ])
+        self.option_ids = [(6, 0, pick.ids)]
 
     def action_select_none(self):
         self.ensure_one()

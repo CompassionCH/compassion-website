@@ -283,17 +283,19 @@ class EventBanner(models.Model):
 
     def action_pick_routes(self):
         self.ensure_one()
+        selector = self.env['my2.route.selector'].create({
+            'target_model': self._name,
+            'target_id': self.id,
+            'target_field': 'target_pages',
+        })
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'my2.route.selector',
+            'res_id': selector.id,
             'view_mode': 'form',
             'view_id': self.env.ref('my_compassion.view_my2_route_selector_form').id,
             'target': 'new',
-            'context': {
-                'default_target_model': self._name,
-                'default_target_id': self.id,
-                'default_target_field': 'target_pages',
-            },
+            'context': dict(self.env.context),
         }
 
 
