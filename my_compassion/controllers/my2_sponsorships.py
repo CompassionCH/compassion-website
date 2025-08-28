@@ -15,6 +15,10 @@ from odoo import fields, http
 from odoo.http import request
 
 from odoo.addons.website_sponsorship.controllers.main import WebsiteChild
+from odoo.addons.website_sponsorship.models.compassion_child import ChildNotFound
+
+# Hold up to 3 children (more is too slow)
+GLOBAL_FETCH_LIMIT = 3
 
 
 class MyCompassionSponsorshipsController(WebsiteChild):
@@ -28,7 +32,10 @@ class MyCompassionSponsorshipsController(WebsiteChild):
         sponsorships landing page.
         """
         countries = request.env["compassion.field.office"].search(
-            [("available_on_childpool", "=", True)]
+            [
+                ("available_on_childpool", "=", True),
+                ("field_office_id", "!=", "ID"),  # Indonesia has two field offices
+            ]
         )
 
         return request.render(
@@ -45,23 +52,25 @@ class MyCompassionSponsorshipsController(WebsiteChild):
         website=True,
         methods=["POST"],
     )
-    def fetch_sponsorships(self, **post):
+    def fetch_sponsorships(
+        self, limit: int = 20, offset: int = 0, global_pool: bool = False, **post
+    ):
         """
         Fetches children available for sponsorship and renders them using the
         my_compassion.my2_sponsorships_results_content template.
         return: An JSON response containing the rendered template html
         as well as the new children count and total hits.
         """
-        # The number of results to fetch per call
-        limit = int(post.get("limit", 20))
-        # The number of results to skip
-        offset = int(post.get("offset", 0))
-
-        # Get domain from filters
-        domain = self._get_filtered_domain(post)
-
-        # Query matching children
         child_obj = request.env["compassion.child"]
+        if global_pool:
+            try:
+                post["limit"] = GLOBAL_FETCH_LIMIT
+                child_obj.website_hold_child(post)
+            except ChildNotFound:
+                # Error is already logged, the frontend will just show no results
+                pass
+        # Query matching children
+        domain = self._get_filtered_domain(post)
         total_results = child_obj.search_count(domain)
         children = child_obj.search(
             domain,
@@ -70,7 +79,6 @@ class MyCompassionSponsorshipsController(WebsiteChild):
             order="unsponsored_since asc, create_date asc, completion_date asc",
         )
 
-        # Render and return the updated content
         html_content = request.env["ir.qweb"]._render(
             "my_compassion.my2_sponsorships_results_content", {"children": children}
         )
@@ -116,8 +124,8 @@ class MyCompassionSponsorshipsController(WebsiteChild):
 
     def _get_filtered_domain(self, post):
         gender = post.get("gender", "either")
-        min_age = int(post.get("min_age", 0))
-        max_age = int(post.get("max_age", 18))
+        age_min = int(post.get("age_min", 0))
+        age_max = int(post.get("age_max", 18))
         country = post.get("country", "")
 
         child_obj = request.env["compassion.child"]
@@ -137,17 +145,17 @@ class MyCompassionSponsorshipsController(WebsiteChild):
 
         # Filter by age
         domain += [
-            ("age", ">=", min_age),
-            ("age", "<=", max_age),
+            ("age", ">=", age_min),
+            ("age", "<=", age_max),
         ]
 
         # Filter by gender
         if gender != "either":
-            domain += [("gender", "=", "F" if gender == "girl" else "M")]
+            domain += [("gender", "=", gender)]
 
         # Filter by country
         if country != "":
-            domain += [("field_office_id", "=", int(country))]
+            domain += [("field_office_id.field_office_id", "=", country)]
 
         return domain
 
