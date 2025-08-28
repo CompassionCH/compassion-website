@@ -51,9 +51,6 @@
         "templates/signup.xml",
         "views/correspondence_template_view.xml",
         "views/my2_event_banner_views.xml",
-        # noch ändern!!!!!!!
-        "views/my2_route_selector_form.xml",
-        # noch ändern!!!!!!!
         "views/partner_compassion_view.xml",
         "views/product_view.xml",
         "data/signup_email_confirmation.xml",

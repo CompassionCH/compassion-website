@@ -270,48 +270,11 @@ class EventBanner(models.Model):
         placeholder="e.g., https://www.google.com/"
     )
 
-    target_pages = fields.Text(
-        required=True
+    target_route_ids = fields.Many2many(
+        'my_compassion.website_route',
+        string='Target Pages',
+        help="Select the pages where this banner should be visible."
     )
-
-    target_pages_display = fields.Html(
-        compute='_compute_target_pages_display',
-        sanitize=False,
-        string='Target Pages'
-    )
-
-
-    def action_pick_routes(self):
-        self.ensure_one()
-        selector = self.env['my2.route.selector'].create({
-            'target_model': self._name,
-            'target_id': self.id,
-            'target_field': 'target_pages',
-        })
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'my2.route.selector',
-            'res_id': selector.id,
-            'view_mode': 'form',
-            'view_id': self.env.ref('my_compassion.view_my2_route_selector_form').id,
-            'target': 'new',
-            'context': dict(self.env.context),
-        }
-
-
-    @api.depends('target_pages')
-    def _compute_target_pages_display(self):
-        for rec in self:
-            parts = [p.strip() for p in (rec.target_pages or '').split(';') if p.strip()]
-            if parts:
-                rec.target_pages_display = (
-                    '<ul class="o_route_list">'
-                    + ''.join(f'<li><code>{p}</code></li>' for p in parts)
-                    + '</ul>'
-                )
-            else:
-                rec.target_pages_display = '<span class="text-muted">No pages selected</span>'
-
 
     def name_get(self):
         """
@@ -355,17 +318,17 @@ class EventBanner(models.Model):
             if banner.start_date and banner.end_date and banner.start_date > banner.end_date:
                 raise ValidationError("The end date must be after the start date.")
 
-    @api.constrains('button_action_url')
-    def _check_button_action_url(self):
-        """ Ensures that the button action URL is valid if provided. """
-        allowed = {'http', 'https'}
-        for banner in self:
-            action_url = (banner.button_action_url or '').strip()
-
-            if not action_url:
-               continue
-
-            parsed = urlparse(action_url)
-            if parsed.scheme not in allowed or not parsed.netloc:
-                raise ValidationError("Invalid button action URL. Please enter a valid http(s) URL (e.g., https://example.com).")
+    # @api.constrains('button_action_url')
+    # def _check_button_action_url(self):
+    #     """ Ensures that the button action URL is valid if provided. """
+    #     allowed = {'http', 'https'}
+    #     for banner in self:
+    #         action_url = (banner.button_action_url or '').strip()
+    #
+    #         if not action_url:
+    #            continue
+    #
+    #         parsed = urlparse(action_url)
+    #         if parsed.scheme not in allowed or not parsed.netloc:
+    #             raise ValidationError("Invalid button action URL. Please enter a valid http(s) URL (e.g., https://example.com).")
 

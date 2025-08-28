@@ -30,11 +30,7 @@ class MyCompassionEventBannerController(http.Controller):
             ('is_active', '=', True),
             ('start_date', '<=', now),
             '|', ('end_date', '=', False), ('end_date', '>=', now),
-            '|', '|', '|',
-            ('target_pages', '=', current_page_route),  # exakt (ein Eintrag)
-            ('target_pages', 'ilike', f'{current_page_route};%'),  # am Anfang
-            ('target_pages', 'ilike', f'%;{current_page_route};%'),  # in der Mitte
-            ('target_pages', 'ilike', f'%;{current_page_route}'),
+            ('target_route_ids.path', '=', current_page_route),
         ]
 
         banners = request.env['my_compassion.event_banner'].sudo().search(
@@ -60,8 +56,7 @@ class MyCompassionEventBannerController(http.Controller):
                 'pictogram_color': banner.pictogram_color ,
                 'background_color': banner.background_color ,
                 'button_color': banner.button_color ,
-                'target_pages': banner.target_pages ,
-                'button_action': banner.button_action,
+                'button_action': banner.button_action_url,
             }
             html = request.env['ir.ui.view']._render_template(
                 'theme_compassion_2025.EventBannerComponent', values

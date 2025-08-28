@@ -15,6 +15,15 @@
         </field>
     </record>
 
+    <record id="action_server_refresh_website_routes" model="ir.actions.server">
+        <field name="name">Refresh Website Routes</field>
+        <field name="model_id" ref="my_compassion.model_my_compassion_website_route"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = model.action_refresh_routes_and_reload_view()
+        </field>
+    </record>
+
     <!-- Form -->
     <record id="view_my2_compassion_event_banner_form" model="ir.ui.view">
         <field name="name">my_compassion.event_banner.form</field>
@@ -57,13 +66,17 @@
                         </group>
                     </group>
                      <group string="Target Pages">
-                        <field name="target_pages_display" widget="html" nolabel="1" readonly="1"/>
-                        <field name="target_pages" invisible="1" readonly="1"/>
-                        <button name="action_pick_routes"
-                            type="object"
-                            string="Select Target Pages"
-                            class="btn btn-secondary oe_edit_only"
-                            icon="fa-sitemap"/>
+                        <div class="o_row">
+                            <field name="target_route_ids" widget="many2many_tags"
+                                   options="{'no_create_edit': True}"
+                                   placeholder="Select pages..."/>
+
+                            <button name="%(action_server_refresh_website_routes)d"
+                                    type="action"
+                                    string="Refresh List"
+                                    icon="fa-refresh"
+                                    class="btn btn-secondary ml-2"/>
+                        </div>
                     </group>
                 </sheet>
             </form>
