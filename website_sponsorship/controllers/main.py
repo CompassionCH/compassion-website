@@ -224,7 +224,7 @@ class WebsiteChild(http.Controller):
         return (
             request.env["compassion.child"]
             .sudo()
-            .website_hold_child(request.jsonrequest)
+            .website_hold_child(request.jsonrequest)[0]
         )
 
     def _get_reservation_uuid(self):

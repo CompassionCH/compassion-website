@@ -61,9 +61,9 @@ Page: My Compassion 2 Sponsorships Page
                     <t t-call="my_compassion.SponsorshipsFilter">
                         <t t-set="title" t-value="'I\'d like to sponsor a'" />
                         <div class="gender-select-container d-flex my-2">
-                            <input id="gender-boy" type="radio" name="gender" value="boy" />
+                            <input id="gender-boy" type="radio" name="gender" value="M" />
                             <label class="gender-select-button" for="gender-boy">Boy</label>
-                            <input id="gender-girl" type="radio" name="gender" value="girl" />
+                            <input id="gender-girl" type="radio" name="gender" value="F" />
                             <label class="gender-select-button" for="gender-girl">Girl</label>
                             <input id="gender-either" type="radio" name="gender" value="either" checked="" />
                             <label class="gender-select-button" for="gender-either">Either</label>
@@ -83,7 +83,7 @@ Page: My Compassion 2 Sponsorships Page
                             <t t-call="theme_compassion_2025.SelectComponent">
                                 <option value="">Select country</option>
                                 <t t-foreach="countries" t-as="country">
-                                    <option t-att-value="country.id">
+                                    <option t-att-value="country.field_office_id">
                                         <t t-esc="country.name" />
                                     </option>
                                 </t>
