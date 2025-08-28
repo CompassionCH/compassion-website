@@ -173,20 +173,19 @@ class MyCompassionNewSponsorshipController(http.Controller):
             raise Gone()
 
         # Create new wizard
-        wizard = request.env["new.sponsorship.wizard"].create({})
-        wizard.child = child
+        wizard = request.env["new.sponsorship.wizard"].create(
+            {
+                "child_id": child.id,
+                "user_id": request.env.user.id,
+            }
+        )
 
-        # Fetch available salutations and countries
-        titles = request.env["res.partner.title"].search([])
-        countries = request.env["res.country"].search([])
-
-        context = {
-            "wizard": wizard,
-            "titles": titles,
-            "countries": countries,
-        }
-
-        return request.render("my_compassion.my2_new_sponsorship_wizard_page", context)
+        return request.render(
+            "my_compassion.my2_new_sponsorship_wizard_page",
+            {
+                "form_content_html": self._render_form_content(wizard),
+            },
+        )
 
     @http.route(
         "/my2/new-sponsorship/step",
@@ -207,39 +206,12 @@ class MyCompassionNewSponsorshipController(http.Controller):
         wizard = request.env["new.sponsorship.wizard"].sudo().browse(wizard_id)
 
         # Update the record
-        self._update_wizard(wizard, post)
+        wizard.update(post)
 
-        # Fetch available salutations, countries, payment methods,
-        # languages and lead sources
-        titles = request.env["res.partner.title"].search([])
-        countries = request.env["res.country"].search([])
-        spoken_languages = (
-            request.env["res.lang.compassion"]
-            .sudo()
-            .search([("translatable", "=", True)])
-        )
-        payment_methods = request.env["account.payment.mode"].sudo().search([])
-        lead_sources = request.env["recurring.contract.origin"].sudo().search([])
-
-        # TODO: decide if we filter by website_published or not
-        # payment_methods = request.env["account.payment.mode"].sudo().search([("website_published", "=", True)]) # noqa: E501
-        # lead_sources = request.env["recurring.contract.origin"].sudo().search([("website_published", "=", True)]) # noqa: E501
-
-        context = {
-            "wizard": wizard,
-            "titles": titles,
-            "countries": countries,
-            "payment_methods": payment_methods,
-            "spoken_languages": spoken_languages,
-            "lead_sources": lead_sources,
-        }
-
-        # Render and return the updated content
-        html_content = request.env["ir.qweb"]._render(
-            "my_compassion.my2_new_sponsorship_wizard_form_content", context
-        )
-
-        return {"html": html_content}
+        if wizard.is_done:
+            return {"finish": True}
+        else:
+            return {"html": self._render_form_content(wizard)}
 
     @http.route(
         "/my2/new-sponsorship/submit",
@@ -258,13 +230,10 @@ class MyCompassionNewSponsorshipController(http.Controller):
         wizard_id = int(post.get("wizard_id"))
         wizard = request.env["new.sponsorship.wizard"].sudo().browse(wizard_id)
 
-        # Update wizard
-        self._update_wizard(wizard, post)
-
         # Make sure child is still available and finalize sponsorship creation
-        if wizard.child.state not in wizard.child._available_states():
+        if wizard.child_id.state not in wizard.child_id._available_states():
             raise Gone()
-        sponsorship = wizard.action_finish_sponsorship()
+        sponsorship = wizard.finish_sponsorship()
 
         # Redirect to thank-you page
         return request.redirect(
@@ -286,57 +255,52 @@ class MyCompassionNewSponsorshipController(http.Controller):
         return request.render(
             "my_compassion.my2_new_sponsorship_thank_you_page",
             {
-                "n_steps": request.env["new.sponsorship.wizard"].n_steps,
+                "n_steps": 3,
                 "sponsorship": sponsorship,
             },
         )
 
     @staticmethod
-    def _update_wizard(wizard, post):
-        values = {}
+    def _render_form_content(wizard):
+        # Fetch available salutations, countries, payment methods,
+        # languages and lead sources
+        titles = request.env["res.partner.title"].search([])
+        countries = request.env["res.country"].search([])
+        spoken_languages = (
+            request.env["res.lang.compassion"]
+            .sudo()
+            .search([("translatable", "=", True)])
+        )
+        payment_methods = request.env["account.payment.mode"].sudo().search([])
+        lead_sources = request.env["recurring.contract.origin"].sudo().search([])
 
-        def soft_convert(value, convert=lambda x: x):
-            try:
-                return convert(value)
-            except (ValueError, TypeError):
-                return None
+        # TODO: decide if we filter by website_published or not
+        # payment_methods = request.env["account.payment.mode"].sudo().search([("website_published", "=", True)]) # noqa: E501
+        # lead_sources = request.env["recurring.contract.origin"].sudo().search([("website_published", "=", True)]) # noqa: E501
 
-        if wizard.step == 0:
-            values["title"] = soft_convert(post.get("title"), int)
-            values["lastname"] = post.get("lastname")
-            values["firstname"] = post.get("firstname")
-            values["birthdate"] = post.get("birthdate")
-            values["email"] = post.get("email")
-            values["phone"] = post.get("phone")
-            values["street"] = post.get("street")
-            values["street_number"] = post.get("street_number")
-            values["zip"] = post.get("zip")
-            values["city"] = post.get("city")
-            values["country"] = post.get("country")
+        # Render step template first
+        inner_step_html = request.env["ir.qweb"]._render(
+            wizard.current_step.template,
+            {
+                "wizard": wizard,
+                "titles": titles,
+                "countries": countries,
+                "payment_methods": payment_methods,
+                "spoken_languages": spoken_languages,
+                "lead_sources": lead_sources,
+            },
+        )
 
-        if wizard.step == 1:
-            values["payment_method"] = soft_convert(post.get("payment_method"), int)
-            values["sponsorship_plus"] = soft_convert(
-                post.get("sponsorship_plus"), bool
-            )
+        # Render and return the updated content
+        html_content = request.env["ir.qweb"]._render(
+            "my_compassion.my2_new_sponsorship_wizard_form_content",
+            {
+                "wizard": wizard,
+                "inner_step_html": inner_step_html,
+            },
+        )
 
-        if wizard.step == 2:
-            spoken_languages_ids = [
-                int(post.get(key)) for key in post if key.startswith("spoken_language")
-            ]
-            values["spoken_languages"] = [(6, 0, spoken_languages_ids)]
-            values["lead_source"] = soft_convert(post.get("lead_source"), int)
-            values["volunteering"] = soft_convert(post.get("volunteering"), bool)
-
-        wizard.write(values)
-
-        # Move to previous / next step
-        if "action" in post:
-            action = post.get("action")
-            if action == "next":
-                wizard.action_next_step()
-            elif action == "previous":
-                wizard.action_previous_step()
+        return html_content
 
     @staticmethod
     def _get_reservation_uuid():

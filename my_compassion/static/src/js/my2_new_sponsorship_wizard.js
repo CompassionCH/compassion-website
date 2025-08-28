@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         publicWidget.registry.NewSponsorshipWizard = publicWidget.Widget.extend({
             selector: ".new-sponsorship-wizard-form",
             events: {
-                "click .btn-next, .btn-previous, .btn-finish": "_onStepClick",
+                "click .btn-next, .btn-previous": "_onStepClick",
             },
 
             /**
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
             _onStepClick: function (ev) {
                 ev.preventDefault();
 
-                var action = $(ev.currentTarget).attr("name"); // 'next', 'previous' or finish
+                var action = $(ev.currentTarget).attr("name"); // 'next', 'previous'
 
                 // Don't validate when moving backwards
                 if (action !== "previous" && !this._validateForm()) {
@@ -35,12 +35,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
                 // Prevent double clicks
                 this.$(".btn").prop("disabled", true);
-
-                // Submit the form and return if action is finish
-                if (action === "finish") {
-                    $(".new-sponsorship-wizard-form").submit();
-                    return;
-                }
 
                 // Serialize form and add action
                 var formData = this.$el.serializeArray();
@@ -55,11 +49,15 @@ document.addEventListener("DOMContentLoaded", function (event) {
                         function (data) {
                             // Replace the form's inner content with the new step's HTML
                             if (data.html) {
-                                $(".new-sponsorship-wizard-form-content").html(data.html);
-                                $("html, body").animate({ scrollTop: 0 }, "slow");
+                                this.$(".new-sponsorship-wizard-form-content").html(data.html);
+                                this.$("html, body").animate({ scrollTop: 0 }, "slow");
                             }
-                            // Re-enable buttons
-                            this.$(".btn").prop("disabled", false);
+                            if (data.finish) {
+                                this.$el.submit();
+                            } else {
+                                // Re-enable buttons
+                                this.$(".btn").prop("disabled", false);
+                            }
                         }.bind(this)
                     )
                     .guardedCatch(
