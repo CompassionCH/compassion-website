@@ -43,6 +43,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 this.resultsLoaded = 0;
                 this.totalResults = 0;
 
+                this.sponsorship_type = this.$el.data("sponsorship-type");
+
                 this._fetchSponsorships();
 
                 return def;
@@ -94,6 +96,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                         age_min: this.ageFilter.low,
                         age_max: this.ageFilter.high,
                         country: this.countryFilter,
+                        sponsorship_type: this.sponsorship_type,
                         global_pool: global_pool,
                     },
                 })
@@ -247,7 +250,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
                         function (data) {
                             if (data.child_id) {
                                 // Redirect to new sponsorship page
-                                window.location.href = "/my2/new-sponsorship/" + data.child_id;
+                                window.location.href =
+                                    "/my2/new-sponsorship/" + data.child_id + "?type=" + this.sponsorship_type;
                             }
                             this.$(".btn").prop("disabled", false);
                         }.bind(this)

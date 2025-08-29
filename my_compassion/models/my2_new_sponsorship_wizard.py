@@ -5,16 +5,27 @@ class NewSponsorshipWizard(models.TransientModel):
     _name = "new.sponsorship.wizard"
     _description = "New Sponsorship Wizard"
 
-    STEP_CONFIGS = {
+    STEPS_CONFIGS = {
         "standard": {
             "public": [
                 "my_compassion.new_sponsorship_wizard_step_user_details",
+                "my_compassion.new_sponsorship_wizard_step_communication_details",
                 "my_compassion.new_sponsorship_wizard_step_payment_methods",
             ],
             "logged_in": [
                 "my_compassion.new_sponsorship_wizard_step_payment_methods",
             ],
-        }
+        },
+        "write_and_pray": {
+            "public": [
+                "my_compassion.new_sponsorship_wizard_step_user_details",
+                "my_compassion.new_sponsorship_wizard_step_communication_details",
+                "my_compassion.new_sponsorship_wizard_step_wap_options",
+            ],
+            "logged_in": [
+                "my_compassion.new_sponsorship_wizard_step_wap_options",
+            ],
+        },
     }
 
     current_step_idx = fields.Integer()
@@ -40,6 +51,14 @@ class NewSponsorshipWizard(models.TransientModel):
         "compassion.child",
         required=True,
     )
+    sponsorship_type = fields.Selection(
+        [
+            ("standard", "Standard"),
+            ("write_and_pray", "Write&Pray"),
+        ],
+        string="Sponsorship type",
+        default="standard",
+    )
 
     # User details fields
     title = fields.Many2one("res.partner.title")
@@ -62,6 +81,9 @@ class NewSponsorshipWizard(models.TransientModel):
     )
     sponsorship_plus = fields.Boolean()
 
+    # Write&Pray fields
+    wap_contribution_amount = fields.Float()
+
     # Communication fields
     spoken_languages = fields.Many2many(
         "res.lang.compassion",
@@ -74,7 +96,7 @@ class NewSponsorshipWizard(models.TransientModel):
     )
     volunteering = fields.Boolean()
 
-    @api.depends("current_step_idx", "user_id")
+    @api.depends("current_step_idx", "sponsorship_type", "user_id")
     def _compute_current_step(self):
         for wizard in self:
             steps = wizard._get_steps()
@@ -83,7 +105,7 @@ class NewSponsorshipWizard(models.TransientModel):
             else:
                 wizard.current_step = False
 
-    @api.depends("user_id")
+    @api.depends("sponsorship_type", "user_id")
     def _compute_n_steps(self):
         for wizard in self:
             wizard.n_steps = len(wizard._get_steps())
@@ -102,6 +124,8 @@ class NewSponsorshipWizard(models.TransientModel):
             except (ValueError, TypeError, KeyError):
                 pass
 
+        update_field("sponsorship_type", "sponsorship_type")
+
         update_field("title", "title", int)
         update_field("lastname", "lastname")
         update_field("firstname", "firstname")
@@ -117,6 +141,14 @@ class NewSponsorshipWizard(models.TransientModel):
         update_field("payment_method", "payment_method", int)
         update_field("sponsorship_plus", "sponsorship_plus", bool)
 
+        if post.get("contribute") == "true":
+            if post.get("suggested_amount") == "custom":
+                update_field("wap_contribution_amount", "custom_amount", float)
+            else:
+                update_field("wap_contribution_amount", "suggested_amount", float)
+        elif post.get("contribute") == "false":
+            values["wap_contribution_amount"] = 0
+
         spoken_languages_ids = [
             int(post.get(key)) for key in post if key.startswith("spoken_language")
         ]
@@ -125,16 +157,16 @@ class NewSponsorshipWizard(models.TransientModel):
         update_field("lead_source", "lead_source", int)
         update_field("volunteering", "volunteering", bool)
 
+        initial_step = self.current_step
+
         self.write(values)
 
-        # Move to previous / next step
+        # Move to previous / next step (only if current step didn't change)
         action = post.get("action")
-        if action == "next":
-            if self.current_step_idx <= self.n_steps:
-                self.current_step_idx += 1
+        if action == "next" and initial_step.id == self.current_step.id:
+            self.current_step_idx = min(self.current_step_idx + 1, self.n_steps)
         elif action == "previous":
-            if self.current_step_idx > 0:
-                self.current_step_idx -= 1
+            self.current_step_idx = max(self.current_step_idx - 1, 0)
 
     def finish_sponsorship(self):
         self.ensure_one()
@@ -163,28 +195,44 @@ class NewSponsorshipWizard(models.TransientModel):
                 partner = self.env["res.partner"].create(partner_vals)
 
         # Create new sponsorship
-        sponsorship = self.env["recurring.contract"].create(
-            {
-                "partner_id": partner.id,
-                "child_id": self.child_id.id,
-                "payment_mode_id": self.payment_method.id,
-                "type": "S",
-            }
-        )
+        sponsorship_values = {
+            "partner_id": partner.id,
+            "child_id": self.child_id.id,
+        }
+        if self.sponsorship_type == "write_and_pray":
+            sponsorship_values["payment_mode_id"] = None
+            sponsorship_values["type"] = "SWP"
+        else:
+            sponsorship_values["payment_mode_id"] = self.payment_method.id
+            sponsorship_values["type"] = "S"
+        sponsorship = self.env["recurring.contract"].create(sponsorship_values)
 
         # Set contract lines for the sponsorship
-        contract_lines = sponsorship._get_sponsorship_standard_lines(False)
+        contract_lines = sponsorship._get_sponsorship_standard_lines(
+            self.sponsorship_type == "write_and_pray"
+        )
         if not self.sponsorship_plus:
             # Remove sponsorship+ from the contract
             contract_lines = contract_lines[:-1]
-
+        # Add Write&Pray contribution
+        if (
+            self.sponsorship_type == "write_and_pray"
+            and self.wap_contribution_amount > 0
+        ):
+            contract_lines[-1][2].update(
+                {
+                    "quantity": 1,
+                    "amount": self.wap_contribution_amount,
+                    "subtotal": self.wap_contribution_amount,
+                }
+            )
         sponsorship.contract_line_ids = contract_lines
 
         # Return the new sponsorship
         return sponsorship
 
     def _get_steps(self):
-        xml_ids = self.STEP_CONFIGS["standard"][
+        xml_ids = self.STEPS_CONFIGS[self.sponsorship_type][
             "public" if self.user_id._is_public() else "logged_in"
         ]
         return [self.env.ref(xml_id).id for xml_id in xml_ids]

@@ -9,7 +9,8 @@
 import random
 import uuid
 
-from werkzeug.exceptions import Gone, NotFound
+from dateutil.relativedelta import relativedelta
+from werkzeug.exceptions import BadRequest, Gone, NotFound
 
 from odoo import fields, http
 from odoo.http import request
@@ -42,6 +43,28 @@ class MyCompassionSponsorshipsController(WebsiteChild):
             "my_compassion.my2_sponsorships_page",
             {
                 "countries": countries,
+                "sponsorship_type": "standard",
+            },
+        )
+
+    @http.route(
+        "/my2/write-and-pray", type="http", auth="public", website=True, sitemap=False
+    )
+    def my2_render_write_and_pray_page(self, **kwargs):
+        """
+        Renders the write and pray variant of the sponsorships page.
+        return: An HTTP response containing a rendered template with the
+        sponsorships landing page.
+        """
+        countries = request.env["compassion.field.office"].search(
+            [("available_on_childpool", "=", True)]
+        )
+
+        return request.render(
+            "my_compassion.my2_sponsorships_page",
+            {
+                "countries": countries,
+                "sponsorship_type": "write_and_pray",
             },
         )
 
@@ -80,7 +103,11 @@ class MyCompassionSponsorshipsController(WebsiteChild):
         )
 
         html_content = request.env["ir.qweb"]._render(
-            "my_compassion.my2_sponsorships_results_content", {"children": children}
+            "my_compassion.my2_sponsorships_results_content",
+            {
+                "children": children,
+                "sponsorship_type": post.get("sponsorship_type", "standard"),
+            },
         )
 
         return {
@@ -122,7 +149,8 @@ class MyCompassionSponsorshipsController(WebsiteChild):
             "child_id": child_id,
         }
 
-    def _get_filtered_domain(self, post):
+    @classmethod
+    def _get_filtered_domain(cls, post):
         gender = post.get("gender", "either")
         age_min = int(post.get("age_min", 0))
         age_max = int(post.get("age_max", 18))
@@ -167,7 +195,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
         auth="public",
         website=True,
     )
-    def wizard_start(self, child, **kwargs):
+    def wizard_start(self, child, sponsorship_type="standard", **kwargs):
         """
         Renders the new sponsorship wizard initial page.
         return: An HTTP response containing a rendered template
@@ -185,6 +213,10 @@ class MyCompassionNewSponsorshipController(http.Controller):
             {
                 "child_id": child.id,
                 "user_id": request.env.user.id,
+                "sponsorship_type": sponsorship_type,
+                "birthdate": request.env.user.birthdate_date
+                if not request.env.user._is_public()
+                else False,
             }
         )
 
@@ -231,12 +263,20 @@ class MyCompassionNewSponsorshipController(http.Controller):
     def sponsorship_wizard_submit(self, **post):
         """
         Receives the wizard form submission and finalizes the new sponsorship,
-        then redirect to the thank you page.
-        return: A redirection to the thank you page.
+        then redirect to the thank-you page.
+        return: A redirection to the thank-you page.
         """
         # Fetch the wizard record from the database
         wizard_id = int(post.get("wizard_id"))
         wizard = request.env["new.sponsorship.wizard"].sudo().browse(wizard_id)
+
+        # Cancel if person is too old for Write&Pray
+        if (
+            wizard.sponsorship_type == "write_and_pray"
+            and wizard.birthdate
+            < (fields.Datetime.now() - relativedelta(years=25)).date()
+        ):
+            raise BadRequest()
 
         # Make sure child is still available and finalize sponsorship creation
         if wizard.child_id.state not in wizard.child_id._available_states():
@@ -253,8 +293,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
     )
     def wizard_thank_you(self, sponsorship_id, **kwargs):
         """
-        Renders the new sponsorship thank you page.
-        return: An HTTP response containing a rendered template with the thank you page.
+        Renders the new sponsorship thank-you page.
+        return: An HTTP response containing a rendered template with the thank-you page.
         """
         sponsorship = (
             request.env["recurring.contract"].sudo().browse(int(sponsorship_id))
