@@ -59,6 +59,7 @@
         <t t-set="title_color" t-value="title_color or 'dark-blue'" />
         <t t-set="accent_color" t-value="accent_color or 'dark-blue'" />
         <t t-set="price_color" t-value="price_color or 'dark-blue'" />
+        <t t-set="recipient_color" t-value="recipient_color or 'dark-blue'" />
         <t t-set="bg_color" t-value="bg_color or 'high-blue'" />
         <t t-set="monthly" t-value="monthly == True" />
         <t t-set="monthly_noabbr" t-value="monthly_noabbr == True" />
@@ -106,9 +107,9 @@
                         CHF
                         <t t-if="price % 1 == 0" t-set="price" t-value="'{0}.-'.format(int(price))" />
                         <t t-else="" t-set="price" t-value="'{0:.2f}'.format(price)" />
-                        <t t-if="monthly" t-set="monthly" t-value="'/ mo.'" />
+                        <t t-if="monthly" t-set="monthly" t-value="'/mo.'" />
                         <t t-elif="monthly_noabbr">
-                            <t t-set="monthly" t-value="' / month'"/>
+                            <t t-set="monthly" t-value="' /month'" />
                         </t>
                         <t t-else="" t-set="monthly" t-value="''" />
                         <t t-esc="price + monthly" />

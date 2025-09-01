@@ -25,18 +25,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         document.addEventListener("click", function (event) {
-            const prevBtn = event.target.closest("#history_pager_prev");
-            const nextBtn = event.target.closest("#history_pager_next");
-
-            if (prevBtn) {
+            const btn = event.target.closest("#history_pager_prev, #history_pager_next");
+            if (btn) {
                 event.preventDefault();
-                const page = prevBtn.dataset.page;
-                if (page) {
-                    updateHistory(page);
-                }
-            } else if (nextBtn) {
-                event.preventDefault();
-                const page = nextBtn.dataset.page;
+                const page = btn.dataset.page;
                 if (page) {
                     updateHistory(page);
                 }

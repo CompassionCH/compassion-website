@@ -98,7 +98,7 @@ Page: My Compassion 2 Donations Page
                                         <span class="body-small bold">
                                             <t t-esc="'%.2f' % currency_total[1]" />
                                             <t t-esc="currency_total[0]" />
-                                            / month.
+                                            /month.
                                         </span>
                                         <t t-if="not currency_total_last">,</t>
                                     </t>

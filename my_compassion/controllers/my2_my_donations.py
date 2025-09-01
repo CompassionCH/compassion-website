@@ -9,7 +9,7 @@ from odoo.addons.portal.controllers.portal import CustomerPortal
 
 
 class MyDonationController(CustomerPortal):
-    def get_paid_invoices_filter(self, partner):
+    def _get_paid_invoices_filter(self, partner):
         paid_invoices_filter = [
             ("partner_id", "=", partner.id),
             ("payment_state", "=", "paid"),
@@ -18,28 +18,28 @@ class MyDonationController(CustomerPortal):
         ]
         return paid_invoices_filter
 
-    def get_paid_invoices_subset(self, partner, offset, amount):
+    def _get_paid_invoices_subset(self, partner, offset, amount):
         paid_invoices_subset = (
             request.env["account.move"]
             .sudo()
             .search(
-                self.get_paid_invoices_filter(partner),
+                self._get_paid_invoices_filter(partner),
                 offset=offset,
                 limit=amount,
             )
         )
         return paid_invoices_subset
 
-    def get_paid_invoices_amount(self, partner):
+    def _get_paid_invoices_amount(self, partner):
         number_of_paid_invoices = (
             request.env["account.move"]
             .sudo()
-            .search_count(self.get_paid_invoices_filter(partner))
+            .search_count(self._get_paid_invoices_filter(partner))
         )
         return number_of_paid_invoices
 
     @route(
-        ["/my2/my-donations", "/my2/my-donations/page/<int:invoice_page>"],
+        ["/my2/my-donations"],
         type="http",
         auth="user",
         website=True,
@@ -80,10 +80,10 @@ class MyDonationController(CustomerPortal):
 
         # redundant
         paid_invoices_offset = (invoice_page - 1) * invoice_per_page
-        paid_invoices_subset = self.get_paid_invoices_subset(
+        paid_invoices_subset = self._get_paid_invoices_subset(
             partner, paid_invoices_offset, invoice_per_page
         )
-        total_paid_invoices = self.get_paid_invoices_amount(partner)
+        total_paid_invoices = self._get_paid_invoices_amount(partner)
         total_pages = math.ceil(total_paid_invoices / invoice_per_page)
 
         values = self._prepare_portal_layout_values()
@@ -111,13 +111,13 @@ class MyDonationController(CustomerPortal):
 
         # Paid invoices
         paid_invoices_offset = (int(invoice_page) - 1) * invoice_per_page
-        paid_invoices_subset = self.get_paid_invoices_subset(
+        paid_invoices_subset = self._get_paid_invoices_subset(
             partner, paid_invoices_offset, invoice_per_page
         )
 
         # Paid invoices paging
         total_pages = (
-            math.ceil(self.get_paid_invoices_amount(partner) / invoice_per_page)
+            math.ceil(self._get_paid_invoices_amount(partner) / invoice_per_page)
             if invoice_per_page > 0
             else 0
         )
