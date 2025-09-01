@@ -1,4 +1,5 @@
 import math
+from collections import defaultdict
 from datetime import datetime, timedelta
 
 from odoo import fields
@@ -69,16 +70,13 @@ class MyDonationController(CustomerPortal):
 
         # Computing the total price of the active sponsorships grouped per sponsorship frequency and payment method.
         # group_id groups the invoices that have the same payment method and frequency.
-        grouped_sponsorships = active_sponsorships.mapped("group_id")
-        tot_cost_per_frequency = {}
-        for group in grouped_sponsorships:
-            group_price = group.total_amount
-            group_frequency = group.month_interval
-            # Here I'm assuming that every entry in the group has the same payment method
-            group_currency = (
-                (active_sponsorships.mapped("pricelist_id.currency_id")[:1]).name or ""
-            )
-            tot_cost_per_frequency[group_frequency] = (group_price, group_currency)
+        tot_cost_per_frequency = defaultdict(lambda: defaultdict(float))
+
+        for sponsorship in active_sponsorships:
+            currency = sponsorship.pricelist_id.currency_id.name
+            tot_cost_per_frequency[sponsorship.group_id.month_interval][
+                currency
+            ] += sponsorship.total_amount
 
         # redundant
         paid_invoices_offset = (invoice_page - 1) * invoice_per_page
@@ -118,8 +116,10 @@ class MyDonationController(CustomerPortal):
         )
 
         # Paid invoices paging
-        total_pages = math.ceil(
-            self.get_paid_invoices_amount(partner) / invoice_per_page
+        total_pages = (
+            math.ceil(self.get_paid_invoices_amount(partner) / invoice_per_page)
+            if invoice_per_page > 0
+            else 0
         )
 
         history_data = {

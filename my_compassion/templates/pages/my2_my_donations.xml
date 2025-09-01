@@ -94,11 +94,14 @@ Page: My Compassion 2 Donations Page
                                 <!-- Currently only the monthly payments are available
                                  but in the future this should address also the other frequencies-->
                                 <t t-if="1 in tot_cost_per_frequency">
-                                    <span class="body-small bold">
-                                        <t t-esc="tot_cost_per_frequency[1][1]" />
-                                        <t t-esc="int(tot_cost_per_frequency[1][0])" />
-                                        / month.
-                                    </span>
+                                    <t t-foreach="tot_cost_per_frequency[1].items()" t-as="currency_total">
+                                        <span class="body-small bold">
+                                            <t t-esc="'%.2f' % currency_total[1]" />
+                                            <t t-esc="currency_total[0]" />
+                                            / month.
+                                        </span>
+                                        <t t-if="not currency_total_last">,</t>
+                                    </t>
                                 </t>
                                 <br />
                                 A payment slip is available for download for each of
@@ -196,7 +199,7 @@ Page: My Compassion 2 Donations Page
             <div id="donation_history_container">
                 <div class="mb-4 mt-4">
                     <h3 class="text-dark-blue">Donations history</h3>
-                    <t t-if="paid_invoices_subset or current_page">
+                    <t t-if="total_pages > 0">
                         <div class="row font-weight-bold mb-2">
                             <div class="col text-core-blue">Date</div>
                             <div class="col text-core-blue">
