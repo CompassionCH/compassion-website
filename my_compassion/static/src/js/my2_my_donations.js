@@ -21,9 +21,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (result.html) {
                     historyContainer.outerHTML = result.html;
                 }
-
-                const newUrl = "/my2/my-donations/page/" + page;
-                window.history.pushState({ path: newUrl }, "", newUrl);
             });
         }
 
