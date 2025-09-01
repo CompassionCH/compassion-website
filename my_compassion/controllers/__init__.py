@@ -16,6 +16,8 @@ from . import (
     my2_donations,
     my2_letters,
     my2_my_donations,
+    my2_user,
+    my2_user_settings,
     my2_sponsorships,
     my2_user,
 )
