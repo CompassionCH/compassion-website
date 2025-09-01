@@ -205,6 +205,7 @@ class MyCompassionDonationsController(http.Controller):
             "default_custom_amount": order_line.price_total,
             "limits": limits,
             "date": fields.Date.today(),
+            "currency_name": order.pricelist_id.currency_id.name,
         }
 
         if order_line.is_gift:
@@ -290,6 +291,7 @@ class MyCompassionDonationsController(http.Controller):
                 "products": products,
                 "sponsorships": sponsorships,
                 "limits": limits,
+                "currency_name": order.pricelist_id.currency_id.name,
             },
         )
 

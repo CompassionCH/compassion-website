@@ -57,6 +57,7 @@ Page: My Compassion 2 Thank you Page
                                     <t t-set="recipient_color" t-value="'low-green'" />
                                     <t t-set="bg_color" t-value="'mid-eggshell'" />
                                     <t t-set="price" t-value="line.price_total" />
+                                    <t t-set="currency_name" t-value="line.currency_id.name" />
                                     <t
                                         t-set="image"
                                         t-valuef="/web/image/#{line.product_template_id._name}/#{line.product_template_id.id}/my_compassion_image"
@@ -83,6 +84,7 @@ Page: My Compassion 2 Thank you Page
                                     <t t-set="recipient_color" t-value="'dark-blue'" />
                                     <t t-set="bg_color" t-value="'light-blue'" />
                                     <t t-set="price" t-value="line.price_total" />
+                                    <t t-set="currency_name" t-value="line.currency_id.name" />
                                     <t t-set="monthly" t-value="True" />
                                     <t
                                         t-set="image"

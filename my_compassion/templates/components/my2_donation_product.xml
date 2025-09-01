@@ -74,7 +74,7 @@
                     <div t-attf-class="body-small text-#{price_color} ">
                         From
                         <span class="body-small bold">
-                            CHF
+                            <t t-esc="currency_name" />
                             <t
                                 t-set="price"
                                 t-value="product.my_compassion_donation_quantity_low * product.list_price"

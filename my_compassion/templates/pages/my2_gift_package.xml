@@ -33,6 +33,7 @@
                 <t t-set="recipient_color" t-value="'low-green'" />
                 <t t-set="bg_color" t-value="'mid-eggshell'" />
                 <t t-set="price" t-value="line.price_total" />
+                <t t-set="currency_name" t-value="line.currency_id.name" />
                 <t
                     t-set="image"
                     t-valuef="/web/image/#{line.product_template_id._name}/#{line.product_template_id.id}/my_compassion_image"
@@ -80,6 +81,7 @@
                 <t t-set="recipient_color" t-value="'dark-blue'" />
                 <t t-set="bg_color" t-value="'light-blue'" />
                 <t t-set="price" t-value="line.price_total" />
+                <t t-set="currency_name" t-value="line.currency_id.name" />
                 <t t-set="monthly" t-value="True" />
                 <t
                     t-set="image"
@@ -126,7 +128,7 @@
             <div class="text-mid-green body-large bold">Total amount</div>
             <div class="text-dark-blue body-large bold">
                 <t t-set="amount" t-value="order.amount_total" />
-                CHF
+                <t t-esc="order.currency_id.name" />
                 <t t-if="amount % 1 == 0" t-esc="int(amount)" />
                 <t t-else="" t-esc="'{0:.2f}'.format(amount)" />
             </div>
