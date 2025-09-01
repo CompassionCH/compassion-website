@@ -9,6 +9,7 @@
     - show_underline (boolean): True/False to show underline.
     - underline_color (string): Color for the underline.
     - description (string): Optional text to display below the title/underline.
+    - description_color (string): Color for the description text.
     - icon (string): Optional icon to display before the title.
 -->
 <odoo>
@@ -22,9 +23,12 @@
                 <div t-attf-class="title-underline text-#{underline_color}" />
             </t>
             <t t-if="description">
-                <p class="title-description">
+                <p t-attf-class="title-description text-#{description_color or 'low-black'}">
                     <t t-esc="description" />
                 </p>
+            </t>
+            <t t-else="">
+                <t t-raw="0" />
             </t>
         </div>
     </template>
