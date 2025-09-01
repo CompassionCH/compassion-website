@@ -58,7 +58,7 @@
                     <t
                         t-set="cells"
                         t-value="[
-                        'CHF {:g}'.format(limit.currency_id._convert(limit.min_amount, company.currency_id, company, date))
+                        '{} {:g}'.format(currency_name, limit.currency_id._convert(limit.min_amount, company.currency_id, company, date))
                         for limit in limits
                     ]"
                     />
@@ -69,7 +69,7 @@
                     <t
                         t-set="cells"
                         t-value="[
-                        'CHF {:g}'.format(limit.currency_id._convert(limit.max_amount, company.currency_id, company, date))
+                        '{} {:g}'.format(currency_name, limit.currency_id._convert(limit.max_amount, company.currency_id, company, date))
                         for limit in limits
                     ]"
                     />

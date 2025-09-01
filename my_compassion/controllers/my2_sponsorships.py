@@ -321,6 +321,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
         )
         payment_methods = request.env["account.payment.mode"].sudo().search([])
         lead_sources = request.env["recurring.contract.origin"].sudo().search([])
+        currency_name = request.env.user.company_id.currency_id.name
 
         # TODO: decide if we filter by website_published or not
         # payment_methods = request.env["account.payment.mode"].sudo().search([("website_published", "=", True)]) # noqa: E501
@@ -336,6 +337,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 "payment_methods": payment_methods,
                 "spoken_languages": spoken_languages,
                 "lead_sources": lead_sources,
+                "currency_name": currency_name,
             },
         )
 
@@ -345,6 +347,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
             {
                 "wizard": wizard,
                 "inner_step_html": inner_step_html,
+                "currency_name": currency_name,
             },
         )
 

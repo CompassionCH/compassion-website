@@ -89,6 +89,7 @@
         "web",
         "website_child_protection",
         "website_sponsorship",
+        "gift_compassion",
         "auth_signup",
         "website_crm_privacy_policy",  # OCA/website
         "auth_signup_verify_email",  # OCA/server-auth

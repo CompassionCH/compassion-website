@@ -122,7 +122,7 @@
                                     t-set="price"
                                     t-value="product.my_compassion_donation_quantity_low * product.list_price"
                                 />
-                                CHF
+                                <t t-esc="product.currency_id.name" />
                                 <t t-if="price % 1 == 0" t-esc="int(price)" />
                                 <t t-else="" t-esc="'{0:.2f}'.format(price)" />
                             </label>
@@ -141,7 +141,7 @@
                                     t-set="price"
                                     t-value="product.my_compassion_donation_quantity_medium * product.list_price"
                                 />
-                                CHF
+                                <t t-esc="product.currency_id.name" />
                                 <t t-if="price % 1 == 0" t-esc="int(price)" />
                                 <t t-else="" t-esc="'{0:.2f}'.format(price)" />
                             </label>
@@ -160,7 +160,7 @@
                                     t-set="price"
                                     t-value="product.my_compassion_donation_quantity_high * product.list_price"
                                 />
-                                CHF
+                                <t t-esc="product.currency_id.name" />
                                 <t t-if="price % 1 == 0" t-esc="int(price)" />
                                 <t t-else="" t-esc="'{0:.2f}'.format(price)" />
                             </label>
@@ -186,7 +186,7 @@
                         id="custom-amount"
                         type="text"
                         name="custom_amount"
-                        placeholder="CHF"
+                        t-att-placeholder="'Enter amount in %s' % product.currency_id.name"
                         class="form-control mt-2"
                         hidden=""
                         t-att-value="'{:g}'.format(default_custom_amount) if default_custom_amount else ''"
