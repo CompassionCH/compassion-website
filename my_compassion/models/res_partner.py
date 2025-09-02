@@ -4,6 +4,12 @@ from odoo import fields, models
 class Partner(models.Model):
     _inherit = "res.partner"
 
+    # True if partner has ever been a sponsor.
+    is_sponsor = fields.Boolean(compute="_compute_is_sponsor")
+
+    # True if the partner has ever made a donation
+    is_donor = fields.Boolean(compute="_compute_is_donor")
+
     user_login = fields.Char(
         string="MyCompassion login",
         compute="_compute_user_login",
@@ -36,3 +42,31 @@ class Partner(models.Model):
             limit=1,
         )
         return bool(correspondence)
+
+    def _compute_is_sponsor(self):
+        sponsors_data = (
+            self.env["recurring.contract"]
+            .sudo()
+            .read_group(
+                domain=[("partner_id", "in", self.ids)],
+                fields=["partner_id"],
+                groupby=["partner_id"],
+            )
+        )
+        sponsors_ids = {data["partner_id"][0] for data in sponsors_data}
+        for partner in self:
+            partner.is_sponsor = partner.id in sponsors_ids
+
+    def _compute_is_donor(self):
+        donors_data = (
+            self.env["account.move.line"]
+            .sudo()
+            .read_group(
+                domain=[("partner_id", "in", self.ids)],
+                fields=["partner_id"],
+                groupby=["partner_id"],
+            )
+        )
+        donor_ids = {data["partner_id"][0] for data in donors_data}
+        for partner in self:
+            partner.is_donor = partner.id in donor_ids
