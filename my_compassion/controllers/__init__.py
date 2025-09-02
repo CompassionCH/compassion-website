@@ -13,7 +13,9 @@ from . import (
     auto_texts,
     my_account,
     my2_children,
+    my2_donations,
     my2_letters,
     my2_user,
+    my2_user_settings,
     my2_sponsorships,
 )
