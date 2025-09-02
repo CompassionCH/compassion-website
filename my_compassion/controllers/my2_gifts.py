@@ -7,8 +7,6 @@
 #
 ##############################################################################
 
-from urllib.parse import urljoin
-
 from odoo import http
 from odoo.http import request
 
@@ -18,7 +16,7 @@ class MyCompassionGiftController(http.Controller):
     def render_donation_page(self, type="fund", **kwargs):
         """
         Renders a page of donation opportunities (Funds or Gifts).
-        :param donation_type: 'fund' or 'gift', defaults to 'fund'.
+        :param type: 'fund' or 'gift', defaults to 'fund'.
         """
         if type not in ("fund", "gift"):
             type = "fund"
@@ -41,10 +39,7 @@ class MyCompassionGiftController(http.Controller):
                     "critical need, we take action."
                 ),
                 "banner_btn_text": "Send a gift",
-                "banner_btn_link": urljoin(
-                    base_url,
-                    "/my2/gifts/?type=fund",
-                ),
+                "banner_btn_link": "/my2/gifts?type=fund",
             }
         else:
             page_content = {
@@ -60,10 +55,7 @@ class MyCompassionGiftController(http.Controller):
                     "they really need."
                 ),
                 "banner_btn_text": "Send a gift",
-                "banner_btn_link": urljoin(
-                    base_url,
-                    "/my2/gifts/?type=gift",
-                ),
+                "banner_btn_link": "/my2/gifts?type=gift",
             }
 
         domain = [

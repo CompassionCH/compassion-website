@@ -31,7 +31,7 @@
                     <t t-set="align_sm" t-value="'left'" />
                 </t>
                 <p class="text-pure-white">
-                    <t t-esc="text" />
+                    <t t-raw="text" />
                 </p>
                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                     <t t-set="href" t-value="btn_link" />
