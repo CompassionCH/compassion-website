@@ -68,7 +68,7 @@ class ThemeCompassionColor(models.Model):
         attachment.write({"datas": css_content_b64})
 
         # Force-reload web.assets_frontend
-        self.env['ir.qweb']._get_asset_nodes('web.assets_frontend', {}, js=False)
+        self.env["ir.qweb"]._get_asset_nodes("web.assets_frontend", {}, js=False)
 
     @api.model_create_multi
     def create(self, vals_list):
