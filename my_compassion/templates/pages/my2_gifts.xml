@@ -21,36 +21,47 @@ Page: My Compassion 2 Gifts Page
         <t t-call="website.layout">
             <div class="container">
                 <!-- HELPER FLAGS -->
-                <t t-set="is_gift" t-value="type == 'gift'"/>
-                <t t-set="is_fund" t-value="type == 'fund'"/>
-
+                <t t-set="is_gift" t-value="type == 'gift'" />
+                <t t-set="is_fund" t-value="type == 'fund'" />
                 <!-- BANNER -->
                 <div class="content-column mt-4">
                     <t t-call="theme_compassion_2025.BannerComponent">
                         <t t-if="is_gift">
-                            <t t-set="title" t-value="'Gift of compassion'"/>
-                            <t t-set="text" t-value="'Every child deserves a secure home, safe water, and medicine to keep them healthy. That\'s why, when poverty places a child in critical need, we take action.'"/>
-                            <t t-set="btn_link" t-value="'/my2/gifts?type=fund'"/>
+                            <t t-set="title" t-value="'Gift of compassion'" />
+                            <t
+                                t-set="text"
+                                t-value="'Every child deserves a secure home, safe water, and medicine to keep them healthy. That\'s why, when poverty places a child in critical need, we take action.'"
+                            />
+                            <t t-set="btn_link" t-value="'/my2/gifts?type=fund'" />
                         </t>
                         <t t-elif="is_fund">
-                            <t t-set="title" t-value="'Give to your sponsored children'"/>
-                            <t t-set="text" t-value="'Send a gift to your sponsored child. Compassion staff from their local church will support them in purchasing something they really need.'"/>
-                            <t t-set="btn_link" t-value="'/my2/gifts?type=gift'"/>
+                            <t t-set="title" t-value="'Give to your sponsored children'" />
+                            <t
+                                t-set="text"
+                                t-value="'Send a gift to your sponsored child. Compassion staff from their local church will support them in purchasing something they really need.'"
+                            />
+                            <t t-set="btn_link" t-value="'/my2/gifts?type=gift'" />
                         </t>
-                        <t t-set="btn_text" t-value="'Send a gift'"/>
-                        <t t-set="pictogram" t-value="'gift-donation-general'"/>
+                        <t t-set="btn_text" t-value="'Send a gift'" />
+                        <t t-set="pictogram" t-value="'gift-donation-general'" />
                     </t>
                 </div>
                 <!-- TITLE -->
                 <div class="content-column mt-4">
                     <t t-call="theme_compassion_2025.TitleComponent">
-                         <t t-if="is_gift">
-                            <t t-set="title_content" t-value="'Gift to your sponsored children'"/>
-                             <t t-set="description" t-value="'Send a gift to your sponsored child. Compassion staff from their local church will support them in purchasing something they really need.'"/>
-                         </t>
+                        <t t-if="is_gift">
+                            <t t-set="title_content" t-value="'Gift to your sponsored children'" />
+                            <t
+                                t-set="description"
+                                t-value="'Send a gift to your sponsored child. Compassion staff from their local church will support them in purchasing something they really need.'"
+                            />
+                        </t>
                         <t t-elif="is_fund">
-                            <t t-set="title_content" t-value="'Gift of compassion'"/>
-                            <t t-set="description" t-value="'Make a difference and bring hope to children living in extreme poverty.'"/>
+                            <t t-set="title_content" t-value="'Gift of compassion'" />
+                            <t
+                                t-set="description"
+                                t-value="'Make a difference and bring hope to children living in extreme poverty.'"
+                            />
                         </t>
                         <t t-set="color" t-value="'core-blue'" />
                         <t t-set="show_underline" t-value="true" />
