@@ -62,6 +62,7 @@
         # Security
         "security/ir.model.access.csv",
     ],
+    "post_init_hook": "_post_init_hook",
     "images": ["static/description/compassion_screenshot.png"],
     "license": "LGPL-3",
 }

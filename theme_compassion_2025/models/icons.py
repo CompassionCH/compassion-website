@@ -54,6 +54,19 @@ class ThemeCompassionIcons(models.Model):
         """
         This method generates CSS icon classes and updates the attachment.
         """
+
+        # First check if the template doesn't exist yet.
+        # This can happen during the initial installation/update.
+        # If so, hooks._post_init_hook will call again the method
+        # after the records have been added.
+        template = self.env['ir.model.data'].search_read(
+            [('name', '=', 'theme_compassion_icons_stylesheet_template'),
+             ('module', '=', 'theme_compassion_2025')],
+            ['res_id']
+        )
+        if not template:
+            return
+
         # Search for all icon records
         icons = self.search([])
 
