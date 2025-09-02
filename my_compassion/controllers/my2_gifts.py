@@ -21,8 +21,6 @@ class MyCompassionGiftController(http.Controller):
         if type not in ("fund", "gift"):
             type = "fund"
 
-        base_url = request.httprequest.url_root
-
         page_content = {}
         if type == "gift":
             page_content = {
