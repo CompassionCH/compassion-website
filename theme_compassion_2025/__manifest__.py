@@ -35,12 +35,18 @@
     "author": "Compassion Switzerland",
     "depends": ["website"],
     "data": [
+        "views/theme_compassion_views.xml",
         "views/assets.xml",
         "views/images_content.xml",
         "views/template_header.xml",
         "views/footer.xml",
-        "templates/components/Portrait.xml",
+        # Data
+        "data/colors.xml",
+        "data/icons.xml",
+        "data/pictograms.xml",
+        "data/dynamic_stylesheets.xml",
         # Components
+        "templates/components/Portrait.xml",
         "templates/components/Title.xml",
         "templates/components/Vignette.xml",
         "templates/components/Select.xml",
@@ -49,6 +55,12 @@
         # Buttons
         "templates/components/buttons/ThemedButton.xml",
         "templates/components/buttons/ToggleButton.xml",
+        # Styles
+        "templates/styles/colors_stylesheet.xml",
+        "templates/styles/icons_stylesheet.xml",
+        "templates/styles/pictograms_stylesheet.xml",
+        # Security
+        "security/ir.model.access.csv",
     ],
     "images": ["static/description/compassion_screenshot.png"],
     "license": "LGPL-3",
