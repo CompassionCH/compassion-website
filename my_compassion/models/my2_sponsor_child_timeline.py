@@ -17,7 +17,7 @@ class SponsorshipTimeline(models.Model):
     child_id = fields.Many2one("compassion.child", string="Child")
     partner_id = fields.Many2one("res.partner", string="Sponsor")
     model = fields.Char(string="Source Model")
-    record_id = fields.Integer(string="Record ID")
+    record_id = fields.Char(string="Record ID")
     content = fields.Char(string="Content")
     # This field is a composite string with data from the source record.
     # It is used for conditional rendering in the frontend.
@@ -90,7 +90,7 @@ class SponsorshipTimeline(models.Model):
                     c.child_id,
                     c.partner_id,
                     'correspondence' AS model,
-                    c.id AS record_id,
+                    c.uuid AS record_id,
                     '' AS content,
                     c.direction AS metadata,
                     c.create_date
@@ -102,7 +102,7 @@ class SponsorshipTimeline(models.Model):
                 s.child_id,
                 s.partner_id,
                 'sponsorship_gift' AS model,
-                s.id AS record_id,
+                 s.id::text AS record_id,
                 s.amount::text || ' ' || COALESCE(rc.name, 'CHF') AS content,
                 s.gift_type || '|' || COALESCE(s.sponsorship_gift_type, '') AS metadata,
                 s.create_date
