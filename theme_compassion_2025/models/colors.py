@@ -54,10 +54,12 @@ class ThemeCompassionColor(models.Model):
         # This can happen during the initial installation/update.
         # If so, hooks._post_init_hook will call again the method
         # after the records have been added.
-        template = self.env['ir.model.data'].search_read(
-            [('name', '=', 'theme_compassion_colors_stylesheet_template'),
-             ('module', '=', 'theme_compassion_2025')],
-            ['res_id']
+        template = self.env["ir.model.data"].search_read(
+            [
+                ("name", "=", "theme_compassion_colors_stylesheet_template"),
+                ("module", "=", "theme_compassion_2025"),
+            ],
+            ["res_id"],
         )
         if not template:
             return

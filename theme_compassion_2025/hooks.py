@@ -2,7 +2,7 @@ def _post_init_hook(cr, registry):
     """
     This hook is called after the module is installed.
     """
-    from odoo import api, SUPERUSER_ID
+    from odoo import SUPERUSER_ID, api
 
     env = api.Environment(cr, SUPERUSER_ID, {})
 
