@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from odoo import fields, models
 
 
@@ -197,7 +195,9 @@ class ProductTemplate(models.Model):
                     first_january_of_this_year = fields.Date.today().replace(
                         day=1, month=1
                     )
-                    next_year = first_january_of_this_year + timedelta(days=365)
+                    next_year = first_january_of_this_year.replace(
+                        year=first_january_of_this_year.year + 1
+                    )
                     domain += [
                         ("gift_date", ">=", first_january_of_this_year),
                         ("gift_date", "<", next_year),

@@ -127,12 +127,11 @@ odoo.define("my_compassion.donation_form", function (require) {
                         // Compute amount
                         const suggested_amount = this.$(".suggested-amount:checked").val();
                         const custom_amount = this.$("[name='custom_amount']").val();
-                        var amount = suggested_amount;
+                        let amount = suggested_amount;
                         if (amount === "custom") {
                             amount = custom_amount;
                         }
 
-                        console.log(data.remaining_donations);
                         if (
                             (data.min_amount !== null && amount < data.min_amount) ||
                             (data.max_amount !== null && amount > data.max_amount) ||
