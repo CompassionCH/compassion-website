@@ -56,6 +56,7 @@
         "templates/components/FormField.xml",
         "templates/components/RangeInputLoading.xml",
         "templates/components/EventBanner.xml",
+        "templates/components/Map.xml",
         # Buttons
         "templates/components/buttons/ThemedButton.xml",
         "templates/components/buttons/ToggleButton.xml",
