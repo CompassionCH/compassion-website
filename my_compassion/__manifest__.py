@@ -76,6 +76,7 @@
         "templates/components/my2_donation_item.xml",
         "templates/components/my2_donation_product.xml",
         "templates/components/my2_donation_form.xml",
+        "templates/components/my2_giving_limits_table.xml",
         "templates/components/my2_giving_limits_modal.xml",
     ],
     "depends": [

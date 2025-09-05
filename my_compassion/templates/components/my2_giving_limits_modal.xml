@@ -10,21 +10,6 @@
     - modal_id (string): The id of the modal element.                                            ['giving-limits-modal']
 -->
 <odoo>
-    <!-- GIVING LIMITS MODAL TABLE COLUMN -->
-    <template id="my2_giving_limits_modal_table_column" name="Gift Package Help Table Column">
-        <div t-attf-class="table-column d-flex flex-column #{top_class}">
-            <div class="table-cell tiny-text bold bg-light-green border-0 d-flex flex-column justify-content-center">
-                <t t-esc="title" />
-            </div>
-            <t t-foreach="cells" t-as="cell">
-                <div class="table-cell super-tiny-text d-flex flex-column justify-content-center">
-                    <div>
-                        <t t-raw="cell.replace('*', '&lt;span class=\'body-small text-low-pink\'&gt;*&lt;/span&gt;')" />
-                    </div>
-                </div>
-            </t>
-        </div>
-    </template>
     <!-- GIVING LIMITS MODAL COMPONENT -->
     <template id="GivingLimitsModalComponent" name="Giving Limits Modal Component">
         <!-- Default property values -->
@@ -62,56 +47,8 @@
                             is to encourage a culture of dependency on gifts. Also, we don't want to overwhelm
                             families or single them out for special treatment, which is why we have limits in place.
                         </div>
-                        <div class="d-flex flex-column my-4">
-                            <!-- TABLE TITLE -->
-                            <div class="p-3 table-title col-12 bg-low-green tiny-text text-center text-pure-white">
-                                Annual gift limits in Switzerland
-                            </div>
-                            <!-- COLUMNS -->
-                            <div class="d-flex">
-                                <!-- TYPE -->
-                                <t t-call="my_compassion.my2_giving_limits_modal_table_column">
-                                    <t t-set="top_class" t-value="'flex-grow-1'" />
-                                    <t t-set="title" t-value="'Type'" />
-                                    <t
-                                        t-set="cells"
-                                        t-value="[
-                                        (limit.sponsorship_gift_type + ' Gift' if limit.sponsorship_gift_type else limit.gift_type) +
-                                        ('*' if limit.yearly_threshold and limit.gift_frequency == 2 else
-                                         '**' if not limit.yearly_threshold and limit.gift_frequency == 1 else '')
-                                        for limit in limits
-                                    ]"
-                                    />
-                                </t>
-                                <!-- MIN -->
-                                <t t-call="my_compassion.my2_giving_limits_modal_table_column">
-                                    <t t-set="title" t-value="'Min'" />
-                                    <t
-                                        t-set="cells"
-                                        t-value="[
-                                        'CHF {:g}'.format(limit.min_amount)
-                                        for limit in limits
-                                    ]"
-                                    />
-                                </t>
-                                <!-- MAX -->
-                                <t t-call="my_compassion.my2_giving_limits_modal_table_column">
-                                    <t t-set="title" t-value="'Max'" />
-                                    <t
-                                        t-set="cells"
-                                        t-value="[
-                                        'CHF {:,g}'.format(limit.max_amount)
-                                        for limit in limits
-                                    ]"
-                                    />
-                                </t>
-                            </div>
-                            <!-- NOTES -->
-                            <div class="px-3 pt-1 super-tiny-text text-low-pink">
-                                *A child gift can be given twice a year.
-                                <br />
-                                **Available in the child's final year of the program.
-                            </div>
+                        <div class="my-4">
+                            <t t-call="my_compassion.GivingLimitsTableComponent" />
                         </div>
                         <div class="tiny-text">
                             If you'd like to make a large donation to support the work of  Compassion, please get in

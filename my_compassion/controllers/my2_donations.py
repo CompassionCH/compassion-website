@@ -9,7 +9,7 @@
 
 from werkzeug.exceptions import BadRequest, NotFound
 
-from odoo import http
+from odoo import fields, http
 from odoo.http import request
 
 
@@ -28,13 +28,17 @@ class MyCompassionDonationsController(http.Controller):
         details page.
         """
         sponsorships = request.env.user.partner_id.sponsorship_ids
+        donation_limits = request.env["gift.threshold.settings"].sudo().search([])
+
+        context = {
+            "product": product,
+            "sponsorships": sponsorships,
+            "donation_limits": donation_limits,
+        }
 
         return request.render(
             "my_compassion.my2_donation_details_page",
-            {
-                "product": product,
-                "sponsorships": sponsorships,
-            },
+            context,
         )
 
     @http.route(
@@ -109,6 +113,37 @@ class MyCompassionDonationsController(http.Controller):
         )
 
     @http.route(
+        "/my2/gifts/get-limits",
+        type="json",
+        auth="user",
+        website=True,
+        methods=["POST"],
+    )
+    def donation_get_limits(self, product_id, sponsorship_id=None, **post):
+        """
+        Returns the donation limits for a product (and optionally a sponsorship)
+        in the form:
+        {
+            "min_amount": int,               # If amount is limited
+            "max_amount": int,               # If amount is limited
+            "remaining_donations": int,      # If frequency is limited
+        }
+        """
+        product = request.env["product.template"].search([("id", "=", product_id)])
+        if not product:
+            return BadRequest()
+        if sponsorship_id is not None:
+            try:
+                sponsorship_id = int(sponsorship_id)
+            except TypeError as e:
+                raise BadRequest() from e
+
+        limits = product.get_donation_limits(
+            request.website.company_id, request.env.user.partner_id, sponsorship_id
+        )
+        return limits
+
+    @http.route(
         "/my2/gift-package",
         type="http",
         auth="user",
@@ -154,12 +189,16 @@ class MyCompassionDonationsController(http.Controller):
         if not order_line:
             raise NotFound()
 
+        limits = request.env["gift.threshold.settings"].sudo().search([])
+
         render_attrs = {
             "product": order_line.product_template_id,
             "submit_label": "Ok",
             "default_frequency": order_line.frequency,
             "default_suggested_amount": "custom",
             "default_custom_amount": order_line.price_total,
+            "limits": limits,
+            "date": fields.Date.today(),
         }
 
         if order_line.is_gift:
