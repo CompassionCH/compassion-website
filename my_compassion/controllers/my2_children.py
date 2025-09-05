@@ -107,6 +107,13 @@ class MyCompassionChildrenController(WebsiteChild):
 
         records, total = self._get_timeline_records(partner.id, child.id, offset, limit)
 
+        google_api_key = (
+            request.env["ir.config_parameter"].sudo().get_param("google_maps_api_key")
+        )
+        google_custom_map_id = (
+            request.env["ir.config_parameter"].sudo().get_param("google_custom_map_id")
+        )
+
         return request.render(
             "my_compassion.my2_child_timeline_page",
             {
@@ -114,6 +121,8 @@ class MyCompassionChildrenController(WebsiteChild):
                 "records": records,
                 "has_more_records": total > offset + limit,
                 "access_scope": access_scope,
+                "google_api_key": google_api_key,
+                "google_custom_map_id": google_custom_map_id,
             },
         )
 

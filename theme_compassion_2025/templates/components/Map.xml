@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Component: Map
+
+    Description:
+    Renders a container div for a dynamic Google Map.
+
+    Props:
+    - lat (float): The latitude for the maps center point.
+    - long (float): The longitude for the maps center point.
+    - api_key (string): The Google Maps API key.
+    - custom_map_id (string): The Google Maps Custom Map ID for styling.
+
+-->
+<odoo>
+    <template id="MapComponent" name="Map Component">
+        <div
+            class="map js-map-widget"
+            t-att-data-lat="lat"
+            t-att-data-lng="long"
+            t-att-data-api-key="api_key"
+            t-att-data-custom-map-id="custom_map_id"
+        />
+    </template>
+</odoo>
