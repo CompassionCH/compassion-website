@@ -11,6 +11,7 @@
     Injected data:
     - product ('product.template' record): The donation product.
     - sponsorships ('recurring.contract' records): The list of the user's sponsorships.
+    - donation_limits ('gift.threshold.settings' records): The price limits for different donations types.
 -->
 <odoo>
     <!-- DONATION DETAILS PAGE -->
@@ -94,6 +95,7 @@
                         <!-- DONATE -->
                         <t t-call="my_compassion.DonationFormComponent">
                             <t t-set="top_class" t-value="'mt-3 mb-4'" />
+                            <t t-set="limits" t-value="donation_limits" />
                         </t>
                     </div>
                 </div>

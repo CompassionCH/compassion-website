@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Component: Giving Limits Table
+
+    Description:
+    A table displaying the giving limits.
+
+    Props:                                                                                       Default:
+    - limits (list[gift.threshold.settings]): The price limits for different donations types.    -required-
+    - date (date): The date to use for price conversions.                                        [today]
+-->
+<odoo>
+    <!-- GIVING LIMITS TABLE COLUMN -->
+    <template id="my2_giving_limits_modal_table_column" name="Gift Package Help Table Column">
+        <div t-attf-class="table-column d-flex flex-column #{top_class}">
+            <div class="table-cell tiny-text bold bg-light-green border-0 d-flex flex-column justify-content-center">
+                <t t-esc="title" />
+            </div>
+            <t t-foreach="cells" t-as="cell">
+                <div class="table-cell super-tiny-text d-flex flex-column justify-content-center">
+                    <div>
+                        <t t-raw="cell.replace('*', '&lt;span class=\'body-small text-low-pink\'&gt;*&lt;/span&gt;')" />
+                    </div>
+                </div>
+            </t>
+        </div>
+    </template>
+    <!-- GIVING LIMITS TABLE COMPONENT -->
+    <template id="GivingLimitsTableComponent" name="Giving Limits Table Component">
+        <!-- Include stylesheet -->
+        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_giving_limits_table.css" />
+        <t t-set="company" t-value="request.website.company_id" />
+        <t t-set="date" t-value="date or datetime.date.today()" />
+        <div class="giving-limits-table d-flex flex-column">
+            <!-- TABLE TITLE -->
+            <div class="p-3 table-title col-12 bg-low-green tiny-text text-center text-pure-white">
+                Annual gift limits in Switzerland
+            </div>
+            <!-- COLUMNS -->
+            <div class="d-flex">
+                <!-- TYPE -->
+                <t t-call="my_compassion.my2_giving_limits_modal_table_column">
+                    <t t-set="top_class" t-value="'flex-grow-1'" />
+                    <t t-set="title" t-value="'Type'" />
+                    <t
+                        t-set="cells"
+                        t-value="[
+                        (limit.sponsorship_gift_type + ' Gift' if limit.sponsorship_gift_type else limit.gift_type) +
+                        ('*' if limit.yearly_threshold and limit.gift_frequency == 2 else
+                         '**' if not limit.yearly_threshold and limit.gift_frequency == 1 else '')
+                        for limit in limits
+                    ]"
+                    />
+                </t>
+                <!-- MIN -->
+                <t t-call="my_compassion.my2_giving_limits_modal_table_column">
+                    <t t-set="title" t-value="'Min'" />
+                    <t
+                        t-set="cells"
+                        t-value="[
+                        'CHF {:g}'.format(limit.currency_id._convert(limit.min_amount, company.currency_id, company, date))
+                        for limit in limits
+                    ]"
+                    />
+                </t>
+                <!-- MAX -->
+                <t t-call="my_compassion.my2_giving_limits_modal_table_column">
+                    <t t-set="title" t-value="'Max'" />
+                    <t
+                        t-set="cells"
+                        t-value="[
+                        'CHF {:g}'.format(limit.currency_id._convert(limit.max_amount, company.currency_id, company, date))
+                        for limit in limits
+                    ]"
+                    />
+                </t>
+            </div>
+            <!-- NOTES -->
+            <div class="px-3 pt-1 super-tiny-text text-low-pink">
+                *A child gift can be given twice a year.
+                <br />
+                **Available in the child's final year of the program.
+            </div>
+        </div>
+    </template>
+</odoo>
