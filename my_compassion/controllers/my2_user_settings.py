@@ -168,3 +168,13 @@ class MyCompassionUserController(http.Controller):
             partner.sudo().write(update_vals)
 
         return {"success": True}
+
+    @http.route(
+        "/my2/user_settings/delete_account",
+        type="json",
+        auth="user",
+        methods=["POST"],
+    )
+    def user_settings_page_delete_account(self, **post):
+        partner = request.env.user.partner_id
+        partner.forget_me()

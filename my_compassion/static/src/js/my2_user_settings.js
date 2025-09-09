@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     odoo.define("my_compassion.user_settings", function (require) {
         "use strict";
 
+        const ToastService = require("my_compassion.toast_service");
         const rpc = require("web.rpc");
         const Dialog = require("web.Dialog");
 
@@ -24,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
             initTabNavigation();
             initCommunicationSettings();
             initAgreementsForm();
+            initAccountDeletion();
 
             initFormHandler({
                 formId: "personal-information-form",
@@ -198,6 +200,22 @@ document.addEventListener("DOMContentLoaded", () => {
                         null,
                         "You must check the box to accept the legal terms and privacy policy before signing."
                     );
+                }
+            });
+        }
+
+        function initAccountDeletion() {
+            const checkbox = document.getElementById("ConfirmDeletionCheck");
+            const confirmDeletionButton = document.getElementById("DeleteAccountFinalButton");
+
+            confirmDeletionButton.addEventListener("click", () => {
+                if (checkbox.checked) {
+                    rpc.query({
+                        route: "/my2/user_settings/delete_account",
+                        params: {},
+                    });
+                } else {
+                    ToastService.error("A required field is empty");
                 }
             });
         }
