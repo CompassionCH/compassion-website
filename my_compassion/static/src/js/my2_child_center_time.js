@@ -3,6 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const mapContainerEl = document.querySelector(".cd-map-container");
     const currentTimeEl = document.getElementById('current_time');
+    const currentTemperatureEl = document.getElementById('current_temperature');
     const childId = mapContainerEl.dataset.childId;
 
     if (currentTimeEl) {
@@ -50,4 +51,59 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.error('Required HTML element #current_time is missing.');
     }
+
+
+    if (currentTemperatureEl) {
+
+    fetch(`/my2/children/${childId}/center-weather`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const temperature = data.current_temperature;
+            currentTemperatureEl.textContent = `${temperature}°C`;
+        })
+        .catch(error => {
+
+            console.error('Failed to fetch temperature:', error);
+            currentTimeEl.textContent = 'Could not load temperature.';
+        });
+} else {
+    console.error('Required HTML element #current_temperature is missing.');
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 });

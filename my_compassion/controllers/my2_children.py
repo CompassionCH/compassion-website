@@ -178,3 +178,30 @@ class MyCompassionChildrenController(WebsiteChild):
             json.dumps(data),
             headers=[('Content-Type', 'application/json')]
         )
+
+
+
+
+    @http.route('/my2/children/<model("compassion.child"):child>/center-weather',
+                type='http',
+                auth='user',
+                website=True)
+    def get_center_weather(self, child, **kw):
+        """
+        This controller returns the child's center weather as a JSON object.
+        """
+
+        child.sudo().project_id.update_weather()
+        center_temperature_kelvin = child.sudo().project_id.current_temperature
+        center_temperature_celsius = center_temperature_celsius = round(center_temperature_kelvin - 273.15, 1)
+        center_weather = child.sudo().project_id.current_weather
+
+        data = {'current_temperature': center_temperature_celsius, 'current_weather': center_weather}
+
+        return request.make_response(
+            json.dumps(data),
+            headers=[('Content-Type', 'application/json')]
+        )
+
+
+
