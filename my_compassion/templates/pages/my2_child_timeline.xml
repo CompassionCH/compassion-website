@@ -279,7 +279,8 @@
                             <!--map info container conatining the meteo info, time and location -->
                             <div class="map-info-container bg-white pb-3 mt-3 rounded shadow-sm">
 
-                                #TODO Manage to make the color a bit more darker without using HEX
+                                <!--TODO Manage to make the color a bit more darker without using HEX-->
+
                                 <!-- Project name and local church name -->
                                 <div class="bg-mid-yellow d-flex justify-content-center align-items-center py-2 px-3">
                                     <p class="text-mid-green mb-0 text-center"
@@ -291,13 +292,13 @@
 
 
                                 <!-- City and country name -->
-                                <p class="text-mid-green text-center mb-2">
+                                <p class="text-mid-green text-center mb-2 pt-2">
                                     <t t-esc="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"/>
                                 </p>
                                 <!-- Time and meteo info -->
 
                                 <!-- Time -->
-                                <div class="text-mid-grey d-flex justify-content-center pt-2">
+                                <div class="text-mid-grey d-flex justify-content-center pt-1">
                                     <span class="mr-3">10:32am</span>
                                     <!-- Bar separating time and meteo info -->
                                     <span class="mr-3 border-left border-mid-green"></span>
