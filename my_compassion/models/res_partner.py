@@ -5,10 +5,10 @@ class Partner(models.Model):
     _inherit = "res.partner"
 
     # True if partner has ever been a sponsor.
-    is_sponsor = fields.Boolean(compute="_compute_is_sponsor")
+    is_sponsor = fields.Boolean(compute="_compute_is_sponsor", compute_sudo=True)
 
     # True if the partner has ever made a donation
-    is_donor = fields.Boolean(compute="_compute_is_donor")
+    is_donor = fields.Boolean(compute="_compute_is_donor", compute_sudo=True)
 
     user_login = fields.Char(
         string="MyCompassion login",
@@ -44,28 +44,26 @@ class Partner(models.Model):
         return bool(correspondence)
 
     def _compute_is_sponsor(self):
-        sponsors_data = (
-            self.env["recurring.contract"]
-            .sudo()
-            .read_group(
-                domain=[("partner_id", "in", self.ids)],
-                fields=["partner_id"],
-                groupby=["partner_id"],
-            )
-        )
-        sponsors_ids = {data["partner_id"][0] for data in sponsors_data}
         for partner in self:
-            partner.is_sponsor = partner.id in sponsors_ids
+            partner.is_sponsor = self.env["recurring.contract"].search_count(
+                [
+                    "|",
+                    ("partner_id", "=", partner.id),
+                    ("correspondent_id", "=", partner.id),
+                    ("state", "in", ["waiting", "active"]),
+                    ("child_id", "!=", False),
+                ],
+            )
 
     def _compute_is_donor(self):
-        donors_data = (
-            self.env["account.move.line"]
-            .sudo()
-            .read_group(
-                domain=[("partner_id", "in", self.ids)],
-                fields=["partner_id"],
-                groupby=["partner_id"],
-            )
+        donors_data = self.env["account.move.line"].read_group(
+            domain=[
+                ("partner_id", "in", self.ids),
+                ("payment_state", "=", "paid"),
+                ("move_id.move_type", "=", "out_invoice"),
+            ],
+            fields=["partner_id"],
+            groupby=["partner_id"],
         )
         donor_ids = {data["partner_id"][0] for data in donors_data}
         for partner in self:

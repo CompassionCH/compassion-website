@@ -21,38 +21,34 @@ class MyCompassionUserController(http.Controller):
         return: An HTTP response containing a rendered template with the dashboard.
         """
         partner = request.env.user.partner_id
-
-        vignettes_data = [
-            {
-                "key": "sponsorship",
-                "template": "my_compassion.dashboard_sponsorship_vignette",
-                # Right now is_active is useless, but in the future it could be useful
-                # if some vignettes don't have to be rendered
-                "is_active": True,
-                # High priority -> Shows first in page
-                "priority": 2 + partner.is_sponsor * 100,
-            },
-            {
-                "key": "donations",
-                "template": "my_compassion.dashboard_donations_vignette",
-                "is_active": True,
-                "priority": 1 + partner.is_donor * 100,
-            },
-            {
-                "key": "volunteering",
-                "template": "my_compassion.dashboard_volunteering_vignette",
-                "is_active": True,
-                "priority": 0 + getattr(partner, "is_volunteer", False) * 100,
-            },
-        ]
-        active_vignettes = [v for v in vignettes_data if v["is_active"]]
-        sorted_vignettes = sorted(
-            active_vignettes, key=lambda v: v["priority"], reverse=True
-        )
+        vignettes_data = self._get_vignettes(partner)
 
         return request.render(
             "my_compassion.my2_dashboard_page",
             {
-                "sorted_vignettes": sorted_vignettes,
+                "sorted_vignettes": vignettes_data,
+                "partner": partner,
             },
         )
+
+    def _get_vignettes(self, partner):
+        vignettes = [
+            {
+                "key": "sponsorship",
+                "template": "my_compassion.dashboard_sponsorship_vignette",
+                # Low priority number -> Shows first in page
+                "priority": 0 - partner.is_sponsor * 100,
+                "number_sponsorships": partner.number_sponsorships,
+            },
+            {
+                "key": "donations",
+                "template": "my_compassion.dashboard_donations_vignette",
+                "priority": 1 - partner.is_donor * 100,
+            },
+            {
+                "key": "volunteering",
+                "template": "my_compassion.dashboard_volunteering_vignette",
+                "priority": 2 - getattr(partner, "is_volunteer", False) * 100,
+            },
+        ]
+        return sorted(vignettes, key=lambda v: v["priority"])
