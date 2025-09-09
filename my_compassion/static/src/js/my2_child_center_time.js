@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const centerTimeString = now.toLocaleTimeString('en-US', options)
                                                     .replace('AM', 'am')
                                                     .replace('PM', 'pm');
-                        currentTimeEl.textContent = finalTimeString;
+                        currentTimeEl.textContent = centerTimeString;
                     } catch (error) {
                         console.error("Invalid timezone identifier received from server:", centerTimezone, error);
                         currentTimeEl.textContent = "Error";
