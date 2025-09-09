@@ -277,43 +277,50 @@
 
 
                             <!--map info container conatining the meteo info, time and location -->
-                            <div class="map-info-container bg-white pb-3 mt-3 rounded shadow-sm">
+                            <section t-if="access_scope == 'sponsor'" class="cd-map-container js-cd-map-container"
+                                     t-att-data-child-id="compassion_child.id">
 
-                                <!--TODO Manage to make the color a bit more darker without using HEX-->
+                                <div class="map-info-container bg-white pb-3 mt-3 rounded shadow-sm">
 
-                                <!-- Project name and local church name -->
-                                <div class="bg-mid-yellow d-flex justify-content-center align-items-center py-2 px-3">
-                                    <p class="text-mid-green mb-0 text-center"
-                                       style="font-size: 0.875rem;">
-                                        <t t-esc="compassion_child.project_id.name"/>,
-                                        <t
-                                                t-esc="compassion_child.project_id.local_church_name"/>
+                                    <!--TODO Manage to make the color a bit more darker without using HEX-->
+
+                                    <!-- Project name and local church name -->
+                                    <div class="bg-mid-yellow d-flex justify-content-center align-items-center py-2 px-3">
+                                        <p class="text-mid-green mb-0 text-center"
+                                           style="font-size: 0.875rem;">
+                                            <t t-esc="compassion_child.project_id.name"/>,
+                                            <t
+                                                    t-esc="compassion_child.project_id.local_church_name"/>
+                                        </p>
+                                    </div>
+
+
+                                    <!-- City and country name -->
+                                    <p class="text-mid-green text-center mb-2 pt-2">
+                                        <t t-esc="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"/>
                                     </p>
-                                </div>
 
+                                    <!-- Time and meteo info -->
 
-                                <!-- City and country name -->
-                                <p class="text-mid-green text-center mb-2 pt-2">
-                                    <t t-esc="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"/>
-                                </p>
+                                    <!-- Time -->
+                                    <div class="text-mid-grey d-flex justify-content-center pt-1">
+                                        <!-- Place holder for current time at the compassion center -->
+                                        <span id="current_time" class="mr-3"></span>
 
-                                <!-- Time and meteo info -->
+                                        <script src="/my_compassion/static/src/js/my2_child_center_time.js"
+                                                type="text/javascript"/>
 
-                                <!-- Time -->
-                                <div class="text-mid-grey d-flex justify-content-center pt-1">
-
-                                    <span class="mr-3"> <t t-esc="center_time.strftime('%I:%M:%S %p').lower()" /> </span>
-                                    <!-- Bar separating time and meteo info -->
-                                    <span class="mr-3 border-left border-mid-green"></span>
-                                    <!-- Meteo info -->
-                                    <div class="text-primary-grey d-flex align-items-center">
-                                        <span class="mr-1">☀️</span>
-                                        <span>22°C</span>
+                                        <!-- Bar separating time and meteo info -->
+                                        <span class="mr-3 border-left border-mid-green"></span>
+                                        <!-- Meteo info -->
+                                        <div class="text-primary-grey d-flex align-items-center">
+                                            <span class="mr-1">☀️</span>
+                                            <span>22°C</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-
+                            </section>
                             <!-- PROJECT TAB CONTENT -->
                             <div
                                     class="tab-pane fade"

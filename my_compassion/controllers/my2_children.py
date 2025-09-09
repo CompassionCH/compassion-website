@@ -9,7 +9,7 @@
 from odoo import _, http
 from odoo.exceptions import AccessError
 from odoo.http import request
-
+import json
 from odoo.addons.website_sponsorship.controllers.main import WebsiteChild
 
 
@@ -114,7 +114,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 "records": records,
                 "has_more_records": total > offset + limit,
                 "access_scope": access_scope,
-                "center_time": request.env['compassion.project'].search([('id', '=', child.project_id.id)]).center_current_time,
+
             },
         )
 
@@ -158,3 +158,23 @@ class MyCompassionChildrenController(WebsiteChild):
             "html": html,
             "has_more_records": has_more,
         }
+
+
+
+    @http.route('/my2/children/<model("compassion.child"):child>/center-timezone',
+                type='http',
+                auth='user',
+                website=True)
+    def get_center_timezone(self, child, **kw):
+        """
+        This controller returns the child's center timezone as a JSON object.
+        """
+
+        center_timezone = child.project_id.timezone or 'UTC'
+
+        data = {'timezone': center_timezone}
+
+        return request.make_response(
+            json.dumps(data),
+            headers=[('Content-Type', 'application/json')]
+        )
