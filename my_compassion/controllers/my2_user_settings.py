@@ -175,6 +175,12 @@ class MyCompassionUserController(http.Controller):
         auth="user",
         methods=["POST"],
     )
-    def user_settings_page_delete_account(self, **post):
+    def user_settings_page_delete_account(self):
         partner = request.env.user.partner_id
+        if partner.has_sponsorships:
+            return {
+                "success": False,
+                "error": "Account cannot be deleted due to active sponsorships.",
+            }
         partner.forget_me()
+        return {"success": True}

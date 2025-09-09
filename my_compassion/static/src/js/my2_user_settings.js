@@ -208,14 +208,31 @@ document.addEventListener("DOMContentLoaded", () => {
             const checkbox = document.getElementById("ConfirmDeletionCheck");
             const confirmDeletionButton = document.getElementById("DeleteAccountFinalButton");
 
+            if (!confirmDeletionButton) {
+                return;
+            }
+
             confirmDeletionButton.addEventListener("click", () => {
                 if (checkbox.checked) {
                     rpc.query({
                         route: "/my2/user_settings/delete_account",
                         params: {},
-                    });
+                    })
+                        .then((response) => {
+                            if (response.success) {
+                                window.location.href = "/web/session/logout";
+                            } else {
+                                ToastService.error(
+                                    response.error || "Could not delete your account.",
+                                    "Deletion Failed"
+                                );
+                            }
+                        })
+                        .catch(() => {
+                            ToastService.error("An unexpected error occurred while deleting your account.", "Error");
+                        });
                 } else {
-                    ToastService.error("A required field is empty");
+                    ToastService.error("Please check the box to confirm you understand this action cannot be undone.");
                 }
             });
         }

@@ -433,7 +433,12 @@ Injected data:
                                     <div class="modal-dialog" style="max-width: 400px;" role="document">
                                         <div class="modal-content border-0">
                                             <div class="bg-low-orange p-3 position-relative" id="modal-title">
-                                                <h2 class="text-center text-pure-white m-0">Account deletion</h2>
+                                                <h2
+                                                    class="text-center text-pure-white m-0"
+                                                    id="deleteAccountModalLabel"
+                                                >
+                                                    Account deletion
+                                                </h2>
                                                 <button
                                                     type="button"
                                                     class="close text-pure-white position-absolute"
@@ -446,12 +451,8 @@ Injected data:
                                             </div>
                                             <t t-if="partner.has_sponsorships">
                                                 <div class="m-4 p-3 bg-high-pink rounded-lg">
-                                                    You currently have active
-                                                    sponsorships,
-                                                    so this action cannot be
-                                                    performed
-                                                    in
-                                                    the website.
+                                                    You currently have active sponsorships, so this action cannot be
+                                                    performed in the website.
                                                 </div>
                                                 <div class="px-4">
                                                     <p>
@@ -490,17 +491,16 @@ Injected data:
                                                             cannot be undone.
                                                         </label>
                                                     </div>
-                                                    <a id="DeleteAccountFinalButton" class="d-block">
-                                                        <div class="d-flex flex-column align-items-stretch">
-                                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                                <t t-set="variant" t-value="'default'" />
-                                                                <t t-set="variation" t-value="'filled'" />
-                                                                <t t-set="label" t-value="'Delete'" />
-                                                                <t t-set="color" t-value="'low-orange'" />
-                                                                <t t-set="text_color" t-value="'pure-white'" />
-                                                            </t>
-                                                        </div>
-                                                    </a>
+                                                    <div class="d-flex flex-column align-items-stretch">
+                                                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                                            <t t-set="id" t-value="'DeleteAccountFinalButton'" />
+                                                            <t t-set="variant" t-value="'default'" />
+                                                            <t t-set="variation" t-value="'filled'" />
+                                                            <t t-set="label" t-value="'Delete'" />
+                                                            <t t-set="color" t-value="'low-orange'" />
+                                                            <t t-set="text_color" t-value="'pure-white'" />
+                                                        </t>
+                                                    </div>
                                                 </div>
                                             </t>
                                         </div>
