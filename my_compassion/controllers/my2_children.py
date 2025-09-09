@@ -114,6 +114,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 "records": records,
                 "has_more_records": total > offset + limit,
                 "access_scope": access_scope,
+                "center_time": request.env['compassion.project'].search([('id', '=', child.project_id.id)]).center_current_time,
             },
         )
 
