@@ -114,6 +114,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 "records": records,
                 "has_more_records": total > offset + limit,
                 "access_scope": access_scope,
+                "timezone": child.sudo().project_id.timezone,
 
             },
         )

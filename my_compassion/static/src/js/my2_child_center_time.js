@@ -5,26 +5,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentTimeEl = document.getElementById('current_time');
     const currentTemperatureEl = document.getElementById('current_temperature');
     const childId = mapContainerEl.dataset.childId;
+    const timezone = mapContainerEl.dataset.timezone;
 
     if (currentTimeEl) {
 
-        fetch(`/my2/children/${childId}/center-timezone`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-
-                const centerTimezone = data.timezone;
                 //Formatting options for the time to be shown
                 const options = {
                     hour: '2-digit',
                     minute: '2-digit',
                     hour12: true,
-                    timeZone: centerTimezone
+                    timeZone: timezone
                 };
+
+                console.log("Timezone for center:", timezone);
 
                 const updateTime = () => {
                     try {
@@ -38,21 +31,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         currentTimeEl.textContent = "Error";
                         clearInterval(clockInterval);
                     }
-                };
 
+                }
                 updateTime();
                 const clockInterval = setInterval(updateTime, 1000 * 60); // Update every minute
-            })
-            .catch(error => {
 
-                console.error('Failed to fetch timezone:', error);
-                currentTimeEl.textContent = 'Could not load time.';
-            });
-    } else {
-        console.error('Required HTML element #current_time is missing.');
+
+
+
     }
-
-
     if (currentTemperatureEl) {
 
     fetch(`/my2/children/${childId}/center-weather`)

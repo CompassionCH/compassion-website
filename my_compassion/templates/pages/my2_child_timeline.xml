@@ -278,7 +278,9 @@
 
                             <section t-if="access_scope == 'sponsor'"
                                      class="cd-weather-map-container js-cd-weather-map-container"
-                                     t-att-data-child-id="compassion_child.id">
+                                     t-att-data-child-id="compassion_child.id"
+                                     t-att-data-timezone="timezone">
+                                >
 
                                 <t t-call="my_compassion.WeatherTimeContainer">
 
