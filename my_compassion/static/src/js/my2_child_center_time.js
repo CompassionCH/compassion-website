@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentTemperatureEl = document.getElementById('current_temperature');
     const childId = mapContainerEl.dataset.childId;
     const timezone = mapContainerEl.dataset.timezone;
+    const weather_icon_el = document.getElementById('weather_icon');
 
     if (currentTimeEl) {
 
@@ -52,6 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             const temperature = data.current_temperature;
             currentTemperatureEl.textContent = `${temperature}°C`;
+            const icon_id = data.weather_icon_id;
+            weather_icon_el.src = `/theme_compassion_2025/static/src/img/icons/${icon_id}`;
         })
         .catch(error => {
 

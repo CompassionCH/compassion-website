@@ -14,8 +14,6 @@
     Injected data:
     - records: list of items to display in the component, each item should have:
         - timezone (string): timezone of the center.
-        - current_temperature (float): current temperature of the center.
-        - weather_status (string): status of the weather eg: "clear", "rain"...
         - project_name (string): name of the project the center belongs to.
         - church_name (string): name of the local church associated with the center.
         - city_country (string): represents where the center is located in the following format city,country.
@@ -24,8 +22,6 @@
 
 
 <!--map info container containing the meteo info, time and location -->
-
-
 
 
 <odoo>
@@ -50,7 +46,8 @@
                 <span id="current_time" class="center-info-card__time"></span>
                 <span class="center-info-card__separator"></span>
                 <div class="center-info-card__weather">
-                    <img src="/theme_compassion_2025/static/src/img/icons/Sun.svg"
+                    <img src=""
+                         id="weather_icon"
                          class="center-info-card__weather-icon"
                          alt="Weather icon"/>
                     <span id="current_temperature" class="center-info-card__temperature"></span>
