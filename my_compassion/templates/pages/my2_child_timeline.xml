@@ -276,51 +276,69 @@
                             </div>
 
 
-                            <!--map info container conatining the meteo info, time and location -->
-                            <section t-if="access_scope == 'sponsor'" class="cd-map-container js-cd-map-container"
+                            <section t-if="access_scope == 'sponsor'"
+                                     class="cd-weather-map-container js-cd-weather-map-container"
                                      t-att-data-child-id="compassion_child.id">
 
-                                <div class="map-info-container bg-white pb-3 mt-3 rounded shadow-sm">
+                                <t t-call="my_compassion.WeatherTimeContainer">
 
-                                    <!--TODO Manage to make the color a bit more darker without using HEX-->
+                                    <t t-set="timezone" t-value="timezone"/>
+                                    <t t-set="current_temperature" t-value="current_temperature"/>
+                                    <t t-set="weather_status" t-value="weather_status"/>
+                                    <t t-set="project_name" t-value="compassion_child.project_id.local_church_name"/>
+                                    <t t-set="church_name" t-value="compassion_child.project_id.local_church_name"/>
+                                    <t t-set="city_country"
+                                       t-value="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"/>
 
-                                    <!-- Project name and local church name -->
-                                    <div class="bg-mid-yellow d-flex justify-content-center align-items-center py-2 px-3">
-                                        <p class="text-mid-green mb-0 text-center"
-                                           style="font-size: 0.875rem;">
-                                            <t t-esc="compassion_child.project_id.name"/>,
-                                            <t
-                                                    t-esc="compassion_child.project_id.local_church_name"/>
-                                        </p>
-                                    </div>
-
-
-                                    <!-- City and country name -->
-                                    <p class="text-mid-green text-center mb-2 pt-2">
-                                        <t t-esc="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"/>
-                                    </p>
-
-                                    <!-- Time and meteo info -->
-
-                                    <!-- Time -->
-                                    <div class="text-mid-grey d-flex justify-content-center pt-1">
-                                        <!-- Place holder for current time at the compassion center -->
-                                        <span id="current_time" class="mr-3"></span>
-
-                                        <script src="/my_compassion/static/src/js/my2_child_center_time.js"
-                                                type="text/javascript"/>
-
-                                        <!-- Bar separating time and meteo info -->
-                                        <span class="mr-3 border-left border-mid-green"></span>
-                                        <!-- Meteo info -->
-                                        <div class="text-primary-grey d-flex align-items-center">
-                                             <span class ="mr-1" id="child-local-weather"> Include sun.svg from theme_compassion_2025/static/src/img/icons/ </span>
-                                            <span class ="mr-1" id="current_temperature"></span>
-                                        </div>
-                                    </div>
-                                </div>
-
+                                </t>
                             </section>
+
+
+                            <!--                            &lt;!&ndash;map info container conatining the meteo info, time and location &ndash;&gt;-->
+                            <!--                            <section t-if="access_scope == 'sponsor'" class="cd-map-container js-cd-map-container"-->
+                            <!--                                     t-att-data-child-id="compassion_child.id">-->
+
+                            <!--                                <div class="map-info-container bg-white pb-3 mt-3 rounded shadow-sm">-->
+
+                            <!--                                    &lt;!&ndash;TODO Manage to make the color a bit more darker without using HEX&ndash;&gt;-->
+
+                            <!--                                    &lt;!&ndash; Project name and local church name &ndash;&gt;-->
+                            <!--                                    <div class="bg-mid-yellow d-flex justify-content-center align-items-center py-2 px-3">-->
+                            <!--                                        <p class="text-mid-green mb-0 text-center"-->
+                            <!--                                           style="font-size: 0.875rem;">-->
+                            <!--                                            <t t-esc="compassion_child.project_id.name"/>,-->
+                            <!--                                            <t-->
+                            <!--                                                    t-esc="compassion_child.project_id.local_church_name"/>-->
+                            <!--                                        </p>-->
+                            <!--                                    </div>-->
+
+
+                            <!--                                    &lt;!&ndash; City and country name &ndash;&gt;-->
+                            <!--                                    <p class="text-mid-green text-center mb-2 pt-2">-->
+                            <!--                                        <t t-esc="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"/>-->
+                            <!--                                    </p>-->
+
+                            <!--                                    &lt;!&ndash; Time and meteo info &ndash;&gt;-->
+
+                            <!--                                    &lt;!&ndash; Time &ndash;&gt;-->
+                            <!--                                    <div class="text-mid-grey d-flex justify-content-center pt-1">-->
+                            <!--                                        &lt;!&ndash; Place holder for current time at the compassion center &ndash;&gt;-->
+                            <!--                                        <span id="current_time" class="mr-3"></span>-->
+
+                            <!--                                        <script src="/my_compassion/static/src/js/my2_child_center_time.js"-->
+                            <!--                                                type="text/javascript"/>-->
+
+                            <!--                                        &lt;!&ndash; Bar separating time and meteo info &ndash;&gt;-->
+                            <!--                                        <span class="mr-3 border-left border-mid-green"></span>-->
+                            <!--                                        &lt;!&ndash; Meteo info &ndash;&gt;-->
+                            <!--                                        <div class="text-primary-grey d-flex align-items-center">-->
+                            <!--                                            <img src="/theme_compassion_2025/static/src/img/icons/sun.svg" alt="Weather icon"/>-->
+                            <!--                                            <span class ="mr-1" id="current_temperature"></span>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                </div>-->
+
+                            <!--                            </section>-->
                             <!-- PROJECT TAB CONTENT -->
                             <div
                                     class="tab-pane fade"
@@ -507,6 +525,10 @@
         </t>
         <!-- Include Custom Javascript -->
         <script type="text/javascript" src="/my_compassion/static/src/js/child_profile_tabs.js"/>
+
+        <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_center_time.js"/>
+
+
         <script
                 t-if="access_scope == 'sponsor'"
                 type="text/javascript"

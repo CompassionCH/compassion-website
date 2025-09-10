@@ -42,6 +42,7 @@
         "data/my2_website.xml",
         # My compassion 2 assets, needs to be placed before others
         "templates/my2_assets.xml",
+        "templates/components/my2_weather_time_container.xml",
         "templates/my_account_components.xml",
         "templates/my_account_personal_info.xml",
         "templates/my_account_donations.xml",
@@ -56,6 +57,7 @@
         "data/communication_config.xml",
         # My Compassion 2 pages
         "templates/pages/my2_children.xml",
+
         "templates/pages/my2_child_timeline.xml",
         "templates/pages/my2_child_letters.xml",
         "templates/pages/my2_dashboard.xml",
@@ -75,6 +77,7 @@
         "templates/components/my2_donation_item.xml",
         "templates/components/my2_donation_form.xml",
         "templates/components/my2_giving_limits_modal.xml",
+
     ],
     "depends": [
         "partner_communication_compassion",

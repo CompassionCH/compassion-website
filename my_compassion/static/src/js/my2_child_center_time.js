@@ -1,7 +1,7 @@
 
 // This script fetches the timezone of a child's center and displays the current time there.
 document.addEventListener('DOMContentLoaded', () => {
-    const mapContainerEl = document.querySelector(".cd-map-container");
+    const mapContainerEl = document.querySelector(".cd-weather-map-container");
     const currentTimeEl = document.getElementById('current_time');
     const currentTemperatureEl = document.getElementById('current_temperature');
     const childId = mapContainerEl.dataset.childId;

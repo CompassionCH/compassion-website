@@ -29,6 +29,13 @@ class CompassionProject(models.Model):
         string='Current Time',
         compute='_compute_current_time'
     )
+    current_temperature_celsius = fields.Float(
+        string='Current Temperature (°C)',
+        compute='_compute_current_temperature',
+        store = False
+    )
+
+
 
     def get_activity_for_age(self, age, activity_type="physical"):
         if activity_type and activity_type not in self.supported_types:
@@ -58,3 +65,13 @@ class CompassionProject(models.Model):
             tzinfo = timezone(record.timezone) if record.timezone else tools.utc
             record.center_current_time = now_utc.astimezone(tzinfo).strftime("%Y-%m-%d %H:%M:%S")
 
+
+    def _compute_current_temperature(self):
+        """
+        Computes the current temperature in celsius.
+        """
+        for record in self:
+            if record.current_temperature:
+                record.update_weather()
+                # Convert from Kelvin to Celsius
+                record.current_temperature_celsius = round(record.current_temperature - 273.15, 1)
