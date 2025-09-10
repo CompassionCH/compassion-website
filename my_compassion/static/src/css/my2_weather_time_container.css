@@ -14,7 +14,6 @@
 
 /*
   Styles for the main component container (the Block)
-  Replaces: bg-white pb-3 mt-3 rounded shadow-sm
 */
 .center-info-card {
     font-family: var(--font-primary);
@@ -28,7 +27,6 @@
 
 /*
   Styles for the header element
-  Replaces: bg-mid-yellow d-flex justify-content-center align-items-center py-2 px-3
 */
 .center-info-card__header {
     display: flex;
@@ -40,7 +38,6 @@
 
 /*
   Styles for the project/church info text
-  Replaces: text-mid-green mb-0 text-center, and inline font-size
 */
 .center-info-card__project-info {
     color: var(--color-mid-green);
@@ -52,7 +49,6 @@
 
 /*
   Styles for the location text
-  Replaces: text-mid-green text-center mb-2 pt-2
 */
 .center-info-card__location {
     color: var(--color-mid-green);
@@ -63,7 +59,6 @@
 
 /*
   Styles for the time and weather details container
-  Replaces: text-mid-grey d-flex justify-content-center pt-1
 */
 .center-info-card__details {
     display: flex;
@@ -75,7 +70,6 @@
 
 /*
   Styles for the time, which has its own spacing
-  Replaces: mr-3
 */
 .center-info-card__time {
     margin-right: 1rem;
@@ -83,7 +77,6 @@
 
 /*
   Styles for the separator line
-  Replaces: mr-3 border-left border-mid-green
 */
 .center-info-card__separator {
     border-left: 1px solid var(--color-mid-green);
@@ -93,7 +86,6 @@
 
 /*
   Styles for the weather container
-  Replaces: text-primary-grey d-flex align-items-center
 */
 .center-info-card__weather {
     display: flex;
@@ -102,8 +94,17 @@
 }
 
 /*
+  ✅ NEW: Styles for the weather icon
+*/
+.center-info-card__weather-icon {
+    width: 20px;
+    height: 20px;
+    /* This adds the space you requested */
+    margin-right: 0.5rem; /* 8px */
+}
+
+/*
   Styles for the temperature reading
-  Replaces: mr-1
 */
 .center-info-card__temperature {
     font-weight: 500;
