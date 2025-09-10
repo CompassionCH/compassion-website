@@ -8,6 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const timezone = mapContainerEl.dataset.timezone;
     const weather_icon_el = document.getElementById('weather_icon');
 
+    const containerEl = document.querySelector('.center-info-card');
+
+
+
+
     if (currentTimeEl) {
 
                 //Formatting options for the time to be shown
@@ -41,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     }
-    if (currentTemperatureEl) {
+    if (currentTemperatureEl && weather_icon_el) {
 
     fetch(`/my2/children/${childId}/center-weather`)
         .then(response => {
@@ -55,6 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
             currentTemperatureEl.textContent = `${temperature}°C`;
             const icon_id = data.weather_icon_id;
             weather_icon_el.src = `/theme_compassion_2025/static/src/img/icons/${icon_id}`;
+
+
+        if (containerEl) {
+                containerEl.style.display = 'block';
+            }
         })
         .catch(error => {
 

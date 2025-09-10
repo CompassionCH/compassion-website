@@ -11,7 +11,7 @@ from odoo.exceptions import AccessError
 from odoo.http import request
 import json
 from odoo.addons.website_sponsorship.controllers.main import WebsiteChild
-
+import time
 
 class MyCompassionChildrenController(WebsiteChild):
     def _check_sponsored_child_access(self, child):
@@ -170,7 +170,6 @@ class MyCompassionChildrenController(WebsiteChild):
         This controller returns the child's center weather as a JSON object.
         """
         weather_status = child.sudo().project_id.current_weather
-
         center_temperature = child.sudo().project_id.current_temperature_celsius
         weather_icon_id = child.sudo().project_id.weather_icon_id
         #data = {'current_temperature': center_temperature, 'current_weather': {'status' : weather_status, 'icon_path': weather_icon}}

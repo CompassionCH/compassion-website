@@ -27,7 +27,7 @@
 <odoo>
     <template id="WeatherTimeContainer" name="Weather and Time Container">
         <link rel="stylesheet" href="/my_compassion/static/src/css/my2_weather_time_container.css"/>
-        <div class="center-info-card">
+        <div class="center-info-card" style="display: none;">
 
             <t t-if="project_name and church_name">
                 <div class="center-info-card__header">
@@ -44,6 +44,7 @@
 
             <div class="center-info-card__details">
                 <span id="current_time" class="center-info-card__time"></span>
+
                 <span class="center-info-card__separator"></span>
                 <div class="center-info-card__weather">
                     <img src=""
