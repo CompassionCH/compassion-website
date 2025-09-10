@@ -1,20 +1,4 @@
-/* File: static/src/css/weather_time_container.css */
 
-/*
-  Define theme colors as CSS variables for easy management.
-  These would typically be defined in a more global stylesheet.
-*/
-:root {
-    --color-mid-yellow: #FFD100; /* Example color */
-    --color-mid-green: #006747;  /* Example color */
-    --color-mid-grey: #6c757d;   /* Example color */
-    --color-primary-grey: #495057; /* Example color */
-    --font-primary: 'Arial', sans-serif;
-}
-
-/*
-  Styles for the main component container (the Block)
-*/
 .center-info-card {
     font-family: var(--font-primary);
     background-color: #ffffff;
@@ -22,7 +6,7 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
     margin-top: 1rem;
     padding-bottom: 1rem;
-    overflow: hidden; /* Ensures child elements conform to border-radius */
+
 }
 
 /*
@@ -32,7 +16,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--color-mid-yellow);
+    background-color: var(--high-green);
     padding: 0.5rem 1rem;
 }
 
@@ -40,9 +24,8 @@
   Styles for the project/church info text
 */
 .center-info-card__project-info {
-    color: var(--color-mid-green);
-    font-size: 0.875rem; /* 14px */
-    font-weight: 600;
+    color: var(--low-green);
+    font-size: 0.875rem;
     margin: 0;
     text-align: center;
 }
@@ -51,9 +34,8 @@
   Styles for the location text
 */
 .center-info-card__location {
-    color: var(--color-mid-green);
+    color: var(--low-green);
     text-align: center;
-    padding: 0.75rem 1rem 0.5rem;
     margin: 0;
 }
 
@@ -73,13 +55,14 @@
 */
 .center-info-card__time {
     margin-right: 1rem;
+    color: var(--low-grey);
 }
 
 /*
   Styles for the separator line
 */
 .center-info-card__separator {
-    border-left: 1px solid var(--color-mid-green);
+    border-left: 1px solid var(--mid-green);
     height: 1.25em; /* Make the line vertically centered */
     margin-right: 1rem;
 }
@@ -107,5 +90,6 @@
   Styles for the temperature reading
 */
 .center-info-card__temperature {
-    font-weight: 500;
-}
+       font-weight: 500;
+       color: var(--low-grey);
+   }
