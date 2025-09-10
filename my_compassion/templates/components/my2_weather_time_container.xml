@@ -24,36 +24,32 @@
 
 
 <!--map info container containing the meteo info, time and location -->
-
 <odoo>
     <template id="WeatherTimeContainer" name="Weather and Time Container">
-        <div class="map-info-container bg-white pb-3 mt-3 rounded shadow-sm">
+        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_weather_time_container.css"/>
+        <div class="center-info-card">
 
             <t t-if="project_name and church_name">
-                <div class="bg-mid-yellow d-flex justify-content-center align-items-center py-2 px-3">
-                    <p class="text-mid-green mb-0 text-center" style="font-size: 0.875rem;">
-                        <t t-esc="project_name"/>, <t t-esc="church_name"/>
+                <div class="center-info-card__header">
+                    <p class="center-info-card__project-info">
+                        <t t-esc="project_name"/>,
+                        <t t-esc="church_name"/>
                     </p>
                 </div>
             </t>
 
-            <p t-if="city_country" class="text-mid-green text-center mb-2 pt-2">
+            <p t-if="city_country" class="center-info-card__location">
                 <t t-esc="city_country"/>
             </p>
 
+            <div class="center-info-card__details">
+                <span id="current_time" class="center-info-card__time"></span>
 
+                <span class="center-info-card__separator"></span>
 
-            <div class="text-mid-grey d-flex justify-content-center pt-1">
-                <span id="current_time" class="mr-3"></span>
-
-                <span class="mr-3 border-left border-mid-green"></span>
-
-                <div class="text-primary-grey d-flex align-items-center">
-
-                    <span class="mr-1" id="current_temperature"></span>
+                <div class="center-info-card__weather">
+                    <span id="current_temperature" class="center-info-card__temperature"></span>
                 </div>
-
-
             </div>
 
         </div>

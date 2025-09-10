@@ -161,28 +161,6 @@ class MyCompassionChildrenController(WebsiteChild):
         }
 
 
-
-    @http.route('/my2/children/<model("compassion.child"):child>/center-timezone',
-                type='http',
-                auth='user',
-                website=True)
-    def get_center_timezone(self, child, **kw):
-        """
-        This controller returns the child's center timezone as a JSON object.
-        """
-
-        center_timezone = child.project_id.timezone or 'UTC'
-
-        data = {'timezone': center_timezone}
-
-        return request.make_response(
-            json.dumps(data),
-            headers=[('Content-Type', 'application/json')]
-        )
-
-
-
-
     @http.route('/my2/children/<model("compassion.child"):child>/center-weather',
                 type='http',
                 auth='user',
@@ -192,10 +170,10 @@ class MyCompassionChildrenController(WebsiteChild):
         This controller returns the child's center weather as a JSON object.
         """
         weather_status = child.sudo().project_id.current_weather
-        #weather_icon = child.sudo().project_id.weather_icon
+        #weather_icon_path = child.sudo().project_id.weather_icon
         center_temperature = child.sudo().project_id.current_temperature_celsius
+        #data = {'current_temperature': center_temperature, 'current_weather': {'status' : weather_status, 'icon_path': weather_icon}}
         data = {'current_temperature': center_temperature, 'current_weather': weather_status}
-
 
         return request.make_response(
             json.dumps(data),
