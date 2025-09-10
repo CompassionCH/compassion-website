@@ -103,3 +103,19 @@
         margin-left: -10px;
     }
 }
+
+// =====================
+// Outlined Button Hover Effects
+// =====================
+@each $name, $color in $compassion-colors {
+    .btn--default-outlined.border-#{$name},
+    .btn--impact-outlined.border-#{$name},
+    .btn--compact-outlined.border-#{$name} {
+
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+            background-color: $color !important;
+        }
+    }
+}
