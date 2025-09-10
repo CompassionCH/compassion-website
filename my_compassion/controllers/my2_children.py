@@ -170,10 +170,11 @@ class MyCompassionChildrenController(WebsiteChild):
         This controller returns the child's center weather as a JSON object.
         """
         weather_status = child.sudo().project_id.current_weather
-        #weather_icon_path = child.sudo().project_id.weather_icon
+
         center_temperature = child.sudo().project_id.current_temperature_celsius
+        weather_icon_id = child.sudo().project_id.weather_icon_id
         #data = {'current_temperature': center_temperature, 'current_weather': {'status' : weather_status, 'icon_path': weather_icon}}
-        data = {'current_temperature': center_temperature, 'current_weather': weather_status}
+        data = {'current_temperature': center_temperature, 'current_weather': weather_status, 'weather_icon_id': weather_icon_id}
 
         return request.make_response(
             json.dumps(data),
