@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const icon_id = data.weather_icon_id;
             weather_icon_el.src = `/theme_compassion_2025/static/src/img/icons/${icon_id}`;
 
-
+        //Upon successful fetch and update, ensure the container is visible
         if (containerEl) {
                 containerEl.style.display = 'block';
             }

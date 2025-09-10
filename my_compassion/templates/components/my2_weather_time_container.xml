@@ -27,6 +27,7 @@
 <odoo>
     <template id="WeatherTimeContainer" name="Weather and Time Container">
         <link rel="stylesheet" href="/my_compassion/static/src/css/my2_weather_time_container.css"/>
+        <!-- Keep the container invisible until all the weather data have been loaded -->
         <div class="center-info-card" style="display: none;">
 
             <t t-if="project_name and church_name">
