@@ -14,8 +14,8 @@ odoo.define("my_compassion.toast_service", function (require) {
     const ToastService = {
         /**
          * Show an informational toast message
-         * @param {string} msg - The message body
-         * @param {string} title - Optional title (defaults to 'Info')
+         * @param {String} msg - The message body
+         * @param {String} title - Optional title (defaults to 'Info')
          */
         info(msg, title = "Info") {
             new Toast(null, {
@@ -27,8 +27,8 @@ odoo.define("my_compassion.toast_service", function (require) {
 
         /**
          * Show a success toast message
-         * @param {string} msg - The message body
-         * @param {string} title - Optional title (defaults to 'Success')
+         * @param {String} msg - The message body
+         * @param {String} title - Optional title (defaults to 'Success')
          */
         success(msg, title = "Success") {
             new Toast(null, {
@@ -40,8 +40,8 @@ odoo.define("my_compassion.toast_service", function (require) {
 
         /**
          * Show a warning toast message
-         * @param {string} msg - The message body
-         * @param {string} title - Optional title (defaults to 'Warning')
+         * @param {String} msg - The message body
+         * @param {String} title - Optional title (defaults to 'Warning')
          */
         warning(msg, title = "Warning") {
             new Toast(null, {
@@ -53,8 +53,8 @@ odoo.define("my_compassion.toast_service", function (require) {
 
         /**
          * Show an error toast message
-         * @param {string} msg - The message body
-         * @param {string} title - Optional title (defaults to 'Error')
+         * @param {String} msg - The message body
+         * @param {String} title - Optional title (defaults to 'Error')
          */
         error(msg, title = "Error") {
             new Toast(null, {

@@ -37,9 +37,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 return this._super.apply(this, arguments);
             },
 
-            //--------------------------------------------------------------------------
+            // --------------------------------------------------------------------------
             // Handlers
-            //--------------------------------------------------------------------------
+            // --------------------------------------------------------------------------
 
             /**
              * When the mobile dropdown value changes, find the corresponding desktop

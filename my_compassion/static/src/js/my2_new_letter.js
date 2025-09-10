@@ -119,10 +119,10 @@ document.addEventListener("DOMContentLoaded", function () {
              * @async
              * @function
              * @returns {Promise<Object>} A promise that resolves to an object containing:
-             *   @property {string} childId - The ID of the selected child.
-             *   @property {string|null} templateId - The ID of the selected template, or null if not selected.
-             *   @property {string} letterBody - The body text of the letter.
-             *   @property {Array<{filename: string, content: string}>} attachments - The list of base64-encoded attachments.
+             *   @property {String} childId - The ID of the selected child.
+             *   @property {String|null} templateId - The ID of the selected template, or null if not selected.
+             *   @property {String} letterBody - The body text of the letter.
+             *   @property {Array<{filename: String, content: String}>} attachments - The list of base64-encoded attachments.
              */
             _collectFormData: async function () {
                 const childId = this.$("#child-dropdown").val();
@@ -203,9 +203,9 @@ document.addEventListener("DOMContentLoaded", function () {
              *
              * @async
              * @function
-             * @param {string} mode - Submission mode: `'send'` to submit the letter, `'preview'` to show a preview.
+             * @param {String} mode - Submission mode: `'send'` to submit the letter, `'preview'` to show a preview.
              * @param {Object} result - The result object returned by the server.
-             * @param {string} childId - The ID of the selected child, used in the redirect URL.
+             * @param {String} childId - The ID of the selected child, used in the redirect URL.
              *
              * @returns {Promise<void>} Resolves when the UI navigation or update is complete.
              */

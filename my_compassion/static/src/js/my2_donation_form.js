@@ -139,9 +139,8 @@ odoo.define("my_compassion.donation_form", function (require) {
                         ) {
                             this.$(".limit-error-message").removeAttr("hidden");
                             return;
-                        } else {
-                            this.$(".limit-error-message").attr("hidden", true);
                         }
+                        this.$(".limit-error-message").attr("hidden", true);
 
                         // Trigger submission event
                         this.$el.trigger(this.$(".btn-submit").data("submission-event"), [
@@ -172,7 +171,7 @@ odoo.define("my_compassion.donation_form", function (require) {
 
         /**
          * Validates the payment form.
-         * @returns {boolean} - True if valid, false otherwise.
+         * @returns {Boolean} - True if valid, false otherwise.
          */
         _validateForm: function () {
             var isValid = true;

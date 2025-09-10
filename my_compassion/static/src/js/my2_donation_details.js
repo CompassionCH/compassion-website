@@ -30,12 +30,10 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     route: "/my2/gifts/new",
                     params: data,
                 })
-                    .then(
-                        function (data) {
-                            // Redirect user to gift package page
-                            window.location.href = "/my2/gift-package";
-                        }.bind(this)
-                    )
+                    .then(function (data) {
+                        // Redirect user to gift package page
+                        window.location.href = "/my2/gift-package";
+                    })
                     .guardedCatch(
                         function () {
                             // Re-enable buttons

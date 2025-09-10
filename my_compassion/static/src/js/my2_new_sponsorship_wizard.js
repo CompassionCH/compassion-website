@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
             /**
              * Validates required fields in the current step.
-             * @returns {boolean} - True if valid, false otherwise.
+             * @returns {Boolean} - True if valid, false otherwise.
              */
             _validateForm: function () {
                 var isValid = true;

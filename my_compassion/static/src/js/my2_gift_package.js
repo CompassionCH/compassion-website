@@ -66,12 +66,10 @@ document.addEventListener("DOMContentLoaded", function (event) {
                             }
                         }.bind(this)
                     )
-                    .guardedCatch(
-                        function () {
-                            // Replace spinner with error
-                            $("#edit-donation-form").html("Error");
-                        }.bind(this)
-                    );
+                    .guardedCatch(function () {
+                        // Replace spinner with error
+                        $("#edit-donation-form").html("Error");
+                    });
             },
 
             /**
@@ -128,12 +126,10 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     route: "/my2/gifts/edit",
                     params: data,
                 })
-                    .then(
-                        function (data) {
-                            // Redirect user to gift package page
-                            window.location.href = "/my2/gift-package";
-                        }.bind(this)
-                    )
+                    .then(function (data) {
+                        // Redirect user to gift package page
+                        window.location.href = "/my2/gift-package";
+                    })
                     .guardedCatch(
                         function () {
                             // Re-enable buttons
