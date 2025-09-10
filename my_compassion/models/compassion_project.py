@@ -32,46 +32,103 @@ class CompassionProject(models.Model):
     current_temperature_celsius = fields.Float(
         string='Current Temperature (°C)',
         compute='_compute_current_temperature',
-        store = False
+        store=False
     )
 
 
-
-    def get_activity_for_age(self, age, activity_type="physical"):
-        if activity_type and activity_type not in self.supported_types:
-            raise ValueError(
-                f"Type {activity_type} is not supported."
-                f"It should be in {self.supported_types}"
-            )
-        if age < 0:
-            raise ValueError("Age needs to be positive")
-        elif age <= 5:
-            return getattr(self, f"{activity_type}_activity_babies_ids")
-        elif age <= 11:
-            return getattr(self, f"{activity_type}_activity_kids_ids")
-        else:
-            return getattr(self, f"{activity_type}_activity_ados_ids")
+current_weather_icon_id = fields.Char(
+    string='Current Weather Icon Id',
+    compute='_compute_current_weather_icon_id'
+)
 
 
+def get_activity_for_age(self, age, activity_type="physical"):
+    if activity_type and activity_type not in self.supported_types:
+        raise ValueError(
+            f"Type {activity_type} is not supported."
+            f"It should be in {self.supported_types}"
+        )
+    if age < 0:
+        raise ValueError("Age needs to be positive")
+    elif age <= 5:
+        return getattr(self, f"{activity_type}_activity_babies_ids")
+    elif age <= 11:
+        return getattr(self, f"{activity_type}_activity_kids_ids")
+    else:
+        return getattr(self, f"{activity_type}_activity_ados_ids")
 
-    def _compute_current_time(self):
-        """
-        Computes the current time.
-        Odoo automatically handles timezone conversion for display.
-        The value should be assigned in UTC.
-        """
-        now_utc = fields.Datetime.now()
-        for record in self:
-            tzinfo = timezone(record.timezone) if record.timezone else tools.utc
-            record.center_current_time = now_utc.astimezone(tzinfo).strftime("%Y-%m-%d %H:%M:%S")
+
+def _compute_current_time(self):
+    """
+    Computes the current time.
+    Odoo automatically handles timezone conversion for display.
+    The value should be assigned in UTC.
+    """
+    now_utc = fields.Datetime.now()
+    for record in self:
+        tzinfo = timezone(record.timezone) if record.timezone else tools.utc
+        record.center_current_time = now_utc.astimezone(tzinfo).strftime("%Y-%m-%d %H:%M:%S")
 
 
-    def _compute_current_temperature(self):
-        """
-        Computes the current temperature in celsius.
-        """
-        for record in self:
-            if record.current_temperature:
-                record.update_weather()
-                # Convert from Kelvin to Celsius
-                record.current_temperature_celsius = round(record.current_temperature - 273.15, 1)
+def _compute_current_temperature(self):
+    """
+    Computes the current temperature in celsius.
+    """
+    for record in self:
+        if record.current_temperature:
+            record.update_weather()
+            # Convert from Kelvin to Celsius
+            record.current_temperature_celsius = round(record.current_temperature - 273.15, 1)
+
+
+def _compute_current_weather_icon_id(self):
+    """
+    Computes the current weather icon.
+    """
+    for record in self:
+        if record.weather_icon:
+            record.update_weather()
+            current_hour = record.center_current_time.hour
+            isDay = (6 <= current_hour < 19)
+
+            icon_id = ""
+
+            match record.current_weather:
+                case "Clear":
+                    icon_id = "Sun" if isDay else "Moon01"
+                case "Clouds":
+                    icon_id = "CloudSun02" if isDay else "CloudMoon"
+                case "Rain" | "Storm" :
+                    icon_id = "CloudRaining"
+                case "Mist" |"Haze" | "Fog" | "Smoke" | "Dust" | "Sand" | "Ash " | "Drizzle":
+                    icon_id = "Waves"
+                case "Thunderstorm":
+                    icon_id = "CloudLightning"
+                case "Snow":
+                    icon_id = "Snowflake01"
+                case "Tornado" | "Squall":
+                    icon_id = "Wind03"
+                case _:
+                    icon_id = "Sun" if isDay else "Moon01"
+
+            record.current_weather_icon_id = icon_id
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            record.current_weather_icon = {
+                "icon": {'day': day_icon, 'night': night_icon},
+            }
