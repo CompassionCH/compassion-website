@@ -280,14 +280,14 @@
                                      class="cd-weather-map-container js-cd-weather-map-container"
                                      t-att-data-child-id="compassion_child.id"
                                      t-att-data-timezone="timezone">
-                                >
+
 
                                 <t t-call="my_compassion.WeatherTimeContainer">
 
                                     <t t-set="timezone" t-value="timezone"/>
                                     <t t-set="current_temperature" t-value="current_temperature"/>
                                     <t t-set="weather_status" t-value="weather_status"/>
-                                    <t t-set="project_name" t-value="compassion_child.project_id.name"/>
+                                    <t t-set="fcp_id" t-value="compassion_child.project_id.fcp_id"/>
                                     <t t-set="church_name" t-value="compassion_child.project_id.local_church_name"/>
                                     <t t-set="city_country"
                                        t-value="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"/>

@@ -14,7 +14,7 @@
     Injected data:
     - records: list of items to display in the component, each item should have:
         - timezone (string): timezone of the center.
-        - project_name (string): name of the project the center belongs to.
+        - fcp_id (string): Identifier of the compassion project.
         - church_name (string): name of the local church associated with the center.
         - city_country (string): represents where the center is located in the following format city,country.
 
@@ -30,10 +30,10 @@
         <!-- Keep the container invisible until all the weather data have been loaded -->
         <div class="center-info-card" style="display: none;">
 
-            <t t-if="project_name and church_name">
+            <t t-if="fcp_id and church_name">
                 <div class="center-info-card__header">
                     <p class="center-info-card__project-info">
-                        <t t-esc="project_name"/>,
+                        <t t-esc="fcp_id"/>,
                         <t t-esc="church_name"/>
                     </p>
                 </div>
