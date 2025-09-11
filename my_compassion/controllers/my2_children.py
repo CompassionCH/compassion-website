@@ -174,7 +174,6 @@ class MyCompassionChildrenController(WebsiteChild):
         weather_status = child.sudo().project_id.current_weather
         center_temperature = child.sudo().project_id.current_temperature_celsius
         weather_icon_id = child.sudo().project_id.weather_icon_id
-        # data = {'current_temperature': center_temperature, 'current_weather': {'status' : weather_status, 'icon_path': weather_icon}}
         data = {
             "current_temperature": center_temperature,
             "current_weather": weather_status,
