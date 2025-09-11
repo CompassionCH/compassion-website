@@ -1,15 +1,22 @@
-
-// This script fetches the timezone of a child's center and displays the current time there.
+/**
+ * Time updater and Weather Fetcher for Child Profile Center
+ * --------------------------------
+ * This script keeps the current time of the child compassion center updated every minute and fetches the weather infos.
+ * Key Features:
+ * - Fetches weather data in via POST to `/my2/children/<childId>/center-weather`
+ * - Use the injected time zone to display the current time in the center's locale
+ * - Updates the time every minute in the client side
+ * - Displays the container only after successful data fetch
+ * Used in /templates/pages/my2_child_timeline.xml
+ */
 document.addEventListener('DOMContentLoaded', () => {
-    const mapContainerEl = document.querySelector(".cd-weather-map-container");
+    const containerEl = document.querySelector('.center-info-card');
+    const timelinePageEl = document.querySelector(".cd-weather-map-container");
     const currentTimeEl = document.getElementById('current_time');
     const currentTemperatureEl = document.getElementById('current_temperature');
-    const childId = mapContainerEl.dataset.childId;
-    const timezone = mapContainerEl.dataset.timezone;
+    const childId = timelinePageEl.dataset.childId;
+    const timezone = timelinePageEl.dataset.timezone;
     const weather_icon_el = document.getElementById('weather_icon');
-
-    const containerEl = document.querySelector('.center-info-card');
-
 
 
 
