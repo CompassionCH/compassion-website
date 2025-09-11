@@ -14,6 +14,8 @@ const sunColorFilter =
     "filter: brightness(0) saturate(100%) invert(71%) sepia(39%) saturate(849%) hue-rotate(356deg) brightness(101%) contrast(98%);";
 const moonColorFilter =
     "filter: brightness(0) saturate(100%) invert(35%) sepia(24%) saturate(1%) hue-rotate(317deg) brightness(92%) contrast(87%);";
+const rainColorFilter ="filter: brightness(0) saturate(100%) invert(27%) sepia(75%) saturate(2335%) hue-rotate(217deg) brightness(94%) contrast(96%);"
+const mistColorFilter ="filter: brightness(0) saturate(100%) invert(50%) sepia(16%) saturate(381%) hue-rotate(188deg) brightness(100%) contrast(95%);"
 
 document.addEventListener("DOMContentLoaded", () => {
     const containerEl = document.querySelector(".center-info-card");
@@ -71,6 +73,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else if (icon_id === "MoonStar.svg") {
                     weather_icon_el.style = moonColorFilter;
                 }
+                else if (icon_id === "CloudRaining04.svg" || icon_id === "CloudLightning.svg") {
+                    weather_icon_el.style = rainColorFilter;
+                }
+                else if (icon_id === "Waves.svg" || icon_id==="Wind03.svg") {
+                    weather_icon_el.style = mistColorFilter;
+                }
+
+
+
 
                 //Upon successful fetch and update, ensure the container is visible
                 if (containerEl) {
