@@ -102,7 +102,7 @@ class CompassionProject(models.Model):
                     | "Smoke"
                     | "Dust"
                     | "Sand"
-                    | "Ash "
+                    | "Ash"
                     | "Drizzle"
                 ):
                     icon_id = "Waves"
