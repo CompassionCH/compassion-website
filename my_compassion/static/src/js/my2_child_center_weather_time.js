@@ -5,7 +5,8 @@
  * Key Features:
  * - Fetches weather data in via POST to `/my2/children/<childId>/center-weather`
  * - Use the injected time zone to display the current time in the center's locale
- * - Updates the time every minute in the client side
+ * - Updates the time every 15 seconds in the client side
+ * - Load the weather icon based on the fetched weather data
  * - Displays the container only after successful data fetch
  * Used in /templates/pages/my2_child_timeline.xml
  */
@@ -18,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const timezone = timelinePageEl.dataset.timezone;
     const weather_icon_el = document.getElementById("weather_icon");
 
+    // Handles time computation and formating
     if (currentTimeEl) {
         //Formatting options for the time to be shown
         const options = {
@@ -26,8 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
             hour12: true,
             timeZone: timezone,
         };
-
-        console.log("Timezone for center:", timezone);
 
         const updateTime = () => {
             try {
@@ -39,13 +39,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 currentTimeEl.textContent = centerTimeString;
             } catch (error) {
                 console.error("Invalid timezone identifier received from server:", centerTimezone, error);
-                currentTimeEl.textContent = "Error";
                 clearInterval(clockInterval);
             }
         };
         updateTime();
-        const clockInterval = setInterval(updateTime, 1000 * 60); // Update every minute
+        const clockInterval = setInterval(updateTime, 1000 * 15); // Update every 15 seconds
     }
+    // Fetch and update the current temperature and weather icon
     if (currentTemperatureEl && weather_icon_el) {
         fetch(`/my2/children/${childId}/center-weather`)
             .then((response) => {
