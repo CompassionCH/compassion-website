@@ -11,7 +11,7 @@ from datetime import date
 from odoo import http
 from odoo.exceptions import ValidationError
 from odoo.http import request
-
+from odoo import api
 
 class MyCompassionUserController(http.Controller):
     @http.route("/my2/user_settings", type="http", auth="user", website=True)
@@ -182,5 +182,11 @@ class MyCompassionUserController(http.Controller):
                 "success": False,
                 "error": "Account cannot be deleted due to active sponsorships.",
             }
-        partner.forget_me()
-        return {"success": True}
+        try:
+            request.env['res.partner'].with_user(api.SUPERUSER_ID).browse(partner.id).forget_me()
+            return {"success": True}
+        except Exception as e:
+            return {
+                "success": False,
+                "error": "Account cannot be deleted due to exception:" + str(e),
+            }
