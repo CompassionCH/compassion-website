@@ -8,9 +8,8 @@
 ##############################################################################
 
 import logging
-from odoo import _, api, fields, models, tools
-from odoo.exceptions import UserError
-from odoo.addons.message_center_compassion.tools.onramp_connector import OnrampConnector
+
+from odoo import fields, models, tools
 
 logger = logging.getLogger(__name__)
 
@@ -26,19 +25,16 @@ class CompassionProject(models.Model):
     supported_types = ["cognitive", "physical", "socio", "spiritual"]
 
     center_current_time = fields.Datetime(
-        string='Current Time',
-        compute='_compute_current_time'
+        string="Current Time", compute="_compute_current_time"
     )
     weather_icon_id = fields.Char(
-        string='Current Weather Icon Id',
-        compute='_compute_weather_icon_id'
+        string="Current Weather Icon Id", compute="_compute_weather_icon_id"
     )
     current_temperature_celsius = fields.Float(
-        string='Current Temperature (°C)',
-        compute='_compute_current_temperature',
-        store=False
+        string="Current Temperature (°C)",
+        compute="_compute_current_temperature",
+        store=False,
     )
-
 
     def get_activity_for_age(self, age, activity_type="physical"):
         if activity_type and activity_type not in self.supported_types:
@@ -55,7 +51,6 @@ class CompassionProject(models.Model):
         else:
             return getattr(self, f"{activity_type}_activity_ados_ids")
 
-
     def _compute_current_time(self):
         """
         Computes the current time.
@@ -65,8 +60,9 @@ class CompassionProject(models.Model):
         now_utc = fields.Datetime.now()
         for record in self:
             tzinfo = timezone(record.timezone) if record.timezone else tools.utc
-            record.center_current_time = now_utc.astimezone(tzinfo).strftime("%Y-%m-%d %H:%M:%S")
-
+            record.center_current_time = now_utc.astimezone(tzinfo).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
 
     def _compute_current_temperature(self):
         """
@@ -76,8 +72,9 @@ class CompassionProject(models.Model):
             if record.current_temperature:
                 record.update_weather()
                 # Convert from Kelvin to Celsius
-                record.current_temperature_celsius = round(record.current_temperature - 273.15, 1)
-
+                record.current_temperature_celsius = round(
+                    record.current_temperature - 273.15, 1
+                )
 
     def _compute_weather_icon_id(self):
         """
@@ -87,7 +84,7 @@ class CompassionProject(models.Model):
             self.ensure_one()
             record.update_weather()
             current_hour = record.center_current_time.hour
-            isDay = (6 <= current_hour < 19)
+            isDay = 6 <= current_hour < 19
 
             icon_id = ""
 
@@ -98,7 +95,16 @@ class CompassionProject(models.Model):
                     icon_id = "CloudSun02" if isDay else "CloudMoon"
                 case "Rain" | "Storm":
                     icon_id = "CloudRaining"
-                case "Mist" | "Haze" | "Fog" | "Smoke" | "Dust" | "Sand" | "Ash " | "Drizzle":
+                case (
+                    "Mist"
+                    | "Haze"
+                    | "Fog"
+                    | "Smoke"
+                    | "Dust"
+                    | "Sand"
+                    | "Ash "
+                    | "Drizzle"
+                ):
                     icon_id = "Waves"
                 case "Thunderstorm":
                     icon_id = "CloudLightning"
