@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .then((data) => {
                 const temperature = data.current_temperature;
-                currentTemperatureEl.textContent = `${temperature}°C`;
+                currentTemperatureEl.textContent = `${temperature}`;
                 const icon_id = data.weather_icon_id;
                 weather_icon_el.src = `/theme_compassion_2025/static/src/img/icons/${icon_id}`;
 

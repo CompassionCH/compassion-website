@@ -23,27 +23,28 @@
 <!--map info container containing the meteo info, time and location -->
 <odoo>
     <template id="WeatherTimeContainer" name="Weather and Time Container">
-        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_weather_time_container.css" />
+        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_weather_time_container.css"/>
         <!-- Keep the container invisible until all the weather data have been loaded -->
         <div class="center-info-card" style="display: none;">
             <t t-if="fcp_id and church_name">
                 <div class="center-info-card__header">
                     <p class="center-info-card__project-info">
-                        <t t-esc="fcp_id" />
+                        <t t-esc="fcp_id"/>
                         ,
-                        <t t-esc="church_name" />
+                        <t t-esc="church_name"/>
                     </p>
                 </div>
             </t>
             <p t-if="city_country" class="center-info-card__location">
-                <t t-esc="city_country" />
+                <t t-esc="city_country"/>
             </p>
             <div class="center-info-card__details">
-                <span id="current_time" class="center-info-card__time" />
-                <span class="center-info-card__separator" />
+                <span id="current_time" class="center-info-card__time"/>
+                <span class="center-info-card__separator"/>
                 <div class="center-info-card__weather">
-                    <img src="" id="weather_icon" class="center-info-card__weather-icon" alt="Weather icon" />
-                    <span id="current_temperature" class="center-info-card__temperature" />
+                    <img src="" id="weather_icon" class="center-info-card__weather-icon" alt="Weather icon"/>
+                    <span id="current_temperature" class="center-info-card__temperature"/>
+                    <span class="small" style="position: relative; top: -0.18em; color: var(--low-grey);">°C</span>
                 </div>
             </div>
         </div>
