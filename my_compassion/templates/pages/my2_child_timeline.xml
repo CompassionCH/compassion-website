@@ -17,8 +17,8 @@
 -->
 <odoo>
     <template id="my2_child_timeline_page" name="My Compassion 2 Child Timeline Page">
-        <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile.css"/>
-        <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile_timeline.css"/>
+        <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile.css" />
+        <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile_timeline.css" />
         <t t-call="website.layout">
             <div class="container">
                 <div class="single-column">
@@ -27,13 +27,13 @@
                         <!-- Portrait -->
                         <div class="child-details-container">
                             <t t-call="theme_compassion_2025.PortraitComponent">
-                                <t t-set="title" t-value="compassion_child.preferred_name"/>
+                                <t t-set="title" t-value="compassion_child.preferred_name" />
                                 <t
-                                        t-set="src"
-                                        t-value="'/web/image/compassion.child/' + str(compassion_child.id) + '/portrait'"
+                                    t-set="src"
+                                    t-value="'/web/image/compassion.child/' + str(compassion_child.id) + '/portrait'"
                                 />
-                                <t t-set="alt" t-value="'Portrait of ' + compassion_child.preferred_name"/>
-                                <t t-set="size" t-value="'large'"/>
+                                <t t-set="alt" t-value="'Portrait of ' + compassion_child.preferred_name" />
+                                <t t-set="size" t-value="'large'" />
                             </t>
                         </div>
                         <!-- Child info and buttons actions -->
@@ -41,93 +41,91 @@
                             <!-- Action buttons -->
                             <div class="child-action-buttons justify-content-md-start ml-md-3 pb-3 p-md-0">
                                 <t
-                                        t-if="access_scope == 'sponsor'"
-                                        t-call="theme_compassion_2025.ThemedButtonComponent"
+                                    t-if="access_scope == 'sponsor'"
+                                    t-call="theme_compassion_2025.ThemedButtonComponent"
                                 >
-                                    <t t-set="variant" t-value="'compact'"/>
-                                    <t t-set="variation" t-value="'hollow'"/>
-                                    <t t-set="label" t-value="'Write a letter'"/>
-                                    <t t-set="color" t-value="'core-blue'"/>
-                                    <t t-set="text_color" t-value="'core-blue'"/>
+                                    <t t-set="variant" t-value="'compact'" />
+                                    <t t-set="variation" t-value="'hollow'" />
+                                    <t t-set="label" t-value="'Write a letter'" />
+                                    <t t-set="color" t-value="'core-blue'" />
+                                    <t t-set="text_color" t-value="'core-blue'" />
                                     <t
-                                            t-set="href"
-                                            t-value="'/my2/children/letters/new' + '?child_id=' + str(compassion_child.id)"
+                                        t-set="href"
+                                        t-value="'/my2/children/letters/new' + '?child_id=' + str(compassion_child.id)"
                                     />
                                 </t>
                                 <t
-                                        t-if="access_scope == 'sponsor'"
-                                        t-call="theme_compassion_2025.ThemedButtonComponent"
+                                    t-if="access_scope == 'sponsor'"
+                                    t-call="theme_compassion_2025.ThemedButtonComponent"
                                 >
-                                    <t t-set="variant" t-value="'compact'"/>
-                                    <t t-set="variation" t-value="'hollow'"/>
-                                    <t t-set="label" t-value="'Give a gift'"/>
-                                    <t t-set="color" t-value="'core-blue'"/>
-                                    <t t-set="text_color" t-value="'core-blue'"/>
+                                    <t t-set="variant" t-value="'compact'" />
+                                    <t t-set="variation" t-value="'hollow'" />
+                                    <t t-set="label" t-value="'Give a gift'" />
+                                    <t t-set="color" t-value="'core-blue'" />
+                                    <t t-set="text_color" t-value="'core-blue'" />
                                     <t
-                                            t-set="href"
-                                            t-value="'/my2/gifts' + '?type=gift&amp;child_id=' + str(compassion_child.id)"
+                                        t-set="href"
+                                        t-value="'/my2/gifts' + '?type=gift&amp;child_id=' + str(compassion_child.id)"
                                     />
                                 </t>
-
-
                                 <t t-if="access_scope == 'public'" t-call="theme_compassion_2025.ThemedButtonComponent">
-                                    <t t-set="variant" t-value="'compact'"/>
-                                    <t t-set="variation" t-value="'filled'"/>
-                                    <t t-set="label" t-value="'Sponsor me'"/>
-                                    <t t-set="color" t-value="'dark-blue'"/>
-                                    <t t-set="text_color" t-value="'pure-white'"/>
-                                    <t t-set="href" t-value="'/my2/new-sponsorship/' + str(compassion_child.id)"/>
+                                    <t t-set="variant" t-value="'compact'" />
+                                    <t t-set="variation" t-value="'filled'" />
+                                    <t t-set="label" t-value="'Sponsor me'" />
+                                    <t t-set="color" t-value="'dark-blue'" />
+                                    <t t-set="text_color" t-value="'pure-white'" />
+                                    <t t-set="href" t-value="'/my2/new-sponsorship/' + str(compassion_child.id)" />
                                 </t>
                             </div>
                             <!-- Child personal information -->
                             <div class="child-personal-information d-flex flex-column flex-grow-1 mt-md-3 ml-md-3">
                                 <div class="child-info-item d-flex align-items-center">
                                     <div class="frame bg-core-blue mr-2">
-                                        <i class="icon icon-calendar-heart02 text-pure-white m-2"/>
+                                        <i class="icon icon-calendar-heart02 text-pure-white m-2" />
                                     </div>
                                     <!-- TODO: Handle language changes for birthday -->
                                     <!-- TODO: Put that in the backend (maybe) -->
-                                    <t t-set="day" t-value="compassion_child.birthdate.day"/>
-                                    <t t-set="month" t-value="compassion_child.birthdate.strftime('%B')"/>
-                                    <t t-set="suffix" t-value="'th'"/>
+                                    <t t-set="day" t-value="compassion_child.birthdate.day" />
+                                    <t t-set="month" t-value="compassion_child.birthdate.strftime('%B')" />
+                                    <t t-set="suffix" t-value="'th'" />
                                     <t t-if="day in [1, 21, 31]">
-                                        <t t-set="suffix" t-value="'st'"/>
+                                        <t t-set="suffix" t-value="'st'" />
                                     </t>
                                     <t t-elif="day in [2, 22]">
-                                        <t t-set="suffix" t-value="'nd'"/>
+                                        <t t-set="suffix" t-value="'nd'" />
                                     </t>
                                     <t t-elif="day in [3, 23]">
-                                        <t t-set="suffix" t-value="'rd'"/>
+                                        <t t-set="suffix" t-value="'rd'" />
                                     </t>
                                     <p class="child-info-text">
                                         My birthday is the
                                         <span class="text-core-blue font-weight-bold">
-                                            <t t-esc="day"/>
-                                            <t t-esc="suffix"/>
-                                            <t t-esc="month"/>
+                                            <t t-esc="day" />
+                                            <t t-esc="suffix" />
+                                            <t t-esc="month" />
                                         </span>
                                     </p>
                                 </div>
                                 <div class="child-info-item d-flex align-items-center">
                                     <div class="frame bg-mid-green mr-2">
-                                        <i class="icon icon-heart text-pure-white m-2"/>
+                                        <i class="icon icon-heart text-pure-white m-2" />
                                     </div>
                                     <p class="child-info-text">
                                         <span class="text-mid-green font-weight-bold">I love</span>
-                                        <t t-esc="compassion_child.get_list('hobby_ids.value')"/>
+                                        <t t-esc="compassion_child.get_list('hobby_ids.value')" />
                                     </p>
                                 </div>
                                 <div class="child-info-item d-flex align-items-center">
                                     <div class="frame bg-mid-pink mr-2">
-                                        <i class="icon icon-graduation-hat02 text-pure-white m-2"/>
+                                        <i class="icon icon-graduation-hat02 text-pure-white m-2" />
                                     </div>
                                     <p class="child-info-text">
                                         I'm in
                                         <span class="text-mid-pink font-weight-bold">
-                                            <t t-esc="compassion_child.translate('education_level')"/>
+                                            <t t-esc="compassion_child.translate('education_level')" />
                                         </span>
                                         <span>and my favourite subjects are</span>
-                                        <t t-esc="compassion_child.get_list('subject_ids.value')"/>
+                                        <t t-esc="compassion_child.get_list('subject_ids.value')" />
                                     </p>
                                 </div>
                             </div>
@@ -147,39 +145,39 @@
                         <ul class="nav nav-tabs d-none d-md-flex" id="child-info-tabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <a
-                                        class="nav-link active"
-                                        id="family-tab-link"
-                                        data-toggle="tab"
-                                        href="#family-tab"
-                                        role="tab"
-                                        aria-controls="family-tab"
-                                        aria-selected="true"
+                                    class="nav-link active"
+                                    id="family-tab-link"
+                                    data-toggle="tab"
+                                    href="#family-tab"
+                                    role="tab"
+                                    aria-controls="family-tab"
+                                    aria-selected="true"
                                 >
                                     My Family
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <a
-                                        class="nav-link"
-                                        id="project-tab-link"
-                                        data-toggle="tab"
-                                        href="#project-tab"
-                                        role="tab"
-                                        aria-controls="project-tab"
-                                        aria-selected="false"
+                                    class="nav-link"
+                                    id="project-tab-link"
+                                    data-toggle="tab"
+                                    href="#project-tab"
+                                    role="tab"
+                                    aria-controls="project-tab"
+                                    aria-selected="false"
                                 >
                                     My Project
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <a
-                                        class="nav-link"
-                                        id="country-tab-link"
-                                        data-toggle="tab"
-                                        href="#country-tab"
-                                        role="tab"
-                                        aria-controls="country-tab"
-                                        aria-selected="false"
+                                    class="nav-link"
+                                    id="country-tab-link"
+                                    data-toggle="tab"
+                                    href="#country-tab"
+                                    role="tab"
+                                    aria-controls="country-tab"
+                                    aria-selected="false"
                                 >
                                     My Country
                                 </a>
@@ -189,47 +187,47 @@
                         <div class="tab-content" id="child-info-tabs-content">
                             <!-- FAMILY TAB CONTENT -->
                             <div
-                                    class="tab-pane fade show active"
-                                    id="family-tab"
-                                    role="tabpanel"
-                                    aria-labelledby="family-tab-link"
+                                class="tab-pane fade show active"
+                                id="family-tab"
+                                role="tabpanel"
+                                aria-labelledby="family-tab-link"
                             >
                                 <div class="description-text">
                                     <p>
                                         I currently live in
                                         <t
-                                                t-esc="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"
+                                            t-esc="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"
                                         />
                                         with
                                         <t
-                                                t-if="compassion_child.household_id.father_living_with_child and compassion_child.household_id.mother_living_with_child"
+                                            t-if="compassion_child.household_id.father_living_with_child and compassion_child.household_id.mother_living_with_child"
                                         >
                                             both of my parents and the rest of my family.
                                         </t>
                                         <t t-else="">my family.</t>
                                         <t
-                                                t-if="compassion_child.household_id.nb_brothers or compassion_child.household_id.nb_sisters"
+                                            t-if="compassion_child.household_id.nb_brothers or compassion_child.household_id.nb_sisters"
                                         >
                                             I have
                                             <t t-if="compassion_child.household_id.nb_brothers > 0">
                                                 <t t-if="compassion_child.household_id.nb_brothers > 1">
-                                                    <t t-esc="compassion_child.household_id.nb_brothers"/>
+                                                    <t t-esc="compassion_child.household_id.nb_brothers" />
                                                 </t>
                                                 <t
-                                                        t-esc="'a brother' if compassion_child.household_id.nb_brothers == 1 else 'brothers'"
+                                                    t-esc="'a brother' if compassion_child.household_id.nb_brothers == 1 else 'brothers'"
                                                 />
                                             </t>
                                             <t
-                                                    t-if="compassion_child.household_id.nb_brothers > 0 and compassion_child.household_id.nb_sisters > 0"
+                                                t-if="compassion_child.household_id.nb_brothers > 0 and compassion_child.household_id.nb_sisters > 0"
                                             >
                                                 and
                                             </t>
                                             <t t-if="compassion_child.household_id.nb_sisters > 0">
                                                 <t t-if="compassion_child.household_id.nb_sisters > 1">
-                                                    <t t-esc="compassion_child.household_id.nb_sisters"/>
+                                                    <t t-esc="compassion_child.household_id.nb_sisters" />
                                                 </t>
                                                 <t
-                                                        t-esc="'a sister' if compassion_child.household_id.nb_sisters == 1 else 'sisters'"
+                                                    t-esc="'a sister' if compassion_child.household_id.nb_sisters == 1 else 'sisters'"
                                                 />
                                                 .
                                             </t>
@@ -237,29 +235,29 @@
                                     </p>
                                     <p>
                                         <t
-                                                t-if="compassion_child.household_id.father_living_with_child and
+                                            t-if="compassion_child.household_id.father_living_with_child and
                                                 compassion_child.household_id.male_guardian_job_type != 'Not Employed'"
                                         >
                                             My father works on
                                             <t
-                                                    t-set="value"
-                                                    t-value="request.env['ir.advanced.translation'].get(compassion_child.household_id.translate('male_guardian_job'))"
+                                                t-set="value"
+                                                t-value="request.env['ir.advanced.translation'].get(compassion_child.household_id.translate('male_guardian_job'))"
                                             />
-                                            <t t-esc="value"/>
+                                            <t t-esc="value" />
                                             .
                                         </t>
                                         <t
-                                                t-if="compassion_child.household_id.mother_living_with_child and
+                                            t-if="compassion_child.household_id.mother_living_with_child and
                                                 compassion_child.household_id.female_guardian_job_type != 'Not Employed'"
                                         >
                                             My mother works as a
                                             <t
-                                                    t-set="value"
-                                                    t-value="request.env['ir.advanced.translation']
+                                                t-set="value"
+                                                t-value="request.env['ir.advanced.translation']
                                                .get(compassion_child.household_id.translate('female_guardian_job'),
                                                female=True)"
                                             />
-                                            <t t-esc="value"/>
+                                            <t t-esc="value" />
                                             .
                                         </t>
                                     </p>
@@ -274,117 +272,114 @@
                                     </iframe>-->
                                 </div>
                             </div>
-
-
-                            <section t-if="access_scope == 'sponsor'"
-                                     class="cd-weather-map-container js-cd-weather-map-container"
-                                     t-att-data-child-id="compassion_child.id"
-                                     t-att-data-timezone="timezone">
-
-
+                            <section
+                                t-if="access_scope == 'sponsor'"
+                                class="cd-weather-map-container js-cd-weather-map-container"
+                                t-att-data-child-id="compassion_child.id"
+                                t-att-data-timezone="timezone"
+                            >
                                 <t t-call="my_compassion.WeatherTimeContainer">
-
-                                    <t t-set="timezone" t-value="timezone"/>
-                                    <t t-set="current_temperature" t-value="current_temperature"/>
-                                    <t t-set="weather_status" t-value="weather_status"/>
-                                    <t t-set="fcp_id" t-value="compassion_child.project_id.fcp_id"/>
-                                    <t t-set="church_name" t-value="compassion_child.project_id.local_church_name"/>
-                                    <t t-set="city_country"
-                                       t-value="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"/>
-
+                                    <t t-set="timezone" t-value="timezone" />
+                                    <t t-set="current_temperature" t-value="current_temperature" />
+                                    <t t-set="weather_status" t-value="weather_status" />
+                                    <t t-set="fcp_id" t-value="compassion_child.project_id.fcp_id" />
+                                    <t t-set="church_name" t-value="compassion_child.project_id.local_church_name" />
+                                    <t
+                                        t-set="city_country"
+                                        t-value="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"
+                                    />
                                 </t>
                             </section>
-
                             <!-- PROJECT TAB CONTENT -->
                             <div
-                                    class="tab-pane fade"
-                                    id="project-tab"
-                                    role="tabpanel"
-                                    aria-labelledby="project-tab-link"
+                                class="tab-pane fade"
+                                id="project-tab"
+                                role="tabpanel"
+                                aria-labelledby="project-tab-link"
                             >
                                 <ul class="tab-items">
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Church partner:</strong>
-                                        <t t-esc="compassion_child.project_id.local_church_name"/>
+                                        <t t-esc="compassion_child.project_id.local_church_name" />
                                     </li>
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Location:</strong>
-                                        <t t-esc="compassion_child.project_id.country_id.name"/>
+                                        <t t-esc="compassion_child.project_id.country_id.name" />
                                     </li>
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Closest Major City:</strong>
-                                        <t t-esc="compassion_child.project_id.closest_city"/>
+                                        <t t-esc="compassion_child.project_id.closest_city" />
                                     </li>
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Community:</strong>
-                                        <t t-esc="compassion_child.project_id.community_locale"/>
+                                        <t t-esc="compassion_child.project_id.community_locale" />
                                     </li>
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Most Commonly Spoken Language:</strong>
-                                        <t t-esc="compassion_child.project_id.primary_language_id.name"/>
+                                        <t t-esc="compassion_child.project_id.primary_language_id.name" />
                                     </li>
                                     <li class="tab-item">
                                         <strong class="tab-item-title">No. of Residents:</strong>
-                                        <t t-esc="compassion_child.project_id.nb_cdsp_kids"/>
+                                        <t t-esc="compassion_child.project_id.nb_cdsp_kids" />
                                     </li>
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Most Common Occupation:</strong>
                                         <t
-                                                t-set="value"
-                                                t-value="compassion_child.get_list('project_id.primary_adults_occupation_ids.value')"
+                                            t-set="value"
+                                            t-value="compassion_child.get_list('project_id.primary_adults_occupation_ids.value')"
                                         />
-                                        <t t-esc="value"/>
+                                        <t t-esc="value" />
                                     </li>
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Typical House Construction:</strong>
-                                        <t t-esc="compassion_child.project_id.typical_wall_material"/>
+                                        <t t-esc="compassion_child.project_id.typical_wall_material" />
                                     </li>
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Regional Diet:</strong>
                                         <t
-                                                t-set="value"
-                                                t-value="compassion_child.get_list('project_id.primary_diet_ids.value')"
+                                            t-set="value"
+                                            t-value="compassion_child.get_list('project_id.primary_diet_ids.value')"
                                         />
-                                        <t t-esc="value"/>
+                                        <t t-esc="value" />
                                     </li>
                                 </ul>
                             </div>
                             <!-- COUNTRY TAB CONTENT -->
                             <div
-                                    class="tab-pane fade"
-                                    id="country-tab"
-                                    role="tabpanel"
-                                    aria-labelledby="country-tab-link"
+                                class="tab-pane fade"
+                                id="country-tab"
+                                role="tabpanel"
+                                aria-labelledby="country-tab-link"
                             >
-                                <t t-set="field_office" t-value="compassion_child.field_office_id"/>
+                                <t t-set="field_office" t-value="compassion_child.field_office_id" />
                                 <ul class="tab-items">
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Official Country Name:</strong>
-                                        <t t-esc="compassion_child.project_id.country_id.name"/>
+                                        <t t-esc="compassion_child.project_id.country_id.name" />
                                     </li>
                                     <t t-if="field_office.capital_city">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Capital City:</strong>
-                                            <t t-esc="field_office.capital_city"/>
+                                            <t t-esc="field_office.capital_city" />
                                         </li>
                                     </t>
                                     <t t-if="field_office.population">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Population:</strong>
-                                            <t t-esc="field_office.population" t-options='{"widget": "integer"}'/>
+                                            <t t-esc="field_office.population" t-options='{"widget": "integer"}' />
                                         </li>
                                     </t>
                                     <t t-if="field_office.male_life_expectancy">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Male life expectancy:</strong>
-                                            <t t-esc="field_office.male_life_expectancy"/>
+                                            <t t-esc="field_office.male_life_expectancy" />
                                             <span>Years Old</span>
                                         </li>
                                     </t>
                                     <t t-if="field_office.female_life_expectancy">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Female life expectancy:</strong>
-                                            <t t-esc="field_office.female_life_expectancy"/>
+                                            <t t-esc="field_office.female_life_expectancy" />
                                             <span>Years Old</span>
                                         </li>
                                     </t>
@@ -393,7 +388,7 @@
                                             <strong class="tab-item-title">
                                                 Urban population with drinking water access:
                                             </strong>
-                                            <t t-esc="'{:.0f}%'.format(field_office.urban_water_access * 100)"/>
+                                            <t t-esc="'{:.0f}%'.format(field_office.urban_water_access * 100)" />
                                         </li>
                                     </t>
                                     <t t-if="field_office.rural_water_access">
@@ -401,31 +396,31 @@
                                             <strong class="tab-item-title">
                                                 Rural population with drinking water access:
                                             </strong>
-                                            <t t-esc="'{:.0f}%'.format(field_office.rural_water_access * 100)"/>
+                                            <t t-esc="'{:.0f}%'.format(field_office.rural_water_access * 100)" />
                                         </li>
                                     </t>
                                     <t t-if="field_office.adult_literacy_rate">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Adult literacy rate:</strong>
-                                            <t t-esc="'{:.0f}%'.format(field_office.adult_literacy_rate * 100)"/>
+                                            <t t-esc="'{:.0f}%'.format(field_office.adult_literacy_rate * 100)" />
                                         </li>
                                     </t>
                                     <t t-if="field_office.infant_mortality_rate">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Infant mortality rate:</strong>
-                                            <t t-esc="'{:.0f}%'.format(field_office.infant_mortality_rate * 100)"/>
+                                            <t t-esc="'{:.0f}%'.format(field_office.infant_mortality_rate * 100)" />
                                         </li>
                                     </t>
                                     <t t-if="field_office.under_five_mortality_rate">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Under-five mortality rate:</strong>
-                                            <t t-esc="'{:.0f}%'.format(field_office.under_five_mortality_rate * 100)"/>
+                                            <t t-esc="'{:.0f}%'.format(field_office.under_five_mortality_rate * 100)" />
                                         </li>
                                     </t>
                                     <t t-if="field_office.religions">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Religion:</strong>
-                                            <t t-esc="field_office.religions"/>
+                                            <t t-esc="field_office.religions" />
                                         </li>
                                     </t>
                                     <t t-if="field_office.less_than_2_dollars_a_day">
@@ -434,7 +429,7 @@
                                                 Population living on less than $2/day:
                                             </strong>
                                             <t
-                                                    t-esc="'{:.0f}%'.format(field_office.less_than_2_dollars_a_day * 100 )"
+                                                t-esc="'{:.0f}%'.format(field_office.less_than_2_dollars_a_day * 100 )"
                                             />
                                         </li>
                                     </t>
@@ -444,14 +439,14 @@
                     </section>
                     <!-- ### Partner and child timeline title ### -->
                     <t t-if="access_scope == 'sponsor'" t-call="theme_compassion_2025.TitleComponent">
-                        <t t-set="title_content" t-value="'Timeline'"/>
-                        <t t-set="title_size" t-value="'md'"/>
-                        <t t-set="color" t-value="'core-blue'"/>
-                        <t t-set="show_underline" t-value="True"/>
-                        <t t-set="underline_color" t-value="'low-yellow'"/>
+                        <t t-set="title_content" t-value="'Timeline'" />
+                        <t t-set="title_size" t-value="'md'" />
+                        <t t-set="color" t-value="'core-blue'" />
+                        <t t-set="show_underline" t-value="True" />
+                        <t t-set="underline_color" t-value="'low-yellow'" />
                         <t
-                                t-set="description"
-                                t-value="'Follow the thread of hope and
+                            t-set="description"
+                            t-value="'Follow the thread of hope and
                         encouragement you’ve woven together.'"
                         />
                     </t>
@@ -459,14 +454,14 @@
             </div>
             <!-- ### Partner and child timeline component ### -->
             <section
-                    t-if="access_scope == 'sponsor'"
-                    class="cd-timeline js-cd-timeline"
-                    t-att-data-child-id="compassion_child.id"
+                t-if="access_scope == 'sponsor'"
+                class="cd-timeline js-cd-timeline"
+                t-att-data-child-id="compassion_child.id"
             >
                 <div class="cd-timeline__container">
                     <div class="single-column">
                         <t t-call="my_compassion.SponsorChildTimelineBatchComponent">
-                            <t t-set="records" t-value="records"/>
+                            <t t-set="records" t-value="records" />
                         </t>
                     </div>
                 </div>
@@ -480,15 +475,12 @@
             <!-- cd-timeline -->
         </t>
         <!-- Include Custom Javascript -->
-        <script type="text/javascript" src="/my_compassion/static/src/js/child_profile_tabs.js"/>
-
-        <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_center_time.js"/>
-
-
+        <script type="text/javascript" src="/my_compassion/static/src/js/child_profile_tabs.js" />
+        <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_center_time.js" />
         <script
-                t-if="access_scope == 'sponsor'"
-                type="text/javascript"
-                src="/my_compassion/static/src/js/child_profile_timeline.js"
+            t-if="access_scope == 'sponsor'"
+            type="text/javascript"
+            src="/my_compassion/static/src/js/child_profile_timeline.js"
         />
     </template>
 </odoo>
