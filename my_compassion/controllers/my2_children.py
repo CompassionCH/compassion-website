@@ -6,12 +6,14 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+import json
+
 from odoo import _, http
 from odoo.exceptions import AccessError
 from odoo.http import request
-import json
+
 from odoo.addons.website_sponsorship.controllers.main import WebsiteChild
-import time
+
 
 class MyCompassionChildrenController(WebsiteChild):
     def _check_sponsored_child_access(self, child):
@@ -115,7 +117,6 @@ class MyCompassionChildrenController(WebsiteChild):
                 "has_more_records": total > offset + limit,
                 "access_scope": access_scope,
                 "timezone": child.sudo().project_id.timezone,
-
             },
         )
 
@@ -160,11 +161,12 @@ class MyCompassionChildrenController(WebsiteChild):
             "has_more_records": has_more,
         }
 
-
-    @http.route('/my2/children/<model("compassion.child"):child>/center-weather',
-                type='http',
-                auth='user',
-                website=True)
+    @http.route(
+        '/my2/children/<model("compassion.child"):child>/center-weather',
+        type="http",
+        auth="user",
+        website=True,
+    )
     def get_center_weather(self, child, **kw):
         """
         This controller returns the child's center weather as a JSON object.
@@ -172,13 +174,13 @@ class MyCompassionChildrenController(WebsiteChild):
         weather_status = child.sudo().project_id.current_weather
         center_temperature = child.sudo().project_id.current_temperature_celsius
         weather_icon_id = child.sudo().project_id.weather_icon_id
-        #data = {'current_temperature': center_temperature, 'current_weather': {'status' : weather_status, 'icon_path': weather_icon}}
-        data = {'current_temperature': center_temperature, 'current_weather': weather_status, 'weather_icon_id': weather_icon_id}
+        # data = {'current_temperature': center_temperature, 'current_weather': {'status' : weather_status, 'icon_path': weather_icon}}
+        data = {
+            "current_temperature": center_temperature,
+            "current_weather": weather_status,
+            "weather_icon_id": weather_icon_id,
+        }
 
         return request.make_response(
-            json.dumps(data),
-            headers=[('Content-Type', 'application/json')]
+            json.dumps(data), headers=[("Content-Type", "application/json")]
         )
-
-
-

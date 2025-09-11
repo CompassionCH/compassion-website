@@ -28,8 +28,11 @@ class Partner(models.Model):
 
     def has_unread_correspondence(self):
         """Check if partner has at least one correspondence with email_read set."""
-        correspondence = self.env["correspondence"].search([
-            ("partner_id", "=", self.id),
-            ("email_read", "=", False),
-        ], limit=1)
+        correspondence = self.env["correspondence"].search(
+            [
+                ("partner_id", "=", self.id),
+                ("email_read", "=", False),
+            ],
+            limit=1,
+        )
         return bool(correspondence)
