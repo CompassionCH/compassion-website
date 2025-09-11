@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     .replace("PM", "pm");
                 currentTimeEl.textContent = centerTimeString;
             } catch (error) {
-                console.error("Invalid timezone identifier received from server:", centerTimezone, error);
+                console.error("Invalid timezone identifier received from server:", timezone, error);
                 clearInterval(clockInterval);
             }
         };
