@@ -90,9 +90,9 @@ class CompassionProject(models.Model):
 
             match record.current_weather:
                 case "Clear":
-                    icon_id = "Sun" if isDay else "Moon01"
+                    icon_id = "Sun" if isDay else "MoonStar"
                 case "Clouds":
-                    icon_id = "CloudSun02" if isDay else "CloudMoon"
+                    icon_id = "CloudBlank02"
                 case "Rain" | "Storm":
                     icon_id = "CloudRaining"
                 case (

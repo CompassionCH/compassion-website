@@ -10,6 +10,9 @@
  * - Displays the container only after successful data fetch
  * Used in /templates/pages/my2_child_timeline.xml
  */
+ const sunColorFilter = "filter: brightness(0) saturate(100%) invert(71%) sepia(39%) saturate(849%) hue-rotate(356deg) brightness(101%) contrast(98%);";
+ const moonColorFilter = "filter: brightness(0) saturate(100%) invert(35%) sepia(24%) saturate(1%) hue-rotate(317deg) brightness(92%) contrast(87%);";
+
 document.addEventListener("DOMContentLoaded", () => {
     const containerEl = document.querySelector(".center-info-card");
     const timelinePageEl = document.querySelector(".cd-weather-map-container");
@@ -62,7 +65,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // If Sunny, set the color to yellow
                 if (icon_id === "Sun.svg") {
-                    weather_icon_el.style.filter = "filter: brightness(0) saturate(100%) invert(71%) sepia(39%) saturate(849%) hue-rotate(356deg) brightness(101%) contrast(98%);";
+                    weather_icon_el.style = sunColorFilter;
+                }
+                else if (icon_id === "MoonStar.svg") {
+                    weather_icon_el.style = moonColorFilter;
                 }
 
                 //Upon successful fetch and update, ensure the container is visible
