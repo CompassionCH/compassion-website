@@ -94,7 +94,7 @@ class CompassionProject(models.Model):
                 case "Clouds":
                     icon_id = "CloudBlank02"
                 case "Rain" | "Storm":
-                    icon_id = "CloudRaining"
+                    icon_id = "CloudRaining04"
                 case (
                     "Mist"
                     | "Haze"
