@@ -60,6 +60,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 const icon_id = data.weather_icon_id;
                 weather_icon_el.src = `/theme_compassion_2025/static/src/img/icons/${icon_id}`;
 
+                // If Sunny, set the color to yellow
+                if (icon_id === "Sun.svg") {
+                    weather_icon_el.style.filter = "filter: brightness(0) saturate(100%) invert(71%) sepia(39%) saturate(849%) hue-rotate(356deg) brightness(101%) contrast(98%);";
+                }
+
                 //Upon successful fetch and update, ensure the container is visible
                 if (containerEl) {
                     containerEl.style.display = "block";
