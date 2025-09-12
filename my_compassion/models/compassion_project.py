@@ -69,12 +69,14 @@ class CompassionProject(models.Model):
         Computes the current temperature in celsius.
         """
         for record in self:
+            record.update_weather()
             if record.current_temperature:
-                record.update_weather()
                 # Convert from Kelvin to Celsius
                 record.current_temperature_celsius = round(
                     record.current_temperature - 273.15, 1
                 )
+            else:
+                record.current_temperature_celsius = False
 
     def _compute_weather_icon_id(self):
         """
