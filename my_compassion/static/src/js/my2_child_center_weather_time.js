@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .catch((error) => {
                 console.error("Failed to fetch temperature:", error);
-                currentTimeEl.textContent = "Could not load temperature.";
+                currentTemperatureEl.textContent = "--";
             });
     } else {
         console.error("Required HTML element #current_temperature is missing.");
