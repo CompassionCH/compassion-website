@@ -13,13 +13,13 @@
 
 // Mapping of weather icon filenames to their corresponding CSS classes
 const iconClassMap = {
-    'Sun.svg': 'weather-icon-sun',
-    'MoonStar.svg': 'weather-icon-moon',
-    'CloudRaining04.svg': 'weather-icon-rain',
-    'CloudLightning.svg': 'weather-icon-rain',
-    'Waves.svg': 'weather-icon-mist',
-    'Wind03.svg': 'weather-icon-mist',
-    'CloudBlank02.svg': 'weather-icon-cloudy',
+    "Sun.svg": "weather-icon-sun",
+    "MoonStar.svg": "weather-icon-moon",
+    "CloudRaining04.svg": "weather-icon-rain",
+    "CloudLightning.svg": "weather-icon-rain",
+    "Waves.svg": "weather-icon-mist",
+    "Wind03.svg": "weather-icon-mist",
+    "CloudBlank02.svg": "weather-icon-cloudy",
 };
 document.addEventListener("DOMContentLoaded", () => {
     const containerEl = document.querySelector(".center-info-card");
