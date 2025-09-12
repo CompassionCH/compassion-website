@@ -10,15 +10,17 @@
  * - Displays the container only after successful data fetch
  * Used in /templates/pages/my2_child_timeline.xml
  */
-const sunColorFilter =
-    "filter: brightness(0) saturate(100%) invert(71%) sepia(39%) saturate(849%) hue-rotate(356deg) brightness(101%) contrast(98%);";
-const moonColorFilter =
-    "filter: brightness(0) saturate(100%) invert(35%) sepia(24%) saturate(1%) hue-rotate(317deg) brightness(92%) contrast(87%);";
-const rainColorFilter =
-    "filter: brightness(0) saturate(100%) invert(27%) sepia(75%) saturate(2335%) hue-rotate(217deg) brightness(94%) contrast(96%);";
-const mistColorFilter =
-    "filter: brightness(0) saturate(100%) invert(50%) sepia(16%) saturate(381%) hue-rotate(188deg) brightness(100%) contrast(95%);";
 
+// Mapping of weather icon filenames to their corresponding CSS classes
+const iconClassMap = {
+    'Sun.svg': 'weather-icon-sun',
+    'MoonStar.svg': 'weather-icon-moon',
+    'CloudRaining04.svg': 'weather-icon-rain',
+    'CloudLightning.svg': 'weather-icon-rain',
+    'Waves.svg': 'weather-icon-mist',
+    'Wind03.svg': 'weather-icon-mist',
+    'CloudBlank02.svg': 'weather-icon-cloudy',
+};
 document.addEventListener("DOMContentLoaded", () => {
     const containerEl = document.querySelector(".center-info-card");
     const timelinePageEl = document.querySelector(".cd-weather-map-container");
@@ -68,16 +70,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 currentTemperatureEl.textContent = `${temperature}`;
                 const icon_id = data.weather_icon_id;
                 weather_icon_el.src = `/theme_compassion_2025/static/src/img/icons/${icon_id}`;
-
-                // If Sunny, set the color to yellow
-                if (icon_id === "Sun.svg") {
-                    weather_icon_el.style = sunColorFilter;
-                } else if (icon_id === "MoonStar.svg") {
-                    weather_icon_el.style = moonColorFilter;
-                } else if (icon_id === "CloudRaining04.svg" || icon_id === "CloudLightning.svg") {
-                    weather_icon_el.style = rainColorFilter;
-                } else if (icon_id === "Waves.svg" || icon_id === "Wind03.svg") {
-                    weather_icon_el.style = mistColorFilter;
+                //Attach the corresponding class for the icon to allow CSS styling
+                const iconClass = iconClassMap[icon_id];
+                if (iconClass) {
+                    weather_icon_el.classList.add(iconClass);
                 }
 
                 //Upon successful fetch and update, ensure the container is visible

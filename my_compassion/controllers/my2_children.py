@@ -26,14 +26,14 @@ class MyCompassionChildrenController(WebsiteChild):
         if child.state == "N":
             reservation_uuid = self._get_reservation_uuid()
             if (
-                not child.website_published
-                or not child.is_available_for_web_sponsorship(reservation_uuid)
+                    not child.website_published
+                    or not child.is_available_for_web_sponsorship(reservation_uuid)
             ):
                 raise AccessError(_("This child is not available for sponsorship."))
         if child.state == "P":
             if (
-                not request.env.user.partner_id.sponsorship_ids.mapped("child_id")
-                & child
+                    not request.env.user.partner_id.sponsorship_ids.mapped("child_id")
+                        & child
             ):
                 raise AccessError(
                     _("You are not authorized to view this child's information.")
@@ -171,6 +171,15 @@ class MyCompassionChildrenController(WebsiteChild):
         """
         This controller returns the child's center weather as a JSON object.
         """
+
+        try:
+            self._check_sponsored_child_access(child)
+        except AccessError:
+            return request.make_response(
+                json.dumps({'error': 'Access Denied'}),
+                headers=[('Content-Type', 'application/json')],
+                status=403
+            )
         weather_status = child.sudo().project_id.current_weather
         center_temperature = child.sudo().project_id.current_temperature_celsius
         weather_icon_id = child.sudo().project_id.weather_icon_id
