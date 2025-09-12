@@ -6,8 +6,6 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-import json
-
 from odoo import _, http
 from odoo.exceptions import AccessError
 from odoo.http import request
@@ -124,7 +122,6 @@ class MyCompassionChildrenController(WebsiteChild):
                 "records": records,
                 "has_more_records": total > offset + limit,
                 "access_scope": access_scope,
-                "timezone": child.sudo().project_id.timezone,
             },
         )
 
@@ -168,35 +165,3 @@ class MyCompassionChildrenController(WebsiteChild):
             "html": html,
             "has_more_records": has_more,
         }
-
-    @http.route(
-        '/my2/children/<model("compassion.child"):child>/center-weather',
-        type="http",
-        auth="user",
-        website=True,
-    )
-    def get_center_weather(self, child, **kw):
-        """
-        This controller returns the child's center weather as a JSON object.
-        """
-
-        try:
-            self._check_sponsored_child_access(child)
-        except AccessError:
-            return request.make_response(
-                json.dumps({"error": "Access Denied"}),
-                headers=[("Content-Type", "application/json")],
-                status=403,
-            )
-        weather_status = child.sudo().project_id.current_weather
-        center_temperature = child.sudo().project_id.current_temperature_celsius
-        weather_icon_id = child.sudo().project_id.weather_icon_id
-        data = {
-            "current_temperature": center_temperature,
-            "current_weather": weather_status,
-            "weather_icon_id": weather_icon_id,
-        }
-
-        return request.make_response(
-            json.dumps(data), headers=[("Content-Type", "application/json")]
-        )

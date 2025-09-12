@@ -80,7 +80,6 @@
         "templates/components/my2_giving_limits_table.xml",
         "templates/components/my2_giving_limits_modal.xml",
         "templates/components/my2_checkout.xml",
-        "templates/components/my2_weather_time_container.xml",
         # Other data the depends on the templates
         "data/my2_new_sponsorship_wizard_steps.xml",
     ],
