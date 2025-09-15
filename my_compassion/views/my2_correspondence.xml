@@ -17,7 +17,7 @@
         <field name="name">Sponsorship letter template tree</field>
         <field name="model">my2.correspondence.letter.template</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree delete="true">
                 <field name="title" />
                 <field name="enabled" widget="toggle" />
                 <field name="start_date" />
