@@ -1,4 +1,5 @@
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class My2CorrespondenceLetterTemplate(models.Model):
@@ -13,43 +14,90 @@ class My2CorrespondenceLetterTemplate(models.Model):
     title = fields.Char(string="Title", required=True)
     text = fields.Text(string="Text")
     start_date = fields.Date(
-        string="Start Date", help="The date from which this template is valid."
+        string="Start Date",
+        help="The date from which this template is valid.",
+        required=True,
     )
     end_date = fields.Date(
-        string="End Date", help="The date until which this template is valid."
+        string="End Date",
+        help="The date until which this template is valid.",
+        required=True,
     )
-    enabled = fields.Boolean(
-        string="Enabled",
+    scheduled = fields.Boolean(
+        string="Scheduled",
         default=False,
-        copy=False,  # Avoid copying the enabled status when duplicating
-        help="If checked, this template is the active one.",
+        copy=False,
+        help="If checked, this template is scheduled for use within its date range.",
     )
-
     status = fields.Selection(
-        [("scheduled", "Scheduled"), ("active", "Active"), ("expired", "Expired")],
+        [
+            ("scheduled", "Scheduled"),
+            ("expired", "Expired"),
+            ("active", "Active"),
+            ("disabled", "Disabled"),
+        ],
         string="Status",
+        compute="_compute_status",
+        store=True,  # Recommended for computed fields used in searches/filters
+        help="The current status of the template    .",
     )
 
-    # == ORM Overrides ==
-    @api.model
-    def create(self, vals):
+    @api.depends("start_date", "end_date", "scheduled")
+    def _compute_status(self):
         """
-        On creation, if the new template is 'enabled', disable all other templates.
+        Computes the status of the template based on current date and fields.
+        This logic is now exhaustive and covers all cases.
         """
-        if vals.get("enabled"):
-            self.search([("enabled", "=", True)]).write({"enabled": False})
-
-        return super(My2CorrespondenceLetterTemplate, self).create(vals)
-
-    def write(self, vals):
-        """
-        On update, if a template is being 'enabled', disable all other templates.
-        """
-        # This logic should only run if the 'enabled' field is being set to True.
-        if vals.get("enabled"):
-            # This finds all records but the one on creation.
-            self.search([("enabled", "=", True), ("id", "not in", self.ids)]).write(
-                {"enabled": False}
+        today = fields.Date.context_today(self)
+        for record in self:
+            is_in_date_range = (
+                record.start_date
+                and record.end_date
+                and (record.start_date <= today <= record.end_date)
             )
 
-        return super(My2CorrespondenceLetterTemplate, self).write(vals)
+            if record.end_date and record.end_date < today:
+                record.status = "expired"
+            elif record.scheduled:
+                if is_in_date_range:
+                    record.status = "active"
+                elif record.start_date and record.start_date > today:
+                    record.status = "scheduled"
+                else:
+                    record.status = "disabled"
+            else:
+                record.status = "disabled"
+
+    @api.constrains("scheduled", "start_date", "end_date")
+    def _check_non_overlapping_schedule(self):
+        """
+        Ensures that scheduled templates do not have overlapping date ranges.
+        """
+        for record in self:
+            # Ensure start_date is before end_date
+            if (
+                record.start_date
+                and record.end_date
+                and record.start_date > record.end_date
+            ):
+                raise ValidationError(_("The start date must be before the end date."))
+
+            # Only check for overlaps if the current record is scheduled
+            if record.scheduled and record.start_date and record.end_date:
+                # Domain to find other scheduled records that overlap
+                domain = [
+                    ("id", "!=", record.id),
+                    ("scheduled", "=", True),
+                    ("start_date", "<=", record.end_date),
+                    ("end_date", ">=", record.start_date),
+                ]
+
+                conflicting_records = self.search(domain)
+                if conflicting_records:
+                    conflict_details = "\n".join(
+                        f"{c.display_name} {c.start_date} to {c.end_date}"
+                        for c in conflicting_records
+                    )
+                    raise ValidationError(
+                        _("Conflicts with the following records:\n" + conflict_details)
+                    )

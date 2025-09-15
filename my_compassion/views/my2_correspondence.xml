@@ -19,9 +19,10 @@
         <field name="arch" type="xml">
             <tree delete="true">
                 <field name="title" />
-                <field name="enabled" widget="toggle" />
+                <field name="scheduled" widget="toggle" />
                 <field name="start_date" />
                 <field name="end_date" />
+                <field name="status" />
             </tree>
         </field>
     </record>
@@ -40,8 +41,8 @@
                             <field name="title" placeholder="Title" />
                         </h1>
                     </div>
-                    <field name="enabled" widget="boolean_toggle" class="oe_edit_only oe_inline" />
-                    <label for="enabled" class="oe_inline" />
+                    <field name="scheduled" widget="boolean_toggle" class="oe_edit_only oe_inline" />
+                    <label for="scheduled" class="oe_inline" />
                     <group>
                         <group string="Validity Period">
                             <field name="start_date" />
