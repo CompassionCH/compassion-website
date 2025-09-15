@@ -95,7 +95,7 @@ class My2CorrespondenceLetterTemplate(models.Model):
                 conflicting_records = self.search(domain)
                 if conflicting_records:
                     conflict_details = "\n".join(
-                        f"{c.display_name} {c.start_date} to {c.end_date}"
+                        f"{c.title} {c.start_date} to {c.end_date}"
                         for c in conflicting_records
                     )
                     raise ValidationError(
