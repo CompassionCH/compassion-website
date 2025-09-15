@@ -33,11 +33,11 @@ any published child.
 Configuration
 =============
 
--  You can go on the website and edit the page templates in order to
-   make sure it fits your needs and design guidelines.
--  Under Sponsorship/Settings/Personal Data Agreement, you should create
-   a page for displaying the general terms that have to be accepted upon
-   making a new sponsorship.
+- You can go on the website and edit the page templates in order to make
+  sure it fits your needs and design guidelines.
+- Under Sponsorship/Settings/Personal Data Agreement, you should create
+  a page for displaying the general terms that have to be accepted upon
+  making a new sponsorship.
 
 Usage
 =====
@@ -47,15 +47,15 @@ website.
 
 Three new public routes will be added:
 
--  /children : public childpool
--  /child/<child_id>: child presentation page
--  /child/<child_id>/sponsor: child sponsorship form
--  /data-protection: data protection and general terms page
+- /children : public childpool
+- /child/<child_id>: child presentation page
+- /child/<child_id>/sponsor: child sponsorship form
+- /data-protection: data protection and general terms page
 
 Known issues / Roadmap
 ======================
 
--  T0433 : make a nice looking child description page
+- T0433 : make a nice looking child description page
 
 Bug Tracker
 ===========
@@ -78,7 +78,7 @@ Authors
 Contributors
 ------------
 
--  Emanuel Cino <ecino@compassion.ch>
+- Emanuel Cino <ecino@compassion.ch>
 
 Maintainers
 -----------
