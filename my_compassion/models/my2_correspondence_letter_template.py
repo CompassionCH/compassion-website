@@ -82,6 +82,16 @@ class My2CorrespondenceLetterTemplate(models.Model):
             ):
                 raise ValidationError(_("The start date must be before the end date."))
 
+            # Check that the template being scheduled is not expired
+            if (
+                record.scheduled
+                and record.end_date
+                and record.end_date < fields.Date.context_today(self)
+            ):
+                raise ValidationError(
+                    _("Cannot schedule a template that is already expired.")
+                )
+
             # Only check for overlaps if the current record is scheduled
             if record.scheduled and record.start_date and record.end_date:
                 # Domain to find other scheduled records that overlap
