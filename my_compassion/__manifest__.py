@@ -41,6 +41,7 @@
         # My Compassion 2 data
         "data/my2_website.xml",
         "data/my2_website_redirect.xml",
+        "data/action_letter_template_expiry_check.xml",
         # My compassion 2 assets, needs to be placed before others
         "templates/my2_assets.xml",
         "templates/my_account_components.xml",

@@ -48,6 +48,7 @@ class My2CorrespondenceLetterTemplate(models.Model):
         Computes the status of the template based on current date and fields.
         This logic is now exhaustive and covers all cases.
         """
+
         today = fields.Date.context_today(self)
         for record in self:
             is_in_date_range = (
@@ -67,6 +68,27 @@ class My2CorrespondenceLetterTemplate(models.Model):
                     record.status = "disabled"
             else:
                 record.status = "disabled"
+
+    @api.model
+    def _cron_unschedule_expired_templates(self):
+        """
+        Called by a scheduled action to automatically unschedule templates
+        whose end_date has passed.
+        """
+        today = fields.Date.context_today(self)
+        domain = [
+            ("scheduled", "=", True),
+            ("end_date", "<", today),
+        ]
+        expired_templates = self.search(domain)
+        if expired_templates:
+            expired_templates.write({"scheduled": False})
+
+        all_templates = self.search([])
+        if all_templates:
+            all_templates._compute_status()
+
+        return True
 
     @api.constrains("scheduled", "start_date", "end_date")
     def _check_non_overlapping_schedule(self):
