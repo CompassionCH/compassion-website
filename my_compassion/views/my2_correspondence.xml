@@ -19,7 +19,7 @@
             <tree delete="true">
                 <field name="title" />
                 <field name="template_description" />
-                <field name="scheduled" widget="boolean_toggle" />
+                <field name="scheduled" widget="toggle" />
                 <field name="status" />
                 <field name="start_date" />
                 <field name="end_date" />
@@ -27,7 +27,7 @@
         </field>
     </record>
     <record id="my_compassion_letter_template_form" model="ir.ui.view">
-        <field name="name">Sponsorship Letter Template</field>
+        <field name="name">Sponsorship letter template form</field>
         <field name="model">my2.correspondence.letter.template</field>
         <field name="arch" type="xml">
             <form>
@@ -58,6 +58,19 @@
                     </notebook>
                 </sheet>
             </form>
+        </field>
+    </record>
+    <record id="my_compassion_letter_template_view_search" model="ir.ui.view">
+        <field name="name">Sponsorship Letter Template search</field>
+        <field name="model">my2.correspondence.letter.template</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="title" />
+                <field name="text" />
+                <filter string="Expired" name="Expired templates" domain="[('status','=','expired')]" />
+                <filter string="Scheduled" name="scheduled templates" domain="[('scheduled','=',True)]" />
+                <filter string="Active" name="Active templates" domain="[('status','=','active')]" />
+            </search>
         </field>
     </record>
 </odoo>
