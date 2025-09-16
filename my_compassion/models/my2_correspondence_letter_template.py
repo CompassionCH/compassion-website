@@ -69,25 +69,34 @@ class My2CorrespondenceLetterTemplate(models.Model):
             else:
                 record.status = "disabled"
 
-    @api.model
-    def _cron_unschedule_expired_templates(self):
+    def _unschedule_expired_templates(self):
         """
-        Called by a scheduled action to automatically unschedule templates
-        whose end_date has passed.
+        Unschedules templates that have expired.
+        This method can be called from a scheduled action.
         """
         today = fields.Date.context_today(self)
-        domain = [
-            ("scheduled", "=", True),
-            ("end_date", "<", today),
-        ]
-        expired_templates = self.search(domain)
+        expired_templates = self.search(
+            [
+                ("scheduled", "=", True),
+                ("end_date", "<", today),
+            ]
+        )
         if expired_templates:
             expired_templates.write({"scheduled": False})
+        return True
 
+    @api.model
+    def _cron_update_template_letter_status(self):
+        """
+        Updates the status of all letter templates.
+        This method is called from the action with id "ir_cron_update_letter_templates".
+        """
+        # Unschedule expired templates
+        self._unschedule_expired_templates()
+        # Recompute status for all templates
         all_templates = self.search([])
         if all_templates:
             all_templates._compute_status()
-
         return True
 
     @api.constrains("scheduled", "start_date", "end_date")
