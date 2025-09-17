@@ -12,7 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .then((data) => {
                 const template_text = data.template_text;
-                textInput.value = template_text;
+                if (template_text) {
+                    textInput.value = template_text;
+                }
             })
 
             .catch((error) => {
