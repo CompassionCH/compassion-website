@@ -3,6 +3,7 @@ def _post_init_hook(cr, registry):
     This hook is called after the module is installed.
     """
     import logging
+
     from odoo import SUPERUSER_ID, api
 
     _logger = logging.getLogger(__name__)

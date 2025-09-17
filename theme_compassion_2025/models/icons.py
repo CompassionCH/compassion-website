@@ -1,4 +1,3 @@
-import base64
 import re
 
 from slugify import slugify
@@ -12,7 +11,15 @@ class ThemeCompassionIcons(models.Model):
     """
 
     _name = "theme.compassion.icons"
+    _inherit = "stylesheet.generator.mixin"
     _description = "MyCompassion theme icons"
+
+    # Fields related to the abstract stylesheet_generator_mixin class
+    css_template_xml_id = (
+        "theme_compassion_2025.theme_compassion_icons_stylesheet_template"
+    )
+    css_attachment_xml_id = "theme_compassion_2025.theme_compassion_stylesheet_icons"
+    render_key = "icons"
 
     name = fields.Char(
         string="Name", required=True, copy=False, help="Enter the name for the icon."
@@ -48,60 +55,3 @@ class ThemeCompassionIcons(models.Model):
                 )
             else:
                 record.class_name = False
-
-    @api.model
-    def _generate_stylesheet(self):
-        """
-        This method generates CSS icon classes and updates the attachment.
-        """
-
-        # First check if the template doesn't exist yet.
-        # This can happen during the initial installation/update.
-        # If so, hooks._post_init_hook will call again the method
-        # after the records have been added.
-        template = self.env["ir.model.data"].search_read(
-            [
-                ("name", "=", "theme_compassion_icons_stylesheet_template"),
-                ("module", "=", "theme_compassion_2025"),
-            ],
-            ["res_id"],
-        )
-        if not template:
-            return
-
-        # Search for all icon records
-        icons = self.search([])
-
-        # Render the QWeb template
-        css_content = self.env["ir.qweb"]._render(
-            "theme_compassion_2025.theme_compassion_icons_stylesheet_template",
-            {"icons": icons},
-        )
-        css_content_b64 = base64.b64encode(css_content)
-
-        # Find the attachment using its XML ID
-        attachment = self.env.ref(
-            "theme_compassion_2025.theme_compassion_stylesheet_icons"
-        )
-
-        # Update its content
-        attachment.write({"datas": css_content_b64})
-
-        # Force-reload web.assets_frontend
-        self.env["ir.qweb"]._get_asset_nodes("web.assets_frontend", {}, js=False)
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        records = super().create(vals_list)
-        self._generate_stylesheet()
-        return records
-
-    def write(self, vals):
-        res = super().write(vals)
-        self._generate_stylesheet()
-        return res
-
-    def unlink(self):
-        res = super().unlink()
-        self._generate_stylesheet()
-        return res
