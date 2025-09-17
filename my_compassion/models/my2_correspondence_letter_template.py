@@ -9,6 +9,7 @@ class My2CorrespondenceLetterTemplate(models.Model):
 
     _name = "my2.correspondence.letter.template"
     _description = "Correspondence Letter Template"
+    _rec_name = "title"
 
     # == Fields ==
     title = fields.Char(string="Title", required=True)
