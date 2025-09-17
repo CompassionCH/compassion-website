@@ -4,7 +4,7 @@
  * Used in /templates/pages/my2_new_letter.xml
  */
 document.addEventListener("DOMContentLoaded", () => {
-    textInput = document.getElementById("letter-input");
+    const textInput = document.getElementById("letter-input");
 
     if (textInput) {
         fetch(`/my2/children/letter/templates`)
