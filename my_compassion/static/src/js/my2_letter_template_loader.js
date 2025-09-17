@@ -1,7 +1,11 @@
+/**
+ * Fetches a letter template from the server and populates the text input field with it.
+ *
+ * Used in /templates/pages/my2_new_letter.xml
+ */
 document.addEventListener("DOMContentLoaded", () => {
     textInput = document.getElementById("letter-input");
 
-    // see if there is an active template for letter
     if (textInput) {
         fetch(`/my2/children/letter/templates`)
             .then((response) => {
