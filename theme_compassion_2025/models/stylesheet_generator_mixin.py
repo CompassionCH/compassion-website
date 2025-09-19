@@ -11,7 +11,6 @@ import base64
 import logging
 
 from odoo import api, models
-from odoo.http import request
 
 _logger = logging.getLogger(__name__)
 
@@ -21,6 +20,7 @@ class StylesheetGeneratorMixin(models.AbstractModel):
     Abstract class to provide common functionalities for generating theme related
     stylesheets.
     """
+
     _name = "stylesheet.generator.mixin"
     _description = "Stylesheet Generator Mixin"
 
