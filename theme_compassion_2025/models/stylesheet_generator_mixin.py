@@ -18,10 +18,9 @@ _logger = logging.getLogger(__name__)
 
 class StylesheetGeneratorMixin(models.AbstractModel):
     """
-    Abstract class to provide common functionality for generating theme related
+    Abstract class to provide common functionalities for generating theme related
     stylesheets.
     """
-
     _name = "stylesheet.generator.mixin"
     _description = "Stylesheet Generator Mixin"
 
@@ -37,7 +36,6 @@ class StylesheetGeneratorMixin(models.AbstractModel):
             )
             return
 
-        # TODO clean this ugly way of doing
         module, template_id = self.css_template_xml_id.split(".")
 
         css_template_xml = self.env["ir.model.data"].search(
@@ -66,20 +64,29 @@ class StylesheetGeneratorMixin(models.AbstractModel):
         attachment = self.env.ref(self.css_attachment_xml_id)
         if attachment:
             attachment.write({"datas": css_content_b64})
+            _logger.info(f"Successfully updated {attachment.name} file.")
         else:
             _logger.warning(
                 f"Attachment '{self.css_attachment_xml_id}' not found. Skipping css generation"
             )
 
-        try:
-            # Ensure request object is initialise
-            request.env
-            # Force-reload web.assets_frontend
-            self.env["ir.qweb"]._get_asset_nodes("web.assets_frontend", {}, js=False)
-            _logger.info(f"Successfully re-loaded assets for {self._name}.")
-        except RuntimeError:
-            # This is expected when the asset regeneration is call out of request context
-            # For exemple during an update, when the odd http server is not fully loaded.
-            _logger.warning(
-                f"Failed to re-load assets for {self._name}. Please do it manually using the interface."
-            )
+        # force bundle invalidation
+        self.env["ir.qweb"].clear_caches()
+        _logger.info(f"Successfully re-loaded assets for {self._name}.")
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        self._generate_stylesheet()
+        # Force-reload web.assets_frontend
+        return records
+
+    def write(self, vals):
+        res = super().write(vals)
+        self._generate_stylesheet()
+        return res
+
+    def unlink(self):
+        res = super().unlink()
+        self._generate_stylesheet()
+        return res
