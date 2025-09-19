@@ -44,14 +44,15 @@
                         <p class="modal-title text-core-blue">
                             <t t-esc="item.title" />
                         </p>
-                        <t t-if="item.content">
+                        <t t-if="item.amount">
+
                             <p class="text-muted">
-                                <t t-esc="item.content" />
+                                <t t-esc="item.amount"/> <t t-esc="item.currency_name"/>
                             </p>
                         </t>
                         <div class="flex justify-between items-center">
                             <span class="cd-timeline__date">
-                                <t t-esc="item.create_date_str" />
+                                <t t-esc="item.create_date" />
                             </span>
                         </div>
                     </div>
@@ -78,14 +79,14 @@
                         <p class="modal-title text-core-blue">
                             <t t-esc="item.title" />
                         </p>
-                        <t t-if="item.content">
+                        <t t-if="item.amount">
                             <p class="text-muted">
-                                <t t-esc="item.content" />
+                                <t t-esc="item.amount"/> <t t-esc="item.currency_name"/>
                             </p>
                         </t>
                         <div class="flex justify-between items-center">
                             <span class="cd-timeline__date">
-                                <t t-esc="item.create_date_str" />
+                                <t t-esc="item.create_date" />
                             </span>
                         </div>
                     </a>
