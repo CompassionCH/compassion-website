@@ -1,6 +1,8 @@
 def _post_init_hook(cr, registry):
     """
     This hook is called after the module is installed.
+    His purpose is to call the generation of the needed
+    attachment generated stylesheets.
     """
     import logging
 
@@ -9,11 +11,15 @@ def _post_init_hook(cr, registry):
     _logger = logging.getLogger(__name__)
 
     env = api.Environment(cr, SUPERUSER_ID, {})
-    _logger.info("Generating theme stylesheets via post-init hook...")
+    _logger.info("Post-init hook: Generating theme stylesheets.")
 
-    # Generate the stylesheets for each model
-    env["theme.compassion.colors"]._generate_stylesheet()
-    env["theme.compassion.icons"]._generate_stylesheet()
-    env["theme.compassion.pictograms"]._generate_stylesheet()
+    models_to_process = [
+        "theme.compassion.colors",
+        "theme.compassion.icons",
+        "theme.compassion.pictograms",
+    ]
 
-    _logger.info("Theme stylesheet generation complete.")
+    for model_name in models_to_process:
+        env[model_name]._generate_stylesheet()
+
+    _logger.info("Post-init hook: Stylesheet generation complete.")
