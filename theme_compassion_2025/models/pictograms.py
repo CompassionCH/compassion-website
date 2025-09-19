@@ -16,9 +16,9 @@ class ThemeCompassionPictograms(models.Model):
 
     _sql_constraints = [
         (
-            'class_name_unique',
-            'UNIQUE(class_name)',
-            'The CSS class name must be unique!'
+            "class_name_unique",
+            "UNIQUE(class_name)",
+            "The CSS class name must be unique!",
         )
     ]
 
