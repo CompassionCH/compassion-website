@@ -25,7 +25,8 @@ class ThemeCompassionColor(models.Model):
         string="Name", required=True, copy=False, help="Enter the name for the color."
     )
 
-    # TODO refactor uniqueness, it's not properly implemented, should use _sql_constraints
+    # TODO refactor uniqueness, it's not properly implemented,
+    # It should use _sql_constraints instead
     class_name = fields.Char(
         string="Class Name",
         compute="_compute_class_name",

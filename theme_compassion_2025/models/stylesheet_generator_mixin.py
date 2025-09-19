@@ -32,7 +32,8 @@ class StylesheetGeneratorMixin(models.AbstractModel):
         """
         if not hasattr(self, "css_template_xml_id"):
             _logger.warning(
-                f"Model {self._name} is missing 'css_template_xml_id' attribute. Skipping generation."
+                f"Model {self._name} is missing 'css_template_xml_id' attribute. "
+                f"Skipping generation."
             )
             return
 
@@ -46,7 +47,8 @@ class StylesheetGeneratorMixin(models.AbstractModel):
         )
         if not css_template_xml:
             _logger.warning(
-                f"Stylesheet template '{self.css_template_xml_id}' not found. Skipping generation."
+                f"Stylesheet template '{self.css_template_xml_id}' not found. "
+                f"Skipping generation."
             )
             return
 
@@ -67,7 +69,8 @@ class StylesheetGeneratorMixin(models.AbstractModel):
             _logger.info(f"Successfully updated {attachment.name} file.")
         else:
             _logger.warning(
-                f"Attachment '{self.css_attachment_xml_id}' not found. Skipping css generation"
+                f"Attachment '{self.css_attachment_xml_id}' not found. Skipping css "
+                f"generation"
             )
 
         # force bundle invalidation
