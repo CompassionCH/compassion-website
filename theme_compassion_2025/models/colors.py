@@ -14,6 +14,14 @@ class ThemeCompassionColor(models.Model):
     _inherit = "stylesheet.generator.mixin"
     _description = "MyCompassion theme colors"
 
+    _sql_constraints = [
+        (
+            'class_name_unique',
+            'UNIQUE(class_name)',
+            'The CSS class name must be unique!'
+        )
+    ]
+
     # Fields related to the abstract stylesheet_generator_mixin class
     css_template_xml_id = (
         "theme_compassion_2025.theme_compassion_colors_stylesheet_template"
@@ -25,14 +33,11 @@ class ThemeCompassionColor(models.Model):
         string="Name", required=True, copy=False, help="Enter the name for the color."
     )
 
-    # TODO refactor uniqueness, it's not properly implemented,
-    # It should use _sql_constraints instead
     class_name = fields.Char(
         string="Class Name",
         compute="_compute_class_name",
         store=True,
         readonly=True,
-        unique=True,
         help="Auto-generated css class name in kebab-case.",
     )
 

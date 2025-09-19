@@ -14,6 +14,14 @@ class ThemeCompassionPictograms(models.Model):
     _inherit = "stylesheet.generator.mixin"
     _description = "MyCompassion theme pictograms"
 
+    _sql_constraints = [
+        (
+            'class_name_unique',
+            'UNIQUE(class_name)',
+            'The CSS class name must be unique!'
+        )
+    ]
+
     # Fields related to the abstract stylesheet_generator_mixin class
     css_template_xml_id = (
         "theme_compassion_2025.theme_compassion_pictograms_stylesheet_template"
@@ -35,7 +43,6 @@ class ThemeCompassionPictograms(models.Model):
         compute="_compute_class_name",
         store=True,
         readonly=True,
-        unique=True,
         help="Auto-generated css class name in kebab-case.",
     )
 
