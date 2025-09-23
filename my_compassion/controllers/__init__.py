@@ -18,4 +18,6 @@ from . import (
     my2_user,
     my2_user_settings,
     my2_sponsorships,
+    my2_login,
+    my2_auth_signup
 )
