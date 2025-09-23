@@ -225,7 +225,8 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             return {"error": "Something went wrong."}
 
         letter_generator.onchange_domain()
-        letter_generator.preview()
+        #SHAYAN
+        letter_generator.preview(create_letter_callback= self.create_letter_callback, apply_img_callback = self.apply_img_callback)
 
         if post.get("mode") == "send":
             letter_generator.generate_letters_job()
@@ -236,3 +237,20 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             "letter_values": letter_values,
             "generator_id": letter_generator.id,
         }
+
+
+    # Callbacks
+    def create_letter_callback(self):
+        print("Create letter")
+
+    def apply_img_callback(self):
+        print("Applying img")
+
+    def apply_template_callback(self):
+        print("Applying template")
+
+    def apply_text_callback(self):
+        print("Apply text")
+
+    def generating_pdf_callback(self):
+        print("generating pdf")
