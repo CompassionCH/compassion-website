@@ -7,16 +7,51 @@
 #
 ##############################################################################
 import calendar
+import logging
+import threading
 from datetime import date
-
 
 import babel
 
+import odoo
 from odoo import http
 from odoo.exceptions import AccessError
 from odoo.http import request
 
 from .my2_children import MyCompassionChildrenController
+
+_logger = logging.getLogger(__name__)
+
+
+def _process_letter_generator_threaded(db_name, generator_id, post_data):
+    """
+    This function runs in a separate thread to handle heavy PDF generation.
+    It creates its own Odoo environment to ensure thread safety.
+    """
+    try:
+        # 1. Create a new registry and cursor for this thread
+        registry = odoo.registry(db_name)
+        with registry.cursor() as cr:
+            # 2. Create a new environment. Use SUPERUSER_ID for background jobs
+            #    to avoid permission issues.
+            env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {})
+
+            # 3. Fetch a FRESH recordset using the new environment and the passed ID
+            letter_generator = env["correspondence.s2b.generator"].browse(generator_id)
+
+            # 4. Now you can safely work with the recordset
+            _logger.info(f"Background thread started for generator ID {generator_id}")
+            letter_generator.onchange_domain()
+            letter_generator.preview()  # Callbacks are omitted for thread safety
+
+            if post_data.get("mode") == "send":
+                letter_generator.generate_letters_job()
+            _logger.info(f"Background thread finished for generator ID {generator_id}")
+            # The transaction is automatically committed when the 'with' block exits.
+
+    except Exception as e:
+        # It's crucial to log any errors that happen inside a thread
+        _logger.error(f"Error in letter generation thread for ID {generator_id}: {e}", exc_info=True)
 
 
 class MyCompassionCorrespondenceController(MyCompassionChildrenController):
@@ -225,63 +260,20 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         if not letter_generator:
             return {"error": "Something went wrong."}
 
-        #SHAYAN
-        # Launch the heavy processing in a new thread (background job)
+        # CORRECTED THREADING IMPLEMENTATION
+        # Launch the heavy processing in a new thread using the correct Odoo pattern.
+        # We pass simple, thread-safe arguments: db name, record ID, and a dictionary.
+        db_name = request.env.cr.dbname
+        generator_id = letter_generator.id
+        post_copy = post.copy()
 
-        callbacks = {
-            "create_letter_callback": self.create_letter_callback,
-            "apply_template_callback": self.apply_template_callback,
-            "apply_text_callback": self.apply_text_callback,
-            "apply_img_callback": self.apply_img_callback,
-            "generating_pdf_callback": self.generating_pdf_callback,
-        }
-
-
-        import threading
-
-        def process_letter_generator(letter_generator, callbacks, post):
-            letter_generator.onchange_domain()
-            letter_generator.preview(**callbacks)
-            print("SHAYAN caller after thread")
-            if post.get("mode") == "send":
-                letter_generator.generate_letters_job()
-
-        # Launch the thread
         thread = threading.Thread(
-            target=process_letter_generator,
-            args=(letter_generator.copy(), callbacks, post.copy())
+            target=_process_letter_generator_threaded,
+            args=(db_name, generator_id, post_copy),
         )
         thread.start()
-        #process_letter_generator(letter_generator,callbacks,post)
 
-        # Immediately return the ID to the client
+        # Immediately return the ID to the client for polling
         return {
             "generator_id": letter_generator.id,
         }
-
-        # return {
-        #     "preview_url": f"{request.httprequest.host_url}web/image"
-        #     f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
-        #     "letter_values": letter_values,
-        #     "generator_id": letter_generator.id,
-        # }
-
-
-
-
-    # Callbacks
-    def create_letter_callback(self):
-        print("SHAYAN Create letter")
-
-    def apply_img_callback(self):
-        print("SHAYAN Applying img")
-
-    def apply_template_callback(self):
-        print("SHAYAN Applying template")
-
-    def apply_text_callback(self):
-        print("SHAYAN Apply text")
-
-    def generating_pdf_callback(self):
-        print("SHAYAN generating pdf")
-
