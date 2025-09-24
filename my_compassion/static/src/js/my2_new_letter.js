@@ -51,8 +51,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
-                const data = { ...formData, source: "mycompassion", csrf_token: odoo.csrf_token, mode: mode };
-                let fakeProgressPromise;
+                const creationData = { ...formData, source: "mycompassion", csrf_token: odoo.csrf_token, mode: mode };
+                let fakeProgressPromise = Promise.resolve();
 
                 // If the mode is 'send', show a modal with a fake progress bar
                 if (mode === "send") {
@@ -70,22 +70,39 @@ document.addEventListener("DOMContentLoaded", function () {
                         ],
                     });
                     await this.progressBar.appendTo($("#progress-bar-div"));
-
                     fakeProgressPromise = this.progressBar.startProgress();
                 }
 
-                const rpcPromise = this._submitLetterRPC(data);
-
                 try {
-                    const [result] = await Promise.all([rpcPromise, fakeProgressPromise || Promise.resolve()]);
-                    await this._handleResponse(mode, result, formData.child_id);
+                    // --- NEW TWO-STEP PROCESS ---
+                    // 1. First RPC call: Quickly create the letter record and get its ID.
+                    const initialResult = await this._submitLetterRPC(creationData);
+                    if (!initialResult.generator_id) {
+                        throw new Error(initialResult.error || "Could not create the letter record.");
+                    }
+
+                    // 2. Second RPC call: Launch the heavy processing using the new ID.
+                    const processingData = {
+                        generator_id: initialResult.generator_id,
+                        child_id: formData.child_id, // Pass child_id for access checks
+                        mode: mode,
+                        csrf_token: odoo.csrf_token
+                    };
+                    const processingPromise = this._launchProcessingRPC(processingData);
+
+                    // 3. Wait for the heavy processing AND the fake progress bar to finish.
+                    const [finalResult] = await Promise.all([processingPromise, fakeProgressPromise]);
+
+                    // 4. Handle the final response from the processing call.
+                    await this._handleResponse(mode, finalResult, formData.child_id);
+
                 } catch (error) {
                     if (this.progressBar) {
                         this.progressBar.destroy();
                     }
                     $("#submitModal").modal("hide");
                     ToastService.error(
-                        "An error occurred while processing your letter. Please try again or contact the support."
+                        error.message || "An error occurred while processing your letter. Please try again or contact the support."
                     );
                 }
             },
@@ -98,7 +115,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (originalValue !== cleanedValue) {
                     let warning = this.$("#emoji-warning");
                     if (!warning.length) {
-                        // TODO refactor the styling with a class from the theme when theme is ready
                         warning = $('<div id="emoji-warning" style="color: red; margin-top: 5px;"></div>');
                         this.$("#letter-input").parent().append(warning);
                     }
@@ -112,17 +128,9 @@ document.addEventListener("DOMContentLoaded", function () {
             /**
              * Collects and prepares all data from the letter submission form.
              *
-             * This function extracts the selected child ID, letter content,
-             * selected template ID (from the chosen image), and file attachments
-             * from the form. It also encodes the attachments into base64 format.
-             *
              * @async
              * @function
-             * @returns {Promise<Object>} A promise that resolves to an object containing:
-             *   @property {string} childId - The ID of the selected child.
-             *   @property {string|null} templateId - The ID of the selected template, or null if not selected.
-             *   @property {string} letterBody - The body text of the letter.
-             *   @property {Array<{filename: string, content: string}>} attachments - The list of base64-encoded attachments.
+             * @returns {Promise<Object>} A promise that resolves to an object containing form data.
              */
             _collectFormData: async function () {
                 const childId = this.$("#child-dropdown").val();
@@ -146,19 +154,11 @@ document.addEventListener("DOMContentLoaded", function () {
             /**
              * Encodes a list of files into base64 format for backend transmission.
              *
-             * This function takes a FileList (from an input[type="file"]) and returns
-             * an array of objects, each containing the original filename and its content
-             * as a base64-encoded string (excluding the MIME prefix).
-             *
              * @async
              * @function
              * @param {FileList} fileList - The list of files selected by the user.
-             * @returns {Promise<Array<{filename: string, content: string}>>}
-             *   A promise resolving to an array of attachment objects with:
-             *   - filename: Original name of the file.
-             *   - content: Base64-encoded string (without the data URI prefix).
+             * @returns {Promise<Array<{filename: string, content: string}>>} A promise resolving to an array of attachment objects.
              */
-
             _encodeAttachments: async function (fileList) {
                 const filePromises = Array.from(fileList).map(
                     (file) =>
@@ -177,14 +177,10 @@ document.addEventListener("DOMContentLoaded", function () {
             },
 
             /**
-             * Sends the letter form data to the backend via RPC.
-             *
-             * The backend is expected to return a preview URL (in preview mode)
-             * and a generator ID for redirection (in send mode).
+             * Sends the initial form data to create the letter record.
              *
              * @function
              * @param {Object} data - The data payload to send with the request.
-             *
              * @returns {Promise<Object>} A promise that resolves with the backend response.
              */
             _submitLetterRPC: function (data) {
@@ -195,18 +191,27 @@ document.addEventListener("DOMContentLoaded", function () {
             },
 
             /**
-             * Handles the server response after submitting or previewing a letter.
+             * Triggers the heavy processing on the backend for a given generator ID.
              *
-             * Depending on the mode, this function either redirects the user to the letters
-             * page with a reference to the newly created generator, or displays a preview
-             * image of the letter in a modal dialog.
+             * @function
+             * @param {Object} data - The data payload containing the generator_id.
+             * @returns {Promise<Object>} A promise that resolves with the final processing result.
+             */
+            _launchProcessingRPC: function (data) {
+                return rpc.query({
+                    route: "/my2/children/letter/launch_processing",
+                    params: data,
+                });
+            },
+
+            /**
+             * Handles the server response after processing is complete.
              *
              * @async
              * @function
-             * @param {string} mode - Submission mode: `'send'` to submit the letter, `'preview'` to show a preview.
+             * @param {string} mode - Submission mode: `'send'` or `'preview'`.
              * @param {Object} result - The result object returned by the server.
              * @param {string} childId - The ID of the selected child, used in the redirect URL.
-             *
              * @returns {Promise<void>} Resolves when the UI navigation or update is complete.
              */
             _handleResponse: function (mode, result, childId) {

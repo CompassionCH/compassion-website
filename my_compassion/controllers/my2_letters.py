@@ -231,23 +231,11 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         #SHAYAN
         # Launch the heavy processing in a new thread (background job)
 
-        callbacks = {
-            "create_letter_callback": self.create_letter_callback,
-            "apply_template_callback": self.apply_template_callback,
-            "apply_text_callback": self.apply_text_callback,
-            "apply_img_callback": self.apply_img_callback,
-            "generating_pdf_callback": self.generating_pdf_callback,
-        }
+
 
 
         import threading
 
-        def process_letter_generator(letter_generator, callbacks, post):
-            letter_generator.onchange_domain()
-            letter_generator.preview(**callbacks)
-            print("SHAYAN caller after thread")
-            if post.get("mode") == "send":
-                letter_generator.generate_letters_job()
 
         # # Launch the thread
         # thread = threading.Thread(
@@ -256,7 +244,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         # )
         # thread.start()
 
-        process_letter_generator(letter_generator,callbacks,post)
+        #process_letter_generator(letter_generator,callbacks,post)
 
         # Immediately return the ID to the client
         return {
@@ -269,6 +257,55 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         #     "letter_values": letter_values,
         #     "generator_id": letter_generator.id,
         # }
+
+    @http.route(
+        "/my2/children/letter/launch_processing",
+        type="json",
+        auth="user",
+        methods=["POST"],
+        sitemap=False,
+    )
+    def my2_launch_letter_processing(self, **post):
+
+        def process_letter_generator(letter_generator, callbacks, post):
+            letter_generator.onchange_domain()
+            letter_generator.preview(**callbacks)
+            print("SHAYAN caller after thread")
+            if post.get("mode") == "send":
+                letter_generator.generate_letters_job()
+
+        try:
+            child_id = int(post.get("child_id"))
+            child = request.env["compassion.child"].browse(child_id)
+            self._check_sponsored_child_access(child)
+        except (AccessError, ValueError, TypeError):
+            return {"error": "Something went wrong."}
+
+        letter_generator_id = post.get("generator_id")
+        if not letter_generator_id:
+            return {"error": "Something went wrong."}
+        letter_generator = request.env["correspondence.s2b.generator"].sudo().browse(letter_generator_id)
+        if not letter_generator.exists():
+            return {"error": "Something went wrong."}
+
+        callbacks = {
+            "create_letter_callback": self.create_letter_callback,
+            "apply_template_callback": self.apply_template_callback,
+            "apply_text_callback": self.apply_text_callback,
+            "apply_img_callback": self.apply_img_callback,
+            "generating_pdf_callback": self.generating_pdf_callback,
+        }
+
+        process_letter_generator(letter_generator,callbacks,post)
+
+
+        return {
+            "preview_url": f"{request.httprequest.host_url}web/image"
+            f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
+            "generator_id": letter_generator.id,
+        }
+
+
 
 
 
@@ -288,4 +325,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
 
     def generating_pdf_callback(self):
         print("SHAYAN generating pdf")
+
+
+
 
