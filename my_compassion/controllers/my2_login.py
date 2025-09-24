@@ -15,7 +15,7 @@ from odoo.addons.website.controllers.main import Website
 class WebsiteLoginRedirect(Website):
 
     @http.route('/web/login', type='http', auth="public", website=True, sitemap=False)
-    def web_login(self, redirect="/web/login?redirect=/my2/children"):
+    def web_login(self, *args, **kw):
         """
         Overrides the login page controller.
         If the user is already logged in, they are redirected immediately.
@@ -25,5 +25,5 @@ class WebsiteLoginRedirect(Website):
             # If so, redirect the user to their account page or dashboard
             return request.redirect('/my2/dashboard/')
 
-        # If the user is not logged in, execute the original Odoo logic
-        return super(WebsiteLoginRedirect, self).web_login(redirect=redirect)
+        # If the user is not logged in, execute the original Odoo logic for login
+        return super().web_login(*args, **kw)

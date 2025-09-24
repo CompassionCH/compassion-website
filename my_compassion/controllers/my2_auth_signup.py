@@ -25,4 +25,4 @@ class SignupOverride(AuthSignupHome):
             return request.redirect('/my2/dashboard/')
 
         # If the user is not logged in, execute the original Odoo logic for signup
-        return super(SignupOverride, self).web_auth_signup(*args, **kw)
+        return super().web_auth_signup(*args, **kw)
