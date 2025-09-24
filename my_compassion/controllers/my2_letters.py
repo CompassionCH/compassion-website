@@ -9,6 +9,7 @@
 import calendar
 from datetime import date
 
+
 import babel
 
 from odoo import http
@@ -224,33 +225,63 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         if not letter_generator:
             return {"error": "Something went wrong."}
 
-        letter_generator.onchange_domain()
         #SHAYAN
-        letter_generator.preview(create_letter_callback= self.create_letter_callback, apply_img_callback = self.apply_img_callback)
+        # Launch the heavy processing in a new thread (background job)
 
-        if post.get("mode") == "send":
-            letter_generator.generate_letters_job()
+        callbacks = {
+            "create_letter_callback": self.create_letter_callback,
+            "apply_template_callback": self.apply_template_callback,
+            "apply_text_callback": self.apply_text_callback,
+            "apply_img_callback": self.apply_img_callback,
+            "generating_pdf_callback": self.generating_pdf_callback,
+        }
 
+
+        import threading
+
+        def process_letter_generator(letter_generator, callbacks, post):
+            letter_generator.onchange_domain()
+            letter_generator.preview(**callbacks)
+            print("SHAYAN caller after thread")
+            if post.get("mode") == "send":
+                letter_generator.generate_letters_job()
+
+        # Launch the thread
+        thread = threading.Thread(
+            target=process_letter_generator,
+            args=(letter_generator.copy(), callbacks, post.copy())
+        )
+        thread.start()
+        #process_letter_generator(letter_generator,callbacks,post)
+
+        # Immediately return the ID to the client
         return {
-            "preview_url": f"{request.httprequest.host_url}web/image"
-            f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
-            "letter_values": letter_values,
             "generator_id": letter_generator.id,
         }
+
+        # return {
+        #     "preview_url": f"{request.httprequest.host_url}web/image"
+        #     f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
+        #     "letter_values": letter_values,
+        #     "generator_id": letter_generator.id,
+        # }
+
+
 
 
     # Callbacks
     def create_letter_callback(self):
-        print("Create letter")
+        print("SHAYAN Create letter")
 
     def apply_img_callback(self):
-        print("Applying img")
+        print("SHAYAN Applying img")
 
     def apply_template_callback(self):
-        print("Applying template")
+        print("SHAYAN Applying template")
 
     def apply_text_callback(self):
-        print("Apply text")
+        print("SHAYAN Apply text")
 
     def generating_pdf_callback(self):
-        print("generating pdf")
+        print("SHAYAN generating pdf")
+
