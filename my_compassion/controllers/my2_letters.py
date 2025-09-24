@@ -9,7 +9,7 @@
 import calendar
 from datetime import date
 
-
+import time
 import babel
 
 from odoo import http
@@ -297,27 +297,38 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         callbacks = {
                       "create_letter_callback": lambda: (
                           letter_generator.write({'generation_status': 'creating_task'}),
+                          time.sleep(1),
                           request.env.cr.commit()
+
                       ),
                       "apply_template_callback": lambda: (
                           letter_generator.write({'generation_status': 'apply_template'}),
+                          time.sleep(8),
                           request.env.cr.commit()
                       ),
                       "apply_text_callback": lambda: (
                           letter_generator.write({'generation_status': 'apply_text'}),
+                          time.sleep(1),
                           request.env.cr.commit()
                       ),
                       "apply_img_callback": lambda: (
                           letter_generator.write({'generation_status': 'apply_images'}),
+                          time.sleep(1),
                           request.env.cr.commit()
                       ),
                       "generating_pdf_callback": lambda: (
                           letter_generator.write({'generation_status': 'generate_pdf'}),
+                          time.sleep(1),
                           request.env.cr.commit()
                       ),
                   }
 
         process_letter_generator(letter_generator,callbacks,post)
+
+
+        letter_generator.write({'generation_status': 'done'}),
+        request.env.cr.commit()
+        print("DONE")
 
 
         return {
@@ -350,3 +361,37 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
 
 
 
+    @http.route(
+        "/my2/children/letter/status",
+        type="json",
+        auth="user",
+        methods=["POST"],
+        sitemap=False,
+    )
+    def my2_get_letter_status(self, **post):
+        """
+        Endpoint for the frontend to poll for the generation status.
+        """
+        try:
+            generator_id = int(post.get("generator_id"))
+            letter_generator = request.env["correspondence.s2b.generator"].sudo().browse(generator_id)
+            if not letter_generator.exists():
+                return {"status": "failed", "error": "Generator not found."}
+
+
+            status = letter_generator.generation_status
+            if status == 'done':
+                # If done, also return the final data needed by the frontend
+                return {
+                    "status": "done",
+                    "result": {
+                        "preview_url": f"{request.httprequest.host_url}web/image"
+                        f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
+                        "generator_id": letter_generator.id,
+                    }
+                }
+            else:
+                return {"status": status}
+
+        except (AccessError, ValueError, TypeError):
+            return {"status": "failed", "error": "Access denied or invalid ID."}

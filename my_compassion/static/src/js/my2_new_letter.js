@@ -74,23 +74,25 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 try {
-                    // --- NEW TWO-STEP PROCESS ---
+                    // --- NEW THREE-STEP PROCESS: CREATE -> LAUNCH -> POLL ---
                     // 1. First RPC call: Quickly create the letter record and get its ID.
                     const initialResult = await this._submitLetterRPC(creationData);
                     if (!initialResult.generator_id) {
                         throw new Error(initialResult.error || "Could not create the letter record.");
                     }
 
-                    // 2. Second RPC call: Launch the heavy processing using the new ID.
-                    const processingData = {
+                    // 2a. Trigger the processing on the backend. This call should return immediately.
+                    this._launchProcessingRPC({
                         generator_id: initialResult.generator_id,
-                        child_id: formData.child_id, // Pass child_id for access checks
+                        child_id: formData.child_id,
                         mode: mode,
                         csrf_token: odoo.csrf_token
-                    };
-                    const processingPromise = this._launchProcessingRPC(processingData);
+                    });
 
-                    // 3. Wait for the heavy processing AND the fake progress bar to finish.
+                    // 2b. Now, poll for the status of the generation process we just launched.
+                    const processingPromise = this._pollForStatus(initialResult.generator_id);
+
+                    // 3. Wait for the heavy processing (polling) AND the fake progress bar to finish.
                     const [finalResult] = await Promise.all([processingPromise, fakeProgressPromise]);
 
                     // 4. Handle the final response from the processing call.
@@ -198,9 +200,45 @@ document.addEventListener("DOMContentLoaded", function () {
              * @returns {Promise<Object>} A promise that resolves with the final processing result.
              */
             _launchProcessingRPC: function (data) {
+                // This function is now just used to kick off the process.
                 return rpc.query({
                     route: "/my2/children/letter/launch_processing",
                     params: data,
+                });
+            },
+
+            /**
+             * Polls the backend for the letter generation status.
+             *
+             * @function
+             * @param {number} generatorId - The ID of the letter generator record.
+             * @returns {Promise<Object>} A promise that resolves with the final result when status is 'done'.
+             */
+            _pollForStatus: function (generatorId) {
+                return new Promise((resolve, reject) => {
+                    const intervalId = setInterval(async () => {
+                        try {
+                            const response = await rpc.query({
+                                route: "/my2/children/letter/status",
+                                params: { generator_id: generatorId },
+                            });
+
+                            console.log("Polling status:", response.status);
+
+                            if (response.status === 'done') {
+                                clearInterval(intervalId);
+                                resolve(response.result);
+                            } else if (response.status === 'failed') {
+                                clearInterval(intervalId);
+                                reject(new Error(response.error || "Letter generation failed."));
+                            }
+                            // If status is 'pending', 'processing', etc., do nothing and let the interval continue.
+
+                        } catch (error) {
+                            clearInterval(intervalId);
+                            reject(error); // Reject on network error or other RPC failure
+                        }
+                    }, 200); // Poll every 200ms
                 });
             },
 
