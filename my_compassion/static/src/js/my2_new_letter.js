@@ -52,36 +52,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 const creationData = { ...formData, source: "mycompassion", csrf_token: odoo.csrf_token, mode: mode };
-                let fakeProgressPromise = Promise.resolve();
 
-                // If the mode is 'send', show a modal with a fake progress bar
                 if (mode === "send") {
                     $("#submitModal").modal({ backdrop: "static", keyboard: false }).modal("show");
 
-                    // Progress bar
                     const ProgressBarWidgetClass = publicWidget.registry.ProgressBarWidget;
                     this.progressBar = new ProgressBarWidgetClass(this, {
                         density: "medium",
-                        steps: [
-                            "Creating your letter…",
-                            "Applying the template…",
-                            "Adding your text…",
-                            "Adding your attachments…",
-                        ],
+                        steps: ["Creating your letter…"],
                     });
                     await this.progressBar.appendTo($("#progress-bar-div"));
-                    fakeProgressPromise = this.progressBar.startProgress();
                 }
 
                 try {
-                    // --- NEW THREE-STEP PROCESS: CREATE -> LAUNCH -> POLL ---
-                    // 1. First RPC call: Quickly create the letter record and get its ID.
                     const initialResult = await this._submitLetterRPC(creationData);
                     if (!initialResult.generator_id) {
                         throw new Error(initialResult.error || "Could not create the letter record.");
                     }
 
-                    // 2a. Trigger the processing on the backend. This call should return immediately.
                     this._launchProcessingRPC({
                         generator_id: initialResult.generator_id,
                         child_id: formData.child_id,
@@ -89,13 +77,27 @@ document.addEventListener("DOMContentLoaded", function () {
                         csrf_token: odoo.csrf_token
                     });
 
-                    // 2b. Now, poll for the status of the generation process we just launched.
-                    const processingPromise = this._pollForStatus(initialResult.generator_id);
+                    // --- ROBUST FIX IS HERE ---
+                    const updateProgress = (message) => {
+                        if (this.progressBar && message) {
+                            // This is a more robust way to update the text.
+                            // It first tries the specific label, but if that fails,
+                            // it updates the main widget element as a fallback.
+                            const stepLabel = this.progressBar.$el.find(".progress-bar-step-label").first();
+                            if (stepLabel.length) {
+                                stepLabel.text(message);
+                            } else {
+                                // Fallback: If the specific label isn't found, update the whole component's text.
+                                // This helps confirm if the polling data is being received.
+                                this.progressBar.$el.text(message);
+                            }
+                        }
+                    };
 
-                    // 3. Wait for the heavy processing (polling) AND the fake progress bar to finish.
-                    const [finalResult] = await Promise.all([processingPromise, fakeProgressPromise]);
+                    const processingPromise = this._pollForStatus(initialResult.generator_id, updateProgress);
 
-                    // 4. Handle the final response from the processing call.
+                    const finalResult = await processingPromise;
+
                     await this._handleResponse(mode, finalResult, formData.child_id);
 
                 } catch (error) {
@@ -127,13 +129,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             },
 
-            /**
-             * Collects and prepares all data from the letter submission form.
-             *
-             * @async
-             * @function
-             * @returns {Promise<Object>} A promise that resolves to an object containing form data.
-             */
             _collectFormData: async function () {
                 const childId = this.$("#child-dropdown").val();
                 const letterBody = this.$("#letter-input").val();
@@ -153,14 +148,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 };
             },
 
-            /**
-             * Encodes a list of files into base64 format for backend transmission.
-             *
-             * @async
-             * @function
-             * @param {FileList} fileList - The list of files selected by the user.
-             * @returns {Promise<Array<{filename: string, content: string}>>} A promise resolving to an array of attachment objects.
-             */
             _encodeAttachments: async function (fileList) {
                 const filePromises = Array.from(fileList).map(
                     (file) =>
@@ -178,13 +165,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 return Promise.all(filePromises);
             },
 
-            /**
-             * Sends the initial form data to create the letter record.
-             *
-             * @function
-             * @param {Object} data - The data payload to send with the request.
-             * @returns {Promise<Object>} A promise that resolves with the backend response.
-             */
             _submitLetterRPC: function (data) {
                 return rpc.query({
                     route: "/my2/children/letter/new",
@@ -192,29 +172,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             },
 
-            /**
-             * Triggers the heavy processing on the backend for a given generator ID.
-             *
-             * @function
-             * @param {Object} data - The data payload containing the generator_id.
-             * @returns {Promise<Object>} A promise that resolves with the final processing result.
-             */
             _launchProcessingRPC: function (data) {
-                // This function is now just used to kick off the process.
                 return rpc.query({
                     route: "/my2/children/letter/launch_processing",
                     params: data,
                 });
             },
 
-            /**
-             * Polls the backend for the letter generation status.
-             *
-             * @function
-             * @param {number} generatorId - The ID of the letter generator record.
-             * @returns {Promise<Object>} A promise that resolves with the final result when status is 'done'.
-             */
-            _pollForStatus: function (generatorId) {
+            _pollForStatus: function (generatorId, onProgressUpdate) {
                 return new Promise((resolve, reject) => {
                     const intervalId = setInterval(async () => {
                         try {
@@ -225,6 +190,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             console.log("Polling status:", response.status);
 
+                            if (onProgressUpdate && response.status) {
+                                const friendlyMessage = response.status.charAt(0).toUpperCase() + response.status.slice(1) + '...';
+                                onProgressUpdate(friendlyMessage);
+                            }
+
                             if (response.status === 'done') {
                                 clearInterval(intervalId);
                                 resolve(response.result);
@@ -232,26 +202,15 @@ document.addEventListener("DOMContentLoaded", function () {
                                 clearInterval(intervalId);
                                 reject(new Error(response.error || "Letter generation failed."));
                             }
-                            // If status is 'pending', 'processing', etc., do nothing and let the interval continue.
 
                         } catch (error) {
                             clearInterval(intervalId);
-                            reject(error); // Reject on network error or other RPC failure
+                            reject(error);
                         }
-                    }, 200); // Poll every 200ms
+                    }, 200);
                 });
             },
 
-            /**
-             * Handles the server response after processing is complete.
-             *
-             * @async
-             * @function
-             * @param {string} mode - Submission mode: `'send'` or `'preview'`.
-             * @param {Object} result - The result object returned by the server.
-             * @param {string} childId - The ID of the selected child, used in the redirect URL.
-             * @returns {Promise<void>} Resolves when the UI navigation or update is complete.
-             */
             _handleResponse: function (mode, result, childId) {
                 if (mode === "send") {
                     window.location.href = `/my2/children/letters/${childId}?new_letter_generator_id=${result.generator_id}`;
