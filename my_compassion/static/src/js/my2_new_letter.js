@@ -19,29 +19,33 @@ document.addEventListener("DOMContentLoaded", function () {
                 "input #letter-input": "_onLetterInput",
             },
 
-            /**
-             * @override
-             */
             init: function () {
                 this._super.apply(this, arguments);
                 this.RE_EMOJI = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
                 this.progressBar = null;
             },
 
-            /**
-             * Handles the submission of the letter creation form. This function manages Preview and Submit mode
-             *
-             * @async
-             * @function
-             * @param {Event} event - The form submission event.
-             *
-             * @returns {Promise<void>} Resolves once the letter submission process is complete.
-             */
             _onSubmitLetter: async function (ev) {
                 ev.preventDefault();
 
                 const submitButton = ev.originalEvent.submitter;
                 const mode = $(submitButton).data("custom");
+
+                // --- FIX: Define steps and map at the function level for wider scope ---
+                const steps = [
+                    "Creating Task...",         // Step 0
+                    "Applying Template...",     // Step 1
+                    "Adding Your Text...",      // Step 2
+                    "Adding Attachments...",    // Step 3
+                    "Generating PDF...",  // Step 4
+                ];
+                const statusMap = {
+                    'create_task': 0,
+                    'apply_template': 1,
+                    'apply_text': 2,
+                    'apply_images': 3,
+                    'generate_pdf': 4,
+                };
 
                 let formData;
                 try {
@@ -59,9 +63,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     const ProgressBarWidgetClass = publicWidget.registry.ProgressBarWidget;
                     this.progressBar = new ProgressBarWidgetClass(this, {
                         density: "medium",
-                        steps: ["Creating your letter…"],
+                        steps: steps, // Use the steps defined above
                     });
                     await this.progressBar.appendTo($("#progress-bar-div"));
+
+                    this.progressBar.startProgress();
                 }
 
                 try {
@@ -77,20 +83,11 @@ document.addEventListener("DOMContentLoaded", function () {
                         csrf_token: odoo.csrf_token
                     });
 
-                    // --- ROBUST FIX IS HERE ---
-                    const updateProgress = (message) => {
-                        if (this.progressBar && message) {
-                            // This is a more robust way to update the text.
-                            // It first tries the specific label, but if that fails,
-                            // it updates the main widget element as a fallback.
-                            const stepLabel = this.progressBar.$el.find(".progress-bar-step-label").first();
-                            if (stepLabel.length) {
-                                stepLabel.text(message);
-                            } else {
-                                // Fallback: If the specific label isn't found, update the whole component's text.
-                                // This helps confirm if the polling data is being received.
-                                this.progressBar.$el.text(message);
-                            }
+                    // This callback now has access to statusMap from the parent scope
+                    const updateProgress = (status) => {
+                        if (this.progressBar && status in statusMap) {
+                            const stepIndex = statusMap[status];
+                            this.progressBar.goToStep(stepIndex);
                         }
                     };
 
@@ -188,21 +185,23 @@ document.addEventListener("DOMContentLoaded", function () {
                                 params: { generator_id: generatorId },
                             });
 
-                            console.log("Polling status:", response.status);
+                            console.log("Polling response:", response);
 
-                            if (onProgressUpdate && response.status) {
-                                const friendlyMessage = response.status.charAt(0).toUpperCase() + response.status.slice(1) + '...';
-                                onProgressUpdate(friendlyMessage);
+                            if (onProgressUpdate) {
+                                onProgressUpdate(response.status);
                             }
 
                             if (response.status === 'done') {
+                                if (this.progressBar) {
+                                    const lastStep = this.progressBar.options.steps.length - 1;
+                                    this.progressBar.goToStep(lastStep);
+                                }
                                 clearInterval(intervalId);
                                 resolve(response.result);
                             } else if (response.status === 'failed') {
                                 clearInterval(intervalId);
                                 reject(new Error(response.error || "Letter generation failed."));
                             }
-
                         } catch (error) {
                             clearInterval(intervalId);
                             reject(error);

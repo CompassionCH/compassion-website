@@ -297,23 +297,23 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         callbacks = {
                       "create_letter_callback": lambda: (
                           letter_generator.write({'generation_status': 'creating_task'}),
-                          #time.sleep(1),
+                          time.sleep(1),
                           request.env.cr.commit()
 
                       ),
                       "apply_template_callback": lambda: (
                           letter_generator.write({'generation_status': 'apply_template'}),
-                          #time.sleep(8),
+                          time.sleep(2),
                           request.env.cr.commit()
                       ),
                       "apply_text_callback": lambda: (
                           letter_generator.write({'generation_status': 'apply_text'}),
-                          #time.sleep(1),
+                          time.sleep(1),
                           request.env.cr.commit()
                       ),
                       "apply_img_callback": lambda: (
                           letter_generator.write({'generation_status': 'apply_images'}),
-                          #time.sleep(1),
+                          time.sleep(1),
                           request.env.cr.commit()
                       ),
                       "generating_pdf_callback": lambda: (
