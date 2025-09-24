@@ -271,8 +271,14 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             letter_generator.onchange_domain()
             letter_generator.preview(**callbacks)
             print("SHAYAN caller after thread")
+            #TODO refactor this
             if post.get("mode") == "send":
-                letter_generator.generate_letters_job()
+                if 'generating_pdf_callback' in callbacks:
+                    callbacks['generating_pdf_callback']()
+                    letter_generator.generate_letters_job()
+
+
+
 
         try:
             child_id = int(post.get("child_id"))
@@ -289,12 +295,27 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             return {"error": "Something went wrong."}
 
         callbacks = {
-            "create_letter_callback": self.create_letter_callback,
-            "apply_template_callback": self.apply_template_callback,
-            "apply_text_callback": self.apply_text_callback,
-            "apply_img_callback": self.apply_img_callback,
-            "generating_pdf_callback": self.generating_pdf_callback,
-        }
+                      "create_letter_callback": lambda: (
+                          letter_generator.write({'generation_status': 'creating_task'}),
+                          request.env.cr.commit()
+                      ),
+                      "apply_template_callback": lambda: (
+                          letter_generator.write({'generation_status': 'apply_template'}),
+                          request.env.cr.commit()
+                      ),
+                      "apply_text_callback": lambda: (
+                          letter_generator.write({'generation_status': 'apply_text'}),
+                          request.env.cr.commit()
+                      ),
+                      "apply_img_callback": lambda: (
+                          letter_generator.write({'generation_status': 'apply_images'}),
+                          request.env.cr.commit()
+                      ),
+                      "generating_pdf_callback": lambda: (
+                          letter_generator.write({'generation_status': 'generate_pdf'}),
+                          request.env.cr.commit()
+                      ),
+                  }
 
         process_letter_generator(letter_generator,callbacks,post)
 
