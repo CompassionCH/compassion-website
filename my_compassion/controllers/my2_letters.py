@@ -228,35 +228,9 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         if not letter_generator:
             return {"error": "Something went wrong."}
 
-        #SHAYAN
-        # Launch the heavy processing in a new thread (background job)
-
-
-
-
-        import threading
-
-
-        # # Launch the thread
-        # thread = threading.Thread(
-        #     target=process_letter_generator,
-        #     args=(letter_generator.copy(), callbacks, post.copy())
-        # )
-        # thread.start()
-
-        #process_letter_generator(letter_generator,callbacks,post)
-
-        # Immediately return the ID to the client
         return {
             "generator_id": letter_generator.id,
         }
-
-        # return {
-        #     "preview_url": f"{request.httprequest.host_url}web/image"
-        #     f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
-        #     "letter_values": letter_values,
-        #     "generator_id": letter_generator.id,
-        # }
 
     @http.route(
         "/my2/children/letter/launch_processing",
@@ -268,18 +242,19 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
     def my2_launch_letter_processing(self, **post):
 
         def process_letter_generator(letter_generator, callbacks, post):
-            letter_generator.onchange_domain()
-            letter_generator.preview(**callbacks)
-            print("SHAYAN caller after thread")
-            #TODO refactor this
-            if post.get("mode") == "send":
-                if 'generating_pdf_callback' in callbacks:
-                    callbacks['generating_pdf_callback']()
-                    letter_generator.generate_letters_job()
-
-
-
-
+                                try:
+                                    letter_generator.onchange_domain()
+                                    letter_generator.preview(**callbacks)
+                                    print("SHAYAN caller after thread")
+                                    # TODO refactor this
+                                    if post.get("mode") == "send":
+                                        if 'finalizing_callback' in callbacks:
+                                            callbacks['finalizing_callback']()
+                                            letter_generator.generate_letters_job()
+                                except Exception as e:
+                                    if 'failure_callback' in callbacks:
+                                        callbacks['failure_callback']()
+                                    raise
         try:
             child_id = int(post.get("child_id"))
             child = request.env["compassion.child"].browse(child_id)
@@ -290,76 +265,57 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         letter_generator_id = post.get("generator_id")
         if not letter_generator_id:
             return {"error": "Something went wrong."}
-        letter_generator = request.env["correspondence.s2b.generator"].sudo().browse(letter_generator_id)
+        letter_generator = request.env["correspondence.s2b.generator"].sudo().browse(
+            letter_generator_id)
         if not letter_generator.exists():
             return {"error": "Something went wrong."}
 
         callbacks = {
-                      "create_letter_callback": lambda: (
-                          letter_generator.write({'generation_status': 'creating_task'}),
-                          time.sleep(1),
-                          request.env.cr.commit()
+            "create_letter_callback": lambda: (
+                letter_generator.write({'generation_status': 'creating_task'}),
+                request.env.cr.commit()
 
-                      ),
-                      "apply_template_callback": lambda: (
-                          letter_generator.write({'generation_status': 'apply_template'}),
-                          time.sleep(2),
-                          request.env.cr.commit()
-                      ),
-                      "apply_text_callback": lambda: (
-                          letter_generator.write({'generation_status': 'apply_text'}),
-                          time.sleep(1),
-                          request.env.cr.commit()
-                      ),
-                      "apply_img_callback": lambda: (
-                          letter_generator.write({'generation_status': 'apply_images'}),
-                          time.sleep(1),
-                          request.env.cr.commit()
-                      ),
-                      "generating_pdf_callback": lambda: (
-                          letter_generator.write({'generation_status': 'generate_pdf'}),
-                          time.sleep(1),
-                          request.env.cr.commit()
-                      ),
-                  }
+            ),
+            "apply_template_callback": lambda: (
+                letter_generator.write({'generation_status': 'apply_template'}),
+                request.env.cr.commit()
+            ),
+            "apply_text_callback": lambda: (
+                letter_generator.write({'generation_status': 'apply_text'}),
+                request.env.cr.commit()
+            ),
+            "apply_img_callback": lambda: (
+                letter_generator.write({'generation_status': 'apply_images'}),
+                request.env.cr.commit()
+            ),
+            "generating_pdf_callback": lambda: (
+                letter_generator.write({'generation_status': 'generate_pdf'}),
+                request.env.cr.commit()
+            ),
+            "failure_callback": lambda: (
+                letter_generator.write({'generation_status': 'failed'}),
+                time.sleep(1),
+                request.env.cr.commit()
+            ),
+            "finalizing_callback": lambda: (
+                letter_generator.write({'generation_status': 'finalizing'}),
+                time.sleep(1),
+                request.env.cr.commit()
+            ),
 
-        process_letter_generator(letter_generator,callbacks,post)
+        }
 
+        process_letter_generator(letter_generator, callbacks, post)
 
         letter_generator.write({'generation_status': 'done'}),
         request.env.cr.commit()
         print("DONE")
 
-
         return {
             "preview_url": f"{request.httprequest.host_url}web/image"
-            f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
+                           f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
             "generator_id": letter_generator.id,
         }
-
-
-
-
-
-
-    # Callbacks
-    def create_letter_callback(self):
-        print("SHAYAN Create letter")
-
-    def apply_img_callback(self):
-        print("SHAYAN Applying img")
-
-    def apply_template_callback(self):
-        print("SHAYAN Applying template")
-
-    def apply_text_callback(self):
-        print("SHAYAN Apply text")
-
-    def generating_pdf_callback(self):
-        print("SHAYAN generating pdf")
-
-
-
 
     @http.route(
         "/my2/children/letter/status",
@@ -374,10 +330,10 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         """
         try:
             generator_id = int(post.get("generator_id"))
-            letter_generator = request.env["correspondence.s2b.generator"].sudo().browse(generator_id)
+            letter_generator = request.env[
+                "correspondence.s2b.generator"].sudo().browse(generator_id)
             if not letter_generator.exists():
                 return {"status": "failed", "error": "Generator not found."}
-
 
             status = letter_generator.generation_status
             if status == 'done':
@@ -386,7 +342,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                     "status": "done",
                     "result": {
                         "preview_url": f"{request.httprequest.host_url}web/image"
-                        f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
+                                       f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
                         "generator_id": letter_generator.id,
                     }
                 }

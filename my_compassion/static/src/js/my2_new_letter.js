@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     "Adding Your Text...",      // Step 2
                     "Adding Attachments...",    // Step 3
                     "Generating PDF...",  // Step 4
+                    "Finalizing..."            // Step 5
                 ];
                 const statusMap = {
                     'create_task': 0,
@@ -45,6 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     'apply_text': 2,
                     'apply_images': 3,
                     'generate_pdf': 4,
+                    'finalizing': 5
                 };
 
                 let formData;
