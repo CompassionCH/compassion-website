@@ -166,14 +166,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             _submitLetterRPC: function (data) {
                 return rpc.query({
-                    route: "/my2/children/letter/new",
+                    route: "/my2/children/letter/create_generator",
                     params: data,
                 });
             },
 
             _launchProcessingRPC: function (data) {
                 return rpc.query({
-                    route: "/my2/children/letter/launch_processing",
+                    route: "/my2/children/letter/launch_generation",
                     params: data,
                 });
             },

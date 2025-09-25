@@ -8,7 +8,6 @@
 ##############################################################################
 import calendar
 from datetime import date
-
 import time
 import babel
 
@@ -76,10 +75,10 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             nr_filters_applied += 1
 
         if (
-            year_from > 1900
-            or year_to < current_year
-            or month_from > 1
-            or month_to < 12
+                year_from > 1900
+                or year_to < current_year
+                or month_from > 1
+                or month_to < 12
         ):
             nr_filters_applied += 1
         if letter_type:
@@ -180,9 +179,6 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             },
         )
 
-
-
-
     @http.route(
         "/my2/children/letter/new",
         type="json",
@@ -228,33 +224,84 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         if not letter_generator:
             return {"error": "Something went wrong."}
 
+        self.process_letter_generator(letter_generator= letter_generator, post=post.copy())
+
         return {
+            "preview_url": f"{request.httprequest.host_url}web/image"
+                           f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
+            "letter_values": letter_values,
             "generator_id": letter_generator.id,
         }
 
+
+
     @http.route(
-        "/my2/children/letter/launch_processing",
+        "/my2/children/letter/create_generator",
         type="json",
         auth="user",
         methods=["POST"],
         sitemap=False,
     )
-    def my2_launch_letter_processing(self, **post):
+    def my2_create_generator(self, **post):
+        """
+        Used in my2_new_letter.js for sending the new letter form data
+        """
+        try:
+            child_id = int(post.get("child_id"))
+            child = request.env["compassion.child"].browse(child_id)
+            self._check_sponsored_child_access(child)
+            template_id = int(post.get("template_id"))
+        except (AccessError, ValueError, TypeError):
+            return {"error": "Something went wrong."}
 
-        def process_letter_generator(letter_generator, callbacks, post):
-                                try:
-                                    letter_generator.onchange_domain()
-                                    letter_generator.preview(**callbacks)
-                                    print("SHAYAN caller after thread")
-                                    # TODO refactor this
-                                    if post.get("mode") == "send":
-                                        if 'finalizing_callback' in callbacks:
-                                            callbacks['finalizing_callback']()
-                                            letter_generator.generate_letters_job()
-                                except Exception as e:
-                                    if 'failure_callback' in callbacks:
-                                        callbacks['failure_callback']()
-                                    raise
+        attachments = [
+            (0, 0, {"datas": file["content"], "name": file["filename"]})
+            for file in post.get("attachments", [])
+            if isinstance(file, dict) and "content" in file
+        ]
+
+        letter_values = {
+            "name": f"{post.get('source')}-{child.local_id}",
+            "selection_domain": str(
+                [
+                    ("child_id.local_id", "=", child.local_id),
+                    ("state", "not in", ["draft", "cancelled"]),
+                ]
+            ),
+            "body": post.get("letter_body"),
+            "template_id": template_id,
+            "image_ids": attachments,
+            "source": post.get("source"),
+        }
+
+        letter_generator = (
+            request.env["correspondence.s2b.generator"].sudo().create(letter_values)
+        )
+        if not letter_generator:
+            return {"error": "Something went wrong."}
+
+
+
+        return {
+            "generator_id": letter_generator.id,
+        }
+
+
+
+
+
+
+
+
+
+    @http.route(
+        "/my2/children/letter/launch_generation",
+        type="json",
+        auth="user",
+        methods=["POST"],
+        sitemap=False,
+    )
+    def my2_launch_letter_generation(self, **post):
         try:
             child_id = int(post.get("child_id"))
             child = request.env["compassion.child"].browse(child_id)
@@ -294,23 +341,21 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             ),
             "failure_callback": lambda: (
                 letter_generator.write({'generation_status': 'failed'}),
-                time.sleep(1),
+                time.sleep(10),
                 request.env.cr.commit()
             ),
             "finalizing_callback": lambda: (
                 letter_generator.write({'generation_status': 'finalizing'}),
-                time.sleep(1),
+                time.sleep(10),
                 request.env.cr.commit()
             ),
 
         }
 
-        process_letter_generator(letter_generator, callbacks, post)
+        self.process_letter_generator(letter_generator, post=post, callbacks=callbacks)
 
         letter_generator.write({'generation_status': 'done'}),
         request.env.cr.commit()
-        print("DONE")
-
         return {
             "preview_url": f"{request.httprequest.host_url}web/image"
                            f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
@@ -351,3 +396,17 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
 
         except (AccessError, ValueError, TypeError):
             return {"status": "failed", "error": "Access denied or invalid ID."}
+
+
+    def process_letter_generator(self, letter_generator,post,callbacks=None):
+        try:
+            letter_generator.onchange_domain()
+            letter_generator.preview(**callbacks)
+            if post.get("mode") == "send":
+                if 'finalizing_callback' in callbacks:
+                    callbacks['finalizing_callback']()
+                letter_generator.generate_letters_job()
+        except Exception as e:
+            if 'failure_callback' in callbacks:
+                callbacks['failure_callback']()
+            raise
