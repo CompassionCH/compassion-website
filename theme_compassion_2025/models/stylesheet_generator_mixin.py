@@ -24,13 +24,17 @@ class StylesheetGeneratorMixin(models.AbstractModel):
     _name = "stylesheet.generator.mixin"
     _description = "Stylesheet Generator Mixin"
 
+    render_key = None
+    css_template_xml_id = None
+    css_attachment_xml_id = None
+
     @api.model
     def _generate_stylesheet(self):
         """
         Generates a CSS stylesheet from a template and updates the corresponding CSS
         attachment.
         """
-        if not hasattr(self, "css_template_xml_id"):
+        if not getattr(self, "css_template_xml_id", None):
             _logger.warning(
                 f"Model {self._name} is missing 'css_template_xml_id' attribute. "
                 f"Skipping generation."
@@ -45,7 +49,8 @@ class StylesheetGeneratorMixin(models.AbstractModel):
                 ("module", "=", module),
             ]
         )
-        if not css_template_xml:
+        views = self.env["ir.ui.view"].browse(css_template_xml.res_id or [])
+        if not css_template_xml or not views.exists():
             _logger.warning(
                 f"Stylesheet template '{self.css_template_xml_id}' not found. "
                 f"Skipping generation."
