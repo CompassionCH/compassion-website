@@ -226,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             clearInterval(intervalId);
                             reject(error);
                         }
-                    }, 400);
+                    }, 1000);
                 });
             },
 
