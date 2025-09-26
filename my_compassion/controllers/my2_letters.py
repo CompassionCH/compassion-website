@@ -332,10 +332,6 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         # Define callbacks for each stage of the process
         # These callbacks update the generation_status field and commit in the db.
         callbacks = {
-            "create_letter_callback": lambda: (
-                letter_generator.write({"generation_status": "creating_task"}),
-                request.env.cr.commit(),
-            ),
             "apply_template_callback": lambda: (
                 letter_generator.write({"generation_status": "apply_template"}),
                 request.env.cr.commit(),
@@ -354,12 +350,10 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             ),
             "failure_callback": lambda: (
                 letter_generator.write({"generation_status": "failed"}),
-                time.sleep(10),
                 request.env.cr.commit(),
             ),
             "finalizing_callback": lambda: (
                 letter_generator.write({"generation_status": "finalizing"}),
-                time.sleep(3),
                 request.env.cr.commit(),
             ),
         }
@@ -432,8 +426,6 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 are triggered at various stages of the process. This is used
                 to provide real-time feedback. Defaults to None.
                 Expected keys include:
-                - 'create_letter_callback': Called at the very beginning of
-                  the PDF generation process within `preview`.
                 - 'apply_template_callback': Called when the base template is
                   being applied.
                 - 'apply_text_callback': Called when the letter's text body is

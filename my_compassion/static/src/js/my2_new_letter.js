@@ -223,7 +223,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             clearInterval(intervalId);
                             reject(error);
                         }
-                    }, 1000);
+                    }, 400);
                 });
             },
 
