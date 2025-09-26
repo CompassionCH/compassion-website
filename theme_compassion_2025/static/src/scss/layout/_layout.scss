@@ -9,23 +9,15 @@
     * The content column is set to a max-width of 768px for a better reading experience
     */
 
-.site-wrapper {
-    max-width: $max-site-width;
-    margin: 0 auto;
-    background-color: map-get($compassion-colors, "pure-white");
-    border-left: 1px solid #d2d5df;
-    border-right: 1px solid #d2d5df;
-}
-
 .container {
-    max-width: $container-width;
+    max-width: $max-site-width !important;
     margin: 0 auto;
-    padding-left: $gutter-sm;
-    padding-right: $gutter-sm;
+    padding-left: 0px;
+    padding-right: 0px;
 
-    @media (min-width: $breakpoint-sm) {
-        padding-left: $gutter-lg;
-        padding-right: $gutter-lg;
+    @media (max-width: $breakpoint-sm) {
+        padding-left: $gutter-sm;
+        padding-right: $gutter-sm;
     }
 
     &--header {
@@ -35,7 +27,12 @@
     }
 }
 
-.content-column {
+.container-content {
+    max-width: $main-content-width;
+    margin: 0 auto;
+}
+
+.single-column {
     max-width: $single-column-width;
     margin-left: auto;
     margin-right: auto;

@@ -1,13 +1,6 @@
 /**
  * Handles the new_letter form submission.
- *Shows a progress bar that updates as the letter is processed by polling the server.
- * The update works by:
- *    1) Request the server to create a letter generation task.
- *    2) Tell the server to start processing the task while updating the task state.
- *    3) Poll the server to get the current statusof the task and update the progress bar accordingly.
- *    4) Once the task is complete, redirect or show a preview based on user choice.
- *
- *Is used in /templates/pages/my2_new_letter.xml
+ * Is used in /templates/pages/my2_new_letter.xml
  *
  */
 document.addEventListener("DOMContentLoaded", function () {
@@ -191,6 +184,7 @@ document.addEventListener("DOMContentLoaded", function () {
             _launchProcessingRPC: function (data) {
                 return rpc.query({
                     route: "/my2/children/letter/launch_generation",
+                    route: "/my2/children/letters/new",
                     params: data,
                 });
             },
