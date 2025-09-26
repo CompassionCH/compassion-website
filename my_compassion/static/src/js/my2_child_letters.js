@@ -23,11 +23,13 @@ odoo.define("my_compassion.my2_child_letters", function (require) {
                 rpc.query({
                     route: "/my2/letters/mark_read",
                     params: { letter_id: parseInt(letterId) },
-                }).then((result) => {
-                    console.log("Letter read status updated:", result);
-                }).catch(err => {
-                    console.error("Failed to mark letter as read", err);
-                });
+                })
+                    .then((result) => {
+                        console.log("Letter read status updated:", result);
+                    })
+                    .catch((err) => {
+                        console.error("Failed to mark letter as read", err);
+                    });
             }
 
             setTimeout(() => {

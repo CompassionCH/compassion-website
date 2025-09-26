@@ -97,7 +97,10 @@ Page: My Compassion 2 Dashboard Page
                                 <t t-set="color" t-value="'low-green'" />
                                 <t t-set="icon_color" t-value="'low-green'" />
                                 <t t-set="text_color" t-value="'low-green'" />
-                                <t t-set="href" t-value="'/my2/children/letters?year_to=2025&amp;month_from=1&amp;month_to=12&amp;sort=newest&amp;unread=unread&amp;page=1'" />
+                                <t
+                                    t-set="href"
+                                    t-value="'/my2/children/letters?year_to=2025&amp;month_from=1&amp;month_to=12&amp;sort=newest&amp;unread=unread&amp;page=1'"
+                                />
                             </t>
                         </t>
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
