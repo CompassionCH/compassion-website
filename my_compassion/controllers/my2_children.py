@@ -47,7 +47,7 @@ class MyCompassionChildrenController(WebsiteChild):
         )
         return records, total
 
-    @http.route("/my2/children", type="http", auth="user", website=True, sitemap=False)
+    @http.route("/my2/children/", type="http", auth="user", website=True, sitemap=False)
     def my2_render_children_page(self, **kwargs):
         """
         Renders the children page related to the logged-in user's sponsorships.
@@ -111,6 +111,14 @@ class MyCompassionChildrenController(WebsiteChild):
             "my_compassion.my2_child_timeline_page",
             {
                 "compassion_child": child.sudo(),
+                "breadcrumbs": [
+                    {"name": "Children", "url": "/my2/children/", "active": False},
+                    {
+                        "name": child.preferred_name,
+                        "url": "/my2/children/" + str(child.id),
+                        "active": True,
+                    },
+                ],
                 "records": records,
                 "has_more_records": total > offset + limit,
                 "access_scope": access_scope,

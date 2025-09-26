@@ -8,45 +8,54 @@ odoo.define("my_compassion.my2_child_letters", function (require) {
     const okBtn = document.getElementById("filterOkBtn");
     const ToastService = require("my_compassion.toast_service");
     const _t = require("web.core")._t;
-    const rpc = require("web.rpc");
 
     // Letter animation
     document.querySelectorAll(".my2-envelope").forEach((envelope) => {
         envelope.addEventListener("click", function () {
-            envelope.classList.add("open");
             const letter = envelope.querySelector(".env-letter");
 
-            // dataset is retrieved from xml t-att-data attribute
-            const letterId = envelope.dataset.letterId;
-            const letterRead = envelope.dataset.letterRead;
-            const childId = envelope.dataset.childId;
+            if (!envelope.classList.contains("already-read")) {
+                // Iframe
+                const iframeContainer = envelope.querySelector(".iframe-container");
+                let iframe = iframeContainer.querySelector("iframe");
+                if (!iframe) {
+                    iframe = document.createElement("iframe");
+                    iframe.src = "/b2s_image?id=" + envelope.dataset.letterUuid + "&disposition=inline&file_type=pdf";
+                    iframe.type = "application/pdf";
+                    iframeContainer.appendChild(iframe);
+                    iframeContainer.style.display = "block";
 
-            // Mark letter as read
-            if (childId && letterId && !letterRead) {
-                rpc.query({
-                    route: `/my2/children/${childId}/letters/${letterId}/mark_read`,
-                    params: { letter_id: parseInt(letterId) },
-                })
-                    .then((result) => {
-                        console.log("Letter read status updated:", result);
-                    })
-                    .catch((err) => {
-                        console.error("Failed to mark letter as read", err);
+                    iframe.addEventListener("load", () => {
+                        envelope.classList.add("open");
                     });
+                } else {
+                    envelope.classList.add("open");
+                }
+
+                // The z-index has to change dynamically during the animation
+                setTimeout(() => {
+                    if (letter) {
+                        letter.style.zIndex = "3";
+                    }
+                }, 800);
+
+                setTimeout(function () {
+                    const href = envelope.getAttribute("href");
+                    if (href) {
+                        window.location.href = href;
+                    }
+                }, 1400);
+            } else {
+                envelope.classList.remove("open");
+                envelope.classList.add("reopen");
+
+                setTimeout(function () {
+                    const href = envelope.getAttribute("href");
+                    if (href) {
+                        window.location.href = href;
+                    }
+                }, 600);
             }
-
-            setTimeout(() => {
-                if (letter) {
-                    letter.style.zIndex = "3";
-                }
-            }, 800);
-
-            setTimeout(function () {
-                const href = envelope.getAttribute("href");
-                if (href) {
-                    window.location.href = href;
-                }
-            }, 1200);
         });
     });
 
@@ -75,24 +84,27 @@ odoo.define("my_compassion.my2_child_letters", function (require) {
             const filterYearTo = document.getElementById("yearDropdownTo")?.value || "";
             const filterMonthFrom = document.getElementById("monthDropdownFrom")?.value || "";
             const filterMonthTo = document.getElementById("monthDropdownTo")?.value || "";
+            const filterUnread = document.querySelector('input[name="unreadOptions"]:checked');
 
             const sort = document.querySelector('input[name="sortOptions"]:checked')?.value || "newest";
-            const unreadFilter = document.querySelector('input[name="unreadOptions"]:checked')?.value || "all";
-
             const redirect_child_id = document.getElementById("childrenDropdown")?.value || "";
             const selectedType = document.querySelector('input[name="type"]:checked')?.value || "";
 
             const url = new URL(window.location.origin + "/my2/children/letters");
-            if (redirect_child_id) url.pathname += `/${redirect_child_id}`;
+            if (redirect_child_id) url.searchParams.set("child_id", redirect_child_id);
             if (filterYearFrom) url.searchParams.set("year_from", filterYearFrom);
             if (filterYearTo) url.searchParams.set("year_to", filterYearTo);
             if (filterMonthFrom) url.searchParams.set("month_from", filterMonthFrom);
             if (filterMonthTo) url.searchParams.set("month_to", filterMonthTo);
             if (selectedType) url.searchParams.set("type", selectedType);
-
             url.searchParams.set("sort", sort);
-            url.searchParams.set("unread", unreadFilter); // new filter
             url.searchParams.set("page", 1);
+
+            if (filterUnread && filterUnread.value === "unread") {
+                url.searchParams.set("unread", "true");
+            } else {
+                url.searchParams.delete("unread");
+            }
 
             window.location.href = url.toString();
         });

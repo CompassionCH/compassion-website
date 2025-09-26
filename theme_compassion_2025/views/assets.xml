@@ -5,7 +5,7 @@
             <link rel="stylesheet" type="text/css" href="/theme_compassion_2025/static/src/css/custom_style.css" />
         </xpath>
     </template>
-    <template id="_assets_frontend_helpers" inherit_id="website.assets_frontend" priority="2">
+    <template id="_assets_frontend_helpers" inherit_id="website.assets_frontend">
         <xpath expr="//link[last()]" position="after">
             <link
                 rel="stylesheet"
@@ -19,11 +19,23 @@
             />
         </xpath>
     </template>
-    <template id="assets_frontend" name="My style" inherit_id="website.assets_frontend" priority="3">
+    <template id="assets_frontend" name="My style" inherit_id="website.assets_frontend">
         <xpath expr="link[last()]" position="after">
-            <link rel="stylesheet" type="text/scss" href="/theme/compassion/colors.scss" />
-            <link rel="stylesheet" type="text/scss" href="/theme/compassion/icons.scss" />
-            <link rel="stylesheet" type="text/scss" href="/theme/compassion/pictograms.scss" />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/abstracts/_colors.scss"
+            />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/abstracts/images/_icons_variables.scss"
+            />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/abstracts/images/_pictograms_variables.scss"
+            />
             <link
                 rel="stylesheet"
                 type="text/scss"
@@ -48,6 +60,16 @@
             <link rel="stylesheet" type="text/scss" href="/theme_compassion_2025/static/src/scss/base/_base.scss" />
             <link rel="stylesheet" type="text/scss" href="/theme_compassion_2025/static/src/scss/layout/_layout.scss" />
             <link rel="stylesheet" type="text/scss" href="/theme_compassion_2025/static/src/scss/layout/_grid.scss" />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/components/_icons.scss"
+            />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/components/_pictograms.scss"
+            />
             <link
                 rel="stylesheet"
                 type="text/scss"

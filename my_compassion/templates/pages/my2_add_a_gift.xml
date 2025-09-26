@@ -19,7 +19,7 @@
         <link rel="stylesheet" href="/my_compassion/static/src/css/my2_add_a_gift.css" />
         <t t-call="website.layout">
             <div class="container">
-                <div class="single-column my2-add-a-gift">
+                <div class="content-column my2-add-a-gift">
                     <!-- HELP MODAL -->
                     <t t-call="my_compassion.GivingLimitsModalComponent">
                         <t t-set="modal_id" t-value="'help-modal'" />

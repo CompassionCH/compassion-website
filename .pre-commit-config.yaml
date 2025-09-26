@@ -72,11 +72,7 @@ repos:
             types: [text]
             files: \.(css|htm|html|js|json|jsx|less|md|scss|toml|ts|xml|yaml|yml)$
             language: node
-            exclude: |
-                (?x)(
-                    \.scss$|
-                    ^theme_compassion_2025/templates/styles/
-                )
+            exclude: \.scss$
             additional_dependencies:
                 - "prettier@2.1.2"
                 - "@prettier/plugin-xml@0.12.0"
