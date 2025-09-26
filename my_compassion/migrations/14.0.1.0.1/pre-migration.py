@@ -5,7 +5,7 @@ def migrate(cr, version):
     openupgrade.logged_query(
         cr,
         """
-        DELETE FROM v14_switzerland.public.ir_model_data
+        DELETE FROM ir_model_data
             WHERE module = 'my_compassion'
             AND name like 'selection__product_template__my_compassion_pictogram%'
                """,
@@ -13,7 +13,7 @@ def migrate(cr, version):
     openupgrade.logged_query(
         cr,
         """
-         DELETE FROM v14_switzerland.public.ir_model_data
+         DELETE FROM ir_model_data
          WHERE module = 'my_compassion'
            AND name = 'field__product_template__my_compassion_pictogram'
          """,
