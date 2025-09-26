@@ -81,7 +81,7 @@ odoo.define("theme_compassion_2025.ProgressBarWidget", function (require) {
 
         /**
          * Moves the progress bar to a specific step.
-         * @param {number} stepIndex - The zero-based index of the step to go to.
+         * @param {Number} stepIndex - The zero-based index of the step to go to.
          */
         goToStep: function (stepIndex) {
             var steps = this.options.steps;

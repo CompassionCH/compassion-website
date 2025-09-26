@@ -7,8 +7,9 @@
 #
 ##############################################################################
 import calendar
-from datetime import date
 import time
+from datetime import date
+
 import babel
 
 from odoo import http
@@ -75,10 +76,10 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             nr_filters_applied += 1
 
         if (
-                year_from > 1900
-                or year_to < current_year
-                or month_from > 1
-                or month_to < 12
+            year_from > 1900
+            or year_to < current_year
+            or month_from > 1
+            or month_to < 12
         ):
             nr_filters_applied += 1
         if letter_type:
@@ -224,16 +225,16 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         if not letter_generator:
             return {"error": "Something went wrong."}
 
-        self.process_letter_generator(letter_generator= letter_generator, post=post.copy())
+        self.process_letter_generator(
+            letter_generator=letter_generator, post=post.copy()
+        )
 
         return {
             "preview_url": f"{request.httprequest.host_url}web/image"
-                           f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
+            f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
             "letter_values": letter_values,
             "generator_id": letter_generator.id,
         }
-
-
 
     @http.route(
         "/my2/children/letter/create_generator",
@@ -280,19 +281,9 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         if not letter_generator:
             return {"error": "Something went wrong."}
 
-
-
         return {
             "generator_id": letter_generator.id,
         }
-
-
-
-
-
-
-
-
 
     @http.route(
         "/my2/children/letter/launch_generation",
@@ -306,7 +297,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         Handles the launch of the letter generation process for a specific child.
         Args:
             post (dict): A dictionary containing the following keys:
-                - "child_id" (int): The ID of the child for whom the letter is being generated.
+                - "child_id" (int): The ID of the child to whom the letter is generated.
                 - "generator_id" (int): The ID of the letter generator instance.
 
         Returns:
@@ -330,8 +321,11 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         letter_generator_id = post.get("generator_id")
         if not letter_generator_id:
             return {"error": "Something went wrong."}
-        letter_generator = request.env["correspondence.s2b.generator"].sudo().browse(
-            letter_generator_id)
+        letter_generator = (
+            request.env["correspondence.s2b.generator"]
+            .sudo()
+            .browse(letter_generator_id)
+        )
         if not letter_generator.exists():
             return {"error": "Something went wrong."}
 
@@ -339,48 +333,44 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         # These callbacks update the generation_status field and commit in the db.
         callbacks = {
             "create_letter_callback": lambda: (
-                letter_generator.write({'generation_status': 'creating_task'}),
-                request.env.cr.commit()
-
+                letter_generator.write({"generation_status": "creating_task"}),
+                request.env.cr.commit(),
             ),
             "apply_template_callback": lambda: (
-                letter_generator.write({'generation_status': 'apply_template'}),
-                request.env.cr.commit()
+                letter_generator.write({"generation_status": "apply_template"}),
+                request.env.cr.commit(),
             ),
             "apply_text_callback": lambda: (
-                letter_generator.write({'generation_status': 'apply_text'}),
-                request.env.cr.commit()
+                letter_generator.write({"generation_status": "apply_text"}),
+                request.env.cr.commit(),
             ),
             "apply_img_callback": lambda: (
-                letter_generator.write({'generation_status': 'apply_images'}),
-                request.env.cr.commit()
+                letter_generator.write({"generation_status": "apply_images"}),
+                request.env.cr.commit(),
             ),
             "generating_pdf_callback": lambda: (
-                letter_generator.write({'generation_status': 'generate_pdf'}),
-                request.env.cr.commit()
+                letter_generator.write({"generation_status": "generate_pdf"}),
+                request.env.cr.commit(),
             ),
             "failure_callback": lambda: (
-                letter_generator.write({'generation_status': 'failed'}),
-
-
+                letter_generator.write({"generation_status": "failed"}),
                 time.sleep(10),
-                request.env.cr.commit()
+                request.env.cr.commit(),
             ),
             "finalizing_callback": lambda: (
-                letter_generator.write({'generation_status': 'finalizing'}),
+                letter_generator.write({"generation_status": "finalizing"}),
                 time.sleep(3),
-                request.env.cr.commit()
+                request.env.cr.commit(),
             ),
-
         }
-        #Launch the processing of the letter generator with the defined callbacks
+        # Launch the processing of the letter generator with the defined callbacks
         self.process_letter_generator(letter_generator, post=post, callbacks=callbacks)
 
-        letter_generator.write({'generation_status': 'done'}),
+        (letter_generator.write({"generation_status": "done"}),)
         request.env.cr.commit()
         return {
             "preview_url": f"{request.httprequest.host_url}web/image"
-                           f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
+            f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
             "generator_id": letter_generator.id,
         }
 
@@ -402,28 +392,28 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             self._check_sponsored_child_access(child)
 
             generator_id = int(post.get("generator_id"))
-            letter_generator = request.env[
-                "correspondence.s2b.generator"].sudo().browse(generator_id)
+            letter_generator = (
+                request.env["correspondence.s2b.generator"].sudo().browse(generator_id)
+            )
             if not letter_generator.exists():
                 return {"status": "failed", "error": "Generator not found."}
 
             status = letter_generator.generation_status
-            if status == 'done':
+            if status == "done":
                 # If done, also return the final data needed by the frontend
                 return {
                     "status": "done",
                     "result": {
                         "preview_url": f"{request.httprequest.host_url}web/image"
-                                       f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
+                        f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
                         "generator_id": letter_generator.id,
-                    }
+                    },
                 }
             else:
                 return {"status": status}
 
         except (AccessError, ValueError, TypeError):
             return {"status": "failed", "error": "Access denied or invalid ID."}
-
 
     def process_letter_generator(self, letter_generator, post, callbacks=None):
         """
@@ -450,8 +440,8 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                   being rendered onto the template.
                 - 'apply_img_callback': Called when attachments or images are
                   being added to the letter.
-                - 'generating_pdf_callback': Called just before the final PDF is compiled.
-                - 'finalizing_callback': Called just before the final
+                - 'generating_pdf_callback': Called before the final PDF is compiled.
+                - 'finalizing_callback': Called before the final
                 - 'failure_callback': Called if any exception occurs during
                   the entire process.
 
@@ -465,11 +455,11 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             letter_generator.preview(**(callbacks or {}))
 
             if post.get("mode") == "send":
-                if callbacks and 'finalizing_callback' in callbacks:
-                    callbacks['finalizing_callback']()
+                if callbacks and "finalizing_callback" in callbacks:
+                    callbacks["finalizing_callback"]()
                 letter_generator.generate_letters_job()
 
-        except Exception as e:
-            if callbacks and 'failure_callback' in callbacks:
-                callbacks['failure_callback']()
+        except Exception:
+            if callbacks and "failure_callback" in callbacks:
+                callbacks["failure_callback"]()
             raise
