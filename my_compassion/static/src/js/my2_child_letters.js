@@ -15,13 +15,16 @@ odoo.define("my_compassion.my2_child_letters", function (require) {
         envelope.addEventListener("click", function () {
             envelope.classList.add("open");
             const letter = envelope.querySelector(".env-letter");
-            const letterId = envelope.dataset.letterId; // you'll need to add this in XML
-            const letterRead = envelope.dataset.letterRead; // you'll need to add this in XML
+
+            // dataset is retrieved from xml t-att-data attribute
+            const letterId = envelope.dataset.letterId;
+            const letterRead = envelope.dataset.letterRead;
+            const childId = envelope.dataset.childId;
 
             // Mark letter as read
-            if (letterId && !letterRead) {
+            if (childId && letterId && !letterRead) {
                 rpc.query({
-                    route: "/my2/letters/mark_read",
+                    route: `/my2/children/${childId}/letters/${letterId}/mark_read`,
                     params: { letter_id: parseInt(letterId) },
                 })
                     .then((result) => {

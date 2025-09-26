@@ -22,6 +22,7 @@
                     t-attf-href="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf"
                     t-att-data-letter-id="letter.id"
                     t-att-data-letter-read="letter.email_read"
+                    t-att-data-child-id="letter.child_id.id"
                 >
                     <div class="env-body" />
                     <div t-attf-class="{{ 'env-letter mt-3 pt-4' if letter.email_read else 'env-letter' }}">
