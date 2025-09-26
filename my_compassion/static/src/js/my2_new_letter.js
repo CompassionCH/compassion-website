@@ -1,6 +1,13 @@
 /**
  * Handles the new_letter form submission.
- * Is used in /templates/pages/my2_new_letter.xml
+ *Shows a progress bar that updates as the letter is processed by polling the server.
+ * The update works by:
+ *    1) Request the server to create a letter generation task.
+ *    2) Tell the server to start processing the task while updating the task state.
+ *    3) Poll the server to get the current statusof the task and update the progress bar accordingly. 
+ *    4) Once the task is complete, redirect or show a preview based on user choice.
+ * 
+ *Is used in /templates/pages/my2_new_letter.xml
  *
  */
 document.addEventListener("DOMContentLoaded", function () {
@@ -31,13 +38,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 const submitButton = ev.originalEvent.submitter;
                 const mode = $(submitButton).data("custom");
 
-                // --- FIX: Define steps and map at the function level for wider scope ---
+                 // Progress bar steps and status map
                 const steps = [
                     "Creating Task...",         // Step 0
                     "Applying Template...",     // Step 1
                     "Adding Your Text...",      // Step 2
                     "Adding Attachments...",    // Step 3
-                    "Generating PDF...",  // Step 4
+                    "Generating PDF...",        // Step 4
                     "Finalizing..."            // Step 5
                 ];
                 const statusMap = {
@@ -71,13 +78,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     this.progressBar.startProgress();
                 }
-
+                //Ask the server to create a letter generation task
                 try {
-                    const initialResult = await this._submitLetterRPC(creationData);
+                    const initialResult = await this._createGenerator(creationData);
                     if (!initialResult.generator_id) {
                         throw new Error(initialResult.error || "Could not create the letter record.");
                     }
-
+                //Tell the server to start processing the task while updating the task state
                     this._launchProcessingRPC({
                         generator_id: initialResult.generator_id,
                         child_id: formData.child_id,
@@ -85,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         csrf_token: odoo.csrf_token
                     });
 
-                    // This callback now has access to statusMap from the parent scope
+                // Poll the state of hte task and update the progress bar accordingly
                     const updateProgress = (status) => {
                         if (this.progressBar && status in statusMap) {
                             const stepIndex = statusMap[status];
@@ -93,7 +100,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     };
 
-                    const processingPromise = this._pollForStatus(initialResult.generator_id, updateProgress);
+                    const processingPromise = this._pollForStatus({
+                        generator_id: initialResult.generator_id,
+                        child_id: formData.child_id,
+                        mode: mode,
+                        csrf_token: odoo.csrf_token
+                    }, updateProgress);
 
                     const finalResult = await processingPromise;
 
@@ -164,13 +176,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 return Promise.all(filePromises);
             },
 
-            _submitLetterRPC: function (data) {
+            // Ask the server to create a letter generation task and to return a generator_id
+            _createGenerator: function (data) {
                 return rpc.query({
                     route: "/my2/children/letter/create_generator",
                     params: data,
                 });
             },
-
+            // Tell the server to start processing the task while updating the task state
+            // data contains generator_id, child_id, mode, csrf_token
             _launchProcessingRPC: function (data) {
                 return rpc.query({
                     route: "/my2/children/letter/launch_generation",
@@ -178,13 +192,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             },
 
-            _pollForStatus: function (generatorId, onProgressUpdate) {
+            // Poll the server to get the current status of the task and update the progress bar accordingly
+            _pollForStatus: function (data, onProgressUpdate) {
                 return new Promise((resolve, reject) => {
                     const intervalId = setInterval(async () => {
                         try {
                             const response = await rpc.query({
                                 route: "/my2/children/letter/status",
-                                params: { generator_id: generatorId },
+                                params: data,
                             });
 
                             console.log("Polling response:", response);
@@ -208,7 +223,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             clearInterval(intervalId);
                             reject(error);
                         }
-                    }, 200);
+                    }, 400);
                 });
             },
 

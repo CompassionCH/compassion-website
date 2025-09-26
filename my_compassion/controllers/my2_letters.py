@@ -302,6 +302,24 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         sitemap=False,
     )
     def my2_launch_letter_generation(self, **post):
+        """
+        Handles the launch of the letter generation process for a specific child.
+        Args:
+            post (dict): A dictionary containing the following keys:
+                - "child_id" (int): The ID of the child for whom the letter is being generated.
+                - "generator_id" (int): The ID of the letter generator instance.
+
+        Returns:
+            dict: A dictionary containing:
+                - "preview_url" (str): The URL to preview the generated letter PDF.
+                - "generator_id" (int): The ID of the letter generator instance.
+
+        Raises:
+            AccessError: If the user does not have access to the specified child.
+            ValueError/TypeError: If invalid data is provided in the request.
+
+        Used in my2_new_letter.js
+        """
         try:
             child_id = int(post.get("child_id"))
             child = request.env["compassion.child"].browse(child_id)
@@ -317,6 +335,8 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         if not letter_generator.exists():
             return {"error": "Something went wrong."}
 
+        # Define callbacks for each stage of the process
+        # These callbacks update the generation_status field and commit in the db.
         callbacks = {
             "create_letter_callback": lambda: (
                 letter_generator.write({'generation_status': 'creating_task'}),
@@ -341,17 +361,19 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             ),
             "failure_callback": lambda: (
                 letter_generator.write({'generation_status': 'failed'}),
+
+
                 time.sleep(10),
                 request.env.cr.commit()
             ),
             "finalizing_callback": lambda: (
                 letter_generator.write({'generation_status': 'finalizing'}),
-                time.sleep(10),
+                time.sleep(3),
                 request.env.cr.commit()
             ),
 
         }
-
+        #Launch the processing of the letter generator with the defined callbacks
         self.process_letter_generator(letter_generator, post=post, callbacks=callbacks)
 
         letter_generator.write({'generation_status': 'done'}),
@@ -372,8 +394,13 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
     def my2_get_letter_status(self, **post):
         """
         Endpoint for the frontend to poll for the generation status.
+        Used in my2_new_letter.js
         """
         try:
+            child_id = int(post.get("child_id"))
+            child = request.env["compassion.child"].browse(child_id)
+            self._check_sponsored_child_access(child)
+
             generator_id = int(post.get("generator_id"))
             letter_generator = request.env[
                 "correspondence.s2b.generator"].sudo().browse(generator_id)
@@ -398,15 +425,51 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             return {"status": "failed", "error": "Access denied or invalid ID."}
 
 
-    def process_letter_generator(self, letter_generator,post,callbacks=None):
+    def process_letter_generator(self, letter_generator, post, callbacks=None):
+        """
+        Processes the letter generator by executing its domain change, preview,
+        and letter generation logic. This method orchestrates the entire
+        generation flow, using a system of callbacks to report progress or
+        handle failures.
+
+        Args:
+            letter_generator (object): The `correspondence.s2b.generator`
+                record to process.
+            post (dict): A dictionary containing data from the client request.
+                It is expected to include a "mode" key ('send' or 'preview')
+                to determine the full operation.
+            callbacks (dict, optional): A dictionary of callable functions that
+                are triggered at various stages of the process. This is used
+                to provide real-time feedback. Defaults to None.
+                Expected keys include:
+                - 'create_letter_callback': Called at the very beginning of
+                  the PDF generation process within `preview`.
+                - 'apply_template_callback': Called when the base template is
+                  being applied.
+                - 'apply_text_callback': Called when the letter's text body is
+                  being rendered onto the template.
+                - 'apply_img_callback': Called when attachments or images are
+                  being added to the letter.
+                - 'generating_pdf_callback': Called just before the final PDF is compiled.
+                - 'finalizing_callback': Called just before the final
+                - 'failure_callback': Called if any exception occurs during
+                  the entire process.
+
+        Raises:
+            Exception: Re-raises any exception encountered during the process
+                       after invoking the 'failure_callback', if provided. This
+                       ensures the error propagates up the call stack.
+        """
         try:
             letter_generator.onchange_domain()
-            letter_generator.preview(**callbacks)
+            letter_generator.preview(**(callbacks or {}))
+
             if post.get("mode") == "send":
-                if 'finalizing_callback' in callbacks:
+                if callbacks and 'finalizing_callback' in callbacks:
                     callbacks['finalizing_callback']()
                 letter_generator.generate_letters_job()
+
         except Exception as e:
-            if 'failure_callback' in callbacks:
+            if callbacks and 'failure_callback' in callbacks:
                 callbacks['failure_callback']()
             raise
