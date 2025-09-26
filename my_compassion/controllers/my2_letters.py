@@ -11,7 +11,7 @@ from datetime import date
 
 import babel
 
-from odoo import http
+from odoo import fields, http
 from odoo.exceptions import AccessError
 from odoo.http import request
 
@@ -19,6 +19,13 @@ from .my2_children import MyCompassionChildrenController
 
 
 class MyCompassionCorrespondenceController(MyCompassionChildrenController):
+    # Helper function to safely parse integers from query params
+    def _safe_int(self, value, default):
+        try:
+            return int(value)
+        except (ValueError, TypeError):
+            return default
+
     @http.route(
         [
             "/my2/children/letters",
@@ -29,28 +36,23 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         website=True,
         sitemap=False,
     )
-    def my2_render_child_letters_page(self, child=None, **kwargs):
+    def my2_render_child_letters_page(self, **kwargs):
         partner = request.env.user.partner_id
         children_sponsored_by_partner = partner.sponsorship_ids.child_id
         current_year = date.today().year
 
-        # Helper function to safely parse integers from query params
-        def safe_int(value, default):
-            try:
-                return int(value)
-            except (ValueError, TypeError):
-                return default
-
         # Filtering params
-        page = safe_int(kwargs.get("page"), 1)
-        year_from = safe_int(kwargs.get("year_from"), 1900)
-        year_to = safe_int(kwargs.get("year_to"), current_year)
-        month_from = safe_int(kwargs.get("month_from"), 1)
-        month_to = safe_int(kwargs.get("month_to"), 12)
+        page = self._safe_int(kwargs.get("page"), 1)
+        year_from = self._safe_int(kwargs.get("year_from"), 1900)
+        year_to = self._safe_int(kwargs.get("year_to"), current_year)
+        month_from = self._safe_int(kwargs.get("month_from"), 1)
+        month_to = self._safe_int(kwargs.get("month_to"), 12)
         letter_type = kwargs.get("type")
         sort_order = kwargs.get("sort", "newest")
-        unread_filter = kwargs.get("unread")
+        unread_filter = kwargs.get("unread", "all")
         nr_filters_applied = 0
+        child_id = self._safe_int(kwargs.get("child_id"), None)
+        child = request.env["compassion.child"].browse(child_id)
 
         # Build filter date range
         last_day = calendar.monthrange(year_to, month_to)[1]
@@ -67,10 +69,11 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 nr_filters_applied += 1
             except AccessError:
                 child = None
+
         filter_domain.append(("create_date", ">=", from_date))
         filter_domain.append(("create_date", "<=", to_date))
 
-        if unread_filter == "true":
+        if unread_filter == "unread":
             filter_domain.append(("email_read", "=", False))
             nr_filters_applied += 1
 
@@ -84,7 +87,9 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         if letter_type:
             filter_domain.append(("direction", "=", letter_type))
             nr_filters_applied += 1
+
         order = "create_date DESC" if sort_order == "newest" else "create_date ASC"
+
         if sort_order == "oldest":
             nr_filters_applied += 1
 
@@ -125,6 +130,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                     "month_to": month_to,
                     "type": letter_type,
                     "sort": sort_order,
+                    "unread": unread_filter,
                 },
                 "nr_filters_applied": nr_filters_applied,
                 "months": months,
@@ -132,14 +138,38 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         )
 
     @http.route(
-        "/my2/children/<model('compassion.child'):child>/letter/new",
+        '/my2/children/<model("compassion.child"):child>/'
+        'letters/<model("correspondence"):correspondence>/mark_read',
+        type="json",
+        auth="user",
+        methods=["POST"],
+    )
+    def mark_letter_as_read(self, child, correspondence):
+        letter = request.env["correspondence"].search(
+            [("id", "=", correspondence.id)], limit=1
+        )
+        if (
+            letter.exists()
+            and letter.child_id == child.id
+            and letter.partner_id.id == request.env.user.partner_id.id
+        ):
+            if not letter.email_read:  # only set if not already read
+                letter.email_read = fields.Datetime.now()
+            return {"status": "success"}
+        return {"status": "error", "message": "Not found or unauthorized"}
+
+    @http.route(
+        "/my2/children/letters/new",
         type="http",
         auth="user",
         website=True,
         sitemap=False,
     )
-    def my2_render_new_letter_page(self, child, **kwargs):
+    def my2_render_new_letter_page(self, **kwargs):
         partner = request.env.user.partner_id
+        child_id = self._safe_int(kwargs.get("child_id"), None)
+        child = request.env["compassion.child"].browse(child_id)
+
         try:
             self._check_sponsored_child_access(child)
         except AccessError:
@@ -160,27 +190,17 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             .sorted(lambda t: "0" if "christmas" in t.name.lower() else t.name)
         )
 
-        breadcrumbs = [
-            {"name": "Children", "url": "/my2/children/", "active": False},
-            {
-                "name": "New Letter",
-                "url": "/my2/children/" + str(child.id) + "/letter/new",
-                "active": True,
-            },
-        ]
-
         return request.render(
             "my_compassion.my2_new_letter_page",
             {
                 "selected_child": child,
                 "sponsorship_ids": partner.sponsorship_ids,
                 "templates": templates,
-                "breadcrumbs": breadcrumbs,
             },
         )
 
     @http.route(
-        "/my2/children/letter/new",
+        "/my2/children/letters/new",
         type="json",
         auth="user",
         methods=["POST"],
