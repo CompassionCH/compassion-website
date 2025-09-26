@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         csrf_token: odoo.csrf_token,
                     });
 
-                    // Poll the state of hte task and update the progress bar accordingly
+                    // Poll the state of the task and update the progress bar accordingly
                     const updateProgress = (status) => {
                         if (this.progressBar && status in statusMap) {
                             const stepIndex = statusMap[status];
