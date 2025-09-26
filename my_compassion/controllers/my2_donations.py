@@ -9,7 +9,7 @@
 
 from werkzeug.exceptions import BadRequest, NotFound
 
-from odoo import http
+from odoo import fields, http
 from odoo.http import request
 
 
@@ -28,13 +28,17 @@ class MyCompassionDonationsController(http.Controller):
         details page.
         """
         sponsorships = request.env.user.partner_id.sponsorship_ids
+        donation_limits = request.env["gift.threshold.settings"].sudo().search([])
+
+        context = {
+            "product": product,
+            "sponsorships": sponsorships,
+            "donation_limits": donation_limits,
+        }
 
         return request.render(
             "my_compassion.my2_donation_details_page",
-            {
-                "product": product,
-                "sponsorships": sponsorships,
-            },
+            context,
         )
 
     @http.route(
@@ -109,6 +113,37 @@ class MyCompassionDonationsController(http.Controller):
         )
 
     @http.route(
+        "/my2/gifts/get-limits",
+        type="json",
+        auth="user",
+        website=True,
+        methods=["POST"],
+    )
+    def donation_get_limits(self, product_id, sponsorship_id=None, **post):
+        """
+        Returns the donation limits for a product (and optionally a sponsorship)
+        in the form:
+        {
+            "min_amount": int,               # If amount is limited
+            "max_amount": int,               # If amount is limited
+            "remaining_donations": int,      # If frequency is limited
+        }
+        """
+        product = request.env["product.template"].search([("id", "=", product_id)])
+        if not product:
+            return BadRequest()
+        if sponsorship_id is not None:
+            try:
+                sponsorship_id = int(sponsorship_id)
+            except TypeError as e:
+                raise BadRequest() from e
+
+        limits = product.get_donation_limits(
+            request.website.company_id, request.env.user.partner_id, sponsorship_id
+        )
+        return limits
+
+    @http.route(
         "/my2/gift-package",
         type="http",
         auth="user",
@@ -121,17 +156,23 @@ class MyCompassionDonationsController(http.Controller):
         return: An HTTP response containing a rendered template with the gift
         package page.
         """
-        # Get the current sales order
+        # Get the current sales order and register it as last order
+        # (usually done in a confirmation step that we don't have)
         order = request.website.sale_get_order()
+        request.session["sale_last_order_id"] = order.id
 
         # Fetch gift thresholds
         limits = request.env["gift.threshold.settings"].sudo().search([])
+
+        # Fetch acquirer
+        acquirer = self._get_payment_acquirer()
 
         return request.render(
             "my_compassion.my2_gift_package_page",
             {
                 "order": order,
                 "limits": limits,
+                "acquirer": acquirer,
             },
         )
 
@@ -154,12 +195,17 @@ class MyCompassionDonationsController(http.Controller):
         if not order_line:
             raise NotFound()
 
+        limits = request.env["gift.threshold.settings"].sudo().search([])
+
         render_attrs = {
             "product": order_line.product_template_id,
             "submit_label": "Ok",
             "default_frequency": order_line.frequency,
             "default_suggested_amount": "custom",
             "default_custom_amount": order_line.price_total,
+            "limits": limits,
+            "date": fields.Date.today(),
+            "currency_name": order.pricelist_id.currency_id.name,
         }
 
         if order_line.is_gift:
@@ -205,7 +251,10 @@ class MyCompassionDonationsController(http.Controller):
             },
         )
 
-        return {"html": html_content}
+        return {
+            "html": html_content,
+            "is_order_empty": len(order.order_line) == 0,
+        }
 
     @http.route(
         "/my2/gift-package/add",
@@ -242,6 +291,7 @@ class MyCompassionDonationsController(http.Controller):
                 "products": products,
                 "sponsorships": sponsorships,
                 "limits": limits,
+                "currency_name": order.pricelist_id.currency_id.name,
             },
         )
 
@@ -256,13 +306,10 @@ class MyCompassionDonationsController(http.Controller):
         sale_order_id = request.session.get("sale_last_order_id")
         if sale_order_id:
             sale_order = request.env["sale.order"].sudo().browse(sale_order_id)
-            current_partner = request.env.user.partner_id
-            # Check that the order belongs to the current user
-            if sale_order.partner_id == current_partner:
-                return request.render(
-                    "my_compassion.my2_gifts_thank_you_page",
-                    {"sale_order": sale_order},
-                )
+            return request.render(
+                "my_compassion.my2_gifts_thank_you_page",
+                {"sale_order": sale_order},
+            )
         return request.redirect("/my2/dashboard")
 
     @staticmethod
@@ -303,3 +350,11 @@ class MyCompassionDonationsController(http.Controller):
             order_line_fields["gift_recipient_id"] = post.get("recipient")
 
         return order_line_fields
+
+    @staticmethod
+    def _get_payment_acquirer():
+        return (
+            http.request.env["payment.acquirer"]
+            .sudo()
+            .search([("provider", "=", "postfinance")], limit=1)
+        )

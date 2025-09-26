@@ -11,6 +11,7 @@
     Injected data:
     - order ('sales.order' record): The user's current order (cart content).
     - limits ('gift.threshold.settings' records): The giving limits.
+    - acquirer ('payment.acquirer' record): The PostFinance payment acquirer.
 -->
 <odoo>
     <!-- GIFT PACKAGE CONTENT -->
@@ -32,6 +33,7 @@
                 <t t-set="recipient_color" t-value="'low-green'" />
                 <t t-set="bg_color" t-value="'mid-eggshell'" />
                 <t t-set="price" t-value="line.price_total" />
+                <t t-set="currency_name" t-value="line.currency_id.name" />
                 <t
                     t-set="image"
                     t-valuef="/web/image/#{line.product_template_id._name}/#{line.product_template_id.id}/my_compassion_image"
@@ -79,6 +81,7 @@
                 <t t-set="recipient_color" t-value="'dark-blue'" />
                 <t t-set="bg_color" t-value="'light-blue'" />
                 <t t-set="price" t-value="line.price_total" />
+                <t t-set="currency_name" t-value="line.currency_id.name" />
                 <t t-set="monthly" t-value="True" />
                 <t
                     t-set="image"
@@ -125,50 +128,9 @@
             <div class="text-mid-green body-large bold">Total amount</div>
             <div class="text-dark-blue body-large bold">
                 <t t-set="amount" t-value="order.amount_total" />
-                CHF
+                <t t-esc="order.currency_id.name" />
                 <t t-if="amount % 1 == 0" t-esc="int(amount)" />
                 <t t-else="" t-esc="'{0:.2f}'.format(amount)" />
-            </div>
-        </div>
-        <!-- ADD GIFT & PAYMENT -->
-        <div class="gift-package-payment-container mt-5 w-100 align-self-center">
-            <div class="d-flex flex-column align-items-stretch">
-                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                    <t t-set="variant" t-value="'compact'" />
-                    <t t-set="variation" t-value="'hollow'" />
-                    <t t-set="label" t-value="'Add a gift'" />
-                    <t t-set="icon" t-value="'icon-plus'" />
-                    <t t-set="color" t-value="'mid-green'" />
-                    <t t-set="text_color" t-value="'mid-green'" />
-                    <t t-set="icon_color" t-value="'mid-green'" />
-                    <t t-set="href" t-value="'/my2/gift-package/add'" />
-                </t>
-                <t t-if="len(order.order_line) &gt;= 1">
-                    <div class="mt-3 d-flex flex-column align-items-stretch">
-                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                            <t t-set="variant" t-value="'compact'" />
-                            <t t-set="variation" t-value="'filled'" />
-                            <t t-set="label" t-value="'Proceed to payment'" />
-                            <t t-set="color" t-value="'dark-blue'" />
-                            <t t-set="text_color" t-value="'pure-white'" />
-                        </t>
-                    </div>
-                    <div class="mt-3 px-5 d-flex align-items-center">
-                        <img class="px-1 col-3" src="/my_compassion/static/src/img/mastercard.png" />
-                        <img class="px-1 col-3" src="/my_compassion/static/src/img/visa.png" />
-                        <img class="px-1 col-3" src="/my_compassion/static/src/img/twint.png" />
-                        <img class="px-1 col-3" src="/my_compassion/static/src/img/post_finance.png" />
-                    </div>
-                    <div class="mt-3 body-small bold text-mid-green text-center">
-                        <i class="mt-n1 icon-lock03" />
-                        Secure checkout
-                    </div>
-                    <div class="mt-1 tiny-text text-mid-grey text-center">
-                        Learn more in our
-                        <a href="">Privacy Policy</a>
-                        .
-                    </div>
-                </t>
             </div>
         </div>
     </template>
@@ -202,43 +164,75 @@
                                         data-dismiss="modal"
                                         aria-label="Close"
                                     />
-                                    <div id="edit-donation-form" class="d-flex justify-content-center" />
+                                    <div
+                                        id="edit-donation-form"
+                                        class="d-flex justify-content-center"
+                                        data-edit-mode="true"
+                                    />
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- TODO: Add form action -->
-                    <form class="my2_gift_package_form" action="/my2/" method="POST">
-                        <div class="px-3 mt-4 d-flex flex-column align-items-center">
-                            <!-- TITLE -->
-                            <t t-call="theme_compassion_2025.TitleComponent">
-                                <t t-set="title_content" t-value="'Gift Package'" />
-                                <t t-set="color" t-value="'core-blue'" />
-                                <t t-set="show_underline" t-value="True" />
-                                <t t-set="underline_color" t-value="'low-yellow'" />
-                                <t t-set="icon" t-value="'gift02'" />
-                            </t>
-                            <!-- HELP -->
-                            <button
-                                type="button"
-                                class="body-large icon-help-circle text-mid-grey"
-                                data-toggle="modal"
-                                data-target="#help-modal"
-                            />
-                            <!-- DESCRIPTION -->
-                            <div class="mt-3 px-4 body-small text-center">
-                                Your donations will have an everlasting impact.
-                            </div>
-                            <!-- GIFT PACKAGE CONTENT -->
-                            <div
-                                id="gift-package-content-wrapper"
-                                class="mb-4 w-100 d-flex flex-column align-items-stretch"
-                            >
-                                <!-- RENDER INITIAL CONTENT -->
-                                <t t-call="my_compassion.my2_gift_package_content" />
+                    <div class="px-3 mt-4 d-flex flex-column align-items-center">
+                        <!-- TITLE -->
+                        <t t-call="theme_compassion_2025.TitleComponent">
+                            <t t-set="title_content" t-value="'Gift Package'" />
+                            <t t-set="color" t-value="'core-blue'" />
+                            <t t-set="show_underline" t-value="True" />
+                            <t t-set="underline_color" t-value="'low-yellow'" />
+                            <t t-set="icon" t-value="'gift02'" />
+                        </t>
+                        <!-- HELP -->
+                        <button
+                            type="button"
+                            class="body-large icon-help-circle text-mid-grey"
+                            data-toggle="modal"
+                            data-target="#help-modal"
+                        />
+                        <!-- DESCRIPTION -->
+                        <div class="mt-3 px-4 body-small text-center">
+                            Your donations will have an everlasting impact.
+                        </div>
+                        <!-- GIFT PACKAGE CONTENT -->
+                        <div id="gift-package-content-wrapper" class="w-100 d-flex flex-column align-items-stretch">
+                            <!-- RENDER INITIAL CONTENT -->
+                            <t t-call="my_compassion.my2_gift_package_content" />
+                        </div>
+                        <!-- ADD GIFT & PAYMENT -->
+                        <div class="gift-package-payment-container mt-5 mb-4 w-100 align-self-center">
+                            <div class="d-flex flex-column align-items-stretch">
+                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                    <t t-set="variant" t-value="'compact'" />
+                                    <t t-set="variation" t-value="'hollow'" />
+                                    <t t-set="label" t-value="'Add a gift'" />
+                                    <t t-set="icon" t-value="'icon-plus'" />
+                                    <t t-set="color" t-value="'mid-green'" />
+                                    <t t-set="text_color" t-value="'mid-green'" />
+                                    <t t-set="icon_color" t-value="'mid-green'" />
+                                    <t t-set="href" t-value="'/my2/gift-package/add'" />
+                                </t>
+                                <div t-if="len(order.order_line) &gt;= 1" class="empty-order-hidden">
+                                    <t t-call="my_compassion.CheckoutComponent">
+                                        <t t-set="variant" t-value="'compact'" />
+                                    </t>
+                                    <div class="mt-3 px-5 d-flex align-items-center">
+                                        <img class="px-1 col-3" src="/my_compassion/static/src/img/mastercard.png" />
+                                        <img class="px-1 col-3" src="/my_compassion/static/src/img/visa.png" />
+                                        <img class="px-1 col-3" src="/my_compassion/static/src/img/twint.png" />
+                                        <img class="px-1 col-3" src="/my_compassion/static/src/img/post_finance.png" />
+                                    </div>
+                                    <div class="mt-3 body-small bold text-mid-green text-center">
+                                        <i class="mt-n1 icon-lock03" />
+                                        Secure checkout
+                                    </div>
+                                    <div class="mt-1 tiny-text text-mid-grey text-center">
+                                        Learn more in our
+                                        <a href="/legal">Privacy Policy</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </t>

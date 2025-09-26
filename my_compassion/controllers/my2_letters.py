@@ -29,6 +29,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
     @http.route(
         [
             "/my2/children/letters",
+            "/my2/children/letters/<model('compassion.child'):child>",
         ],
         type="http",
         auth="user",
@@ -83,7 +84,6 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             or month_to < 12
         ):
             nr_filters_applied += 1
-
         if letter_type:
             filter_domain.append(("direction", "=", letter_type))
             nr_filters_applied += 1
@@ -99,7 +99,13 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         total_letters = request.env["correspondence"].search_count(filter_domain)
         total_pages = max(1, -(-total_letters // letters_per_page))
 
-        letters = request.env["correspondence"].search(
+        # Without the context here the letters are marked as read by just
+        # iterating trough them in the xml.
+        correspondence_model = request.env["correspondence"].with_context(
+            tracking_disable=True
+        )
+
+        letters = correspondence_model.search(
             filter_domain, order=order, offset=offset, limit=letters_per_page
         )
 

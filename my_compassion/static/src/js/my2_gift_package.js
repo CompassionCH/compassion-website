@@ -96,7 +96,11 @@ document.addEventListener("DOMContentLoaded", function (event) {
                         function (data) {
                             // Replace the form's inner content with the new step's HTML
                             if (data.html) {
-                                $("#gift-package-content-wrapper").html(data.html);
+                                this.$("#gift-package-content-wrapper").html(data.html);
+                            }
+                            // Some elements must be hidden when the order is empty
+                            if (data.is_order_empty) {
+                                this.$(".empty-order-hidden").hide();
                             }
                             // Re-enable buttons
                             this.$(".btn").prop("disabled", false);

@@ -5,7 +5,7 @@
             <link rel="stylesheet" type="text/css" href="/theme_compassion_2025/static/src/css/custom_style.css" />
         </xpath>
     </template>
-    <template id="_assets_frontend_helpers" inherit_id="website.assets_frontend">
+    <template id="_assets_frontend_helpers" inherit_id="website.assets_frontend" priority="2">
         <xpath expr="//link[last()]" position="after">
             <link
                 rel="stylesheet"
@@ -19,23 +19,11 @@
             />
         </xpath>
     </template>
-    <template id="assets_frontend" name="My style" inherit_id="website.assets_frontend">
+    <template id="assets_frontend" name="My style" inherit_id="website.assets_frontend" priority="3">
         <xpath expr="link[last()]" position="after">
-            <link
-                rel="stylesheet"
-                type="text/scss"
-                href="/theme_compassion_2025/static/src/scss/abstracts/_colors.scss"
-            />
-            <link
-                rel="stylesheet"
-                type="text/scss"
-                href="/theme_compassion_2025/static/src/scss/abstracts/images/_icons_variables.scss"
-            />
-            <link
-                rel="stylesheet"
-                type="text/scss"
-                href="/theme_compassion_2025/static/src/scss/abstracts/images/_pictograms_variables.scss"
-            />
+            <link rel="stylesheet" type="text/scss" href="/theme/compassion/colors.scss" />
+            <link rel="stylesheet" type="text/scss" href="/theme/compassion/icons.scss" />
+            <link rel="stylesheet" type="text/scss" href="/theme/compassion/pictograms.scss" />
             <link
                 rel="stylesheet"
                 type="text/scss"
@@ -60,16 +48,6 @@
             <link rel="stylesheet" type="text/scss" href="/theme_compassion_2025/static/src/scss/base/_base.scss" />
             <link rel="stylesheet" type="text/scss" href="/theme_compassion_2025/static/src/scss/layout/_layout.scss" />
             <link rel="stylesheet" type="text/scss" href="/theme_compassion_2025/static/src/scss/layout/_grid.scss" />
-            <link
-                rel="stylesheet"
-                type="text/scss"
-                href="/theme_compassion_2025/static/src/scss/components/_icons.scss"
-            />
-            <link
-                rel="stylesheet"
-                type="text/scss"
-                href="/theme_compassion_2025/static/src/scss/components/_pictograms.scss"
-            />
             <link
                 rel="stylesheet"
                 type="text/scss"
@@ -105,6 +83,11 @@
                 type="text/scss"
                 href="/theme_compassion_2025/static/src/scss/components/_password.scss"
             />
+            <link
+                rel="stylesheet"
+                type="text/scss"
+                href="/theme_compassion_2025/static/src/scss/components/_progress_bar.scss"
+            />
             <script type="text/javascript" src="/theme_compassion_2025/static/src/js/_password.js" />
             <script type="text/javascript" src="/theme_compassion_2025/static/src/js/_range_input.js" />
             <link
@@ -122,6 +105,7 @@
                 type="text/scss"
                 href="/theme_compassion_2025/static/src/scss/components/_toggle_button.scss"
             />
+            <script type="text/javascript" src="/theme_compassion_2025/static/src/js/_progress_bar.js" />
         </xpath>
     </template>
 </odoo>
