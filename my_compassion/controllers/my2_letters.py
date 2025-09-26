@@ -366,7 +366,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         # Launch the processing of the letter generator with the defined callbacks
         self.process_letter_generator(letter_generator, post=post, callbacks=callbacks)
 
-        (letter_generator.write({"generation_status": "done"}),)
+        letter_generator.write({"generation_status": "done"})
         request.env.cr.commit()
         return {
             "preview_url": f"{request.httprequest.host_url}web/image"
@@ -441,7 +441,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 - 'apply_img_callback': Called when attachments or images are
                   being added to the letter.
                 - 'generating_pdf_callback': Called before the final PDF is compiled.
-                - 'finalizing_callback': Called before the final
+                - 'finalizing_callback': Called before the corresp. is added in the db.
                 - 'failure_callback': Called if any exception occurs during
                   the entire process.
 

@@ -204,9 +204,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                 route: "/my2/children/letter/status",
                                 params: data,
                             });
-
-                            console.log("Polling response:", response);
-
                             if (onProgressUpdate) {
                                 onProgressUpdate(response.status);
                             }
