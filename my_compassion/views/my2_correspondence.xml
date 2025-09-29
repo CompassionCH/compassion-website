@@ -34,13 +34,13 @@
             <form>
                 <sheet>
                     <div class="oe_title">
-                        <label for="title" class="oe_edit_only" />
+                        <label for="title" />
                         <h1>
                             <field name="title" placeholder="Title" />
                         </h1>
                     </div>
                     <div class="oe_title">
-                        <label for="description" class="oe_edit_only" />
+                        <label for="description" />
                         <h2>
                             <field name="template_description" placeholder="Description" />
                         </h2>
@@ -49,7 +49,7 @@
                         <group string="Validity Period">
                             <field name="start_date" class="oe_inline" />
                             <field name="end_date" class="oe_inline" />
-                            <field name="scheduled" widget="boolean_toggle" class="oe_edit_only oe_inline" />
+                            <field name="scheduled" widget="boolean_toggle" class="oe_inline" />
                         </group>
                     </group>
                     <notebook>
