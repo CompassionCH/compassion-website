@@ -13,35 +13,31 @@
     <template id="my2_letter_card_component" name="Letter Card Component">
         <t t-set="child" t-value="letter.child_id" />
         <link rel="stylesheet" href="/my_compassion/static/src/css/letter_card.css" />
-        <div class="position-relative d-flex shadow-sm rounded-4  h-100">
+        <div class="position-relative d-flex shadow-sm rounded-4 h-100">
             <!-- Icon at the left -->
-            <div>
+            <div class="envelope" t-attf-class="{{ 'open' if letter.email_read else '' }}">
                 <div
                     id="envelope-{{ letter.uuid }}"
-                    t-attf-class="ml-2 mt-4 my2-envelope {{ 'already-read' if letter.email_read else '' }} {{ 'envelope--blue' if letter.direction != 'Supporter To Beneficiary' else 'envelope--green' }}"
+                    t-attf-class="ml-2 mt-4 my2-envelope {{ 'envelope--blue' if letter.direction != 'Supporter To Beneficiary' else 'envelope--green' }}"
                     t-attf-href="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf"
                     t-att-data-letter-id="letter.id"
                     t-att-data-letter-read="letter.email_read"
-                    t-att-data-letter-uuid="letter.uuid"
+                    t-att-data-child-id="letter.child_id.id"
                 >
                     <div class="env-body" />
-                    <div class="env-letter">
+                    <div t-attf-class="{{ 'env-letter mt-3 pt-4' if letter.email_read else 'env-letter' }}">
                         <!-- Letter preview -->
                         <!-- TODO Using an iframe for each letter card to show a preview can lead to significant performance issues.
                               For better performance, consider lazy-loading the src of the <iframe>.
                               You could set the src attribute via JavaScript only when the card is about to become visible in the viewport
                               (e.g., using IntersectionObserver) or when the user initiates the envelope-opening animation.
                         -->
-                        <!-- The iframe is already loaded for the letters that have already been read -->
-                        <!-- The iframe is added dynamically here to the unread letters only when clicking the closed envelope -->
-                        <div class="iframe-container">
-                            <t t-if="letter.email_read">
-                                <iframe
-                                    t-attf-src="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf"
-                                    type="application/pdf"
-                                />
-                            </t>
-                        </div>
+                        <iframe
+                            t-attf-src="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf"
+                            type="application/pdf"
+                        >
+
+                        </iframe>
                     </div>
                     <div class="env-pocket" />
                     <div class="env-flap" />
@@ -97,7 +93,7 @@
                             <div class="dropdown-divider border-low-black" />
                             <a
                                 class="dropdown-item d-flex align-items-center pt-0 pb-0 pl-3 pr-3"
-                                t-attf-href="/my2/children/{{child.id}}/letter/new"
+                                t-attf-href="/my2/children/letters/new{{ '?child_id=' + str(child.id)}}"
                             >
                                 Reply
                                 <i class="icon-pencil02 ml-auto" />
