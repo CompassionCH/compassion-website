@@ -19,10 +19,11 @@
         <field name="arch" type="xml">
             <tree delete="true">
                 <field name="title" />
+                <field name="template_description" />
                 <field name="scheduled" widget="toggle" />
+                <field name="status" />
                 <field name="start_date" />
                 <field name="end_date" />
-                <field name="status" />
             </tree>
         </field>
     </record>
@@ -31,9 +32,6 @@
         <field name="model">my2.correspondence.letter.template</field>
         <field name="arch" type="xml">
             <form>
-                <header>
-
-                </header>
                 <sheet>
                     <div class="oe_title">
                         <label for="title" class="oe_edit_only" />
@@ -41,15 +39,17 @@
                             <field name="title" placeholder="Title" />
                         </h1>
                     </div>
-                    <field name="scheduled" widget="boolean_toggle" class="oe_edit_only oe_inline" />
-                    <label for="scheduled" class="oe_inline" />
+                    <div class="oe_title">
+                        <label for="description" class="oe_edit_only" />
+                        <h2>
+                            <field name="template_description" placeholder="Description" />
+                        </h2>
+                    </div>
                     <group>
                         <group string="Validity Period">
-                            <field name="start_date" />
-                        </group>
-                        <group>
-                            <label for="end_date" string=" " />
-                            <field name="end_date" />
+                            <field name="start_date" class="oe_inline" />
+                            <field name="end_date" class="oe_inline" />
+                            <field name="scheduled" widget="boolean_toggle" class="oe_edit_only oe_inline" />
                         </group>
                     </group>
                     <notebook>

@@ -12,6 +12,7 @@ class My2CorrespondenceLetterTemplate(models.Model):
 
     # == Fields ==
     title = fields.Char(string="Title", required=True)
+    template_description = fields.Text(string="Template Description")
     text = fields.Text(string="Text")
     start_date = fields.Date(
         string="Start Date",
@@ -103,6 +104,7 @@ class My2CorrespondenceLetterTemplate(models.Model):
     def _check_non_overlapping_schedule(self):
         """
         Ensures that scheduled templates do not have overlapping date ranges.
+        This also enforces that no more than one template can be active at a time.
         """
         for record in self:
             # Ensure start_date is before end_date
@@ -125,7 +127,6 @@ class My2CorrespondenceLetterTemplate(models.Model):
 
             # Only check for overlaps if the current record is scheduled
             if record.scheduled and record.start_date and record.end_date:
-                # Domain to find other scheduled records that overlap
                 domain = [
                     ("id", "!=", record.id),
                     ("scheduled", "=", True),
