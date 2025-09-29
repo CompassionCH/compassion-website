@@ -182,7 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Ask the server to create a letter generation task and to return a generator_id
             _createGenerator: function (data) {
                 return rpc.query({
-                    route: "/my2/children/letter/create_generator",
+                    route: "/my2/children/letters/create_generator",
                     params: data,
                 });
             },
@@ -190,7 +190,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // data contains generator_id, child_id, mode, csrf_token
             _launchProcessingRPC: function (data) {
                 return rpc.query({
-                    route: "/my2/children/letter/launch_generation",
+                    route: "/my2/children/letters/launch_generation",
                     params: data,
                 });
             },
@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const intervalId = setInterval(async () => {
                         try {
                             const response = await rpc.query({
-                                route: "/my2/children/letter/status",
+                                route: "/my2/children/letters/status",
                                 params: data,
                             });
                             if (onProgressUpdate) {
