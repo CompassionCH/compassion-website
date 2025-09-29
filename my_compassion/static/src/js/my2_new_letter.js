@@ -2,10 +2,10 @@
  * Handles the new_letter form submission.
  *Shows a progress bar that updates as the letter is processed by polling the server.
  * The update works by:
- *    1) Request the server to create a letter generation task.
- *    2) Tell the server to start processing the task while updating the task state.
- *    3) Poll the server to get the current statusof the task and update the progress bar accordingly.
- *    4) Once the task is complete, redirect or show a preview based on user choice.
+ * 1) Request the server to create a letter generation task.
+ * 2) Tell the server to start processing the task while updating the task state.
+ * 3) Poll the server to get the current statusof the task and update the progress bar accordingly.
+ * 4) Once the task is complete, redirect or show a preview based on user choice.
  *
  *Is used in /templates/pages/my2_new_letter.xml
  *
@@ -197,8 +197,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Poll the server to get the current status of the task and update the progress bar accordingly
             _pollForStatus: function (data, onProgressUpdate) {
+                const POLLING_INTERVAL = 400;
+                const MAX_POLLS = 150; // 400ms * 150 = 1 minute timeout
+                let pollCount = 0;
+
                 return new Promise((resolve, reject) => {
                     const intervalId = setInterval(async () => {
+                        if (++pollCount > MAX_POLLS) {
+                            clearInterval(intervalId);
+                            reject(new Error("Letter generation timed out."));
+                            return;
+                        }
                         try {
                             const response = await rpc.query({
                                 route: "/my2/children/letters/status",
@@ -223,7 +232,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             clearInterval(intervalId);
                             reject(error);
                         }
-                    }, 400);
+                    }, POLLING_INTERVAL);
                 });
             },
 
