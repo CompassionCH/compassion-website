@@ -429,7 +429,7 @@ class MyCompassionDonationsController(CustomerPortal):
             ] += sponsorship.total_amount
 
         # redundant
-        paid_invoices_offset = (invoice_page - 1) * invoice_per_page
+        paid_invoices_offset = (int(invoice_page) - 1) * invoice_per_page
         paid_invoices_subset = self._get_paid_invoices_subset(
             partner, paid_invoices_offset, invoice_per_page
         )
