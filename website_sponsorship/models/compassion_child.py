@@ -21,6 +21,10 @@ from odoo.addons.http_routing.models.ir_http import slug
 _logger = logging.getLogger(__name__)
 
 
+class ChildNotFound(UserError):
+    pass
+
+
 class CompassionChild(models.Model):
     _inherit = [
         "compassion.child",
@@ -139,33 +143,31 @@ class CompassionChild(models.Model):
         Called by website JS in order to fetch a new child on the global pool
         meeting the search criteria given by the user.
         @param search_params: query parameters
-        @return: id of the child record on hold
+        @return: ids of the child records on hold
         """
-        child_gender = search_params.get("gender")
-        if child_gender == "M":
-            child_gender = "Male"
-        elif child_gender == "F":
-            child_gender = "Female"
-        field_office = self.env["compassion.field.office"]
+        GENDER_MAP = {"M": "Male", "F": "Female"}
+        child_gender = GENDER_MAP.get(search_params.get("gender"), False)
+        field_offices = self.env["compassion.field.office"]
         fo_code = search_params.get("country")
         if fo_code:
             # Special case for Indonesia which has two field offices
             if fo_code == "ID":
                 fo_code += ",IO"
-            field_office = field_office.search(
-                [("field_office_id", "in", fo_code.split(","))], limit=1
+            field_offices = field_offices.search(
+                [("field_office_id", "in", fo_code.split(","))]
             )
         birthday = False
         if search_params.get("birthday"):
             birthday = fields.Date.from_string(search_params.get("birthday"))
         partner = self.env.user.partner_id
+        limit = search_params.get("limit", 1)
         childpool = self.env["compassion.childpool.search"].create(
             {
-                "take": 1,
+                "take": limit,
                 "min_age": search_params.get("age_min"),
                 "max_age": search_params.get("age_max"),
                 "gender": child_gender,
-                "field_office_ids": field_office and [(6, 0, field_office.ids)],
+                "field_office_ids": field_offices and [(6, 0, field_offices.ids)],
                 "birthday_month": birthday and birthday.month,
                 "birthday_day": birthday and birthday.day,
                 # Make sure we find what we are looking for
@@ -199,15 +201,15 @@ class CompassionChild(models.Model):
         )
         res = hold_wizard.send()
         try:
-            child_id = res["domain"][0][2][0]
+            child_ids = res["domain"][0][2]
         except IndexError as error:
             _logger.error(
                 "No child found for the given search parameters: %s", str(search_params)
             )
-            raise UserError(
+            raise ChildNotFound(
                 _("No child found for the given search parameters.")
             ) from error
-        return child_id
+        return child_ids
 
     def child_released(self, state="R"):
         # Unpublish the child if it's released

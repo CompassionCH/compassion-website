@@ -35,9 +35,14 @@
 /* Tab container styling */
 .user_settings_tabs .nav-tabs {
     border-bottom: none;
-    position: relative;
-    z-index: 1;
-    justify-content: center;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.user_settings_tabs .nav-tabs .nav-item {
+    flex: 1;
+    text-align: center;
 }
 
 /* Mobile Select container styling */
@@ -47,7 +52,6 @@
     display: flex;
     justify-content: center;
     width: 100%;
-    max-width: 300px;
     margin: 0 auto;
 }
 
@@ -79,6 +83,8 @@
 
 /* Style for each desktop tab link */
 .user_settings_tabs .nav-tabs .nav-link {
+    width: 100%;
+    justify-content: center;
     border: none;
     margin-bottom: 0;
     height: 42px;

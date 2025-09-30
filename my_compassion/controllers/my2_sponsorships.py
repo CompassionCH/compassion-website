@@ -9,12 +9,17 @@
 import random
 import uuid
 
-from werkzeug.exceptions import Gone, NotFound
+from dateutil.relativedelta import relativedelta
+from werkzeug.exceptions import BadRequest, Gone, NotFound
 
 from odoo import fields, http
 from odoo.http import request
 
 from odoo.addons.website_sponsorship.controllers.main import WebsiteChild
+from odoo.addons.website_sponsorship.models.compassion_child import ChildNotFound
+
+# Hold up to 3 children (more is too slow)
+GLOBAL_FETCH_LIMIT = 3
 
 
 class MyCompassionSponsorshipsController(WebsiteChild):
@@ -28,6 +33,30 @@ class MyCompassionSponsorshipsController(WebsiteChild):
         sponsorships landing page.
         """
         countries = request.env["compassion.field.office"].search(
+            [
+                ("available_on_childpool", "=", True),
+                ("field_office_id", "!=", "ID"),  # Indonesia has two field offices
+            ]
+        )
+
+        return request.render(
+            "my_compassion.my2_sponsorships_page",
+            {
+                "countries": countries,
+                "sponsorship_type": "standard",
+            },
+        )
+
+    @http.route(
+        "/my2/write-and-pray", type="http", auth="public", website=True, sitemap=False
+    )
+    def my2_render_write_and_pray_page(self, **kwargs):
+        """
+        Renders the write and pray variant of the sponsorships page.
+        return: An HTTP response containing a rendered template with the
+        sponsorships landing page.
+        """
+        countries = request.env["compassion.field.office"].search(
             [("available_on_childpool", "=", True)]
         )
 
@@ -35,6 +64,7 @@ class MyCompassionSponsorshipsController(WebsiteChild):
             "my_compassion.my2_sponsorships_page",
             {
                 "countries": countries,
+                "sponsorship_type": "write_and_pray",
             },
         )
 
@@ -45,23 +75,25 @@ class MyCompassionSponsorshipsController(WebsiteChild):
         website=True,
         methods=["POST"],
     )
-    def fetch_sponsorships(self, **post):
+    def fetch_sponsorships(
+        self, limit: int = 20, offset: int = 0, global_pool: bool = False, **post
+    ):
         """
         Fetches children available for sponsorship and renders them using the
         my_compassion.my2_sponsorships_results_content template.
         return: An JSON response containing the rendered template html
         as well as the new children count and total hits.
         """
-        # The number of results to fetch per call
-        limit = int(post.get("limit", 20))
-        # The number of results to skip
-        offset = int(post.get("offset", 0))
-
-        # Get domain from filters
-        domain = self._get_filtered_domain(post)
-
-        # Query matching children
         child_obj = request.env["compassion.child"]
+        if global_pool:
+            try:
+                post["limit"] = GLOBAL_FETCH_LIMIT
+                child_obj.website_hold_child(post)
+            except ChildNotFound:
+                # Error is already logged, the frontend will just show no results
+                pass
+        # Query matching children
+        domain = self._get_filtered_domain(post)
         total_results = child_obj.search_count(domain)
         children = child_obj.search(
             domain,
@@ -70,9 +102,12 @@ class MyCompassionSponsorshipsController(WebsiteChild):
             order="unsponsored_since asc, create_date asc, completion_date asc",
         )
 
-        # Render and return the updated content
         html_content = request.env["ir.qweb"]._render(
-            "my_compassion.my2_sponsorships_results_content", {"children": children}
+            "my_compassion.my2_sponsorships_results_content",
+            {
+                "children": children,
+                "sponsorship_type": post.get("sponsorship_type", "standard"),
+            },
         )
 
         return {
@@ -114,10 +149,11 @@ class MyCompassionSponsorshipsController(WebsiteChild):
             "child_id": child_id,
         }
 
-    def _get_filtered_domain(self, post):
+    @classmethod
+    def _get_filtered_domain(cls, post):
         gender = post.get("gender", "either")
-        min_age = int(post.get("min_age", 0))
-        max_age = int(post.get("max_age", 18))
+        age_min = int(post.get("age_min", 0))
+        age_max = int(post.get("age_max", 18))
         country = post.get("country", "")
 
         child_obj = request.env["compassion.child"]
@@ -137,17 +173,17 @@ class MyCompassionSponsorshipsController(WebsiteChild):
 
         # Filter by age
         domain += [
-            ("age", ">=", min_age),
-            ("age", "<=", max_age),
+            ("age", ">=", age_min),
+            ("age", "<=", age_max),
         ]
 
         # Filter by gender
         if gender != "either":
-            domain += [("gender", "=", "F" if gender == "girl" else "M")]
+            domain += [("gender", "=", gender)]
 
         # Filter by country
         if country != "":
-            domain += [("field_office_id", "=", int(country))]
+            domain += [("field_office_id.field_office_id", "=", country)]
 
         return domain
 
@@ -159,7 +195,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
         auth="public",
         website=True,
     )
-    def wizard_start(self, child, **kwargs):
+    def wizard_start(self, child, sponsorship_type="standard", **kwargs):
         """
         Renders the new sponsorship wizard initial page.
         return: An HTTP response containing a rendered template
@@ -173,20 +209,23 @@ class MyCompassionNewSponsorshipController(http.Controller):
             raise Gone()
 
         # Create new wizard
-        wizard = request.env["new.sponsorship.wizard"].create({})
-        wizard.child = child
+        wizard = request.env["new.sponsorship.wizard"].create(
+            {
+                "child_id": child.id,
+                "user_id": request.env.user.id,
+                "sponsorship_type": sponsorship_type,
+                "birthdate": request.env.user.birthdate_date
+                if not request.env.user._is_public()
+                else False,
+            }
+        )
 
-        # Fetch available salutations and countries
-        titles = request.env["res.partner.title"].search([])
-        countries = request.env["res.country"].search([])
-
-        context = {
-            "wizard": wizard,
-            "titles": titles,
-            "countries": countries,
-        }
-
-        return request.render("my_compassion.my2_new_sponsorship_wizard_page", context)
+        return request.render(
+            "my_compassion.my2_new_sponsorship_wizard_page",
+            {
+                "form_content_html": self._render_form_content(wizard),
+            },
+        )
 
     @http.route(
         "/my2/new-sponsorship/step",
@@ -207,39 +246,12 @@ class MyCompassionNewSponsorshipController(http.Controller):
         wizard = request.env["new.sponsorship.wizard"].sudo().browse(wizard_id)
 
         # Update the record
-        self._update_wizard(wizard, post)
+        wizard.update(post)
 
-        # Fetch available salutations, countries, payment methods,
-        # languages and lead sources
-        titles = request.env["res.partner.title"].search([])
-        countries = request.env["res.country"].search([])
-        spoken_languages = (
-            request.env["res.lang.compassion"]
-            .sudo()
-            .search([("translatable", "=", True)])
-        )
-        payment_methods = request.env["account.payment.mode"].sudo().search([])
-        lead_sources = request.env["recurring.contract.origin"].sudo().search([])
-
-        # TODO: decide if we filter by website_published or not
-        # payment_methods = request.env["account.payment.mode"].sudo().search([("website_published", "=", True)]) # noqa: E501
-        # lead_sources = request.env["recurring.contract.origin"].sudo().search([("website_published", "=", True)]) # noqa: E501
-
-        context = {
-            "wizard": wizard,
-            "titles": titles,
-            "countries": countries,
-            "payment_methods": payment_methods,
-            "spoken_languages": spoken_languages,
-            "lead_sources": lead_sources,
-        }
-
-        # Render and return the updated content
-        html_content = request.env["ir.qweb"]._render(
-            "my_compassion.my2_new_sponsorship_wizard_form_content", context
-        )
-
-        return {"html": html_content}
+        if wizard.is_done:
+            return {"finish": True}
+        else:
+            return {"html": self._render_form_content(wizard)}
 
     @http.route(
         "/my2/new-sponsorship/submit",
@@ -251,20 +263,25 @@ class MyCompassionNewSponsorshipController(http.Controller):
     def sponsorship_wizard_submit(self, **post):
         """
         Receives the wizard form submission and finalizes the new sponsorship,
-        then redirect to the thank you page.
-        return: A redirection to the thank you page.
+        then redirect to the thank-you page.
+        return: A redirection to the thank-you page.
         """
         # Fetch the wizard record from the database
         wizard_id = int(post.get("wizard_id"))
         wizard = request.env["new.sponsorship.wizard"].sudo().browse(wizard_id)
 
-        # Update wizard
-        self._update_wizard(wizard, post)
+        # Cancel if person is too old for Write&Pray
+        if (
+            wizard.sponsorship_type == "write_and_pray"
+            and wizard.birthdate
+            < (fields.Datetime.now() - relativedelta(years=25)).date()
+        ):
+            raise BadRequest()
 
         # Make sure child is still available and finalize sponsorship creation
-        if wizard.child.state not in wizard.child._available_states():
+        if wizard.child_id.state not in wizard.child_id._available_states():
             raise Gone()
-        sponsorship = wizard.action_finish_sponsorship()
+        sponsorship = wizard.finish_sponsorship()
 
         # Redirect to thank-you page
         return request.redirect(
@@ -276,8 +293,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
     )
     def wizard_thank_you(self, sponsorship_id, **kwargs):
         """
-        Renders the new sponsorship thank you page.
-        return: An HTTP response containing a rendered template with the thank you page.
+        Renders the new sponsorship thank-you page.
+        return: An HTTP response containing a rendered template with the thank-you page.
         """
         sponsorship = (
             request.env["recurring.contract"].sudo().browse(int(sponsorship_id))
@@ -286,57 +303,55 @@ class MyCompassionNewSponsorshipController(http.Controller):
         return request.render(
             "my_compassion.my2_new_sponsorship_thank_you_page",
             {
-                "n_steps": request.env["new.sponsorship.wizard"].n_steps,
+                "n_steps": 3,
                 "sponsorship": sponsorship,
             },
         )
 
     @staticmethod
-    def _update_wizard(wizard, post):
-        values = {}
+    def _render_form_content(wizard):
+        # Fetch available salutations, countries, payment methods,
+        # languages and lead sources
+        titles = request.env["res.partner.title"].search([])
+        countries = request.env["res.country"].search([])
+        spoken_languages = (
+            request.env["res.lang.compassion"]
+            .sudo()
+            .search([("translatable", "=", True)])
+        )
+        payment_methods = request.env["account.payment.mode"].sudo().search([])
+        lead_sources = request.env["recurring.contract.origin"].sudo().search([])
+        currency_name = request.env.user.company_id.currency_id.name
 
-        def soft_convert(value, convert=lambda x: x):
-            try:
-                return convert(value)
-            except (ValueError, TypeError):
-                return None
+        # TODO: decide if we filter by website_published or not
+        # payment_methods = request.env["account.payment.mode"].sudo().search([("website_published", "=", True)]) # noqa: E501
+        # lead_sources = request.env["recurring.contract.origin"].sudo().search([("website_published", "=", True)]) # noqa: E501
 
-        if wizard.step == 0:
-            values["title"] = soft_convert(post.get("title"), int)
-            values["lastname"] = post.get("lastname")
-            values["firstname"] = post.get("firstname")
-            values["birthdate"] = post.get("birthdate")
-            values["email"] = post.get("email")
-            values["phone"] = post.get("phone")
-            values["street"] = post.get("street")
-            values["street_number"] = post.get("street_number")
-            values["zip"] = post.get("zip")
-            values["city"] = post.get("city")
-            values["country"] = post.get("country")
+        # Render step template first
+        inner_step_html = request.env["ir.qweb"]._render(
+            wizard.current_step.template,
+            {
+                "wizard": wizard,
+                "titles": titles,
+                "countries": countries,
+                "payment_methods": payment_methods,
+                "spoken_languages": spoken_languages,
+                "lead_sources": lead_sources,
+                "currency_name": currency_name,
+            },
+        )
 
-        if wizard.step == 1:
-            values["payment_method"] = soft_convert(post.get("payment_method"), int)
-            values["sponsorship_plus"] = soft_convert(
-                post.get("sponsorship_plus"), bool
-            )
+        # Render and return the updated content
+        html_content = request.env["ir.qweb"]._render(
+            "my_compassion.my2_new_sponsorship_wizard_form_content",
+            {
+                "wizard": wizard,
+                "inner_step_html": inner_step_html,
+                "currency_name": currency_name,
+            },
+        )
 
-        if wizard.step == 2:
-            spoken_languages_ids = [
-                int(post.get(key)) for key in post if key.startswith("spoken_language")
-            ]
-            values["spoken_languages"] = [(6, 0, spoken_languages_ids)]
-            values["lead_source"] = soft_convert(post.get("lead_source"), int)
-            values["volunteering"] = soft_convert(post.get("volunteering"), bool)
-
-        wizard.write(values)
-
-        # Move to previous / next step
-        if "action" in post:
-            action = post.get("action")
-            if action == "next":
-                wizard.action_next_step()
-            elif action == "previous":
-                wizard.action_previous_step()
+        return html_content
 
     @staticmethod
     def _get_reservation_uuid():

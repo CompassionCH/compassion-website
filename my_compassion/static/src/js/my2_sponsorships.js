@@ -43,6 +43,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 this.resultsLoaded = 0;
                 this.totalResults = 0;
 
+                this.sponsorship_type = this.$el.data("sponsorship-type");
+
                 this._fetchSponsorships();
 
                 return def;
@@ -69,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
              * Fetches and displays the next batch of sponsorships from the backend.
              * @private
              */
-            _fetchSponsorships: function () {
+            _fetchSponsorships: function (global_pool = false) {
                 // Disable buttons to avoid double clicks
                 this.$(".btn").prop("disabled", true);
 
@@ -91,9 +93,11 @@ document.addEventListener("DOMContentLoaded", function (event) {
                         limit: this.resultsPerBatch,
                         offset: this.resultsLoaded,
                         gender: this.genderFilter,
-                        min_age: this.ageFilter.low,
-                        max_age: this.ageFilter.high,
+                        age_min: this.ageFilter.low,
+                        age_max: this.ageFilter.high,
                         country: this.countryFilter,
+                        sponsorship_type: this.sponsorship_type,
+                        global_pool: global_pool,
                     },
                 })
                     .then(
@@ -101,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                             // Remove spinner
                             $spinner.remove();
 
-                            if (data.html) {
+                            if (data.count && data.html) {
                                 // Parse the HTML string into jQuery objects and add the initial animation class.
                                 const $newItems = $(data.html).addClass("animate-in");
 
@@ -128,6 +132,18 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
                                 // Re-enable buttons
                                 this.$(".btn").prop("disabled", false);
+                            } else {
+                                // Refetch using global pool if no results found
+                                if (!global_pool) {
+                                    this._fetchSponsorships(true);
+                                } else {
+                                    // No results found even in global pool, just update UI
+                                    this.totalResults = 0;
+                                    this._updateTotalResultsLabel();
+                                    this._updateChooseForMeButton();
+                                    this._updateShowMoreButton();
+                                    this.$(".btn").prop("disabled", false);
+                                }
                             }
                         }.bind(this)
                     )
@@ -225,8 +241,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     route: "/my2/sponsorships/fetch-random",
                     params: {
                         gender: this.genderFilter,
-                        min_age: this.ageFilter.low,
-                        max_age: this.ageFilter.high,
+                        age_min: this.ageFilter.low,
+                        age_max: this.ageFilter.high,
                         country: this.countryFilter,
                     },
                 })
@@ -234,7 +250,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
                         function (data) {
                             if (data.child_id) {
                                 // Redirect to new sponsorship page
-                                window.location.href = "/my2/new-sponsorship/" + data.child_id;
+                                window.location.href =
+                                    "/my2/new-sponsorship/" + data.child_id + "?type=" + this.sponsorship_type;
                             }
                             this.$(".btn").prop("disabled", false);
                         }.bind(this)

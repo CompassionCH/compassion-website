@@ -19,6 +19,7 @@
     - name (string): Item name.                                                              -required-
     - image (string): Item image src.                                                        -required-
     - price (float): Item price.                                                             -required-
+    - currency_name (str): Currency name                                                     -required-
     - primary_button (dict): Primary button with custom action (see Button).                 [none]
     - recipient (string): Item recipient.                                                    [none]
     - subtext (string): Text under name and recipient.                                       [none]
@@ -104,7 +105,7 @@
                         <t t-set="button" t-value="primary_button" />
                     </t>
                     <div t-attf-class="text-#{price_color} ">
-                        CHF
+                        <t t-esc="currency_name" />
                         <t t-if="price % 1 == 0" t-set="price" t-value="'{0}.-'.format(int(price))" />
                         <t t-else="" t-set="price" t-value="'{0:.2f}'.format(price)" />
                         <t t-if="monthly" t-set="monthly" t-value="'/mo.'" />

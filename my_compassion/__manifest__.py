@@ -30,7 +30,7 @@
 # pylint: disable=C8101
 {
     "name": "MyCompassion - Sponsor portal website",
-    "version": "14.0.1.0.0",
+    "version": "14.0.1.0.1",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
@@ -40,6 +40,7 @@
         "security/ir.model.access.csv",
         # My Compassion 2 data
         "data/my2_website.xml",
+        "data/my2_website_redirect.xml",
         # My compassion 2 assets, needs to be placed before others
         "templates/my2_assets.xml",
         "templates/my_account_components.xml",
@@ -78,7 +79,11 @@
         "templates/components/my2_donation_item.xml",
         "templates/components/my2_donation_product.xml",
         "templates/components/my2_donation_form.xml",
+        "templates/components/my2_giving_limits_table.xml",
         "templates/components/my2_giving_limits_modal.xml",
+        "templates/components/my2_checkout.xml",
+        # Other data the depends on the templates
+        "data/my2_new_sponsorship_wizard_steps.xml",
     ],
     "depends": [
         "partner_communication_compassion",
@@ -86,6 +91,7 @@
         "web",
         "website_child_protection",
         "website_sponsorship",
+        "gift_compassion",
         "auth_signup",
         "website_crm_privacy_policy",  # OCA/website
         "auth_signup_verify_email",  # OCA/server-auth
