@@ -9,15 +9,16 @@
 ##############################################################################
 
 import math
+from collections import defaultdict
+from datetime import datetime, timedelta
 
 from werkzeug.exceptions import BadRequest, NotFound
 
-from odoo import http
-from odoo import fields
+from odoo import fields, http
 from odoo.http import request
-from collections import defaultdict
-from datetime import datetime, timedelta
+
 from odoo.addons.portal.controllers.portal import CustomerPortal
+
 
 class MyCompassionDonationsController(CustomerPortal):
     @http.route(
@@ -310,7 +311,6 @@ class MyCompassionDonationsController(CustomerPortal):
 
         return order_line_fields
 
-
     def _get_paid_invoices_filter(self, partner):
         paid_invoices_filter = [
             ("partner_id", "=", partner.id),
@@ -436,4 +436,3 @@ class MyCompassionDonationsController(CustomerPortal):
         )
 
         return {"html": html}
-
