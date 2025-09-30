@@ -358,7 +358,6 @@ class MyCompassionDonationsController(CustomerPortal):
 
         return order_line_fields
 
-
     def _get_paid_invoices_filter(self, partner):
         paid_invoices_filter = [
             ("partner_id", "=", partner.id),
@@ -493,4 +492,3 @@ class MyCompassionDonationsController(CustomerPortal):
             .sudo()
             .search([("provider", "=", "postfinance")], limit=1)
         )
-
