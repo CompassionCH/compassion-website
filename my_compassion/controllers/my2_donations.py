@@ -9,13 +9,17 @@
 ##############################################################################
 
 import math
+
 from werkzeug.exceptions import BadRequest, NotFound
 
 from odoo import http
+from odoo import fields
 from odoo.http import request
+from collections import defaultdict
+from datetime import datetime, timedelta
+from odoo.addons.portal.controllers.portal import CustomerPortal
 
-
-class MyCompassionDonationsController(http.Controller):
+class MyCompassionDonationsController(CustomerPortal):
     @http.route(
         '/my2/gifts/<model("product.template"):product>',
         type="http",
