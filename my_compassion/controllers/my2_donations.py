@@ -370,7 +370,8 @@ class MyCompassionDonationsController(CustomerPortal):
             )
         )
 
-        # Computing the total price of the active sponsorships grouped per sponsorship frequency and payment method.
+        # Computing the total price of the active sponsorships grouped
+        # per sponsorship frequency and payment method.
         # group_id groups the invoices that have the same payment method and frequency.
         tot_cost_per_frequency = defaultdict(lambda: defaultdict(float))
 
