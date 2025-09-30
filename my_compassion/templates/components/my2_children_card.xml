@@ -8,6 +8,7 @@
     Props:                                                                  Default:
     - child (record): The child related object.                             [None]
     - show_sponsor_me (bool): Show sponsor me button.                       [False]
+    - sponsorship_type (string): Type of sponsorship.                       ['standard']
     - show_status (bool): Show correspondence status.                       [True]
     - sponsorship_end_date (date): Display sponsorship end date.            [None]
     - latest_correspondence (date): Display latest correspondence date.     [None]
@@ -16,6 +17,7 @@
     <template id="my2_children_card_component" name="Children Card Component">
         <!-- Default property values -->
         <t t-set="show_sponsor_me" t-value="show_sponsor_me or False" />
+        <t t-set="sponsorship_type" t-value="sponsorship_type or 'standard'" />
         <t t-set="show_status" t-value="not show_status == False" />
         <div class="children-card text-center mb-3 mt-3">
             <div class="p-4 d-flex flex-column align-items-center bg-high-eggshell">
@@ -71,7 +73,7 @@
                 </div>
                 <!-- Sponsor me Button-->
                 <div t-if="show_sponsor_me" class="mt-1 mb-2">
-                    <a t-attf-href="/my2/new-sponsorship/{{child.id}}">
+                    <a t-attf-href="/my2/new-sponsorship/{{child.id}}?sponsorship_type=#{sponsorship_type}">
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variation" t-value="'filled'" />
                             <t t-set="color" t-value="'dark-blue'" />

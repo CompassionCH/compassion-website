@@ -69,7 +69,6 @@
     width: 1200%;
     height: 1200%;
 }
-
 /* Envelope animation */
 .open .env-flap {
     transform: rotateX(180deg);
@@ -78,10 +77,32 @@
 }
 .open .env-letter {
     transform: translateY(-40%);
-    transition: transform 0.4s ease 0.8s;
+    transition: transform 0.6s ease 0.8s;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     z-index: 1;
 }
 .open .env-pocket {
     z-index: 3;
+}
+
+/* Style of the letters when they are already been read */
+.already-read .env-flap {
+    transform: rotateX(180deg);
+    z-index: 1;
+}
+
+.already-read .env-letter {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 2;
+}
+
+.already-read .env-pocket {
+    z-index: 3;
+}
+
+/* Animation on click for the already read letters */
+.reopen .env-letter {
+    transform: translateY(-40%);
+    transition: transform 0.6s ease 0s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
