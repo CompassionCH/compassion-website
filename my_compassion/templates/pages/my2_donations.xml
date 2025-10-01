@@ -178,7 +178,7 @@ Page: My Compassion 2 Donations Page
                                         </div>
                                         <div class="col text-right">
                                             <t t-esc="int(invoice.amount_total)" />
-                                            <t t-esc="invoice.currency_id.name" />
+                                            <t t-esc="invoice.currency_id.display_name" />
                                         </div>
                                     </div>
                                 </t>
