@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             rpc.query({
-                route: "/my2/my-donations/history",
+                route: "/my2/donations/history",
                 params: {
                     invoice_page: page,
                 },

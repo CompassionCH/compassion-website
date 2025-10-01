@@ -56,11 +56,11 @@
         "data/signup_email_confirmation.xml",
         "data/communication_config.xml",
         # My Compassion 2 pages
-        "templates/pages/my2_my_donations.xml",
         "templates/pages/my2_children.xml",
         "templates/pages/my2_child_timeline.xml",
         "templates/pages/my2_child_letters.xml",
         "templates/pages/my2_dashboard.xml",
+        "templates/pages/my2_donations.xml",
         "templates/pages/my2_donation_details.xml",
         "templates/pages/my2_new_letter.xml",
         "templates/pages/my2_user_settings.xml",

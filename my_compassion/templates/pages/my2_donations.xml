@@ -11,9 +11,9 @@ Page: My Compassion 2 Donations Page
       - A paginated donation history with amount and beneficiary details.
 
     Used in routes:
-    - /my2/my-donations/
-    - /my2/my-donations/page/<int:invoice_page>
-    - /my2/my-donations/history (JSON endpoint for history updates)
+    - /my2/donations/
+    - /my2/donations/page/<int:invoice_page>
+    - /my2/donations/history (JSON endpoint for history updates)
 
     Injected data:
     - active_sponsorships (recordset): Sponsorships in active state for the logged-in partner.
@@ -191,7 +191,7 @@ Page: My Compassion 2 Donations Page
                         <t t-call="my_compassion.my2_donations_history_content" />
                     </div>
                 </div>
-                <script type="text/javascript" src="/my_compassion/static/src/js/my2_my_donations.js" />
+                <script type="text/javascript" src="/my_compassion/static/src/js/my2_donations.js" />
             </t>
         </template>
         <!-- DONATION HISTORY -->

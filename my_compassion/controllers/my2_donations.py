@@ -388,7 +388,7 @@ class MyCompassionDonationsController(CustomerPortal):
         return number_of_paid_invoices
 
     @http.route(
-        ["/my2/my-donations"],
+        "/my2/donations",
         type="http",
         auth="user",
         website=True,
@@ -450,7 +450,7 @@ class MyCompassionDonationsController(CustomerPortal):
         return request.render("my_compassion.my2_my_donations_page", values)
 
     @http.route(
-        "/my2/my-donations/history",
+        "/my2/donations/history",
         type="json",
         auth="user",
         methods=["POST"],
