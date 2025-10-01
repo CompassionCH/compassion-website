@@ -13,30 +13,31 @@ document.addEventListener("DOMContentLoaded", function () {
             const historyContainer = document.getElementById("donation_history_container");
             const pagerButtons = document.querySelectorAll("#history_pager_prev, #history_pager_next");
 
-
             if (!historyContainer) {
                 console.error("Donation history container not found.");
                 return;
             }
 
             isUpdating = true;
-            pagerButtons.forEach(btn => btn.classList.add('disabled'));
+            pagerButtons.forEach((btn) => btn.classList.add("disabled"));
 
             rpc.query({
                 route: "/my2/donations/history",
                 params: {
                     invoice_page: page,
                 },
-            }).then(function (result) {
-                if (result.html) {
-                    historyContainer.outerHTML = result.html;
-                }
-            }).finally(() => {
+            })
+                .then(function (result) {
+                    if (result.html) {
+                        historyContainer.outerHTML = result.html;
+                    }
+                })
+                .finally(() => {
                     isUpdating = false;
-                    document.querySelectorAll("#history_pager_prev, #history_pager_next").forEach(btn => {
-                    if(btn) btn.classList.remove('disabled');
+                    document.querySelectorAll("#history_pager_prev, #history_pager_next").forEach((btn) => {
+                        if (btn) btn.classList.remove("disabled");
+                    });
                 });
-            });
         }
 
         document.addEventListener("click", function (event) {
