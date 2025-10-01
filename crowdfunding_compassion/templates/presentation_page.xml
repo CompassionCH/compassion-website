@@ -315,9 +315,17 @@
                     class="text-primary my-4"
                   >Why do I engage in this project</h3>
                                     <p>
-                                        <t
-                      t-esc="participant.personal_motivation"
+      <t
+                      t-set="motivation_lines"
+                      t-value="participant.personal_motivation.split('\n')"
                     />
+                                      <t
+                      t-foreach="motivation_lines"
+                      t-as="motivation_line"
+                    >
+                                        <span t-esc="motivation_line" />
+                                        <br />
+                                     </t>
                                     </p>
                                 </t>
                                 <!-- Social sharing links -->
