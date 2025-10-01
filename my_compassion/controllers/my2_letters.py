@@ -366,8 +366,10 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 letter_generator.write({"generation_status": "generate_pdf"}),
                 request.env.cr.commit(),
             ),
-            "failure_callback": lambda: (
-                letter_generator.write({"generation_status": "failed"}),
+            "failure_callback": lambda err_msg="": (
+                letter_generator.write(
+                    {"generation_status": "failed", "generation_error_message": err_msg}
+                ),
                 request.env.cr.commit(),
             ),
             "finalizing_callback": lambda: (
@@ -422,6 +424,11 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                     },
                 }
             else:
+                if status == "failed":
+                    return {
+                        "status": status,
+                        "error": letter_generator.generation_error_message,
+                    }
                 return {"status": status}
 
         except (AccessError, ValueError, TypeError):
