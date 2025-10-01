@@ -32,7 +32,7 @@ $btn-border-color: #000;
     line-height: 1;
 }
 
-@mixin button-variant($height, $padding-x, $font-size, $font-family, $font-weight, $icon-only: false, $filled: true) {
+@mixin compassion-button-variant($height, $padding-x, $font-size, $font-family, $font-weight, $icon-only: false, $filled: true) {
     @include button-base($height, $padding-x, $font-size, $font-family, $font-weight);
 
     @if $filled {
@@ -55,22 +55,22 @@ $btn-border-color: #000;
 
 .btn {
     // Default
-    &--default-filled            { @include button-variant(48px, 32px, 17px, "NeighbourSans Medium", 500, false, true); }
-    &--default-filled-icon-only  { @include button-variant(48px, 32px, 17px, "NeighbourSans Medium", 500, true,  true); }
-    &--default-hollow            { @include button-variant(48px, 32px, 17px, "NeighbourSans Medium", 500, false, false); }
-    &--default-hollow-icon-only  { @include button-variant(48px, 32px, 17px, "NeighbourSans Medium", 500, true,  false); }
+    &--default-filled            { @include compassion-button-variant(48px, 32px, 17px, "NeighbourSans Medium", 500, false, true); }
+    &--default-filled-icon-only  { @include compassion-button-variant(48px, 32px, 17px, "NeighbourSans Medium", 500, true,  true); }
+    &--default-hollow            { @include compassion-button-variant(48px, 32px, 17px, "NeighbourSans Medium", 500, false, false); }
+    &--default-hollow-icon-only  { @include compassion-button-variant(48px, 32px, 17px, "NeighbourSans Medium", 500, true,  false); }
 
     // Impact
-    &--impact-filled             { @include button-variant(56px, 36px, 19px, "NeighbourSans DemiBold", 600, false, true); }
-    &--impact-filled-icon-only   { @include button-variant(56px, 36px, 19px, "NeighbourSans DemiBold", 600, true,  true); }
-    &--impact-hollow             { @include button-variant(56px, 36px, 19px, "NeighbourSans DemiBold", 600, false, false); }
-    &--impact-hollow-icon-only   { @include button-variant(56px, 36px, 19px, "NeighbourSans DemiBold", 600, true,  false); }
+    &--impact-filled             { @include compassion-button-variant(56px, 36px, 19px, "NeighbourSans DemiBold", 600, false, true); }
+    &--impact-filled-icon-only   { @include compassion-button-variant(56px, 36px, 19px, "NeighbourSans DemiBold", 600, true,  true); }
+    &--impact-hollow             { @include compassion-button-variant(56px, 36px, 19px, "NeighbourSans DemiBold", 600, false, false); }
+    &--impact-hollow-icon-only   { @include compassion-button-variant(56px, 36px, 19px, "NeighbourSans DemiBold", 600, true,  false); }
 
     // Compact
-    &--compact-filled            { @include button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, false, true); }
-    &--compact-filled-icon-only  { @include button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, true,  true); }
-    &--compact-hollow            { @include button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, false, false); }
-    &--compact-hollow-icon-only  { @include button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, true,  false); }
+    &--compact-filled            { @include compassion-button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, false, true); }
+    &--compact-filled-icon-only  { @include compassion-button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, true,  true); }
+    &--compact-hollow            { @include compassion-button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, false, false); }
+    &--compact-hollow-icon-only  { @include compassion-button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, true,  false); }
 
     // Radius modifiers
     &--radius-pill  { border-radius: 25px; }
