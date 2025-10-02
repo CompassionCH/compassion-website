@@ -466,23 +466,21 @@ class MyCompassionDonationsController(CustomerPortal):
 
         return {"html": html}
 
-    def _get_paginated_paid_invoices(self, partner, invoice_page=1, invoice_per_page=12):
+    def _get_paginated_paid_invoices(
+        self, partner, invoice_page=1, invoice_per_page=12
+    ):
         """
         Fetches a paginated subset of paid invoices for a partner and calculates
         pagination details.
         """
         offset = (int(invoice_page) - 1) * invoice_per_page
 
-        subset = self._get_paid_invoices_subset(
-            partner, offset, invoice_per_page
-        )
+        subset = self._get_paid_invoices_subset(partner, offset, invoice_per_page)
 
         total_amount = self._get_paid_invoices_amount(partner)
 
         total_pages = (
-            math.ceil(total_amount / invoice_per_page)
-            if invoice_per_page > 0
-            else 0
+            math.ceil(total_amount / invoice_per_page) if invoice_per_page > 0 else 0
         )
 
         return {
