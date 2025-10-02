@@ -378,7 +378,9 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             ),
         }
         # Launch the processing of the letter generator with the defined callbacks
-        self.process_letter_generator(letter_generator, post=post, callbacks=callbacks)
+        self.process_letter_generator(
+            letter_generator, post=post, callbacks=callbacks, raise_user_errors=False
+        )
 
         letter_generator.write({"generation_status": "done"})
         request.env.cr.commit()
@@ -434,7 +436,9 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         except (AccessError, ValueError, TypeError):
             return {"status": "failed", "error": "Access denied or invalid ID."}
 
-    def process_letter_generator(self, letter_generator, post, callbacks=None):
+    def process_letter_generator(
+        self, letter_generator, post, callbacks=None, raise_user_errors=True
+    ):
         """
         Processes the letter generator by executing its domain change, preview,
         and letter generation logic. This method orchestrates the entire
@@ -461,6 +465,8 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 - 'finalizing_callback': Called before the corresp. is added in the db.
                 - 'failure_callback': Called if any exception occurs during
                   the entire process.
+            raise_user_errors (bool, optional): True:an odoo UserError shown in the UI,
+                False: the error is raised only in the python logs.
 
         Raises:
             Exception: Re-raises any exception encountered during the process
@@ -476,7 +482,13 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                     callbacks["finalizing_callback"]()
                 letter_generator.generate_letters_job()
 
-        except Exception:
+        # If the process fails at any step, call the failure callback to store the error
+        # message in the letter generator record for user feedback.
+        except Exception as e:
             if callbacks and "failure_callback" in callbacks:
-                callbacks["failure_callback"]()
-            raise
+                callbacks["failure_callback"](err_msg=str(e))
+
+            if raise_user_errors:
+                raise
+            else:
+                raise Exception("Error during letter generation") from e
