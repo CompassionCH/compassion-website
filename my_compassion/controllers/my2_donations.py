@@ -434,7 +434,7 @@ class MyCompassionDonationsController(CustomerPortal):
             partner, paid_invoices_offset, invoice_per_page
         )
         total_paid_invoices = self._get_paid_invoices_amount(partner)
-        total_pages = math.ceil(total_paid_invoices / invoice_per_page)
+        total_pages = math.ceil(total_paid_invoices / invoice_per_page) if invoice_per_page > 0 else 0
 
         values = self._prepare_portal_layout_values()
         values.update(
