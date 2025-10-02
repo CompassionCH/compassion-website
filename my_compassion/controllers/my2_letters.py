@@ -377,10 +377,15 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 request.env.cr.commit(),
             ),
         }
-        # Launch the processing of the letter generator with the defined callbacks
-        self.process_letter_generator(
-            letter_generator, post=post, callbacks=callbacks, raise_user_errors=False
-        )
+        try:
+            # Launch the processing of the letter generator with the defined callbacks
+            self.process_letter_generator(
+                letter_generator, post=post, callbacks=callbacks, raise_user_errors=False
+            )
+        except Exception as e:
+            return {
+                "error": str(e)
+            }
 
         letter_generator.write({"generation_status": "done"})
         request.env.cr.commit()
@@ -482,7 +487,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                     callbacks["finalizing_callback"]()
                 letter_generator.generate_letters_job()
 
-        # If the process fails at any step, call the failure callback to store the error
+        # If the process fails at any step, call the failure callback
         # message in the letter generator record for user feedback.
         except Exception as e:
             if callbacks and "failure_callback" in callbacks:
