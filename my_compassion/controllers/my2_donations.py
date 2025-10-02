@@ -428,13 +428,9 @@ class MyCompassionDonationsController(CustomerPortal):
                 currency
             ] += sponsorship.total_amount
 
-        # redundant
-        paid_invoices_offset = (int(invoice_page) - 1) * invoice_per_page
-        paid_invoices_subset = self._get_paid_invoices_subset(
-            partner, paid_invoices_offset, invoice_per_page
+        paid_invoices_data = self._get_paginated_paid_invoices(
+            partner, invoice_page, invoice_per_page
         )
-        total_paid_invoices = self._get_paid_invoices_amount(partner)
-        total_pages = math.ceil(total_paid_invoices / invoice_per_page) if invoice_per_page > 0 else 0
 
         values = self._prepare_portal_layout_values()
         values.update(
@@ -442,9 +438,9 @@ class MyCompassionDonationsController(CustomerPortal):
                 "active_sponsorships": active_sponsorships,
                 "tot_cost_per_frequency": tot_cost_per_frequency,
                 "due_invoices": due_invoices,
-                "paid_invoices_subset": paid_invoices_subset,
-                "current_page": invoice_page,
-                "total_pages": total_pages,
+                "paid_invoices_subset": paid_invoices_data["paid_invoices_subset"],
+                "current_page": paid_invoices_data["current_page"],
+                "total_pages": paid_invoices_data["total_pages"],
             }
         )
         return request.render("my_compassion.my2_my_donations_page", values)
@@ -459,24 +455,9 @@ class MyCompassionDonationsController(CustomerPortal):
     def my_donations_history(self, invoice_page=1, invoice_per_page=12, **kw):
         partner = request.env.user.partner_id
 
-        # Paid invoices
-        paid_invoices_offset = (int(invoice_page) - 1) * invoice_per_page
-        paid_invoices_subset = self._get_paid_invoices_subset(
-            partner, paid_invoices_offset, invoice_per_page
+        history_data = self._get_paginated_paid_invoices(
+            partner, invoice_page, invoice_per_page
         )
-
-        # Paid invoices paging
-        total_pages = (
-            math.ceil(self._get_paid_invoices_amount(partner) / invoice_per_page)
-            if invoice_per_page > 0
-            else 0
-        )
-
-        history_data = {
-            "current_page": int(invoice_page),
-            "paid_invoices_subset": paid_invoices_subset,
-            "total_pages": total_pages,
-        }
 
         html = request.env["ir.qweb"]._render(
             "my_compassion.my2_donations_history_content",
@@ -484,6 +465,31 @@ class MyCompassionDonationsController(CustomerPortal):
         )
 
         return {"html": html}
+
+    def _get_paginated_paid_invoices(self, partner, invoice_page=1, invoice_per_page=12):
+        """
+        Fetches a paginated subset of paid invoices for a partner and calculates
+        pagination details.
+        """
+        offset = (int(invoice_page) - 1) * invoice_per_page
+
+        subset = self._get_paid_invoices_subset(
+            partner, offset, invoice_per_page
+        )
+
+        total_amount = self._get_paid_invoices_amount(partner)
+
+        total_pages = (
+            math.ceil(total_amount / invoice_per_page)
+            if invoice_per_page > 0
+            else 0
+        )
+
+        return {
+            "paid_invoices_subset": subset,
+            "current_page": int(invoice_page),
+            "total_pages": total_pages,
+        }
 
     @staticmethod
     def _get_payment_acquirer():
