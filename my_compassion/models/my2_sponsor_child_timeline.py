@@ -1,5 +1,4 @@
-from odoo import _, api, fields, models, tools
-from odoo.tools import format_date
+from odoo import fields, models, tools
 
 
 class SponsorshipTimeline(models.Model):
@@ -26,7 +25,9 @@ class SponsorshipTimeline(models.Model):
     # The name of the currency for the amount (e.g., USD, EUR).
     currency_name = fields.Char(string="Currency", readonly=True)
     gift_type = fields.Char(string="Gift Type", readonly=True)
-    correspondence_direction = fields.Char(string="Correspondence Direction", readonly=True)
+    correspondence_direction = fields.Char(
+        string="Correspondence Direction", readonly=True
+    )
 
     # It is used for the date.
     create_date = fields.Char(string="Create_date", readonly=True)
@@ -60,8 +61,9 @@ class SponsorshipTimeline(models.Model):
                      c.child_id,
                      c.partner_id,
                      'correspondence' AS model,
-                     case c.direction when 'Beneficiary To Supporter' then 'Received your letter'
-                          else 'Wrote you a letter' 
+                     case c.direction when 'Beneficiary To Supporter'
+                          then 'Received your letter'
+                          else 'Wrote you a letter'
                      end AS title,
                      c.uuid AS record_id,
                      '' AS amount,
@@ -73,11 +75,11 @@ class SponsorshipTimeline(models.Model):
                WHERE c.partner_id IS NOT NULL
                 UNION ALL
                 SELECT
-                     'correspondence-' || s.id AS id,  -- Prevent ID clash with correspondence
+                     'correspondence-' || s.id AS id,
                      s.child_id,
                      s.partner_id,
                      'sponsorship_gift' AS model,
-                     case s.gift_type 
+                     case s.gift_type
                           when 'Birthday' then 'Sent a birthday gift'
                           when 'Graduation/Final' then 'Sent a graduation/final gift'
                           when 'Family Gift' then 'Sent a family gift'

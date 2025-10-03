@@ -45,9 +45,9 @@
                             <t t-esc="item.title" />
                         </p>
                         <t t-if="item.amount">
-
                             <p class="text-muted">
-                                <t t-esc="item.amount"/> <t t-esc="item.currency_name"/>
+                                <t t-esc="item.amount" />
+                                <t t-esc="item.currency_name" />
                             </p>
                         </t>
                         <div class="flex justify-between items-center">
@@ -81,7 +81,8 @@
                         </p>
                         <t t-if="item.amount">
                             <p class="text-muted">
-                                <t t-esc="item.amount"/> <t t-esc="item.currency_name"/>
+                                <t t-esc="item.amount" />
+                                <t t-esc="item.currency_name" />
                             </p>
                         </t>
                         <div class="flex justify-between items-center">
