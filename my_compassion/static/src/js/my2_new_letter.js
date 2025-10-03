@@ -229,10 +229,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             },
 
+            /**
+             * Handles the final response after a successful task.
+             * THIS METHOD IS MODIFIED to clean up the progress bar on preview.
+             */
             _handleResponse: function (mode, result, childId) {
                 if (mode === "send") {
+                    // No cleanup needed here, the page will redirect and clear everything.
                     window.location.href = `/my2/children/letters/${childId}?new_letter_generator_id=${result.generator_id}`;
                 } else if (mode === "preview") {
+                    // On success for preview, hide the progress modal and destroy the widget.
+                    // This ensures a clean state for the user's next action.
+                    $("#submitModal").modal("hide");
+                    if (this.progressBar) {
+                        this.progressBar.destroy();
+                        this.progressBar = null; // Clean up the reference.
+                    }
 
                     $("#previewImage").attr("src", result.preview_url);
                     $("#previewModal").modal("show");
