@@ -1,3 +1,12 @@
+##############################################################################
+#
+#    Copyright (C) 2025 Compassion CH (http://www.compassion.ch)
+#    Releasing children from poverty in Jesus' name
+#    @author: Noé Berdoz <nberdoz@compassion.ch>
+#
+#    The licence is in the file __manifest__.py
+#
+##############################################################################
 def _post_init_hook(cr, registry):
     """
     This hook is called after the module is installed.
@@ -11,6 +20,12 @@ def _post_init_hook(cr, registry):
     _logger = logging.getLogger(__name__)
 
     env = api.Environment(cr, SUPERUSER_ID, {})
+
+    # Clear the cache before processing the CSS generation from Qweb
+    env["ir.qweb"].clear_caches()
+    env["ir.ui.view"].clear_caches()
+    env["theme.ir.ui.view"].clear_caches()
+
     _logger.info("Post-init hook: Generating theme stylesheets.")
 
     models_to_process = [
