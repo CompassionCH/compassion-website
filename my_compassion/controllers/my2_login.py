@@ -10,11 +10,12 @@
 # -*- coding: utf-8 -*-
 from odoo import http
 from odoo.http import request
+
 from odoo.addons.website.controllers.main import Website
 
-class WebsiteLoginRedirect(Website):
 
-    @http.route('/web/login', type='http', auth="public", website=True, sitemap=False)
+class WebsiteLoginRedirect(Website):
+    @http.route("/web/login", type="http", auth="public", website=True, sitemap=False)
     def web_login(self, *args, **kw):
         """
         Overrides the login page controller.
@@ -23,7 +24,7 @@ class WebsiteLoginRedirect(Website):
         # Check if a user ID exists in the current session
         if request.session.uid:
             # If so, redirect the user to their account page or dashboard
-            return request.redirect('/my2/dashboard/')
+            return request.redirect("/my2/dashboard/")
 
         # If the user is not logged in, execute the original Odoo logic for login
         return super().web_login(*args, **kw)

@@ -9,12 +9,13 @@
 
 # -*- coding: utf-8 -*-
 from odoo import http
-from odoo.addons.auth_signup.controllers.main import AuthSignupHome
 from odoo.http import request
 
-class SignupOverride(AuthSignupHome):
+from odoo.addons.auth_signup.controllers.main import AuthSignupHome
 
-    @http.route('/web/signup', type='http', auth='public', website=True, sitemap=False)
+
+class SignupOverride(AuthSignupHome):
+    @http.route("/web/signup", type="http", auth="public", website=True, sitemap=False)
     def web_auth_signup(self, *args, **kw):
         """
         Overrides the original signup page controller.
@@ -22,7 +23,7 @@ class SignupOverride(AuthSignupHome):
         """
         # Check if a user ID exists in the current session
         if request.session.uid:
-            return request.redirect('/my2/dashboard/')
+            return request.redirect("/my2/dashboard/")
 
         # If the user is not logged in, execute the original Odoo logic for signup
         return super().web_auth_signup(*args, **kw)
