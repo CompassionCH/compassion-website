@@ -270,8 +270,9 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             child = request.env["compassion.child"].browse(child_id)
             self._check_sponsored_child_access(child)
             template_id = int(post.get("template_id"))
-        except (AccessError, ValueError, TypeError):
-            return {"error": "Something went wrong."}
+        except (AccessError, ValueError, TypeError) as e:
+            _logger.warning("Failed to create letter generator for post %s: %s", post, e)
+            return {"error": _("Something went wrong.")}
 
         attachments = [
             (0, 0, {"datas": file["content"], "name": file["filename"]})

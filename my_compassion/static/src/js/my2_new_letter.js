@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         child_id: formData.child_id,
                         mode: mode,
                         csrf_token: odoo.csrf_token,
-                    });
+                    }).catch(err => console.error('Failed to launch letter generation:', err));
 
                     // Poll the state of the task and update the progress bar accordingly
                     const updateProgress = (status) => {
