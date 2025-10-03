@@ -21,4 +21,6 @@ from . import (
     my2_donation_info_line,
     my2_donation_impact_line,
     my2_correspondence_letter_template,
+    my2_event_banner,
+    my2_website_route,
 )

@@ -31,25 +31,42 @@
     "summary": "Compassion Theme 2025",
     "website": "https://github.com/CompassionCH/compassion-website",
     "sequence": 260,
-    "version": "14.0.1.0.0",
+    "version": "14.0.2.0.0",
     "author": "Compassion Switzerland",
     "depends": ["website"],
+    "external_dependencies": {
+        "python": ["python-slugify"],
+    },
     "data": [
+        "views/theme_compassion_views.xml",
         "views/assets.xml",
         "views/images_content.xml",
         "views/template_header.xml",
         "views/footer.xml",
-        "templates/components/Portrait.xml",
+        # Data
+        "data/colors.xml",
+        "data/icons.xml",
+        "data/pictograms.xml",
+        "data/dynamic_stylesheets.xml",
         # Components
+        "templates/components/Portrait.xml",
         "templates/components/Title.xml",
         "templates/components/Vignette.xml",
         "templates/components/Select.xml",
         "templates/components/FormField.xml",
         "templates/components/RangeInputLoading.xml",
+        "templates/components/EventBanner.xml",
         # Buttons
         "templates/components/buttons/ThemedButton.xml",
         "templates/components/buttons/ToggleButton.xml",
+        # Styles
+        "templates/styles/colors_stylesheet.xml",
+        "templates/styles/icons_stylesheet.xml",
+        "templates/styles/pictograms_stylesheet.xml",
+        # Security
+        "security/ir.model.access.csv",
     ],
+    "post_init_hook": "_post_init_hook",
     "images": ["static/description/compassion_screenshot.png"],
     "license": "LGPL-3",
 }

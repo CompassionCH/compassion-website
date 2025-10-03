@@ -30,7 +30,7 @@
 # pylint: disable=C8101
 {
     "name": "MyCompassion - Sponsor portal website",
-    "version": "14.0.1.0.0",
+    "version": "14.0.1.0.1",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
@@ -51,6 +51,8 @@
         "templates/my_account_write_a_letter.xml",
         "templates/login_template.xml",
         "templates/signup.xml",
+        "views/correspondence_template_view.xml",
+        "views/my2_event_banner_views.xml",
         "views/partner_compassion_view.xml",
         "views/product_view.xml",
         "views/my2_letter_templates_view.xml",
@@ -95,6 +97,7 @@
         "website_crm_privacy_policy",  # OCA/website
         "auth_signup_verify_email",  # OCA/server-auth
         "queue_job",
+        "theme_compassion_2025",
     ],
     "demo": [],
     "installable": True,

@@ -15,8 +15,9 @@
     @extend .rounded-circle;
     @extend .border;
     @extend .border-5;
-    @extend .border-low-yellow;
     @extend .mb-2;
+
+    border-color: var(--low-yellow);
 
     &-size-small {
         max-width: 80px;
@@ -53,7 +54,8 @@
     @extend .img-circle;
     @extend .border;
     @extend .border-5;
-    @extend .border-pure-white;
+
+    border: var(--pure-white);
     width: auto;
     height: auto;
 }

@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const childId = timelineEl.dataset.childId;
     const loader = timelineEl.querySelector("#timeline-loader");
-    const container = timelineEl.querySelector(".content-column");
+    const container = timelineEl.querySelector(".single-column");
 
     const getLimitBasedOnContainer = () => {
         const scrollContainer = document.querySelector("#wrapwrap");
