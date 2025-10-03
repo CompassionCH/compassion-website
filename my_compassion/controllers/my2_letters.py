@@ -380,12 +380,13 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         try:
             # Launch the processing of the letter generator with the defined callbacks
             self.process_letter_generator(
-                letter_generator, post=post, callbacks=callbacks, raise_user_errors=False
+                letter_generator,
+                post=post,
+                callbacks=callbacks,
+                raise_user_errors=False,
             )
         except Exception as e:
-            return {
-                "error": str(e)
-            }
+            return {"error": str(e)}
 
         letter_generator.write({"generation_status": "done"})
         request.env.cr.commit()
