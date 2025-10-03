@@ -4,12 +4,12 @@
  * The update works by:
  * 1) Request the server to create a letter generation task, server returns a gen.Id.
  * and the maps to build the progress bar steps in the following format:
- *      steps = [ [step_index, generation_status, step_description], ...]
+ * steps = [ [step_index, generation_status, step_description], ...]
  * 2) Tell the server to start processing the task while updating the task state.
  * 3) Poll the server to get the current statusof the task and update the progress bar accordingly.
  * 4) Once the task is complete, redirect or show a preview based on user choice.
  *
- *Is used in /templates/pages/my2_new_letter.xml
+ * Is used in /templates/pages/my2_new_letter.xml
  *
  */
 document.addEventListener("DOMContentLoaded", function () {
@@ -50,42 +50,40 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const creationData = { ...formData, source: "mycompassion", csrf_token: odoo.csrf_token, mode: mode };
 
-                let initialResult;
                 try {
-                    // Ask the server to create a letter generation task
-                    initialResult = await this._createGenerator(creationData);
+                    const initialResult = await this._createGenerator(creationData);
                     if (!initialResult.generator_id) {
                         throw new Error(initialResult.error || "Could not create the letter record.");
                     }
-                } catch (error) {
-                    ToastService.error(
-                        error.message || "An error occurred while preparing your letter. Please try again."
-                    );
-                    return;
-                }
 
-                // Dynamically build steps and status map from server response
-                const steps = (initialResult.steps || []).map((step) => step[2]); // Extract step description
-                const statusMap = (initialResult.steps || []).reduce((map, step) => {
-                    map[step[1]] = step[0]; // Map status key to index
-                    return map;
-                }, {});
+                    // --- Send Mode Logic ---
+                    const steps = (initialResult.steps || []).map((step) => step[2]);
+                    const statusMap = (initialResult.steps || []).reduce((map, step) => {
+                        map[step[1]] = step[0];
+                        return map;
+                    }, {});
 
-                if (mode === "send") {
-                    $("#submitModal").modal({ backdrop: "static", keyboard: false }).modal("show");
-
+                    // 1. Create the widget object in memory BEFORE showing the modal.
                     const ProgressBarWidgetClass = publicWidget.registry.ProgressBarWidget;
                     this.progressBar = new ProgressBarWidgetClass(this, {
                         density: "medium",
-                        steps: steps, // Use steps from server
+                        steps: steps,
                     });
-                    await this.progressBar.appendTo($("#progress-bar-div"));
 
-                    this.progressBar.startProgress();
-                }
+                    // 2. Use a Promise to wait for the modal and widget rendering to complete.
+                    await new Promise(resolve => {
+                        const modal = $("#submitModal");
+                        modal.one('shown.bs.modal', async () => {
+                            // 3. The modal is now visible. Append the pre-made widget.
+                            await this.progressBar.appendTo(modal.find("#progress-bar-div"));
+                            this.progressBar.startProgress();
+                            resolve(); // Continue the main function
+                        });
+                        // 4. Trigger the modal to show.
+                        modal.modal({ backdrop: "static", keyboard: false }).modal("show");
+                    });
 
-                try {
-                    // Tell the server to start processing the task while updating the task state
+                    // 5. With UI ready, launch and poll the backend task.
                     this._launchProcessingRPC({
                         generator_id: initialResult.generator_id,
                         child_id: formData.child_id,
@@ -93,15 +91,11 @@ document.addEventListener("DOMContentLoaded", function () {
                         csrf_token: odoo.csrf_token,
                     }).catch((err) => console.error("Failed to launch letter generation:", err));
 
-                    // Poll the state of the task and update the progress bar accordingly
                     const updateProgress = (status) => {
-                        // Use the dynamically generated statusMap
                         if (this.progressBar && status in statusMap) {
-                            const stepIndex = statusMap[status];
-                            this.progressBar.goToStep(stepIndex);
+                            this.progressBar.goToStep(statusMap[status]);
                         }
                     };
-
                     const processingPromise = this._pollForStatus(
                         {
                             generator_id: initialResult.generator_id,
@@ -111,10 +105,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         },
                         updateProgress
                     );
-
                     const finalResult = await processingPromise;
 
                     await this._handleResponse(mode, finalResult, formData.child_id);
+
                 } catch (error) {
                     if (this.progressBar) {
                         this.progressBar.destroy();
@@ -181,15 +175,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 return Promise.all(filePromises);
             },
 
-            // Ask the server to create a letter generation task and to return a generator_id
             _createGenerator: function (data) {
                 return rpc.query({
                     route: "/my2/children/letters/create_generator",
                     params: data,
                 });
             },
-            // Tell the server to start processing the task while updating the task state
-            // data contains generator_id, child_id, mode, csrf_token
+
             _launchProcessingRPC: function (data) {
                 return rpc.query({
                     route: "/my2/children/letters/launch_generation",
@@ -197,7 +189,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             },
 
-            // Poll the server to get the current status of the task and update the progress bar accordingly
             _pollForStatus: function (data, onProgressUpdate) {
                 const POLLING_INTERVAL = 400;
                 const MAX_POLLS = 150; // 400ms * 150 = 1 minute timeout
@@ -221,7 +212,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             if (response.status === "done") {
                                 if (this.progressBar) {
-                                    // Use the steps available on the progressBar options
                                     const lastStep = this.progressBar.options.steps.length - 1;
                                     this.progressBar.goToStep(lastStep);
                                 }
@@ -243,6 +233,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (mode === "send") {
                     window.location.href = `/my2/children/letters/${childId}?new_letter_generator_id=${result.generator_id}`;
                 } else if (mode === "preview") {
+
                     $("#previewImage").attr("src", result.preview_url);
                     $("#previewModal").modal("show");
                 }
