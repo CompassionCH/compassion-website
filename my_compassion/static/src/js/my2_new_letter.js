@@ -230,7 +230,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             /**
              * Handles the final response after a successful task.
-             * THIS METHOD IS MODIFIED to clean up the progress bar on preview.
              */
             _handleResponse: function (mode, result, childId) {
                 if (mode === "send") {
