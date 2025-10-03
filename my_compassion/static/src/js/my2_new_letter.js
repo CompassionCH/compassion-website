@@ -71,9 +71,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
 
                     // 2. Use a Promise to wait for the modal and widget rendering to complete.
-                    await new Promise(resolve => {
+                    await new Promise((resolve) => {
                         const modal = $("#submitModal");
-                        modal.one('shown.bs.modal', async () => {
+                        modal.one("shown.bs.modal", async () => {
                             // 3. The modal is now visible. Append the pre-made widget.
                             await this.progressBar.appendTo(modal.find("#progress-bar-div"));
                             this.progressBar.startProgress();
@@ -108,7 +108,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     const finalResult = await processingPromise;
 
                     await this._handleResponse(mode, finalResult, formData.child_id);
-
                 } catch (error) {
                     if (this.progressBar) {
                         this.progressBar.destroy();
