@@ -7,15 +7,18 @@
 #
 ##############################################################################
 import calendar
+import logging
 from datetime import date
 
 import babel
 
-from odoo import fields, http
+from odoo import _, fields, http
 from odoo.exceptions import AccessError
 from odoo.http import request
 
 from .my2_children import MyCompassionChildrenController
+
+_logger = logging.getLogger(__name__)
 
 
 class MyCompassionCorrespondenceController(MyCompassionChildrenController):
@@ -271,7 +274,9 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             self._check_sponsored_child_access(child)
             template_id = int(post.get("template_id"))
         except (AccessError, ValueError, TypeError) as e:
-            _logger.warning("Failed to create letter generator for post %s: %s", post, e)
+            _logger.warning(
+                "Failed to create letter generator for post %s: %s", post, e
+            )
             return {"error": _("Something went wrong.")}
 
         attachments = [
