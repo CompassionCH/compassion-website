@@ -25,11 +25,11 @@ class My2CorrespondenceLetterTemplate(models.Model):
         help="The date until which this template is valid.",
         required=True,
     )
-    scheduled = fields.Boolean(
-        string="Scheduled",
+    is_active = fields.Boolean(
+        string="Is active",
         default=False,
         copy=False,
-        help="If checked, this template is scheduled for use within its date range.",
+        help="If checked, this template is used within its date range.",
     )
     status = fields.Selection(
         [
@@ -44,7 +44,7 @@ class My2CorrespondenceLetterTemplate(models.Model):
         help="The current status of the template    .",
     )
 
-    @api.depends("start_date", "end_date", "scheduled")
+    @api.depends("start_date", "end_date", "is_active")
     def _compute_status(self):
         """
         Computes the status of the template based on current date and fields.
@@ -61,7 +61,7 @@ class My2CorrespondenceLetterTemplate(models.Model):
 
             if record.end_date and record.end_date < today:
                 record.status = "expired"
-            elif record.scheduled:
+            elif record.is_active:
                 if is_in_date_range:
                     record.status = "active"
                 elif record.start_date and record.start_date > today:
@@ -79,12 +79,12 @@ class My2CorrespondenceLetterTemplate(models.Model):
         today = fields.Date.context_today(self)
         expired_templates = self.search(
             [
-                ("scheduled", "=", True),
+                ("is_active", "=", True),
                 ("end_date", "<", today),
             ]
         )
         if expired_templates:
-            expired_templates.write({"scheduled": False})
+            expired_templates.write({"is_active": False})
         return True
 
     @api.model
@@ -101,7 +101,7 @@ class My2CorrespondenceLetterTemplate(models.Model):
             all_templates._compute_status()
         return True
 
-    @api.constrains("scheduled", "start_date", "end_date")
+    @api.constrains("is_active", "start_date", "end_date")
     def _check_non_overlapping_schedule(self):
         """
         Ensures that scheduled templates do not have overlapping date ranges.
@@ -118,7 +118,7 @@ class My2CorrespondenceLetterTemplate(models.Model):
 
             # Check that the template being scheduled is not expired
             if (
-                record.scheduled
+                record.is_active
                 and record.end_date
                 and record.end_date < fields.Date.context_today(self)
             ):
@@ -127,10 +127,10 @@ class My2CorrespondenceLetterTemplate(models.Model):
                 )
 
             # Only check for overlaps if the current record is scheduled
-            if record.scheduled and record.start_date and record.end_date:
+            if record.is_active and record.start_date and record.end_date:
                 domain = [
                     ("id", "!=", record.id),
-                    ("scheduled", "=", True),
+                    ("is_active", "=", True),
                     ("start_date", "<=", record.end_date),
                     ("end_date", ">=", record.start_date),
                 ]

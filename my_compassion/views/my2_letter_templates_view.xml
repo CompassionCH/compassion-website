@@ -19,7 +19,7 @@
             <tree delete="true" decoration-info="status == 'active'">
                 <field name="title" />
                 <field name="template_description" />
-                <field name="scheduled" widget="toggle" />
+                <field name="is_active" widget="toggle" />
                 <field name="status" />
                 <field name="start_date" />
                 <field name="end_date" />
@@ -48,7 +48,7 @@
                         <group string="Validity Period">
                             <field name="start_date" />
                             <field name="end_date" />
-                            <field name="scheduled" widget="boolean_toggle" />
+                            <field name="is_active" widget="boolean_toggle" />
                         </group>
                     </group>
                     <notebook>
@@ -68,7 +68,7 @@
                 <field name="title" />
                 <field name="text" />
                 <filter string="Expired" name="Expired templates" domain="[('status','=','expired')]" />
-                <filter string="Scheduled" name="scheduled templates" domain="[('scheduled','=',True)]" />
+                <filter string="Scheduled" name="scheduled templates" domain="[('is_active','=',True)]" />
                 <filter string="Active" name="Active templates" domain="[('status','=','active')]" />
             </search>
         </field>
