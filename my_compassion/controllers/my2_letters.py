@@ -276,7 +276,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         )
 
         data = {
-            "template_text": templates.text if (templates and templates.text) else "",
+            "template_text": templates.text or "",
         }
 
         return request.make_response(
