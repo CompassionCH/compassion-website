@@ -189,7 +189,7 @@ document.addEventListener("DOMContentLoaded", function () {
              */
             _submitLetterRPC: function (data) {
                 return rpc.query({
-                    route: "/my2/children/letter/new",
+                    route: "/my2/children/letters/new",
                     params: data,
                 });
             },
