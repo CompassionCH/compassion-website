@@ -56,9 +56,7 @@ Page: My Compassion 2 Dashboard Page
             </div>
         </t>
     </template>
-
     <!-- VIGNETTES AND ACTIONS DECLARATION -->
-
     <!-- SPONSORING VIGNETTE -->
     <template id="dashboard_sponsorship_vignette">
         <t t-call="my_compassion.DashboardGridItem">
@@ -114,10 +112,7 @@ Page: My Compassion 2 Dashboard Page
     <template id="dashboard_donations_vignette">
         <t t-call="my_compassion.DashboardGridItem">
             <t t-call="theme_compassion_2025.VignetteComponent">
-                <t
-                    t-set="image"
-                    t-value="'/theme_compassion_2025/static/src/img/snippets/s_image_text.jpg'"
-                />
+                <t t-set="image" t-value="'/theme_compassion_2025/static/src/img/snippets/s_image_text.jpg'" />
                 <t t-set="title" t-value="'Make a gift'" />
                 <t t-set="icon" t-value="'pictogram-gift-donation-general'" />
                 <t t-set="color" t-value="'high-brown'" />
@@ -136,33 +131,30 @@ Page: My Compassion 2 Dashboard Page
                     <t t-set="href" t-value="'/my2/donations'" />
                 </t>
             </t>
-         </t>
+        </t>
     </template>
     <!-- VOLUNTEER VIGNETTE -->
     <template id="dashboard_volunteering_vignette">
         <t t-call="my_compassion.DashboardGridItem">
             <t t-call="theme_compassion_2025.VignetteComponent">
-                <t
-                        t-set="image"
-                        t-value="'/theme_compassion_2025/static/src/img/snippets/library_image_13.jpg'"
-                />
-                <t t-set="title" t-value="'Volunteers'"/>
-                <t t-set="subtitle" t-value="'We need letter translators!'"/>
-                <t t-set="icon" t-value="'pictogram-local-empowerment-partnership'"/>
-                <t t-set="color" t-value="'low-green'"/>
-                <t t-set="bg_color" t-value="'high-green'"/>
-                <t t-set="href" t-value="'/my2/volunteering'"/>
+                <t t-set="image" t-value="'/theme_compassion_2025/static/src/img/snippets/library_image_13.jpg'" />
+                <t t-set="title" t-value="'Volunteers'" />
+                <t t-set="subtitle" t-value="'We need letter translators!'" />
+                <t t-set="icon" t-value="'pictogram-local-empowerment-partnership'" />
+                <t t-set="color" t-value="'low-green'" />
+                <t t-set="bg_color" t-value="'high-green'" />
+                <t t-set="href" t-value="'/my2/volunteering'" />
             </t>
             <t t-if="partner.is_volunteer">
                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                    <t t-set="variant" t-value="'default'"/>
-                    <t t-set="variation" t-value="'filled'"/>
-                    <t t-set="label" t-value="'Translate a letter'"/>
-                    <t t-set="icon" t-value="'pictogram-letter-writing'"/>
-                    <t t-set="color" t-value="'mid-green'"/>
-                    <t t-set="icon_color" t-value="'low-green'"/>
-                    <t t-set="text_color" t-value="'pure-white'"/>
-                    <t t-set="href" t-value="'https://translate.compassion.ch'"/>
+                    <t t-set="variant" t-value="'default'" />
+                    <t t-set="variation" t-value="'filled'" />
+                    <t t-set="label" t-value="'Translate a letter'" />
+                    <t t-set="icon" t-value="'pictogram-letter-writing'" />
+                    <t t-set="color" t-value="'mid-green'" />
+                    <t t-set="icon_color" t-value="'low-green'" />
+                    <t t-set="text_color" t-value="'pure-white'" />
+                    <t t-set="href" t-value="'https://translate.compassion.ch'" />
                 </t>
             </t>
         </t>
