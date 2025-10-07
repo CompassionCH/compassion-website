@@ -77,8 +77,7 @@ class Partner(models.Model):
                 ],
             )
             partner.is_ex_sponsor = (
-                bool(sponsorships)
-                and any(s.state == "terminated" for s in sponsorships)
+                any(s.state == "terminated" for s in sponsorships)
                 and all(s.state in ["terminated", "cancelled"] for s in sponsorships)
             )
 
