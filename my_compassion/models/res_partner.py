@@ -65,7 +65,7 @@ class Partner(models.Model):
         This method checks if the partner has been a sponsor in the past but is not
         currently sponsoring a child. It searches for all sponsorship contracts
         associated with the partner and determines if all of them are in a
-        'terminated' or 'cancelled' state.
+        'terminated' state (excluding those cancelled).
         """
         for partner in self:
             sponsorships = self.env["recurring.contract"].search(
