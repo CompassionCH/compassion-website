@@ -55,6 +55,7 @@ class Partner(models.Model):
                 ],
             )
 
+    def _compute_is_ex_sponsor(self):
     def _compute_is_donor(self):
         donors_data = self.env["account.move.line"].read_group(
             domain=[
