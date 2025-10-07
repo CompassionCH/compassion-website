@@ -76,10 +76,9 @@ class Partner(models.Model):
                     ("child_id", "!=", False),
                 ],
             )
-            partner.is_ex_sponsor = (
-                any(s.state == "terminated" for s in sponsorships)
-                and all(s.state in ["terminated", "cancelled"] for s in sponsorships)
-            )
+            partner.is_ex_sponsor = any(
+                s.state == "terminated" for s in sponsorships
+            ) and all(s.state in ["terminated", "cancelled"] for s in sponsorships)
 
     def _compute_is_donor(self):
         donors_data = self.env["account.move.line"].read_group(
