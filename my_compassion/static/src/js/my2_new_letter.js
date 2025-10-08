@@ -211,7 +211,7 @@ document.addEventListener("DOMContentLoaded", function () {
              */
             _handleResponse: function (mode, result, childId) {
                 if (mode === "send") {
-                    window.location.href = `/my2/children/letters/${childId}?new_letter_generator_id=${result.generator_id}`;
+                    window.location.href = `/my2/children/letters/${childId}`;
                 } else if (mode === "preview") {
                     $("#previewImage").attr("src", result.preview_url);
                     $("#previewModal").modal("show");
