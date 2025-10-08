@@ -8,10 +8,10 @@
 ##############################################################################
 from datetime import date
 
-from odoo import http
+from odoo import api, http
 from odoo.exceptions import ValidationError
 from odoo.http import request
-from odoo import api
+
 
 class MyCompassionUserController(http.Controller):
     @http.route("/my2/user_settings", type="http", auth="user", website=True)
@@ -183,7 +183,9 @@ class MyCompassionUserController(http.Controller):
                 "error": "Account cannot be deleted due to active sponsorships.",
             }
         try:
-            request.env['res.partner'].with_user(api.SUPERUSER_ID).browse(partner.id).forget_me()
+            request.env["res.partner"].with_user(api.SUPERUSER_ID).browse(
+                partner.id
+            ).forget_me()
             return {"success": True}
         except Exception as e:
             return {

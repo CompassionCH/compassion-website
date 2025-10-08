@@ -376,7 +376,7 @@ Injected data:
                                             href="/my/security?redirect=/my/information"
                                             class="d-block text-decoration-none"
                                         >
-                                            <div class="d-flex flex-column align-items-stretch">
+                                            <div class="d-flex flex-column align-items-stretch mb-3">
                                                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                                     <t t-set="variant" t-value="'default'" />
                                                     <t t-set="variation" t-value="'filled'" />
@@ -387,21 +387,21 @@ Injected data:
                                             </div>
                                         </a>
                                         <a
-                                        id="DeleteAccountButton"
-                                        class="d-block"
-                                        data-toggle="modal"
-                                        data-target="#deleteAccountModal"
-                                    >
-                                        <div class="d-flex flex-column align-items-stretch">
-                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                <t t-set="variant" t-value="'default'" />
-                                                <t t-set="variation" t-value="'filled'" />
-                                                <t t-set="label" t-value="'Delete my account'" />
-                                                <t t-set="color" t-value="'low-orange'" />
-                                                <t t-set="text_color" t-value="'pure-white'" />
-                                            </t>
-                                        </div>
-                                    </a>
+                                            id="DeleteAccountButton"
+                                            class="d-block"
+                                            data-toggle="modal"
+                                            data-target="#deleteAccountModal"
+                                        >
+                                            <div class="d-flex flex-column align-items-stretch mb-3">
+                                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                                    <t t-set="variant" t-value="'default'" />
+                                                    <t t-set="variation" t-value="'filled'" />
+                                                    <t t-set="label" t-value="'Delete my account'" />
+                                                    <t t-set="color" t-value="'low-orange'" />
+                                                    <t t-set="text_color" t-value="'pure-white'" />
+                                                </t>
+                                            </div>
+                                        </a>
                                     </div>
                                     <div class="edit-mode">
                                         <a id="ApplyModificationsAccountButton" class="d-inline-block me-2">
@@ -424,113 +424,119 @@ Injected data:
                                         </a>
                                     </div>
                                     <!-- Account deletion modal -->
-                                <div
-                                    class="modal fade"
-                                    id="deleteAccountModal"
-                                    tabindex="-1"
-                                    role="dialog"
-                                    aria-labelledby="deleteAccountModalLabel"
-                                    aria-hidden="true"
-                                >
-                                    <div class="modal-dialog" style="max-width: 400px;" role="document">
-                                        <div class="modal-content border-0">
-                                            <div class="modal-body p-0">
-                                                <div class="bg-low-orange p-3 position-relative" id="modal-title">
-                                                    <h2
-                                                        class="text-center text-pure-white m-0"
-                                                        id="deleteAccountModalLabel"
-                                                    >
-                                                        Account deletion
-                                                    </h2>
-                                                    <button
-                                                        type="button"
-                                                        class="close text-pure-white position-absolute"
-                                                        style="top: 50%; right: 1rem; transform: translateY(-50%);"
-                                                        data-dismiss="modal"
-                                                        aria-label="Close"
-                                                    >
-                                                        <div class="icon-x-circle" />
-                                                    </button>
-                                                </div>
-                                                <t t-if="partner.has_sponsorships">
-                                                    <div class="m-4 p-3 bg-high-pink rounded-lg">
-                                                        You currently have active
+                                    <div
+                                        class="modal fade"
+                                        id="deleteAccountModal"
+                                        tabindex="-1"
+                                        role="dialog"
+                                        aria-labelledby="deleteAccountModalLabel"
+                                        aria-hidden="true"
+                                    >
+                                        <div class="modal-dialog" style="max-width: 400px;" role="document">
+                                            <div class="modal-content border-0">
+                                                <div class="modal-body p-0">
+                                                    <div class="bg-low-orange p-3 position-relative" id="modal-title">
+                                                        <h2
+                                                            class="text-center text-pure-white m-0"
+                                                            id="deleteAccountModalLabel"
+                                                        >
+                                                            Account deletion
+                                                        </h2>
+                                                        <button
+                                                            type="button"
+                                                            class="close text-pure-white position-absolute"
+                                                            style="top: 50%; right: 1rem; transform: translateY(-50%);"
+                                                            data-dismiss="modal"
+                                                            aria-label="Close"
+                                                        >
+                                                            <div class="icon-x-circle" />
+                                                        </button>
+                                                    </div>
+                                                    <t t-if="partner.has_sponsorships">
+                                                        <div class="m-4 p-3 bg-high-pink rounded-lg">
+                                                            You currently have active
                                                         sponsorships, so this action
                                                         cannot be
                                                         performed in the website.
-                                                    </div>
-                                                    <div class="px-4">
-                                                        <p>
-                                                            Please contact Compassion
+                                                        </div>
+                                                        <div class="px-4">
+                                                            <p>
+                                                                Please contact Compassion
                                                             for
                                                             assistance
                                                             at:
-                                                            <br />
-                                                            info@compassion.ch
-                                                            <br />
-                                                            024 434 21 24
-                                                        </p>
-                                                    </div>
-                                                </t>
-                                                <t t-else="">
-                                                    <div class="m-4 p-3 bg-high-pink rounded-lg">
-                                                        Be aware: due to legal reasons,
+                                                                <br />
+                                                                info@compassion.ch
+                                                                <br />
+                                                                024 434 21 24
+                                                            </p>
+                                                        </div>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <div class="m-4 p-3 bg-high-pink rounded-lg">
+                                                            Be aware: due to legal reasons,
                                                         accountability data may still
                                                         persist.
-                                                    </div>
-                                                    <div
-                                                        id="deletion-status-message"
-                                                        class="mx-4 my-3 text-muted d-none"
-                                                        style="text-align: center;"
-                                                    />
-                                                    <div class="px-4 pb-4">
-                                                        <p>
-                                                            By clicking "Delete" your
+                                                        </div>
+                                                        <div
+                                                            id="deletion-status-message"
+                                                            class="mx-4 my-3 text-muted d-none"
+                                                            style="text-align: center;"
+                                                        />
+                                                        <div class="px-4 pb-4">
+                                                            <p>
+                                                                By clicking "Delete" your
                                                             account will be
-                                                            <span class="font-weight-bold">permanently</span>
-                                                            deleted.
-                                                        </p>
-                                                        <div class="form-check mb-4">
-                                                            <input
-                                                                class="form-check-input"
-                                                                type="checkbox"
-                                                                id="ConfirmDeletionCheck"
-                                                            />
-                                                            <label class="form-check-label" for="ConfirmDeletionCheck">
-                                                                I understand that this
+                                                                <span class="font-weight-bold">permanently</span>
+                                                                deleted.
+                                                            </p>
+                                                            <div class="form-check mb-4">
+                                                                <input
+                                                                    class="form-check-input"
+                                                                    type="checkbox"
+                                                                    id="ConfirmDeletionCheck"
+                                                                />
+                                                                <label
+                                                                    class="form-check-label"
+                                                                    for="ConfirmDeletionCheck"
+                                                                >
+                                                                    I understand that this
                                                                 step
                                                                 cannot be undone.
-                                                            </label>
+                                                                </label>
+                                                            </div>
+                                                            <div class="d-flex flex-column align-items-stretch">
+                                                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                                                    <t
+                                                                        t-set="id"
+                                                                        t-value="'DeleteAccountFinalButton'"
+                                                                    />
+                                                                    <t t-set="variant" t-value="'default'" />
+                                                                    <t t-set="variation" t-value="'filled'" />
+                                                                    <t t-set="label" t-value="'Delete'" />
+                                                                    <t t-set="color" t-value="'low-orange'" />
+                                                                    <t t-set="text_color" t-value="'pure-white'" />
+                                                                </t>
+                                                            </div>
                                                         </div>
-                                                        <div class="d-flex flex-column align-items-stretch">
-                                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                                <t t-set="id" t-value="'DeleteAccountFinalButton'" />
-                                                                <t t-set="variant" t-value="'default'" />
-                                                                <t t-set="variation" t-value="'filled'" />
-                                                                <t t-set="label" t-value="'Delete'" />
-                                                                <t t-set="color" t-value="'low-orange'" />
-                                                                <t t-set="text_color" t-value="'pure-white'" />
-                                                            </t>
-                                                        </div>
-                                                    </div>
-                                                </t>
-                                            </div>
-                                            <div id="deletion-status-view" class="d-none text-center p-4">
-                                                <p id="deletion-progress-message" style="min-height: 50px;" />
-                                                <div id="deletion-continue-button-container" class="d-none">
-                                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                        <t t-set="id" t-value="'DeleteAccountContinueButton'" />
-                                                        <t t-set="variant" t-value="'default'" />
-                                                        <t t-set="variation" t-value="'filled'" />
-                                                        <t t-set="label" t-value="'Continue'" />
-                                                        <t t-set="color" t-value="'core-blue'" />
-                                                        <t t-set="text_color" t-value="'pure-white'" />
                                                     </t>
+                                                </div>
+                                                <div id="deletion-status-view" class="d-none text-center p-4">
+                                                    <p id="deletion-progress-message" style="min-height: 50px;" />
+                                                    <div id="deletion-continue-button-container" class="d-none">
+                                                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                                            <t t-set="id" t-value="'DeleteAccountContinueButton'" />
+                                                            <t t-set="variant" t-value="'default'" />
+                                                            <t t-set="variation" t-value="'filled'" />
+                                                            <t t-set="label" t-value="'Continue'" />
+                                                            <t t-set="color" t-value="'core-blue'" />
+                                                            <t t-set="text_color" t-value="'pure-white'" />
+                                                        </t>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
                                 </div>
                             </div>
                         </div>
