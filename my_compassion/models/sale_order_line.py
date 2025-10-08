@@ -18,5 +18,5 @@ class SalesOrderLine(models.Model):
     is_gift = fields.Boolean("Is a Gift")
 
     gift_recipient_id = fields.Many2one(
-        "recurring.contract", "Gift Recipient", ondelete="cascade"
+        "recurring.contract", "Gift Recipient", ondelete="set null"
     )
