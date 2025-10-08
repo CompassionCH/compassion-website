@@ -6,7 +6,6 @@
  * Is used in /templates/pages/my2_child_letters.xml
  */
 document.addEventListener("DOMContentLoaded", function () {
-
     window.onDownloadButtonClick = function (event) {
         handleIconOpen(event);
     };
