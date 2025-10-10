@@ -261,57 +261,60 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- Letters -->
-            <div id="lettersContainer" class="row mb-3">
-                <t t-foreach="letters" t-as="letter" t-foreach-index="i">
-                    <div
-                        class="col-12 col-md-6 col-lg-4 mb-3 mt-3 letter-card"
-                        t-att-data-create_date="letter.create_date"
-                        t-att-data-type="letter.direction"
-                        t-att-data-index="i"
-                        t-att-data-generator-id="letter.generator_id.id"
-                    >
-                        <t t-call="my_compassion.my2_letter_card_component" />
+                <!-- Letters -->
+                <div class="container-content d-flex flex-column align-items-center mt-4">
+                    <div class="w-100 d-flex flex-column">
+                        <div class="row justify-content-center">
+                            <t t-foreach="letters" t-as="letter" t-foreach-index="i">
+                                <div
+                                    class="col-12 col-md-6 col-lg-4 my-3 letter-card"
+                                    t-att-data-create_date="letter.create_date"
+                                    t-att-data-type="letter.direction"
+                                    t-att-data-index="i"
+                                >
+                                    <t t-call="my_compassion.my2_letter_card_component" />
+                                </div>
+                            </t>
+                        </div>
                     </div>
-                </t>
-            </div>
-            <!-- Buttons for changing page -->
-            <div class="d-flex justify-content-center align-items-center mb-5">
-                <!-- Prev -->
-                <t t-if="current_page > 1">
-                    <a id="prevPageBtn">
-                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                            <t t-set="variation" t-value="'hollow'" />
-                            <t t-set="color" t-value="'mid-blue'" />
-                            <t t-set="text_color" t-value="'low-black'" />
-                            <t t-set="variant" t-value="'compact'" />
-                            <t t-set="label" t-value="'Prev'" />
-                        </t>
-                    </a>
-                </t>
-                <!-- Page indicator -->
-                <span id="pageIndicator" class="p-2">
-                    Page
-                    <t t-esc="current_page" />
-                    of
-                    <t t-esc="total_pages" />
-                </span>
-                <!-- Next -->
-                <t t-if="current_page &lt; total_pages">
-                    <a id="nextPageBtn">
-                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                            <t t-set="variation" t-value="'hollow'" />
-                            <t t-set="color" t-value="'mid-blue'" />
-                            <t t-set="text_color" t-value="'low-black'" />
-                            <t t-set="variant" t-value="'compact'" />
-                            <t t-set="label" t-value="'Next'" />
-                        </t>
-                    </a>
-                </t>
-                <t t-else="">
-                    <span class="disabled ps-3">Next</span>
-                </t>
+                </div>
+                <!-- Buttons for changing page -->
+                <div class="d-flex justify-content-center align-items-center mt-3 mb-5">
+                    <!-- Prev -->
+                    <t t-if="current_page > 1">
+                        <a id="prevPageBtn">
+                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                <t t-set="variation" t-value="'hollow'" />
+                                <t t-set="color" t-value="'mid-blue'" />
+                                <t t-set="text_color" t-value="'low-black'" />
+                                <t t-set="variant" t-value="'compact'" />
+                                <t t-set="label" t-value="'Prev'" />
+                            </t>
+                        </a>
+                    </t>
+                    <!-- Page indicator -->
+                    <span id="pageIndicator" class="p-2">
+                        Page
+                        <t t-esc="current_page" />
+                        of
+                        <t t-esc="total_pages" />
+                    </span>
+                    <!-- Next -->
+                    <t t-if="current_page &lt; total_pages">
+                        <a id="nextPageBtn">
+                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                <t t-set="variation" t-value="'hollow'" />
+                                <t t-set="color" t-value="'mid-blue'" />
+                                <t t-set="text_color" t-value="'low-black'" />
+                                <t t-set="variant" t-value="'compact'" />
+                                <t t-set="label" t-value="'Next'" />
+                            </t>
+                        </a>
+                    </t>
+                    <t t-else="">
+                        <span class="disabled ps-3">Next</span>
+                    </t>
+                </div>
             </div>
             <!-- JavaScript logic for highlighting new letters -->
             <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_letters.js" />
