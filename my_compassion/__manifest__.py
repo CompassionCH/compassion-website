@@ -50,6 +50,7 @@
         "templates/my_account_write_a_letter.xml",
         "templates/login_template.xml",
         "templates/signup.xml",
+        "templates/my2_change_password.xml",
         "views/correspondence_template_view.xml",
         "views/my2_event_banner_views.xml",
         "views/partner_compassion_view.xml",
