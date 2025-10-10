@@ -8,12 +8,32 @@ odoo.define("my_compassion.my2_child_letters", function (require) {
     const okBtn = document.getElementById("filterOkBtn");
     const ToastService = require("my_compassion.toast_service");
     const _t = require("web.core")._t;
+    const rpc = require("web.rpc");
 
     // Letter animation
     document.querySelectorAll(".my2-envelope").forEach((envelope) => {
         envelope.addEventListener("click", function () {
             envelope.classList.add("open");
             const letter = envelope.querySelector(".env-letter");
+
+            // dataset is retrieved from xml t-att-data attribute
+            const letterId = envelope.dataset.letterId;
+            const letterRead = envelope.dataset.letterRead;
+            const childId = envelope.dataset.childId;
+
+            // Mark letter as read
+            if (childId && letterId && !letterRead) {
+                rpc.query({
+                    route: `/my2/children/${childId}/letters/${letterId}/mark_read`,
+                    params: { letter_id: parseInt(letterId) },
+                })
+                    .then((result) => {
+                        console.log("Letter read status updated:", result);
+                    })
+                    .catch((err) => {
+                        console.error("Failed to mark letter as read", err);
+                    });
+            }
 
             setTimeout(() => {
                 if (letter) {
@@ -55,7 +75,10 @@ odoo.define("my_compassion.my2_child_letters", function (require) {
             const filterYearTo = document.getElementById("yearDropdownTo")?.value || "";
             const filterMonthFrom = document.getElementById("monthDropdownFrom")?.value || "";
             const filterMonthTo = document.getElementById("monthDropdownTo")?.value || "";
+
             const sort = document.querySelector('input[name="sortOptions"]:checked')?.value || "newest";
+            const unreadFilter = document.querySelector('input[name="unreadOptions"]:checked')?.value || "all";
+
             const redirect_child_id = document.getElementById("childrenDropdown")?.value || "";
             const selectedType = document.querySelector('input[name="type"]:checked')?.value || "";
 
@@ -66,7 +89,9 @@ odoo.define("my_compassion.my2_child_letters", function (require) {
             if (filterMonthFrom) url.searchParams.set("month_from", filterMonthFrom);
             if (filterMonthTo) url.searchParams.set("month_to", filterMonthTo);
             if (selectedType) url.searchParams.set("type", selectedType);
+
             url.searchParams.set("sort", sort);
+            url.searchParams.set("unread", unreadFilter); // new filter
             url.searchParams.set("page", 1);
 
             window.location.href = url.toString();

@@ -57,51 +57,10 @@ class ProductTemplate(models.Model):
         help="Thematic color of the fund/gift visible on the MyCompassion website",
     )
 
-    my_compassion_pictogram = fields.Selection(
-        [
-            ("advocacy", "Advocacy"),
-            ("bible-gift", "Bible Gift"),
-            ("birthday-gift", "Birthday Gift"),
-            ("buildings-city", "Buildings City"),
-            ("buildings-house", "Buildings House"),
-            ("buildings-neighbourhood", "Buildings Neighbourhood"),
-            ("buildings-rural", "Buildings Rural"),
-            ("centre-gift", "Centre Gift"),
-            ("child-focused", "Child Focused"),
-            ("child-sponsorship", "Child Sponsorship"),
-            ("children", "Children"),
-            ("christ-centred", "Christ Centred"),
-            ("christmas-gift", "Christmas Gift"),
-            ("church-based", "Church Based"),
-            ("cognitive-brain", "Cognitive Brain"),
-            ("critical-needs", "Critical Needs"),
-            ("disaster-relief", "Disaster Relief"),
-            ("education-and-training", "Education And Training"),
-            ("family", "Family"),
-            ("family-gift", "Family Gift"),
-            ("food", "Food"),
-            ("gift-donation-general", "Gift Donation General"),
-            ("globe-global", "Globe Global"),
-            ("health", "Health"),
-            ("highly-vulnerable-children", "Highly Vulnerable Children"),
-            ("income-generation", "Income Generation"),
-            ("infrastructure", "Infrastructure"),
-            ("letter-writing", "Letter Writing"),
-            ("local-empowerment-partnership", "Local Empowerment Partnership"),
-            ("location-pin", "Location Pin"),
-            ("love", "Love"),
-            ("mothers-and-babies", "Mothers And Babies"),
-            ("neighbourhood", "Neighbourhood"),
-            ("physical", "Physical"),
-            ("socio-emotional", "Socio Emotional"),
-            ("spiritual", "Spiritual"),
-            ("unsponsored-children", "Unsponsored Children"),
-            ("virus", "Virus"),
-            ("water-and-sanitation", "Water And Sanitation"),
-            ("were-most-needed", "Were Most Needed"),
-        ],
+    my_compassion_pictogram = fields.Many2one(
+        "theme.compassion.pictograms",
         string="Pictogram",
-        help="Pictogram of the fund/gift visible on the MyCompassion website",
+        help="The pictogram for the fund/gift visible on the MyCompassion website.",
     )
 
     my_compassion_description = fields.Text(
@@ -182,3 +141,86 @@ class ProductTemplate(models.Model):
     my_compassion_donation_quantity_high = fields.Integer(
         default=5, help="Highest quantity suggestion when making a donation"
     )
+
+    def get_donation_limits(self, company, partner, sponsorship_id=None):
+        """
+        Returns the donation limits for the product (optionally tied to a sponsorship)
+        in the form:
+        {
+            "min_amount": int,               # If amount is limited
+            "max_amount": int,               # If amount is limited
+            "remaining_donations": int,      # If frequency is limited
+        }
+        """
+        limits = {}
+        product_limits = (
+            self.env["gift.threshold.settings"]
+            .sudo()
+            .search([("product_id", "=", self.id)], limit=1)
+        )
+        if product_limits:
+            limits["min_amount"] = product_limits.currency_id._convert(
+                product_limits.min_amount,
+                company.currency_id,
+                company,
+                fields.Date.today(),
+            )
+            limits["max_amount"] = product_limits.currency_id._convert(
+                product_limits.max_amount,
+                company.currency_id,
+                company,
+                fields.Date.today(),
+            )
+
+            if product_limits.gift_frequency:
+                gift_types = self.env["sponsorship.gift"].get_gift_types(self)
+
+                domain = [
+                    ("partner_id", "=", partner.id),
+                    ("gift_type", "=", gift_types["gift_type"]),
+                    ("attribution", "=", gift_types["attribution"]),
+                    ("sponsorship_gift_type", "=", gift_types["sponsorship_gift_type"]),
+                ]
+
+                if sponsorship_id:
+                    domain += [("sponsorship_id", "=", sponsorship_id)]
+
+                if product_limits.yearly_threshold:
+                    first_january_of_this_year = fields.Date.today().replace(
+                        day=1, month=1
+                    )
+                    next_year = first_january_of_this_year.replace(
+                        year=first_january_of_this_year.year + 1
+                    )
+                    domain += [
+                        ("gift_date", ">=", first_january_of_this_year),
+                        ("gift_date", "<", next_year),
+                    ]
+
+                other_gifts_count = (
+                    self.env["sponsorship.gift"].sudo().search_count(domain)
+                )
+                # Add gifts currently in the user's cart
+                sale_order = (
+                    self.env["sale.order"]
+                    .sudo()
+                    .search(
+                        [
+                            ("partner_id", "=", partner.id),
+                            ("state", "in", ["draft", "sent"]),
+                        ]
+                    )
+                )
+                order_lines = sale_order.order_line.filtered(
+                    lambda line: line.product_template_id.id == self.id
+                    and (
+                        (not sponsorship_id)
+                        or line.gift_recipient_id.id == sponsorship_id
+                    )
+                )
+                other_gifts_count += len(order_lines)
+                limits["remaining_donations"] = (
+                    product_limits.gift_frequency - other_gifts_count
+                )
+
+        return limits

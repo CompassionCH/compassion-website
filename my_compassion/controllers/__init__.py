@@ -19,4 +19,5 @@ from . import (
     my2_gifts,
     my2_user_settings,
     my2_sponsorships,
+    my2_event_banner,
 )

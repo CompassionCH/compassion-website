@@ -3,21 +3,17 @@
    /templates/pages/my2_sponsorships.xml
 */
 
-.sponsorships-header {
+.sponsorships-foreground {
     position: relative;
 }
 
-.sponsorships-header::before {
-    content: "";
-    width: 100%;
-    height: 135%;
-    display: block;
+.sponsorships-background {
     position: absolute;
+    top: 0;
     z-index: -1;
-    background-color: var(--core-blue);
 }
 
-.sponsorships-header i {
+#sponsorships-title-icon {
     width: 10rem;
     height: 10rem;
 }
@@ -71,7 +67,7 @@ i.results-icon {
     height: 1em;
 }
 
-.sponsorships-body-container {
+.sponsorships-column {
     max-width: calc(min(1110px, 100% - 25px));
     margin-left: auto;
     margin-right: auto;
