@@ -16,6 +16,7 @@ from . import (
     my2_donations,
     my2_letters,
     my2_user,
+    my2_gifts,
     my2_user_settings,
     my2_sponsorships,
     my2_event_banner,

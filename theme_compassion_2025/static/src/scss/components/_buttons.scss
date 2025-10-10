@@ -90,3 +90,19 @@ $btn-border-color: #000;
     &--default { margin-right: 8px;  margin-left: -8px; }
     &--impact  { margin-right: 10px; margin-left: -10px; }
 }
+
+// =====================
+// Outlined Button Hover Effects
+// =====================
+@each $name, $color in $compassion-colors {
+    .btn--default-outlined.border-#{$name},
+    .btn--impact-outlined.border-#{$name},
+    .btn--compact-outlined.border-#{$name} {
+
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+            background-color: $color !important;
+        }
+    }
+}
