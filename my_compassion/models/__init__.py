@@ -20,4 +20,6 @@ from . import (
     sale_order_line,
     my2_donation_info_line,
     my2_donation_impact_line,
+    my2_event_banner,
+    my2_website_route,
 )
