@@ -73,7 +73,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         filter_domain.append(("create_date", ">=", from_date))
         filter_domain.append(("create_date", "<=", to_date))
 
-        if unread_filter == "unread":
+        if unread_filter == "true":
             filter_domain.append(("email_read", "=", False))
             nr_filters_applied += 1
 
