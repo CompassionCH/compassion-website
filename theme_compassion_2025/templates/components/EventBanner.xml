@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Component: Event Banner Component
+    Description: Renders a responsive and dismissible event banner with pictogram,
+                 title, description, and optional action button. Supports both
+                 mobile and desktop layouts.
+
+    Props:
+    - id:                The unique ID of the banner.
+    - background_color:  Background color class.
+    - text_color:        Text color class for the banner content.
+    - close_icon_color:  Color class for the close (dismiss) icon.
+    - pictogram:         Name of the pictogram icon to display.
+    - pictogram_color:   Color class for the pictogram.
+    - title:             Banner title.
+    - description:       Banner body text.
+    - button_label:      Optional button label (default: 'Learn more').
+    - button_action_url: Optional URL for the action button.
+    - button_background_color: Background color of the action button.
+    - button_text_color:       Text color of the action button.
+-->
+<odoo>
+    <template id="EventBannerComponent" name="Event Banner Component">
+        <div
+            t-att-data-id="banner.id"
+            t-attf-class="event-banner bg-#{banner.background_color.class_name} text-#{banner.text_color.class_name} mt-3 px-3 py-3 px-md-5 rounded-lg"
+        >
+            <div class="row no-gutters align-items-center">
+                <!-- Mobile Close Button and Pictogram Centered -->
+                <div class="col-12 d-md-none mb-2">
+                    <div class="d-flex align-items-start">
+                        <i t-attf-class="invisible h3 mb-0" />
+                        <div class="flex-fill d-flex justify-content-center">
+                            <i
+                                t-attf-class="display-4 mb-0 #{banner.pictogram.class_name} text-#{banner.pictogram_color.class_name}"
+                            />
+                        </div>
+                        <i
+                            t-attf-class="action-close h3 mb-0 icon-x-circle text-#{banner.close_icon_color.class_name}"
+                        />
+                    </div>
+                </div>
+                <!-- Desktop Pictogram and Content -->
+                <div class="col-12 col-md-1 d-none d-md-flex align-items-center justify-content-center">
+                    <i
+                        t-attf-class="display-4 mb-0 #{banner.pictogram.class_name} text-#{banner.pictogram_color.class_name}"
+                    />
+                </div>
+                <div
+                    class="col-12 col-md-7 col-lg-8 col-xl-9 d-flex flex-column align-items-center text-center align-items-md-start text-md-left"
+                >
+                    <p class="h3 font-weight-bold mb-1 text-low-black">
+                        <t t-esc="banner.title" />
+                    </p>
+                    <p class="mb-0 text-low-black text-break">
+                        <t t-esc="banner.description" />
+                    </p>
+                </div>
+                <div
+                    class="col-12 col-md-4 col-lg-3 col-xl-2 d-flex justify-content-center align-items-center justify-content-md-end mt-3 mt-md-0"
+                >
+                    <t t-if="banner.button_action_url">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variant" t-value="'default'" />
+                            <t t-set="variation" t-value="'filled'" />
+                            <t t-set="label" t-value="banner.button_text or 'Learn more'" />
+                            <t t-set="color" t-value="banner.button_background_color.class_name" />
+                            <t t-set="text_color" t-value="banner.button_text_color.class_name" />
+                            <t t-set="radius" t-value="'pill'" />
+                            <t t-set="href" t-value="banner.button_action_url" />
+                        </t>
+                    </t>
+                    <i
+                        t-attf-class="action-close h3 d-none d-md-inline mb-0 ml-2 icon-x-circle text-#{banner.close_icon_color.class_name}"
+                    />
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>
