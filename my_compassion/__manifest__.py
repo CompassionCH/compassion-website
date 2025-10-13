@@ -57,6 +57,7 @@
         "views/product_view.xml",
         "data/signup_email_confirmation.xml",
         "data/communication_config.xml",
+        "data/dynamic_stylesheets.xml",
         # My Compassion 2 pages
         "templates/pages/my2_children.xml",
         "templates/pages/my2_child_timeline.xml",
