@@ -33,6 +33,7 @@ Page: My Compassion 2 Gifts Page
                                 t-value="'Every child deserves a secure home, safe water, and medicine to keep them healthy. That\'s why, when poverty places a child in critical need, we take action.'"
                             />
                             <t t-set="btn_link" t-value="'/my2/gifts?type=fund'" />
+                            <t t-set="btn_text" t-value="'Send a donation'" />
                         </t>
                         <t t-elif="is_fund">
                             <t t-set="title" t-value="'Give to your sponsored children'" />
@@ -41,8 +42,8 @@ Page: My Compassion 2 Gifts Page
                                 t-value="'Send a gift to your sponsored child. Compassion staff from their local church will support them in purchasing something they really need.'"
                             />
                             <t t-set="btn_link" t-value="'/my2/gifts?type=gift'" />
+                            <t t-set="btn_text" t-value="'Send a gift'" />
                         </t>
-                        <t t-set="btn_text" t-value="'Send a gift'" />
                         <t t-set="pictogram" t-value="'gift-donation-general'" />
                     </t>
                 </div>
@@ -79,9 +80,9 @@ Page: My Compassion 2 Gifts Page
                                 />
                                 <t t-set="href" t-value="'/my2/gifts/' + str(my_compassion_gift.id)" />
                                 <t t-set="title" t-value="my_compassion_gift.my_compassion_name" />
-                                <t t-set="icon" t-value="'pictogram-' + my_compassion_gift.my_compassion_pictogram" />
+                                <t t-set="icon" t-value="my_compassion_gift.my_compassion_pictogram.class_name" />
                                 <t t-set="color" t-value="'pure-white'" />
-                                <t t-set="bg_color" t-value="my_compassion_gift.my_compassion_color" />
+                                <t t-set="bg_color" t-value="my_compassion_gift.my_compassion_color.class_name" />
                                 <t t-set="learn_more_text" t-value="'Learn more and donate'" />
                             </t>
                         </div>
