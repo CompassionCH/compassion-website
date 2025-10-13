@@ -23,7 +23,7 @@ class ProductTemplate(models.Model):
     )
 
     my_compassion_color = fields.Many2one(
-        "theme.compassion.icons",
+        "theme.compassion.colors",
         string="Color",
         help="Thematic color of the fund/gift visible on the MyCompassion website",
     )
