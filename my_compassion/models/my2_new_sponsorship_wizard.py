@@ -194,6 +194,8 @@ class NewSponsorshipWizard(models.TransientModel):
             if not partner:
                 partner = self.env["res.partner"].create(partner_vals)
 
+        is_ebill = self.payment_method.technical_name == 'ebill'
+
         # Create new sponsorship
         sponsorship_values = {
             "partner_id": partner.id,
@@ -202,6 +204,12 @@ class NewSponsorshipWizard(models.TransientModel):
         if self.sponsorship_type == "write_and_pray":
             sponsorship_values["payment_mode_id"] = None
             sponsorship_values["type"] = "SWP"
+        elif is_ebill:
+            # Assign the E-Bill payment mode so it's stored on the contract
+            sponsorship_values["payment_mode_id"] = self.payment_method.id
+            sponsorship_values["type"] = "S"
+            # The actual E-Bill contract is created by your separate controller,
+            # which should already be linked to the partner.
         else:
             sponsorship_values["payment_mode_id"] = self.payment_method.id
             sponsorship_values["type"] = "S"
