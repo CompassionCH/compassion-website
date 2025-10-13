@@ -20,4 +20,6 @@ from . import (
     my2_sponsorships,
     my2_login,
     my2_auth_signup,
+    my2_event_banner,
+    my2_portal,
 )

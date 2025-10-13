@@ -30,7 +30,7 @@
 # pylint: disable=C8101
 {
     "name": "MyCompassion - Sponsor portal website",
-    "version": "14.0.1.0.0",
+    "version": "14.0.1.0.1",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
@@ -50,16 +50,20 @@
         "templates/my_account_write_a_letter.xml",
         "templates/login_template.xml",
         "templates/signup.xml",
+        "templates/my2_change_password.xml",
         "views/correspondence_template_view.xml",
+        "views/my2_event_banner_views.xml",
         "views/partner_compassion_view.xml",
         "views/product_view.xml",
         "data/signup_email_confirmation.xml",
         "data/communication_config.xml",
+        "data/dynamic_stylesheets.xml",
         # My Compassion 2 pages
         "templates/pages/my2_children.xml",
         "templates/pages/my2_child_timeline.xml",
         "templates/pages/my2_child_letters.xml",
         "templates/pages/my2_dashboard.xml",
+        "templates/pages/my2_donations.xml",
         "templates/pages/my2_donation_details.xml",
         "templates/pages/my2_new_letter.xml",
         "templates/pages/my2_user_settings.xml",
@@ -80,6 +84,7 @@
         "templates/components/my2_giving_limits_table.xml",
         "templates/components/my2_giving_limits_modal.xml",
         "templates/components/my2_checkout.xml",
+        "templates/components/my2_weather_time_container.xml",
         # Other data the depends on the templates
         "data/my2_new_sponsorship_wizard_steps.xml",
     ],
@@ -94,6 +99,7 @@
         "website_crm_privacy_policy",  # OCA/website
         "auth_signup_verify_email",  # OCA/server-auth
         "queue_job",
+        "theme_compassion_2025",
     ],
     "demo": [],
     "installable": True,

@@ -97,6 +97,7 @@ odoo.define("my_compassion.my2_child_letters", function (require) {
             if (filterMonthFrom) url.searchParams.set("month_from", filterMonthFrom);
             if (filterMonthTo) url.searchParams.set("month_to", filterMonthTo);
             if (selectedType) url.searchParams.set("type", selectedType);
+
             url.searchParams.set("sort", sort);
             url.searchParams.set("page", 1);
 
