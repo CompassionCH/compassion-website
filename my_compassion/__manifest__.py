@@ -68,6 +68,7 @@
         "templates/pages/my2_new_letter.xml",
         "templates/pages/my2_user_settings.xml",
         "templates/pages/my2_login_template.xml",
+        "templates/pages/my2_gifts.xml",
         "templates/pages/my2_sponsorships.xml",
         "templates/pages/my2_new_sponsorship_wizard.xml",
         "templates/pages/my2_gift_package.xml",
