@@ -21,11 +21,35 @@ class MyCompassionUserController(http.Controller):
 
         partner = request.env.user.partner_id
         has_unread_correspondence = partner.has_unread_correspondence()
+        vignettes_data = self._get_vignettes(partner)
 
         return request.render(
             "my_compassion.my2_dashboard_page",
             {
                 "has_unread_correspondence": has_unread_correspondence,
+                "sorted_vignettes": vignettes_data,
                 "partner": partner,
             },
         )
+
+    def _get_vignettes(self, partner):
+        vignettes = [
+            {
+                "key": "sponsorship",
+                "template": "my_compassion.dashboard_sponsorship_vignette",
+                # Low priority number -> Shows first in page
+                "priority": 0 - partner.is_sponsor * 100,
+                "number_sponsorships": partner.number_sponsorships,
+            },
+            {
+                "key": "donations",
+                "template": "my_compassion.dashboard_donations_vignette",
+                "priority": 1 - partner.is_donor * 100,
+            },
+            {
+                "key": "volunteering",
+                "template": "my_compassion.dashboard_volunteering_vignette",
+                "priority": 2 - getattr(partner, "is_volunteer", False) * 100,
+            },
+        ]
+        return sorted(vignettes, key=lambda v: v["priority"])

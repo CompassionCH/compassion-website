@@ -11,6 +11,7 @@ import base64
 import logging
 
 from odoo import api, models
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -19,6 +20,11 @@ class StylesheetGeneratorMixin(models.AbstractModel):
     """
     Abstract class to provide common functionalities for generating theme related
     stylesheets.
+
+    Inheriting models must define the following class attributes:
+    - render_key (str): The key used in the QWeb context to pass the records.
+    - css_template_xml_id (str): The XML ID of the 'ir.ui.view' used as a template.
+    - css_attachment_xml_id (str): The XML ID of the 'ir.attachment' to update
     """
 
     _name = "stylesheet.generator.mixin"
@@ -28,32 +34,30 @@ class StylesheetGeneratorMixin(models.AbstractModel):
     css_template_xml_id = None
     css_attachment_xml_id = None
 
+    def _check_required_attributes(self):
+        """Ensure that the inheriting class has defined the required attributes."""
+        if not all(
+            [self.render_key, self.css_template_xml_id, self.css_attachment_xml_id]
+        ):
+            raise UserError(
+                f"The model '{self._name}' inheriting 'stylesheet.generator.mixin' "
+                "must define 'render_key', 'css_template_xml_id', and "
+                "'css_attachment_xml_id'."
+            )
+
     @api.model
     def _generate_stylesheet(self):
         """
-        Generates a CSS stylesheet from a template and updates the corresponding CSS
-        attachment.
+        Generates a CSS stylesheet from a QWeb template and updates the
+        corresponding ir.attachment record.
         """
-        if not getattr(self, "css_template_xml_id", None):
-            _logger.warning(
-                f"Model {self._name} is missing 'css_template_xml_id' attribute. "
-                f"Skipping generation."
-            )
-            return
+        self._check_required_attributes()
 
-        module, template_id = self.css_template_xml_id.split(".")
-
-        css_template_xml = self.env["ir.model.data"].search(
-            [
-                ("name", "=", template_id),
-                ("module", "=", module),
-            ]
-        )
-        views = self.env["ir.ui.view"].browse(css_template_xml.res_id or [])
-        if not css_template_xml or not views.exists():
+        view_template = self.env.ref(self.css_template_xml_id, raise_if_not_found=False)
+        if not view_template:
             _logger.warning(
-                f"Stylesheet template '{self.css_template_xml_id}' not found. "
-                f"Skipping generation."
+                f"Stylesheet template '{self.css_template_xml_id}' not found for model "
+                f"'{self._name}'. Skipping CSS generation."
             )
             return
 
@@ -68,15 +72,15 @@ class StylesheetGeneratorMixin(models.AbstractModel):
         css_content_b64 = base64.b64encode(css_content)
 
         # Find and update css file present in ir.attachment
-        attachment = self.env.ref(self.css_attachment_xml_id)
-        if attachment:
-            attachment.write({"datas": css_content_b64})
-            _logger.info(f"Successfully updated {attachment.name} file.")
-        else:
+        attachment = self.env.ref(self.css_attachment_xml_id, raise_if_not_found=False)
+        if not attachment:
             _logger.warning(
-                f"Attachment '{self.css_attachment_xml_id}' not found. Skipping css "
-                f"generation"
+                f"Attachment '{self.css_attachment_xml_id}' not found for model "
+                f"'{self._name}'. Skipping CSS update."
             )
+            return
+        attachment.write({"datas": css_content_b64})
+        _logger.info(f"Successfully updated {attachment.name} file.")
 
         # force bundle invalidation
         self.env["ir.qweb"].clear_caches()

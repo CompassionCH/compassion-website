@@ -1,0 +1,41 @@
+/**
+    * _event_banner.scss
+    * ============
+    * This file contains the styles for the EventBanner used in the Compassion website.
+    * It includes the animation to reveal the banner content smoothly.
+    */
+
+.event-banner-wrap {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height .35s ease-out;
+}
+
+.event-banner {
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity .35s ease-out, transform .35s ease-out;
+    will-change: opacity, transform;
+}
+
+.event-banner-wrap.is-displayed .event-banner {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.action-close {
+    cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .event-banner-wrap {
+        transition: none;
+        max-height: none;
+   }
+
+    .event-banner {
+        transition: none;
+        opacity: 1;
+        transform: none;
+     }
+}
