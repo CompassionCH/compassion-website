@@ -76,7 +76,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         filter_domain.append(("create_date", ">=", from_date))
         filter_domain.append(("create_date", "<=", to_date))
 
-        if unread_filter == "true":
+        if unread_filter == "unread":
             filter_domain.append(("email_read", "=", False))
             nr_filters_applied += 1
 
@@ -367,40 +367,39 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
 
         # Define callbacks for each stage of the process
         # These callbacks update the generation_status field and commit in the db.
-        callbacks = {
-            "apply_template_callback": lambda: (
-                letter_generator.write({"generation_status": "apply_template"}),
-                request.env.cr.commit(),
-            ),
-            "apply_text_callback": lambda: (
-                letter_generator.write({"generation_status": "apply_text"}),
-                request.env.cr.commit(),
-            ),
-            "apply_img_callback": lambda: (
-                letter_generator.write({"generation_status": "apply_images"}),
-                request.env.cr.commit(),
-            ),
-            "generating_pdf_callback": lambda: (
-                letter_generator.write({"generation_status": "generate_pdf"}),
-                request.env.cr.commit(),
-            ),
-            "failure_callback": lambda err_msg="": (
-                letter_generator.write(
-                    {"generation_status": "failed", "generation_error_message": err_msg}
-                ),
-                request.env.cr.commit(),
-            ),
-            "finalizing_callback": lambda: (
-                letter_generator.write({"generation_status": "finalizing"}),
-                request.env.cr.commit(),
-            ),
-        }
+        # callbacks = {
+        #     "apply_template_callback": lambda: (
+        #         letter_generator.write({"generation_status": "apply_template"}),
+        #         request.env.cr.commit(),
+        #     ),
+        #     "apply_text_callback": lambda: (
+        #         letter_generator.write({"generation_status": "apply_text"}),
+        #         request.env.cr.commit(),
+        #     ),
+        #     "apply_img_callback": lambda: (
+        #         letter_generator.write({"generation_status": "apply_images"}),
+        #         request.env.cr.commit(),
+        #     ),
+        #     "generating_pdf_callback": lambda: (
+        #         letter_generator.write({"generation_status": "generate_pdf"}),
+        #         request.env.cr.commit(),
+        #     ),
+        #     "failure_callback": lambda err_msg="": (
+        #         letter_generator.write(
+        #             {"generation_status": "failed", "generation_error_message": err_msg}
+        #         ),
+        #         request.env.cr.commit(),
+        #     ),
+        #     "finalizing_callback": lambda: (
+        #         letter_generator.write({"generation_status": "finalizing"}),
+        #         request.env.cr.commit(),
+        #     ),
+        # }
         try:
             # Launch the processing of the letter generator with the defined callbacks
             self.process_letter_generator(
                 letter_generator,
                 post=post,
-                callbacks=callbacks,
                 raise_user_errors=False,
             )
         except Exception as e:
@@ -439,6 +438,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 return {"status": "failed", "error": "Generator not found."}
 
             status = letter_generator.generation_status
+            letter_generator.env.cr.commit()
             if status == "done":
                 # If done, also return the final data needed by the frontend
                 return {
@@ -499,19 +499,22 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         """
         try:
             letter_generator.onchange_domain()
-            letter_generator.preview(**(callbacks or {}))
+            letter_generator.preview(s2b_generator = letter_generator)
 
             if post.get("mode") == "send":
-                if callbacks and "finalizing_callback" in callbacks:
-                    callbacks["finalizing_callback"]()
+
+                letter_generator.generation_status = "finalizing"
+                letter_generator.env.cr.commit()
+
                 letter_generator.generate_letters_job()
 
         # If the process fails at any step, call the failure callback
         # message in the letter generator record for user feedback.
         except Exception as e:
-            if callbacks and "failure_callback" in callbacks:
-                callbacks["failure_callback"](err_msg=str(e))
-
+            if letter_generator:
+                letter_generator.generation_status = "failed"
+                letter_generator.generation_error_message = str(e)
+                letter_generator.env.cr.commit()
             if raise_user_errors:
                 raise
             else:
