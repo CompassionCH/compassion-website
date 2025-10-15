@@ -20,6 +20,11 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 "click .btn-sponsor": "_onSponsorClick",
                 "change .wap-contribute": "_onWAPContributeChange",
                 "change .suggested-amount": "_onAmountChange",
+                // START: E-BILL EVENTS
+                "change #payment_method": "_onPaymentMethodChange",
+                "click #start_ebill_workflow_btn": "_onStartEbillWorkflow",
+                "submit #ebill_workflow_modal form": "_onEbillFormSubmit",
+                // END: E-BILL EVENTS
             },
 
             /**
@@ -27,14 +32,90 @@ document.addEventListener("DOMContentLoaded", function (event) {
              */
             start: function () {
                 this._super.apply(this, arguments);
-
                 this._updateUI();
+                // Check initial state in case the user comes back to this step
+                this._onPaymentMethodChange();
+            },
+
+            // ... (keep all your existing methods like _onStepClick, _validateForm, etc.)
+
+            /**
+             * Handles the change event on the payment method dropdown.
+             * @private
+             */
+            _onPaymentMethodChange: function () {
+                console.log("changed")
+                const selectedText = this.$('#payment_method option:selected').text();
+                const isEbill = selectedText.includes('eBill');
+
+                this.$('#ebill_setup_container').toggle(isEbill);
+
+                if (isEbill) {
+                    this.$('.btn-next').prop('disabled', true);
+                } else {
+                    this.$('.btn-next').prop('disabled', false);
+                }
             },
 
             /**
-             * Handles the click on "Next" or "Previous" buttons.
+             * Starts the E-Bill workflow when the "Set up" button is clicked.
+             * @private
              * @param {Event} ev
              */
+            _onStartEbillWorkflow: function (ev) {
+                ev.preventDefault();
+                // Ersten Schritt (Subscribe) per JSON holen
+                rpc.query({
+                    route: '/ebill/subscribe',
+                    params: { is_ajax: true },
+                }).then(data => {
+                    // In den Container schreiben
+                    this.$('#ebill_setup_container').show();
+                    this.$('#ebill_modal_content').html(data.html); // REPLACE, nicht append
+                    // "Finish" Button blockieren bis Erfolg
+                    this.$('.btn-next').prop('disabled', true);
+                }).catch(console.error);
+            },
+            /**
+             * Intercepts form submissions inside the E-Bill modal and handles them via AJAX.
+             * @private
+             * @param {Event} ev
+             */
+            _onEbillFormSubmit: function (ev) {
+                ev.preventDefault();
+                const $form = $(ev.currentTarget);
+                const action = $form.attr('action');
+                const formData = $form.serializeArray();
+                formData.push({ name: 'is_ajax', value: '1' }); // Ensure the ajax flag is sent
+
+                // Show a loading indicator in the modal
+                this.$('#ebill_modal_content').html('<div class="text-center"><i class="fa fa-spinner fa-spin"/> Loading...</div>');
+
+                rpc.query({
+                    route: action,
+                    params: this._serializeForm(formData),
+                }).then(data => {
+                    if (data.success) {
+                        // Workflow is complete and successful!
+                        this.$('#ebill_workflow_modal').modal('hide');
+                        this.$('#ebill_setup_container .alert-info').hide(); // Hide the initial message and button
+                        this.$('#ebill_success_message').show(); // Show success message
+                        // Enable the main Finish button
+                        this.$('.btn-next').prop('disabled', false);
+                    } else if (data.html) {
+                        // Load the next step's HTML into the modal
+                        this.$('#ebill_modal_content').html(data.html);
+                    }
+                }).guardedCatch(error => {
+                    // Handle validation errors or other failures from the backend
+                    const errorMessage = error.data.message || 'An error occurred. Please try again.';
+                    const $errorDiv = $('<div class="alert alert-danger"/>').text(errorMessage);
+                    this.$('#ebill_modal_content').find('.alert-danger').remove();
+                    this.$('#ebill_modal_content').prepend($errorDiv);
+                     // It might be good to reload the previous step here if possible, or provide a retry button.
+                });
+            },
+
             _onStepClick: function (ev) {
                 ev.preventDefault();
 
@@ -100,11 +181,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
                         }.bind(this)
                     );
             },
-
-            /**
-             * Validates required fields in the current step.
-             * @returns {boolean} - True if valid, false otherwise.
-             */
             _validateForm: function () {
                 var isValid = true;
                 // Remove previous error messages and styles
@@ -136,12 +212,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 });
                 return isValid;
             },
-
-            /**
-             * Helper to convert form data array to a key-value object.
-             * @param {Array} formData
-             * @returns {Object}
-             */
             _serializeForm: function (formData) {
                 var obj = {};
                 for (const field of formData) {
@@ -149,30 +219,12 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 }
                 return obj;
             },
-
-            /**
-             * Handles the change event for the Write&Pray contribute radio buttons.
-             * @private
-             * @param {Event} ev The jQuery event object.
-             */
             _onWAPContributeChange: function (ev) {
                 this._updateUI("fast");
             },
-
-            /**
-             * Handles the change event for the suggested amounts radio buttons.
-             * @private
-             * @param {Event} ev The jQuery event object.
-             */
             _onAmountChange: function (ev) {
                 this._updateUI("fast");
             },
-
-            /**
-             * Updates UI
-             * @private
-             * @param speed
-             */
             _updateUI: function (speed = 0) {
                 if (this.$(".wap-contribute:checked").val() === "true") {
                     this.$("#wap-contribution-amount").slideDown(speed);
@@ -187,7 +239,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 }
             },
         });
-
         return publicWidget.registry.NewSponsorshipWizard;
     });
 });
