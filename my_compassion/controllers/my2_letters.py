@@ -15,6 +15,7 @@ from odoo import fields, http
 from odoo.exceptions import AccessError
 from odoo.http import request
 
+
 from .my2_children import MyCompassionChildrenController
 
 
@@ -216,6 +217,42 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 "draft": draft,
             },
         )
+
+    @http.route(
+        "/my2/letter/remove_attachment",
+        type="json",
+        auth="user",
+        methods=["POST"],
+        csrf=True,
+    )
+    def my2_remove_attachment(self, attachment_id):
+        """
+
+        Deletes an attachment linked to the draft letter of the logged-in user.
+        Used by the × button in my2_new_letter_page.
+        """
+        try:
+            attachment = request.env["ir.attachment"].sudo().browse(int(attachment_id))
+            if not attachment.exists():
+                return {"success": False, "error": "Attachment not found"}
+
+            draft = request.env["correspondence.s2b.generator"].search(
+                [
+                    ("user_id", "=", request.env.user.id),
+                    ("image_ids", "in", attachment.id),
+                ],
+                limit=1,
+            )
+
+            if not draft:
+                return {"success": False, "error": "Unauthorized"}
+
+            attachment.unlink()
+
+            return {"success": True}
+
+        except (ValueError, TypeError):
+            return {"error": "Something went wrong."}
 
     @http.route(
         "/my2/children/letters/new",
