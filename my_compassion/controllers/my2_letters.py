@@ -15,7 +15,6 @@ from odoo import fields, http
 from odoo.exceptions import AccessError
 from odoo.http import request
 
-
 from .my2_children import MyCompassionChildrenController
 
 
@@ -291,9 +290,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         generator_id = self._safe_int(post.get("generator_id"), 0)
         if generator_id:
             letter_generator = (
-                request.env["correspondence.s2b.generator"]
-                .browse(generator_id)
-                .sudo()
+                request.env["correspondence.s2b.generator"].browse(generator_id).sudo()
             )
             letter_generator.write(letter_values)
         else:

@@ -143,7 +143,9 @@
                         </div>
                         <!-- oca-hooks:disable=line-too-long -->
                         <!-- prettier-ignore -->
-                        <textarea id="letter-input" class="form-control" rows="10"><t t-esc="draft.body" t-if="draft.body" /></textarea>
+                        <textarea id="letter-input" class="form-control" rows="10">
+                            <t t-esc="draft.body" t-if="draft.body" />
+                        </textarea>
                     </div>
                     <!-- Add attachments box input -->
                     <div class="row mb-3">
