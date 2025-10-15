@@ -308,12 +308,12 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         # Define the steps for the progress bar
         # Format: (step_index, status_key, description)
         processing_steps = [
-            (0, "create_task", "Creating Task..."),
-            (1, "apply_template", "Applying Template..."),
-            (2, "apply_text", "Adding Your Text..."),
-            (3, "apply_images", "Adding Attachments..."),
-            (4, "generate_pdf", "Generating PDF..."),
-            (5, "finalizing", "Finalizing..."),
+            (0, "create_task", _("Creating Task...")),
+            (1, "apply_template", _("Applying Template...")),
+            (2, "apply_text", _("Adding Your Text...")),
+            (3, "apply_images", _("Adding Attachments...")),
+            (4, "generate_pdf", _("Generating PDF...")),
+            (5, "finalizing", _("Finalizing...")),
         ]
 
         return {
