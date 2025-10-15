@@ -364,39 +364,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         )
         if not letter_generator.exists():
             return {"error": "Something went wrong."}
-
-        # Define callbacks for each stage of the process
-        # These callbacks update the generation_status field and commit in the db.
-        # callbacks = {
-        #     "apply_template_callback": lambda: (
-        #         letter_generator.write({"generation_status": "apply_template"}),
-        #         request.env.cr.commit(),
-        #     ),
-        #     "apply_text_callback": lambda: (
-        #         letter_generator.write({"generation_status": "apply_text"}),
-        #         request.env.cr.commit(),
-        #     ),
-        #     "apply_img_callback": lambda: (
-        #         letter_generator.write({"generation_status": "apply_images"}),
-        #         request.env.cr.commit(),
-        #     ),
-        #     "generating_pdf_callback": lambda: (
-        #         letter_generator.write({"generation_status": "generate_pdf"}),
-        #         request.env.cr.commit(),
-        #     ),
-        #     "failure_callback": lambda err_msg="": (
-        #         letter_generator.write(
-        #             {"generation_status": "failed", "generation_error_message": err_msg}
-        #         ),
-        #         request.env.cr.commit(),
-        #     ),
-        #     "finalizing_callback": lambda: (
-        #         letter_generator.write({"generation_status": "finalizing"}),
-        #         request.env.cr.commit(),
-        #     ),
-        # }
         try:
-            # Launch the processing of the letter generator with the defined callbacks
             self.process_letter_generator(
                 letter_generator,
                 post=post,
@@ -404,9 +372,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             )
         except Exception as e:
             return {"error": str(e)}
-
-        letter_generator.write({"generation_status": "done"})
-        request.env.cr.commit()
+        letter_generator.update_generation_status("done")
         return {
             "preview_url": f"{request.httprequest.host_url}web/image"
             f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
@@ -438,7 +404,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 return {"status": "failed", "error": "Generator not found."}
 
             status = letter_generator.generation_status
-            letter_generator.env.cr.commit()
+
             if status == "done":
                 # If done, also return the final data needed by the frontend
                 return {
@@ -460,61 +426,39 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         except (AccessError, ValueError, TypeError):
             return {"status": "failed", "error": "Access denied or invalid ID."}
 
-    def process_letter_generator(
-        self, letter_generator, post, callbacks=None, raise_user_errors=True
-    ):
+    def process_letter_generator(self, letter_generator, post, raise_user_errors=True):
         """
         Processes the letter generator by executing its domain change, preview,
         and letter generation logic. This method orchestrates the entire
-        generation flow, using a system of callbacks to report progress or
-        handle failures.
-
+        generation flow keeping hte generation_status updated.
         Args:
             letter_generator (object): The `correspondence.s2b.generator`
                 record to process.
             post (dict): A dictionary containing data from the client request.
                 It is expected to include a "mode" key ('send' or 'preview')
                 to determine the full operation.
-            callbacks (dict, optional): A dictionary of callable functions that
-                are triggered at various stages of the process. This is used
-                to provide real-time feedback. Defaults to None.
-                Expected keys include:
-                - 'apply_template_callback': Called when the base template is
-                  being applied.
-                - 'apply_text_callback': Called when the letter's text body is
-                  being rendered onto the template.
-                - 'apply_img_callback': Called when attachments or images are
-                  being added to the letter.
-                - 'generating_pdf_callback': Called before the final PDF is compiled.
-                - 'finalizing_callback': Called before the corresp. is added in the db.
-                - 'failure_callback': Called if any exception occurs during
-                  the entire process.
             raise_user_errors (bool, optional): True:an odoo UserError shown in the UI,
                 False: the error is raised only in the python logs.
 
         Raises:
             Exception: Re-raises any exception encountered during the process
-                       after invoking the 'failure_callback', if provided. This
+                       after updating the generating_status, if provided. This
                        ensures the error propagates up the call stack.
         """
         try:
             letter_generator.onchange_domain()
-            letter_generator.preview(s2b_generator = letter_generator)
+            letter_generator.preview()
 
             if post.get("mode") == "send":
-
-                letter_generator.generation_status = "finalizing"
-                letter_generator.env.cr.commit()
-
+                letter_generator.update_generation_status("generate_pdf")
                 letter_generator.generate_letters_job()
 
-        # If the process fails at any step, call the failure callback
-        # message in the letter generator record for user feedback.
+        # Error message put in the letter generator record for user feedback.
         except Exception as e:
             if letter_generator:
-                letter_generator.generation_status = "failed"
-                letter_generator.generation_error_message = str(e)
-                letter_generator.env.cr.commit()
+                letter_generator.update_generation_status(
+                    "failed", generation_error_message=str(e)
+                )
             if raise_user_errors:
                 raise
             else:
