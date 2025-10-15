@@ -450,7 +450,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             letter_generator.preview()
 
             if post.get("mode") == "send":
-                letter_generator.update_generation_status("generate_pdf")
+                letter_generator.update_generation_status("finalizing")
                 letter_generator.generate_letters_job()
 
         # Error message put in the letter generator record for user feedback.
