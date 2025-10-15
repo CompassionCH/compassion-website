@@ -234,7 +234,7 @@ document.addEventListener("DOMContentLoaded", function () {
             _handleResponse: function (mode, result, childId) {
                 if (mode === "send") {
                     // No cleanup needed here, the page will redirect and clear everything.
-                    window.location.href = `/my2/children/letters/${childId}`;
+                    window.location.href = `/my2/children/letters/${childId}?new_letter_generator_id=${result.generator_id}`;
                 } else if (mode === "preview") {
                     // On success for preview, hide the progress modal and destroy the widget.
                     // This ensures a clean state for the user's next action.
