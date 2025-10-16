@@ -7,21 +7,18 @@ class My2CorrespondenceLetterTemplate(models.Model):
     Represents a letter template for correspondence.
     """
 
-    _name = "my2.correspondence.letter.template"
+    _name = "correspondence.prewritten.letter"
     _description = "Correspondence Letter Template"
-    _rec_name = "title"
+    _rec_name = "name"
 
     # == Fields ==
-    title = fields.Char(string="Title", required=True)
-    template_description = fields.Text(string="Template Description")
+    name = fields.Char(required=True)
     text = fields.Text(string="Text")
     start_date = fields.Date(
-        string="Start Date",
         help="The date from which this template is valid.",
         required=True,
     )
     end_date = fields.Date(
-        string="End Date",
         help="The date until which this template is valid.",
         required=True,
     )
@@ -138,7 +135,7 @@ class My2CorrespondenceLetterTemplate(models.Model):
                 conflicting_records = self.search(domain)
                 if conflicting_records:
                     conflict_details = "\n".join(
-                        f"{c.title} {c.start_date} to {c.end_date}"
+                        f"{c.name} {c.start_date} to {c.end_date}"
                         for c in conflicting_records
                     )
                     raise ValidationError(

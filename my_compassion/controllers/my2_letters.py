@@ -270,7 +270,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         """
 
         templates = (
-            request.env["my2.correspondence.letter.template"]
+            request.env["correspondence.prewritten.letter"]
             .sudo()
             .search([("status", "=", "active")], limit=1)
         )
