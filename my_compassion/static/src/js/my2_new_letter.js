@@ -54,7 +54,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 try {
                     const initialResult = await this._createGenerator(creationData);
                     if (!initialResult.generator_id) {
-                        throw new Error(initialResult.error || "Could not create the letter record.");
+                        throw new Error(initialResult.error || _t("Could not save the letter."));
+                    }
+                    if (mode === "save_draft") {
+                        ToastService.success(_t("Letter saved!"));
+                        return;
                     }
 
                     // --- Send Mode Logic ---
@@ -257,8 +261,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     $("#previewImage").attr("src", result.preview_url);
                     $("#previewModal").modal("show");
-                } else if (mode === "save_draft") {
-                    ToastService.success(result.message || _t("Draft saved!"));
                 }
             },
         });

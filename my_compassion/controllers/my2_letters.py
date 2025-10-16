@@ -23,7 +23,8 @@ _logger = logging.getLogger(__name__)
 
 class MyCompassionCorrespondenceController(MyCompassionChildrenController):
     # Helper function to safely parse integers from query params
-    def _safe_int(self, value, default):
+    @staticmethod
+    def _safe_int(value, default):
         try:
             return int(value)
         except (ValueError, TypeError):
@@ -153,7 +154,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         )
         if (
             letter.exists()
-            and letter.child_id == child.id
+            and letter.child_id == child
             and letter.partner_id.id == request.env.user.partner_id.id
         ):
             if not letter.email_read:  # only set if not already read
@@ -253,65 +254,9 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
 
             return {"success": True}
 
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as e:
+            _logger.warning("Failed to remove attachment %s: %s", attachment_id, e)
             return {"error": _("Something went wrong.")}
-
-    @http.route(
-        "/my2/children/letters/new",
-        type="json",
-        auth="user",
-        methods=["POST"],
-        sitemap=False,
-    )
-    def my2_create_new_letter(self, **post):
-        """
-        Used in my2_new_letter.js for sending the new letter form data
-        """
-        try:
-            child_id = int(post.get("child_id"))
-            child = request.env["compassion.child"].browse(child_id)
-            self._check_sponsored_child_access(child)
-            template_id = int(post.get("template_id"))
-        except (AccessError, ValueError, TypeError):
-            return {"error": _("Something went wrong.")}
-
-        attachments = [
-            (0, 0, {"datas": file["content"], "name": file["filename"]})
-            for file in post.get("attachments", [])
-            if isinstance(file, dict) and "content" in file
-        ]
-
-        letter_values = {
-            "name": f"{post.get('source')}-{child.local_id}",
-            "body": post.get("letter_body"),
-            "template_id": template_id,
-            "image_ids": attachments,
-            "source": post.get("source"),
-            "child_id": child.id,
-            "user_id": request.env.user.id,
-        }
-        generator_id = self._safe_int(post.get("generator_id"), 0)
-        if generator_id:
-            letter_generator = (
-                request.env["correspondence.s2b.generator"].browse(generator_id).sudo()
-            )
-            letter_generator.write(letter_values)
-        else:
-            letter_generator = (
-                request.env["correspondence.s2b.generator"].sudo().create(letter_values)
-            )
-        if not letter_generator.exists():
-            return {"error": _("Something went wrong.")}
-
-        self.process_letter_generator(
-            letter_generator=letter_generator, post=post.copy()
-        )
-        return {
-            "preview_url": f"{request.httprequest.host_url}web/image"
-            f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
-            "letter_values": letter_values,
-            "generator_id": letter_generator.id,
-        }
 
     @http.route(
         "/my2/children/letters/create_generator",
@@ -343,23 +288,27 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
 
         letter_values = {
             "name": f"{post.get('source')}-{child.local_id}",
-            "selection_domain": str(
-                [
-                    ("child_id.local_id", "=", child.local_id),
-                    ("state", "not in", ["draft", "cancelled"]),
-                ]
-            ),
             "body": post.get("letter_body"),
             "template_id": template_id,
             "image_ids": attachments,
             "source": post.get("source"),
+            "child_id": child.id,
+            "user_id": request.env.user.id,
+            "state": "draft",
         }
-
-        letter_generator = (
-            request.env["correspondence.s2b.generator"].sudo().create(letter_values)
-        )
-        if not letter_generator:
-            return {"error": "Something went wrong."}
+        generator_id = self._safe_int(post.get("generator_id"), 0)
+        if generator_id:
+            letter_generator = (
+                request.env["correspondence.s2b.generator"].browse(generator_id).sudo()
+            )
+            letter_generator.write(letter_values)
+        else:
+            letter_generator = (
+                request.env["correspondence.s2b.generator"].sudo().create(letter_values)
+            )
+        if not letter_generator.exists():
+            return {"error": _("Something went wrong.")}
+        letter_generator.set_sponsorship_from_user_and_child()
 
         # Define the steps for the progress bar
         # Format: (step_index, status_key, description)
@@ -404,35 +353,37 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         Used in my2_new_letter.js
         """
         try:
-            child_id = int(post.get("child_id"))
-            child = request.env["compassion.child"].browse(child_id)
-            self._check_sponsored_child_access(child)
-        except (AccessError, ValueError, TypeError):
-            return {"error": "Something went wrong."}
-
-        letter_generator_id = post.get("generator_id")
-        if not letter_generator_id:
-            return {"error": "Something went wrong."}
-        letter_generator = (
-            request.env["correspondence.s2b.generator"]
-            .sudo()
-            .browse(letter_generator_id)
-        )
-        if not letter_generator.exists():
-            return {"error": "Something went wrong."}
-        try:
-            self.process_letter_generator(
-                letter_generator,
-                post=post,
-                raise_user_errors=False,
+            generator = (
+                request.env["correspondence.s2b.generator"]
+                .sudo()
+                .browse(int(post.get("generator_id")))
             )
-        except Exception as e:
-            return {"error": str(e)}
-        letter_generator.update_generation_status("done")
+            generator.ensure_one()
+        except (AccessError, ValueError, TypeError) as e:
+            _logger.warning(
+                "Failed to launch letter generation for post %s: %s", post, e
+            )
+            return {
+                "error": _(
+                    "We couldn't find your letter. Please try reloading the page."
+                )
+            }
+
+        if post.get("mode") == "preview":
+            generator.preview()
+
+        elif post.get("mode") == "send":
+            generator.update_generation_status("finalizing")
+            generator.generate_letters_job()
+
+        if generator.generation_status == "failed":
+            return {"error": generator.generation_error_message}
+
+        generator.update_generation_status("done")
         return {
             "preview_url": f"{request.httprequest.host_url}web/image"
-            f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
-            "generator_id": letter_generator.id,
+            f"/{generator._name}/{generator.id}/preview_pdf",
+            "generator_id": generator.id,
         }
 
     @http.route(
@@ -457,7 +408,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 request.env["correspondence.s2b.generator"].sudo().browse(generator_id)
             )
             if not letter_generator.exists():
-                return {"status": "failed", "error": "Generator not found."}
+                return {"status": "failed", "error": _("Generator not found.")}
 
             status = letter_generator.generation_status
 
@@ -479,52 +430,6 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                     }
                 return {"status": status}
 
-        except (AccessError, ValueError, TypeError):
-            return {"status": "failed", "error": "Access denied or invalid ID."}
-
-    def process_letter_generator(self, letter_generator, post, raise_user_errors=True):
-        """
-        Processes the letter generator by executing its domain change, preview,
-        and letter generation logic. This method orchestrates the entire
-        generation flow keeping hte generation_status updated.
-        Args:
-            letter_generator (object): The `correspondence.s2b.generator`
-                record to process.
-            post (dict): A dictionary containing data from the client request.
-                It is expected to include a "mode" key ('send' or 'preview')
-                to determine the full operation.
-            raise_user_errors (bool, optional): True:an odoo UserError shown in the UI,
-                False: the error is raised only in the python logs.
-
-        Raises:
-            Exception: Re-raises any exception encountered during the process
-                       after updating the generating_status, if provided. This
-                       ensures the error propagates up the call stack.
-        """
-        try:
-            letter_generator.set_sponsorship_from_user_and_child()
-
-            if post.get("mode") == "preview":
-                letter_generator.preview()
-
-            if post.get("mode") == "send":
-                letter_generator.update_generation_status("finalizing")
-                letter_generator.generate_letters_job()
-                request.env["correspondence.s2b.generator"].sudo().search(
-                    [
-                        ("user_id", "=", request.env.user.id),
-                        ("child_id", "=", letter_generator.child_id.id),
-                        ("state", "=", "draft"),
-                    ]
-                ).unlink()
-
-        # Error message put in the letter generator record for user feedback.
-        except Exception as e:
-            if letter_generator:
-                letter_generator.update_generation_status(
-                    "failed", generation_error_message=str(e)
-                )
-            if raise_user_errors:
-                raise
-            else:
-                raise Exception("Error during letter generation") from e
+        except (AccessError, ValueError, TypeError) as e:
+            _logger.warning("Failed to get letter status for post %s: %s", post, e)
+            return {"status": "failed", "error": _("Access denied or invalid ID.")}

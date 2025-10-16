@@ -29,7 +29,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // Check server response
                     if (result.success) {
-                        ToastService.success(_t("Attachment successfully removed!"));
                         const uploadedFile = button.closest(".uploaded-file");
                         if (uploadedFile) {
                             uploadedFile.remove();
