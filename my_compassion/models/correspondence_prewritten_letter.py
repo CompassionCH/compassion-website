@@ -2,7 +2,7 @@ from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
 
-class My2CorrespondenceLetterTemplate(models.Model):
+class My2CorrespondencePreWrittenLetter(models.Model):
     """
     Represents a letter template for correspondence.
     """
