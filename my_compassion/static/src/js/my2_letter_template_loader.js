@@ -6,7 +6,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const textInput = document.getElementById("letter-input");
 
-    if (textInput) {
+    if (textInput && !textInput.value) {
         fetch(`/my2/children/letter/templates`)
             .then((response) => {
                 if (!response.ok) {

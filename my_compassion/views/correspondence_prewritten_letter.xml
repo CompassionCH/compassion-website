@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id='my_compassion_correspondence_action' model='ir.actions.act_window'>
-        <field name="name">My Compassion letters templates</field>
+        <field name="name">My Compassion prewritten texts</field>
         <field name="res_model">correspondence.prewritten.letter</field>
         <field name="view_mode">tree,form</field>
     </record>
     <menuitem name="My Compassion" id="my_compassion_sponsorship_menu" parent="sbc_compassion.menu_correspondence" />
     <menuitem
-        name="Letters templates"
+        name="Prewritten Texts"
         id="letter_template_menu"
         parent="my_compassion_sponsorship_menu"
         action="my_compassion_correspondence_action"
     />
     <record id="my_compassion_letter_template_tree" model="ir.ui.view">
-        <field name="name">Sponsorship letter template tree</field>
+        <field name="name">Prewritten text tree</field>
         <field name="model">correspondence.prewritten.letter</field>
         <field name="arch" type="xml">
             <tree delete="true" decoration-info="status == 'active'">
                 <field name="name" />
-                <field name="is_active" widget="toggle" />
+                <field name="is_active" widget="boolean_toggle" />
                 <field name="status" />
                 <field name="start_date" />
                 <field name="end_date" />
@@ -26,7 +26,7 @@
         </field>
     </record>
     <record id="my_compassion_letter_template_form" model="ir.ui.view">
-        <field name="name">Sponsorship letter template form</field>
+        <field name="name">Prewritten text form</field>
         <field name="model">correspondence.prewritten.letter</field>
         <field name="arch" type="xml">
             <form>
@@ -54,7 +54,7 @@
         </field>
     </record>
     <record id="my_compassion_letter_template_view_search" model="ir.ui.view">
-        <field name="name">Sponsorship Letter Template search</field>
+        <field name="name">Prewritten text search</field>
         <field name="model">correspondence.prewritten.letter</field>
         <field name="arch" type="xml">
             <search>
