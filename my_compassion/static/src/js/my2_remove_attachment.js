@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const ToastService = require("my_compassion.toast_service");
         const rpc = require("web.rpc");
+        const _t = require("web.core")._t;
 
         // Select all remove buttons
         const removeButtons = document.querySelectorAll(".remove-attachment-button");
@@ -14,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const attachmentId = button.getAttribute("data-id");
                 if (!attachmentId) {
-                    const msg = "Attachment ID is missing.";
+                    const msg = _t("Attachment ID is missing.");
                     ToastService.error(msg);
                     return;
                 }
@@ -28,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // Check server response
                     if (result.success) {
-                        ToastService.success("Attachment successfully removed!");
+                        ToastService.success(_t("Attachment successfully removed!"));
                         const uploadedFile = button.closest(".uploaded-file");
                         if (uploadedFile) {
                             uploadedFile.remove();
@@ -36,13 +37,13 @@ document.addEventListener("DOMContentLoaded", function () {
                             console.warn("Unable to find the element to remove in the DOM.");
                         }
                     } else {
-                        const msg = result.error || "Error occurred while removing the attachment.";
+                        const msg = result.error || _t("Error occurred while removing the attachment.");
                         console.error("Server error:", msg, result);
                         ToastService.error(msg);
                     }
                 } catch (error) {
                     console.error("JS error while removing attachment:", error);
-                    ToastService.error("Unable to remove the attachment.");
+                    ToastService.error(_t("Unable to remove the attachment."));
                 }
             });
         });

@@ -11,7 +11,7 @@ from datetime import date
 
 import babel
 
-from odoo import fields, http
+from odoo import _, fields, http
 from odoo.exceptions import AccessError
 from odoo.http import request
 
@@ -233,7 +233,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         try:
             attachment = request.env["ir.attachment"].sudo().browse(int(attachment_id))
             if not attachment.exists():
-                return {"success": False, "error": "Attachment not found"}
+                return {"success": False, "error": _("Attachment not found")}
 
             draft = request.env["correspondence.s2b.generator"].search(
                 [
@@ -244,14 +244,14 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             )
 
             if not draft:
-                return {"success": False, "error": "Unauthorized"}
+                return {"success": False, "error": _("Unauthorized")}
 
             attachment.unlink()
 
             return {"success": True}
 
         except (ValueError, TypeError):
-            return {"error": "Something went wrong."}
+            return {"error": _("Something went wrong.")}
 
     @http.route(
         "/my2/children/letters/new",
@@ -270,7 +270,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             self._check_sponsored_child_access(child)
             template_id = int(post.get("template_id"))
         except (AccessError, ValueError, TypeError):
-            return {"error": "Something went wrong."}
+            return {"error": _("Something went wrong.")}
 
         attachments = [
             (0, 0, {"datas": file["content"], "name": file["filename"]})
@@ -298,7 +298,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 request.env["correspondence.s2b.generator"].sudo().create(letter_values)
             )
         if not letter_generator.exists():
-            return {"error": "Something went wrong."}
+            return {"error": _("Something went wrong.")}
 
         letter_generator.set_sponsorship_from_user_and_child()
 
