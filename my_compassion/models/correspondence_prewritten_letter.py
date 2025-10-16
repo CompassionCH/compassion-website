@@ -8,7 +8,7 @@ class My2CorrespondencePreWrittenLetter(models.Model):
     """
 
     _name = "correspondence.prewritten.letter"
-    _description = "Correspondence Letter Template"
+    _description = "Prewritten text for S2B Correspondence"
     _rec_name = "name"
 
     # == Fields ==
