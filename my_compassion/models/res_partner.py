@@ -7,6 +7,9 @@ class Partner(models.Model):
     # True if partner has ever been a sponsor.
     is_sponsor = fields.Boolean(compute="_compute_is_sponsor", compute_sudo=True)
 
+    # True if partner has been a sponsor but is not currently sponsoring a child.
+    is_ex_sponsor = fields.Boolean(compute="_compute_is_ex_sponsor", compute_sudo=True)
+
     # True if the partner has ever made a donation
     is_donor = fields.Boolean(compute="_compute_is_donor", compute_sudo=True)
 
@@ -69,6 +72,28 @@ class Partner(models.Model):
                     ("child_id", "!=", False),
                 ],
             )
+
+    def _compute_is_ex_sponsor(self):
+        """
+        Compute whether the partner is an ex-sponsor.
+
+        This method checks if the partner has been a sponsor in the past but is not
+        currently sponsoring a child. It searches for all sponsorship contracts
+        associated with the partner and determines if all of them are in a
+        'terminated' state (excluding those cancelled).
+        """
+        for partner in self:
+            sponsorships = self.env["recurring.contract"].search(
+                [
+                    "|",
+                    ("partner_id", "=", partner.id),
+                    ("correspondent_id", "=", partner.id),
+                    ("child_id", "!=", False),
+                ],
+            )
+            partner.is_ex_sponsor = any(
+                s.state == "terminated" for s in sponsorships
+            ) and all(s.state in ["terminated", "cancelled"] for s in sponsorships)
 
     def _compute_is_donor(self):
         donors_data = self.env["account.move.line"].read_group(

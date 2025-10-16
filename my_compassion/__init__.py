@@ -7,4 +7,4 @@
 #
 ##############################################################################
 
-from . import controllers, models
+from . import models, controllers

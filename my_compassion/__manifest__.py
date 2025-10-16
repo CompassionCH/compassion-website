@@ -41,6 +41,7 @@
         # My Compassion 2 data
         "data/my2_website.xml",
         "data/my2_website_redirect.xml",
+        "data/auto_letter_templates_updater_cron.xml",
         # My compassion 2 assets, needs to be placed before others
         "templates/my2_assets.xml",
         "templates/my_account_components.xml",
@@ -50,12 +51,16 @@
         "templates/my_account_write_a_letter.xml",
         "templates/login_template.xml",
         "templates/signup.xml",
+        "templates/my2_change_password.xml",
         "views/correspondence_template_view.xml",
         "views/my2_event_banner_views.xml",
         "views/partner_compassion_view.xml",
         "views/product_view.xml",
+        "views/correspondence_generator_view.xml",
+        "views/correspondence_prewritten_letter.xml",
         "data/signup_email_confirmation.xml",
         "data/communication_config.xml",
+        "data/dynamic_stylesheets.xml",
         # My Compassion 2 pages
         "templates/pages/my2_children.xml",
         "templates/pages/my2_child_timeline.xml",
@@ -66,6 +71,7 @@
         "templates/pages/my2_new_letter.xml",
         "templates/pages/my2_user_settings.xml",
         "templates/pages/my2_login_template.xml",
+        "templates/pages/my2_gifts.xml",
         "templates/pages/my2_sponsorships.xml",
         "templates/pages/my2_new_sponsorship_wizard.xml",
         "templates/pages/my2_gift_package.xml",
@@ -82,6 +88,7 @@
         "templates/components/my2_giving_limits_table.xml",
         "templates/components/my2_giving_limits_modal.xml",
         "templates/components/my2_checkout.xml",
+        "templates/components/my2_weather_time_container.xml",
         # Other data the depends on the templates
         "data/my2_new_sponsorship_wizard_steps.xml",
     ],

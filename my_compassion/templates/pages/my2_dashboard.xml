@@ -38,7 +38,7 @@ Page: My Compassion 2 Dashboard Page
                     <img src="/theme_compassion_2025/static/src/img/snippets/dashboard_banner.png" class="img-fluid" />
                 </div>
                 <!-- TITLE -->
-                <div class="mt-4">
+                <div class="content-column mt-4">
                     <t t-call="theme_compassion_2025.TitleComponent">
                         <t t-set="title_content" t-value="'My hub'" />
                         <t t-set="color" t-value="'core-blue'" />
@@ -104,6 +104,19 @@ Page: My Compassion 2 Dashboard Page
                     <t t-set="icon_color" t-value="'low-yellow'" />
                     <t t-set="text_color" t-value="'pure-white'" />
                     <t t-set="href" t-value="'/my2/children/letters/new'" />
+                </t>
+            </t>
+            <!-- If an ex-sponsor, creates a button to see old sponsorships  -->
+            <t t-if="partner.is_ex_sponsor">
+                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                    <t t-set="variant" t-value="'default'" />
+                    <t t-set="variation" t-value="'filled'" />
+                    <t t-set="label">See my terminated sponsorships</t>
+                    <t t-set="icon" t-value="'pictogram-child-focused'" />
+                    <t t-set="color" t-value="'core-blue'" />
+                    <t t-set="icon_color" t-value="'low-yellow'" />
+                    <t t-set="text_color" t-value="'pure-white'" />
+                    <t t-set="href" t-value="'/my2/children'" />
                 </t>
             </t>
         </t>

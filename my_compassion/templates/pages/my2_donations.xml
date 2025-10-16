@@ -212,12 +212,30 @@ Page: My Compassion 2 Donations Page
                         <div id="donation_history_rows">
                             <t t-foreach="paid_invoices_subset" t-as="invoice">
                                 <t t-set="children" t-value="invoice.invoice_line_ids.mapped('contract_id.child_id')" />
-                                <div class="row mb-3">
+                                <t t-set="gift_types" t-value="invoice.invoice_line_ids.get_list('gift_id.name')" />
+                                <div class="row p-2 border-bottom">
                                     <div class="col">
                                         <span t-esc="invoice.last_payment" />
                                     </div>
                                     <div class="col">
                                         <t t-esc="children.get_list('preferred_name', 3, children.get_number())" />
+                                        <t t-if="invoice.invoice_category == 'gift'">
+                                            <t t-if="gift_types">
+                                                :
+                                                <t t-esc="gift_types" />
+                                            </t>
+                                            <t t-else="">
+                                                :
+                                                <t t-esc="invoice.invoice_line_ids.get_list('product_id.name')" />
+                                            </t>
+                                        </t>
+                                        <t t-if="invoice.invoice_category == 'fund'">
+                                            Donation for :
+                                            <t t-esc="invoice.invoice_line_ids.get_list('product_id.name')" />
+                                        </t>
+                                        <t t-if="invoice.invoice_category == 'sponsorship'">
+                                            <span>(Sponsorship)</span>
+                                        </t>
                                     </div>
                                     <div class="col text-right">
                                         <span t-esc="int(invoice.amount_total)" />
