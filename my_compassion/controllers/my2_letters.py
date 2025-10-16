@@ -193,14 +193,68 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             .sorted(lambda t: "0" if "christmas" in t.name.lower() else t.name)
         )
 
+        if not child:
+            child = partner.sponsorship_ids[:1].child_id
+
+        draft = (
+            request.env["correspondence.s2b.generator"]
+            .sudo()
+            .search(
+                [
+                    ("user_id", "=", request.env.user.id),
+                    ("child_id", "=", child.id),
+                    ("state", "in", ["draft", "preview"]),
+                ],
+                limit=1,
+            )
+            .with_context(bin_size=False)
+        )
+
         return request.render(
             "my_compassion.my2_new_letter_page",
             {
                 "selected_child": child,
                 "sponsorship_ids": partner.sponsorship_ids,
                 "templates": templates,
+                "draft": draft,
             },
         )
+
+    @http.route(
+        "/my2/letter/remove_attachment",
+        type="json",
+        auth="user",
+        methods=["POST"],
+        csrf=True,
+    )
+    def my2_remove_attachment(self, attachment_id):
+        """
+
+        Deletes an attachment linked to the draft letter of the logged-in user.
+        Used by the × button in my2_new_letter_page.
+        """
+        try:
+            attachment = request.env["ir.attachment"].sudo().browse(int(attachment_id))
+            if not attachment.exists():
+                return {"success": False, "error": _("Attachment not found")}
+
+            draft = request.env["correspondence.s2b.generator"].search(
+                [
+                    ("user_id", "=", request.env.user.id),
+                    ("image_ids", "in", attachment.id),
+                ],
+                limit=1,
+            )
+
+            if not draft:
+                return {"success": False, "error": _("Unauthorized")}
+
+            attachment.unlink()
+
+            return {"success": True}
+
+        except (ValueError, TypeError):
+            return {"error": _("Something went wrong.")}
 
     @http.route(
         "/my2/children/letters/new",
@@ -219,7 +273,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             self._check_sponsored_child_access(child)
             template_id = int(post.get("template_id"))
         except (AccessError, ValueError, TypeError):
-            return {"error": "Something went wrong."}
+            return {"error": _("Something went wrong.")}
 
         attachments = [
             (0, 0, {"datas": file["content"], "name": file["filename"]})
@@ -229,23 +283,25 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
 
         letter_values = {
             "name": f"{post.get('source')}-{child.local_id}",
-            "selection_domain": str(
-                [
-                    ("child_id.local_id", "=", child.local_id),
-                    ("state", "not in", ["draft", "cancelled"]),
-                ]
-            ),
             "body": post.get("letter_body"),
             "template_id": template_id,
             "image_ids": attachments,
             "source": post.get("source"),
+            "child_id": child.id,
+            "user_id": request.env.user.id,
         }
-
-        letter_generator = (
-            request.env["correspondence.s2b.generator"].sudo().create(letter_values)
-        )
-        if not letter_generator:
-            return {"error": "Something went wrong."}
+        generator_id = self._safe_int(post.get("generator_id"), 0)
+        if generator_id:
+            letter_generator = (
+                request.env["correspondence.s2b.generator"].browse(generator_id).sudo()
+            )
+            letter_generator.write(letter_values)
+        else:
+            letter_generator = (
+                request.env["correspondence.s2b.generator"].sudo().create(letter_values)
+            )
+        if not letter_generator.exists():
+            return {"error": _("Something went wrong.")}
 
         self.process_letter_generator(
             letter_generator=letter_generator, post=post.copy()
@@ -446,12 +502,21 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                        ensures the error propagates up the call stack.
         """
         try:
-            letter_generator.onchange_domain()
-            letter_generator.preview()
+            letter_generator.set_sponsorship_from_user_and_child()
+
+            if post.get("mode") == "preview":
+                letter_generator.preview()
 
             if post.get("mode") == "send":
                 letter_generator.update_generation_status("finalizing")
                 letter_generator.generate_letters_job()
+                request.env["correspondence.s2b.generator"].sudo().search(
+                    [
+                        ("user_id", "=", request.env.user.id),
+                        ("child_id", "=", letter_generator.child_id.id),
+                        ("state", "=", "draft"),
+                    ]
+                ).unlink()
 
         # Error message put in the letter generator record for user feedback.
         except Exception as e:
