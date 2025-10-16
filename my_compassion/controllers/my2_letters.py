@@ -7,6 +7,7 @@
 #
 ##############################################################################
 import calendar
+import json
 import logging
 from datetime import date
 
@@ -433,3 +434,28 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         except (AccessError, ValueError, TypeError) as e:
             _logger.warning("Failed to get letter status for post %s: %s", post, e)
             return {"status": "failed", "error": _("Access denied or invalid ID.")}
+
+    @http.route(
+        "/my2/children/letter/templates",
+        type="http",
+        auth="user",
+        website=True,
+    )
+    def get_letter_templates(self, **kw):
+        """
+        This controller returns the currently active letter template.
+        """
+
+        templates = (
+            request.env["correspondence.prewritten.letter"]
+            .sudo()
+            .search([("status", "=", "active")], limit=1)
+        )
+
+        data = {
+            "template_text": templates.text or "",
+        }
+
+        return request.make_response(
+            json.dumps(data), headers=[("Content-Type", "application/json")]
+        )

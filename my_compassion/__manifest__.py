@@ -41,6 +41,7 @@
         # My Compassion 2 data
         "data/my2_website.xml",
         "data/my2_website_redirect.xml",
+        "data/auto_letter_templates_updater_cron.xml",
         # My compassion 2 assets, needs to be placed before others
         "templates/my2_assets.xml",
         "templates/my_account_components.xml",
@@ -56,6 +57,7 @@
         "views/partner_compassion_view.xml",
         "views/product_view.xml",
         "views/correspondence_generator_view.xml",
+        "views/correspondence_prewritten_letter.xml",
         "data/signup_email_confirmation.xml",
         "data/communication_config.xml",
         "data/dynamic_stylesheets.xml",
