@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const publicWidget = require("web.public.widget");
         const rpc = require("web.rpc");
         const ToastService = require("my_compassion.toast_service");
+        const _t = require("web.core")._t;
 
         publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
             selector: "#new_letter_form",
@@ -85,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                     $("#submitModal").modal("hide");
                     ToastService.error(
-                        "An error occurred while processing your letter. Please try again or contact the support."
+                        _t("An error occurred while processing your letter. Please try again or contact the support.")
                     );
                 }
             },
@@ -102,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         warning = $('<div id="emoji-warning" style="color: red; margin-top: 5px;"></div>');
                         this.$("#letter-input").parent().append(warning);
                     }
-                    warning.text("Emojis are not supported in letters.");
+                    warning.text(_t("Emojis are not supported in letters."));
                     letterInput.value = cleanedValue;
                 } else {
                     this.$("#emoji-warning").remove();
@@ -137,9 +138,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 const fileInput = this.$("#letter-attachments")[0];
                 const generatorId = this.$("input[name='generator_id']").val();
 
-                if (!childId) throw new Error("Please select a child to write to.");
-                if (!templateId) throw new Error("Please select a template for your letter.");
-                if (!letterBody) throw new Error("Please write something in your letter.");
+                if (!childId) throw new Error(_t("Please select a child to write to."));
+                if (!templateId) throw new Error(_t("Please select a template for your letter."));
+                if (!letterBody) throw new Error(_t("Please write something in your letter."));
 
                 const attachments = await this._encodeAttachments(fileInput.files);
 
@@ -179,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                     filename: file.name,
                                     content: reader.result.split(",")[1],
                                 });
-                            reader.onerror = () => reject("Error reading file.");
+                            reader.onerror = () => reject(_t("Error reading file."));
                         })
                 );
                 return Promise.all(filePromises);
@@ -225,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     $("#previewImage").attr("src", result.preview_url);
                     $("#previewModal").modal("show");
                 } else if (mode === "save_draft") {
-                    ToastService.success(result.message || "Draft saved!");
+                    ToastService.success(result.message || _t("Draft saved!"));
                 }
             },
         });
