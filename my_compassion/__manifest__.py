@@ -55,7 +55,7 @@
         "views/my2_event_banner_views.xml",
         "views/partner_compassion_view.xml",
         "views/product_view.xml",
-        "views/my2_letter_templates_view.xml",
+        "views/correspondence_prewritten_letter.xml",
         "data/signup_email_confirmation.xml",
         "data/communication_config.xml",
         # My Compassion 2 pages
