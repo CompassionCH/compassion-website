@@ -56,46 +56,63 @@ class SponsorshipTimeline(models.Model):
         self._cr.execute(
             """
             CREATE OR REPLACE VIEW sponsorship_timeline AS (
-                SELECT
-                     'correspondence-' || c.id AS id,
-                     c.child_id,
-                     c.partner_id,
-                     'correspondence' AS model,
-                     case c.direction when 'Beneficiary To Supporter'
-                          then 'Received your letter'
-                          else 'Wrote you a letter'
-                     end AS title,
-                     c.uuid AS record_id,
-                     '' AS amount,
-                     '' AS currency_name,
-                     '' AS gift_type,
-                     c.direction AS correspondence_direction,
-                     TO_CHAR(c.create_date, 'DD Mon YYYY') AS create_date
-                FROM correspondence c
-               WHERE c.partner_id IS NOT NULL
-                UNION ALL
-                SELECT
-                     'correspondence-' || s.id AS id,
-                     s.child_id,
-                     s.partner_id,
-                     'sponsorship_gift' AS model,
-                     case s.gift_type
-                          when 'Birthday' then 'Sent a birthday gift'
-                          when 'Graduation/Final' then 'Sent a graduation/final gift'
-                          when 'Family Gift' then 'Sent a family gift'
-                          when 'General' then 'Sent a general gift'
-                           else 'Sent a gift'
-                     end AS title,
-                     s.id::text AS record_id,
-                     s.amount::text AS amount,
-                     COALESCE(rc.name, 'CHF') AS currency_name,
-                     s.gift_type AS gift_type,
-                     COALESCE(s.sponsorship_gift_type, '') AS correspondence_direction,
-                     to_char(s.create_date, 'DD Mon YYYY') AS create_date
-                FROM sponsorship_gift s
-                LEFT JOIN account_move_line aml ON aml.gift_id = s.id
-                LEFT JOIN res_currency rc ON rc.id = aml.currency_id
-               WHERE s.partner_id IS NOT NULL
+              SELECT
+                'correspondence-' || c.id AS id,
+                rp.lang,
+                c.child_id,
+                c.partner_id,
+                'correspondence' AS model,
+                iat.male_singular AS title,
+                c.uuid AS record_id,
+                '' AS amount,
+                '' AS currency_name,
+                '' AS gift_type,
+                c.direction AS correspondence_direction,
+                TO_CHAR(c.create_date, 'DD Mon YYYY') AS create_date
+            FROM correspondence c
+            join res_partner rp
+                on rp.id = c.partner_id
+            join ir_advanced_translation iat
+                on iat.lang = rp.lang
+                    AND iat.src = CASE c.direction
+                                  WHEN 'Beneficiary To Supporter'
+                                    THEN 'Received your letter'
+                                  ELSE 'Wrote you a letter'
+                        END
+            WHERE c.partner_id IS NOT NULL
+            UNION ALL
+            SELECT
+                'correspondence-' || s.id AS id,
+                rp.lang,
+                s.child_id,
+                s.partner_id,
+                'sponsorship_gift' AS model,
+                iat.male_singular as title,
+                s.id::text AS record_id,
+                s.amount::text AS amount,
+                COALESCE(rc.name, 'CHF') AS currency_name,
+                s.gift_type AS gift_type,
+                COALESCE(s.sponsorship_gift_type, '') AS correspondence_direction,
+                to_char(s.create_date, 'DD Mon YYYY') AS create_date
+            FROM sponsorship_gift s
+                     LEFT JOIN account_move_line aml ON aml.gift_id = s.id
+                     LEFT JOIN res_currency rc ON rc.id = aml.currency_id
+            join res_partner rp
+                on rp.id = s.partner_id
+            join ir_advanced_translation iat
+                on iat.lang = rp.lang
+               and iat.src = CASE s.gift_type
+                                 WHEN 'Birthday'
+                                   THEN 'Sent a birthday gift'
+                                 WHEN 'Graduation/Final'
+                                   THEN 'Sent a graduation/final gift'
+                                 WHEN 'Family Gift'
+                                   THEN 'Sent a family gift'
+                                 WHEN 'General'
+                                   THEN 'Sent a general gift'
+                                 ELSE 'Sent a gift'
+                        END
+            WHERE s.partner_id IS NOT NULL
                     );
             """
         )
