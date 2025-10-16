@@ -11,6 +11,7 @@ from . import (
     compassion_project,
     contract_group,
     correspondence_template,
+    correspondence_s2b_generator,
     move,
     my2_new_sponsorship_wizard,
     res_partner,

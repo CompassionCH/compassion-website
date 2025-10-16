@@ -155,26 +155,26 @@
                                         id="unreadToggle"
                                     >
                                         <label
-                                            t-att-class="'btn btn-secondary btn-custom-toggle text-low-blue bg-pure-white border-low-blue border-left-pill w-50' + (' active' if filters['sort'] == 'unread' else '')"
+                                            t-att-class="'btn btn-secondary btn-custom-toggle text-low-blue bg-pure-white border-low-blue border-left-pill w-50' + (' active' if unread == 'true' else '')"
                                         >
                                             <input
                                                 type="radio"
                                                 name="unreadOptions"
                                                 value="unread"
-                                                t-att-checked="'checked' if filters['sort'] == 'unread' else None"
+                                                t-att-checked="'checked' if unread == 'true' else None"
                                             />
                                             Unread
                                         </label>
                                         <label
-                                            t-att-class="'btn btn-secondary btn-custom-toggle text-low-blue bg-pure-white border-low-blue border-right-pill w-50' + (' active' if filters['sort'] == 'all' else '')"
+                                            t-att-class="'btn btn-secondary btn-custom-toggle text-low-blue bg-pure-white border-low-blue border-right-pill w-50' + (' active' if unread != 'true' else '')"
                                         >
                                             <input
                                                 type="radio"
                                                 name="unreadOptions"
-                                                value="all"
-                                                t-att-checked="'checked' if filters['sort'] == 'all' else None"
+                                                value="read"
+                                                t-att-checked="'checked' if unread != 'true' else None"
                                             />
-                                            All letters
+                                            All
                                         </label>
                                     </div>
                                     <!-- Type filter: Received / Sent -->
@@ -271,7 +271,6 @@
                                     t-att-data-create_date="letter.create_date"
                                     t-att-data-type="letter.direction"
                                     t-att-data-index="i"
-                                    t-att-data-generator-id="letter.generator_id.id"
                                 >
                                     <t t-call="my_compassion.my2_letter_card_component" />
                                 </div>
@@ -318,7 +317,7 @@
                 </div>
             </div>
             <!-- JavaScript logic for highlighting new letters -->
-            <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_letters_card_behavior.js" />
+            <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_letters.js" />
         </t>
     </template>
 </odoo>

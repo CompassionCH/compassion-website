@@ -6,8 +6,6 @@
  * Is used in /templates/pages/my2_child_letters.xml
  */
 document.addEventListener("DOMContentLoaded", function () {
-    highlightNewLetter();
-
     window.onDownloadButtonClick = function (event) {
         handleIconOpen(event);
     };
@@ -16,21 +14,6 @@ document.addEventListener("DOMContentLoaded", function () {
         handleIconOpen(event);
     };
 });
-
-/**
- * Checks the current page URL for the `new_letter_generator_id` parameter.
- * If found, highlights the corresponding letter card by adding a CSS class.
- */
-function highlightNewLetter() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const newLetterGeneratorId = urlParams.get("new_letter_generator_id");
-    if (!newLetterGeneratorId) return;
-
-    const newLetterElement = document.querySelector("[data-generator-id]");
-    if (newLetterElement) {
-        newLetterElement.classList.add("new-letter-created");
-    }
-}
 
 /**
  * Updates the envelope icon within a clicked card to the "opened" state.

@@ -417,7 +417,32 @@
                                     </t>
                                 </ul>
                             </div>
+                            <t t-if="google_api_key">
+                                <t t-call="theme_compassion_2025.MapComponent">
+                                    <t t-set="long" t-value="compassion_child.project_id.gps_longitude" />
+                                    <t t-set="lat" t-value="compassion_child.project_id.gps_latitude" />
+                                    <t t-set="api_key" t-value="google_api_key" />
+                                    <t t-set="custom_map_id" t-value="google_custom_map_id" />
+                                </t>
+                            </t>
                         </div>
+                    </section>
+                    <!-- ### Weather and Time Component ### -->
+                    <section
+                        t-if="access_scope == 'sponsor'"
+                        class="cd-weather-map-container js-cd-weather-map-container"
+                        t-att-data-child-id="compassion_child.id"
+                        t-att-data-timezone="timezone"
+                    >
+                        <t t-call="my_compassion.WeatherTimeContainer">
+                            <t t-set="timezone" t-value="timezone" />
+                            <t t-set="fcp_id" t-value="compassion_child.project_id.fcp_id" />
+                            <t t-set="church_name" t-value="compassion_child.project_id.local_church_name" />
+                            <t
+                                t-set="city_country"
+                                t-value="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"
+                            />
+                        </t>
                     </section>
                     <!-- ### Partner and child timeline title ### -->
                     <t t-if="access_scope == 'sponsor'" t-call="theme_compassion_2025.TitleComponent">
@@ -458,6 +483,8 @@
         </t>
         <!-- Include Custom Javascript -->
         <script type="text/javascript" src="/my_compassion/static/src/js/child_profile_tabs.js" />
+        <!-- Scripts for the weather and time component -->
+        <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_center_weather_time.js" />
         <script
             t-if="access_scope == 'sponsor'"
             type="text/javascript"

@@ -148,7 +148,6 @@
 .child-related-information .tab-content {
     background-color: #fff2ad;
     border-radius: 25px;
-    padding: 2rem;
     /* Pull the content up to visually connect with the active tab */
     margin-top: -28px; /* Half the height of the tab (56px / 2) */
     padding-top: calc(2rem + 28px); /* Adjust top padding to account for the overlap */
@@ -158,6 +157,7 @@
 
 /* The individual tab-pane no longer needs a background color */
 .tab-pane {
+    padding: 2rem;
     background-color: transparent;
 }
 

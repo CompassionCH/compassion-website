@@ -21,11 +21,6 @@ def _post_init_hook(cr, registry):
 
     env = api.Environment(cr, SUPERUSER_ID, {})
 
-    # Clear the cache before processing the CSS generation from Qweb
-    env["ir.qweb"].clear_caches()
-    env["ir.ui.view"].clear_caches()
-    env["theme.ir.ui.view"].clear_caches()
-
     _logger.info("Post-init hook: Generating theme stylesheets.")
 
     models_to_process = [
@@ -35,6 +30,6 @@ def _post_init_hook(cr, registry):
     ]
 
     for model_name in models_to_process:
-        env[model_name]._generate_stylesheet()
+        env[model_name].with_delay()._generate_stylesheet()
 
     _logger.info("Post-init hook: Stylesheet generation complete.")

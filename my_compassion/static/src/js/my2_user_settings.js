@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     odoo.define("my_compassion.user_settings", function (require) {
         "use strict";
 
+        const ToastService = require("my_compassion.toast_service");
         const rpc = require("web.rpc");
         const Dialog = require("web.Dialog");
 
@@ -24,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
             initTabNavigation();
             initCommunicationSettings();
             initAgreementsForm();
+            initAccountDeletion();
 
             initFormHandler({
                 formId: "personal-information-form",
@@ -199,6 +201,70 @@ document.addEventListener("DOMContentLoaded", () => {
                         "You must check the box to accept the legal terms and privacy policy before signing."
                     );
                 }
+            });
+        }
+
+        function initAccountDeletion() {
+            const checkbox = document.getElementById("ConfirmDeletionCheck");
+            const confirmDeletionButton = document.getElementById("DeleteAccountFinalButton");
+
+            if (!confirmDeletionButton) {
+                return;
+            }
+
+            const standardView = document.querySelector("#deleteAccountModal .modal-body");
+            const statusView = document.getElementById("deletion-status-view");
+            const statusMessage = document.getElementById("deletion-progress-message");
+            const continueButtonContainer = document.getElementById("deletion-continue-button-container");
+            const continueButton = document.getElementById("DeleteAccountContinueButton");
+
+            if (!standardView || !statusView || !statusMessage || !continueButtonContainer || !continueButton) {
+                console.error("Deletion modal elements not found. Aborting initAccountDeletion.");
+                return;
+            }
+
+            confirmDeletionButton.addEventListener("click", () => {
+                if (checkbox.checked) {
+                    Array.from(standardView.children).forEach((child) => {
+                        if (child.id !== "modal-title" && child.id !== "deletion-status-view") {
+                            child.classList.add("d-none");
+                        }
+                    });
+                    statusMessage.textContent = "The operation could require some minutes...";
+                    continueButtonContainer.classList.add("d-none");
+                    statusView.classList.remove("d-none");
+
+                    rpc.query({
+                        route: "/my2/user_settings/delete_account",
+                        params: {},
+                    })
+                        .then((response) => {
+                            if (response.success) {
+                                statusMessage.textContent = "Account deleted. You will be logged out.";
+                                window.location.href = "/web/session/logout";
+                            } else {
+                                statusMessage.textContent =
+                                    "Sorry, the operation did not succeed. Please contact Compassion.";
+                                continueButtonContainer.classList.remove("d-none");
+                            }
+                        })
+                        .catch(() => {
+                            statusMessage.textContent = "An unexpected error occurred. Please try again later.";
+                            continueButtonContainer.classList.remove("d-none");
+                        });
+                } else {
+                    ToastService.error("Please check the box to confirm you understand this action cannot be undone.");
+                }
+            });
+
+            continueButton.addEventListener("click", () => {
+                statusView.classList.add("d-none");
+                checkbox.checked = false;
+                Array.from(standardView.children).forEach((child) => {
+                    if (child.id !== "modal-title" && child.id !== "deletion-status-view") {
+                        child.classList.remove("d-none");
+                    }
+                });
             });
         }
 
