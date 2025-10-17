@@ -23,7 +23,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 // START: E-BILL EVENTS
                 "change #payment_method": "_onPaymentMethodChange",
                 "click #start_ebill_workflow_btn": "_onStartEbillWorkflow",
-                "submit #ebill_workflow_modal form": "_onEbillFormSubmit",
+                "click #ebill_modal_content button[type='submit']": "_onEbillFormSubmit",
+                "click #ebill_modal_content a[type='submit']": "_onEbillFormSubmit",
                 // END: E-BILL EVENTS
             },
 
@@ -33,7 +34,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
             start: function () {
                 this._super.apply(this, arguments);
                 this._updateUI();
-                // Check initial state in case the user comes back to this step
                 this._onPaymentMethodChange();
             },
 
@@ -51,9 +51,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 this.$('#ebill_setup_container').toggle(isEbill);
 
                 if (isEbill) {
-                    this.$('.btn-next').prop('disabled', true);
+                    this.$('#finishButton').prop('disabled', true);
                 } else {
-                    this.$('.btn-next').prop('disabled', false);
+                    this.$('#finishButton').prop('disabled', false);
                 }
             },
 
@@ -69,11 +69,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     route: '/ebill/subscribe',
                     params: { is_ajax: true },
                 }).then(data => {
-                    // In den Container schreiben
                     this.$('#ebill_setup_container').show();
-                    this.$('#ebill_modal_content').html(data.html); // REPLACE, nicht append
-                    // "Finish" Button blockieren bis Erfolg
-                    this.$('.btn-next').prop('disabled', true);
+                    this.$('#ebill_modal_content').html(data.html);
+                    this.$('#finishButton').prop('disabled', true);
                 }).catch(console.error);
             },
             /**
@@ -83,37 +81,37 @@ document.addEventListener("DOMContentLoaded", function (event) {
              */
             _onEbillFormSubmit: function (ev) {
                 ev.preventDefault();
-                const $form = $(ev.currentTarget);
-                const action = $form.attr('action');
-                const formData = $form.serializeArray();
-                formData.push({ name: 'is_ajax', value: '1' }); // Ensure the ajax flag is sent
+                ev.stopPropagation();
 
-                // Show a loading indicator in the modal
-                this.$('#ebill_modal_content').html('<div class="text-center"><i class="fa fa-spinner fa-spin"/> Loading...</div>');
+                const action = ev.currentTarget.dataset.action;
+
+                let email;
+                let validationCode;
+                let token;
+                if (!action) {
+                    console.error("The clicked button is missing a 'data-action' attribute.");
+                    return;
+                }   else if (action === "/ebill/validate"){
+                    email = this.$('#email_input').val();
+                } else if (action === "/ebill/confirm") {
+                    validationCode = this.$('#validation_code_input').val();
+                    token = this.$('#token').val();
+                    email = this.$('#email').val();
+                }
+
+                const params = {
+                    is_ajax: true,
+                    email: email,
+                    validation_code: validationCode,
+                    token: token
+                };
 
                 rpc.query({
                     route: action,
-                    params: this._serializeForm(formData),
+                    params: params,
                 }).then(data => {
-                    if (data.success) {
-                        // Workflow is complete and successful!
-                        this.$('#ebill_workflow_modal').modal('hide');
-                        this.$('#ebill_setup_container .alert-info').hide(); // Hide the initial message and button
-                        this.$('#ebill_success_message').show(); // Show success message
-                        // Enable the main Finish button
-                        this.$('.btn-next').prop('disabled', false);
-                    } else if (data.html) {
-                        // Load the next step's HTML into the modal
-                        this.$('#ebill_modal_content').html(data.html);
-                    }
-                }).guardedCatch(error => {
-                    // Handle validation errors or other failures from the backend
-                    const errorMessage = error.data.message || 'An error occurred. Please try again.';
-                    const $errorDiv = $('<div class="alert alert-danger"/>').text(errorMessage);
-                    this.$('#ebill_modal_content').find('.alert-danger').remove();
-                    this.$('#ebill_modal_content').prepend($errorDiv);
-                     // It might be good to reload the previous step here if possible, or provide a retry button.
-                });
+                   this.$('#ebill_modal_content').html(data.html);
+                }).catch(console.error);
             },
 
             _onStepClick: function (ev) {
@@ -122,7 +120,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 const action = $(ev.currentTarget).data("action"); // 'next', 'previous'
                 const sponsorship_type = $(ev.currentTarget).data("sponsorship-type"); // 'standard', 'write_and_pray'
 
-                // Don't validate when moving backwards
                 if (action !== "previous" && !this._validateForm()) {
                     return; // Stop execution if validation fails
                 }
