@@ -2,8 +2,6 @@
 odoo.define("theme_compassion_2025.map", function (require) {
     "use strict";
 
-
-
     var publicWidget = require("web.public.widget");
 
     /**
