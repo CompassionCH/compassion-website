@@ -2,7 +2,7 @@
 odoo.define("theme_compassion_2025.map", function (require) {
     "use strict";
 
-    console.log("Loading theme_compassion_2025 map.js");
+
 
     var publicWidget = require("web.public.widget");
 
@@ -21,7 +21,7 @@ odoo.define("theme_compassion_2025.map", function (require) {
         GRAPPED_PEGMAN: 'gmp-internal-use-am[aria-grabbed="true"]',
     };
 
-    publicWidget.registry.GoogleMap1 = publicWidget.Widget.extend({
+    publicWidget.registry.GoogleMapEl = publicWidget.Widget.extend({
         selector: ".js-map-widget",
 
         /**
