@@ -33,9 +33,9 @@
                     </p>
                 </div>
             </t>
-            <p t-if="city_country" class="center-info-card__location">
+            <div t-if="city_country" class="center-info-card__location">
                 <t t-esc="city_country" />
-            </p>
+            </div>
             <div class="center-info-card__details">
                 <span id="current_time" class="center-info-card__time" />
                 <span class="center-info-card__separator" />
