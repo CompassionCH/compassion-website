@@ -15,17 +15,16 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
         publicWidget.registry.NewSponsorshipWizard = publicWidget.Widget.extend({
             selector: ".new-sponsorship-wizard-form",
+            _hasAlreadyEbillContract: false,
             events: {
                 "click .btn-next, .btn-previous": "_onStepClick",
                 "click .btn-sponsor": "_onSponsorClick",
                 "change .wap-contribute": "_onWAPContributeChange",
                 "change .suggested-amount": "_onAmountChange",
-                // START: E-BILL EVENTS
                 "change #payment_method": "_onPaymentMethodChange",
                 "click #start_ebill_workflow_btn": "_onStartEbillWorkflow",
-                "click #ebill_modal_content button[type='submit']": "_onEbillFormSubmit",
-                "click #ebill_modal_content a[type='submit']": "_onEbillFormSubmit",
-                // END: E-BILL EVENTS
+                "click #ebill_content_container button[type='submit']": "_onEbillFormSubmit",
+                "click #ebill_content_container a[type='submit']": "_onEbillFormSubmit",
             },
 
             /**
@@ -35,22 +34,38 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 this._super.apply(this, arguments);
                 this._updateUI();
                 this._onPaymentMethodChange();
+                this._initEbillState();
             },
 
             // ... (keep all your existing methods like _onStepClick, _validateForm, etc.)
+            /**
+             * Checks if user has already an ebill contract.
+             * @private
+             */
+            _initEbillState: function () {
+                return rpc.query({
+                    route: "/ebill/current-user/contract",
+                    params: {},
+                })
+                .then((res) => (res && res.has_contract))
+                .then((exists) => this._hasEbillContract = exists)
+                .catch((err) => {
+                    console.warn("Could not check existing eBill contract:", err);
+                });
+            },
 
             /**
              * Handles the change event on the payment method dropdown.
              * @private
              */
             _onPaymentMethodChange: function () {
-                console.log("changed")
                 const selectedText = this.$('#payment_method option:selected').text();
                 const isEbill = selectedText.includes('eBill');
 
-                this.$('#ebill_setup_container').toggle(isEbill);
 
-                if (isEbill) {
+
+                if (isEbill && !this._hasAlreadyEbillContract) {
+                    this.$('#ebill_setup_container').toggle(isEbill);
                     this.$('#finishButton').prop('disabled', true);
                 } else {
                     this.$('#finishButton').prop('disabled', false);
@@ -65,12 +80,13 @@ document.addEventListener("DOMContentLoaded", function (event) {
             _onStartEbillWorkflow: function (ev) {
                 ev.preventDefault();
                 // Ersten Schritt (Subscribe) per JSON holen
+
                 rpc.query({
                     route: '/ebill/subscribe',
-                    params: { is_ajax: true },
+                    params: { is_integrated: true },
                 }).then(data => {
                     this.$('#ebill_setup_container').show();
-                    this.$('#ebill_modal_content').html(data.html);
+                    this.$('#ebill_content_container').html(data.html);
                     this.$('#finishButton').prop('disabled', true);
                 }).catch(console.error);
             },
@@ -80,7 +96,16 @@ document.addEventListener("DOMContentLoaded", function (event) {
              * @param {Event} ev
              */
             _onEbillFormSubmit: function (ev) {
-                ev.preventDefault();
+                const form = ev.delegateTarget; // das <form> Element
+                // Native HTML5 Validierung
+                if (!form.checkValidity()) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    form.reportValidity(); // zeigt Browser-Hinweise an
+                    return;
+                }
+
+                ev.preventDefault(); // ab hier AJAX übernehmen
                 ev.stopPropagation();
 
                 const action = ev.currentTarget.dataset.action;
@@ -92,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     console.error("The clicked button is missing a 'data-action' attribute.");
                     return;
                 }   else if (action === "/ebill/validate"){
-                    email = this.$('#email_input').val();
+                    email =  this.$('#email_input').val() ?? this.$('#email').val();
                 } else if (action === "/ebill/confirm") {
                     validationCode = this.$('#validation_code_input').val();
                     token = this.$('#token').val();
@@ -100,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 }
 
                 const params = {
-                    is_ajax: true,
+                    is_integrated: true,
                     email: email,
                     validation_code: validationCode,
                     token: token
@@ -110,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     route: action,
                     params: params,
                 }).then(data => {
-                   this.$('#ebill_modal_content').html(data.html);
+                   this.$('#ebill_content_container').html(data.html);
                 }).catch(console.error);
             },
 
