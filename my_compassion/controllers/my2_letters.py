@@ -446,14 +446,32 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         This controller returns the currently active letter template.
         """
 
+        partner = request.env.user.partner_id
+        child_id = self._safe_int(kw.get("child_id"), None)
+        # 2. Récupérer l'objet 'child' et vérifier l'accès
+        child = request.env["compassion.child"].browse(child_id)
+
+        self._check_sponsored_child_access(child)
+
         templates = (
             request.env["correspondence.prewritten.letter"]
             .sudo()
             .search([("status", "=", "active")], limit=1)
         )
 
+        template_text = templates.text or ""
+
+        if template_text:
+            # 2. template_text est modifié (ex: "Bonjour test")
+            template_text = template_text.replace("%child%", child.preferred_name or "")
+            template_text = template_text.replace(
+                "%firstname%", partner.firstname or ""
+            )
+            template_text = template_text.replace("%lastname%", partner.lastname or "")
+
+        # 3. Renvoyez la variable modifiée 'template_text'
         data = {
-            "template_text": templates.text or "",
+            "template_text": template_text,
         }
 
         return request.make_response(

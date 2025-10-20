@@ -5,9 +5,11 @@
  */
 document.addEventListener("DOMContentLoaded", () => {
     const textInput = document.getElementById("letter-input");
+    const childSelector = document.getElementById("child-dropdown");
+    const selectedChildId = childSelector.value;
 
     if (textInput && !textInput.value) {
-        fetch(`/my2/children/letter/templates`)
+        fetch(`/my2/children/letter/templates?child_id=${selectedChildId}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
@@ -15,9 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 return response.json();
             })
             .then((data) => {
-                const template_text = data.template_text;
-                if (template_text) {
-                    textInput.value = template_text;
+                if (data && data.template_text) {
+                    textInput.value = data.template_text;
                 }
             })
 
