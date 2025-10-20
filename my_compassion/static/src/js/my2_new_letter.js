@@ -121,6 +121,8 @@ document.addEventListener("DOMContentLoaded", function () {
             },
 
             _onLetterInput: function (ev) {
+                const autosave_delay = 5000
+
                 const letterInput = ev.currentTarget;
                 const originalValue = letterInput.value;
                 const cleanedValue = originalValue.replace(this.RE_EMOJI, "");
@@ -139,7 +141,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 clearTimeout(this.autoSaveTimer);
                 this.autoSaveTimer = setTimeout(() => {
                     this._autoSaveDraft();
-                }, 5000);
+                }, autosave_delay);
             },
 
             _collectFormData: async function () {
