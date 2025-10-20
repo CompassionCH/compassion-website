@@ -1,14 +1,5 @@
 /**
  * Handles the new_letter form submission.
- * Shows a progress bar that updates as the letter is processed by polling the server.
- * The update works by:
- * 1) Request the server to create a letter generation task, server returns a gen.Id.
- * and the maps to build the progress bar steps in the following format:
- * steps = [ [step_index, generation_status, step_description], ...]
- * 2) Tell the server to start processing the task while updating the task state.
- * 3) Poll the server to get the current statusof the task and update the progress bar accordingly.
- * 4) Once the task is complete, redirect or show a preview based on user choice.
- *
  * Is used in /templates/pages/my2_new_letter.xml
  *
  */
@@ -33,6 +24,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 this._super.apply(this, arguments);
                 this.RE_EMOJI = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
                 this.progressBar = null;
+                this.lastDraft = null;
+                this.autoSaveTimer = null;
             },
 
             _onSubmitLetter: async function (ev) {
@@ -143,6 +136,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 } else {
                     this.$("#emoji-warning").remove();
                 }
+                clearTimeout(this.autoSaveTimer);
+                this.autoSaveTimer = setTimeout(() => {
+                    this._autoSaveDraft();
+                }, 5000);
             },
 
             _collectFormData: async function () {
@@ -261,6 +258,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     $("#previewImage").attr("src", result.preview_url);
                     $("#previewModal").modal("show");
+                } else if (mode === "save_draft") {
+                    ToastService.success(result.message || "Draft saved!");
+                }
+            },
+             _autoSaveDraft: async function () {
+                try {
+                    const formData = await this._collectFormData();
+                    const currentDraft = JSON.stringify(formData);
+                    if (this.lastDraft === currentDraft) return;
+                    this.lastDraft = currentDraft;
+
+                    const data = { ...formData, source: "mycompassion", csrf_token: odoo.csrf_token, mode: "save_draft" };
+                    const result = await this._createGenerator(data);
+                    this._handleResponse("save_draft", result, formData.child_id);
+                } catch (error) {
+                    console.warn("Auto-save draft failed:", error.message);
                 }
             },
         });
