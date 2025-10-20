@@ -43,15 +43,16 @@ document.addEventListener("DOMContentLoaded", function (event) {
              * @private
              */
             _initEbillState: function () {
-                return rpc.query({
-                    route: "/ebill/current-user/contract",
-                    params: {},
-                })
-                .then((res) => (res && res.has_contract))
-                .then((exists) => this._hasEbillContract = exists)
-                .catch((err) => {
-                    console.warn("Could not check existing eBill contract:", err);
-                });
+                return rpc
+                    .query({
+                        route: "/ebill/current-user/contract",
+                        params: {},
+                    })
+                    .then((res) => res && res.has_contract)
+                    .then((exists) => (this._hasEbillContract = exists))
+                    .catch((err) => {
+                        console.warn("Could not check existing eBill contract:", err);
+                    });
             },
 
             /**
@@ -59,16 +60,14 @@ document.addEventListener("DOMContentLoaded", function (event) {
              * @private
              */
             _onPaymentMethodChange: function () {
-                const selectedText = this.$('#payment_method option:selected').text();
-                const isEbill = selectedText.includes('eBill');
-
-
+                const selectedText = this.$("#payment_method option:selected").text();
+                const isEbill = selectedText.includes("eBill");
 
                 if (isEbill && !this._hasAlreadyEbillContract) {
-                    this.$('#ebill_setup_container').toggle(isEbill);
-                    this.$('#finishButton').prop('disabled', true);
+                    this.$("#ebill_setup_container").toggle(isEbill);
+                    this.$("#finishButton").prop("disabled", true);
                 } else {
-                    this.$('#finishButton').prop('disabled', false);
+                    this.$("#finishButton").prop("disabled", false);
                 }
             },
 
@@ -82,13 +81,15 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 // Ersten Schritt (Subscribe) per JSON holen
 
                 rpc.query({
-                    route: '/ebill/subscribe',
+                    route: "/ebill/subscribe",
                     params: { is_integrated: true },
-                }).then(data => {
-                    this.$('#ebill_setup_container').show();
-                    this.$('#ebill_content_container').html(data.html);
-                    this.$('#finishButton').prop('disabled', true);
-                }).catch(console.error);
+                })
+                    .then((data) => {
+                        this.$("#ebill_setup_container").show();
+                        this.$("#ebill_content_container").html(data.html);
+                        this.$("#finishButton").prop("disabled", true);
+                    })
+                    .catch(console.error);
             },
             /**
              * Intercepts form submissions inside the E-Bill modal and handles them via AJAX.
@@ -116,27 +117,29 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 if (!action) {
                     console.error("The clicked button is missing a 'data-action' attribute.");
                     return;
-                }   else if (action === "/ebill/validate"){
-                    email =  this.$('#email_input').val() ?? this.$('#email').val();
+                } else if (action === "/ebill/validate") {
+                    email = this.$("#email_input").val() ?? this.$("#email").val();
                 } else if (action === "/ebill/confirm") {
-                    validationCode = this.$('#validation_code_input').val();
-                    token = this.$('#token').val();
-                    email = this.$('#email').val();
+                    validationCode = this.$("#validation_code_input").val();
+                    token = this.$("#token").val();
+                    email = this.$("#email").val();
                 }
 
                 const params = {
                     is_integrated: true,
                     email: email,
                     validation_code: validationCode,
-                    token: token
+                    token: token,
                 };
 
                 rpc.query({
                     route: action,
                     params: params,
-                }).then(data => {
-                   this.$('#ebill_content_container').html(data.html);
-                }).catch(console.error);
+                })
+                    .then((data) => {
+                        this.$("#ebill_content_container").html(data.html);
+                    })
+                    .catch(console.error);
             },
 
             _onStepClick: function (ev) {

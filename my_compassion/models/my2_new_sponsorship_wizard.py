@@ -194,7 +194,7 @@ class NewSponsorshipWizard(models.TransientModel):
             if not partner:
                 partner = self.env["res.partner"].create(partner_vals)
 
-        is_ebill = self.payment_method.technical_name == 'ebill'
+        is_ebill = self.payment_method.technical_name == "ebill"
 
         # Create new sponsorship
         sponsorship_values = {
