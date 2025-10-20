@@ -111,13 +111,12 @@ class MyCompassionUserController(http.Controller):
 
                 # transforming the database values to a user-friendly
                 # format for the staff
-                match field:
-                    case "title" | "country_id":
-                        old_val_userfriendly = old_val.name if old_val else ""
-                        new_val_userfriendly = new_val.name if new_val else ""
-                    case _:
-                        old_val_userfriendly = str(old_val or "")
-                        new_val_userfriendly = str(new_val or "")
+                if field in ("title", "country_id"):
+                    old_val_userfriendly = old_val.name if old_val else ""
+                    new_val_userfriendly = new_val.name if new_val else ""
+                else:
+                    old_val_userfriendly = str(old_val or "")
+                    new_val_userfriendly = str(new_val or "")
 
                 if old_val_userfriendly != new_val_userfriendly:
                     changes.append(
