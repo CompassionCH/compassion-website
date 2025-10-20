@@ -26,6 +26,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 this._super.apply(this, arguments);
                 this.RE_EMOJI = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
                 this.progressBar = null;
+                this.lastDraft = null;
+                this.autoSaveTimer = null;
             },
 
             /**
@@ -79,6 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 try {
                     const [result] = await Promise.all([rpcPromise, fakeProgressPromise || Promise.resolve()]);
                     await this._handleResponse(mode, result, formData.child_id);
+                    if (mode === "send") clearTimeout(this.autoSaveTimer);
                 } catch (error) {
                     if (this.progressBar) {
                         this.progressBar.destroy();
@@ -107,6 +110,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 } else {
                     this.$("#emoji-warning").remove();
                 }
+                clearTimeout(this.autoSaveTimer);
+                this.autoSaveTimer = setTimeout(() => {
+                    this._autoSaveDraft();
+                }, 5000);
             },
 
             /**
@@ -128,7 +135,6 @@ document.addEventListener("DOMContentLoaded", function () {
             _collectFormData: async function () {
                 const childId = this.$("#child-dropdown").val();
                 const letterBody = this.$("#letter-input").val();
-                const selectedTemplateImage = document.getElementById("selected-template");
                 let templateId = this.$("#selected-template").attr("data-template-id") || null;
                 if (!templateId) {
                     const draftTemplate = document.getElementById("draft-template-id");
@@ -226,6 +232,20 @@ document.addEventListener("DOMContentLoaded", function () {
                     $("#previewModal").modal("show");
                 } else if (mode === "save_draft") {
                     ToastService.success(result.message || "Draft saved!");
+                }
+            },
+             _autoSaveDraft: async function () {
+                try {
+                    const formData = await this._collectFormData();
+                    const currentDraft = JSON.stringify(formData);
+                    if (this.lastDraft === currentDraft) return;
+                    this.lastDraft = currentDraft;
+
+                    const data = { ...formData, source: "mycompassion", csrf_token: odoo.csrf_token, mode: "save_draft" };
+                    const result = await this._submitLetterRPC(data);
+                    this._handleResponse("save_draft", result, formData.child_id);
+                } catch (error) {
+                    console.warn("Auto-save draft failed:", error.message);
                 }
             },
         });
