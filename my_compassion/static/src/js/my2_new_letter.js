@@ -262,14 +262,19 @@ document.addEventListener("DOMContentLoaded", function () {
                     ToastService.success(result.message || "Draft saved!");
                 }
             },
-             _autoSaveDraft: async function () {
+            _autoSaveDraft: async function () {
                 try {
                     const formData = await this._collectFormData();
                     const currentDraft = JSON.stringify(formData);
                     if (this.lastDraft === currentDraft) return;
                     this.lastDraft = currentDraft;
 
-                    const data = { ...formData, source: "mycompassion", csrf_token: odoo.csrf_token, mode: "save_draft" };
+                    const data = {
+                        ...formData,
+                        source: "mycompassion",
+                        csrf_token: odoo.csrf_token,
+                        mode: "save_draft",
+                    };
                     const result = await this._createGenerator(data);
                     this._handleResponse("save_draft", result, formData.child_id);
                 } catch (error) {
