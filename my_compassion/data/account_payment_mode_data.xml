@@ -8,5 +8,11 @@
             <field name="payment_method_id" ref="account.account_payment_method_manual_in"/>
             <field name="active" eval="True"/>
         </record>
+
+        <record id="account_payment_method_ebill" model="account.payment.method">
+            <field name="name">eBill</field>
+            <field name="code">ebill</field>
+            <field name="payment_type">inbound</field>
+        </record>
     </data>
 </odoo>
