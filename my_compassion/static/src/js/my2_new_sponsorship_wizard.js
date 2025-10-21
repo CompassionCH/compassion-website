@@ -67,10 +67,11 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
                 if (isEBill) {
                     if (!this._eBill.has_contract) {
-                        this.$("#ebill_setup_container").toggle(isEBill);
+                        this.$("#ebill_setup_container").toggleClass("d-none", false);
                         this.$("#finishButton").prop("disabled", true);
                     }
                 } else {
+                    this.$("#ebill_setup_container").toggleClass("d-none", true);
                     this.$("#finishButton").prop("disabled", false);
                 }
             },
