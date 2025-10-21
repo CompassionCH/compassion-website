@@ -85,6 +85,7 @@ class SponsorshipTimeline(models.Model):
                 c.direction AS metadata,
                 c.create_date::date AS create_date
             FROM correspondence c
+           WHERE c.partner_id IS NOT NULL
             UNION ALL
             SELECT
                 'sponsorship_gift-' || s.id AS id,
