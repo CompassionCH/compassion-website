@@ -380,7 +380,6 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         if generator.generation_status == "failed":
             return {"error": generator.generation_error_message}
 
-        generator.update_generation_status("done")
         return {
             "preview_url": f"{request.httprequest.host_url}web/image"
             f"/{generator._name}/{generator.id}/preview_pdf",
