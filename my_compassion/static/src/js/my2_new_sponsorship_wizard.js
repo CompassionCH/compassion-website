@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
              */
             start: function () {
                 this._super.apply(this, arguments);
+
                 this._updateUI();
                 this._onPaymentMethodChange();
                 this._initEbillState();
@@ -114,26 +115,20 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
                 const action = ev.currentTarget.dataset.action;
 
-                let email;
-                let validationCode;
-                let token;
+                const params = {
+                    is_integrated: true,
+                };
+
                 if (!action) {
                     console.error("The clicked button is missing a 'data-action' attribute.");
                     return;
-                } else if (action === "/ebill/validate") {
-                    email = this.$("#email_input").val() ?? this.$("#email").val();
+                } else if (action === "/ebill/validate"){
+                    params.email =  this.$('#email_input').val() ?? this.$('#email').val();
                 } else if (action === "/ebill/confirm") {
-                    validationCode = this.$("#validation_code_input").val();
-                    token = this.$("#token").val();
-                    email = this.$("#email").val();
+                    params.validation_code = this.$('#validation_code_input').val();
+                    params.token = this.$('#token').val();
+                    params.email = this.$('#email').val();
                 }
-
-                const params = {
-                    is_integrated: true,
-                    email: email,
-                    validation_code: validationCode,
-                    token: token,
-                };
 
                 rpc.query({
                     route: action,
@@ -154,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
                 const action = $(ev.currentTarget).data("action"); // 'next', 'previous'
                 const sponsorship_type = $(ev.currentTarget).data("sponsorship-type"); // 'standard', 'write_and_pray'
-
+                // Don't validate when moving backwards
                 if (action !== "previous" && !this._validateForm()) {
                     return; // Stop execution if validation fails
                 }
@@ -213,6 +208,11 @@ document.addEventListener("DOMContentLoaded", function (event) {
                         }.bind(this)
                     );
             },
+
+            /**
+             * Validates required fields in the current step.
+             * @returns {boolean} - True if valid, false otherwise.
+             */
             _validateForm: function () {
                 var isValid = true;
                 // Remove previous error messages and styles
@@ -244,6 +244,12 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 });
                 return isValid;
             },
+
+            /**
+             * Helper to convert form data array to a key-value object.
+             * @param {Array} formData
+             * @returns {Object}
+             */
             _serializeForm: function (formData) {
                 var obj = {};
                 for (const field of formData) {
@@ -251,12 +257,30 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 }
                 return obj;
             },
+
+            /**
+             * Handles the change event for the Write&Pray contribute radio buttons.
+             * @private
+             * @param {Event} ev The jQuery event object.
+             */
             _onWAPContributeChange: function (ev) {
                 this._updateUI("fast");
             },
+
+            /**
+             * Handles the change event for the suggested amounts radio buttons.
+             * @private
+             * @param {Event} ev The jQuery event object.
+             */
             _onAmountChange: function (ev) {
                 this._updateUI("fast");
             },
+
+            /**
+             * Updates UI
+             * @private
+             * @param speed
+             */
             _updateUI: function (speed = 0) {
                 if (this.$(".wap-contribute:checked").val() === "true") {
                     this.$("#wap-contribution-amount").slideDown(speed);
@@ -271,6 +295,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 }
             },
         });
+
         return publicWidget.registry.NewSponsorshipWizard;
     });
 });
