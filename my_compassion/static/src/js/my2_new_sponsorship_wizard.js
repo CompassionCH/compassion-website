@@ -149,6 +149,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
                 const action = $(ev.currentTarget).data("action"); // 'next', 'previous'
                 const sponsorship_type = $(ev.currentTarget).data("sponsorship-type"); // 'standard', 'write_and_pray'
+
                 // Don't validate when moving backwards
                 if (action !== "previous" && !this._validateForm()) {
                     return; // Stop execution if validation fails
