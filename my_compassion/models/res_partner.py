@@ -20,21 +20,6 @@ class Partner(models.Model):
         tracking=True,
     )
 
-    ebill_status = fields.Selection(
-        [("subscribed", "Subscribed"), ("not_subscribed", "Not Subscribed")],
-        compute="_compute_ebill_status",
-        string="E-Bill Status",
-    )
-
-    def _compute_ebill_status(self):
-        for partner in self:
-            has_active_ebill = self.env["ebill.payment.contract"].search_count(
-                [("partner_id", "=", partner.id), ("state", "=", "open")]
-            )
-            partner.ebill_status = (
-                "subscribed" if has_active_ebill else "not_subscribed"
-            )
-
     def _compute_user_login(self):
         for partner in self:
             login = partner.mapped("user_ids.login")
