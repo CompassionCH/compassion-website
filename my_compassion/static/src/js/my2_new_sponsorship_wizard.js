@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
         var publicWidget = require("web.public.widget");
         var rpc = require("web.rpc");
+        var ajax = require('web.ajax');
 
         publicWidget.registry.NewSponsorshipWizard = publicWidget.Widget.extend({
             selector: ".new-sponsorship-wizard-form",
@@ -87,16 +88,11 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     email: this._eBill.partner?.email,
                 };
 
-                rpc.query({
-                    route: "/ebill/subscribe",
-                    params: params,
-                })
-                    .then((data) => {
+                ajax.post('/ebill/subscribe', params).then((html) => {
                         this.$("#ebill_setup_container").show();
-                        this.$("#ebill_content_container").html(data.html);
+                        this.$("#ebill_content_container").html(html);
                         this.$("#finishButton").prop("disabled", true);
-                    })
-                    .catch(console.error);
+                }).catch(console.error);
             },
             /**
              * Intercepts form submissions inside the E-Bill modal and handles them via rpc.
@@ -132,12 +128,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     params.email = this.$("#email").val();
                 }
 
-                rpc.query({
-                    route: action,
-                    params: params,
-                })
-                    .then((data) => {
-                        this.$("#ebill_content_container").html(data.html);
+                ajax.post(action, params).then((html) => {
+                        this.$("#ebill_content_container").html(html);
                         const doneSuccessfully = this.$("#ebill_content_container #ebill-success-marker").length > 0;
                         if (doneSuccessfully) {
                             this.$("#finishButton").prop("disabled", false);
