@@ -48,7 +48,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
                         route: "/ebill/current-user/contract",
                         params: {},
                     })
-                    .then((eBillInfoOfCurrentUser) => {this._eBill = eBillInfoOfCurrentUser})
+                    .then((eBillInfoOfCurrentUser) => {
+                        this._eBill = eBillInfoOfCurrentUser;
+                    })
                     .catch((err) => {
                         console.warn("Could not check existing eBill contract:", err);
                     });
@@ -82,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
                 const params = {
                     is_integrated: true,
-                    email: this._eBill.partner?.email
+                    email: this._eBill.partner?.email,
                 };
 
                 rpc.query({
@@ -103,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
              */
             _onEbillFormSubmit: function (ev) {
                 const form = ev.delegateTarget;
-                const noValidationNeeded = $(ev.currentTarget).is('[formnovalidate]')
+                const noValidationNeeded = $(ev.currentTarget).is("[formnovalidate]");
 
                 if (!form.checkValidity() && !noValidationNeeded) {
                     form.reportValidity();
@@ -122,26 +124,26 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 if (!action) {
                     console.error("The clicked button is missing a 'data-action' attribute.");
                     return;
-                } else if (action === "/ebill/validate"){
-                    params.email =  this.$('#email_input').val() ?? this.$('#email').val();
+                } else if (action === "/ebill/validate") {
+                    params.email = this.$("#email_input").val() ?? this.$("#email").val();
                 } else if (action === "/ebill/confirm") {
-                    params.validation_code = this.$('#validation_code_input').val();
-                    params.token = this.$('#token').val();
-                    params.email = this.$('#email').val();
+                    params.validation_code = this.$("#validation_code_input").val();
+                    params.token = this.$("#token").val();
+                    params.email = this.$("#email").val();
                 }
 
                 rpc.query({
                     route: action,
                     params: params,
                 })
-                .then((data) => {
-                    this.$("#ebill_content_container").html(data.html);
-                    const doneSuccessfully = this.$("#ebill_content_container #ebill-success-marker").length > 0;
-                    if (doneSuccessfully) {
-                        this.$("#finishButton").prop("disabled", false);
-                    }
-                })
-                .catch(console.error);
+                    .then((data) => {
+                        this.$("#ebill_content_container").html(data.html);
+                        const doneSuccessfully = this.$("#ebill_content_container #ebill-success-marker").length > 0;
+                        if (doneSuccessfully) {
+                            this.$("#finishButton").prop("disabled", false);
+                        }
+                    })
+                    .catch(console.error);
             },
 
             _onStepClick: function (ev) {
