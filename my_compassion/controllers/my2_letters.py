@@ -375,8 +375,10 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
 
         if post.get("mode") == "preview":
             generator.preview()
+            generator.update_generation_status("done")
 
         elif post.get("mode") == "send":
+            # Run a preview to check if the letter's length is acceptable
             generator.preview()
 
             if generator.generation_status != "failed":
