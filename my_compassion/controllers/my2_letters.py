@@ -296,6 +296,8 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             "child_id": child.id,
             "user_id": request.env.user.id,
             "state": "draft",
+            "generation_status": "creating_task",
+            "generation_error_message": "",
         }
         generator_id = self._safe_int(post.get("generator_id"), 0)
         if generator_id:
@@ -303,6 +305,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 request.env["correspondence.s2b.generator"].browse(generator_id).sudo()
             )
             letter_generator.write(letter_values)
+
         else:
             letter_generator = (
                 request.env["correspondence.s2b.generator"].sudo().create(letter_values)
@@ -374,12 +377,15 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             generator.preview()
 
         elif post.get("mode") == "send":
-            generator.update_generation_status("finalizing")
-            generator.generate_letters_job()
+            generator.preview()
+
+            if generator.generation_status != "failed":
+                generator.update_generation_status("finalizing")
+                generator.generate_letters_job()
+                generator.update_generation_status("done")
 
         if generator.generation_status == "failed":
             return {"error": generator.generation_error_message}
-
         return {
             "preview_url": f"{request.httprequest.host_url}web/image"
             f"/{generator._name}/{generator.id}/preview_pdf",
