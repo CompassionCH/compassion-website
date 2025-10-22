@@ -314,11 +314,10 @@
                                     <h3
                     class="text-primary my-4"
                   >Why do I engage in this project</h3>
-                                    <p>
-                                        <t
-                      t-esc="participant.personal_motivation"
-                    />
-                                    </p>
+                                    <span
+                    t-esc="participant.personal_motivation"
+                    style="white-space: pre-line"
+                  />
                                 </t>
                                 <!-- Social sharing links -->
                                 <t t-if="model == 'project'">
