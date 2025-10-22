@@ -296,6 +296,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             "child_id": child.id,
             "user_id": request.env.user.id,
             "state": "draft",
+            # Restore initial generation status
             "generation_status": "creating_task",
             "generation_error_message": "",
         }
