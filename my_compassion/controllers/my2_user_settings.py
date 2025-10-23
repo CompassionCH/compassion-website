@@ -8,9 +8,10 @@
 ##############################################################################
 from datetime import date
 
-from odoo import http
+from odoo import api, http
 from odoo.exceptions import ValidationError
 from odoo.http import request
+from odoo.tools import html_escape
 
 
 class MyCompassionUserController(http.Controller):
@@ -86,11 +87,61 @@ class MyCompassionUserController(http.Controller):
             # When an address component is changed, reset the linked zip_id
             if any(k in vals_to_update for k in ["city", "zip", "country_id"]):
                 vals_to_update["zip_id"] = False
+
+            # getting old values for email notification of the changes
+            old_values = {f: getattr(partner, f) for f in vals_to_update.keys()}
+
             try:
                 partner.sudo().write(vals_to_update)
             except ValidationError as e:
                 if "email" in vals_to_update:
                     return {"success": False, "errors": {"email": e.args[0]}}
+
+            new_values = {f: getattr(partner, f) for f in vals_to_update.keys()}
+
+            # Prepare change summary for notification
+            changes = []
+            for field, _ in vals_to_update.items():
+                # those are compute
+                if field in ("zip_id", "email_bounced", "preferred_name"):
+                    continue
+
+                old_val = old_values.get(field)
+                new_val = new_values.get(field)
+
+                # transforming the database values to a user-friendly
+                # format for the staff
+                if field in ("title", "country_id"):
+                    old_val_userfriendly = old_val.name if old_val else ""
+                    new_val_userfriendly = new_val.name if new_val else ""
+                else:
+                    old_val_userfriendly = str(old_val or "")
+                    new_val_userfriendly = str(new_val or "")
+
+                if old_val_userfriendly != new_val_userfriendly:
+                    changes.append(
+                        f"<li><b>{field}</b>: {html_escape(old_val_userfriendly)} → "
+                        f"{html_escape(new_val_userfriendly)}</li>"
+                    )
+
+            if changes:
+                body_html = (
+                    f"<p>Sponsor <b>{html_escape(partner.name)}</b>, "
+                    f"with user_id <b>{partner.id}</b> "
+                    f"has updated their personal information via MyCompassion. "
+                    f"Please review the changes:</p>"
+                    f"<ul>{''.join(changes)}</ul>"
+                )
+
+                # Send the notification email
+                mail_values = {
+                    "subject": f"Partner data change - {partner.name} "
+                    f"(Ref {partner.ref})",
+                    "body_html": body_html,
+                    # TODO : replace with a setting in v17
+                    "email_to": "sds_requests@compassion.ch",
+                }
+                request.env["mail.mail"].sudo().create(mail_values)
 
         return {"success": True}
 
@@ -168,3 +219,27 @@ class MyCompassionUserController(http.Controller):
             partner.sudo().write(update_vals)
 
         return {"success": True}
+
+    @http.route(
+        "/my2/user_settings/delete_account",
+        type="json",
+        auth="user",
+        methods=["POST"],
+    )
+    def user_settings_page_delete_account(self):
+        partner = request.env.user.partner_id
+        if partner.has_sponsorships:
+            return {
+                "success": False,
+                "error": "Account cannot be deleted due to active sponsorships.",
+            }
+        try:
+            request.env["res.partner"].with_user(api.SUPERUSER_ID).browse(
+                partner.id
+            ).forget_me()
+            return {"success": True}
+        except Exception as e:
+            return {
+                "success": False,
+                "error": "Account cannot be deleted due to exception:" + str(e),
+            }

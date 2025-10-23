@@ -22,51 +22,16 @@ class ProductTemplate(models.Model):
         help="Name of the fund/gift visible on the MyCompassion website",
     )
 
-    my_compassion_pictogram = fields.Selection(
-        [
-            ("advocacy", "Advocacy"),
-            ("bible-gift", "Bible Gift"),
-            ("birthday-gift", "Birthday Gift"),
-            ("buildings-city", "Buildings City"),
-            ("buildings-house", "Buildings House"),
-            ("buildings-neighbourhood", "Buildings Neighbourhood"),
-            ("buildings-rural", "Buildings Rural"),
-            ("centre-gift", "Centre Gift"),
-            ("child-focused", "Child Focused"),
-            ("child-sponsorship", "Child Sponsorship"),
-            ("children", "Children"),
-            ("christ-centred", "Christ Centred"),
-            ("christmas-gift", "Christmas Gift"),
-            ("church-based", "Church Based"),
-            ("cognitive-brain", "Cognitive Brain"),
-            ("critical-needs", "Critical Needs"),
-            ("disaster-relief", "Disaster Relief"),
-            ("education-and-training", "Education And Training"),
-            ("family", "Family"),
-            ("family-gift", "Family Gift"),
-            ("food", "Food"),
-            ("gift-donation-general", "Gift Donation General"),
-            ("globe-global", "Globe Global"),
-            ("health", "Health"),
-            ("highly-vulnerable-children", "Highly Vulnerable Children"),
-            ("income-generation", "Income Generation"),
-            ("infrastructure", "Infrastructure"),
-            ("letter-writing", "Letter Writing"),
-            ("local-empowerment-partnership", "Local Empowerment Partnership"),
-            ("location-pin", "Location Pin"),
-            ("love", "Love"),
-            ("mothers-and-babies", "Mothers And Babies"),
-            ("neighbourhood", "Neighbourhood"),
-            ("physical", "Physical"),
-            ("socio-emotional", "Socio Emotional"),
-            ("spiritual", "Spiritual"),
-            ("unsponsored-children", "Unsponsored Children"),
-            ("virus", "Virus"),
-            ("water-and-sanitation", "Water And Sanitation"),
-            ("were-most-needed", "Were Most Needed"),
-        ],
+    my_compassion_color = fields.Many2one(
+        "theme.compassion.colors",
+        string="Color",
+        help="Thematic color of the fund/gift visible on the MyCompassion website",
+    )
+
+    my_compassion_pictogram = fields.Many2one(
+        "theme.compassion.pictograms",
         string="Pictogram",
-        help="Pictogram of the fund/gift visible on the MyCompassion website",
+        help="The pictogram for the fund/gift visible on the MyCompassion website.",
     )
 
     my_compassion_description = fields.Text(

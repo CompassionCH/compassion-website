@@ -5,12 +5,16 @@
     */
 
 .vignette {
-    min-width: 24rem;
+    width: 100%;
     aspect-ratio: 1;
     border-top-left-radius: 0.4rem;
     border-top-right-radius: 0.4rem;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
+
+    @media (min-width: $breakpoint-sm) {
+        min-width: 24rem;
+    }
 }
 
 .vignette h3 {

@@ -13,7 +13,7 @@
     <template id="my2_letter_card_component" name="Letter Card Component">
         <t t-set="child" t-value="letter.child_id" />
         <link rel="stylesheet" href="/my_compassion/static/src/css/letter_card.css" />
-        <div class="position-relative d-flex shadow-sm rounded-4  h-100">
+        <div class="position-relative d-flex shadow-sm rounded-4 h-100">
             <!-- Icon at the left -->
             <div>
                 <div
@@ -97,7 +97,7 @@
                             <div class="dropdown-divider border-low-black" />
                             <a
                                 class="dropdown-item d-flex align-items-center pt-0 pb-0 pl-3 pr-3"
-                                t-attf-href="/my2/children/{{child.id}}/letter/new"
+                                t-attf-href="/my2/children/letters/new{{ '?child_id=' + str(child.id)}}"
                             >
                                 Reply
                                 <i class="icon-pencil02 ml-auto" />
