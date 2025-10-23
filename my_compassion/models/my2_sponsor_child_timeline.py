@@ -26,10 +26,6 @@ class SponsorshipTimeline(models.Model):
     # The name of the currency for the amount (e.g., USD, EUR).
     currency_name = fields.Char(string="Currency", readonly=True)
 
-    # It is used for the date.
-    create_date = fields.Date(string="Create Date", readonly=True)
-
-    # New field for the title.
     title = fields.Char(string="Title", compute="_compute_title")
 
     # Title mapping for sponsorship gift types.
@@ -75,8 +71,8 @@ class SponsorshipTimeline(models.Model):
             """
             CREATE OR REPLACE VIEW sponsorship_timeline AS (
               SELECT
-  -- This creates a unique, incrementing number for each row
-  row_number() OVER () AS id,
+              -- This creates a unique, incrementing number for each row
+                row_number() OVER () AS id,
                 c.child_id,
                 c.partner_id,
                 'correspondence' AS model,
@@ -89,7 +85,7 @@ class SponsorshipTimeline(models.Model):
            WHERE c.partner_id IS NOT NULL
             UNION ALL
             SELECT
-                'sponsorship_gift-' || s.id AS id,
+                row_number() OVER () AS id,
                 s.child_id,
                 s.partner_id,
                 'sponsorship_gift' AS model,
