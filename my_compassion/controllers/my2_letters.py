@@ -452,8 +452,28 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             .search([("status", "=", "active")], limit=1)
         )
 
+        template_text = templates.text or ""
+        if template_text:
+            partner = request.env.user.partner_id
+            child = request.env["compassion.child"]
+            try:
+                child_id = self._safe_int(kw.get("child_id"), False)
+                if child_id:
+                    child = request.env["compassion.child"].browse(child_id)
+                    child.exists().ensure_one()
+                    self._check_sponsored_child_access(child)
+            except (AccessError, ValueError):
+                _logger.warning("Invalid child access for letter template.")
+            replacements = {
+                "%child%": child.preferred_name or "",
+                "%firstname%": partner.preferred_name or partner.name or "",
+                "%lastname%": partner.lastname or "",
+            }
+            for old, new in replacements.items():
+                template_text = template_text.replace(old, new)
+
         data = {
-            "template_text": templates.text or "",
+            "template_text": template_text,
         }
 
         return request.make_response(
