@@ -93,31 +93,31 @@ class CompassionProject(models.Model):
 
             icon_id = ""
             # Generate the icon id in the kebab-case format
-            match record.current_weather:
-                case "Clear":
-                    icon_id = "sun" if is_day else "moon-star"
-                case "Clouds":
-                    icon_id = "cloud-blank02"
-                case "Rain" | "Storm":
-                    icon_id = "cloud-raining04"
-                case (
-                    "Mist"
-                    | "Haze"
-                    | "Fog"
-                    | "Smoke"
-                    | "Dust"
-                    | "Sand"
-                    | "Drizzle"
-                    | "Ash"
-                ):
-                    icon_id = "waves"
-                case "Thunderstorm":
-                    icon_id = "cloud-lightning"
-                case "Snow":
-                    icon_id = "snowflake01"
-                case "Tornado" | "Squall":
-                    icon_id = "wind03"
-                case _:
-                    icon_id = "sun" if is_day else "moon-star"
+            weather = record.current_weather
+            if weather == "Clear":
+                icon_id = "sun" if is_day else "moon-star"
+            elif weather == "Clouds":
+                icon_id = "cloud-blank02"
+            elif weather in ("Rain", "Storm"):
+                icon_id = "cloud-raining04"
+            elif weather in (
+                "Mist",
+                "Haze",
+                "Fog",
+                "Smoke",
+                "Dust",
+                "Sand",
+                "Drizzle",
+                "Ash",
+            ):
+                icon_id = "waves"
+            elif weather == "Thunderstorm":
+                icon_id = "cloud-lightning"
+            elif weather == "Snow":
+                icon_id = "snowflake01"
+            elif weather in ("Tornado", "Squall"):
+                icon_id = "wind03"
+            else:
+                icon_id = "sun" if is_day else "moon-star"
 
             record.weather_icon_id = icon_id
