@@ -75,7 +75,8 @@ class SponsorshipTimeline(models.Model):
             """
             CREATE OR REPLACE VIEW sponsorship_timeline AS (
               SELECT
-                'correspondence-' || c.id AS id,
+  -- This creates a unique, incrementing number for each row
+  row_number() OVER () AS id,
                 c.child_id,
                 c.partner_id,
                 'correspondence' AS model,
