@@ -6,7 +6,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const textInput = document.getElementById("letter-input");
     const childSelector = document.getElementById("child-dropdown");
-    const selectedChildId = childSelector.value;
+    const selectedChildId = childSelector ? childSelector.value : "";
 
     if (textInput && !textInput.value) {
         fetch(`/my2/children/letter/templates?child_id=${selectedChildId}`)
