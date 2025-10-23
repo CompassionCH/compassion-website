@@ -33,6 +33,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 this._super.apply(this, arguments);
                 this.RE_EMOJI = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
                 this.progressBar = null;
+                this.lastDraft = null;
+                this.autoSaveTimer = null;
             },
 
             _onSubmitLetter: async function (ev) {
@@ -128,6 +130,8 @@ document.addEventListener("DOMContentLoaded", function () {
             },
 
             _onLetterInput: function (ev) {
+                const autosave_delay = 5000;
+
                 const letterInput = ev.currentTarget;
                 const originalValue = letterInput.value;
                 const cleanedValue = originalValue.replace(this.RE_EMOJI, "");
@@ -143,6 +147,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 } else {
                     this.$("#emoji-warning").remove();
                 }
+                clearTimeout(this.autoSaveTimer);
+                this.autoSaveTimer = setTimeout(() => {
+                    this._autoSaveDraft();
+                }, autosave_delay);
             },
 
             _collectFormData: async function () {
@@ -261,6 +269,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     $("#previewImage").attr("src", result.preview_url);
                     $("#previewModal").modal("show");
+                } else if (mode === "save_draft") {
+                    ToastService.success(result.message || "Draft saved!");
+                }
+            },
+            _autoSaveDraft: async function () {
+                try {
+                    const formData = await this._collectFormData();
+                    const currentDraft = JSON.stringify(formData);
+                    if (this.lastDraft === currentDraft) return;
+                    this.lastDraft = currentDraft;
+
+                    const data = {
+                        ...formData,
+                        source: "mycompassion",
+                        csrf_token: odoo.csrf_token,
+                        mode: "save_draft",
+                    };
+                    const result = await this._createGenerator(data);
+                    this._handleResponse("save_draft", result, formData.child_id);
+                } catch (error) {
+                    console.warn("Auto-save draft failed:", error.message);
                 }
             },
         });
