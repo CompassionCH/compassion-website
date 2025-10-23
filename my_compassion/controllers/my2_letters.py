@@ -376,16 +376,16 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
 
         if post.get("mode") == "preview":
             generator.preview()
-            generator.update_generation_status("done")
+            generator.isolated_write({"generation_status": "done"})
 
         elif post.get("mode") == "send":
             # Run a preview to check if the letter's length is acceptable
             generator.preview()
 
             if generator.generation_status != "failed":
-                generator.update_generation_status("finalizing")
+                generator.isolated_write({"generation_status": "finalizing"})
                 generator.generate_letters_job()
-                generator.update_generation_status("done")
+                generator.isolated_write({"generation_status": "done"})
 
         if generator.generation_status == "failed":
             return {"error": generator.generation_error_message}
