@@ -1,5 +1,14 @@
 /**
  * Handles the new_letter form submission.
+ * Shows a progress bar that updates as the letter is processed by polling the server.
+ * The update works by:
+ * 1) Request the server to create a letter generation task, server returns a gen.Id.
+ * and the maps to build the progress bar steps in the following format:
+ * steps = [ [step_index, generation_status, step_description], ...]
+ * 2) Tell the server to start processing the task while updating the task state.
+ * 3) Poll the server to get the current statusof the task and update the progress bar accordingly.
+ * 4) Once the task is complete, redirect or show a preview based on user choice.
+ *
  * Is used in /templates/pages/my2_new_letter.xml
  *
  */
