@@ -10,6 +10,7 @@ class SponsorshipTimeline(models.Model):
     """
 
     _name = "sponsorship.timeline"
+    _inherit = "translatable.model"
     _auto = False  # This model is a database view, so its table is not managed by Odoo.
     _description = "Timeline View of the sponsor and child interactions"
 
@@ -23,6 +24,7 @@ class SponsorshipTimeline(models.Model):
     metadata = fields.Char(string="Metadata")
     # The monetary value of the gift or correspondence.
     amount = fields.Char(string="Amount", readonly=True)
+    create_date = fields.Datetime(string="Created Date")
     # The name of the currency for the amount (e.g., USD, EUR).
     currency_name = fields.Char(string="Currency", readonly=True)
 
@@ -80,7 +82,8 @@ class SponsorshipTimeline(models.Model):
                 '' AS amount,
                 '' AS currency_name,
                 c.direction AS metadata,
-                c.create_date::date AS create_date
+                c.create_date::date AS create_date,
+                'M' as gender
             FROM correspondence c
            WHERE c.partner_id IS NOT NULL
             UNION ALL
@@ -93,7 +96,8 @@ class SponsorshipTimeline(models.Model):
                 s.amount::text AS amount,
                 COALESCE(rc.name, 'CHF') AS currency_name,
                 s.gift_type || '|' || COALESCE(s.sponsorship_gift_type, '') AS metadata,
-                s.create_date::date AS create_date
+                s.create_date::date AS create_date,
+                'M' as gender
             FROM sponsorship_gift s
                      LEFT JOIN account_move_line aml ON aml.gift_id = s.id
                      LEFT JOIN res_currency rc ON rc.id = aml.currency_id
