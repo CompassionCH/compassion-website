@@ -97,7 +97,7 @@ class SponsorshipTimeline(models.Model):
             FROM sponsorship_gift s
                      LEFT JOIN account_move_line aml ON aml.gift_id = s.id
                      LEFT JOIN res_currency rc ON rc.id = aml.currency_id
-           WHERE s.partner_id IS NOT NULL                     
+           WHERE s.partner_id IS NOT NULL
                     );
             """
         )
