@@ -256,5 +256,5 @@ odoo.define("theme_compassion_2025.map", function (require) {
         },
     });
 
-    return publicWidget.registry.GoogleMap;
+    return publicWidget.registry.GoogleMapEl;
 });
