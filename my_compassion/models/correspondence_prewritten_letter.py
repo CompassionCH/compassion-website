@@ -12,8 +12,8 @@ class My2CorrespondencePreWrittenLetter(models.Model):
     _rec_name = "name"
 
     # == Fields ==
-    name = fields.Char(required=True)
-    text = fields.Text(string="Text")
+    name = fields.Char(required=True, translate=True)
+    text = fields.Text(required=True, translate=True)
     start_date = fields.Date(
         help="The date from which this template is valid.",
         required=True,
@@ -122,22 +122,3 @@ class My2CorrespondencePreWrittenLetter(models.Model):
                 raise ValidationError(
                     _("Cannot schedule a template that is already expired.")
                 )
-
-            # Only check for overlaps if the current record is scheduled
-            if record.is_active and record.start_date and record.end_date:
-                domain = [
-                    ("id", "!=", record.id),
-                    ("is_active", "=", True),
-                    ("start_date", "<=", record.end_date),
-                    ("end_date", ">=", record.start_date),
-                ]
-
-                conflicting_records = self.search(domain)
-                if conflicting_records:
-                    conflict_details = "\n".join(
-                        f"{c.name} {c.start_date} to {c.end_date}"
-                        for c in conflicting_records
-                    )
-                    raise ValidationError(
-                        _("Conflicts with the following records:\n" + conflict_details)
-                    )
