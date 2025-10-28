@@ -1,17 +1,17 @@
 document.addEventListener("DOMContentLoaded", function () {
     odoo.define("my_compassion.clear_letter_button_widget", function (require) {
         "use strict";
-
+        const { _t } = require("web.core");
         const publicWidget = require("web.public.widget");
 
         publicWidget.registry.ClearLetterButtonWidget = publicWidget.Widget.extend({
             // The widget will attach to the form containing the button and input
-            selector: '#new_letter_form',
+            selector: "#new_letter_form",
 
             // Binds events to methods within the widget
             events: {
-                'input #letter-input': '_onLetterInput',
-                'click #clear-letter-button-container': '_onClearClick',
+                "input #letter-input": "_onLetterInput",
+                "click #clear-letter-button-container": "_onClearClick",
             },
 
             /**
@@ -34,15 +34,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 this._toggleClearButton();
             },
 
-/**
+            /**
              * Called when the "Clear letter" button is clicked.
              * @private
              * @param {Event} ev - The click event.
              */
             _onClearClick: function (ev) {
                 ev.preventDefault();
-                // Use global '$' to find the input and clear it
-                $('#letter-input').val('').trigger('input');
+                // Remove all written text from the textarea
+                $("#letter-input").val("").trigger("input");
+
+                // Remove the selected template image
+                const img = document.getElementById("selected-template");
+                if (img) {
+                    img.remove();
+                }
+                // Restore the select template button label to default
+                const button_label_element = document.getElementById("template-selection-label");
+                if (button_label_element) {
+                    button_label_element.textContent = _t("Select a template");
+                }
             },
 
             /**
@@ -51,9 +62,9 @@ document.addEventListener("DOMContentLoaded", function () {
              */
             _toggleClearButton: function () {
                 // Use global '$' to find the input
-                const hasText = $('#letter-input').val().trim().length > 0;
+                const hasText = $("#letter-input").val().trim().length > 0;
                 // Use global '$' to find the button container and toggle its visibility
-                $('#clear-letter-button-container').toggle(hasText);
+                $("#clear-letter-button-container").toggle(hasText);
             },
         });
 
