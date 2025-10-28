@@ -10,8 +10,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Binds events to methods within the widget
             events: {
-                "input #letter-input": "_onLetterInput",
+                "input #letter-input": "_onUserInput",
                 "click #clear-letter-button-container": "_onClearClick",
+                // Add this new line for the template image click
+                "click .template-image": "_onUserInput",
             },
 
             /**
@@ -30,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
              * Called every time the user types in the textarea.
              * @private
              */
-            _onLetterInput: function () {
+            _onUserInput: function () {
                 this._toggleClearButton();
             },
 
@@ -42,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
             _onClearClick: function (ev) {
                 ev.preventDefault();
                 // Remove all written text from the textarea
-                $("#letter-input").val("").trigger("input");
+                $("#letter-input").val("");
 
                 // Remove the selected template image
                 const img = document.getElementById("selected-template");
@@ -54,6 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (button_label_element) {
                     button_label_element.textContent = _t("Select a template");
                 }
+                this._toggleClearButton();
             },
 
             /**
@@ -61,10 +64,10 @@ document.addEventListener("DOMContentLoaded", function () {
              * @private
              */
             _toggleClearButton: function () {
-                // Use global '$' to find the input
                 const hasText = $("#letter-input").val().trim().length > 0;
-                // Use global '$' to find the button container and toggle its visibility
-                $("#clear-letter-button-container").toggle(hasText);
+                const selectedTemplate = document.getElementById("selected-template") !== null;
+
+                $("#clear-letter-button-container").toggle(hasText || selectedTemplate);
             },
         });
 

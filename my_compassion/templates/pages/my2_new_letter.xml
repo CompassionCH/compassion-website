@@ -216,7 +216,7 @@
                                 <t t-set="text_color" t-value="'pure_white'" />
                                 <t t-set="data_custom" t-value="'save_draft'" />
                             </t>
-                            <div id="clear-letter-button-container" class="ml-4">
+                            <div id="clear-letter-button-container" class="ml-4" style="display: none;">
                                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                     <t t-set="variant" t-value="'default'" />
                                     <t t-set="variation" t-value="'hollow'" />
