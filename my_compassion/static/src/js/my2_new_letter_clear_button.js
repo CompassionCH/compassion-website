@@ -6,14 +6,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const publicWidget = require("web.public.widget");
 
         publicWidget.registry.ClearLetterButtonWidget = publicWidget.Widget.extend({
-            // The widget will attach to the form containing the button and input
             selector: "#new_letter_form",
-
             // Binds events to methods within the widget
             events: {
                 "input #letter-input": "_onUserInput",
                 "click #clear-letter-button-container": "_onClearClick",
-                // Add this new line for the template image click
                 "click .template-image": "_onUserInput",
                 "change #letter-attachments": "_onUserInput",
             },
@@ -28,10 +25,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 this._toggleClearButton();
             },
 
-            // --- Custom Methods ---
-
             /**
-             * Called every time the user types in the textarea.
+             * Called when the user writes, adds/remove an image, selects a template.
              * @private
              */
             _onUserInput: function () {
@@ -41,16 +36,26 @@ document.addEventListener("DOMContentLoaded", function () {
             /**
              * Called when the "Clear letter" button is clicked.
              * @private
-             * @param {Event} ev - The click event.
              */
             _onClearClick: function (ev) {
                 ev.preventDefault();
+                /*
+                TEXTAREA CLEARING
+                */
                 // Remove all written text from the textarea
                 $("#letter-input").val("");
+                /*
+                ATTACHMENTS REMOVAL
+                */
+                //Remove the uploaded files from the input
                 const fileInput = this.$("#letter-attachments")[0];
                 fileInput.value = "";
                 uploadedFiles = [];
-
+                //Clear the uploaded images container
+                document.getElementById("uploaded-files-container").innerHTML = "";
+                /*
+                LETTER TEMPLATE REMOVAL
+                */
                 // Remove the selected template image
                 const img = document.getElementById("selected-template");
                 if (img) {
@@ -61,7 +66,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (button_label_element) {
                     button_label_element.textContent = _t("Select a template");
                 }
-
+                /*
+                BACKEND SYNCING
+                */
                 // Unlink the draft generator from the user
                 rpc.query({
                     route: "/my2/letter/unlink_draft_generator",
@@ -69,17 +76,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 }).catch((error) => {
                     console.error("Error unlinking draft generator:", error);
                 });
-                // Clear the generator_id value got from the draft.
+                // Clear the generator_id value got from the draft if any.
                 this.$("input[name='generator_id']").val("");
-                //Hide the uploaded images container
-                const container = document.getElementById("uploaded-files-container");
-                container.innerHTML = "";
 
                 this._toggleClearButton();
             },
 
             /**
-             * The core logic to show or hide the button based on textarea content.
+             * The core logic to show or hide the button based on the form content.
              * @private
              */
             _toggleClearButton: function () {
@@ -91,7 +95,6 @@ document.addEventListener("DOMContentLoaded", function () {
             },
         });
 
-        // This makes the widget available for use
         return publicWidget.registry.ClearLetterButtonWidget;
     });
 });
