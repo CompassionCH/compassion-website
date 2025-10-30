@@ -13,8 +13,9 @@ document.addEventListener("DOMContentLoaded", function () {
             events: {
                 "input #letter-input": "_onUserInput",
                 "click #clear-letter-button-container": "_onClearClick",
-                "change #letter-attachments": "_onUserInput",
+                // Add this new line for the template image click
                 "click .template-image": "_onUserInput",
+                "change #letter-attachments": "_onUserInput",
             },
 
             /**
@@ -44,19 +45,13 @@ document.addEventListener("DOMContentLoaded", function () {
              */
             _onClearClick: function (ev) {
                 ev.preventDefault();
-                ////////TEXT AREA CLEARING////////
                 // Remove all written text from the textarea
                 $("#letter-input").val("");
-                ///////ATTACHMENTS CLEARING////////
-                //Remove the uploaded files from the input field
-                this.$("#letter-attachments")[0] = "";
-                // Clear the uploadedFiles array (Global variable from my2_new_letter_add_a_picture_input.js)
+                const fileInput = this.$("#letter-attachments")[0];
+                fileInput.value = "";
                 uploadedFiles = [];
-                //Clear the uploaded images container
-                const container = document.getElementById("uploaded-files-container");
-                container.innerHTML = "";
-                ///////TEMPLATE CLEARING////////
-                // Remove the selected letter template
+
+                // Remove the selected template image
                 const img = document.getElementById("selected-template");
                 if (img) {
                     img.remove();
@@ -66,17 +61,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (button_label_element) {
                     button_label_element.textContent = _t("Select a template");
                 }
-                ///////BACKEND DRAFT CLEARING////////
+
                 // Unlink the draft generator from the user
                 rpc.query({
                     route: "/my2/letter/unlink_draft_generator",
                     params: {},
                 }).catch((error) => {
-                    console.error("Error clearing the letter:", error);
+                    console.error("Error unlinking draft generator:", error);
                 });
                 // Clear the generator_id value got from the draft.
                 this.$("input[name='generator_id']").val("");
-                // Finally, toggle the button visibility
+                //Hide the uploaded images container
+                const container = document.getElementById("uploaded-files-container");
+                container.innerHTML = "";
+
                 this._toggleClearButton();
             },
 
@@ -87,8 +85,9 @@ document.addEventListener("DOMContentLoaded", function () {
             _toggleClearButton: function () {
                 const hasText = $("#letter-input").val().trim().length > 0;
                 const selectedTemplate = document.getElementById("selected-template") !== null;
-                const hasAttachments = document.getElementById("letter-attachments").files.length > 0;
-                $("#clear-letter-button-container").toggle(hasText || selectedTemplate|| hasAttachments);
+                const hasAttachments = this.$("#letter-attachments")[0].files.length > 0;
+
+                $("#clear-letter-button-container").toggle(hasText || selectedTemplate || hasAttachments);
             },
         });
 
