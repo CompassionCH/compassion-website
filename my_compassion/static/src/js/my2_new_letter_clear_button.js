@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
             events: {
                 "input #letter-input": "_onUserInput",
                 "click #clear-letter-button-container": "_onClearClick",
-                // Add this new line for the template image click
+                "change #letter-attachments": "_onUserInput",
                 "click .template-image": "_onUserInput",
             },
 
@@ -87,8 +87,8 @@ document.addEventListener("DOMContentLoaded", function () {
             _toggleClearButton: function () {
                 const hasText = $("#letter-input").val().trim().length > 0;
                 const selectedTemplate = document.getElementById("selected-template") !== null;
-
-                $("#clear-letter-button-container").toggle(hasText || selectedTemplate);
+                const hasAttachments = document.getElementById("letter-attachments").files.length > 0;
+                $("#clear-letter-button-container").toggle(hasText || selectedTemplate|| hasAttachments);
             },
         });
 
