@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     odoo.define("my_compassion.clear_letter_button_widget", function (require) {
         "use strict";
         const { _t } = require("web.core");
+        const rpc = require("web.rpc");
         const publicWidget = require("web.public.widget");
 
         publicWidget.registry.ClearLetterButtonWidget = publicWidget.Widget.extend({
@@ -45,6 +46,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 ev.preventDefault();
                 // Remove all written text from the textarea
                 $("#letter-input").val("");
+                const fileInput = this.$("#letter-attachments")[0];
+                fileInput.value = "";
+                var element = document.getElementById(Id_of_required_form).element.reset();
+                uploadedFiles = [];
 
                 // Remove the selected template image
                 const img = document.getElementById("selected-template");
@@ -56,6 +61,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (button_label_element) {
                     button_label_element.textContent = _t("Select a template");
                 }
+
+                // Unlink the draft generator from the user
+                rpc.query({
+                    route: "/my2/letter/unlink_draft_generator",
+                    params: {},
+                }).catch((error) => {
+                    console.error("Error unlinking draft generator:", error);
+                });
+                // Clear the generator_id value got from the draft.
+                this.$("input[name='generator_id']").val("");
+                //Hide the uploaded images container
+                const container = document.getElementById("uploaded-files-container");
+                container.innerHTML = "";
+
                 this._toggleClearButton();
             },
 
