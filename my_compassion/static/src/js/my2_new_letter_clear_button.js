@@ -44,14 +44,19 @@ document.addEventListener("DOMContentLoaded", function () {
              */
             _onClearClick: function (ev) {
                 ev.preventDefault();
+                ////////TEXT AREA CLEARING////////
                 // Remove all written text from the textarea
                 $("#letter-input").val("");
-                const fileInput = this.$("#letter-attachments")[0];
-                fileInput.value = "";
-                var element = document.getElementById(Id_of_required_form).element.reset();
+                ///////ATTACHMENTS CLEARING////////
+                //Remove the uploaded files from the input field
+                this.$("#letter-attachments")[0] = "";
+                // Clear the uploadedFiles array (Global variable from my2_new_letter_add_a_picture_input.js)
                 uploadedFiles = [];
-
-                // Remove the selected template image
+                //Clear the uploaded images container
+                const container = document.getElementById("uploaded-files-container");
+                container.innerHTML = "";
+                ///////TEMPLATE CLEARING////////
+                // Remove the selected letter template
                 const img = document.getElementById("selected-template");
                 if (img) {
                     img.remove();
@@ -61,20 +66,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (button_label_element) {
                     button_label_element.textContent = _t("Select a template");
                 }
-
+                ///////BACKEND DRAFT CLEARING////////
                 // Unlink the draft generator from the user
                 rpc.query({
                     route: "/my2/letter/unlink_draft_generator",
                     params: {},
                 }).catch((error) => {
-                    console.error("Error unlinking draft generator:", error);
+                    console.error("Error clearing the letter:", error);
                 });
                 // Clear the generator_id value got from the draft.
                 this.$("input[name='generator_id']").val("");
-                //Hide the uploaded images container
-                const container = document.getElementById("uploaded-files-container");
-                container.innerHTML = "";
-
+                // Finally, toggle the button visibility
                 this._toggleClearButton();
             },
 
