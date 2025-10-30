@@ -260,6 +260,27 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             return {"error": _("Something went wrong.")}
 
     @http.route(
+        "/my2/letter/unlink_draft_generator",
+        type="json",
+        auth="user",
+        methods=["POST"],
+        csrf=True,
+    )
+    def unlink_draft_generator(self):
+        drafts = (
+            request.env["correspondence.s2b.generator"]
+            .sudo()
+            .search(
+                [
+                    ("user_id", "=", request.env.user.id),
+                    ("state", "in", ["draft", "preview"]),
+                ]
+            )
+        )
+        drafts.unlink()
+        return {"success": True, "len": len(drafts)}
+
+    @http.route(
         "/my2/children/letters/create_generator",
         type="json",
         auth="user",
