@@ -5,7 +5,7 @@
             <ul class="navbar-nav">
                 <t t-set="partner" t-value="request.env.user.partner_id" />
                 <li class="nav-item">
-                    <a class="nav-link" href="/my2/dashboard">Dashboard</a>
+                    <a class="nav-link" href="/my2/dashboard">Home</a>
                 </li>
                 <t t-if="partner.is_sponsor">
                     <li class="nav-item">
@@ -13,6 +13,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/my2/children/letters">Letters</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my2/children/letters/new">Write a letter</a>
                     </li>
                 </t>
                 <li class="nav-item">
