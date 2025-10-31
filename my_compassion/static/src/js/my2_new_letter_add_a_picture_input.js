@@ -3,6 +3,8 @@
  *
  * Used in /templates/pages/my2_new_letter.xml
  */
+let uploadedFiles = [];
+
 document.addEventListener("DOMContentLoaded", () => {
     // Constants
     const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
@@ -13,8 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Retrieve the input where the users put files and the container for displaying the file preview
     const fileInput = document.getElementById("letter-attachments");
     const container = document.getElementById("uploaded-files-container");
-
-    let uploadedFiles = [];
 
     /**
      * Generates a unique key for a file based on its metadata.

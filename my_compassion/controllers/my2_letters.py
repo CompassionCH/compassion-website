@@ -260,6 +260,41 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             return {"error": _("Something went wrong.")}
 
     @http.route(
+        "/my2/letter/unlink_draft_generator",
+        type="json",
+        auth="user",
+        methods=["POST"],
+        csrf=True,
+    )
+    def unlink_draft_generator(self, child_id):
+        """
+        Deletes the draft letter generator for the given child and user.
+        Used when the user clicks on the "Start Over" button in my2_new_letter_page.
+        """
+        try:
+            child = request.env["compassion.child"].browse(child_id)
+            self._check_sponsored_child_access(child)
+        except (AccessError, ValueError, TypeError) as e:
+            _logger.warning(
+                "Failed to unlink draft generator for child %s: %s", child_id, e
+            )
+            return {"error": _("Something went wrong.")}
+
+        drafts = (
+            request.env["correspondence.s2b.generator"]
+            .sudo()
+            .search(
+                [
+                    ("user_id", "=", request.env.user.id),
+                    ("child_id", "=", child_id),
+                    ("state", "in", ["draft", "preview"]),
+                ]
+            )
+        )
+        drafts.unlink()
+        return {"success": True}
+
+    @http.route(
         "/my2/children/letters/create_generator",
         type="json",
         auth="user",

@@ -22,9 +22,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const selectedTemplateName = image.getAttribute("data-template-name");
             const selectedTemplateImageLink = image.getAttribute("src");
 
-            // Replace the button content with the template name selected
-            const buttonElement = document.getElementById("template-selection");
-            buttonElement.textContent = selectedTemplateName;
+            // Replace the button's label content with the template name selected
+            const button_label_element = document.getElementById("template-selection-label");
+            button_label_element.textContent = selectedTemplateName;
 
             // Add or replace the template image
             const targetDiv = document.getElementById("template-reactive-img");
