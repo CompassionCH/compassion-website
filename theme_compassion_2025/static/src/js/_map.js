@@ -19,7 +19,7 @@ odoo.define("theme_compassion_2025.map", function (require) {
         GRAPPED_PEGMAN: 'gmp-internal-use-am[aria-grabbed="true"]',
     };
 
-    publicWidget.registry.GoogleMap = publicWidget.Widget.extend({
+    publicWidget.registry.GoogleMapEl = publicWidget.Widget.extend({
         selector: ".js-map-widget",
 
         /**
@@ -256,5 +256,5 @@ odoo.define("theme_compassion_2025.map", function (require) {
         },
     });
 
-    return publicWidget.registry.GoogleMap;
+    return publicWidget.registry.GoogleMapEl;
 });
