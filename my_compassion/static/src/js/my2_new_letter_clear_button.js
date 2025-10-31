@@ -61,9 +61,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 BACKEND SYNCING
                 */
                 // Unlink the draft generator from the user
+                const childId = this.$("#child-dropdown").val();
                 rpc.query({
                     route: "/my2/letter/unlink_draft_generator",
-                    params: {},
+                    params: {
+                        child_id: parseInt(childId, 10),
+                    },
                 }).catch((error) => {
                     console.error("Error unlinking draft generator:", error);
                 });
