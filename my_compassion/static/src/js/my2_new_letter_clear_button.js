@@ -39,32 +39,23 @@ document.addEventListener("DOMContentLoaded", function () {
              */
             _onClearClick: function (ev) {
                 ev.preventDefault();
-                /*
-                TEXTAREA CLEARING
-                */
                 // Remove all written text from the textarea
-                $("#letter-input").val("");
-                /*
-                ATTACHMENTS REMOVAL
-                */
+                this.$("#letter-input").val("");
+
                 //Remove the uploaded files from the input
                 const fileInput = this.$("#letter-attachments")[0];
                 fileInput.value = "";
                 uploadedFiles = [];
                 //Clear the uploaded images container
-                document.getElementById("uploaded-files-container").innerHTML = "";
-                /*
-                LETTER TEMPLATE REMOVAL
-                */
+                this.$("#uploaded-files-container").empty();
+
                 // Remove the selected template image
-                const img = document.getElementById("selected-template");
-                if (img) {
-                    img.remove();
-                }
+                this.$("#selected-template").remove();
+
                 // Restore the select template button label to default
-                const button_label_element = document.getElementById("template-selection-label");
-                if (button_label_element) {
-                    button_label_element.textContent = _t("Select a template");
+                const buttonLabel = this.$("#template-selection-label");
+                if (buttonLabel.length) {
+                    buttonLabel.text(_t("Select a template"));
                 }
                 /*
                 BACKEND SYNCING
