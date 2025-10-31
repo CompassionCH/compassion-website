@@ -69,7 +69,7 @@
     </template>
     <!-- Improve the user dropdown in the header -->
     <template id="user_dropdown" inherit_id="portal.user_dropdown">
-        <xpath expr="//t[@t-if='_avatar']//img" position="attributes">
+        <xpath expr="//img" position="attributes">
             <attribute name="width">48</attribute>
             <attribute name="height">48</attribute>
         </xpath>
