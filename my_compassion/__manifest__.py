@@ -98,6 +98,7 @@
         "web",
         "website_child_protection",
         "website_sponsorship",
+        "website_form",
         "gift_compassion",
         "auth_signup",
         "website_crm_privacy_policy",  # OCA/website

@@ -155,24 +155,24 @@
                                         id="unreadToggle"
                                     >
                                         <label
-                                            t-att-class="'btn btn-secondary btn-custom-toggle text-low-blue bg-pure-white border-low-blue border-left-pill w-50' + (' active' if unread == 'true' else '')"
+                                            t-att-class="'btn btn-secondary btn-custom-toggle text-low-blue bg-pure-white border-low-blue border-left-pill w-50' + (' active' if filters['unread'] == 'true' else '')"
                                         >
                                             <input
                                                 type="radio"
                                                 name="unreadOptions"
                                                 value="unread"
-                                                t-att-checked="'checked' if unread == 'true' else None"
+                                                t-att-checked="'checked' if filters['unread'] == 'true' else None"
                                             />
                                             Unread
                                         </label>
                                         <label
-                                            t-att-class="'btn btn-secondary btn-custom-toggle text-low-blue bg-pure-white border-low-blue border-right-pill w-50' + (' active' if unread != 'true' else '')"
+                                            t-att-class="'btn btn-secondary btn-custom-toggle text-low-blue bg-pure-white border-low-blue border-right-pill w-50' + (' active' if filters['unread'] != 'true' else '')"
                                         >
                                             <input
                                                 type="radio"
                                                 name="unreadOptions"
-                                                value="read"
-                                                t-att-checked="'checked' if unread != 'true' else None"
+                                                value="all"
+                                                t-att-checked="'checked' if filters['unread'] != 'true' else None"
                                             />
                                             All
                                         </label>
@@ -316,8 +316,6 @@
                     </t>
                 </div>
             </div>
-            <!-- JavaScript logic for highlighting new letters -->
-            <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_letters.js" />
         </t>
     </template>
 </odoo>
