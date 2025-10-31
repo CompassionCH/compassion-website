@@ -266,13 +266,14 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         methods=["POST"],
         csrf=True,
     )
-    def unlink_draft_generator(self):
+    def unlink_draft_generator(self, child_id):
         drafts = (
             request.env["correspondence.s2b.generator"]
             .sudo()
             .search(
                 [
                     ("user_id", "=", request.env.user.id),
+                    ("child_id", "=", child_id),
                     ("state", "in", ["draft", "preview"]),
                 ]
             )
