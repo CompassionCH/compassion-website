@@ -5,9 +5,15 @@
  */
 document.addEventListener("DOMContentLoaded", () => {
     const textInput = document.getElementById("letter-input");
+    const childSelector = document.getElementById("child-dropdown");
+    const TEMPLATE_URL = `/my2/children/letter/templates`;
 
-    if (textInput && !textInput.value) {
-        fetch(`/my2/children/letter/templates`)
+    const fetchTemplate = (childId) => {
+        if (!textInput) {
+            console.error("Required HTML element #letter-input is missing.");
+            return;
+        }
+        fetch(`${TEMPLATE_URL}?child_id=${childId}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
@@ -15,16 +21,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 return response.json();
             })
             .then((data) => {
-                const template_text = data.template_text;
-                if (template_text) {
-                    textInput.value = template_text;
+                if (data && data.template_text) {
+                    textInput.value = data.template_text;
                 }
             })
-
             .catch((error) => {
                 console.error("Failed to fetch template:", error);
             });
-    } else {
-        console.error("Required HTML element #letter-input is missing.");
+    };
+
+    if (childSelector) {
+        // Fetch template on initial load only if input is empty
+        if (!textInput.value) {
+            fetchTemplate(childSelector.value);
+        }
+        // Re-fetch template when child selection changes
+        childSelector.addEventListener("change", (event) => {
+            fetchTemplate(event.target.value);
+        });
     }
 });
