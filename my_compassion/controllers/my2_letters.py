@@ -259,6 +259,11 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             _logger.warning("Failed to remove attachment %s: %s", attachment_id, e)
             return {"error": _("Something went wrong.")}
 
+        """
+        Deletes the draft letter generator for the given child and user.
+        Used when the user clicks ont hte "Start Over" button in my2_new_letter_page.
+        """
+
     @http.route(
         "/my2/letter/unlink_draft_generator",
         type="json",
@@ -267,6 +272,16 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         csrf=True,
     )
     def unlink_draft_generator(self, child_id):
+        try :
+            child = request.env["compassion.child"].browse(child_id)
+            self._check_sponsored_child_access(child)
+        except (AccessError, ValueError, TypeError) as e:
+            _logger.warning(
+                "Failed to unlink draft generator for child %s: %s", child_id, e
+            )
+            return {"error": _("Something went wrong.")}
+
+        
         drafts = (
             request.env["correspondence.s2b.generator"]
             .sudo()
@@ -279,7 +294,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             )
         )
         drafts.unlink()
-        return {"success": True, "len": len(drafts)}
+        return {"success": True}
 
     @http.route(
         "/my2/children/letters/create_generator",
