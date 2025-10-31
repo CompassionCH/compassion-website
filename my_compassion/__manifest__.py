@@ -97,6 +97,7 @@
         "partner_communication_compassion",
         "wordpress_configuration",
         "web",
+        "website_sale",
         "website_child_protection",
         "website_sponsorship",
         "website_form",
