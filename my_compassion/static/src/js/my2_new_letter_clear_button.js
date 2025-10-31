@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }).catch((error) => {
                     console.error("Error unlinking draft generator:", error);
                 });
-                // Clear the generator_id value got from the draft if any.
+                //Clear the generator_id value got from the previously loaded draft if any.
                 this.$("input[name='generator_id']").val("");
 
                 this._toggleClearButton();
