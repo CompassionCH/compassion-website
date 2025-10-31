@@ -269,7 +269,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
     def unlink_draft_generator(self, child_id):
         """
         Deletes the draft letter generator for the given child and user.
-        Used when the user clicks ont hte "Start Over" button in my2_new_letter_page.
+        Used when the user clicks on the "Start Over" button in my2_new_letter_page.
         """
         try:
             child = request.env["compassion.child"].browse(child_id)
