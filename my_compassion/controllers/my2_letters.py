@@ -272,7 +272,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         csrf=True,
     )
     def unlink_draft_generator(self, child_id):
-        try :
+        try:
             child = request.env["compassion.child"].browse(child_id)
             self._check_sponsored_child_access(child)
         except (AccessError, ValueError, TypeError) as e:
@@ -281,7 +281,6 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             )
             return {"error": _("Something went wrong.")}
 
-        
         drafts = (
             request.env["correspondence.s2b.generator"]
             .sudo()
