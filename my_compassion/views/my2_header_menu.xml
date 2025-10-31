@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="my_compassion_dynamic_menu" inherit_id="website.template_header_default">
+        <xpath expr="//div[@id='top_menu_collapse']" position="inside">
+            <ul class="navbar-nav">
+                <t t-set="partner" t-value="request.env.user.partner_id" />
+                <li class="nav-item">
+                    <a class="nav-link" href="/my2/dashboard">Home</a>
+                </li>
+                <t t-if="partner.is_sponsor">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my2/children">My sponsorships</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my2/children/letters">Letters</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my2/children/letters/new">Write a letter</a>
+                    </li>
+                </t>
+                <li class="nav-item">
+                    <a class="nav-link" href="/my2/gifts">Make a gift</a>
+                </li>
+                <t t-if="partner.is_donor">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my2/donations">My donations</a>
+                    </li>
+                </t>
+            </ul>
+        </xpath>
+    </template>
+</odoo>
