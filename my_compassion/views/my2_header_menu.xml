@@ -29,4 +29,20 @@
             </ul>
         </xpath>
     </template>
+    <template
+        id="custom_header_cart_link_redirect"
+        inherit_id="website_sale.header_cart_link"
+        name="Custom Header Cart Link Redirect"
+    >
+        <!-- Modify the behavior of the base Odoo cart for custom redirection and design -->
+        <xpath expr="//a[@href='/shop/cart']" position="attributes">
+            <attribute name="href">/my2/gift-package</attribute>
+        </xpath>
+        <xpath expr="//i[hasclass('fa-shopping-cart')]" position="attributes">
+            <attribute name="class">icon-gift02 text-low-yellow</attribute>
+        </xpath>
+        <xpath expr="//sup[hasclass('badge-primary')]" position="attributes">
+            <attribute name="class">my_cart_quantity badge bg-core-blue text-white</attribute>
+        </xpath>
+    </template>
 </odoo>
