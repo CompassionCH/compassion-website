@@ -81,11 +81,11 @@ document.addEventListener("DOMContentLoaded", function () {
              * @private
              */
             _toggleClearButton: function () {
-                const hasText = $("#letter-input").val().trim().length > 0;
-                const selectedTemplate = document.getElementById("selected-template") !== null;
+                const hasText = this.$("#letter-input").val().trim().length > 0;
+                const selectedTemplate = this.$("#selected-template").length > 0;
                 const hasAttachments = this.$("#letter-attachments")[0].files.length > 0;
 
-                $("#clear-letter-button-container").toggle(hasText || selectedTemplate || hasAttachments);
+                this.$("#clear-letter-button-container").toggle(hasText || selectedTemplate || hasAttachments);
             },
         });
 
