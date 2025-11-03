@@ -253,51 +253,48 @@
                             </t>
                         </div>
                     </div>
-                    <!-- Modal for previewing the letter -->
-                    <div
-                        class="modal fade"
-                        id="previewModal"
-                        tabindex="-1"
-                        role="dialog"
-                        aria-labelledby="previewModalLabel"
-                        aria-hidden="true"
-                    >
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content h-100">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="previewModalLabel">Letter Preview</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">x</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body text-center h-100">
-                                    <iframe id="previewImage" src="" class="w-100 h-100 border-0" />
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Feedback Modal for when the user submitted the letter.
-                    Where the progress-bar is inserted -->
-                    <div
-                        class="modal fade"
-                        id="submitModal"
-                        tabindex="-1"
-                        role="dialog"
-                        aria-labelledby="submitModalLabel"
-                        aria-hidden="true"
-                    >
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content text-center p-4">
-                                <div class="modal-body">
-                                    <div id="progress-bar-div" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </form>
+                <div
+                    class="modal fade"
+                    id="previewModal"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="previewModalLabel"
+                    aria-hidden="true"
+                >
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content h-100">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="previewModalLabel">Letter Preview</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">x</span>
+                                </button>
+                            </div>
+                            <div class="modal-body text-center h-100">
+                                <iframe id="previewImage" src="" class="w-100 h-100 border-0" />
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="modal fade"
+                    id="submitModal"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="submitModalLabel"
+                    aria-hidden="true"
+                >
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content text-center p-4">
+                            <div class="modal-body">
+                                <div id="progress-bar-div" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </t>
         <!-- Include Owl library -->

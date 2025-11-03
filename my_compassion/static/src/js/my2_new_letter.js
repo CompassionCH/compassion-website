@@ -39,9 +39,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
             _onSubmitLetter: async function (ev) {
                 ev.preventDefault();
-
                 const submitButton = ev.originalEvent.submitter;
+
+                if (!submitButton) {
+                    console.error("Form submitted programmatically (submitter is null). Aborting.");
+                    return;
+                }
+
+                if (submitButton.getAttribute("data-dismiss") === "modal") {
+                    console.warn("Form submission blocked, triggered by a data-dismiss button.");
+                    $(submitButton).closest(".modal").modal("hide");
+                    return;
+                }
+
                 const mode = $(submitButton).data("custom");
+
+                if (!mode) {
+                    console.warn("Form submission blocked. Submitter has no 'data-custom' attribute.", submitButton);
+                    return;
+                }
 
                 let formData;
                 try {
