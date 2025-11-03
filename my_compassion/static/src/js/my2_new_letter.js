@@ -59,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         throw new Error(initialResult.error || _t("Could not save the letter."));
                     }
                     if (mode === "save_draft") {
+                        this._handleResponse("save_draft",       initialResult, formData.child_id);
                         ToastService.success(_t("Letter saved!"));
                         return;
                     }
@@ -130,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
 
             _onLetterInput: function (ev) {
-                const autosave_delay = 5000;
+                const autosave_delay = 1000;
 
                 const letterInput = ev.currentTarget;
                 const originalValue = letterInput.value;
@@ -170,6 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (!letterBody) throw new Error(_t("Please write something in your letter."));
 
                 const attachments = await this._encodeAttachments(fileInput.files);
+
 
                 return {
                     child_id: childId,
@@ -270,6 +272,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     $("#previewImage").attr("src", result.preview_url);
                     $("#previewModal").modal("show");
                 } else if (mode === "save_draft") {
+
+                    const recv_generator_id = result.generator_id;
+                    if (recv_generator_id) {
+                        this.$("input[name='generator_id']").val(recv_generator_id);
+                        //flush the uploaded files sent to the server as they are now saved
+                        const fileInput = this.$("#letter-attachments")[0];
+                        fileInput.value = "";
+                        uploadedFiles = [];
+                    }
+
                     ToastService.success(result.message || "Draft saved!");
                 }
             },

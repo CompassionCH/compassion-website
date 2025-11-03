@@ -363,6 +363,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
 
         return {
             "generator_id": letter_generator.id,
+            "image_ids" : letter_generator.image_ids.ids, # Return the attachments IDs
             "steps": processing_steps,  # Return the steps to the client
         }
 
