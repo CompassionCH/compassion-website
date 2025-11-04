@@ -200,7 +200,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 } catch (error) {
                     console.error("Error processing file:", error);
                     alert(`Failed to process ${file.name}: ${error.message}`);
-                    uploadedAttachmentLetterFiles = uploadedAttachmentLetterFiles.filter((f) => generateFileKey(f) !== fileKey);
+                    uploadedAttachmentLetterFiles = uploadedAttachmentLetterFiles.filter(
+                        (f) => generateFileKey(f) !== fileKey
+                    );
                 }
             }
         } finally {

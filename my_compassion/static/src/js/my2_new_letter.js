@@ -53,6 +53,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 const submitButton = ev.originalEvent.submitter;
                 const mode = $(submitButton).data("custom");
 
+                // Validation check for mode
+                if (!["send", "preview", "save_draft"].includes(mode)) {
+                    return;
+                }
+
                 let formData;
                 try {
                     formData = await this._collectFormData();
@@ -210,6 +215,12 @@ document.addEventListener("DOMContentLoaded", function () {
             },
 
             _createGenerator: async function (data) {
+                //clear the uploaded files buffer as they are now sent to the server
+                // This ensures that if multiple _creategenerator happen at once, the attachment list is coherent regardless of the time taken by the rpc query
+                uploadedAttachmentLetterFiles = [];
+                const fileInput = this.$("#letter-attachments")[0];
+                fileInput.value = "";
+
                 const result = await rpc.query({
                     route: "/my2/children/letters/create_generator",
                     params: data,
