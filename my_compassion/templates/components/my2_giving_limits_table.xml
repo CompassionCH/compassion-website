@@ -58,7 +58,7 @@
                     <t
                         t-set="cells"
                         t-value="[
-                        '{} {:g}'.format(currency_name, limit.currency_id._convert(limit.min_amount, company.currency_id, company, date))
+                        '{} {:.2f}'.format(company.currency_id.name , int(limit.currency_id._convert(limit.min_amount, company.currency_id, company, date) * 10) / 10.0)
                         for limit in limits
                     ]"
                     />
@@ -69,7 +69,7 @@
                     <t
                         t-set="cells"
                         t-value="[
-                        '{} {:g}'.format(currency_name, limit.currency_id._convert(limit.max_amount, company.currency_id, company, date))
+                        '{} {:.2f}'.format(company.currency_id.name , int(limit.currency_id._convert(limit.max_amount, company.currency_id, company, date) * 10) / 10.0)
                         for limit in limits
                     ]"
                     />
