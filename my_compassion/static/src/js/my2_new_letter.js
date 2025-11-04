@@ -121,6 +121,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 try {
                     const initialResult = await this._createGenerator(creationData);
+                    // Bind the remove buttons to the newly created attachment IDs
+                    // This ensures that any attachments saved on the server can be removed by the user from the backend.
+
                     if (!initialResult.generator_id) {
                         throw new Error(initialResult.error || _t("Could not save the letter."));
                     }
@@ -265,11 +268,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 return Promise.all(filePromises);
             },
 
-            _createGenerator: function (data) {
-                return rpc.query({
+_createGenerator: async function (data) {
+                const result = await rpc.query({
                     route: "/my2/children/letters/create_generator",
                     params: data,
                 });
+
+                this._bindAttachmentToRemoveButton(result.image_ids || []);
+
+                return result;
             },
 
             _launchProcessingRPC: function (data) {
@@ -324,7 +331,6 @@ document.addEventListener("DOMContentLoaded", function () {
              */
             _handleResponse: function (mode, result, childId) {
 
-                this._bindAttachmentToRemoveButton(result.image_ids || []);
 
 
                 if (mode === "send") {
