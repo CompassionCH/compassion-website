@@ -66,7 +66,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 try {
                     const initialResult = await this._createGenerator(creationData);
 
-
                     if (!initialResult.generator_id) {
                         throw new Error(initialResult.error || _t("Could not save the letter."));
                     }
