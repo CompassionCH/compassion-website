@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
 
             start: function () {
+                // On starting, bind the remove buttons to the existing attachments got from the draft loading
                 const attachmentIds = $(".uploaded-file")
                     .map(function () {
                         return $(this).data("file-key");
@@ -324,39 +325,27 @@ document.addEventListener("DOMContentLoaded", function () {
             },
 
             /**
-             * Binds the remove-attachment click event to uploaded files.
-             * Assumes 'this' is an Odoo widget and rpc, _t, and ToastService are available.
-             *
+             * Binds the remove-attachment buttons' click event to the uploaded files.
              * @param {Array<number>} attachmentIds - A list of attachment IDs.
              */
             _bindAttachmentToRemoveButton: function (attachmentIds) {
-                // Select all .uploaded-file elements within this widget
+                // Select all .uploaded-file elements
                 const uploadedFilesEl = this.$(".uploaded-file");
-
                 uploadedFilesEl.each((index, element) => {
-                    // 'element' is the raw DOM element for .uploaded-file
-
-                    // Find the button within this element using jQuery
+                    // Find the button within this element
                     const $button = this.$(element).find(".remove-attachment-button");
 
                     // Get the corresponding attachment ID from the input array
+                    // The ids necessarily match the increasing order of the .uploaded-file elements
                     const attachmentId = attachmentIds[index];
-
-                    // Safety check: skip if the arrays don't match
-                    if (!attachmentId) {
-                        console.warn(`No attachment ID found for element at index ${index}`);
-                        return; // Skips to the next item in the .each() loop
-                    }
 
                     // Set the data attribute on the PARENT element
                     element.dataset.fileKey = attachmentId;
 
-                    // Set the button to send a remove request on click
+                    // Set the button to send a remove_attachment request on click
                     // .off() prevents binding multiple click events if this function is called again
                     $button.off("click").on("click", async (event) => {
                         event.preventDefault();
-
-                        // Read the ID from the PARENT element's attribute
                         const idToRemove = element.getAttribute("data-file-key");
 
                         if (!idToRemove) {
