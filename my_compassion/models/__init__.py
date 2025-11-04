@@ -16,7 +16,6 @@ from . import (
     my2_new_sponsorship_wizard,
     res_partner,
     res_user,
-    my2_sponsor_child_timeline,
     product_template,
     sale_order_line,
     my2_donation_info_line,
