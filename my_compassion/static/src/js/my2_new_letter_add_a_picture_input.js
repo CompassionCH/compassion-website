@@ -148,7 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!fileDiv) return;
 
             const fileKey = fileDiv.dataset.fileKey;
-            console.log("Removing file with key:", fileKey);
             uploadedAttachmentLetterFiles = uploadedAttachmentLetterFiles.filter((f) => generateFileKey(f) !== fileKey);
             fileDiv.remove();
             updateFileInput();
