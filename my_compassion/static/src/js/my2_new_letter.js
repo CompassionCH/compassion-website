@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
 
             _onLetterInput: function (ev) {
-                const autosave_delay = 1000;
+                const autosave_delay = 5000;
 
                 const letterInput = ev.currentTarget;
                 const originalValue = letterInput.value;
