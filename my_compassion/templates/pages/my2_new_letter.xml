@@ -188,7 +188,11 @@
                     <div class="row" id="uploaded-files-container">
                         <!-- Uploaded files will be displayed here -->
                         <t t-foreach="draft.image_ids.sorted(reverse=True)" t-as="att">
-                            <div class="col-4 uploaded-file position-relative" t-att-data-file-key="att.id" t-att-data-db-stored="True">
+                            <div
+                                class="col-4 uploaded-file position-relative"
+                                t-att-data-file-key="att.id"
+                                t-att-data-db-stored="True"
+                            >
                                 <img
                                     t-attf-src="data:#{att.mimetype or 'image/png'};base64,#{att.datas}"
                                     class="img-fluid"
