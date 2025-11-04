@@ -274,6 +274,76 @@ document.addEventListener("DOMContentLoaded", function () {
                 } else if (mode === "save_draft") {
 
                     const recv_generator_id = result.generator_id;
+                    const recv_attachments_ids = result.image_ids || [];
+
+
+                    // Take all the remove attachement buttons
+                    const uploadedFilesEl = this.$(".uploaded-file");
+                    uploadedFilesEl.each((index, element) => {
+                        const button = this.$(element).find(".remove-attachment-button");
+                        //Set the data-id attribute with the received attachment id from the server
+                        element.dataset.fileKey = recv_attachments_ids[index]
+                        //Set the button to Send a remove attachment to the server on click on the del button
+
+
+                       button.off().on("click", async (event) => {
+                            event.preventDefault();
+
+                            const attachmentId = element.getAttribute("data-file-key");
+                            if (!attachmentId) {
+                                const msg = _t("Attachment ID is missing.");
+                                ToastService.error(msg);
+                                return;
+                            }
+                            try {
+                                // Call Odoo route
+                                const result = await rpc.query({
+                                    route: "/my2/letter/remove_attachment",
+                                    params: { attachment_id: parseInt(attachmentId, 10) },
+                                });
+
+                                // Check server response
+                                if (result.success) {
+                                    element.remove();
+                                } else {
+                                    const msg = result.error || _t("Error occurred while removing the attachment.");
+                                    console.error("Server error:", msg, result);
+                                    ToastService.error(msg);
+                                }
+                            } catch (error) {
+                                console.error("JS error while removing attachment:", error);
+                                ToastService.error(_t("Unable to remove the attachment."));
+
+                            }
+                       })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        })
+
+                    // For each button, check if its data-id is in the recv_attachments_ids
+                    // set for all button the data-key
+
+
                     if (recv_generator_id) {
                         this.$("input[name='generator_id']").val(recv_generator_id);
                         //flush the uploaded files sent to the server as they are now saved
