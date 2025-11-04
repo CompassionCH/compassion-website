@@ -6,45 +6,56 @@ document.addEventListener("DOMContentLoaded", function () {
         const rpc = require("web.rpc");
         const _t = require("web.core")._t;
 
-        // Select all remove buttons
-        const removeButtons = document.querySelectorAll(".remove-attachment-button");
+        $(".remove-attachment-button").on("click", async function (event) {
+    event.preventDefault();
 
-        removeButtons.forEach((button) => {
-            button.addEventListener("click", async function (event) {
-                event.preventDefault();
+    // Inside the jQuery handler, $(this) refers to the specific button that was clicked
+    const $button = $(this);
 
-                const attachmentId = button.getAttribute("data-id");
-                if (!attachmentId) {
-                    const msg = _t("Attachment ID is missing.");
-                    ToastService.error(msg);
-                    return;
-                }
+    // Use jQuery's .attr() to get the data-id
+    const attachmentId = $button.attr("data-id");
 
-                try {
-                    // Call Odoo route
-                    const result = await rpc.query({
-                        route: "/my2/letter/remove_attachment",
-                        params: { attachment_id: parseInt(attachmentId, 10) },
-                    });
+    if (!attachmentId) {
+        const msg = _t("Attachment ID is missing.");
+        ToastService.error(msg);
+        return;
+    }
 
-                    // Check server response
-                    if (result.success) {
-                        const uploadedFile = button.closest(".uploaded-file");
-                        if (uploadedFile) {
-                            uploadedFile.remove();
-                        } else {
-                            console.warn("Unable to find the element to remove in the DOM.");
-                        }
-                    } else {
-                        const msg = result.error || _t("Error occurred while removing the attachment.");
-                        console.error("Server error:", msg, result);
-                        ToastService.error(msg);
-                    }
-                } catch (error) {
-                    console.error("JS error while removing attachment:", error);
-                    ToastService.error(_t("Unable to remove the attachment."));
-                }
-            });
+    try {
+        // Call Odoo route
+        const result = await rpc.query({
+            route: "/my2/letter/remove_attachment",
+            params: { attachment_id: parseInt(attachmentId, 10) },
         });
+
+        // Check server response
+        if (result.success) {
+            // Use jQuery's .closest() and .remove()
+            const uploadedFile = $button.closest(".uploaded-file");
+            if (uploadedFile.length) { // Check .length for jQuery objects
+                uploadedFile.remove();
+            } else {
+                console.warn("Unable to find the element to remove in the DOM.");
+            }
+        } else {
+            const msg = result.error || _t("Error occurred while removing the attachment.");
+            console.error("Server error:", msg, result);
+            ToastService.error(msg);
+        }
+    } catch (error) {
+        console.error("JS error while removing attachment:", error);
+        ToastService.error(_t("Unable to remove the attachment."));
+    }
+});
+
+
+
+
+
+
+
+
+
+
     });
 });
