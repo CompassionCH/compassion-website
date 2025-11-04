@@ -23,14 +23,14 @@
 <odoo>
     <template id="SponsorChildTimelineBatchComponent" name="My Compassion 2 Child Timeline Batch Component">
         <t t-foreach="records" t-as="item">
-            <t t-if="item.model == 'sponsorship_gift'">
+            <t t-if="item['model'] == 'sponsorship_gift'">
                 <div class="cd-timeline__block">
-                    <t t-if="item.title == 'Birthday gift'">
+                    <t t-if="'Birthday' in item['metadata']">
                         <div class="cd-timeline__img bg-high-pink">
                             <i class="pictogram pictogram-birthday-gift bg-low-black" />
                         </div>
                     </t>
-                    <t t-elif="item.title == 'Family gift'">
+                    <t t-elif="'Family Gift' in item['metadata']">
                         <div class="cd-timeline__img bg-high-brown">
                             <i class="pictogram pictogram-family-gift bg-low-black" />
                         </div>
@@ -42,64 +42,51 @@
                     </t>
                     <div class="cd-timeline__content text-component">
                         <p class="modal-title text-core-blue">
-                            <t t-esc="item.title" />
+                            <t t-esc="item['title']" />
                         </p>
-                        <t t-if="item.amount">
+                        <t t-if="item['amount']">
                             <p class="text-muted">
-                                <t t-esc="item.amount" />
-                                <t t-esc="item.currency_name" />
+                                <t t-esc="item['amount']" />
+                                <t t-esc="item['currency_name']" />
                             </p>
                         </t>
                         <div class="flex justify-between items-center">
                             <span class="cd-timeline__date">
-                                <t t-esc="item.get_date('create_date')" />
+                                <t t-esc="item['create_date']" t-options='{"widget": "date"}' />
                             </span>
                         </div>
                     </div>
-                    <!-- cd-timeline__content -->
                 </div>
-                <!-- cd-timeline__block -->
             </t>
-            <!-- sponsorship_gift -->
-            <t t-elif="item.model == 'correspondence'">
+            <t t-elif="item['model'] == 'correspondence'">
                 <div class="cd-timeline__block">
                     <div class="cd-timeline__img bg-core-blue">
                         <a
-                            t-att-href="'/b2s_image?id=' + item.record_id + '&amp;disposition=inline&amp;file_type=pdf'"
+                            t-att-href="'/b2s_image?id=' + item['record_id'] + '&amp;disposition=inline&amp;file_type=pdf'"
                             class="flex items-center justify-center w-full h-full rounded-full"
                         >
                             <i class="pictogram pictogram-letter-writing bg-pure-white" />
                         </a>
                     </div>
-                    <!-- cd-timeline__img -->
                     <a
                         class="cd-timeline__content text-component text-decoration-none"
-                        t-att-href="'/b2s_image?id=' + item.record_id + '&amp;disposition=inline&amp;file_type=pdf'"
+                        t-att-href="'/b2s_image?id=' + item['record_id'] + '&amp;disposition=inline&amp;file_type=pdf'"
                     >
                         <p class="modal-title text-core-blue">
-                            <t t-esc="item.title" />
+                            <t t-esc="item['title']" />
                         </p>
-                        <t t-if="item.amount">
+                        <t t-if="item['amount']">
                             <p class="text-muted">
-                                <t t-esc="item.amount" />
-                                <t t-esc="item.currency_name" />
+                                <t t-esc="item['amount']" />
+                                <t t-esc="item['currency_name']" />
                             </p>
                         </t>
                         <div class="flex justify-between items-center">
                             <span class="cd-timeline__date">
-                                <t t-esc="item.get_date('create_date')" />
+                                <t t-esc="item['create_date']" t-options='{"widget": "date"}' />
                             </span>
                         </div>
                     </a>
-                    <!-- cd-timeline__content -->
-                </div>
-                <!-- cd-timeline__block -->
-            </t>
-            <!-- correspondence -->
-            <t t-else="">
-                <div class="timeline-card d-flex">
-                    This item type is not supported in the
-                    timeline.
                 </div>
             </t>
         </t>

@@ -7,7 +7,9 @@
 #
 ##############################################################################
 import json
+import logging  # Assurez-vous que c'est en haut du fichier
 
+_logger = logging.getLogger(__name__)  # Assurez-vous que c'est en haut du fichier
 from odoo import _, http
 from odoo.exceptions import AccessError
 from odoo.http import request
@@ -40,14 +42,74 @@ class MyCompassionChildrenController(WebsiteChild):
                 )
 
     def _get_timeline_records(self, partner_id, child_id, offset=0, limit=9):
-        """Private helper to fetch a paginated list of timeline records."""
-        domain = [("child_id", "=", child_id), ("partner_id", "=", partner_id)]
-        timeline_model = request.env["sponsorship.timeline"].sudo()
-        total = timeline_model.search_count(domain)
-        records = timeline_model.search(
-            domain, order="create_date desc", offset=offset, limit=limit
+        sql_count = """
+            SELECT SUM(c) FROM (
+                (SELECT COUNT(*) as c FROM correspondence WHERE child_id = %s AND partner_id = %s)
+                UNION ALL
+                (SELECT COUNT(*) as c FROM sponsorship_gift WHERE child_id = %s AND partner_id = %s)
+            ) AS counts
+        """
+        request.env.cr.execute(sql_count, (child_id, partner_id, child_id, partner_id))
+        total = request.env.cr.fetchone()[0] or 0
+        title_corr_wrote = _("Wrote you a letter")
+        title_corr_received = _("Received your letter")
+        title_gift_bday = _("Birthday gift")
+        title_gift_general = _("General gift")
+        title_gift_grad = _("Graduation/Final gift")
+        title_gift_family = _("Family gift")
+        title_gift_default = _("A gift")
+        sql_data = """
+            (SELECT
+                'correspondence' AS model,
+                c.uuid::text AS record_id,
+                '' AS amount,
+                '' AS currency_name,
+                c.direction AS metadata,
+                c.create_date,
+                CASE WHEN c.direction = 'Beneficiary To Supporter' THEN %s ELSE %s END AS title
+             FROM correspondence c
+             WHERE c.child_id = %s AND c.partner_id = %s)
+            UNION ALL
+            (SELECT
+                'sponsorship_gift' AS model,
+                s.id::text AS record_id,
+                s.amount::text AS amount,
+                COALESCE(rc.name, 'CHF') AS currency_name,
+                s.gift_type || '|' || COALESCE(s.sponsorship_gift_type, '') AS metadata,
+                s.create_date,
+                CASE
+                    WHEN s.gift_type = 'Birthday' THEN %s
+                    WHEN s.gift_type = 'General' THEN %s
+                    WHEN s.gift_type = 'Graduation/Final' THEN %s
+                    WHEN s.gift_type = 'Family Gift' THEN %s
+                    ELSE %s
+                END AS title
+             FROM sponsorship_gift s
+             LEFT JOIN account_move_line aml ON aml.gift_id = s.id
+             LEFT JOIN res_currency rc ON rc.id = aml.currency_id
+             WHERE s.child_id = %s AND s.partner_id = %s)
+            ORDER BY create_date DESC
+            LIMIT %s OFFSET %s
+        """
+        params = (
+            title_corr_wrote,
+            title_corr_received,
+            child_id,
+            partner_id,
+            title_gift_bday,
+            title_gift_general,
+            title_gift_grad,
+            title_gift_family,
+            title_gift_default,
+            child_id,
+            partner_id,
+            limit,
+            offset,
         )
-        return records, total
+        request.env.cr.execute(sql_data, params)
+        records_data = request.env.cr.dictfetchall()
+
+        return records_data, total
 
     @http.route("/my2/children", type="http", auth="user", website=True, sitemap=False)
     def my2_render_children_page(self, **kwargs):
