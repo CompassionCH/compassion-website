@@ -7,9 +7,7 @@
 #
 ##############################################################################
 import json
-import logging  # Assurez-vous que c'est en haut du fichier
 
-_logger = logging.getLogger(__name__)  # Assurez-vous que c'est en haut du fichier
 from odoo import _, http
 from odoo.exceptions import AccessError
 from odoo.http import request
