@@ -37,71 +37,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 this.autoSaveTimer = null;
             },
 
-                    /**
-         * Binds the remove-attachment click event to uploaded files.
-         * Assumes 'this' is an Odoo widget and rpc, _t, and ToastService are available.
-         *
-         * @param {Array<number>} attachmentIds - A list of attachment IDs.
-         */
-        _bindAttachmentToRemoveButton: function (attachmentIds) {
-            // Select all .uploaded-file elements within this widget
-            const uploadedFilesEl = this.$(".uploaded-file");
+            start: function(){
+            const attachmentIds = $('.uploaded-file').map(function() {return $(this).data('file-key');}).get();
+            this._bindAttachmentToRemoveButton(attachmentIds);
+            },
 
-            uploadedFilesEl.each((index, element) => {
-                // 'element' is the raw DOM element for .uploaded-file
-
-                // Find the button within this element using jQuery
-                const $button = this.$(element).find(".remove-attachment-button");
-
-                // Get the corresponding attachment ID from the input array
-                const attachmentId = attachmentIds[index];
-
-                // Safety check: skip if the arrays don't match
-                if (!attachmentId) {
-                    console.warn(`No attachment ID found for element at index ${index}`);
-                    return; // Skips to the next item in the .each() loop
-                }
-
-                // Set the data attribute on the PARENT element
-                element.dataset.fileKey = attachmentId;
-
-                // Set the button to send a remove request on click
-                // .off() prevents binding multiple click events if this function is called again
-                $button.off("click").on("click", async (event) => {
-                    event.preventDefault();
-
-                    // Read the ID from the PARENT element's attribute
-                    const idToRemove = element.getAttribute("data-file-key");
-
-                    if (!idToRemove) {
-                        const msg = _t("Attachment ID is missing.");
-                        ToastService.error(msg);
-                        return;
-                    }
-
-                    try {
-                        // Call Odoo route
-                        const result = await rpc.query({
-                            route: "/my2/letter/remove_attachment",
-                            params: { attachment_id: parseInt(idToRemove, 10) },
-                        });
-
-                        // Check server response
-                        if (result.success) {
-                            // Remove the entire '.uploaded-file' element
-                            element.remove();
-                        } else {
-                            const msg = result.error || _t("Error occurred while removing the attachment.");
-                            console.error("Server error:", msg, result);
-                            ToastService.error(msg);
-                        }
-                    } catch (error) {
-                        console.error("JS error while removing attachment:", error);
-                        ToastService.error(_t("Unable to remove the attachment."));
-                    }
-                });
-            });
-        },
 
             _onSubmitLetter: async function (ev) {
                 ev.preventDefault();
@@ -268,6 +208,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 return Promise.all(filePromises);
             },
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 _createGenerator: async function (data) {
                 const result = await rpc.query({
                     route: "/my2/children/letters/create_generator",
@@ -406,6 +360,73 @@ _createGenerator: async function (data) {
 
 
 
+
+
+                                            /**
+         * Binds the remove-attachment click event to uploaded files.
+         * Assumes 'this' is an Odoo widget and rpc, _t, and ToastService are available.
+         *
+         * @param {Array<number>} attachmentIds - A list of attachment IDs.
+         */
+        _bindAttachmentToRemoveButton: function (attachmentIds) {
+            // Select all .uploaded-file elements within this widget
+            const uploadedFilesEl = this.$(".uploaded-file");
+
+            uploadedFilesEl.each((index, element) => {
+                // 'element' is the raw DOM element for .uploaded-file
+
+                // Find the button within this element using jQuery
+                const $button = this.$(element).find(".remove-attachment-button");
+
+                // Get the corresponding attachment ID from the input array
+                const attachmentId = attachmentIds[index];
+
+                // Safety check: skip if the arrays don't match
+                if (!attachmentId) {
+                    console.warn(`No attachment ID found for element at index ${index}`);
+                    return; // Skips to the next item in the .each() loop
+                }
+
+                // Set the data attribute on the PARENT element
+                element.dataset.fileKey = attachmentId;
+
+                // Set the button to send a remove request on click
+                // .off() prevents binding multiple click events if this function is called again
+                $button.off("click").on("click", async (event) => {
+                    event.preventDefault();
+
+                    // Read the ID from the PARENT element's attribute
+                    const idToRemove = element.getAttribute("data-file-key");
+
+                    if (!idToRemove) {
+                        const msg = _t("Attachment ID is missing.");
+                        ToastService.error(msg);
+                        return;
+                    }
+
+                    try {
+                        // Call Odoo route
+                        const result = await rpc.query({
+                            route: "/my2/letter/remove_attachment",
+                            params: { attachment_id: parseInt(idToRemove, 10) },
+                        });
+
+                        // Check server response
+                        if (result.success) {
+                            // Remove the entire '.uploaded-file' element
+                            element.remove();
+                        } else {
+                            const msg = result.error || _t("Error occurred while removing the attachment.");
+                            console.error("Server error:", msg, result);
+                            ToastService.error(msg);
+                        }
+                    } catch (error) {
+                        console.error("JS error while removing attachment:", error);
+                        ToastService.error(_t("Unable to remove the attachment."));
+                    }
+                });
+            });
+        },
 
 
 
