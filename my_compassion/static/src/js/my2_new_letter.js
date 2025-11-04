@@ -65,8 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 try {
                     const initialResult = await this._createGenerator(creationData);
-                    // Bind the remove buttons to the newly created attachment IDs
-                    // This ensures that any attachments saved on the server can be removed by the user from the backend.
+
 
                     if (!initialResult.generator_id) {
                         throw new Error(initialResult.error || _t("Could not save the letter."));
@@ -216,7 +215,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     route: "/my2/children/letters/create_generator",
                     params: data,
                 });
-
+                // Bind the remove attachment buttons to the newly created attachment IDs
+                // This ensures that any attachments saved on the server can be removed by the user.
                 this._bindAttachmentToRemoveButton(result.image_ids || []);
 
                 return result;
