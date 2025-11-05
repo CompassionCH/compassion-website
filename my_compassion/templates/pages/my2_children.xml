@@ -9,7 +9,8 @@ Page: My Compassion 2 Children Page
     - /my2/children/
 
     Injected data:
-    - sponsorship_ids (array of 'recurring_contract' records): The sponsorships associated with the user.
+    - active_sponsorships (array of 'recurring_contract' records): The sponsorships associated with the user.
+    - ended_sponsorships (array of 'recurring_contract' records): The terminated sponsorships associated with the user.
 -->
 <odoo>
     <template id="my2_children_page" name="My Compassion 2 Children Page">
@@ -42,29 +43,27 @@ Page: My Compassion 2 Children Page
                     </div>
                 </div>
                 <!-- ACTIVE SPONSORSHIPS CHILDREN-->
-                <div class="container-content d-flex flex-column align-items-center mt-4">
+                <div class="container-content d-flex flex-column align-items-center mt-4 mb-5">
                     <div class="w-100 d-flex flex-column">
-                        <div class="row justify-content-center">
-                            <t t-foreach="sponsorship_ids" t-as="sponsorship">
-                                <t t-if="sponsorship.state == 'active'">
-                                    <div class="col-12 col-md-6 col-lg-4">
-                                        <t t-call="my_compassion.my2_children_card_component">
-                                            <t t-set="child" t-value="sponsorship.child_id" />
-                                            <t t-set="sponsorship_end_date" t-value="sponsorship.end_date" />
-                                            <t
-                                                t-set="latest_correspondence"
-                                                t-value="latest_correspondences_by_child_id.get(sponsorship.child_id.id)"
-                                            />
-                                        </t>
-                                    </div>
-                                </t>
+                        <div class="row justify-content-center align-items-stretch">
+                            <t t-foreach="active_sponsorships" t-as="sponsorship">
+                                <div class="col-12 col-md-6 col-lg-4">
+                                    <t t-call="my_compassion.my2_children_card_component">
+                                        <t t-set="child" t-value="sponsorship.child_id" />
+                                        <t t-set="sponsorship_end_date" t-value="sponsorship.end_date" />
+                                        <t
+                                            t-set="latest_correspondence"
+                                            t-value="latest_correspondences_by_child_id.get(sponsorship.child_id.id)"
+                                        />
+                                    </t>
+                                </div>
                             </t>
                         </div>
                     </div>
                 </div>
                 <!-- TERMINATED SPONSORSHIPS CHILDREN -->
-                <t t-if="any(s.state == 'terminated' for s in sponsorship_ids)">
-                    <div class="single-column">
+                <t t-if="ended_sponsorships">
+                    <div class="single-column mt-4">
                         <t t-call="theme_compassion_2025.TitleComponent">
                             <t t-set="title_content" t-value="'Ended sponsorships'" />
                             <t t-set="title_size" t-value="'md'" />
@@ -78,22 +77,20 @@ Page: My Compassion 2 Children Page
                             />
                         </t>
                     </div>
-                    <div class="container-content d-flex flex-column align-items-center mt-4">
+                    <div class="container-content d-flex flex-column align-items-center mb-5">
                         <div class="w-100 d-flex flex-column">
                             <div class="row justify-content-center">
-                                <t t-foreach="sponsorship_ids" t-as="sponsorship">
-                                    <t t-if="sponsorship.state == 'terminated'">
-                                        <div class="col-12 col-md-6 col-lg-4">
-                                            <t t-call="my_compassion.my2_children_card_component">
-                                                <t t-set="child" t-value="sponsorship.child_id" />
-                                                <t t-set="sponsorship_end_date" t-value="sponsorship.end_date" />
-                                                <t
-                                                    t-set="latest_correspondence"
-                                                    t-value="latest_correspondences_by_child_id.get(sponsorship.child_id.id)"
-                                                />
-                                            </t>
-                                        </div>
-                                    </t>
+                                <t t-foreach="ended_sponsorships" t-as="sponsorship">
+                                    <div class="col-12 col-md-6 col-lg-4">
+                                        <t t-call="my_compassion.my2_children_card_component">
+                                            <t t-set="child" t-value="sponsorship.child_id" />
+                                            <t t-set="sponsorship_end_date" t-value="sponsorship.end_date" />
+                                            <t
+                                                t-set="latest_correspondence"
+                                                t-value="latest_correspondences_by_child_id.get(sponsorship.child_id.id)"
+                                            />
+                                        </t>
+                                    </div>
                                 </t>
                             </div>
                         </div>

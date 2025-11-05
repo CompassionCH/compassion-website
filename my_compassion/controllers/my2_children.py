@@ -77,11 +77,17 @@ class MyCompassionChildrenController(WebsiteChild):
         breadcrumbs = [
             {"name": "Children", "url": "/my2/children/", "active": True},
         ]
+        sponsorships = partner.sponsorship_ids.filtered("can_show_on_my_compassion")
 
         return request.render(
             "my_compassion.my2_children_page",
             {
-                "sponsorship_ids": partner.sponsorship_ids,
+                "active_sponsorships": sponsorships.filtered(
+                    lambda s: s.state != "terminated" or s.sds_state == "sub_waiting"
+                ),
+                "ended_sponsorships": sponsorships.filtered(
+                    lambda s: s.state == "terminated" and s.sds_state != "sub_waiting"
+                ),
                 "latest_correspondences_by_child_id": latest_corr_by_child,
                 "breadcrumbs": breadcrumbs,
             },
@@ -101,7 +107,7 @@ class MyCompassionChildrenController(WebsiteChild):
         except AccessError:
             return request.redirect("/my2/children/")
 
-        access_scope = "sponsor" if child.state == "P" else "public"
+        access_scope = "public" if child.is_published else "sponsor"
 
         offset = int(kwargs.get("offset", 0))
         limit = int(kwargs.get("limit", 9))

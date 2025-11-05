@@ -174,6 +174,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         partner = request.env.user.partner_id
         child_id = self._safe_int(kwargs.get("child_id"), None)
         child = request.env["compassion.child"].browse(child_id)
+        sponsorships = partner.sponsorship_ids.filtered("child_id.can_i_write_letter")
 
         try:
             self._check_sponsored_child_access(child)
@@ -196,7 +197,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         )
 
         if not child:
-            child = partner.sponsorship_ids[:1].child_id
+            child = sponsorships[:1].child_id
 
         draft = (
             request.env["correspondence.s2b.generator"]
@@ -216,7 +217,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             "my_compassion.my2_new_letter_page",
             {
                 "selected_child": child,
-                "sponsorship_ids": partner.sponsorship_ids,
+                "sponsorship_ids": sponsorships,
                 "templates": templates,
                 "draft": draft,
             },

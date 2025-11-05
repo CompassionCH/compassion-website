@@ -27,11 +27,25 @@
                      t-attf-src="/web/image/compassion.child/{{child.id}}/portrait"
                 -->
                 <!-- Child name -->
-                <div class="h2 mb-3">
+                <div class="h2 mb-0">
                     <t t-esc="child.preferred_name" />
                 </div>
+                <div class="small" t-if="sponsorship.state in ('draft', 'waiting', 'mandate')">
+                    <span
+                        class="badge bg-low-yellow"
+                        title="Your sponsorship is being confirmed and will become active soon"
+                        aria-label="Sponsorship pending confirmation"
+                    >
+                        Pending activation
+                    </span>
+                </div>
+                <div class="small" t-if="sponsorship.state == 'terminated'">
+                    <span class="badge bg-low-yellow" title="Your sponsorship has ended" aria-label="Sponsorship ended">
+                        Sponsorship ended
+                    </span>
+                </div>
                 <!-- Correspondence Status and info section -->
-                <div class="body-small">
+                <div class="body-small mt-3">
                     <div t-if="show_status" class="mb-3 pl-3 pr-3">
                         <span class="border-bottom border-2 border-high-orange">
                             <t t-if="sponsorship_end_date">
@@ -54,13 +68,13 @@
                         <t t-elif="child.gender == 'F'">Female</t>
                         <t t-else="">Not specified</t>
                     </div>
-                    <div class="mb-3">
+                    <div>
                         <i class="icon-map01 bg-low-yellow mx-1" />
                         <t t-esc="child.field_office_id.name" />
                     </div>
                 </div>
                 <!-- Profile Button -->
-                <div class="mb-2">
+                <div class="mb-2 mt-auto">
                     <a t-attf-href="/my2/children/{{child.id}}">
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variation" t-value="'filled'" />
