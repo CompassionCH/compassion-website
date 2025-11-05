@@ -3,17 +3,17 @@ odoo.define("my_compassion.my2_prevent_modal_resize_error", function (require) {
 
     const publicWidget = require("web.public.widget");
 
-    publicWidget.registry.TemplateSelectionWidget = publicWidget.Widget.extend({
+    publicWidget.registry.ModalResizeFixWidget = publicWidget.Widget.extend({
         selector: ".modal-dialog",
         start: function () {
             this._super.apply(this, arguments);
 
             if (!window.jQuery) {
-                console.error("TemplateSelectionWidget: Global jQuery not found.");
+                console.error("ModalResizeFixWidget: Global jQuery not found.");
                 return;
             }
 
-            // override bootstrap scroll event method
+            // Override Bootstrap's scrollbar compensation logic
             if (window.jQuery.fn.compensateScrollbar) {
                 window.jQuery.fn.compensateScrollbar = function () {
                     return this;
@@ -22,5 +22,5 @@ odoo.define("my_compassion.my2_prevent_modal_resize_error", function (require) {
         },
     });
 
-    return publicWidget.registry.TemplateSelectionWidget;
+    return publicWidget.registry.ModalResizeFixWidget;
 });
