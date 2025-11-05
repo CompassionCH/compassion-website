@@ -96,6 +96,7 @@
     "depends": [
         "partner_communication_compassion",
         "wordpress_configuration",
+        "sponsorship_sub_management",
         "web",
         "website_sale",
         "website_child_protection",

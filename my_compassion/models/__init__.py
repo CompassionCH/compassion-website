@@ -24,4 +24,6 @@ from . import (
     correspondence_prewritten_letter,
     my2_event_banner,
     my2_website_route,
+    compassion_child,
+    contracts,
 )
