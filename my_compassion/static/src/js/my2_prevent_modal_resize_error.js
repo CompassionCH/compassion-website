@@ -1,28 +1,26 @@
-    odoo.define('my_compassion.my2_prevent_modal_resize_error', function (require) {
-        "use strict";
+odoo.define("my_compassion.my2_prevent_modal_resize_error", function (require) {
+    "use strict";
 
-        const publicWidget = require("web.public.widget");
+    const publicWidget = require("web.public.widget");
 
-        publicWidget.registry.TemplateSelectionWidget = publicWidget.Widget.extend({
-            selector: ".modal-dialog",
-            start: function () {
+    publicWidget.registry.TemplateSelectionWidget = publicWidget.Widget.extend({
+        selector: ".modal-dialog",
+        start: function () {
+            this._super.apply(this, arguments);
 
-                this._super.apply(this, arguments);
+            if (!window.jQuery) {
+                console.error("TemplateSelectionWidget: Global jQuery not found.");
+                return;
+            }
 
-                if (!window.jQuery) {
-                    console.error("TemplateSelectionWidget: Global jQuery not found.");
-                    return;
-                }
-
-                // override bootstrap scroll event method
-                if (window.jQuery.fn.compensateScrollbar) {
-                    window.jQuery.fn.compensateScrollbar = function () {
-                        return this;
-                    };
-                }
-
-            },
-        });
-
-        return publicWidget.registry.TemplateSelectionWidget;
+            // override bootstrap scroll event method
+            if (window.jQuery.fn.compensateScrollbar) {
+                window.jQuery.fn.compensateScrollbar = function () {
+                    return this;
+                };
+            }
+        },
     });
+
+    return publicWidget.registry.TemplateSelectionWidget;
+});
