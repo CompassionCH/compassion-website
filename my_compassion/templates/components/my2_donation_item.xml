@@ -77,12 +77,20 @@
                 class="thumbnail responsive-lg mr-3 flex-shrink-0 rounded-lg"
                 t-attf-style="--image_url: url('#{image}');"
             />
-            <div
-                class="thumbnail responsive-sm mr-3 flex-shrink-0 rounded-lg"
-                t-attf-style="--image_url: url('#{image}');"
-            />
+            <t t-if="not primary_button">
+                <div
+                    class="thumbnail responsive-sm mr-3 flex-shrink-0 rounded-lg"
+                    t-attf-style="--image_url: url('#{image}');"
+                />
+            </t>
             <div class="w-100 d-flex flex-column justify-content-between">
                 <div class="d-flex align-items-start">
+                    <t t-if="primary_button">
+                        <div
+                            class="thumbnail responsive-sm mr-3 flex-shrink-0 rounded-lg"
+                            t-attf-style="--image_url: url('#{image}');"
+                        />
+                    </t>
                     <div class="flex-grow-1 d-flex flex-column">
                         <div t-attf-class="text-#{title_color} body-large bold">
                             <t t-esc="name" />
