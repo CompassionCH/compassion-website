@@ -274,7 +274,19 @@
                                 <iframe id="previewImage" src="" class="w-100 h-100 border-0" />
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <a
+                                    href="#"
+                                    data-dismiss="modal"
+                                    aria-label="Close"
+                                    style="text-decoration: none; border: 0;"
+                                >
+                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                        <t t-set="variant" t-value="'default'" />
+                                        <t t-set="variation" t-value="'outline'" />
+                                        <t t-set="label">Close</t>
+                                        <t t-set="color" t-value="'dark-blue'" />
+                                    </t>
+                                </a>
                             </div>
                         </div>
                     </div>
