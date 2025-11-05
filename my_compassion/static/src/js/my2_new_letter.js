@@ -41,7 +41,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 ev.preventDefault();
 
                 const submitButton = ev.originalEvent.submitter;
-
                 const mode = $(submitButton).data("custom");
 
                 let formData;
