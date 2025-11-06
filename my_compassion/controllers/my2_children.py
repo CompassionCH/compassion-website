@@ -127,7 +127,7 @@ class MyCompassionChildrenController(WebsiteChild):
                     %(title_start_sponsorship)s AS title
                 FROM recurring_contract rc
                 WHERE rc.child_id = %(child_id)s
-                  AND rc.partner_id = (%(current_partner_id)s)
+                  AND rc.partner_id = %(current_partner_id)s
                   AND rc.state NOT IN ('draft')
 
             ) AS timeline
