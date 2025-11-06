@@ -84,7 +84,7 @@ class MyCompassionSponsorshipsController(WebsiteChild):
         return: An JSON response containing the rendered template html
         as well as the new children count and total hits.
         """
-        child_obj = request.env["compassion.child"]
+        child_obj = request.env["compassion.child"].sudo()
         if global_pool:
             try:
                 post["limit"] = GLOBAL_FETCH_LIMIT
@@ -319,13 +319,21 @@ class MyCompassionNewSponsorshipController(http.Controller):
             .sudo()
             .search([("translatable", "=", True)])
         )
-        payment_methods = request.env["account.payment.mode"].sudo().search([])
-        lead_sources = request.env["recurring.contract.origin"].sudo().search([])
+        payment_methods = (
+            request.env["account.payment.mode"]
+            .sudo()
+            .search([("website_published", "=", True)])
+        )
+        lead_sources = (
+            request.env["recurring.contract.origin"]
+            .sudo()
+            .search(
+                [
+                    ("website_published", "=", True),
+                ]
+            )
+        )
         currency_name = request.env.user.company_id.currency_id.name
-
-        # TODO: decide if we filter by website_published or not
-        # payment_methods = request.env["account.payment.mode"].sudo().search([("website_published", "=", True)]) # noqa: E501
-        # lead_sources = request.env["recurring.contract.origin"].sudo().search([("website_published", "=", True)]) # noqa: E501
 
         # Render step template first
         inner_step_html = request.env["ir.qweb"]._render(

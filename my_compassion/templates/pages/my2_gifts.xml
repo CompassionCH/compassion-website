@@ -24,7 +24,7 @@ Page: My Compassion 2 Gifts Page
                 <t t-set="is_gift" t-value="type == 'gift'" />
                 <t t-set="is_fund" t-value="type == 'fund'" />
                 <!-- BANNER -->
-                <div class="content-column mt-4">
+                <div class="container-content mt-4">
                     <t t-call="theme_compassion_2025.BannerComponent">
                         <t t-if="is_gift">
                             <t t-set="title" t-value="'Gift of compassion'" />
@@ -48,7 +48,7 @@ Page: My Compassion 2 Gifts Page
                     </t>
                 </div>
                 <!-- TITLE -->
-                <div class="content-column mt-4">
+                <div class="container-content mt-4">
                     <t t-call="theme_compassion_2025.TitleComponent">
                         <t t-if="is_gift">
                             <t t-set="title_content" t-value="'Gift to your sponsored children'" />

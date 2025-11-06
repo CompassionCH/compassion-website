@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 //Remove the uploaded files from the input
                 const fileInput = this.$("#letter-attachments")[0];
                 fileInput.value = "";
-                uploadedFiles = [];
+                uploadedAttachmentLetterFiles = [];
                 //Clear the uploaded images container
                 this.$("#uploaded-files-container").empty();
 
