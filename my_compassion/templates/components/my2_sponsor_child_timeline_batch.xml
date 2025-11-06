@@ -89,6 +89,23 @@
                     </a>
                 </div>
             </t>
+            <t t-elif="item['model'] == 'start_sponsorship'">
+                <div class="cd-timeline__block">
+                    <div class="cd-timeline__img bg-high-green">
+                        <i class="pictogram pictogram-child-sponsorship bg-low-black" />
+                    </div>
+                    <div class="cd-timeline__content text-component">
+                        <p class="modal-title text-core-blue">
+                            <t t-esc="item['title']" />
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <span class="cd-timeline__date">
+                                <t t-esc="item['create_date']" t-options='{"widget": "date"}' />
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </t>
         </t>
     </template>
 </odoo>
