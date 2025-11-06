@@ -66,7 +66,16 @@ class MyCompassionChildrenController(WebsiteChild):
                 +
                 (SELECT COUNT(*) FROM sponsorship_gift
                  WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
-                AS total
+                +
+                (CASE WHEN EXISTS (
+                    SELECT 1 FROM recurring_contract rc
+                    WHERE rc.child_id = %(child_id)s
+                      AND rc.partner_id = (%(current_partner_id)s)
+                      AND rc.state NOT IN ('draft')
+                      AND rc.activation_date IS NOT NULL
+                )
+                THEN 1 ELSE 0 END)
+            AS total
         """
         request.env.cr.execute(
             sql,
@@ -76,8 +85,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 "current_partner_id": partner_ids[0],
             },
         )
-        # The +1 is for the "start sponsorship" record
-        return request.env.cr.fetchone()[0] + 1 or 0
+        return request.env.cr.fetchone()[0] or 0
 
     def _get_timeline_data(self, child_id, partner_ids, offset, limit):
         """Fetch paginated timeline records (correspondence + gifts) ordered by date."""
