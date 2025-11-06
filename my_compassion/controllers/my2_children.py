@@ -58,7 +58,7 @@ class MyCompassionChildrenController(WebsiteChild):
         return partner.ids
 
     def _get_timeline_count(self, child_id, partner_ids):
-        """Get total count of timeline records (correspondence + gifts)."""
+        """Get total count of timeline records (correspondence + gifts + start)."""
         sql = """
             SELECT
                 (SELECT COUNT(*) FROM correspondence
@@ -68,8 +68,9 @@ class MyCompassionChildrenController(WebsiteChild):
                  WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
                 AS total
         """
-        request.env.cr.execute(sql, {"child_id": child_id, "partner_ids": partner_ids})
-        return request.env.cr.fetchone()[0] or 0
+        request.env.cr.execute(sql, {"child_id": child_id, "partner_ids": partner_ids, "current_partner_id": partner_ids[0],})
+        # The +1 is for the "start sponsorship" record
+        return request.env.cr.fetchone()[0] + 1 or 0
 
     def _get_timeline_data(self, child_id, partner_ids, offset, limit):
         """Fetch paginated timeline records (correspondence + gifts) ordered by date."""
@@ -113,6 +114,22 @@ class MyCompassionChildrenController(WebsiteChild):
                 LEFT JOIN res_currency rc ON rc.id = aml.currency_id
                 WHERE s.child_id = %(child_id)s
                   AND s.partner_id = ANY(%(partner_ids)s)
+                  
+                  UNION ALL
+
+                SELECT
+                    'start_sponsorship' AS model,
+                    rc.id::text AS record_id,
+                    '' AS amount,
+                    '' AS currency_name,
+                    '' AS metadata,
+                    rc.activation_date::timestamp AS create_date,
+                    %(title_start_sponsorship)s AS title
+                FROM recurring_contract rc
+                WHERE rc.child_id = %(child_id)s
+                  AND rc.partner_id = (%(current_partner_id)s)
+                  AND rc.state NOT IN ('draft')
+
             ) AS timeline
             ORDER BY create_date DESC
             LIMIT %(limit)s OFFSET %(offset)s
@@ -121,6 +138,7 @@ class MyCompassionChildrenController(WebsiteChild):
         params = {
             "child_id": child_id,
             "partner_ids": partner_ids,
+            "current_partner_id": partner_ids[0],
             "default_currency": request.env.user.currency_id.name,
             "title_corr_wrote": _("Wrote you a letter"),
             "title_corr_received": _("Received your letter"),
@@ -129,6 +147,7 @@ class MyCompassionChildrenController(WebsiteChild):
             "title_gift_grad": _("Graduation/Final gift"),
             "title_gift_family": _("Family gift"),
             "title_gift_default": _("Received a gift"),
+            "title_start_sponsorship": _("Started sponsorship"),
             "limit": limit,
             "offset": offset,
         }
