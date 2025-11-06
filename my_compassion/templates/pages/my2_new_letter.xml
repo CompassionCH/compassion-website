@@ -264,29 +264,22 @@
                 >
                     <div class="modal-dialog" role="document">
                         <div class="modal-content h-100">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="previewModalLabel">Letter Preview</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">x</span>
+                            <div class="modal-header align-items-center">
+                                <h5 class="modal-title title-heading text-core-blue " id="previewModalLabel">
+                                    Letter Preview
+                                </h5>
+                                <button
+                                    type="button"
+                                    class="close"
+                                    data-dismiss="modal"
+                                    aria-label="Close"
+                                    style="opacity: 1;"
+                                >
+                                    <h3 aria-hidden="true" class="text-core-blue">x</h3>
                                 </button>
                             </div>
                             <div class="modal-body text-center h-100">
                                 <iframe id="previewImage" src="" class="w-100 h-100 border-0" />
-                            </div>
-                            <div class="modal-footer">
-                                <a
-                                    href="#"
-                                    data-dismiss="modal"
-                                    aria-label="Close"
-                                    style="text-decoration: none; border: 0;"
-                                >
-                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                        <t t-set="variant" t-value="'default'" />
-                                        <t t-set="variation" t-value="'outline'" />
-                                        <t t-set="label">Close</t>
-                                        <t t-set="color" t-value="'dark-blue'" />
-                                    </t>
-                                </a>
                             </div>
                         </div>
                     </div>
