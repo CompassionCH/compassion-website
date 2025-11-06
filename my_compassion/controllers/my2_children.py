@@ -39,75 +39,119 @@ class MyCompassionChildrenController(WebsiteChild):
                     _("You are not authorized to view this child's information.")
                 )
 
-    def _get_timeline_records(self, partner_id, child_id, offset=0, limit=9):
-        sql_count = """
-            SELECT SUM(c) FROM (
-                (SELECT COUNT(*) as c FROM correspondence WHERE child_id = %s AND partner_id = %s)
-                UNION ALL
-                (SELECT COUNT(*) as c FROM sponsorship_gift WHERE child_id = %s AND partner_id = %s)
-            ) AS counts
+    def _get_authorized_partner_ids(self, child):
         """
-        request.env.cr.execute(sql_count, (child_id, partner_id, child_id, partner_id))
-        total = request.env.cr.fetchone()[0] or 0
-        title_corr_wrote = _("Wrote you a letter")
-        title_corr_received = _("Received your letter")
-        title_gift_bday = _("Birthday gift")
-        title_gift_general = _("General gift")
-        title_gift_grad = _("Graduation/Final gift")
-        title_gift_family = _("Family gift")
-        title_gift_default = _("A gift")
-        sql_data = """
-            (SELECT
-                'correspondence' AS model,
-                c.uuid::text AS record_id,
-                '' AS amount,
-                '' AS currency_name,
-                c.direction AS metadata,
-                c.create_date,
-                CASE WHEN c.direction = 'Beneficiary To Supporter' THEN %s ELSE %s END AS title
-             FROM correspondence c
-             WHERE c.child_id = %s AND c.partner_id = %s)
-            UNION ALL
-            (SELECT
-                'sponsorship_gift' AS model,
-                s.id::text AS record_id,
-                s.amount::text AS amount,
-                COALESCE(rc.name, 'CHF') AS currency_name,
-                s.gift_type || '|' || COALESCE(s.sponsorship_gift_type, '') AS metadata,
-                s.create_date,
-                CASE
-                    WHEN s.gift_type = 'Birthday' THEN %s
-                    WHEN s.gift_type = 'General' THEN %s
-                    WHEN s.gift_type = 'Graduation/Final' THEN %s
-                    WHEN s.gift_type = 'Family Gift' THEN %s
-                    ELSE %s
-                END AS title
-             FROM sponsorship_gift s
-             LEFT JOIN account_move_line aml ON aml.gift_id = s.id
-             LEFT JOIN res_currency rc ON rc.id = aml.currency_id
-             WHERE s.child_id = %s AND s.partner_id = %s)
-            ORDER BY create_date DESC
-            LIMIT %s OFFSET %s
+        Get the list of partner IDs authorized to view timeline records.
+        Includes the current partner and potentially the correspondent
+        if portal settings allow.
         """
-        params = (
-            title_corr_wrote,
-            title_corr_received,
-            child_id,
-            partner_id,
-            title_gift_bday,
-            title_gift_general,
-            title_gift_grad,
-            title_gift_family,
-            title_gift_default,
-            child_id,
-            partner_id,
-            limit,
-            offset,
-        )
-        request.env.cr.execute(sql_data, params)
-        records_data = request.env.cr.dictfetchall()
+        partner = request.env.user.partner_id
+        sponsorship = child.my_sponsorship_id
 
-        return records_data, total
+        # Include correspondent if user has full info access and isn't the correspondent
+        if (
+            partner != sponsorship.correspondent_id
+            and partner.portal_sponsorships == "all_info"
+        ):
+            partner += sponsorship.correspondent_id
+
+        return partner.ids
+
+    def _get_timeline_count(self, child_id, partner_ids):
+        """Get total count of timeline records (correspondence + gifts)."""
+        sql = """
+            SELECT
+                (SELECT COUNT(*) FROM correspondence
+                 WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
+                +
+                (SELECT COUNT(*) FROM sponsorship_gift
+                 WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
+                AS total
+        """
+        request.env.cr.execute(sql, {"child_id": child_id, "partner_ids": partner_ids})
+        return request.env.cr.fetchone()[0] or 0
+
+    def _get_timeline_data(self, child_id, partner_ids, offset, limit):
+        """Fetch paginated timeline records (correspondence + gifts) ordered by date."""
+        # ruff: noqa: E501 (query is more readable this way)
+        sql = """
+            SELECT * FROM (
+                SELECT
+                    'correspondence' AS model,
+                    c.uuid::text AS record_id,
+                    '' AS amount,
+                    '' AS currency_name,
+                    c.direction AS metadata,
+                    c.create_date,
+                    CASE
+                        WHEN c.direction = 'Beneficiary To Supporter'
+                        THEN %(title_corr_wrote)s
+                        ELSE %(title_corr_received)s
+                    END AS title
+                FROM correspondence c
+                WHERE c.child_id = %(child_id)s
+                  AND c.partner_id = ANY(%(partner_ids)s)
+
+                UNION ALL
+
+                SELECT
+                    'sponsorship_gift' AS model,
+                    s.id::text AS record_id,
+                    s.amount::text AS amount,
+                    COALESCE(rc.name, %(default_currency)s) AS currency_name,
+                    s.gift_type || '|' || COALESCE(s.sponsorship_gift_type, '') AS metadata,
+                    s.create_date,
+                    CASE
+                        WHEN s.sponsorship_gift_type = 'Birthday' THEN %(title_gift_bday)s
+                        WHEN s.sponsorship_gift_type = 'General' THEN %(title_gift_general)s
+                        WHEN s.sponsorship_gift_type = 'Graduation/Final' THEN %(title_gift_grad)s
+                        WHEN s.gift_type = 'Family Gift' THEN %(title_gift_family)s
+                        ELSE %(title_gift_default)s
+                    END AS title
+                FROM sponsorship_gift s
+                LEFT JOIN account_move_line aml ON aml.gift_id = s.id
+                LEFT JOIN res_currency rc ON rc.id = aml.currency_id
+                WHERE s.child_id = %(child_id)s
+                  AND s.partner_id = ANY(%(partner_ids)s)
+            ) AS timeline
+            ORDER BY create_date DESC
+            LIMIT %(limit)s OFFSET %(offset)s
+        """
+
+        params = {
+            "child_id": child_id,
+            "partner_ids": partner_ids,
+            "default_currency": request.env.user.currency_id.name,
+            "title_corr_wrote": _("Wrote you a letter"),
+            "title_corr_received": _("Received your letter"),
+            "title_gift_bday": _("Birthday gift"),
+            "title_gift_general": _("General gift"),
+            "title_gift_grad": _("Graduation/Final gift"),
+            "title_gift_family": _("Family gift"),
+            "title_gift_default": _("Received a gift"),
+            "limit": limit,
+            "offset": offset,
+        }
+
+        request.env.cr.execute(sql, params)
+        return request.env.cr.dictfetchall()
+
+    def _get_timeline_records(self, child_id, offset=0, limit=9):
+        """
+        Fetch timeline records (correspondence and gifts) for a child.
+
+        :param child_id: ID of the child
+        :param offset: Number of records to skip (for pagination)
+        :param limit: Maximum number of records to return
+        :return: Tuple of (records_list, total_count)
+        """
+        child = request.env["compassion.child"].browse(child_id)
+        partner_ids = self._get_authorized_partner_ids(child)
+
+        total = self._get_timeline_count(child_id, partner_ids)
+        records = self._get_timeline_data(child_id, partner_ids, offset, limit)
+
+        return records, total
 
     @http.route("/my2/children", type="http", auth="user", website=True, sitemap=False)
     def my2_render_children_page(self, **kwargs):
@@ -165,9 +209,8 @@ class MyCompassionChildrenController(WebsiteChild):
 
         offset = int(kwargs.get("offset", 0))
         limit = int(kwargs.get("limit", 9))
-        partner = request.env.user.partner_id
 
-        records, total = self._get_timeline_records(partner.id, child.id, offset, limit)
+        records, total = self._get_timeline_records(child.id, offset, limit)
 
         google_api_key = (
             request.env["ir.config_parameter"].sudo().get_param("google_maps_api_key")
@@ -208,9 +251,7 @@ class MyCompassionChildrenController(WebsiteChild):
         offset = int(kwargs.get("offset", 0))
         limit = int(kwargs.get("limit", 9))
 
-        partner = request.env.user.partner_id
-
-        records, total = self._get_timeline_records(partner.id, child.id, offset, limit)
+        records, total = self._get_timeline_records(child.id, offset, limit)
         has_more = total > offset + limit
 
         html = (
