@@ -68,7 +68,14 @@ class MyCompassionChildrenController(WebsiteChild):
                  WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
                 AS total
         """
-        request.env.cr.execute(sql, {"child_id": child_id, "partner_ids": partner_ids, "current_partner_id": partner_ids[0],})
+        request.env.cr.execute(
+            sql,
+            {
+                "child_id": child_id,
+                "partner_ids": partner_ids,
+                "current_partner_id": partner_ids[0],
+            },
+        )
         # The +1 is for the "start sponsorship" record
         return request.env.cr.fetchone()[0] + 1 or 0
 
@@ -114,7 +121,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 LEFT JOIN res_currency rc ON rc.id = aml.currency_id
                 WHERE s.child_id = %(child_id)s
                   AND s.partner_id = ANY(%(partner_ids)s)
-                  
+
                   UNION ALL
 
                 SELECT
