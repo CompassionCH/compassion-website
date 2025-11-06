@@ -237,15 +237,6 @@
                                     </div>
                                     <!-- Ok and cancel filter actions -->
                                     <div class="d-flex w-100 justify-content-between">
-                                        <a id="filterOkBtn" data-dismiss="modal">
-                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                <t t-set="variation" t-value="'filled'" />
-                                                <t t-set="color" t-value="'mid-green'" />
-                                                <t t-set="text_color" t-value="'pure-white'" />
-                                                <t t-set="variant" t-value="'compact'" />
-                                                <t t-set="label" t-value="'Ok'" />
-                                            </t>
-                                        </a>
                                         <a t-att-href="'/my2/children/letters'">
                                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                                 <t t-set="variation" t-value="'filled'" />
@@ -253,6 +244,15 @@
                                                 <t t-set="text_color" t-value="'pure-white'" />
                                                 <t t-set="variant" t-value="'compact'" />
                                                 <t t-set="label" t-value="'Cancel'" />
+                                            </t>
+                                        </a>
+                                        <a id="filterOkBtn" data-dismiss="modal">
+                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                                <t t-set="variation" t-value="'filled'" />
+                                                <t t-set="color" t-value="'mid-green'" />
+                                                <t t-set="text_color" t-value="'pure-white'" />
+                                                <t t-set="variant" t-value="'compact'" />
+                                                <t t-set="label" t-value="'Ok'" />
                                             </t>
                                         </a>
                                     </div>

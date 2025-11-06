@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <template id="my_compassion_dynamic_menu" inherit_id="website.template_header_default">
-        <xpath expr="//div[@id='top_menu_collapse']" position="inside">
+        <xpath expr="//div[@id='top_menu_collapse']/*[1]" position="before">
             <ul class="navbar-nav">
                 <t t-set="partner" t-value="request.env.user.partner_id" />
                 <li class="nav-item">
