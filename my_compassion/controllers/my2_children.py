@@ -72,7 +72,7 @@ class MyCompassionChildrenController(WebsiteChild):
                     WHERE rc.child_id = %(child_id)s
                       AND rc.partner_id = (%(current_partner_id)s)
                       AND rc.state NOT IN ('draft')
-                      AND rc.activation_date IS NOT NULL
+                      AND rc.start_date IS NOT NULL
                 )
                 THEN 1 ELSE 0 END)
             AS total
@@ -138,7 +138,7 @@ class MyCompassionChildrenController(WebsiteChild):
                     '' AS amount,
                     '' AS currency_name,
                     '' AS metadata,
-                    rc.activation_date::timestamp AS create_date,
+                    rc.start_date::timestamp AS create_date,
                     %(title_start_sponsorship)s AS title
                 FROM recurring_contract rc
                 WHERE rc.child_id = %(child_id)s
