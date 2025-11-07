@@ -78,7 +78,10 @@
   Styles for the time and weather details container
 */
 .center-info-card__details {
-    font-size: x-large;
+    /* This new responsive font-size now controls
+       the icon size as well */
+    font-size: clamp(1.125rem, 4vw, 1.5rem);
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -96,9 +99,16 @@
 /*
   Styles for the separator line
 */
+/*
+  Styles for the separator line
+*/
 .center-info-card__separator {
     border-left: 1px solid var(--mid-brown);
-    height: 1.25em; /* Make the line vertically centered */
+
+    /* This 'em' unit is relative to the parent's
+       new responsive font-size, so it will scale. */
+    height: 1.25em;
+
     margin-right: 1rem;
 }
 
@@ -115,9 +125,11 @@
   Styles for the weather icon
 */
 .center-info-card__weather-icon {
-    width: 20px;
-    height: 20px;
-    margin-right: 0.5rem; /* 8px */
+    /* === THIS IS THE CHANGE FOR THE ICON === */
+    /* It scales relative to the parent's (details) font-size */
+    width: 1em;
+    height: 1em;
+    margin-right: 0.5rem;
 }
 
 /*
