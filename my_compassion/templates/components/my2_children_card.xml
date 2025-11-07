@@ -30,7 +30,7 @@
                 <div class="h2 mb-0">
                     <t t-esc="child.preferred_name" />
                 </div>
-                <div class="small" t-if="sponsorship.state in ('draft', 'waiting', 'mandate')">
+                <div class="small" t-if="sponsorship and sponsorship.state in ('draft', 'waiting', 'mandate')">
                     <span
                         class="badge bg-low-yellow"
                         title="Your sponsorship is being confirmed and will become active soon"
@@ -39,7 +39,7 @@
                         Pending activation
                     </span>
                 </div>
-                <div class="small" t-if="sponsorship.state == 'terminated'">
+                <div class="small" t-if="sponsorship and sponsorship.state == 'terminated'">
                     <span class="badge bg-low-yellow" title="Your sponsorship has ended" aria-label="Sponsorship ended">
                         Sponsorship ended
                     </span>
