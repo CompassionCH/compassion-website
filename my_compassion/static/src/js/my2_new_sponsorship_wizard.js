@@ -92,6 +92,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 ajax.post("/ebill/subscribe", params)
                     .then((html) => {
                         this.$("#ebill_setup_container").show();
+                        html = html.replace("btn btn-primary", "btn btn--compact-filled btn--radius-pill bg-core-blue text-pure-white")
+                            .replace("btn btn-secondary", "btn btn--compact-filled btn--radius-pill bg-low-yellow text-black")
+                            .replace("alert alert-danger", "alert alert-danger text-black")
                         this.$("#ebill_content_container").html(html);
                         this.$("#finishButton").prop("disabled", true);
                     })
@@ -133,6 +136,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
                 ajax.post(action, params)
                     .then((html) => {
+                        html = html.replace("btn btn-primary", "btn btn--compact-filled btn--radius-pill bg-core-blue text-pure-white")
+                            .replace("btn btn-secondary", "btn btn--compact-filled btn--radius-pill bg-low-yellow text-black")
+                            .replace("alert alert-danger", "alert alert-danger text-black")
                         this.$("#ebill_content_container").html(html);
                         const doneSuccessfully = this.$("#ebill_content_container #ebill-success-marker").length > 0;
                         if (doneSuccessfully) {
