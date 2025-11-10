@@ -17,7 +17,7 @@
 
 .map {
     height: 525px;
-border-radius: 25px;
+    border-radius: 25px;
     &--load-failed {
         height: 0 !important;
         overflow: hidden;
@@ -135,8 +135,9 @@ border-radius: 25px;
             filter: invert(1) brightness(0);
         }
 
+        /* FIX 3: Direction arrows are now visible on mobile */
         @media (max-width: $breakpoint-sm) {
-            visibility: hidden;
+            /* visibility: hidden; */
         }
     }
 
@@ -148,9 +149,17 @@ border-radius: 25px;
         }
     }
 
+    /* FIX 1: Added .gm-svpc to color the mobile Pegman button */
+    .gm-svpc,
     .gm-fullscreen-control{
         background-color: var(--mid-yellow) !important;
     }
+
+    /* FIX 2: Added this new rule to center the mobile Pegman icon */
+    .gm-svpc img {
+        transform: translate(-50%, -50%) !important;
+    }
+
 
     div:has(button[aria-label="Zoom in"]):has(button[aria-label="Zoom out"]) {
         background-color: transparent !important;
@@ -195,8 +204,9 @@ border-radius: 25px;
 // Responsive Adjustments
 // =====================
 
+/* FIX 3 is also here: This rule is now commented out */
 @media (max-width: $breakpoint-sm) {
     button[aria-label="Map camera controls"] {
-        visibility: hidden;
+        /* visibility: hidden; */
     }
 }
