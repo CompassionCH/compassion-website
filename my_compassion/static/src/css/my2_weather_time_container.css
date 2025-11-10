@@ -2,7 +2,7 @@
   position: absolute;
   bottom: 0;
   left: 50%; /* Center the container */
-  transform: translateX(-50%); /* Fine-tune the centering */
+  transform: translateX(-50%);
   z-index: 10;
   padding: 0 1rem 1rem;
    font-size: clamp(0.8rem, 4vw, 1.125rem);
@@ -55,8 +55,6 @@
     margin: 0;
     text-align: center;
 
-    /* === NEW RULES FOR 2-LINE TRUNCATION === */
-    /* Remove white-space: nowrap; and text-overflow: ellipsis; */
 
     overflow: hidden;
     display: -webkit-box;
@@ -72,13 +70,11 @@
     text-align: center;
     margin-top: 0.9rem;
 
-    /* === UPDATED FOR 2-LINE TRUNCATION === */
-    /* Replaced 'nowrap' and 'ellipsis' rules */
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2; /* Limit to 2 lines */
     -webkit-box-orient: vertical;
-    /* === END OF UPDATE === */
+
 
     margin-left: 0.5rem;
     margin-right: 0.5rem;
@@ -104,18 +100,11 @@
     margin-right: 1rem;
     color: var(--low-grey);
 }
-
-/*
-  Styles for the separator line
-*/
 /*
   Styles for the separator line
 */
 .center-info-card__separator {
     border-left: 1px solid var(--mid-brown);
-
-    /* This 'em' unit is relative to the parent's
-       new responsive font-size, so it will scale. */
     height: 1.25em;
 
     margin-right: 1rem;
@@ -134,8 +123,6 @@
   Styles for the weather icon
 */
 .center-info-card__weather-icon {
-    /* === THIS IS THE CHANGE FOR THE ICON === */
-    /* It scales relative to the parent's (details) font-size */
     width: 1em;
     height: 1em;
     margin-right: 0.5rem;

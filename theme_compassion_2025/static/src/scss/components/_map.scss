@@ -135,10 +135,8 @@
             filter: invert(1) brightness(0);
         }
 
-        /* FIX 3: Direction arrows are now visible on mobile */
         @media (max-width: $breakpoint-sm) {
-            /* visibility: hidden; */
-        }
+visibility: hidden;        }
     }
 
      button[aria-label="Drag Pegman onto the map to open Street View"] {
@@ -149,13 +147,11 @@
         }
     }
 
-    /* FIX 1: Added .gm-svpc to color the mobile Pegman button */
     .gm-svpc,
     .gm-fullscreen-control{
         background-color: var(--mid-yellow) !important;
     }
 
-    /* FIX 2: Added this new rule to center the mobile Pegman icon */
     .gm-svpc img {
         transform: translate(-50%, -50%) !important;
     }
@@ -204,9 +200,8 @@
 // Responsive Adjustments
 // =====================
 
-/* FIX 3 is also here: This rule is now commented out */
 @media (max-width: $breakpoint-sm) {
     button[aria-label="Map camera controls"] {
-        /* visibility: hidden; */
+        visibility: hidden;
     }
 }
