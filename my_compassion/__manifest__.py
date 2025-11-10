@@ -107,7 +107,6 @@
         "auth_signup",
         "http_routing",
         "website",
-        "web",
         "website_crm_privacy_policy",  # OCA/website
         "auth_signup_verify_email",  # OCA/server-auth
         "queue_job",
