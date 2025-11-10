@@ -8,13 +8,17 @@
                 </div>
                 <div class="text-start ms-4">
                     <h2 class="mb-3 text-core-blue">
-                        <t t-esc="error_code" /> -
+                        <t t-esc="error_code" />
+                        -
                         <t t-esc="error_name" />
                     </h2>
-
-                    <p class="lead"><t t-esc="'An unexpected error occurred.'"/></p>
                     <p class="lead">
-                        <t t-esc="'Don\'t panic. If you think this is our mistake, please send us a message on this page.'"/>
+                        <t t-esc="'An unexpected error occurred.'" />
+                    </p>
+                    <p class="lead">
+                        <t
+                            t-esc="'Don\'t panic. If you think this is our mistake, please send us a message on this page.'"
+                        />
                     </p>
                     <div class="mt-4">
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
@@ -46,8 +50,8 @@
         <xpath expr="//div[@id='wrap']" position="after">
             <t t-call="my_compassion.http_error_custom">
                 <t t-set="error_code" t-value="'400'" />
-                <t t-set="error_name" t-value="'Bad Request'"/>
-                <t t-set="error_message" t-value="'The request could not be understood by the server.'"/>
+                <t t-set="error_name" t-value="'Bad Request'" />
+                <t t-set="error_message" t-value="'The request could not be understood by the server.'" />
             </t>
         </xpath>
     </template>
@@ -71,9 +75,9 @@
         </xpath>
         <xpath expr="//div[@id='wrap']" position="after">
             <t t-call="my_compassion.http_error_custom">
-                <t t-set="error_code" t-value="'404'"/>
-                <t t-set="error_name" t-value="'Page Not Found'"/>
-                <t t-set="error_message" t-value="'We couldn\'t find the page you were looking for!'"/>
+                <t t-set="error_code" t-value="'404'" />
+                <t t-set="error_name" t-value="'Page Not Found'" />
+                <t t-set="error_message" t-value="'We couldn\'t find the page you were looking for!'" />
             </t>
         </xpath>
     </template>
@@ -86,7 +90,7 @@
             <t t-call="my_compassion.http_error_custom">
                 <t t-set="error_code" t-value="'500'" />
                 <t t-set="error_name" t-value="'Internal Server Error'" />
-                <t t-set="error_message" t-value="'Something went wrong on our side. Please try again later.'"/>
+                <t t-set="error_message" t-value="'Something went wrong on our side. Please try again later.'" />
             </t>
         </xpath>
     </template>
