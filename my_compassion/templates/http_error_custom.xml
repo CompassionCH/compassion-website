@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="http_error_custom">
+        <div id="wrap" class="d-flex justify-content-center align-items-center" style="height: 100%;">
+            <div class="d-flex align-items-center">
+                <div>
+                    <i class="pictogram-critical-needs fa-10x text-dark-blue"></i>
+                </div>
+                <div class="text-start ms-4">
+                    <h2 class="mb-3 text-core-blue">
+                        <t t-esc="error_code"/> - Page not found
+                    </h2>
+                    <p class="lead">
+                        We couldn't find the page you were looking for!
+                    </p>
+                    <p class="lead">
+                        Don't panic. If you think this is our mistake, please send us a message on this page.
+                    </p>
+                    <div class="mt-4">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variant" t-value="'default'"/>
+                            <t t-set="variation" t-value="'filled'"/>
+                            <t t-set="label" t-value="'Dashboard'"/>
+                            <t t-set="color" t-value="'dark-blue'"/>
+                            <t t-set="text_color" t-value="'pure_white'"/>
+                            <t t-set="data_custom" t-value="'dashboard'"/>
+                        </t>
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variant" t-value="'default'"/>
+                            <t t-set="variation" t-value="'hollow'"/>
+                            <t t-set="label" t-value="'Contact us'"/>
+                            <t t-set="color" t-value="'dark-blue'"/>
+                            <t t-set="text_color" t-value="'pure_white'"/>
+                            <t t-set="data_custom" t-value="'contact_us'"/>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Page 400 -->
+    <template id="custom_400" inherit_id="http_routing.400" name="Custom 400 Page">
+        <xpath expr="//div[@id='wrap']" position="replace">
+            <t t-call="my_compassion.http_error_custom">
+                <t t-set="error_code" t-value="'400'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- Page 403 -->
+    <template id="custom_403" inherit_id="http_routing.403" name="Custom 403 Page">
+        <xpath expr="//div[@id='wrap']" position="replace">
+            <t t-call="my_compassion.http_error_custom">
+                <t t-set="error_code" t-value="'403'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- Page 404 -->
+    <template id="custom_404" inherit_id="http_routing.404" name="Custom 404 Page">
+        <xpath expr="//div[@id='wrap']" position="replace">
+            <t t-call="my_compassion.http_error_custom">
+                <t t-set="error_code" t-value="'404'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- Page 500 -->
+    <template id="custom_500" inherit_id="http_routing.500" name="Custom 500 Page">
+        <xpath expr="//div[@id='wrapwrap']" position="replace">
+            <t t-call="my_compassion.http_error_custom">
+                <t t-set="error_code" t-value="'500'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="assets_frontend" inherit_id="web.assets_frontend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" t-att-src="'/my_compassion/static/src/js/error_page_redirect.js'"></script>
+        </xpath>
+    </template>
+</odoo>
