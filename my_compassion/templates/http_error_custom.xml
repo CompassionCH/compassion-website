@@ -42,32 +42,6 @@
             </div>
         </div>
     </template>
-    <!-- Page 400 -->
-    <template id="custom_400" inherit_id="http_routing.400" name="Custom 400 Page">
-        <xpath expr="//div[@id='wrap']" position="attributes">
-            <attribute name="t-if">False</attribute>
-        </xpath>
-        <xpath expr="//div[@id='wrap']" position="after">
-            <t t-call="my_compassion.http_error_custom">
-                <t t-set="error_code" t-value="'400'" />
-                <t t-set="error_name" t-value="'Bad Request'" />
-                <t t-set="error_message" t-value="'The request could not be understood by the server.'" />
-            </t>
-        </xpath>
-    </template>
-    <!-- Page 403 -->
-    <template id="custom_403" inherit_id="http_routing.403" name="Custom 403 Page">
-        <xpath expr="//div[@id='wrap']" position="attributes">
-            <attribute name="t-if">False</attribute>
-        </xpath>
-        <xpath expr="//div[@id='wrap']" position="after">
-            <t t-call="my_compassion.http_error_custom">
-                <t t-set="error_code" t-value="'403'" />
-                <t t-set="error_name" t-value="'Forbidden'" />
-                <t t-set="error_message" t-value="'You don\'t have permission to access this page.'" />
-            </t>
-        </xpath>
-    </template>
     <!-- Page 404 -->
     <template id="custom_404" inherit_id="http_routing.404" name="Custom 404 Page">
         <xpath expr="//div[@id='wrap']" position="attributes">
@@ -78,19 +52,6 @@
                 <t t-set="error_code" t-value="'404'" />
                 <t t-set="error_name" t-value="'Page Not Found'" />
                 <t t-set="error_message" t-value="'We couldn\'t find the page you were looking for!'" />
-            </t>
-        </xpath>
-    </template>
-    <!-- Page 500 -->
-    <template id="custom_500" inherit_id="http_routing.500" name="Custom 500 Page">
-        <xpath expr="//div[@id='wrapwrap']" position="attributes">
-            <attribute name="t-if">False</attribute>
-        </xpath>
-        <xpath expr="//div[@id='wrapwrap']" position="after">
-            <t t-call="my_compassion.http_error_custom">
-                <t t-set="error_code" t-value="'500'" />
-                <t t-set="error_name" t-value="'Internal Server Error'" />
-                <t t-set="error_message" t-value="'Something went wrong on our side. Please try again later.'" />
             </t>
         </xpath>
     </template>
