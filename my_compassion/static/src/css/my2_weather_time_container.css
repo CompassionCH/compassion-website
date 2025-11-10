@@ -5,6 +5,7 @@
   transform: translateX(-50%); /* Fine-tune the centering */
   z-index: 10;
   padding: 0 1rem 1rem;
+   font-size: clamp(0.8rem, 4vw, 1.125rem);
 
   /*
     This combination tells the wrapper to be 100% of the parent's width,
@@ -71,12 +72,16 @@
     text-align: center;
     margin-top: 0.9rem;
 
-    /* === REPLACED RULES === */
-    /* Remove the old 'overflow-wrap' and 'word-wrap' rules */
-    /* and add these three lines: */
-    white-space: nowrap;
+    /* === UPDATED FOR 2-LINE TRUNCATION === */
+    /* Replaced 'nowrap' and 'ellipsis' rules */
     overflow: hidden;
-    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limit to 2 lines */
+    -webkit-box-orient: vertical;
+    /* === END OF UPDATE === */
+
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
 }
 /*
   Styles for the time and weather details container
@@ -84,12 +89,12 @@
 .center-info-card__details {
     /* This new responsive font-size now controls
        the icon size as well */
-    font-size: clamp(1.125rem, 4vw, 1.5rem);
-
     display: flex;
     justify-content: center;
     align-items: center;
     color: var(--color-mid-grey);
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
 }
 
 /*
