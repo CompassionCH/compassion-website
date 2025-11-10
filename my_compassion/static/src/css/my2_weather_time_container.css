@@ -45,18 +45,22 @@
 /*
   Styles for the project/church info text
 */
+/*
+  Styles for the project/church info text
+*/
 .center-info-card__project-info {
     color: var(--low-green);
     font-size: 0.875rem;
     margin: 0;
     text-align: center;
 
-    /* === REPLACED RULES === */
-    /* Remove the old 'overflow-wrap' and 'word-wrap' rules */
-    /* and add these three lines: */
-    white-space: nowrap;      /* 1. Keep all text on a single line */
-    overflow: hidden;         /* 2. Hide any text that goes past the edge */
-    text-overflow: ellipsis;  /* 3. Add the "..." (ellipsis) */
+    /* === NEW RULES FOR 2-LINE TRUNCATION === */
+    /* Remove white-space: nowrap; and text-overflow: ellipsis; */
+
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limit to 2 lines */
+    -webkit-box-orient: vertical;
 }
 
 /*
