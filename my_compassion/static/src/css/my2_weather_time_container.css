@@ -1,21 +1,21 @@
 .weather-time-container-wrapper {
-  position: absolute;
-  bottom: 0;
-  left: 50%; /* Center the container */
-  transform: translateX(-50%);
-  z-index: 10;
-  padding: 0 1rem 1rem;
-   font-size: clamp(0.8rem, 4vw, 1.125rem);
+    position: absolute;
+    bottom: 0;
+    left: 50%; /* Center the container */
+    transform: translateX(-50%);
+    z-index: 10;
+    padding: 0 1rem 1rem;
+    font-size: clamp(0.8rem, 4vw, 1.125rem);
 
-  /*
+    /*
     This combination tells the wrapper to be 100% of the parent's width,
     but never more than 70%. This creates a stable container
     that allows text inside to wrap correctly.
   */
-  width: max-content;
-  max-width: 70%;
+    width: max-content;
+    max-width: 70%;
 
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .center-info-card {
@@ -55,7 +55,6 @@
     margin: 0;
     text-align: center;
 
-
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2; /* Limit to 2 lines */
@@ -74,7 +73,6 @@
     display: -webkit-box;
     -webkit-line-clamp: 2; /* Limit to 2 lines */
     -webkit-box-orient: vertical;
-
 
     margin-left: 0.5rem;
     margin-right: 0.5rem;

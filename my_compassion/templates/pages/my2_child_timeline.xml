@@ -451,9 +451,7 @@
                                 <t t-set="custom_map_id" t-value="google_custom_map_id" />
                             </t>
                         </t>
-                        <div
-                            class="weather-time-container-wrapper"
-                        >
+                        <div class="weather-time-container-wrapper">
                             <t t-call="my_compassion.WeatherTimeContainer">
                                 <t t-set="timezone" t-value="timezone" />
                                 <t t-set="fcp_id" t-value="compassion_child.project_id.fcp_id" />
