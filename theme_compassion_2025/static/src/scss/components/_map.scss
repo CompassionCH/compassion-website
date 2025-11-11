@@ -16,8 +16,8 @@
 }
 
 .map {
-    height: 400px;
-
+    height: 525px;
+    border-radius: 25px;
     &--load-failed {
         height: 0 !important;
         overflow: hidden;
@@ -28,6 +28,7 @@
     .gm-control-active > img {
         transform: translate(-50%, -50%) !important;
     }
+
 
     .custom-map-pin {
         background-color: #ffd257 !important;
@@ -135,8 +136,7 @@
         }
 
         @media (max-width: $breakpoint-sm) {
-            visibility: hidden;
-        }
+visibility: hidden;        }
     }
 
      button[aria-label="Drag Pegman onto the map to open Street View"] {
@@ -147,9 +147,15 @@
         }
     }
 
+    .gm-svpc,
     .gm-fullscreen-control{
         background-color: var(--mid-yellow) !important;
     }
+
+    .gm-svpc img {
+        transform: translate(-50%, -50%) !important;
+    }
+
 
     div:has(button[aria-label="Zoom in"]):has(button[aria-label="Zoom out"]) {
         background-color: transparent !important;
