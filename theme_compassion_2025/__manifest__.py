@@ -61,6 +61,7 @@
         # Buttons
         "templates/components/buttons/ThemedButton.xml",
         "templates/components/buttons/ToggleButton.xml",
+        "templates/components/buttons/ThemedDropdownButton.xml",
         # Styles
         "templates/styles/colors_stylesheet.xml",
         "templates/styles/icons_stylesheet.xml",
