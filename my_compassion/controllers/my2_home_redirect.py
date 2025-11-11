@@ -13,6 +13,7 @@ from odoo.http import request
 
 from odoo.addons.website.controllers.main import Website
 
+
 class WebsiteHomeRedirect(Website):
     @http.route("/", type="http", auth="public", website=True, sitemap=False)
     def home(self, *args, **kw):
@@ -23,5 +24,5 @@ class WebsiteHomeRedirect(Website):
         `my2_login.py` handles the redirection from the login page to the dashboard.
         """
         if request.session.uid:
-            return request.redirect('/my2/dashboard/')
-        return request.redirect('/web/login')
+            return request.redirect("/my2/dashboard/")
+        return request.redirect("/web/login")
