@@ -10,6 +10,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
         var publicWidget = require("web.public.widget");
         var rpc = require("web.rpc");
 
+        const ToastService = require("my_compassion.toast_service");
+        const _t = require("web.core")._t;
+
         publicWidget.registry.Sponsorships = publicWidget.Widget.extend({
             selector: ".sponsorships-body-container",
 
@@ -148,10 +151,12 @@ document.addEventListener("DOMContentLoaded", function (event) {
                         }.bind(this)
                     )
                     .guardedCatch(
-                        function () {
+                        function (error) {
                             // Re-enable buttons and remove spinner in case of error
                             this.$(".btn").prop("disabled", false);
                             $spinner.remove();
+                            // Display error toast
+                            ToastService.error(error.message);
                         }.bind(this)
                     );
             },
@@ -257,9 +262,11 @@ document.addEventListener("DOMContentLoaded", function (event) {
                         }.bind(this)
                     )
                     .guardedCatch(
-                        function () {
+                        function (error) {
                             // Re-enable buttons in case of error
                             this.$(".btn").prop("disabled", false);
+                            // Display error toast
+                            ToastService.error(error.message);
                         }.bind(this)
                     );
             },
