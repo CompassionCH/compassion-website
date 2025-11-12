@@ -150,13 +150,14 @@ document.addEventListener("DOMContentLoaded", function (event) {
                             }
                         }.bind(this)
                     )
-                    .guardedCatch(
+                    .catch(
                         function (error) {
                             // Re-enable buttons and remove spinner in case of error
                             this.$(".btn").prop("disabled", false);
                             $spinner.remove();
+                            if (error.event) error.event.preventDefault();
                             // Display error toast
-                            ToastService.error(error.message);
+                            ToastService.error(error.message.data && error.message.data.message);
                         }.bind(this)
                     );
             },
@@ -261,12 +262,14 @@ document.addEventListener("DOMContentLoaded", function (event) {
                             this.$(".btn").prop("disabled", false);
                         }.bind(this)
                     )
-                    .guardedCatch(
+                    .catch(
                         function (error) {
-                            // Re-enable buttons in case of error
+                            // Re-enable buttons and remove spinner in case of error
                             this.$(".btn").prop("disabled", false);
+                            $spinner.remove();
+                            if (error.event) error.event.preventDefault();
                             // Display error toast
-                            ToastService.error(error.message);
+                            ToastService.error(error.message.data && error.message.data.message);
                         }.bind(this)
                     );
             },
