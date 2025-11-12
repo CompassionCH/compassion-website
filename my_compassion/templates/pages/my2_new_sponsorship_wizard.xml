@@ -206,22 +206,9 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                 </t>
             </t>
         </t>
-        <div id="ebill_setup_container" class="my-3 d-none">
-            <div id="ebill_content_container" class="p-4 bg-high-yellow rounded-lg">
-                <div class="my-2">
-                    <h1 class="mb-4 mt-0">E-Bill</h1>
-                    <p>
-                        You have selected E-Bill. To continue, you first need to set up your E-Bill connection with
-                        Compassion.
-                    </p>
-                    <div class="d-flex justify-content-end">
-                        <button type="button" class="btn btn--compact-filled btn--radius-pill bg-core-blue text-pure-white" id="start_ebill_workflow_btn">
-                            Set up E-Bill Now
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+
+        <div id="ebill_hook"></div>
+
         <!-- Sponsorship plus -->
         <input type="hidden" name="sponsorship_plus" value="" />
         <t t-call="theme_compassion_2025.FormFieldComponent">

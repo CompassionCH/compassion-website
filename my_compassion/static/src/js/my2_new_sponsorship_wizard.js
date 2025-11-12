@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
         var publicWidget = require("web.public.widget");
         var rpc = require("web.rpc");
-        var ajax = require("web.ajax");
 
         publicWidget.registry.NewSponsorshipWizard = publicWidget.Widget.extend({
             selector: ".new-sponsorship-wizard-form",
@@ -21,12 +20,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 "click .btn-sponsor": "_onSponsorClick",
                 "change .wap-contribute": "_onWAPContributeChange",
                 "change .suggested-amount": "_onAmountChange",
-                "change #payment_method": "_onPaymentMethodChange",
-                "click #start_ebill_workflow_btn": "_onStartEbillWorkflow",
-                "click #ebill_content_container button[type='submit']": "_onEbillFormSubmit",
-                "click #ebill_content_container a[type='submit']": "_onEbillFormSubmit",
             },
-            _eBill: { has_contract: false, partner: null, contract: null },
 
             /**
              * @override
@@ -35,119 +29,11 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 this._super.apply(this, arguments);
 
                 this._updateUI();
-                this._onPaymentMethodChange();
-                this._initEbillState();
             },
 
             /**
-             * Checks if user has already an ebill contract.
-             * @private
-             */
-            _initEbillState: function () {
-                return rpc
-                    .query({
-                        route: "/ebill/current-user/contract",
-                        params: {},
-                    })
-                    .then((eBillInfoOfCurrentUser) => {
-                        this._eBill = eBillInfoOfCurrentUser;
-                    })
-                    .catch((err) => {
-                        console.warn("Could not check existing eBill contract:", err);
-                    });
-            },
-
-            /**
-             * Handles the change event on the payment method dropdown.
-             * @private
-             */
-            _onPaymentMethodChange: function () {
-                const selectedText = this.$("#payment_method option:selected").text();
-                const isEBill = selectedText.includes("eBill");
-
-                if (isEBill) {
-                    if (!this._eBill.has_contract) {
-                        this.$("#ebill_setup_container").toggleClass("d-none", false);
-                        this.$("#finishButton").prop("disabled", true);
-                    }
-                } else {
-                    this.$("#ebill_setup_container").toggleClass("d-none", true);
-                    this.$("#finishButton").prop("disabled", false);
-                }
-            },
-
-            /**
-             * Starts the E-Bill workflow when the "Set up" button is clicked.
-             * @private
              * @param {Event} ev
              */
-            _onStartEbillWorkflow: function (ev) {
-                ev.preventDefault();
-
-                const params = {
-                    is_integrated: true,
-                    email: this._eBill.partner?.email,
-                };
-
-                ajax.post("/ebill/subscribe", params)
-                    .then((html) => {
-                        this.$("#ebill_setup_container").show();
-                        html = html.replace("btn btn-primary", "btn btn--compact-filled btn--radius-pill bg-core-blue text-pure-white")
-                            .replace("btn btn-secondary", "btn btn--compact-filled btn--radius-pill bg-low-yellow text-black")
-                            .replace("alert alert-danger", "alert alert-danger text-black")
-                        this.$("#ebill_content_container").html(html);
-                        this.$("#finishButton").prop("disabled", true);
-                    })
-                    .catch(console.error);
-            },
-            /**
-             * Intercepts form submissions inside the E-Bill modal and handles them via rpc.
-             * @private
-             * @param {Event} ev
-             */
-            _onEbillFormSubmit: function (ev) {
-                const form = ev.delegateTarget;
-                const noValidationNeeded = $(ev.currentTarget).is("[formnovalidate]");
-
-                if (!form.checkValidity() && !noValidationNeeded) {
-                    form.reportValidity();
-                    return;
-                }
-
-                ev.preventDefault();
-                ev.stopPropagation();
-
-                const action = ev.currentTarget.dataset.action;
-
-                const params = {
-                    is_integrated: true,
-                };
-
-                if (!action) {
-                    console.error("The clicked button is missing a 'data-action' attribute.");
-                    return;
-                } else if (action === "/ebill/validate") {
-                    params.email = this.$("#email_input").val() ?? this.$("#email").val();
-                } else if (action === "/ebill/confirm") {
-                    params.validation_code = this.$("#validation_code_input").val();
-                    params.token = this.$("#token").val();
-                    params.email = this.$("#email").val();
-                }
-
-                ajax.post(action, params)
-                    .then((html) => {
-                        html = html.replace("btn btn-primary", "btn btn--compact-filled btn--radius-pill bg-core-blue text-pure-white")
-                            .replace("btn btn-secondary", "btn btn--compact-filled btn--radius-pill bg-low-yellow text-black")
-                            .replace("alert alert-danger", "alert alert-danger text-black")
-                        this.$("#ebill_content_container").html(html);
-                        const doneSuccessfully = this.$("#ebill_content_container #ebill-success-marker").length > 0;
-                        if (doneSuccessfully) {
-                            this.$("#finishButton").prop("disabled", false);
-                        }
-                    })
-                    .catch(console.error);
-            },
-
             _onStepClick: function (ev) {
                 ev.preventDefault();
 
