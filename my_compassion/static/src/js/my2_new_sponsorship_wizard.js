@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
             },
 
             /**
-            * Handles the click on "Next" or "Previous" buttons.
+             * Handles the click on "Next" or "Previous" buttons.
              * @param {Event} ev
              */
             _onStepClick: function (ev) {
