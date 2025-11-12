@@ -21,21 +21,8 @@
         <t t-set="radius" t-value="radius or 'pill'"/>
         <t t-set="color" t-value="color or 'primary'"/>
 
-        <t t-if="variation == 'hollow'"
-           t-set="style_class"
+        <t t-set="style_class"
            t-value="'border border-2 border-%s' % color"/>
-
-        <t t-elif="variation == 'filled'"
-           t-set="style_class"
-           t-value="'bg-%s' % color"/>
-
-        <t t-elif="variation == 'outlined'"
-           t-set="style_class"
-           t-value="'bg-%s border border-2 border-%s text-%s-hover' % (color, text_color, color)"/>
-
-        <t t-else=""
-           t-set="style_class"
-           t-value="'bg-black'"/>
 
         <t t-set="btn_modifier"
            t-value="'btn--%s-%s%s' % (variant, variation, '-icon-only' if (icon and not label) else '')"/>
@@ -43,7 +30,7 @@
         <t t-set="shared_classes"
            t-value="'btn %s btn--radius-%s %s text-%s' % (btn_modifier, radius, style_class, text_color)"/>
 
-        <t t-if="href">
+        <t t-if="href">variation
             <a t-att-href="href"
                t-att-id="id"
                t-att-class="shared_classes"
