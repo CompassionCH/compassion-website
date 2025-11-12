@@ -71,6 +71,22 @@ document.addEventListener("DOMContentLoaded", function (event) {
             },
 
             /**
+             * Handles RPC errors by displaying the my_compassion2 error toast.
+             *
+             * @private
+             * @param {Object} error The error object from .catch.
+             * @param {jQuery} [$spinner] Optional spinner element to remove.
+             */
+            _handleError: function (error, $spinner) {
+                this.$(".btn").prop("disabled", false);
+                if ($spinner) $spinner.remove();
+                if (error.event) error.event.preventDefault();
+
+                // Display error toast
+                ToastService.error(error.message.data && error.message.data.message);
+            },
+
+            /**
              * Fetches and displays the next batch of sponsorships from the backend.
              * @private
              */
@@ -150,16 +166,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                             }
                         }.bind(this)
                     )
-                    .catch(
-                        function (error) {
-                            // Re-enable buttons and remove spinner in case of error
-                            this.$(".btn").prop("disabled", false);
-                            $spinner.remove();
-                            if (error.event) error.event.preventDefault();
-                            // Display error toast
-                            ToastService.error(error.message.data && error.message.data.message);
-                        }.bind(this)
-                    );
+                    .catch((error) => this._handleError(error, $spinner));
             },
 
             /**
@@ -262,16 +269,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                             this.$(".btn").prop("disabled", false);
                         }.bind(this)
                     )
-                    .catch(
-                        function (error) {
-                            // Re-enable buttons and remove spinner in case of error
-                            this.$(".btn").prop("disabled", false);
-                            $spinner.remove();
-                            if (error.event) error.event.preventDefault();
-                            // Display error toast
-                            ToastService.error(error.message.data && error.message.data.message);
-                        }.bind(this)
-                    );
+                    .catch((error) => this._handleError(error, $spinner));
             },
         });
 
