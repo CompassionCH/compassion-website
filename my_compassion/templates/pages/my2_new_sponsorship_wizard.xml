@@ -20,6 +20,11 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     - payment_methods (array of 'account.payment.mode' records): The list of payment methods to choose from.
     - spoken_languages (array of 'res.lang.compassion' records): The list of spoken languages to choose from.
     - lead_sources (array of 'recurring.contract.origin' records): The list of lead sources to choose from.
+
+    Note:
+    The element IDs #payment_method and #finish_button are used by the
+    Compassion Switzerland eBill extension (my_compassion_switzerland addon).
+    If renamed or modified, make sure to update the corresponding logic there as well.
 -->
 <odoo>
     <!-- NEW SPONSORSHIP STEP PROGRESS BAR -->
@@ -193,6 +198,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
             <t t-set="input_id" t-value="'payment_method'" />
             <t t-call="theme_compassion_2025.SelectComponent">
                 <t t-set="name" t-value="'payment_method'" />
+                <!-- ID used by eBill extension in my_compassion_switzerland -->
                 <t t-set="id" t-value="'payment_method'" />
                 <t t-set="required" t-value="True" />
                 <option value="">Please select</option>
@@ -206,8 +212,6 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                 </t>
             </t>
         </t>
-
-        <div id="ebill_hook"></div>
 
         <!-- Sponsorship plus -->
         <input type="hidden" name="sponsorship_plus" value="" />
@@ -518,6 +522,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                     <t t-else="" t-set="label" t-value="'Finish'" />
                     <t t-set="color" t-value="'core-blue'" />
                     <t t-set="text_color" t-value="'pure-white'" />
+                    <!-- ID used by eBill extension in my_compassion_switzerland -->
                     <t t-set="id" t-value="'finish_button'" />
                 </t>
             </div>
