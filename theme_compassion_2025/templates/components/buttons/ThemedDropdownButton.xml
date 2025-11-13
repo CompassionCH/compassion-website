@@ -1,95 +1,112 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <data>
 
-        <template id="my_information_personal" inherit_id="my_compassion.my_information_personal">
-            <xpath expr="//div[hasclass('d-flex', 'mt-4')]" position="replace">
-                <div class="d-flex mt-4 align-items-center">
-                    <t t-call="theme_compassion_2025.ThemedDropdownButtonComponent">
-                        <t t-set="label">Edit my details</t>
-                        <t t-set="href">/my/account?redirect=/my/information</t>
-                        <t t-set="variant" t-value="'default'" />
-                        <t t-set="variation" t-value="'filled'" />
-                        <t t-set="color" t-value="'primary'" />
-                        <t t-set="text_color" t-value="'white'" />
-                        <t t-set="font_size" t-value="'mr-4'" />
-                    </t>
+   <!--
+    Component: Theme Dropdown Button from 2025 Compassion Switzerland Theme
 
-                    <t t-call="theme_compassion_2025.ThemedDropdownButtonComponent">
-                        <t t-set="label">Change Password</t>
-                        <t t-set="href">/my/security?redirect=/my/information</t>
-                        <t t-set="variant" t-value="'default'" />
-                        <t t-set="variation" t-value="'filled'" />
-                        <t t-set="color" t-value="'primary'" />
-                        <t t-set="text_color" t-value="'white'" />
-                        <t t-set="font_size" t-value="'ml-4'" />
-                    </t>
-                </div>
-            </xpath>
-        </template>
+    Description:
+    This component renders a themed dropdown button with customizable properties
 
+    Will be used in probably multiple places in the website
 
-        <template id="language_selector_pill_style" inherit_id="portal.language_selector">
-            <xpath expr="." position="inside">
-                <style>
-                    /* 1. The "Curtain" Animation */
-                    @keyframes curtainDrop {
-                        0% { opacity: 0; max-height: 0; }
-                        100% { opacity: 1; max-height: 400px; }
-                    }
+    See theme_compassion_2025/static/src/scss/components/_buttons.scss for the button styles
+    and theme_compassion_2025/static/src/scss/abstracts/_colors.scss for the color variables.
 
-                    /* 2. Apply Animation */
-                    .animation-drop.show {
-                        animation: curtainDrop 0.3s ease-out forwards;
-                        overflow: hidden;
-                        display: block;
-                    }
+    The variation can be 'hollow' or 'filled', which will determine if the button has a border or a background color.
 
-                    /* 3. Hide inner scrollbar */
-                    .animation-drop {
-                        scrollbar-width: none;
-                        -ms-overflow-style: none;
-                    }
-                    .animation-drop::-webkit-scrollbar {
-                        display: none;
-                    }
+    Injected data:
+    - variant (string): Type of the button, e.g., 'default', 'impact' or 'compact'
+        - Impact is used for buttons that have a strong call to action, e.g., 'Donate Now'
+        - Compact is used for buttons that are smaller and more subtle or when space is limited
+        - Default is used for standard buttons
+    - variation (string): Variation of the button, e.g., 'hollow', 'filled' or 'outlined'
+    - label (string): Text to display on the button
+    - icon_right (string): FontAwesome icon class to display on the button right to the label
+    - icon_right_color (string): Color of the right icon
+    - icon_left (string): FontAwesome icon class to display on the button left to the label
+    - icon_left_color (string): Color of the left icon
+    - color (string): Color of the button
+    - text_color (string): Color of the text
+    - id (string, optional): The ID to be assigned to the button element.
+    - href (string, optional): The URL to link to. If provided, an 'a' tag will be rendered instead of a 'button'.
+    - radius (string, optional): Radius of the rounded corners: 'pill' (default) or 'small'
+    - data_custom (char, optional): data-custom attribute to be added to the button or link element, e.g., `data-custom="value"`
+-->
 
-                    /* 4. Specific pill adjustments */
-                    .dropdown-language-button {
-                        padding: 0.5rem 1rem !important; /* Adjusted padding */
-                        line-height: 1 !important;
-                        gap: 0.5rem;
-                    }
-                </style>
-            </xpath>
+    <template id="ThemedDropdownButtonComponent_Content" name="Button Content">
+        <t t-if="icon_left">
+            <span t-attf-class="btn__icon #{'btn__icon--' + variant if label else ''} text-#{icon_left_color}">
+                <i t-att-class="icon_left"/>
+            </span>
+        </t>
 
-            to fix XML error)
-            -->
-            <xpath expr="//div[hasclass('dropdown-menu')]" position="attributes">
-                <attribute name="class" add="dropdown-menu-right shadow-sm animation-drop" separator=" "/>
-            </xpath>
+        <span t-if="label" t-att-id="label_id">
+            <t t-esc="label"/>
+        </span>
 
-            <xpath expr="//button[hasclass('dropdown-toggle')]" position="replace">
-                <t t-call="theme_compassion_2025.ThemedDropdownButtonComponent">
-                    <t t-set="variant" t-value="'compact'" />
-                    <t t-set="variation" t-value="'hollow dropdown-language-button'" />
+        <t t-if="icon_right">
+            <span t-attf-class="btn__icon btn__icon--right text-#{icon_right_color} ml-2 transition-icon">
+                <i t-att-class="icon_right"/>
+            </span>
+        </t>
+    </template>
 
-                    <t t-set="label" t-value="active_lang[0].split('_')[0].upper()" />
+    <template id="ThemedDropdownButtonComponent" name="Button Component">
+<!--        -->
+<!--            CSS for the transition icon (the right icon that indicates the dropdown state)-->
+<!--        -->
+        <style>
+            .transition-icon {
+                /* 1. Animation settings */
+                transition: transform 0.2s ease-in-out;
 
-                    <t t-set="font_size" t-value="'small'" />
+                /* 2. Centering Geometry
+                   We turn the wrapper itself into a flex container.
+                   This removes line-height issues that cause shifting when flipped.
+                */
+                display: flex;
+                align-items: center;
+                justify-content: center;
 
-                    <t t-set="icon_left" t-value="'icon-globe01'" />
-                    <t t-set="icon_left_color" t-value="'core-blue'" />
+                /* 3. Ensure the flip happens around the exact center point */
+                transform-origin: center center;
+            }
 
-                    <t t-set="icon_right" t-value="'icon-chevron-down'" />
-                    <t t-set="icon_right_color" t-value="'black'" />
+            /* Vertical Mirror Effect */
+            [aria-expanded="true"] .transition-icon {
+                transform: scaleY(-1);
+            }
+        </style>
 
-                    <t t-set="color" t-value="'core-blue'" />
-                    <t t-set="text_color" t-value="'black'" />
-                    <t t-set="radius" t-value="'pill'" />
-                </t>
-            </xpath>
-        </template>
+        <t t-set="radius" t-value="radius or 'pill'"/>
+        <t t-set="color" t-value="color or 'primary'"/>
 
-    </data>
+        <t t-set="style_class"
+           t-value="'border border-2 border-%s' % color"/>
+
+        <t t-set="btn_modifier"
+           t-value="'btn--%s-%s%s' % (variant, variation, '-icon-only' if (icon and not label) else '')"/>
+
+        <t t-set="shared_classes"
+           t-value="'btn %s btn--radius-%s %s text-%s d-flex align-items-center justify-content-center' % (btn_modifier, radius, style_class, text_color)"/>
+
+        <t t-if="href">
+            <a t-att-href="href"
+               t-att-id="id"
+               t-att-class="shared_classes"
+               t-att-data-custom="data_custom">
+                <t t-call="theme_compassion_2025.ThemedDropdownButtonComponent_Content"/>
+            </a>
+        </t>
+        <t t-else="">
+            <button t-att-id="id"
+                    t-att-class="shared_classes"
+                    t-att-data-custom="data_custom"
+                    t-att-data-mode="mode"
+                    type="button"
+                    data-toggle="dropdown"
+                    aria-haspopup="true">
+                <t t-call="theme_compassion_2025.ThemedDropdownButtonComponent_Content"/>
+            </button>
+        </t>
+    </template>
 </odoo>

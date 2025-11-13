@@ -27,6 +27,73 @@
 
 
 
+<template id="language_selector_pill_style" inherit_id="portal.language_selector">
+
+
+
+<xpath expr="." position="inside">
+        <style>
+            /* 1. The "Curtain" Animation of the dropdown menu */
+            @keyframes curtainDrop {
+                0% {
+                    opacity: 0;
+                    max-height: 0;
+                }
+                100% {
+                    opacity: 1;
+                    max-height: 400px;
+                }
+            }
+
+            /* 2. Apply Animation */
+            .animation-drop.show {
+                animation: curtainDrop 0.3s ease-out forwards;
+                overflow: hidden;
+                display: block;
+            }
+
+            /* 3. Hide inner scrollbar of the dropdown menu */
+            .animation-drop {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            .animation-drop::-webkit-scrollbar {
+                display: none;
+            }
+        </style>
+    </xpath>
+
+    /*
+        Modify the dropdown menu to have a smooth "curtain" animation and be aligned to the right
+    */
+    <xpath expr="//div[hasclass('dropdown-menu')]" position="attributes">
+        <attribute name="class" add="dropdown-menu-right shadow-sm animation-drop" separator=" "/>
+    </xpath>
+
+    /*
+    Modify the dropdown button to use a custom pill style button
+    */
+            <xpath expr="//button[hasclass('dropdown-toggle')]" position="replace">
+                <t t-call="theme_compassion_2025.ThemedDropdownButtonComponent">
+
+                    <t t-set="variant" t-value="'compact'" />
+                    <t t-set="variation" t-value="'hollow p-3'" />
+                    <t t-set="label" t-value="active_lang[0].split('_')[0].upper()" />
+                    <t t-set="icon_left" t-value="'icon-globe01'" />
+                    <t t-set="icon_left_color" t-value="'core-blue'" />
+
+                    <t t-set="icon_right" t-value="'icon-chevron-down'" />
+                    <t t-set="icon_right_color" t-value="'black'" />
+
+                    <t t-set="color" t-value="'core-blue'" />
+                    <t t-set="text_color" t-value="'black'" />
+                    <t t-set="radius" t-value="'pill'" />
+
+                </t>
+            </xpath>
+
+        </template>
+
 
 
 
