@@ -36,6 +36,10 @@
         inherit_id="website_sale.header_cart_link"
         name="Custom Header Cart Link Redirect"
     >
+        <!-- Hide the cart when user is not logged in -->
+        <xpath expr="//t[@t-set='show_cart']" position="replace">
+            <t t-set="show_cart" t-value="request.session.uid" />
+        </xpath>
         <!-- Modify the behavior of the base Odoo cart for custom redirection and design -->
         <xpath expr="//a[@href='/shop/cart']" position="attributes">
             <attribute name="href">/my2/gift-package</attribute>
