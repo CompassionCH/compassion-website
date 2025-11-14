@@ -46,29 +46,6 @@
         </t>
     </template>
     <template id="ThemedDropdownButtonComponent" name="Button Component">
-        <style>
-            <!-- Transition animation for the button, it flips the right icon -->
-            .transition-icon {
-                /* 1. Animation settings */
-                transition: transform 0.2s ease-in-out;
-
-                /* 2. Centering Geometry
-                   We turn the wrapper itself into a flex container.
-                   This removes line-height issues that cause shifting when flipped.
-                */
-                display: flex;
-                align-items: center;
-                justify-content: center;
-
-                /* 3. Ensure the flip happens around the exact center point */
-                transform-origin: center center;
-            }
-
-            /* Vertical Mirror Effect */
-            [aria-expanded="true"] .transition-icon {
-                transform: scaleY(-1);
-            }
-        </style>
         <t t-set="radius" t-value="radius or 'pill'" />
         <t t-set="color" t-value="color or 'primary'" />
         <t t-set="style_class" t-value="'border border-2 border-%s' % color" />

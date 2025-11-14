@@ -1,0 +1,52 @@
+ /*
+ Curtain drop animation for the language selector dropdown menu
+ */
+ @keyframes curtainDrop {
+                0% {
+                    opacity: 0;
+                    max-height: 0;
+                }
+                100% {
+                    opacity: 1;
+                    max-height: 400px;
+                }
+            }
+
+/* 2. Apply Animation on the drop down menu*/
+.animation-drop.show {
+    animation: curtainDrop 0.3s ease-out forwards;
+    overflow: hidden;
+    display: block;
+}
+
+/* 3. Hide inner scrollbar of the dropdown menu */
+.animation-drop {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.animation-drop::-webkit-scrollbar {
+    display: none;
+}
+
+
+
+.transition-icon {
+    /* 1. Animation settings */
+    transition: transform 0.2s ease-in-out;
+
+    /* 2. Centering Geometry
+       We turn the wrapper itself into a flex container.
+       This removes line-height issues that cause shifting when flipped.
+    */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* 3. Ensure the flip happens around the exact center point */
+    transform-origin: center center;
+}
+
+/* Vertical Mirror Effect */
+[aria-expanded="true"] .transition-icon {
+    transform: scaleY(-1);
+}
