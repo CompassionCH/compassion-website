@@ -1,35 +1,33 @@
 <odoo>
     <!--
-    Component: Theme Dropdown Button from 2025 Compassion Switzerland Theme
+    Component: Themed Dropdown Button (2025 Compassion Switzerland Theme)
 
     Description:
-    This component renders a themed dropdown button with customizable properties
+    This component renders a themed button or dropdown toggle with customizable
+    styles, colors, icons, and behavior.
+    Relevant styles:
+    - Button styles: theme_compassion_2025/static/src/scss/components/_buttons.scss
+    - Color variables: theme_compassion_2025/static/src/scss/abstracts/_colors.scss
 
-    Will be used in probably multiple places in the website
-
-    See theme_compassion_2025/static/src/scss/components/_buttons.scss for the button styles
-    and theme_compassion_2025/static/src/scss/abstracts/_colors.scss for the color variables.
-
-    The variation can be 'hollow' or 'filled', which will determine if the button has a border or a background color.
-
-    Injected data:
-    - variant (string): Type of the button, e.g., 'default', 'impact' or 'compact'
-        - Impact is used for buttons that have a strong call to action, e.g., 'Donate Now'
-        - Compact is used for buttons that are smaller and more subtle or when space is limited
-        - Default is used for standard buttons
-    - variation (string): Variation of the button, e.g., 'hollow', 'filled' or 'outlined'
-    - label (string): Text to display on the button
-    - icon_right (string): FontAwesome icon class to display on the button right to the label
-    - icon_right_color (string): Color of the right icon
-    - icon_left (string): FontAwesome icon class to display on the button left to the label
-    - icon_left_color (string): Color of the left icon
-    - color (string): Color of the button
-    - text_color (string): Color of the text
-    - id (string, optional): The ID to be assigned to the button element.
-    - href (string, optional): The URL to link to. If provided, an 'a' tag will be rendered instead of a 'button'.
-    - radius (string, optional): Radius of the rounded corners: 'pill' (default) or 'small'
-    - data_custom (char, optional): data-custom attribute to be added to the button or link element, e.g., `data-custom="value"`
--->
+    Options:
+    - variant (string): Style variant of the button (e.g., 'default', 'impact', 'compact').
+        * default → standard button
+        * impact → strong call-to-action (e.g., “Donate Now”)
+        * compact → smaller, subtle, or space-restricted buttons
+    - variation (string): Button appearance variation (e.g., 'filled', 'hollow', 'outlined').
+    - label (string): Text to display inside the button.
+    - icon_left (string): icon displayed left of the label.
+    - icon_left_color (string): Optional color class for the left icon.
+    - icon_right (string): icon displayed right of the label.
+    - icon_right_color (string): Optional color class for the right icon.
+    - color (string): Button color theme name (default: 'primary').
+    - text_color (string): Text color class.
+    - radius (string): Border radius style: 'pill' (default) or 'small'.
+    - id (string, optional): HTML ID for the button element.
+    - href (string, optional): If set, renders an <a> instead of a <button>.
+    - data_custom (string, optional): Adds a data-custom="…" attribute.
+    - mode (string, optional): Adds a data-mode="…" attribute.
+    -->
     <template id="ThemedDropdownButtonComponent_Content" name="Button Content">
         <t t-if="icon_left">
             <span t-attf-class="btn__icon text-#{icon_left_color} mr-1 language-selector__icon">
