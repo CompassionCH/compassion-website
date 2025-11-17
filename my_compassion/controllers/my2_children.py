@@ -78,48 +78,54 @@ class MyCompassionChildrenController(WebsiteChild):
         """Fetch paginated timeline records (correspondence + gifts) ordered by date."""
         # ruff: noqa: E501 (query is more readable this way)
         sql = """
-            SELECT * FROM (
-                SELECT
-                    'correspondence' AS model,
-                    c.uuid::text AS record_id,
-                    '' AS amount,
-                    '' AS currency_name,
-                    c.direction AS metadata,
-                    c.create_date,
-                    CASE
-                        WHEN c.direction = 'Beneficiary To Supporter'
-                        THEN %(title_corr_wrote)s
-                        ELSE %(title_corr_received)s
-                    END AS title
-                FROM correspondence c
-                WHERE c.child_id = %(child_id)s
-                  AND c.partner_id = ANY(%(partner_ids)s)
+              SELECT *
+              FROM (
+                       SELECT 'correspondence' AS model,
+                              c.uuid::text AS record_id, '' AS amount,
+                              ''               AS currency_name,
+                              c.direction      AS metadata,
+                              c.create_date,
+                              CASE
+                                  WHEN c.direction = 'Beneficiary To Supporter' THEN %(title_corr_wrote)s
+                                  ELSE %(title_corr_received)s
+                                  END          AS title
+                       FROM correspondence c
+                       WHERE c.child_id = %(child_id)s
+                         AND c.partner_id = ANY (%(partner_ids)s)
 
-                UNION ALL
+                       UNION ALL
 
-                SELECT
-                    'sponsorship_gift' AS model,
-                    s.id::text AS record_id,
-                    s.amount::text AS amount,
-                    COALESCE(rc.name, %(default_currency)s) AS currency_name,
-                    s.gift_type || '|' || COALESCE(s.sponsorship_gift_type, '') AS metadata,
-                    s.create_date,
-                    CASE
-                        WHEN s.sponsorship_gift_type = 'Birthday' THEN %(title_gift_bday)s
-                        WHEN s.sponsorship_gift_type = 'General' THEN %(title_gift_general)s
-                        WHEN s.sponsorship_gift_type = 'Graduation/Final' THEN %(title_gift_grad)s
-                        WHEN s.gift_type = 'Family Gift' THEN %(title_gift_family)s
-                        ELSE %(title_gift_default)s
-                    END AS title
-                FROM sponsorship_gift s
-                LEFT JOIN account_move_line aml ON aml.gift_id = s.id
-                LEFT JOIN res_currency rc ON rc.id = aml.currency_id
-                WHERE s.child_id = %(child_id)s
-                  AND s.partner_id = ANY(%(partner_ids)s)
-            ) AS timeline
-            ORDER BY create_date DESC
-            LIMIT %(limit)s OFFSET %(offset)s
-        """
+                       SELECT 'sponsorship_gift'                                          AS model,
+                              s.id::text AS record_id, s.amount::text AS amount, COALESCE(rc.name, %(default_currency)s) AS currency_name,
+                              s.gift_type || '|' || COALESCE(s.sponsorship_gift_type, '') AS metadata,
+                              s.create_date,
+                              CASE
+                                  WHEN s.sponsorship_gift_type = 'Birthday' THEN %(title_gift_bday)s
+                                  WHEN s.sponsorship_gift_type = 'General' THEN %(title_gift_general)s
+                                  WHEN s.sponsorship_gift_type = 'Graduation/Final' THEN %(title_gift_grad)s
+                                  WHEN s.gift_type = 'Family Gift' THEN %(title_gift_family)s
+                                  ELSE %(title_gift_default)s
+                                  END                                                     AS title
+                       FROM sponsorship_gift s
+                                LEFT JOIN account_move_line aml ON aml.gift_id = s.id
+                                LEFT JOIN res_currency rc ON rc.id = aml.currency_id
+                       WHERE s.child_id = %(child_id)s
+                         AND s.partner_id = ANY (%(partner_ids)s)
+
+                       UNION ALL
+
+                       SELECT 'child_picture'         AS model,
+                              p.id::text AS record_id, '' AS amount,
+                              ''                      AS currency_name,
+                              COALESCE(p.gender, '')  AS metadata,
+                              p.create_date,
+                              %(title_child_picture)s AS title
+                       FROM compassion_child_pictures p
+                       WHERE p.child_id = %(child_id)s) AS timeline
+              ORDER BY create_date DESC
+                  LIMIT %(limit)s
+              OFFSET %(offset)s \
+              """
 
         params = {
             "child_id": child_id,
