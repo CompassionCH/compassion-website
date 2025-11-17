@@ -49,7 +49,7 @@
         <t t-set="style_class" t-value="'border border-2 border-%s' % color" />
         <t
             t-set="btn_modifier"
-            t-value="'btn--%s-%s%s' % (variant, variation, '-icon-only' if (icon and not label) else '')"
+            t-value="'btn--%s-%s%s' % (variant, variation, '-icon-only' if (icon_left and icon_right and not label) else '')"
         />
         <t
             t-set="shared_classes"
