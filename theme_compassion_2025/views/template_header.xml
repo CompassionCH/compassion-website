@@ -56,31 +56,6 @@
         <xpath expr="//div[@id='oe_structure_header_default_1']" position="replace" />
     </template>
     <!-- Improve the language selector in the header -->
-    <template id="language_selector" inherit_id="portal.language_selector">
-        <xpath expr="//button" position="attributes">
-            <attribute name="class">btn btn-sm btn-outline-primary dropdown-toggle</attribute>
-        </xpath>
-        <xpath expr="//button/span" position="before">
-            <i class="fa fa-globe align-middle" />
-        </xpath>
-        <xpath expr="//button/span" position="attributes">
-            <attribute name="class">align-middle d-none d-sm-inline</attribute>
-        </xpath>
-    </template>
-    <!-- Improve the user dropdown in the header -->
-    <template id="user_dropdown" inherit_id="portal.user_dropdown">
-        <xpath expr="//img" position="attributes">
-            <attribute name="width">48</attribute>
-            <attribute name="height">48</attribute>
-        </xpath>
-        <xpath expr="//li[@t-if='is_connected']" position="attributes">
-            <attribute name="t-attf-class">#{_item_class} list-unstyled</attribute>
-        </xpath>
-        <xpath expr="//a[@href='/my/information']" position="replace">
-            <a class="dropdown-item" href="/my2/user_settings" role="menuitem">Settings</a>
-        </xpath>
-    </template>
-    <!-- Improve the language selection drop down menu -->
     <template id="language_selector_pill_style" inherit_id="portal.language_selector">
         <xpath expr="//div[hasclass('dropdown-menu')]" position="attributes">
             <attribute name="class" add="dropdown-menu-right shadow-sm animation-drop" separator=" " />
@@ -99,6 +74,19 @@
                 <t t-set="text_color" t-value="'black'" />
                 <t t-set="radius" t-value="'pill'" />
             </t>
+        </xpath>
+    </template>
+    <!-- Improve the user dropdown in the header -->
+    <template id="user_dropdown" inherit_id="portal.user_dropdown">
+        <xpath expr="//img" position="attributes">
+            <attribute name="width">48</attribute>
+            <attribute name="height">48</attribute>
+        </xpath>
+        <xpath expr="//li[@t-if='is_connected']" position="attributes">
+            <attribute name="t-attf-class">#{_item_class} list-unstyled</attribute>
+        </xpath>
+        <xpath expr="//a[@href='/my/information']" position="replace">
+            <a class="dropdown-item" href="/my2/user_settings" role="menuitem">Settings</a>
         </xpath>
     </template>
 </odoo>
