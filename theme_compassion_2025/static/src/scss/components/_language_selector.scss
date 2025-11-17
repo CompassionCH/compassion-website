@@ -29,21 +29,21 @@
 }
 
 
+/*
+Left and Right icons specific styles
+*/
 
-.transition-icon {
-    /* 1. Animation settings */
-    transition: transform 0.2s ease-in-out;
+.language-selector__icon {
 
-    /* 2. Centering Geometry
-       We turn the wrapper itself into a flex container.
-       This removes line-height issues that cause shifting when flipped.
-    */
     display: flex;
     align-items: center;
     justify-content: center;
+}
 
-    /* 3. Ensure the flip happens around the exact center point */
-    transform-origin: center center;
+.transition-icon {
+    transition: transform 0.2s ease-in-out;
+
+
 }
 
 /* Vertical Mirror Effect */
