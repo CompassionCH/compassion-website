@@ -132,6 +132,7 @@ class MyCompassionChildrenController(WebsiteChild):
             "title_gift_grad": _("Graduation/Final gift"),
             "title_gift_family": _("Family gift"),
             "title_gift_default": _("Received a gift"),
+            "title_child_picture": _("New picture"),
             "limit": limit,
             "offset": offset,
         }
