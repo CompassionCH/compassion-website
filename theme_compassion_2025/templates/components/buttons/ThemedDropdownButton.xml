@@ -30,7 +30,7 @@
     -->
     <template id="ThemedDropdownButtonComponent_Content" name="Button Content">
         <t t-if="icon_left">
-            <span t-attf-class="btn__icon text-#{icon_left_color} mr-1 language-selector__icon">
+            <span t-attf-class="btn__icon text-#{icon_left_color} language-selector__icon language-selector__icon_left">
                 <i t-att-class="icon_left" />
             </span>
         </t>
@@ -38,7 +38,7 @@
             <t t-esc="label" />
         </span>
         <t t-if="icon_right">
-            <span t-attf-class="btn__icon text-#{icon_right_color} ml-2 transition-icon language-selector__icon">
+            <span t-attf-class="btn__icon text-#{icon_right_color} transition-icon language-selector__icon">
                 <i t-att-class="icon_right" />
             </span>
         </t>

@@ -1,52 +1,120 @@
- /*
- Curtain drop animation for the language selector dropdown menu
- */
- @keyframes curtainDrop {
-                0% {
-                    opacity: 0;
-                    max-height: 0;
-                }
-                100% {
-                    opacity: 1;
-                    max-height: 400px;
-                }
-            }
+/* =========================================
+   1. FLUID PARENT & CHILD LOGIC (The Fix)
+   ========================================= */
 
-/* 2. Apply Animation on the drop down menu*/
-.animation-drop.show {
-    animation: curtainDrop 0.3s ease-out forwards;
-    overflow: hidden;
-    display: block;
+/* The Outer Container:
+   This now acts as the master controller for size.
+   Any height/width set inline here will force children to obey. */
+.js_language_selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Default behavior: fit content, but respects max-height if set inline */
+    width: fit-content; 
 }
 
-/* 3. Hide inner scrollbar of the dropdown menu */
+/* The Button:
+   Forces the button to fill the parent completely and resets
+   rigid Bootstrap padding that causes overflow. */
+.js_language_selector .btn {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    
+    /* Override Bootstrap 'p-1' to prevent fixed padding from breaking layout */
+    padding: 0 0.75rem !important; 
+    
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    /* Hides content if the parent is made extremely small */
+    overflow: hidden; 
+
+}
+
+/* The Icons & Text:
+   Ensures icons and text remain vertically centered and
+   don't force the button to grow taller than allowed. */
+.js_language_selector .btn > span {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.language-selector__icon i {
+    display: flex;
+    align-items: center;
+    /* Ensures the icon scales down if the container is tiny */
+    max-height: 100%; 
+    line-height: 1; 
+}
+
+/* =========================================
+   2. DROPDOWN MENU ANIMATION
+   ========================================= */
+
+/* Curtain drop animation definition */
+@keyframes curtainDrop {
+    0% {
+        opacity: 0;
+        max-height: 0;
+        transform: scaleY(0.95); /* Subtle zoom for smoother feel */
+    }
+    100% {
+        opacity: 1;
+        /* Using 60vh is safer for mobile than 400px, 
+           but keeps your original intent */
+        max-height: 60vh; 
+        transform: scaleY(1);
+    }
+}
+
+/* Apply Animation on the dropdown menu */
+.animation-drop.show {
+    animation: curtainDrop 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards; /* Smooth Ease */
+    display: block;
+    overflow-y: auto; /* Adds scroll if list > max-height */
+}
+
+/* Hide inner scrollbar of the dropdown menu (Firefox) */
 .animation-drop {
     scrollbar-width: none;
-    -ms-overflow-style: none;
 }
+
+/* Hide inner scrollbar of the dropdown menu (Chrome/Safari/Edge) */
 .animation-drop::-webkit-scrollbar {
     display: none;
 }
 
+/* Fix for flags inside the dropdown list to prevent stretching */
+.dropdown-menu .o_lang_flag {
+    display: none !important;
+}
 
-/*
-Left and Right icons specific styles
-*/
+/* =========================================
+   3. ICON STYLING & TRANSITIONS
+   ========================================= */
 
 .language-selector__icon {
-
     display: flex;
     align-items: center;
     justify-content: center;
 }
+/* Hides both the Globe and the Chevron icons on screens smaller than 768px (Tablets/Mobiles) */
+@media (max-width: 768px) {
+    .language-selector__icon_left {
+        display: none !important;
+    }
+}
+
+
 
 .transition-icon {
     transition: transform 0.2s ease-in-out;
-
-
 }
 
-/* Vertical Mirror Effect */
+/* Vertical Mirror Effect (Chevron rotation) */
 [aria-expanded="true"] .transition-icon {
     transform: scaleY(-1);
 }
