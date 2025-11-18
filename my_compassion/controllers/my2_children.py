@@ -82,21 +82,24 @@ class MyCompassionChildrenController(WebsiteChild):
               FROM (
                        SELECT 'correspondence' AS model,
                               c.uuid::text AS record_id, '' AS amount,
-                              ''               AS currency_name,
-                              c.direction      AS metadata,
+                              '' AS currency_name,
+                              c.direction AS metadata,
                               c.create_date,
                               CASE
                                   WHEN c.direction = 'Beneficiary To Supporter' THEN %(title_corr_wrote)s
                                   ELSE %(title_corr_received)s
-                                  END          AS title
+                              END AS title,
+                              c.child_id AS child_id
                        FROM correspondence c
                        WHERE c.child_id = %(child_id)s
                          AND c.partner_id = ANY (%(partner_ids)s)
 
                        UNION ALL
 
-                       SELECT 'sponsorship_gift'                                          AS model,
-                              s.id::text AS record_id, s.amount::text AS amount, COALESCE(rc.name, %(default_currency)s) AS currency_name,
+                       SELECT 'sponsorship_gift' AS model,
+                              s.id::text AS record_id,
+                              s.amount::text AS amount,
+                              COALESCE(rc.name, %(default_currency)s) AS currency_name,
                               s.gift_type || '|' || COALESCE(s.sponsorship_gift_type, '') AS metadata,
                               s.create_date,
                               CASE
@@ -105,27 +108,31 @@ class MyCompassionChildrenController(WebsiteChild):
                                   WHEN s.sponsorship_gift_type = 'Graduation/Final' THEN %(title_gift_grad)s
                                   WHEN s.gift_type = 'Family Gift' THEN %(title_gift_family)s
                                   ELSE %(title_gift_default)s
-                                  END                                                     AS title
+                              END AS title,
+                              s.child_id AS child_id
                        FROM sponsorship_gift s
-                                LEFT JOIN account_move_line aml ON aml.gift_id = s.id
-                                LEFT JOIN res_currency rc ON rc.id = aml.currency_id
+                            LEFT JOIN account_move_line aml ON aml.gift_id = s.id
+                            LEFT JOIN res_currency rc ON rc.id = aml.currency_id
                        WHERE s.child_id = %(child_id)s
                          AND s.partner_id = ANY (%(partner_ids)s)
 
                        UNION ALL
 
-                       SELECT 'child_picture'         AS model,
-                              p.id::text AS record_id, '' AS amount,
-                              ''                      AS currency_name,
-                              COALESCE(p.gender, '')  AS metadata,
+                       SELECT 'child_picture' AS model,
+                              p.id::text AS record_id,
+                              '' AS amount,
+                              '' AS currency_name,
+                              COALESCE(p.gender, '') AS metadata,
                               p.create_date,
-                              %(title_child_picture)s AS title
+                              %(title_child_picture)s AS title,
+                              p.child_id AS child_id
                        FROM compassion_child_pictures p
-                       WHERE p.child_id = %(child_id)s) AS timeline
+                       WHERE p.child_id = %(child_id)s
+                   ) AS timeline
               ORDER BY create_date DESC
-                  LIMIT %(limit)s
-              OFFSET %(offset)s \
-              """
+              LIMIT %(limit)s
+              OFFSET %(offset)s
+        """
 
         params = {
             "child_id": child_id,
@@ -188,9 +195,7 @@ class MyCompassionChildrenController(WebsiteChild):
             if child_id not in latest_corr_by_child:
                 latest_corr_by_child[child_id] = corr
 
-        breadcrumbs = [
-            {"name": "Children", "url": "/my2/children/", "active": True},
-        ]
+        breadcrumbs = [{"name": "Children", "url": "/my2/children/", "active": True}]
         sponsorships = partner.sponsorship_ids.filtered("can_show_on_my_compassion")
 
         return request.render(
@@ -215,17 +220,14 @@ class MyCompassionChildrenController(WebsiteChild):
         sitemap=False,
     )
     def my2_render_child_timeline_page(self, child, **kwargs):
-        """Renders the main timeline page with the initial batch of records."""
         try:
             self._check_sponsored_child_access(child)
         except AccessError:
             return request.redirect("/my2/children/")
 
         access_scope = "public" if child.is_published else "sponsor"
-
         offset = int(kwargs.get("offset", 0))
         limit = int(kwargs.get("limit", 9))
-
         records, total = self._get_timeline_records(child.id, offset, limit)
 
         google_api_key = (
@@ -256,17 +258,13 @@ class MyCompassionChildrenController(WebsiteChild):
         sitemap=False,
     )
     def my2_get_child_timeline_items(self, child, **kwargs):
-        """API endpoint for infinite scroll. Returns a rendered HTML snippet."""
         try:
             self._check_sponsored_child_access(child)
         except AccessError:
-            # For an API, it's better to return an empty or error response
-            # than to redirect.
             return request.make_response("", headers={"Content-Type": "text/html"})
 
         offset = int(kwargs.get("offset", 0))
         limit = int(kwargs.get("limit", 9))
-
         records, total = self._get_timeline_records(child.id, offset, limit)
         has_more = total > offset + limit
 
@@ -282,10 +280,7 @@ class MyCompassionChildrenController(WebsiteChild):
             else ""
         )
 
-        return {
-            "html": html,
-            "has_more_records": has_more,
-        }
+        return {"html": html, "has_more_records": has_more}
 
     @http.route(
         '/my2/children/<model("compassion.child"):child>/center-weather',
@@ -294,10 +289,6 @@ class MyCompassionChildrenController(WebsiteChild):
         website=True,
     )
     def get_center_weather(self, child, **kw):
-        """
-        This controller returns the child's center weather as a JSON object.
-        """
-
         try:
             self._check_sponsored_child_access(child)
         except AccessError:
