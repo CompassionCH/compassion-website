@@ -101,6 +101,17 @@
     align-items: center;
     justify-content: center;
 }
+.language-selector__dropdown-menu{
+    //if on the right of the screen
+      right: 0;
+  left: auto;
+    }
+@media (max-width: 437px) {
+    .language-selector__dropdown-menu {
+        left: 0;
+        right: auto;
+    }
+}
 /* Hides both the Globe and the Chevron icons on screens smaller than 768px (Tablets/Mobiles) */
 @media (max-width: 768px) {
     .language-selector__icon_left {
