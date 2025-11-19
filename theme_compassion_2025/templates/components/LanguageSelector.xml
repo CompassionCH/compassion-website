@@ -28,7 +28,7 @@
     - data_custom (string, optional): Adds a data-custom="…" attribute.
     - mode (string, optional): Adds a data-mode="…" attribute.
     -->
-    <template id="ThemedDropdownButtonComponent_Content" name="Button Content">
+    <template id="LanguageSelector_Content" name="Button Content">
         <t t-if="icon_left">
             <span t-attf-class="btn__icon text-#{icon_left_color} language-selector__icon language-selector__icon_left">
                 <i t-att-class="icon_left" />
@@ -43,7 +43,7 @@
             </span>
         </t>
     </template>
-    <template id="ThemedDropdownButtonComponent" name="Button Component">
+    <template id="LanguageSelector" name="Button Component">
         <t t-set="radius" t-value="radius or 'pill'" />
         <t t-set="color" t-value="color or 'primary'" />
         <t t-set="style_class" t-value="'border border-2 border-%s' % color" />
@@ -57,7 +57,7 @@
         />
         <t t-if="href">
             <a t-att-href="href" t-att-id="id" t-att-class="shared_classes" t-att-data-custom="data_custom">
-                <t t-call="theme_compassion_2025.ThemedDropdownButtonComponent_Content" />
+                <t t-call="theme_compassion_2025.LanguageSelector_Content" />
             </a>
         </t>
         <t t-else="">
@@ -70,7 +70,7 @@
                 data-toggle="dropdown"
                 aria-haspopup="true"
             >
-                <t t-call="theme_compassion_2025.ThemedDropdownButtonComponent_Content" />
+                <t t-call="theme_compassion_2025.LanguageSelector_Content" />
             </button>
         </t>
     </template>
