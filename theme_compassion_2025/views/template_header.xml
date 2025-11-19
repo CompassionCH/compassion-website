@@ -56,25 +56,14 @@
         <xpath expr="//div[@id='oe_structure_header_default_1']" position="replace" />
     </template>
     <!-- Improve the language selector in the header by applying the Compassion theme-->
-
     <template id="remove_flags_from_selector" inherit_id="portal.language_selector">
-
-<!--    <xpath expr="//img[hasclass('o_lang_flag')]" position="replace">-->
-<!--        </xpath>-->
-
-</template>
-
-
-
-
+        <!--    <xpath expr="//img[hasclass('o_lang_flag')]" position="replace">-->
+        <!--        </xpath>-->
+    </template>
     <template id="language_selector_pill_style" inherit_id="portal.language_selector">
-
-
-
         <xpath expr="//div[hasclass('dropdown-menu')]" position="attributes">
             <attribute name="class" add="shadow-sm animation-drop language-selector__dropdown-menu" separator=" " />
         </xpath>
-
         <!--    Modify the dropdown button to use a custom pill style button-->
         <xpath expr="//button[hasclass('dropdown-toggle')]" position="replace">
             <t t-call="theme_compassion_2025.ThemedDropdownButtonComponent">
