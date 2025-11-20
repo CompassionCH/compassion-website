@@ -98,8 +98,8 @@
     }
 }
 
-/* Hides the left icon on screen less having width less than 768px (Tablets/Mobiles) */
-@media (max-width: 768px) {
+/* Hides the left icon on small screen (Tablets/Mobiles) */
+@media (max-width: $breakpoint-sm) {
     .language-selector__icon_left {
         display: none !important;
     }
