@@ -8,57 +8,57 @@ odoo.define('compassion_website.donation_tour', function (require) {
         url: '/my2/gift-package/add'
     }, [
         {
-            content: "Search for the test product and click on Learn More",
+            content: "Suche das Test-Produkt und klicke auf Learn More",
             trigger: ".donation-product-container:contains('Test Donation Goat') a:contains('Learn More')",
             run: "click"
         },
         {
-            content: "Check if we are on the details page (H2 header)",
+            content: "Pruefen ob wir auf der Detailseite sind (H2 Header)",
             trigger: ".donation-details-header h2:contains('Test Donation Goat')",
             run: "text"
         },
         {
-            content: "Click on 'Monthly'",
+            content: "Klicke auf 'Monthly'",
             trigger: ".my2_donation_form .donation-frequency label:contains('Monthly')",
             run: "click"
         },
         {
-            content: "Select 'Medium' amount",
+            content: "Waehle ein Patenkind aus",
+            trigger: ".my2_donation_form select[name='recipient']",
+            run: "text Anedu"
+        },
+        {
+            content: "Waehle Betrag 'Medium'",
             trigger: ".my2_donation_form label[for='donation-suggested-medium']",
             run: "click"
         },
         {
-            content: "Select a sponsored child",
-            trigger: ".my2_donation_form select[name='recipient']",
-            run: "text Calvin"
-        },
-        {
-            content: "Click on Add & check out",
+            content: "Klicke auf Add & check out",
             trigger: ".my2_donation_form button:contains('Add & check out')",
             run: "click"
         },
         {
-            content: "Check if we are in the cart (Gift Package)",
+            content: "Pruefen, ob wir im Warenkorb (Gift Package) sind",
             trigger: "h1:contains('Gift Package'), .my2_gift_package_page",
             run: "text"
         },
         {
-            content: "Check if the product is in the list",
+            content: "Pruefen, ob das Produkt in der Liste liegt",
             trigger: "body:has(div:contains('Test Donation Goat')), body:has(td:contains('Test Donation Goat'))",
             run: function () {
-                console.log("Product successfully found in cart!");
+                console.log("Produkt erfolgreich im Warenkorb gefunden!");
             }
         },
         {
-            content: "Click on the delete button",
+            content: "Klicke auf den Loeschen-Button",
             trigger: "i.icon-trash01, .action-button i[class*='trash']",
             run: "click"
         },
         {
-            content: "Wait until the item is gone",
+            content: "Warten bis das Item weg ist",
             trigger: "body:not(:has(:contains('Test Donation Goat')))",
             run: function () {
-                console.log("Product successfully deleted!");
+                console.log("Produkt erfolgreich geloescht!");
             }
         }
     ]);
