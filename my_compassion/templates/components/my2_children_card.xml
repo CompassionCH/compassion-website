@@ -22,7 +22,11 @@
         <div class="children-card text-center mb-3 mt-3">
             <div class="p-4 d-flex flex-column align-items-center bg-high-eggshell">
                 <!-- Child Image -->
-                <img class="rounded-circle img-fluid mb-2" t-attf-src="/web/image/compassion.child/{{child.id}}/portrait" alt="Child image" />
+                <img
+                    class="rounded-circle img-fluid mb-2"
+                    t-attf-src="/web/image/compassion.child/{{child.id}}/portrait"
+                    alt="Child image"
+                />
                 <!-- Child name -->
                 <div class="h2 mb-0">
                     <t t-esc="child.preferred_name" />
