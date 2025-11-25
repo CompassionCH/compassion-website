@@ -51,7 +51,7 @@ odoo.define('compassion_website.donation_tour', function (require) {
         },
         {
             content: "Check total amount before delete (CHF 100)",
-            trigger: ".bg-light-green:contains('Total amount'):contains(' 100')",
+            trigger: ".bg-light-green:contains('Total amount'):contains(' 10asdfasdfasdf0')",
             run: "text"
         },
         {
