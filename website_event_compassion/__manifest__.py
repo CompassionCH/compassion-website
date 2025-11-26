@@ -70,6 +70,6 @@
         "templates/my_events.xml",
         "data/website_page.xml",
     ],
-    "installable": True,
+    'installable': False,
     "auto_install": False,
 }

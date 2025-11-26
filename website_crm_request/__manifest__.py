@@ -43,6 +43,6 @@
         "website_form",
     ],
     "demo": [],
-    "installable": True,
+    'installable': False,
     "auto_install": False,
 }

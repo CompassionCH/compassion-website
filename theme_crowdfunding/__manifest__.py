@@ -37,4 +37,5 @@
     "depends": ["website"],
     "data": ["views/assets.xml"],
     "application": False,
+    'installable': False,
 }

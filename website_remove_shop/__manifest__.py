@@ -19,6 +19,6 @@
         "website_sale",
     ],
     "data": [],
-    "installable": True,
+    'installable': False,
     "auto_install": False,
 }

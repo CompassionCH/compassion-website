@@ -13,4 +13,5 @@
     ],
     "images": ["static/description/compassion_screenshot.jpeg"],
     "license": "LGPL-3",
+    'installable': False,
 }

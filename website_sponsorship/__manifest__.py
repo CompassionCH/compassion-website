@@ -38,6 +38,6 @@
         "views/child_view.xml",
         "views/payment_mode_view.xml",
     ],
-    "installable": True,
+    'installable': False,
     "auto_install": False,
 }
