@@ -13,7 +13,7 @@
 
     Injected data:
     - timezone (string): timezone of the center.
-    - church_name (string): name of the local church associated with the center.
+    - cdc_name (string): name of the child development center.
     - city_country (string): represents where the center is located in the following format city,country.
 
 
@@ -23,10 +23,10 @@
     <template id="WeatherTimeContainer" name="Weather and Time Container">
         <link rel="stylesheet" href="/my_compassion/static/src/css/my2_weather_time_container.css" />
         <div class="center-info-card d-none">
-            <t t-if="church_name">
+            <t t-if="cdc_name">
                 <div class="center-info-card__header">
                     <p class="center-info-card__project-info">
-                        <t t-esc="church_name" />
+                        <t t-esc="cdc_name" />
                     </p>
                 </div>
             </t>
