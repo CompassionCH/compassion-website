@@ -399,6 +399,9 @@ class MyCompassionDonationsController(CustomerPortal):
         # Active sponsorships
         active_sponsorships = partner.get_portal_sponsorships("active")
 
+        # Group sponsorships by their backend Contract Group
+        sponsorship_groups = active_sponsorships.mapped('group_id')
+
         # Due invoices
         date_filter_up_bound = datetime.today() + timedelta(days=30)
         due_invoices = (
@@ -417,16 +420,16 @@ class MyCompassionDonationsController(CustomerPortal):
             )
         )
 
-        # Computing the total price of the active sponsorships grouped
-        # per sponsorship frequency and payment method.
-        # group_id groups the invoices that have the same payment method and frequency.
+        # Total cost calculation
         tot_cost_per_frequency = defaultdict(lambda: defaultdict(float))
 
         for sponsorship in active_sponsorships:
             currency = sponsorship.pricelist_id.currency_id.name
-            tot_cost_per_frequency[sponsorship.group_id.month_interval][
-                currency
-            ] += sponsorship.total_amount
+            # Ensure group exists
+            if sponsorship.group_id:
+                tot_cost_per_frequency[sponsorship.group_id.month_interval][
+                    currency
+                ] += sponsorship.total_amount
 
         paid_invoices_data = self._get_paginated_paid_invoices(
             partner, invoice_page, invoice_per_page
@@ -436,6 +439,7 @@ class MyCompassionDonationsController(CustomerPortal):
         values.update(
             {
                 "active_sponsorships": active_sponsorships,
+                "sponsorship_groups": sponsorship_groups,
                 "tot_cost_per_frequency": tot_cost_per_frequency,
                 "due_invoices": due_invoices,
                 "paid_invoices_subset": paid_invoices_data["paid_invoices_subset"],
