@@ -1,6 +1,8 @@
 import logging
 import random
 from datetime import date
+from unittest.mock import patch
+from unittest.mock import MagicMock
 from odoo.tests import HttpCase, tagged
 
 _logger = logging.getLogger(__name__)
@@ -10,7 +12,23 @@ _logger = logging.getLogger(__name__)
 class TestDonationFlow(HttpCase):
 
     def setUp(self):
+        # WICHTIG: super().setUp() muss ZUERST aufgerufen werden,
+        # damit 'self.env' initialisiert wird.
         super(TestDonationFlow, self).setUp()
+
+        # ----------------------------------------------------------------------
+        # FIX: Authentifizierung patchen (Registry Level)
+        # Wir patchen die Methode direkt auf dem aktiven Model im Speicher.
+        # Das umgeht das Problem, dass String-Patches bei Odoo oft ignoriert werden.
+        # side_effect=None -> Methode tut nichts -> Login erfolgreich.
+        # ----------------------------------------------------------------------
+        RegistryResUsers = type(self.env['res.users'])
+        self.auth_patcher = patch.object(RegistryResUsers, '_check_credentials', side_effect=None)
+        self.auth_patcher.start()
+        self.addCleanup(self.auth_patcher.stop)
+
+        # Cache leeren
+        self.env.cache.invalidate()
 
         self.run_id = random.randint(1000, 9999)
         image_b64 = b"R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="
@@ -48,13 +66,13 @@ class TestDonationFlow(HttpCase):
             })
 
         partner = self.env['res.partner'].create({
-            'name': f'Test Donor',
-            'email': f'test.donor@example.com',
+            'name': f'Test Donor {self.run_id}',
+            'email': f'test.donor.{self.run_id}@example.com',
         })
         self.env['res.partner'].flush()
 
         self.user_portal = self.env['res.users'].create({
-            'login': f'test_donor',
+            'login': f'test_donor_{self.run_id}',
             'password': 'password',
             'partner_id': partner.id,
             'groups_id': [(6, 0, [self.env.ref('base.group_portal').id])]
