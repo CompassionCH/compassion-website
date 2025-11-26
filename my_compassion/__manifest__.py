@@ -90,6 +90,7 @@
         "templates/components/my2_giving_limits_modal.xml",
         "templates/components/my2_checkout.xml",
         "templates/components/my2_weather_time_container.xml",
+        "templates/components/my2_payment_method_selector.xml",
         # Other data the depends on the templates
         "data/my2_new_sponsorship_wizard_steps.xml",
     ],
