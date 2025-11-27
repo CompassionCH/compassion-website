@@ -461,7 +461,7 @@
                                 <t t-set="fcp_id" t-value="compassion_child.project_id.fcp_id" />
                                 <t
                                     t-set="cdc_name"
-                                    t-value="compassion_child.project_id.child_center_original_name or compassion_child.project_id.name or _('Compassion center')"
+                                    t-value="compassion_child.project_id.child_center_original_name or compassion_child.project_id.name or 'Compassion center' "
                                 />
                                 <t
                                     t-set="city_country"
