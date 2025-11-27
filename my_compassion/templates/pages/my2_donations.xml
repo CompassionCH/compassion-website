@@ -83,6 +83,8 @@ Page: My Compassion 2 Donations Page
                             </div>
                         </div>
 
+                        <!-- TEST MODAL TRIGGER BUTTON -->
+                        <!-- TODO: Remove this button when the modal is properly integrated -->
                         <div class="mb-5 text-center">
                              <a href="#" data-toggle="modal" data-target="#payment_method_selector_modal">
                                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
@@ -120,8 +122,8 @@ Page: My Compassion 2 Donations Page
                                 A payment slip is available for download for each of
                                 your sponsored children.
                             </p>
+                            <!-- SPONSORSHIP GROUPS -->
                             <t t-foreach="sponsorship_groups" t-as="group">
-
                                 <t t-call="my_compassion.my2_sponsorships_group_card">
                                     <t t-set="group" t-value="group"/>
                                 </t>
@@ -168,6 +170,8 @@ Page: My Compassion 2 Donations Page
                     </div>
                 </div>
 
+                <!-- PAYMENT METHOD SELECTOR MODAL -->
+                <!-- TODO: Remove it when correctly integrated -->
                 <t t-call="my_compassion.my2_payment_method_selector">
                     <t t-set="modal_type" t-value="'Update'"/>
                     <t t-set="description" t-value="'Description'"/>

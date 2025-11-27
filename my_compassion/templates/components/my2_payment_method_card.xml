@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Description:
+
+     Injected data:
+    - group (record): The sponsorship contract group object containing sponsorships and payment method info.
+-->
+<odoo>
+    <template id="my2_sponsorships_group_card" name="Sponsorship Group Card">
+        <div class="sponsorship-group mb-4">
+
+            <t t-set="info" t-value="group.get_payment_method_info()"/>
+
+            <div class="d-flex border-low-black shadow-sm rounded">
+                <!-- Header Card -->
+                <div class="d-flex justify-content-between align-items-center p-3 bg-light cursor-pointer"
+                     data-toggle="collapse"
+                     t-att-data-target="'#group_collapse_%s' % group.id"
+                     aria-expanded="true">
+
+                    <!-- Left: Title & Description -->
+                    <div class="d-flex flex-column">
+                        <div class="d-flex align-items-center">
+                            <!-- Payment Icon -->
+
+                            <!-- Payment Label (e.g. 'Visa •••• 1234') -->
+                            <h5 class="m-0 text-dark-blue font-weight-bold">
+                                <t t-esc="info.get('label')"/>
+                            </h5>
+                        </div>
+
+                        <div class="small mt-1 text-muted d-flex align-items-center">
+                            <span>Monthly total:</span>
+                            <span class="text-core-blue font-weight-bold ml-1 mr-1">
+                                <t t-esc="'{:,.2f}'.format(group.total_amount)"/>.-
+                                <t t-if="group.contract_ids" t-esc="group.contract_ids[0].pricelist_id.currency_id.name"/>
+                            </span>
+                            <span class="mr-1 ml-1"> </span>
+                            <span>
+                                <t t-esc="len(group.contract_ids.filtered(lambda s: s.state not in ['terminated', 'cancelled']))"/> sponsorships
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Right: Actions -->
+                    <div class="d-flex align-items-center">
+                        <!-- Edit Button -->
+                        <t t-if="info.get('can_edit')">
+                            <a href="#"
+                               class="mr-4 text-core-black opacity-50-hover"
+                               t-att-data-group-id="group.id"
+                               id="btn_edit_group_payment"
+                               title="Edit Payment Method"
+                               onclick="$('#payment_method_selector_modal').modal('show'); event.stopPropagation(); return false;">
+                                <i class="fa fa-pencil"/>
+                            </a>
+                        </t>
+
+                        <div class="text-core-black">
+                            <i class="fa fa-chevron-down"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Collapsible Body -->
+                <div t-att-id="'group_collapse_%s' % group.id"
+                     class="collapse show mt-3 border rounded p-3">
+
+                    <t t-foreach="group.contract_ids" t-as="sponsorship">
+                        <t t-if="sponsorship.state not in ['terminated', 'cancelled']">
+                            <div class="mb-3">
+                                <t t-set="primary_button_data" t-value="{
+                                    'label': 'See profile',
+                                    'pictogram': 'child-sponsorship',
+                                    'action': 'link',
+                                    'href': '/my2/children/' + str(sponsorship.child_id.id),
+                                    'color': 'low-blue'
+                                }"/>
+                                <t t-set="secondary_buttons_data" t-value="[
+                                    {
+                                        'icon': 'download01',
+                                        'color': 'mid-yellow',
+                                        'action': 'link',
+                                        'href': '/my/download/gift_bvr?child_id=' + str(sponsorship.child_id.id),
+                                    }
+                                ]"/>
+
+                                <t t-call="my_compassion.DonationItemComponent">
+                                    <t t-set="name" t-value="sponsorship.child_id.preferred_name" />
+                                    <t t-set="image" t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait"/>
+                                    <!-- Use the specific payment info here too if desired, or keep generic -->
+                                    <t t-set="subtext" t-value="info.get('label')" />
+                                    <t t-set="price" t-value="sponsorship.total_amount" />
+                                    <t t-set="primary_button" t-value="primary_button_data" />
+                                    <t t-set="monthly_noabbr" t-value="True" />
+                                    <t t-set="secondary_buttons" t-value="secondary_buttons_data" />
+                                    <t t-set="bg_color" t-value="'light-blue'" />
+                                    <t t-set="accent_color" t-value="'low-blue'" />
+                                    <t t-set="title_color" t-value="'low-blue'" />
+                                    <t t-set="price_color" t-value="'low-blue'" />
+                                </t>
+                            </div>
+                        </t>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>
