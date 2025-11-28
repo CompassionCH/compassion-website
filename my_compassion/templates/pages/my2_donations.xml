@@ -33,6 +33,10 @@ Page: My Compassion 2 Donations Page
             <t t-call="website.layout">
                 <div class="container">
                     <div class="single-column">
+                        <!-- MODAL: PAYMENT METHOD SELECTOR -->
+                        <t t-call="my_compassion.my2_payment_method_selector"/>
+
+
                         <!-- TITLE-->
                         <div class="my-5">
                             <t t-call="theme_compassion_2025.TitleComponent">
@@ -61,8 +65,8 @@ Page: My Compassion 2 Donations Page
                                                     <t t-set="name" t-value="'year'" />
                                                     <t t-set="id" t-value="'year'" />
                                                     <t
-                                                        t-foreach="range(int(current_year) - 1, first_year - 1, -1)"
-                                                        t-as="fiscal_year"
+                                                            t-foreach="range(int(current_year) - 1, first_year - 1, -1)"
+                                                            t-as="fiscal_year"
                                                     >
                                                         <option t-att-value="fiscal_year">
                                                             <t t-esc="fiscal_year" />
@@ -86,7 +90,7 @@ Page: My Compassion 2 Donations Page
                         <!-- TEST MODAL TRIGGER BUTTON -->
                         <!-- TODO: Remove this button when the modal is properly integrated -->
                         <div class="mb-5 text-center">
-                             <a href="#" data-toggle="modal" data-target="#payment_method_selector_modal">
+                            <a href="#" data-toggle="modal" data-target="#payment_method_selector_modal">
                                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                     <t t-set="variant" t-value="'default'" />
                                     <t t-set="variation" t-value="'filled'" />
@@ -128,6 +132,25 @@ Page: My Compassion 2 Donations Page
                                     <t t-set="group" t-value="group"/>
                                 </t>
                             </t>
+                            <!-- ADD PAYMENT METHOD BUTTON -->
+                            <div class="d-flex flex-column align-items-center">
+                                <t t-call="my_compassion.my2_payment_method_selector">
+                                    <t t-set="modal_type" t-value="'Add'"/>
+                                    <t t-set="description" t-value="'Description'"/>
+                                </t>
+
+                                <a href="#" data-toggle="modal" data-target="#payment_method_selector_modal">
+                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                        <t t-set="variant" t-value="'compact'" />
+                                        <t t-set="variation" t-value="'filled'" />
+                                        <t t-set="label" t-value="'Add a payment method'" />
+                                        <t t-set="icon" t-value="'icon-plus'" />
+                                        <t t-set="color" t-value="'dark-blue'" />
+                                        <t t-set="text_color" t-value="'pure-white'" />
+                                        <t t-set="icon_color" t-value="'pure-white'" />
+                                    </t>
+                                </a>
+                            </div>
                         </div>
                         <!-- DUE INVOICES -->
                         <div class="mb-4 mt-4">
@@ -144,8 +167,8 @@ Page: My Compassion 2 Donations Page
                                 </div>
                                 <t t-foreach="due_invoices" t-as="invoice">
                                     <t
-                                        t-set="children"
-                                        t-value="invoice.invoice_line_ids.mapped('contract_id.child_id')"
+                                            t-set="children"
+                                            t-value="invoice.invoice_line_ids.mapped('contract_id.child_id')"
                                     />
                                     <div class="row mb-3">
                                         <div class="col">
@@ -169,13 +192,6 @@ Page: My Compassion 2 Donations Page
                         <t t-call="my_compassion.my2_donations_history_content" />
                     </div>
                 </div>
-
-                <!-- PAYMENT METHOD SELECTOR MODAL -->
-                <!-- TODO: Remove it when correctly integrated -->
-                <t t-call="my_compassion.my2_payment_method_selector">
-                    <t t-set="modal_type" t-value="'Update'"/>
-                    <t t-set="description" t-value="'Description'"/>
-                </t>
 
                 <script type="text/javascript" src="/my_compassion/static/src/js/my2_donations.js" />
                 <link rel="stylesheet" href="/my_compassion/static/src/css/my2_donations.css" />
