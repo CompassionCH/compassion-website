@@ -26,12 +26,13 @@ Description:
                         <t t-set="icon_id" t-value="info.get('icon')"/>
                         <t t-set="expire_date" t-value="info.get('expire_date')"/>
                         <div class="d-flex flex-row">
-                            <img t-if="icon_id"
-                                 t-att-src="'/web/image?model=payment.icon&amp;id=%s&amp;field=image&amp;width=50&amp;height=50' % icon_id"
-                                 style="width: 30px; height: 30px; object-fit: contain; margin-right: 12px; flex-shrink: 0;"
-                                 alt="Payment method"
-                                 onerror="this.style.display='none'"
-                            />
+                            <t t-if="icon_id">
+                                <img t-att-src="'/web/image?model=payment.icon&amp;id=%s&amp;field=image&amp;width=50&amp;height=50' % icon_id"
+                                     style="width: 28px; height: 28px; object-fit: contain; margin-right: 12px; flex-shrink: 0;"
+                                     alt="Payment method"
+                                     onerror="this.style.display='none'"
+                                />
+                            </t>
                             <div class="d-flex flex-column">
                                 <h5 class="m-0 text-dark-blue font-weight-bold d-flex align-items-center">
 
@@ -40,16 +41,28 @@ Description:
                                     </span>
                                 </h5>
 
-                                <div class="small text-muted mt-1 d-flex align-items-center">
-                                    Expires:
-                                </div>
+                                <!-- Ref number line – only if exists -->
+                                <t t-if="info.get('ref_number')">
+                                    <div class="small text-muted mt-1">
+                                        Ref: <span class="font-weight-medium" t-esc="info.get('ref_number')"/>
+                                    </div>
+                                </t>
+
+                                <!-- Expiration line – only if exists -->
+                                <t t-if="expire_date">
+                                    <div class="small text-muted mt-1">
+                                        Expires: <span class="font-weight-medium" t-esc="expire_date"/>
+                                    </div>
+                                </t>
                             </div>
                         </div>
 
                         <div class="small mt-1 text-muted d-flex align-items-center">
                             <span>Monthly total:</span>
                             <span class="text-core-blue font-weight-bold ml-1 mr-1">
-                                <t t-esc="group.total_amount"/>
+                                <t t-set="price" t-value="group.total_amount"/>
+                                <t t-if="price % 1 == 0" t-set="price" t-value="'{0}.-'.format(int(price))" />
+                                <t t-esc="price"/>
                                 <t t-if="group.contract_ids" t-esc="group.contract_ids[0].pricelist_id.currency_id.name"/>
                             </span>
                             <span class="mr-1 ml-1"> </span>
