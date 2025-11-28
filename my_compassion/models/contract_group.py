@@ -34,20 +34,31 @@ class ContractGroup(models.Model):
         1. Get the Payment Mode from the group.
         2. Find the associated Payment Acquirer via fixed_journal_id from account.payment.mode
         3. Check if the partner has a saved Payment Token  for that Acquirer.
+
+        TODO : Add a way to get icons
         """
         self.ensure_one()
 
+
         # Default / Fallback values
         info = {
-            'icon_url': '/my_compassion/static/src/img/undefined.png',
+            'icon': '/my_compassion/static/src/img/undefined.png',
             'label': _('Unknown Method'),
             'type': 'manual',  # 'manual', 'mode', or 'token'
             'brand': False,
+            'expire_date' : False,
             'mode_id': self.payment_mode_id.id if self.payment_mode_id else False
         }
 
         if not self.payment_mode_id:
             return info
+
+        # test for icon retrieval
+        all_icons = self.env['payment.icon'].sudo().search([('image', '!=', False)])
+        for icon in all_icons:
+            if icon.name.lower() in self.payment_mode_id.name.lower():
+                info['icon'] = icon.id
+                break
 
         # 1. Basic Mode Info
         info['label'] = self.sudo().payment_mode_id.name
@@ -72,9 +83,7 @@ class ContractGroup(models.Model):
             ], limit=1)
 
             if valid_token:
-                # We found a specific saved card
                 info.update({
-                    'icon_url': f'/my_compassion/static/src/img/{acquirer.id}/image_128',
                     'label': valid_token.name,
                     'type': 'token',
                     'token_id': valid_token.id,
@@ -84,7 +93,6 @@ class ContractGroup(models.Model):
             else:
                 # We have an online provider (like Stripe) but no token found
                 info.update({
-                    'icon_url': f'/web/image/payment.acquirer/{acquirer.id}/image_128',
                     'label': acquirer.display_as or acquirer.name,
                 })
 
