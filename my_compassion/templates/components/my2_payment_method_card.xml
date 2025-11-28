@@ -1,38 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 Description:
+    Component to display a sponsorship group card with payment method details and associated sponsorships.
 
-     Injected data:
-    - group (record): The sponsorship contract group object containing sponsorships and payment method info.
+    Injected data:
+    - group: The sponsorship group object containing payment method and sponsorship details.
+
 -->
 <odoo>
-    <template id="my2_sponsorships_group_card" name="Sponsorship Group Card">
-        <div class="sponsorship-group mb-4">
+    <template id="my2_sponsorships_group_card" name="Sponsorships Group Card Component">
+        <t t-call="my_compassion.my2_payment_method_selector">
+            <t t-set="modal_type" t-value="'Update'"/>
+            <t t-set="description" t-value="'Description'"/>
+        </t>
 
-            <t t-set="info" t-value="group.get_payment_method_info()"/>
-
-            <div class="d-flex border-low-black shadow-sm rounded">
-                <!-- Header Card -->
-                <div class="d-flex justify-content-between align-items-center p-3 bg-light cursor-pointer"
+        <t t-set="info" t-value="group.get_payment_method_info()"/>
+        <div class="sponsorship-group mb-4 ">
+            <div class="d-flex flex-column border rounded shadow-sm">
+                <div class="d-flex justify-content-between align-items-center p-3 bg-light cursor-pointer border-bottom rounded-top"
                      data-toggle="collapse"
                      t-att-data-target="'#group_collapse_%s' % group.id"
                      aria-expanded="true">
 
-                    <!-- Left: Title & Description -->
                     <div class="d-flex flex-column">
-                        <div class="d-flex align-items-center">
-                            <!-- Payment Icon -->
+                        <t t-set="icon_id" t-value="info.get('icon')"/>
+                        <t t-set="expire_date" t-value="info.get('expire_date')"/>
+                        <div class="d-flex flex-row">
+                            <img t-if="icon_id"
+                                 t-att-src="'/web/image?model=payment.icon&amp;id=%s&amp;field=image&amp;width=50&amp;height=50' % icon_id"
+                                 style="width: 30px; height: 30px; object-fit: contain; margin-right: 12px; flex-shrink: 0;"
+                                 alt="Payment method"
+                                 onerror="this.style.display='none'"
+                            />
+                            <div class="d-flex flex-column">
+                                <h5 class="m-0 text-dark-blue font-weight-bold d-flex align-items-center">
 
-                            <!-- Payment Label (e.g. 'Visa •••• 1234') -->
-                            <h5 class="m-0 text-dark-blue font-weight-bold">
-                                <t t-esc="info.get('label')"/>
-                            </h5>
+                                    <span>
+                                        <t t-esc="info.get('label') or 'Unknown Method'"/>
+                                    </span>
+                                </h5>
+
+                                <div class="small text-muted mt-1 d-flex align-items-center">
+                                    Expires:
+                                </div>
+                            </div>
                         </div>
 
                         <div class="small mt-1 text-muted d-flex align-items-center">
                             <span>Monthly total:</span>
                             <span class="text-core-blue font-weight-bold ml-1 mr-1">
-                                <t t-esc="'{:,.2f}'.format(group.total_amount)"/>.-
+                                <t t-esc="group.total_amount"/>
                                 <t t-if="group.contract_ids" t-esc="group.contract_ids[0].pricelist_id.currency_id.name"/>
                             </span>
                             <span class="mr-1 ml-1"> </span>
@@ -42,19 +59,17 @@ Description:
                         </div>
                     </div>
 
-                    <!-- Right: Actions -->
                     <div class="d-flex align-items-center">
-                        <!-- Edit Button -->
-                        <t t-if="info.get('can_edit')">
-                            <a href="#"
-                               class="mr-4 text-core-black opacity-50-hover"
-                               t-att-data-group-id="group.id"
-                               id="btn_edit_group_payment"
-                               title="Edit Payment Method"
-                               onclick="$('#payment_method_selector_modal').modal('show'); event.stopPropagation(); return false;">
+                        <a href="#"
+                           class="mr-4 text-core-black opacity-50-hover"
+                           t-att-data-group-id="group.id"
+                           id="btn_edit_group_payment"
+                           title="Edit Payment Method"
+                           onclick="$('#payment_method_selector_modal').modal('show'); event.stopPropagation(); return false;">
+                            <div class="text-dark-blue">
                                 <i class="fa fa-pencil"/>
-                            </a>
-                        </t>
+                            </div>
+                        </a>
 
                         <div class="text-core-black">
                             <i class="fa fa-chevron-down"/>
@@ -62,21 +77,20 @@ Description:
                     </div>
                 </div>
 
-                <!-- Collapsible Body -->
                 <div t-att-id="'group_collapse_%s' % group.id"
-                     class="collapse show mt-3 border rounded p-3">
-
+                     class="collapse show rounded mt-3 mr-3 ml-3">
                     <t t-foreach="group.contract_ids" t-as="sponsorship">
-                        <t t-if="sponsorship.state not in ['terminated', 'cancelled']">
-                            <div class="mb-3">
-                                <t t-set="primary_button_data" t-value="{
+                        <t t-if="sponsorship">
+                            <t t-if="sponsorship.state not in ['terminated', 'cancelled']">
+                                <div class="mb-3">
+                                    <t t-set="primary_button_data" t-value="{
                                     'label': 'See profile',
                                     'pictogram': 'child-sponsorship',
                                     'action': 'link',
                                     'href': '/my2/children/' + str(sponsorship.child_id.id),
                                     'color': 'low-blue'
                                 }"/>
-                                <t t-set="secondary_buttons_data" t-value="[
+                                    <t t-set="secondary_buttons_data" t-value="[
                                     {
                                         'icon': 'download01',
                                         'color': 'mid-yellow',
@@ -85,21 +99,21 @@ Description:
                                     }
                                 ]"/>
 
-                                <t t-call="my_compassion.DonationItemComponent">
-                                    <t t-set="name" t-value="sponsorship.child_id.preferred_name" />
-                                    <t t-set="image" t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait"/>
-                                    <!-- Use the specific payment info here too if desired, or keep generic -->
-                                    <t t-set="subtext" t-value="info.get('label')" />
-                                    <t t-set="price" t-value="sponsorship.total_amount" />
-                                    <t t-set="primary_button" t-value="primary_button_data" />
-                                    <t t-set="monthly_noabbr" t-value="True" />
-                                    <t t-set="secondary_buttons" t-value="secondary_buttons_data" />
-                                    <t t-set="bg_color" t-value="'light-blue'" />
-                                    <t t-set="accent_color" t-value="'low-blue'" />
-                                    <t t-set="title_color" t-value="'low-blue'" />
-                                    <t t-set="price_color" t-value="'low-blue'" />
-                                </t>
-                            </div>
+                                    <t t-call="my_compassion.DonationItemComponent">
+                                        <t t-set="name" t-value="sponsorship.child_id.preferred_name" />
+                                        <t t-set="image" t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait"/>
+                                        <t t-set="subtext" t-value="sponsorship.payment_mode_id.display_name" />
+                                        <t t-set="price" t-value="sponsorship.total_amount" />
+                                        <t t-set="primary_button" t-value="primary_button_data" />
+                                        <t t-set="monthly_noabbr" t-value="True" />
+                                        <t t-set="secondary_buttons" t-value="secondary_buttons_data" />
+                                        <t t-set="bg_color" t-value="'light-blue'" />
+                                        <t t-set="accent_color" t-value="'low-blue'" />
+                                        <t t-set="title_color" t-value="'low-blue'" />
+                                        <t t-set="price_color" t-value="'low-blue'" />
+                                    </t>
+                                </div>
+                            </t>
                         </t>
                     </t>
                 </div>
