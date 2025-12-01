@@ -50,5 +50,38 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         });
+
+        document.addEventListener('open_payment_method_selector', function (ev) {
+                var data = ev.detail || {};
+                var $modal = $('#payment_method_selector_modal');
+
+                var title = data.modal_type + ' Payment Method';
+                $modal.find('#modal_title').text(title);
+
+                // 2. Define Descriptions based on Type
+                var descriptions = {
+                    'Update': 'Update your payment method.',
+                    'Add': 'Add a new payment method to your account.',
+                    'Change': 'Change your payment method for ' + (data.child_name || 'your sponsored child') + '.',
+                };
+                // Set description
+                $modal.find('#modal_description').text(descriptions[data.modal_type]);
+
+                // Store other data (e.g., for form submission)
+                $modal.data('group-id', data.group_id || false);
+                $modal.data('contract-id', data.contract_id || false);
+                // You can use these in your form logic, e.g., set hidden inputs
+                $('#selected_contract_group_id').val($modal.data('group-id'));
+
+                // Show the modal
+                $modal.modal('show');
+            });
+
+            // Clean up on hide
+            $('#payment_method_selector_modal').on('hidden.bs.modal', function () {
+                $(this).removeData(['group-id', 'contract-id']);
+                $('#modal_title').text('Payment Method');
+                $('#modal_description').text('Select a payment method.');
+            });
     });
 });

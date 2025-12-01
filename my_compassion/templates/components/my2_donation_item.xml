@@ -23,6 +23,7 @@
     - primary_button (dict): Primary button with custom action (see Button).                 [none]
     - recipient (string): Item recipient.                                                    [none]
     - subtext (string): Text under name and recipient.                                       [none]
+    - inline_button (dict): Inline button with custom action (see Button).                  [none]
     - title_color (string): Color of the title.                                              [dark-blue]
     - accent_color (string): Color of the left border accent.                                [dark-blue]
     - price_color (string): Color of the price.                                              [dark-blue]
@@ -66,9 +67,7 @@
         <t t-set="monthly" t-value="monthly == True" />
         <t t-set="monthly_noabbr" t-value="monthly_noabbr == True" />
         <t t-set="secondary_buttons" t-value="secondary_buttons or []" />
-        <!-- Estimate component minimum width -->
-        <t t-set="min_width" t-valuef="#{300 + 24 * len(secondary_buttons)}px" />
-        <!-- Component definition -->
+        <t t-set="inline_button" t-value="inline_button or None" />
         <div
             t-attf-class="donation-item-container p-2 d-flex rounded-lg bg-#{bg_color} border-#{accent_color} #{top_class}"
             t-attf-style="min-width: #{min_width}"
@@ -94,6 +93,10 @@
                         <div t-if="subtext" t-attf-class="text-#{subtext_color} body-small bold">
                             <t t-esc="subtext" />
                         </div>
+                        <t t-if="inline_button" t-call="my_compassion.DonationItemButton">
+                            <t t-set="button" t-value="inline_button" />
+                            <t t-set="button_top_class" t-value="'mt-1 p-0 border-0 bg-transparent align-self-start shadow-none'" />
+                        </t>
                     </div>
                     <t t-foreach="secondary_buttons" t-as="button">
                         <t t-call="my_compassion.DonationItemButton">

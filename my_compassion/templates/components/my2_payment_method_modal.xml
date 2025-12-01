@@ -16,18 +16,17 @@
                     <div class="p-0 m-0">
 
                         <h3 class="text-center text-core-blue pb-2 pt-3">
-                            <t t-esc="modal_type + ' Payment Method'"/>
+                            <!-- Placeholder for title -->
+                            <span id="modal_title"></span>
                         </h3>
 
                         <div class="pl-4 pr-4 pt-3">
                             <form id="payment_method_form">
                                 <input type="hidden" name="contract_group_id" id="selected_contract_group_id"/>
-
-                                <t t-esc="description"/>
+                                <!-- Placeholder for description -->
+                                <p id="modal_description">Select a payment method.</p>
 
                             </form>
-
-
 
                             <div class="modal-footer border-top-0">
                                 <a href="#" data-dismiss="modal">

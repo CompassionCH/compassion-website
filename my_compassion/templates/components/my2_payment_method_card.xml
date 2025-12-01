@@ -9,10 +9,6 @@ Description:
 -->
 <odoo>
     <template id="my2_sponsorships_group_card" name="Sponsorships Group Card Component">
-        <t t-call="my_compassion.my2_payment_method_selector">
-            <t t-set="modal_type" t-value="'Update'"/>
-            <t t-set="description" t-value="'Description'"/>
-        </t>
 
         <t t-set="info" t-value="group.get_payment_method_info()"/>
         <div class="sponsorship-group mb-4 ">
@@ -78,9 +74,14 @@ Description:
                            t-att-data-group-id="group.id"
                            id="btn_edit_group_payment"
                            title="Edit Payment Method"
-                           onclick="$('#payment_method_selector_modal').modal('show'); event.stopPropagation(); return false;">
+                           onclick="
+                           event.preventDefault();
+                           event.stopPropagation();
+                            document.dispatchEvent(new CustomEvent('open_payment_method_selector',
+                             {detail: {'modal_type': 'Update', 'group_id': this.dataset.groupId}}));"
+                        >
                             <div class="text-dark-blue">
-                                <i class="fa fa-pencil"/>
+                                <i t-attf-class="tiny-text icon-edit02"/>
                             </div>
                         </a>
 
@@ -96,28 +97,39 @@ Description:
                         <t t-if="sponsorship">
                             <t t-if="sponsorship.state not in ['terminated', 'cancelled']">
                                 <div class="mb-3">
-                                    <t t-set="primary_button_data" t-value="{
-                                    'label': 'See profile',
-                                    'pictogram': 'child-sponsorship',
-                                    'action': 'link',
-                                    'href': '/my2/children/' + str(sponsorship.child_id.id),
-                                    'color': 'low-blue'
-                                }"/>
-                                    <t t-set="secondary_buttons_data" t-value="[
-                                    {
-                                        'icon': 'download01',
-                                        'color': 'mid-yellow',
+                                    <t t-set="profile_button_data" t-value="{
+                                        'label': 'See profile',
+                                        'pictogram': 'child-sponsorship',
                                         'action': 'link',
-                                        'href': '/my/download/gift_bvr?child_id=' + str(sponsorship.child_id.id),
-                                    }
-                                ]"/>
+                                        'href': '/my2/children/' + str(sponsorship.child_id.id),
+                                        'color': 'low-blue'
+                                    }"/>
+
+                                    <t t-set="change_payment_data" t-value="{
+                                        'label': 'Change',
+                                        'icon': 'edit02',
+                                        'action': 'event',
+                                        'custom_event': 'open_payment_method_selector',
+                                        'detail': {'modal_type': 'Change', 'contract_id': sponsorship.id, 'child_name': sponsorship.child_id.preferred_name },
+                                        'color': 'low-blue'
+                                    }"/>
+
+                                    <t t-set="secondary_buttons_data" t-value="[
+                                        {
+                                            'icon': 'download01',
+                                            'color': 'mid-yellow',
+                                            'action': 'link',
+                                            'href': '/my/download/gift_bvr?child_id=' + str(sponsorship.child_id.id),
+                                        }
+                                    ]"/>
 
                                     <t t-call="my_compassion.DonationItemComponent">
                                         <t t-set="name" t-value="sponsorship.child_id.preferred_name" />
                                         <t t-set="image" t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait"/>
-                                        <t t-set="subtext" t-value="sponsorship.payment_mode_id.display_name" />
                                         <t t-set="price" t-value="sponsorship.total_amount" />
-                                        <t t-set="primary_button" t-value="primary_button_data" />
+
+                                        <t t-set="inline_button" t-value="profile_button_data" />
+                                        <t t-set="primary_button" t-value="change_payment_data" />
                                         <t t-set="monthly_noabbr" t-value="True" />
                                         <t t-set="secondary_buttons" t-value="secondary_buttons_data" />
                                         <t t-set="bg_color" t-value="'light-blue'" />

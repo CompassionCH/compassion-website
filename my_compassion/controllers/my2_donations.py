@@ -401,6 +401,7 @@ class MyCompassionDonationsController(CustomerPortal):
 
         # Group sponsorships by their backend Contract Group
         sponsorship_groups = active_sponsorships.mapped('group_id')
+        #message = sponsorship_groups[0].display_name
 
         # Due invoices
         date_filter_up_bound = datetime.today() + timedelta(days=30)

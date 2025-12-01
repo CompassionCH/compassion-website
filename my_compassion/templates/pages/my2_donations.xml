@@ -134,12 +134,12 @@ Page: My Compassion 2 Donations Page
                             </t>
                             <!-- ADD PAYMENT METHOD BUTTON -->
                             <div class="d-flex flex-column align-items-center">
-                                <t t-call="my_compassion.my2_payment_method_selector">
-                                    <t t-set="modal_type" t-value="'Add'"/>
-                                    <t t-set="description" t-value="'Description'"/>
-                                </t>
-
-                                <a href="#" data-toggle="modal" data-target="#payment_method_selector_modal">
+                                <a href="#"
+                                   class="add-payment-method"
+                                   onclick="event.preventDefault();
+                                    document.dispatchEvent(new CustomEvent('open_payment_method_selector',
+                                    {detail: {'modal_type': 'Add'}}));"
+                                >
                                     <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                         <t t-set="variant" t-value="'compact'" />
                                         <t t-set="variation" t-value="'filled'" />
