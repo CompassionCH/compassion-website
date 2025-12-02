@@ -103,14 +103,7 @@ class Partner(models.Model):
     # TODO what about the info_all ? Should I put the fully managed ( using hte ) ?
     def _compute_is_writer(self):
         for partner in self:
-            sponsorships = self.env["recurring.contract"].search(
-                [
-                    ("correspondent_id", "=", partner.id),
-                    ("can_write_letter", "=", True),
-                    ("is_active", "=", True),
-                    ("child_id", "!=", False),
-                ],
-            )
-            partner.is_writer = bool(sponsorships) or (
-                partner.is_sponsor and partner.portal_sponsorships == "all_info"
-            )
+            partner.is_writer= any(partner.sponsorship_ids.mapped("child_id").mapped("can_i_write_letter"))
+
+
+
