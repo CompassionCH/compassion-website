@@ -103,7 +103,6 @@ class Partner(models.Model):
     # TODO what about the info_all ? Should I put the fully managed ( using hte ) ?
     def _compute_is_writer(self):
         for partner in self:
-            partner.is_writer= any(partner.sponsorship_ids.mapped("child_id").mapped("can_i_write_letter"))
-
-
-
+            partner.is_writer = any(
+                partner.sponsorship_ids.mapped("child_id").mapped("can_i_write_letter")
+            )
