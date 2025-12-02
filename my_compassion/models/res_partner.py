@@ -93,3 +93,18 @@ class Partner(models.Model):
         donor_ids = {data["partner_id"][0] for data in donors_data}
         for partner in self:
             partner.is_donor = partner.id in donor_ids
+
+    def get_payment_modes(self):
+        """
+        Retrieve all unique payment modes currently linked to the partner.
+        Used to display existing methods.
+        """
+        self.ensure_one()
+        # Find groups for this partner that have a payment mode and active contracts
+        groups = self.env["recurring.contract.group"].search([
+            ("partner_id", "=", self.id),
+            ("active", "=", True),
+            ("payment_mode_id", "!=", False),
+        ])
+
+        return groups

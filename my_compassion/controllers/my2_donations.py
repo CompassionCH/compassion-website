@@ -401,7 +401,6 @@ class MyCompassionDonationsController(CustomerPortal):
 
         # Group sponsorships by their backend Contract Group
         sponsorship_groups = active_sponsorships.mapped('group_id')
-        #message = sponsorship_groups[0].display_name
 
         # Due invoices
         date_filter_up_bound = datetime.today() + timedelta(days=30)
@@ -471,6 +470,43 @@ class MyCompassionDonationsController(CustomerPortal):
 
         return {"html": html}
 
+    @http.route(
+        '/my2/donations/get_all_payment_methods',
+        type='json',
+        auth='user',
+        website=True
+    )
+    def get_available_methods(self, contract_id=None, group_id=None, **kwargs):
+        """
+        Returns a list of available payment methods.
+        """
+        partner = request.env.user.partner_id
+        payment_methods = []
+        return payment_methods
+
+    @http.route(
+        '/my2/donations/get_payment_methods_sponsor',
+        type="http",
+        auth='user',
+        website=True
+    )
+    def get_payment_methods_sponsor(self, **kwargs):
+        """
+        Returns a list of payment methods (saved tokens and acquirers) for the current user.
+        """
+        partner = request.env.user.partner_id
+        groups = partner.get_payment_modes
+        payment_methods = []
+
+        for g in groups:
+            info = g.get_payment_method_info()
+            info.append({'group_id': g.id})
+            payment_methods.append(info)
+
+        # In a future, we have to return the tokens as well
+        #tokens = self._get_payment_token(partner.id)
+        return payment_methods
+
     def _get_paginated_paid_invoices(
         self, partner, invoice_page=1, invoice_per_page=12
     ):
@@ -501,3 +537,21 @@ class MyCompassionDonationsController(CustomerPortal):
             .sudo()
             .search([("provider", "=", "postfinance")], limit=1)
         )
+
+
+    # TODO : Add payments tokens for the saved payments methods (If there are not linked to a contract)
+    def _get_payment_token(self, partner_id):
+        """
+        Helper method to retrieve all valid payment token (saved card) for the given partner.
+        """
+        tokens = (
+            request.env["payment.token"]
+            .sudo()
+            .search(
+                [
+                    ("partner_id", "=", partner_id),
+                    ("active", "=", True),
+                ]
+            )
+        )
+        return tokens

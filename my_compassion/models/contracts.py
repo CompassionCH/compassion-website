@@ -1,4 +1,5 @@
-from odoo import fields, models
+from odoo import fields, models, _
+from odoo.exceptions import UserError
 
 
 class RecurringContract(models.Model):
@@ -15,3 +16,28 @@ class RecurringContract(models.Model):
                 "active",
                 "terminated",
             ] or (contract.state != "cancelled" and not contract.parent_id)
+
+    def change_contract_group(self, new_group_id):
+        """
+        Moves the sponsorship (self) to the specified contract group.
+        :param new_group_id: int ID of the target recurring.contract.group
+        """
+        self.ensure_one()
+
+        if not new_group_id:
+            return False
+
+        # If we are already in this group, do nothing
+        if self.group_id.id == new_group_id:
+            return True
+
+        target_group = self.env['recurring.contract.group'].browse(new_group_id)
+
+        if not target_group.exists():
+            return False
+
+        # Move the contract to the new group
+        old_group = self.group_id
+        self.write({'group_id': target_group.id})
+
+        return True

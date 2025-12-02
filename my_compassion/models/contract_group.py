@@ -6,13 +6,14 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from odoo import fields, models, _
+from odoo import fields, models, _, api
 
 
 class ContractGroup(models.Model):
     _name = "recurring.contract.group"
     _inherit = ["recurring.contract.group", "translatable.model"]
 
+    active = fields.Boolean(default=True)
     gender = fields.Selection(store=False)
     total_amount = fields.Float(compute="_compute_total_amount")
 
@@ -42,11 +43,13 @@ class ContractGroup(models.Model):
 
         # Default / Fallback values
         info = {
-            'icon': '/my_compassion/static/src/img/undefined.png',
+            'icon': False,
+            'ref_number': False,
             'label': _('Unknown Method'),
             'type': 'manual',  # 'manual', 'mode', or 'token'
             'brand': False,
             'expire_date' : False,
+            'is_card' : False,
             'mode_id': self.payment_mode_id.id if self.payment_mode_id else False
         }
 
@@ -61,8 +64,9 @@ class ContractGroup(models.Model):
                 break
 
         # 1. Basic Mode Info
-        info['label'] = self.sudo().payment_mode_id.name
+        info['label'] = self.payment_mode_id.display_name
         info['type'] = 'mode'
+        info['ref_number'] = self.bvr_reference if self.bvr_reference else False
 
         # 2. Resolve Acquirer via Journal (The link between Mode and Provider)
         # The 'fixed_journal_id' on payment mode usually points to the bank/provider journal
@@ -84,20 +88,95 @@ class ContractGroup(models.Model):
 
             if valid_token:
                 info.update({
-                    'label': valid_token.name,
                     'type': 'token',
                     'token_id': valid_token.id,
-
+                    'ref_number': f"{valid_token.acquirer_id.name} **** {valid_token.last4}",
                     'brand': valid_token.name.split(' ')[0] if valid_token.name else False
                 })
-            else:
-                # We have an online provider (like Stripe) but no token found
-                info.update({
-                    'label': acquirer.display_as or acquirer.name,
-                })
 
-        # 4. Special handling for offline methods (LSV / Direct Debit)
-        elif 'LSV' in self.payment_mode_id.name or 'DD' in self.payment_mode_id.name:
-            info['label'] = _('Direct Debit (LSV)')
 
         return info
+
+    def change_payment_method(self, new_group_id=None, payment_mode_id=None):
+        """
+        Update the contract group by either merging into an existing group
+        (if new_group_id provided) or finding/creating a group for a specific
+        payment mode (if payment_mode_id provided).
+        """
+        self.ensure_one()
+        target_group = False
+
+        if new_group_id:
+            target_group = self.env['recurring.contract.group'].browse(int(new_group_id))
+        elif payment_mode_id:
+            target_group = self.find_or_create(
+                self.partner_id.id,
+                int(payment_mode_id),
+                recurring_unit=self.recurring_unit,
+                recurring_value=self.recurring_value
+            )
+
+        if not target_group or not target_group.exists():
+            return False
+
+        # Ensure we aren't merging into ourselves
+        if self.id == target_group.id:
+            return True
+
+        # Security/Consistency Check
+        if target_group.partner_id != self.partner_id:
+            return False
+
+        # Move all contracts from current group to target group
+        self.contract_ids.write({'group_id': target_group.id})
+
+        # Cleanup: deactivate the old group
+        if not self.contract_ids:
+            self.write({'active': False})
+
+        return True
+
+    @api.model
+    def find_or_create(self, partner_id, payment_mode_id, recurring_unit='monthly', recurring_value=1):
+        """
+        Finds an existing compatible group for the partner/mode or creates a new one.
+        Used for adding a new payment method or updating an existing one.
+
+        :param partner_id: int, ID of the res.partner
+        :param payment_mode_id: int, ID of the account.payment.mode
+        :param recurring_unit: str, 'monthly' (default) or 'yearly'
+        :param recurring_value: int, 1 (default)
+        :return: recurring.contract.group recordset (single record)
+        """
+        partner = self.env['res.partner'].browse(partner_id)
+        mode = self.env['account.payment.mode'].browse(payment_mode_id)
+
+        if not partner.exists() or not mode.exists():
+            return self.browse()
+
+        # Search for existing compatible group
+        domain = [
+            ('partner_id', '=', partner.id),
+            ('payment_mode_id', '=', mode.id),
+            ('recurring_unit', '=', recurring_unit),
+            ('recurring_value', '=', recurring_value),
+        ]
+
+        # We take the most recent one if multiple exist
+        group = self.search(domain, limit=1, order='id desc')
+
+        if not group:
+            # Create a new group
+            # Construct a reference name similar to Odoo standard or your convention
+            new_ref = f"{partner.ref or partner.name} - {mode.name}"
+
+            group = self.create({
+                'partner_id': partner.id,
+                'payment_mode_id': mode.id,
+                'recurring_unit': recurring_unit,
+                'recurring_value': recurring_value,
+                'ref': new_ref,
+                'active': True,
+            })
+
+        return group
