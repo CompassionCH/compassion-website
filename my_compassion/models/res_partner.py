@@ -12,6 +12,12 @@ class Partner(models.Model):
 
     # True if the partner has ever made a donation
     is_donor = fields.Boolean(compute="_compute_is_donor", compute_sudo=True)
+    # True if the partner can write a letter to a sponsored child
+    is_writer = fields.Boolean(
+        string="Is letter writer",
+        compute="_compute_is_writer",
+        compute_sudo=True,
+    )
 
     user_login = fields.Char(
         string="MyCompassion login",
@@ -93,3 +99,18 @@ class Partner(models.Model):
         donor_ids = {data["partner_id"][0] for data in donors_data}
         for partner in self:
             partner.is_donor = partner.id in donor_ids
+
+    # TODO what about the info_all ? Should I put the fully managed ( using hte ) ?
+    def _compute_is_writer(self):
+        for partner in self:
+            sponsorships = self.env["recurring.contract"].search(
+                [
+                    ("correspondent_id", "=", partner.id),
+                    ("can_write_letter", "=", True),
+                    ("is_active", "=", True),
+                    ("child_id", "!=", False),
+                ],
+            )
+            partner.is_writer = bool(sponsorships) or (
+                partner.is_sponsor and partner.portal_sponsorships == "all_info"
+            )
