@@ -1,0 +1,36 @@
+/* Card Container */
+.payment-method-card {
+    transition: all 0.2s ease-in-out;
+    border-width: 1px;
+}
+
+/* Selected State - Using Hex codes instead of SCSS variables */
+.payment-method-card.selected {
+    border-width: 10px;
+}
+
+/* Hover State */
+.payment-method-card:not(.selected):hover {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+}
+
+.payment-method-card .pointer-events-none {
+    pointer-events: none;
+}
+
+.payment-method-card.hover-shadow-sm:hover {
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
+}
+
+#payment_method_selector_modal .modal-content {
+    max-height: 90vh;    /* limit modal height */
+    overflow: hidden;    /* let inner container scroll */
+}
+
+/* scrollable list that fits inside modal (subtract header/footer space) */
+.payment-methods-list {
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
