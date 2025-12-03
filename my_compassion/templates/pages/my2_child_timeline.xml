@@ -467,7 +467,7 @@
                     </section>
                     <!-- ### Partner and child timeline title ### -->
                     <t t-if="access_scope == 'sponsor'" t-call="theme_compassion_2025.TitleComponent">
-                        <t t-set="title_content" t-value="'Timeline'" />
+                        <t t-set="title_content">Timeline</t>
                         <t t-set="title_size" t-value="'md'" />
                         <t t-set="color" t-value="'core-blue'" />
                         <t t-set="show_underline" t-value="True" />

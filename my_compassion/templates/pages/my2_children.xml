@@ -19,7 +19,7 @@ Page: My Compassion 2 Children Page
                 <!-- Title -->
                 <div class="single-column">
                     <t t-call="theme_compassion_2025.TitleComponent">
-                        <t t-set="title_content" t-value="'Your sponsorships'" />
+                        <t t-set="title_content">Your sponsorships</t>
                         <t t-set="title_size" t-value="'md'" />
                         <t t-set="color" t-value="'core-blue'" />
                         <t t-set="underline_color" t-value="'low-yellow'" />
@@ -62,7 +62,7 @@ Page: My Compassion 2 Children Page
                 <t t-if="ended_sponsorships">
                     <div class="single-column mt-4">
                         <t t-call="theme_compassion_2025.TitleComponent">
-                            <t t-set="title_content" t-value="'Ended sponsorships'" />
+                            <t t-set="title_content">Ended sponsorships</t>
                             <t t-set="title_size" t-value="'md'" />
                             <t t-set="color" t-value="'core-blue'" />
                             <t t-set="underline_color" t-value="'low-yellow'" />
