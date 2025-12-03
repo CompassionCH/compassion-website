@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!--
+        Card component for a single payment method.
+        Injected data:
+        - icon: ID of the payment method icon image.
+        - ref_number: Reference number or last 4 digits of the card.
+        - label: Display name of the payment method.
+        - type: Type of the payment method
+        - expire_date: Expiration date of the payment method (if applicable).
+        - brand: Brand of the payment method (if applicable).
+        - is_card: Boolean indicating if the payment method is a card.
+        - mode_id: Unique identifier for the payment method mode.
+        - selected: Boolean indicating if this payment method is currently selected.
+        - group_id: ID of the associated contract group (if applicable).
+    -->
+    <t t-name="my_compassion.PaymentMethodCard">
+        <div t-attf-class="payment-method-card d-flex align-items-center p-3 mb-2 border
+         rounded cursor-pointer position-relative bg-white transition-all
+          #{selected ? 'selected border-core-blue bg-light-blue' : 'border-gray-200 hover-shadow-sm'}"
+             onclick="$(this).find('input[type=radio]').prop('checked', true).trigger('change');">
+
+            <!--Hidden Radio Input (Functional but invisible)-->
+            <div class="d-none">
+                <input type="radio"
+                       name="payment_method_selection"
+                       t-att-id="'pm_' + type + '_' + (mode_id || id)"
+                       t-att-group-id="group_id || undefined"
+                       t-att-checked="selected ? 'checked' : undefined"/>
+            </div>
+
+            <!-- Icon -->
+            <div class="icon-wrapper mr-3 d-flex align-items-center justify-content-center">
+                <t t-if="icon">
+                    <img t-attf-src="/web/image?model=payment.icon&amp;id=#{icon}&amp;field=image&amp;width=50&amp;height=50"
+                         style="width: 28px; height: 28px; object-fit: contain; margin-right: 12px; flex-shrink: 0;"
+                         alt="Icon"
+                         onerror="this.style.display='none'"/>
+                </t>
+            </div>
+
+            <!-- Info -->
+            <div class="flex-grow-1">
+                <div class="font-weight-bold text-dark-blue leading-tight">
+                    <t t-esc="label"/>
+                    <t t-esc="group_id"/>
+                </div>
+
+                <!-- Subtitle Logic: Ref Number or Expire Date or Brand -->
+                <div class="small text-muted mt-1">
+                    <t t-if="ref_number">
+                        <span class="mr-1">Ref: <t t-esc="ref_number"/></span>
+                    </t>
+                    <t t-if="is_card">
+                        <t t-if="expire_date">
+                         <span>Exp: <t t-esc="expire_date"/></span>
+                        </t>
+                    </t>
+                </div>
+            </div>
+
+            <!-- Checkmark for Selected State -->
+            <t t-if="selected">
+                <i class="fa fa-check-circle text-core-blue ml-3"/>
+
+            </t>
+        </div>
+    </t>
+
+    <!-- Loading Template -->
+    <t t-name="my_compassion.PaymentMethodLoading">
+        <div class="text-center p-4">
+            <i class="fa fa-circle-o-notch fa-spin fa-2x text-core-blue mb-2"/>
+            <p class="text-muted small">Loading payment methods...</p>
+        </div>
+    </t>
+
+
+    <!--
+        Reusable Form Field Component (Client Side Version)
+        This mimics the backend theme component for use in JS
+    -->
+    <t t-name="my_compassion.FormFieldComponent">
+        <div t-attf-class="form-field-container mb-3 #{top_class || ''}">
+            <t t-if="label">
+                <label t-att-for="name" class="text-core-blue body-small bold mb-1">
+                    <t t-esc="label" />
+                </label>
+            </t>
+            <!-- Slot content is simulated by passing value/placeholder -->
+            <input type="text"
+                   t-att-name="name"
+                   t-att-id="name"
+                   t-attf-class="form-control #{input_class || ''}"
+                   t-att-value="value"
+                   t-att-placeholder="placeholder || ''"
+                   t-att-disabled="disabled"/>
+
+            <t t-if="invalid_hint">
+                <div class="invalid-hint text-mid-orange tiny-text mb-1 d-none">
+                    <t t-esc="invalid_hint" />
+                </div>
+            </t>
+        </div>
+    </t>
+
+    <!--
+        Payment Method Update Form
+        Injected data:
+        - is_card: Boolean indicating if the payment method is a card.
+        - ref_number: Reference number or last 4 digits of the card.
+        - holder_name: Name of the cardholder.
+        - expire_date: Expiration date of the card.
+    -->
+     <t t-name="my_compassion.PaymentMethodUpdateForm">
+        <div class="payment-update-form text-left">
+            <t t-if="is_card">
+                <!-- Card Number (Read Only usually) -->
+                <t t-call="my_compassion.FormFieldComponent">
+                    <t t-set="label">Card Number</t>
+                    <t t-set="name">card_number</t>
+                    <t t-set="value" t-value="ref_number"/>
+                </t>
+
+                <!-- Cardholder Name -->
+                <t t-call="my_compassion.FormFieldComponent">
+                    <t t-set="label">Cardholder Name</t>
+                    <t t-set="name">cardholder_name</t>
+                    <t t-set="value" t-value="holder_name"/>
+                </t>
+
+                <div class="form-row">
+                    <div class="col-6">
+                        <t t-call="my_compassion.FormFieldComponent">
+                            <t t-set="label">Expiry Date</t>
+                            <t t-set="name">expiry</t>
+                            <t t-set="value" t-value="expire_date"/>
+                            <t t-set="placeholder">MM/YY</t>
+                        </t>
+                    </div>
+                    <div class="col-6">
+                        <t t-call="my_compassion.FormFieldComponent">
+                            <t t-set="label">CVV</t>
+                            <t t-set="name">cvv</t>
+                            <t t-set="placeholder">123</t>
+                        </t>
+                    </div>
+                </div>
+            </t>
+
+
+        </div>
+    </t>
+
+</templates>

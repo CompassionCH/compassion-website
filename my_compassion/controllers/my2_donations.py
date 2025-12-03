@@ -486,7 +486,7 @@ class MyCompassionDonationsController(CustomerPortal):
 
     @http.route(
         '/my2/donations/get_payment_methods_sponsor',
-        type="http",
+        type="json",
         auth='user',
         website=True
     )
@@ -495,17 +495,49 @@ class MyCompassionDonationsController(CustomerPortal):
         Returns a list of payment methods (saved tokens and acquirers) for the current user.
         """
         partner = request.env.user.partner_id
-        groups = partner.get_payment_modes
+        groups = partner.get_payment_modes()
         payment_methods = []
 
-        for g in groups:
-            info = g.get_payment_method_info()
-            info.append({'group_id': g.id})
-            payment_methods.append(info)
+        for group in groups:
+            info = group.get_payment_method_info()
+            if not info:
+                continue
+            method = dict(info)
+            method['group_id'] = group.id
 
-        # In a future, we have to return the tokens as well
-        #tokens = self._get_payment_token(partner.id)
+            payment_methods.append(method)
+
         return payment_methods
+
+
+    @http.route(
+        '/my2/donation/change_method',
+        type='json',
+        auth='user',
+        website=True
+    )
+    def change_payment_method_contract(self, contract_id, group_id, **kwargs):
+        """
+        Changes the payment method for a specific contract.
+
+        :param contract_id: ID of the recurring.contract to update.
+        :param group_id: ID of an existing group to merge into
+        """
+        partner = request.env.user.partner_id
+        if not contract_id or not group_id:
+            raise BadRequest()
+        # Verify that the contract belongs to the user
+        contract = (
+            request.env['recurring.contract']
+            .sudo()
+            .search([('id', '=', int(contract_id)), ('partner_id', '=', partner.id)])
+        )
+        if not contract:
+            raise NotFound()
+
+        success = contract.change_contract_group(int(group_id))
+        return {'success': success}
+
 
     def _get_paginated_paid_invoices(
         self, partner, invoice_page=1, invoice_per_page=12

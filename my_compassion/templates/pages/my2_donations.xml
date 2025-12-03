@@ -31,8 +31,8 @@ Page: My Compassion 2 Donations Page
     <data>
         <template id="my2_my_donations_page" name="My Account Donations Details">
             <t t-call="website.layout">
-                <div class="container">
-                    <div class="single-column">
+                <div class="container sponsorship-group">
+                    <div class="single-column my2-donations-page">
                         <!-- MODAL: PAYMENT METHOD SELECTOR -->
                         <t t-call="my_compassion.my2_payment_method_selector"/>
 
@@ -87,20 +87,7 @@ Page: My Compassion 2 Donations Page
                             </div>
                         </div>
 
-                        <!-- TEST MODAL TRIGGER BUTTON -->
-                        <!-- TODO: Remove this button when the modal is properly integrated -->
-                        <div class="mb-5 text-center">
-                            <a href="#" data-toggle="modal" data-target="#payment_method_selector_modal">
-                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                    <t t-set="variant" t-value="'default'" />
-                                    <t t-set="variation" t-value="'filled'" />
-                                    <t t-set="color" t-value="'mid-blue'" />
-                                    <t t-set="text_color" t-value="'pure-white'" />
-                                    <t t-set="label" t-value="'Test Update Modal'" />
-                                </t>
-                            </a>
-                        </div>
-
+                        <!-- MY SPONSORSHIPS -->
                         <div>
                             <h3 class="text-dark-blue">My sponsorships</h3>
                             <p>
@@ -137,8 +124,8 @@ Page: My Compassion 2 Donations Page
                                 <a href="#"
                                    class="add-payment-method"
                                    onclick="event.preventDefault();
-                                    document.dispatchEvent(new CustomEvent('open_payment_method_selector',
-                                    {detail: {'modal_type': 'Add'}}));"
+                                    this.dispatchEvent(new CustomEvent('open_payment_method_selector',
+                                    {bubbles: true, detail: {'modal_type': 'Add'}}));"
                                 >
                                     <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                         <t t-set="variant" t-value="'compact'" />
@@ -193,7 +180,6 @@ Page: My Compassion 2 Donations Page
                     </div>
                 </div>
 
-                <script type="text/javascript" src="/my_compassion/static/src/js/my2_donations.js" />
                 <link rel="stylesheet" href="/my_compassion/static/src/css/my2_donations.css" />
             </t>
         </template>

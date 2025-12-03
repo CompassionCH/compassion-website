@@ -5,22 +5,22 @@ Description:
 
     Injected data:
     - group: The sponsorship group object containing payment method and sponsorship details.
-
--->
+   -->
 <odoo>
     <template id="my2_sponsorships_group_card" name="Sponsorships Group Card Component">
 
         <t t-set="info" t-value="group.get_payment_method_info()"/>
-        <div class="sponsorship-group mb-4 ">
+        <div class="sponsorship-group mb-4 sponsorship-group-container">
             <div class="d-flex flex-column border rounded shadow-sm">
                 <div class="d-flex justify-content-between align-items-center p-3 bg-light cursor-pointer border-bottom rounded-top"
                      data-toggle="collapse"
                      t-att-data-target="'#group_collapse_%s' % group.id"
                      aria-expanded="true">
 
+                    <t t-set="icon_id" t-value="info.get('icon')"/>
+                    <t t-set="expire_date" t-value="info.get('expire_date')"/>
+
                     <div class="d-flex flex-column">
-                        <t t-set="icon_id" t-value="info.get('icon')"/>
-                        <t t-set="expire_date" t-value="info.get('expire_date')"/>
                         <div class="d-flex flex-row">
                             <t t-if="icon_id">
                                 <img t-att-src="'/web/image?model=payment.icon&amp;id=%s&amp;field=image&amp;width=50&amp;height=50' % icon_id"
@@ -31,7 +31,6 @@ Description:
                             </t>
                             <div class="d-flex flex-column">
                                 <h5 class="m-0 text-dark-blue font-weight-bold d-flex align-items-center">
-
                                     <span>
                                         <t t-esc="info.get('label') or 'Unknown Method'"/>
                                     </span>
@@ -72,13 +71,20 @@ Description:
                         <a href="#"
                            class="mr-4 text-core-black opacity-50-hover"
                            t-att-data-group-id="group.id"
+                           t-att-data-method-info="json.dumps(info)"
                            id="btn_edit_group_payment"
                            title="Edit Payment Method"
                            onclick="
                            event.preventDefault();
                            event.stopPropagation();
-                            document.dispatchEvent(new CustomEvent('open_payment_method_selector',
-                             {detail: {'modal_type': 'Update', 'group_id': this.dataset.groupId}}));"
+                           this.dispatchEvent(new CustomEvent('open_payment_method_selector', {
+                                bubbles: true,
+                                detail: {
+                                    'modal_type': 'Update',
+                                    'group_id': this.dataset.groupId,
+                                    'group_info': JSON.parse(this.dataset.methodInfo),
+                                    },
+                           }));"
                         >
                             <div class="text-dark-blue">
                                 <i t-attf-class="tiny-text icon-edit02"/>
@@ -110,7 +116,10 @@ Description:
                                         'icon': 'edit02',
                                         'action': 'event',
                                         'custom_event': 'open_payment_method_selector',
-                                        'detail': {'modal_type': 'Change', 'contract_id': sponsorship.id, 'child_name': sponsorship.child_id.preferred_name },
+                                        'detail': '{\'modal_type\': \'Change\',
+                                                    \'contract_id\': ' + str(sponsorship.id) + ',
+                                                    \'child_name\': \'' + (sponsorship.child_id.preferred_name or '').replace('\'', '') + '\',
+                                                    \'group_id\': ' + str(group.id) + '}',
                                         'color': 'low-blue'
                                     }"/>
 

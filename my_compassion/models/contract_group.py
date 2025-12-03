@@ -35,8 +35,6 @@ class ContractGroup(models.Model):
         1. Get the Payment Mode from the group.
         2. Find the associated Payment Acquirer via fixed_journal_id from account.payment.mode
         3. Check if the partner has a saved Payment Token  for that Acquirer.
-
-        TODO : Add a way to get icons
         """
         self.ensure_one()
 
@@ -91,6 +89,7 @@ class ContractGroup(models.Model):
                     'type': 'token',
                     'token_id': valid_token.id,
                     'ref_number': f"{valid_token.acquirer_id.name} **** {valid_token.last4}",
+                    'is_card': True,
                     'brand': valid_token.name.split(' ')[0] if valid_token.name else False
                 })
 
