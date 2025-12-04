@@ -206,7 +206,9 @@
                     <t t-call="theme_compassion_2025.ThemedButtonComponent">
                         <t t-set="variant" t-value="'default'" />
                         <t t-set="variation" t-value="'filled'" />
-                        <t t-set="label" t-value="submit_label" />
+                        <t t-set="label">
+                            <t t-esc="submit_label" />
+                        </t>
                         <t t-set="color" t-value="'mid-green'" />
                         <t t-set="text_color" t-value="'pure-white'" />
                     </t>

@@ -78,7 +78,9 @@ Page: My Compassion 2 Gifts Page
                                     t-value="website.image_url(my_compassion_gift, 'my_compassion_image')"
                                 />
                                 <t t-set="href" t-value="'/my2/gifts/' + str(my_compassion_gift.id)" />
-                                <t t-set="title" t-value="my_compassion_gift.my_compassion_name" />
+                                <t t-set="title">
+                                    <t t-esc="my_compassion_gift.my_compassion_name" />
+                                </t>
                                 <t t-set="icon" t-value="my_compassion_gift.my_compassion_pictogram.class_name" />
                                 <t t-set="color" t-value="'pure-white'" />
                                 <t t-set="bg_color" t-value="my_compassion_gift.my_compassion_color.class_name" />

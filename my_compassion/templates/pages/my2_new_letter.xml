@@ -62,7 +62,10 @@
                                     t-set="src"
                                     t-value="'/web/image/compassion.child/' + str(selected_child.id) + '/portrait'"
                                 />
-                                <t t-set="alt" t-value="'' + str(selected_child.id) + 'portrait image'" />
+                                <t t-set="alt">
+                                    <t t-esc="selected_child.id" />
+                                    portrait image
+                                </t>
                                 <t t-set="size" t-value="'small'" />
                             </t>
                         </div>
@@ -79,10 +82,11 @@
                                         <t t-set="variation" t-value="'hollow'" />
                                         <t t-set="label_empty">Select a template</t>
                                         <t t-set="label_id" t-value="'template-selection-label'" />
-                                        <t
-                                            t-set="label"
-                                            t-value="draft.template_id.name if draft and draft.template_id else label_empty"
-                                        />
+                                        <t t-set="label">
+                                            <t
+                                                t-esc="draft.template_id.name if draft and draft.template_id else label_empty"
+                                            />
+                                        </t>
                                         <t t-set="icon" t-value="'icon-image04'" />
                                         <t t-set="color" t-value="'dark-blue'" />
                                         <t t-set="text_color" t-value="'pure_white'" />
