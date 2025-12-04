@@ -35,6 +35,10 @@ class MyCompassionEventBannerController(http.Controller):
             unprefixed_route = "/" + "/".join(path_parts[2:])
             possible_routes.append(unprefixed_route)
 
+        user = request.env.user
+        # Falls Public User (nicht eingeloggt), ist partner_id gesetzt aber category_id leer
+        user_tag_ids = user.partner_id.category_id.ids
+
         now = fields.Datetime.now()
         domain = [
             ("is_active", "=", True),
@@ -44,6 +48,9 @@ class MyCompassionEventBannerController(http.Controller):
             ("end_date", ">=", now),
             # Match either the full path or the path without the lang prefix
             ("target_route_ids.path", "in", possible_routes),
+            "|",
+            ("limit_to_tag_ids", "=", False),
+            ("limit_to_tag_ids", "in", user_tag_ids)
         ]
 
         banners = (
