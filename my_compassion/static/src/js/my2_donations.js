@@ -90,20 +90,63 @@ odoo.define('my_compassion.my2_donations', function (require) {
             }
 
             if (modalType == 'Update') {
-                var group_info = detail.group_info || {};
-                // inspect keys to debug
-
                 var $container = $modal.find('#modal_container');
+
+                /*
+                var group_info = detail.group_info || {};
                 var formHtml = QWeb.render('my_compassion.PaymentMethodUpdateForm', group_info);
                 console.log("Rendering Update Form with data:", formHtml);
                 $container.html(formHtml);
+
+                var $listWrapper = $('<div/>');
+                $container.append($listWrapper);
+                this._loadPaymentMethods($modal, $listWrapper);
+                */
+                // --- UPDATE MODE: ACCORDION (Form + Switch List) ---
+
+                // Create Wrapper
+                var $accordion = $('<div/>', { id: 'payment_method_accordion', class: 'accordion' });
+
+                // A. Update Form Section
+                var info = detail.method_info || detail.group_info || {};
+                info.is_card = (info.type === 'token' || info.is_card);
+
+                var $headerForm = this._createAccordionSectionHeader('collapseForm', _t('Update Current Details'), true);
+                var $bodyForm = $('<div/>', { id: 'collapseForm', class: 'collapse show', 'data-parent': '#payment_method_accordion' });
+                var $contentForm = $('<div/>', { class: 'pt-3 pl-1 pr-1' });
+
+                $contentForm.html(QWeb.render('my_compassion.PaymentMethodUpdateForm', info));
+                $bodyForm.append($contentForm);
+
+                $accordion.append($('<div/>', { class: 'border-bottom mb-2' }).append($headerForm).append($bodyForm));
+
+                // B. Switch List Section
+                var $headerList = this._createAccordionSectionHeader('collapseList', _t('Switch Payment Method'), false);
+                var $bodyList = $('<div/>', { id: 'collapseList', class: 'collapse', 'data-parent': '#payment_method_accordion' });
+                var $contentList = $('<div/>', { class: 'pt-3' });
+
+                this._loadPaymentMethods($modal, $contentList); // Load into specific container
+                $bodyList.append($contentList);
+
+                $accordion.append($('<div/>', { class: 'border-bottom' }).append($headerList).append($bodyList));
+
+                $container.append($accordion);
+
+                // Bind visual events (arrows, button text)
+                this._bindAccordionEvents($modal);
+
+                // Initial Button Text
+                $modal.find('#btn_save_payment_method').text(_t('Update Details'));
+
+
             }
 
             $modal.modal('show');
         },
 
-        _loadPaymentMethods: function ($modal) {
-            var $container = $modal.find('#modal_container');
+        _loadPaymentMethods: function ($modal, $targetContainer) {
+            var $container = $targetContainer || $modal.find('#modal_container');
+            console.log("Loading payment methods into container:", $container);
 
             // Render Loading Spinner
             // Ensure 'my_compassion.PaymentMethodLoading' exists in your XML file
@@ -135,6 +178,48 @@ odoo.define('my_compassion.my2_donations', function (require) {
             });
         },
 
+        _createAccordionSectionHeader: function (targetId, label, isExpanded) {
+            var iconClass = isExpanded ? 'fa-chevron-down' : 'fa-chevron-right';
+            var btnClass = isExpanded ? '' : 'collapsed';
+
+            return $('<div/>', { class: 'card-header bg-white border-0 p-0' })
+                .append($('<h5/>', { class: 'mb-0' })
+                    .append($('<button/>', {
+                        class: 'btn btn-link btn-block text-left text-dark-blue font-weight-bold d-flex justify-content-between align-items-center text-decoration-none ' + btnClass,
+                        type: 'button',
+                        'data-toggle': 'collapse',
+                        'data-target': '#' + targetId,
+                        'aria-expanded': isExpanded,
+                        'aria-controls': targetId
+                    }).append(
+                        $('<span/>', { text: label }),
+                        $('<i/>', { class: 'fa ' + iconClass + ' small' })
+                    ))
+                );
+        },
+
+        _bindAccordionEvents: function ($modal) {
+            var self = this;
+            $modal.find('.collapse').on('show.bs.collapse', function (e) {
+                // Rotate icon to Down
+                var id = $(this).attr('id');
+                $('button[data-target="#' + id + '"] i').removeClass('fa-chevron-right').addClass('fa-chevron-down');
+
+                // Update Save Button Text based on open section
+                if (id === 'collapseForm') {
+                    $modal.find('#btn_save_payment_method').text(_t('Update Details'));
+                } else if (id === 'collapseList') {
+                    $modal.find('#btn_save_payment_method').text(_t('Save Changes'));
+                }
+            });
+
+            $modal.find('.collapse').on('hide.bs.collapse', function (e) {
+                // Rotate icon to Right
+                var id = $(this).attr('id');
+                $('button[data-target="#' + id + '"] i').removeClass('fa-chevron-down').addClass('fa-chevron-right');
+            });
+        },
+
         // Render selected card highlighted
         _onMethodSelectionChange: function (ev) {
             var $input = $(ev.currentTarget);
@@ -155,15 +240,16 @@ odoo.define('my_compassion.my2_donations', function (require) {
 
             var $modal = $('#payment_method_selector_modal');
             var modal_type = $modal.data('modal-type');
-            var $selectedInput = $modal.find('input[name="payment_method_selection"]:checked');
-            var new_group_id = $selectedInput.attr('group-id');
 
             var $btn = $(ev.currentTarget);
             $btn.prop('disabled', true).prepend('<i class="fa fa-spinner fa-spin mr-1"/>');
 
             if (modal_type == 'Change') {
+                var $selectedInput = $modal.find('input[name="payment_method_selection"]:checked');
+                var new_group_id = $selectedInput.attr('group-id');
+
                 this._rpc({
-                    route: '/my2/donation/change_method',
+                    route: '/my2/donation/change_method_contract',
                     params: {
                         contract_id: $modal.data('contract-id'),
                         group_id: new_group_id,
@@ -180,6 +266,42 @@ odoo.define('my_compassion.my2_donations', function (require) {
                 }).finally(function () {
                     $btn.prop('disabled', false).find('.fa-spinner').remove();
                 });
+
+            } else if (modal_type == 'Update') {
+                if ($modal.find('#collapseList').hasClass('show')) {
+                    // USER IS SWITCHING METHOD
+                    // this._saveSwitchMethod($modal, $btn, modalType);
+                    var $selectedInput = $modal.find('input[name="payment_method_selection"]:checked');
+                    var new_group_id = $selectedInput.attr('group-id');
+                    console.log("Switching to Payment Method Group ID:", new_group_id);
+                    this._rpc({
+                        route: '/my2/donation/change_method_group',
+                        params: {
+                            group_id: $modal.data('group-id'),
+                            new_group_id: new_group_id,
+                        }
+                    }).then(function (result) {
+                        if (result.success) {
+                            $modal.modal('hide');
+                            window.location.reload();
+                            console.log("Payment method switched successfully.");
+                            ToastService.success(_t("Payment method switched successfully."));
+                        } else {
+                            ToastService.error(result.error || _t("An error occurred while switching the payment method."));
+                        }
+                    }).finally(function () {
+                        $btn.prop('disabled', false).find('.fa-spinner').remove();
+                    });
+                } else {
+                    // USER IS UPDATING DETAILS (Form)
+                    // TODO: Implement update form submission logic here
+                    var formData = {};
+                    $modal.find('#payment_method_form input').each(function () {
+                        if (this.name) formData[this.name] = $(this).val();
+                    });
+                    console.log("Updating Payment Details:", formData);
+                    alert("Update logic not implemented in this demo.");
+                }
             }
         },
 

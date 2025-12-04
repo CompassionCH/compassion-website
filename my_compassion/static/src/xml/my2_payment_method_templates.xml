@@ -44,7 +44,6 @@
             <div class="flex-grow-1">
                 <div class="font-weight-bold text-dark-blue leading-tight">
                     <t t-esc="label"/>
-                    <t t-esc="group_id"/>
                 </div>
 
                 <!-- Subtitle Logic: Ref Number or Expire Date or Brand -->
@@ -116,7 +115,7 @@
      <t t-name="my_compassion.PaymentMethodUpdateForm">
         <div class="payment-update-form text-left">
             <t t-if="is_card">
-                <!-- Card Number (Read Only usually) -->
+                <!-- Card Number -->
                 <t t-call="my_compassion.FormFieldComponent">
                     <t t-set="label">Card Number</t>
                     <t t-set="name">card_number</t>
@@ -149,7 +148,20 @@
                 </div>
             </t>
 
+            <t t-else="">
+                <!-- Fallback for non-card methods (like LSV, BVR reference) -->
+                <t t-call="my_compassion.FormFieldComponent">
+                    <t t-set="label">Reference Number</t>
+                    <t t-set="name">ref_number</t>
+                    <t t-set="value" t-value="ref_number"/>
+                </t>
+            </t>
 
+            <!-- Switch to another payment method existing -->
+             <div>
+                 <p>Or Choose another payment method.</p>
+
+             </div>
         </div>
     </t>
 

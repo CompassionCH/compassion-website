@@ -511,7 +511,7 @@ class MyCompassionDonationsController(CustomerPortal):
 
 
     @http.route(
-        '/my2/donation/change_method',
+        '/my2/donation/change_method_contract',
         type='json',
         auth='user',
         website=True
@@ -538,6 +538,15 @@ class MyCompassionDonationsController(CustomerPortal):
         success = contract.change_contract_group(int(group_id))
         return {'success': success}
 
+
+    @http.route(
+        '/my2/donation/change_method_group',
+        type='json',
+        auth='user',
+        website=True
+    )
+    def change_payment_method_group(self, group_id, new_group_id, **kwargs):
+        return False
 
     def _get_paginated_paid_invoices(
         self, partner, invoice_page=1, invoice_per_page=12
