@@ -111,7 +111,8 @@ class EventBanner(models.Model):
     target_partner_tags = fields.Many2many(
         comodel_name="res.partner.category",
         string="Target Contact Tags",
-        help="If selected, the banner is only visible to users who have at least one of these tags. If empty, it is visible to everyone.",
+        help="If selected, the banner is only visible to users who have at least "
+        "one of these tags. If empty, it is visible to everyone.",
     )
 
     def name_get(self):
