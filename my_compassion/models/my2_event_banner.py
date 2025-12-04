@@ -108,6 +108,12 @@ class EventBanner(models.Model):
         help="Select the pages where this banner should be visible.",
     )
 
+    target_partner_tags = fields.Many2many(
+        comodel_name="res.partner.category",
+        string="Target Contact Tags",
+        help="If selected, the banner is only visible to users who have at least one of these tags. If empty, it is visible to everyone.",
+    )
+
     def name_get(self):
         """
         Generates the display name for the banners.
