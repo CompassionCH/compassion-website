@@ -64,11 +64,19 @@
                     <group string="Target">
                         <field name="target_route_ids" widget="many2many_tags" options="{'no_create_edit': True}" />
                         <p class="text-info" colspan="2">
-                            <i class="fa fa-info-circle"/> If pages are selected, the banner is only visible on those pages. If empty, it is visible on all pages.
+                            <i class="fa fa-info-circle" />
+                            If pages are selected, the banner is only visible on those pages. If empty, it is visible on
+                            all pages.
                         </p>
-                        <field name="target_partner_tags" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}" />
+                        <field
+                            name="target_partner_tags"
+                            widget="many2many_tags"
+                            options="{'color_field': 'color', 'no_create_edit': True}"
+                        />
                         <p class="text-info" colspan="2">
-                            <i class="fa fa-info-circle"/> If tags are selected, the banner is only visible to users having at least one of these tags. If empty, it is visible to everyone.
+                            <i class="fa fa-info-circle" />
+                            If tags are selected, the banner is only visible to users having at least one of these tags.
+                            If empty, it is visible to everyone.
                         </p>
                     </group>
                 </sheet>
