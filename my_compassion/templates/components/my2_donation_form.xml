@@ -78,7 +78,7 @@
             <!-- TO -->
             <t t-if="product.my_compassion_donation_type == 'gift'" t-call="theme_compassion_2025.FormFieldComponent">
                 <t t-set="top_class" t-value="'mt-3 w-100'" />
-                <t t-set="label">To</t>
+                <t t-set="label" t-value="'To'" />
                 <t t-set="input_id" t-value="'recipient'" />
                 <t t-set="invalid_hint" t-value="'Please select a recipient.'" />
                 <t t-call="theme_compassion_2025.SelectComponent">
@@ -106,7 +106,7 @@
             <div class="amount-selection" t-att-hidden="product.my_compassion_donation_type == 'gift'">
                 <t t-call="theme_compassion_2025.FormFieldComponent">
                     <t t-set="top_class" t-value="'mt-4 w-100'" />
-                    <t t-set="label">Suggested amounts</t>
+                    <t t-set="label" t-value="'Suggested amounts'" />
                     <div class="mt-1 d-flex justify-content-between">
                         <div class="donation-suggested-amount flex-grow-1">
                             <input
@@ -169,7 +169,7 @@
                 </t>
                 <t t-call="theme_compassion_2025.FormFieldComponent">
                     <t t-set="top_class" t-value="'my-3 w-100'" />
-                    <t t-set="label">Or enter your own amount</t>
+                    <t t-set="label" t-value="'Or enter your own amount'" />
                     <t t-set="invalid_hint" t-value="'Please enter a valid amount.'" />
                     <div class="donation-suggested-amount">
                         <input
@@ -206,9 +206,7 @@
                     <t t-call="theme_compassion_2025.ThemedButtonComponent">
                         <t t-set="variant" t-value="'default'" />
                         <t t-set="variation" t-value="'filled'" />
-                        <t t-set="label">
-                            <t t-esc="submit_label" />
-                        </t>
+                        <t t-set="label" t-value="submit_label" />
                         <t t-set="color" t-value="'mid-green'" />
                         <t t-set="text_color" t-value="'pure-white'" />
                     </t>

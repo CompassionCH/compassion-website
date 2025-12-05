@@ -67,7 +67,7 @@
                         <!-- INFORMATION -->
                         <div t-if="product.my_compassion_show_info" class="mt-3 d-flex flex-column">
                             <t t-call="theme_compassion_2025.TitleComponent">
-                                <t t-set="title_content">How does it work?</t>
+                                <t t-set="title_content" t-value="'How does it work?'" />
                                 <t t-set="color" t-value="'core-blue'" />
                                 <t t-set="show_underline" t-value="True" />
                                 <t t-set="underline_color" t-value="'low-yellow'" />
@@ -82,7 +82,7 @@
                         <!-- TESTIMONY -->
                         <div t-if="product.my_compassion_show_testimony" class="mt-3 d-flex flex-column">
                             <t t-call="theme_compassion_2025.TitleComponent">
-                                <t t-set="title_content">Testimony</t>
+                                <t t-set="title_content" t-value="'Testimony'" />
                                 <t t-set="color" t-value="'core-blue'" />
                                 <t t-set="show_underline" t-value="True" />
                                 <t t-set="underline_color" t-value="'low-yellow'" />
