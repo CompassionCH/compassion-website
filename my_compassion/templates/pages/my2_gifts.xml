@@ -38,7 +38,8 @@ Page: My Compassion 2 Gifts Page
                         <t t-elif="is_fund">
                             <t t-set="title">Send a gift to your sponsored child</t>
                             <t t-set="text">
-                                A member of Compassion from their local church will help them get something they really need.
+                                A member of Compassion from their local church will help them get something they really
+                                need.
                             </t>
                             <t t-set="btn_link" t-value="'/my2/gifts?type=gift'" />
                             <t t-set="btn_text">Give</t>
@@ -52,7 +53,8 @@ Page: My Compassion 2 Gifts Page
                         <t t-if="is_gift">
                             <t t-set="title_content">Gift to your sponsored children</t>
                             <t t-set="description">
-                                A member of Compassion from their local church will help them get something they really need.
+                                A member of Compassion from their local church will help them get something they really
+                                need.
                             </t>
                         </t>
                         <t t-elif="is_fund">
