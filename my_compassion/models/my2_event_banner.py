@@ -105,13 +105,15 @@ class EventBanner(models.Model):
     target_route_ids = fields.Many2many(
         "my2.website.route",
         string="Target Pages",
-        help="If pages are selected, the banner is only visible on those pages. If empty, it is visible on all pages.",
+        help="If pages are selected, the banner is only visible on those pages. "
+             "If empty, it is visible on all pages.",
     )
 
     target_partner_tags = fields.Many2many(
         comodel_name="res.partner.category",
         string="Target Contact Tags",
-        help="If tags are selected, the banner is only visible to users having at least one of these tags. If empty, it is visible to everyone.",
+        help="If tags are selected, the banner is only visible to users having "
+             "at least one of these tags. If empty, it is visible to everyone.",
     )
 
     def name_get(self):
