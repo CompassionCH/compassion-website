@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="theme_compassion_colors_stylesheet_template" name="Colors Stylesheet Template">
+        <t t-translation="off">
 <!-- Generate CSS custom properties (variables) for each color. -->
 <!-- This makes the colors available globally in any CSS file. -->
 :root {
@@ -13,6 +14,7 @@
 <!-- Add classes as needed during development, but ensure they are documented and used consistently. -->
 <!-- Follow the pattern of Bootstrap for consistency (I prefer tailwind but odoo use bootstrap...) -->
 <t t-foreach="colors" t-as="color">
+    <t t-translation="off">
 <!-- Background colors -->
 .bg-<t t-esc="color.class_name"/> {
     background-color: <t t-esc="color.color"/> !important;
@@ -90,6 +92,7 @@
     background-color: <t t-esc="color.color"/> !important;
 }
 </t>
+</t>>
 <!-- Outlined button style and effects -->
 .btn--default-outlined.border-primary,
 .btn--impact-outlined.border-primary,
