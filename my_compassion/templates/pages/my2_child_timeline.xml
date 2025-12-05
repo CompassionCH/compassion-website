@@ -32,7 +32,10 @@
                                     t-set="src"
                                     t-value="'/web/image/compassion.child/' + str(compassion_child.id) + '/portrait'"
                                 />
-                                <t t-set="alt">Portrait of <t t-esc="compassion_child.preferred_name"/></t>
+                                <t t-set="alt">
+                                    Portrait of
+                                    <t t-esc="compassion_child.preferred_name" />
+                                </t>
                                 <t t-set="size" t-value="'large'" />
                             </t>
                             <div

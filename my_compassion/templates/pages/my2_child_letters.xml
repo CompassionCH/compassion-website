@@ -37,7 +37,10 @@
                             <t t-set="variant" t-value="'compact'" />
                             <t t-set="icon" t-value="'icon-filter-lines'" />
                             <t t-set="text_color" t-value="'low-black'" />
-                            <t t-set="label"><t t-esc="nr_filters_applied"/> filters applied</t>
+                            <t t-set="label">
+                                <t t-esc="nr_filters_applied" />
+                                filters applied
+                            </t>
                         </t>
                     </a>
                 </div>

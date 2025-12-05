@@ -28,13 +28,19 @@ Page: My Compassion 2 Gifts Page
                     <t t-call="theme_compassion_2025.BannerComponent">
                         <t t-if="is_gift">
                             <t t-set="title">Gift of compassion</t>
-                            <t t-set="text">Every child deserves a secure home, safe water, and medicine to keep them healthy. That's why, when poverty places a child in critical need, we take action.</t>
+                            <t t-set="text">
+                                Every child deserves a secure home, safe water, and medicine to keep them healthy.
+                                That's why, when poverty places a child in critical need, we take action.
+                            </t>
                             <t t-set="btn_link" t-value="'/my2/gifts?type=fund'" />
                             <t t-set="btn_text">Send a donation</t>
                         </t>
                         <t t-elif="is_fund">
                             <t t-set="title">Give to your sponsored children</t>
-                            <t t-set="text">Send a gift to your sponsored child. Compassion staff from their local church will support them in purchasing something they really need.</t>
+                            <t t-set="text">
+                                Send a gift to your sponsored child. Compassion staff from their local church will
+                                support them in purchasing something they really need.
+                            </t>
                             <t t-set="btn_link" t-value="'/my2/gifts?type=gift'" />
                             <t t-set="btn_text">Send a gift</t>
                         </t>
@@ -46,11 +52,16 @@ Page: My Compassion 2 Gifts Page
                     <t t-call="theme_compassion_2025.TitleComponent">
                         <t t-if="is_gift">
                             <t t-set="title_content">Gift to your sponsored children</t>
-                            <t t-set="description">Send a gift to your sponsored child. Compassion staff from their local church will support them in purchasing something they really need.</t>
+                            <t t-set="description">
+                                Send a gift to your sponsored child. Compassion staff from their local church will
+                                support them in purchasing something they really need.
+                            </t>
                         </t>
                         <t t-elif="is_fund">
                             <t t-set="title_content">Gift of compassion</t>
-                            <t t-set="description">Make a difference and bring hope to children living in extreme poverty.</t>
+                            <t t-set="description">
+                                Make a difference and bring hope to children living in extreme poverty.
+                            </t>
                         </t>
                         <t t-set="color" t-value="'core-blue'" />
                         <t t-set="show_underline" t-value="true" />
