@@ -402,6 +402,9 @@ class MyCompassionDonationsController(CustomerPortal):
         # Group sponsorships by their backend Contract Group
         sponsorship_groups = active_sponsorships.mapped('group_id')
 
+        # Put all payement methods into an arry
+        payment_methods = [group.get_payment_method_info() for group in sponsorship_groups]
+
         # Due invoices
         date_filter_up_bound = datetime.today() + timedelta(days=30)
         due_invoices = (
@@ -440,6 +443,7 @@ class MyCompassionDonationsController(CustomerPortal):
             {
                 "active_sponsorships": active_sponsorships,
                 "sponsorship_groups": sponsorship_groups,
+                "payment_methods": payment_methods,
                 "tot_cost_per_frequency": tot_cost_per_frequency,
                 "due_invoices": due_invoices,
                 "paid_invoices_subset": paid_invoices_data["paid_invoices_subset"],

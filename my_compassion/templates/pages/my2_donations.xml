@@ -18,6 +18,7 @@ Page: My Compassion 2 Donations Page
     Injected data:
     - active_sponsorships (recordset): Sponsorships in active state for the logged-in partner.
     - sponsorship_groups (recordset): Sponsorship groups by payment methods linked to the partner.
+    - payment_methods (list): Available payment methods for the partner.
     - tot_cost_per_frequency (dict): Total sponsorship cost grouped by frequency and currency.
     - due_invoices (recordset): Outstanding invoices not yet paid.
     - paid_invoices_subset (recordset): Subset of paid invoices for donation history.
@@ -33,8 +34,27 @@ Page: My Compassion 2 Donations Page
             <t t-call="website.layout">
                 <div class="container sponsorship-group">
                     <div class="single-column my2-donations-page">
-                        <!-- MODAL: PAYMENT METHOD SELECTOR -->
-                        <t t-call="my_compassion.my2_payment_method_selector"/>
+
+
+                        <!-- ========================================== -->
+                        <!-- MODALS: INSTANTIATE 3 VERSIONS OF TEMPLATE -->
+                        <!-- ========================================== -->
+                        <!-- 1. UPDATE MODAL (For editing a group) -->
+                        <t t-call="my_compassion.my2_payment_method_selector">
+                            <t t-set="modal_type" t-value="'update'"/>
+                            <t t-set="payment_methods" t-value="payment_methods"/>
+                        </t>
+
+                        <!-- 2. CHANGE MODAL (For moving a child to another group) -->
+                        <t t-call="my_compassion.my2_payment_method_selector">
+                            <t t-set="modal_type" t-value="'change'"/>
+                            <t t-set="payment_methods" t-value="payment_methods"/>
+                        </t>
+
+                        <!-- 3. ADD MODAL (For creating a new payment method) -->
+                        <t t-call="my_compassion.my2_payment_method_selector">
+                            <t t-set="modal_type" t-value="'add'"/>
+                        </t>
 
 
                         <!-- TITLE-->
@@ -117,161 +137,166 @@ Page: My Compassion 2 Donations Page
                             <t t-foreach="sponsorship_groups" t-as="group">
                                 <t t-call="my_compassion.my2_sponsorships_group_card">
                                     <t t-set="group" t-value="group"/>
+                                    <t t-set="all_groups" t-value="sponsorship_groups"/>
                                 </t>
                             </t>
                             <!-- ADD PAYMENT METHOD BUTTON -->
                             <div class="d-flex flex-column align-items-center">
                                 <a href="#"
-                                   class="add-payment-method"
+                                   data-toggle="modal"
+                                   data-target="#payment_method_selector_modal_add"
                                    onclick="event.preventDefault();
-                                    this.dispatchEvent(new CustomEvent('open_payment_method_selector',
-                                    {bubbles: true, detail: {'modal_type': 'Add'}}));"
+                                   this.dispatchEvent(new CustomEvent('open_payment_method_selector', {
+                                        bubbles: true,
+                                        detail: {'modal_type': 'Add'}
+                                   }));"
                                 >
-                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                        <t t-set="variant" t-value="'compact'" />
-                                        <t t-set="variation" t-value="'filled'" />
-                                        <t t-set="label" t-value="'Add a payment method'" />
-                                        <t t-set="icon" t-value="'icon-plus'" />
-                                        <t t-set="color" t-value="'dark-blue'" />
-                                        <t t-set="text_color" t-value="'pure-white'" />
-                                        <t t-set="icon_color" t-value="'pure-white'" />
-                                    </t>
-                                </a>
-                            </div>
-                        </div>
-                        <!-- DUE INVOICES -->
-                        <div class="mb-4 mt-4">
-                            <h3 class="text-dark-blue">Open contributions</h3>
-                            <p>
-                                Your latest payments may not already be taken into
-                                account.
-                            </p>
-                            <t t-if="due_invoices">
-                                <div class="row mb-2">
-                                    <div class="col text-core-blue body-small-bold">Month</div>
-                                    <div class="col text-core-blue body-small-bold">Child</div>
-                                    <div class="col text-right text-core-blue body-small-bold">Amount</div>
-                                </div>
-                                <t t-foreach="due_invoices" t-as="invoice">
-                                    <t
-                                            t-set="children"
-                                            t-value="invoice.invoice_line_ids.mapped('contract_id.child_id')"
-                                    />
-                                    <div class="row mb-3">
-                                        <div class="col">
-                                            <t t-esc="invoice.get_date('invoice_date', 'MMMM yyyy').title()" />
-                                        </div>
-                                        <div class="col">
-                                            <t t-esc="children.get_list('preferred_name', 3, children.get_number())" />
-                                        </div>
-                                        <div class="col text-right">
-                                            <t t-esc="int(invoice.amount_total)" />
-                                            <t t-esc="invoice.currency_id.display_name" />
-                                        </div>
-                                    </div>
-                                </t>
-                            </t>
-                            <t t-else="">
-                                <p class="mb-3">No due invoices.</p>
-                            </t>
-                        </div>
-                        <!-- DONATION HISTORY -->
-                        <t t-call="my_compassion.my2_donations_history_content" />
-                    </div>
-                </div>
 
-                <link rel="stylesheet" href="/my_compassion/static/src/css/my2_donations.css" />
-            </t>
-        </template>
-        <!-- DONATION HISTORY -->
-        <template id="my2_donations_history_content" name="Donation History Content">
-            <div id="donation_history_container">
-                <div class="mb-4 mt-4">
-                    <h3 class="text-dark-blue">Donations history</h3>
-                    <t t-if="total_pages > 0">
-                        <div class="row font-weight-bold mb-2">
-                            <div class="col text-core-blue">Date</div>
-                            <div class="col text-core-blue">
-                                Details of
-                                donation
-                            </div>
-                            <div class="col text-right text-core-blue">Amount</div>
+                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                    <t t-set="variant" t-value="'compact'" />
+                                    <t t-set="variation" t-value="'filled'" />
+                                    <t t-set="label" t-value="'Add a payment method'" />
+                                    <t t-set="icon" t-value="'icon-plus'" />
+                                    <t t-set="color" t-value="'dark-blue'" />
+                                    <t t-set="text_color" t-value="'pure-white'" />
+                                    <t t-set="icon_color" t-value="'pure-white'" />
+                                </t>
+                            </a>
                         </div>
-                        <div id="donation_history_rows">
-                            <t t-foreach="paid_invoices_subset" t-as="invoice">
-                                <t t-set="children" t-value="invoice.invoice_line_ids.mapped('contract_id.child_id')" />
-                                <t t-set="gift_types" t-value="invoice.invoice_line_ids.get_list('gift_id.name')" />
-                                <div class="row p-2 border-bottom">
+                    </div>
+                    <!-- DUE INVOICES -->
+                    <div class="mb-4 mt-4">
+                        <h3 class="text-dark-blue">Open contributions</h3>
+                        <p>
+                            Your latest payments may not already be taken into
+                            account.
+                        </p>
+                        <t t-if="due_invoices">
+                            <div class="row mb-2">
+                                <div class="col text-core-blue body-small-bold">Month</div>
+                                <div class="col text-core-blue body-small-bold">Child</div>
+                                <div class="col text-right text-core-blue body-small-bold">Amount</div>
+                            </div>
+                            <t t-foreach="due_invoices" t-as="invoice">
+                                <t
+                                        t-set="children"
+                                        t-value="invoice.invoice_line_ids.mapped('contract_id.child_id')"
+                                />
+                                <div class="row mb-3">
                                     <div class="col">
-                                        <span t-esc="invoice.last_payment" />
+                                        <t t-esc="invoice.get_date('invoice_date', 'MMMM yyyy').title()" />
                                     </div>
                                     <div class="col">
                                         <t t-esc="children.get_list('preferred_name', 3, children.get_number())" />
-                                        <t t-if="invoice.invoice_category == 'gift'">
-                                            <t t-if="gift_types">
-                                                :
-                                                <t t-esc="gift_types" />
-                                            </t>
-                                            <t t-else="">
-                                                :
-                                                <t t-esc="invoice.invoice_line_ids.get_list('product_id.name')" />
-                                            </t>
-                                        </t>
-                                        <t t-if="invoice.invoice_category == 'fund'">
-                                            Donation for :
-                                            <t t-esc="invoice.invoice_line_ids.get_list('product_id.name')" />
-                                        </t>
-                                        <t t-if="invoice.invoice_category == 'sponsorship'">
-                                            <span>(Sponsorship)</span>
-                                        </t>
                                     </div>
                                     <div class="col text-right">
-                                        <span t-esc="int(invoice.amount_total)" />
-                                        <span t-esc="invoice.currency_id.display_name" />
+                                        <t t-esc="int(invoice.amount_total)" />
+                                        <t t-esc="invoice.currency_id.display_name" />
                                     </div>
                                 </div>
                             </t>
-                        </div>
-                        <!-- Pager -->
-                        <div class="d-flex justify-content-center align-items-center mb-5">
-                            <!-- Prev -->
-                            <t t-if="current_page > 1">
-                                <a id="history_pager_prev" t-att-data-page="current_page - 1">
-                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                        <t t-set="variation" t-value="'hollow'" />
-                                        <t t-set="color" t-value="'mid-blue'" />
-                                        <t t-set="text_color" t-value="'low-black'" />
-                                        <t t-set="variant" t-value="'compact'" />
-                                        <t t-set="label" t-value="'Prev'" />
-                                    </t>
-                                </a>
-                            </t>
-                            <!-- Page indicator -->
-                            <span id="pageIndicator" class="p-2">
-                                Page
-                                <t t-esc="current_page" />
-                                of
-                                <t t-esc="total_pages" />
-                            </span>
-                            <!-- Next -->
-                            <t t-if="current_page &lt; total_pages">
-                                <a id="history_pager_next" t-att-data-page="current_page + 1">
-                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                        <t t-set="variation" t-value="'hollow'" />
-                                        <t t-set="color" t-value="'mid-blue'" />
-                                        <t t-set="text_color" t-value="'low-black'" />
-                                        <t t-set="variant" t-value="'compact'" />
-                                        <t t-set="label" t-value="'Next'" />
-                                    </t>
-                                </a>
-                            </t>
-                        </div>
-                    </t>
-                    <t t-else="">
-                        <p class="mb-3">No donation history found.</p>
-                    </t>
+                        </t>
+                        <t t-else="">
+                            <p class="mb-3">No due invoices.</p>
+                        </t>
+                    </div>
+                    <!-- DONATION HISTORY -->
+                    <t t-call="my_compassion.my2_donations_history_content" />
                 </div>
             </div>
-        </template>
-    </data>
-</odoo>
+
+            <link rel="stylesheet" href="/my_compassion/static/src/css/my2_donations.css" />
+        </t>
+    </template>
+    <!-- DONATION HISTORY -->
+    <template id="my2_donations_history_content" name="Donation History Content">
+        <div id="donation_history_container">
+            <div class="mb-4 mt-4">
+                <h3 class="text-dark-blue">Donations history</h3>
+                <t t-if="total_pages > 0">
+                    <div class="row font-weight-bold mb-2">
+                        <div class="col text-core-blue">Date</div>
+                        <div class="col text-core-blue">
+                            Details of
+                            donation
+                        </div>
+                        <div class="col text-right text-core-blue">Amount</div>
+                    </div>
+                    <div id="donation_history_rows">
+                        <t t-foreach="paid_invoices_subset" t-as="invoice">
+                            <t t-set="children" t-value="invoice.invoice_line_ids.mapped('contract_id.child_id')" />
+                            <t t-set="gift_types" t-value="invoice.invoice_line_ids.get_list('gift_id.name')" />
+                            <div class="row p-2 border-bottom">
+                                <div class="col">
+                                    <span t-esc="invoice.last_payment" />
+                                </div>
+                                <div class="col">
+                                    <t t-esc="children.get_list('preferred_name', 3, children.get_number())" />
+                                    <t t-if="invoice.invoice_category == 'gift'">
+                                        <t t-if="gift_types">
+                                            :
+                                            <t t-esc="gift_types" />
+                                        </t>
+                                        <t t-else="">
+                                            :
+                                            <t t-esc="invoice.invoice_line_ids.get_list('product_id.name')" />
+                                        </t>
+                                    </t>
+                                    <t t-if="invoice.invoice_category == 'fund'">
+                                        Donation for :
+                                        <t t-esc="invoice.invoice_line_ids.get_list('product_id.name')" />
+                                    </t>
+                                    <t t-if="invoice.invoice_category == 'sponsorship'">
+                                        <span>(Sponsorship)</span>
+                                    </t>
+                                </div>
+                                <div class="col text-right">
+                                    <span t-esc="int(invoice.amount_total)" />
+                                    <span t-esc="invoice.currency_id.display_name" />
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                    <!-- Pager -->
+                    <div class="d-flex justify-content-center align-items-center mb-5">
+                        <!-- Prev -->
+                        <t t-if="current_page > 1">
+                            <a id="history_pager_prev" t-att-data-page="current_page - 1">
+                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                    <t t-set="variation" t-value="'hollow'" />
+                                    <t t-set="color" t-value="'mid-blue'" />
+                                    <t t-set="text_color" t-value="'low-black'" />
+                                    <t t-set="variant" t-value="'compact'" />
+                                    <t t-set="label" t-value="'Prev'" />
+                                </t>
+                            </a>
+                        </t>
+                        <!-- Page indicator -->
+                        <span id="pageIndicator" class="p-2">
+                            Page
+                            <t t-esc="current_page" />
+                            of
+                            <t t-esc="total_pages" />
+                        </span>
+                        <!-- Next -->
+                        <t t-if="current_page &lt; total_pages">
+                            <a id="history_pager_next" t-att-data-page="current_page + 1">
+                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                    <t t-set="variation" t-value="'hollow'" />
+                                    <t t-set="color" t-value="'mid-blue'" />
+                                    <t t-set="text_color" t-value="'low-black'" />
+                                    <t t-set="variant" t-value="'compact'" />
+                                    <t t-set="label" t-value="'Next'" />
+                                </t>
+                            </a>
+                        </t>
+                    </div>
+                </t>
+                <t t-else="">
+                    <p class="mb-3">No donation history found.</p>
+                </t>
+            </div>
+        </div>
+    </template>
+</data>
+        </odoo>

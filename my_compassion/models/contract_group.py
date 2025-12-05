@@ -48,7 +48,8 @@ class ContractGroup(models.Model):
             'brand': False,
             'expire_date' : False,
             'is_card' : False,
-            'mode_id': self.payment_mode_id.id if self.payment_mode_id else False
+            'mode_id': self.payment_mode_id.id if self.payment_mode_id else False,
+            'group_id': self.id,
         }
 
         if not self.payment_mode_id:

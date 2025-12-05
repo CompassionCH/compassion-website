@@ -70,22 +70,19 @@ Description:
                     <div class="d-flex align-items-center">
                         <a href="#"
                            class="mr-4 text-core-black opacity-50-hover"
+                           data-toggle="modal"
+                           data-target="#payment_method_selector_modal_update"
                            t-att-data-group-id="group.id"
                            t-att-data-method-info="json.dumps(info)"
-                           id="btn_edit_group_payment"
-                           title="Edit Payment Method"
-                           onclick="
-                           event.preventDefault();
-                           event.stopPropagation();
-                           this.dispatchEvent(new CustomEvent('open_payment_method_selector', {
-                                bubbles: true,
-                                detail: {
-                                    'modal_type': 'Update',
-                                    'group_id': this.dataset.groupId,
-                                    'group_info': JSON.parse(this.dataset.methodInfo),
-                                    },
-                           }));"
-                        >
+                           onclick="event.stopPropagation();
+                                this.dispatchEvent(new CustomEvent('open_payment_method_update', {
+                                    bubbles: true,
+                                    detail: {
+                                        group_id: this.dataset.groupId,
+                                        method_info: JSON.parse(this.dataset.methodInfo),
+                                    }
+                                }));
+                           ">
                             <div class="text-dark-blue">
                                 <i t-attf-class="tiny-text icon-edit02"/>
                             </div>
@@ -115,7 +112,7 @@ Description:
                                         'label': 'Change',
                                         'icon': 'edit02',
                                         'action': 'event',
-                                        'custom_event': 'open_payment_method_selector',
+                                        'custom_event': 'open_payment_method_change',
                                         'detail': '{\'modal_type\': \'Change\',
                                                     \'contract_id\': ' + str(sponsorship.id) + ',
                                                     \'child_name\': \'' + (sponsorship.child_id.preferred_name or '').replace('\'', '') + '\',
