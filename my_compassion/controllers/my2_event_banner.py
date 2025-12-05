@@ -48,6 +48,8 @@ class MyCompassionEventBannerController(http.Controller):
             ("end_date", "=", False),
             ("end_date", ">=", now),
             # Match either the full path or the path without the lang prefix
+            "|",
+            ("target_route_ids", "=", False),
             ("target_route_ids.path", "in", possible_routes),
             "|",
             ("target_partner_tags", "=", False),
