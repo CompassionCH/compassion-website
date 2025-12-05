@@ -57,7 +57,7 @@
             <t t-set="top_class" t-value="None" />
             <t t-call="theme_compassion_2025.TitleComponent">
                 <t t-if="product.my_compassion_donation_type == 'fund'" t-set="title_content" t-value="'Donate'" />
-                <t t-if="product.my_compassion_donation_type == 'gift'" t-set="title_content" t-value="'Send a gift'" />
+                <t t-if="product.my_compassion_donation_type == 'gift'" t-set="title_content" t-value="'Give'" />
                 <t t-set="color" t-value="'core-blue'" />
                 <t t-set="show_underline" t-value="True" />
                 <t t-set="underline_color" t-value="'low-yellow'" />

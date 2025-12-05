@@ -44,7 +44,7 @@ Page: My Compassion 2 Dashboard Page
                         <t t-set="color" t-value="'core-blue'" />
                         <t t-set="show_underline" t-value="true" />
                         <t t-set="underline_color" t-value="'low-yellow'" />
-                        <t t-set="description">Access your resources and ways to get involved.</t>
+                        <t t-set="description">Resources &amp; Ways to Get Involved</t>
                     </t>
                 </div>
                 <!-- VIGNETTES AND ACTIONS RENDERING -->
@@ -66,7 +66,8 @@ Page: My Compassion 2 Dashboard Page
                     <t t-set="title">You are sponsoring</t>
                     <t t-set="subtitle">
                         <span class="text-low-yellow" t-esc="vignette['number_sponsorships']" />
-                        children
+                        <t t-if="vignette['number_sponsorships'] == 1">child</t>
+                        <t t-else="">children</t>
                     </t>
                     <t t-set="href" t-value="'/my2/children'" />
                 </t>
@@ -98,7 +99,7 @@ Page: My Compassion 2 Dashboard Page
                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                     <t t-set="variant" t-value="'default'" />
                     <t t-set="variation" t-value="'filled'" />
-                    <t t-set="label">Write a letter to a child</t>
+                    <t t-set="label">Write to Your Child</t>
                     <t t-set="icon" t-value="'pictogram-letter-writing'" />
                     <t t-set="color" t-value="'core-blue'" />
                     <t t-set="icon_color" t-value="'low-yellow'" />
@@ -126,7 +127,7 @@ Page: My Compassion 2 Dashboard Page
         <t t-call="my_compassion.DashboardGridItem">
             <t t-call="theme_compassion_2025.VignetteComponent">
                 <t t-set="image" t-value="'/theme_compassion_2025/static/src/img/snippets/s_image_text.jpg'" />
-                <t t-set="title">Make a gift</t>
+                <t t-set="title">Give</t>
                 <t t-set="icon" t-value="'pictogram-gift-donation-general'" />
                 <t t-set="color" t-value="'high-brown'" />
                 <t t-set="bg_color" t-value="'low-brown'" />
