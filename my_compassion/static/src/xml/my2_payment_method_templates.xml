@@ -75,4 +75,131 @@
         </div>
     </t>
 
+    <!--
+        Accordion component for updating or switching payment methods.
+        Contains two sections:
+        1. Update Current Details (expanded by default)
+        2. Switch Payment Method (collapsed by default)
+        The switch payment method section will be populated dynamically via JS.
+    -->
+    <t t-name="my_compassion.PaymentMethodUpdateAccordion">
+        <div id="payment_method_accordion" class="accordion">
+            <!-- Section 1: Update Details -->
+            <div class="border-bottom mb-2">
+                <div class="card-header bg-white border-0 p-0" id="headingForm">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link btn-block text-left text-dark-blue font-weight-bold d-flex justify-content-between align-items-center text-decoration-none"
+                                type="button" data-toggle="collapse" data-target="#collapseForm" aria-expanded="true" aria-controls="collapseForm">
+                            <span>Update Current Details</span>
+                            <i class="fa fa-chevron-down small"/>
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseForm" class="collapse show" aria-labelledby="headingForm" data-parent="#payment_method_accordion">
+                    <div class="pt-3 pl-1 pr-1">
+                        <!-- Calls the form template with current scope's data (group_info) -->
+                        <t t-call="my_compassion.PaymentMethodUpdateForm"/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Switch Method -->
+            <div class="border-bottom">
+                <div class="card-header bg-white border-0 p-0" id="headingList">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link btn-block text-left text-dark-blue font-weight-bold d-flex justify-content-between align-items-center text-decoration-none collapsed"
+                                type="button" data-toggle="collapse" data-target="#collapseList" aria-expanded="false" aria-controls="collapseList">
+                            <span>Switch Payment Method</span>
+                            <i class="fa fa-chevron-right small"/>
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseList" class="collapse" aria-labelledby="headingList" data-parent="#payment_method_accordion">
+                    <!-- JS will target this ID to inject the list -->
+                    <div class="pt-3" id="payment_methods_switch_container"></div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!--
+        Reusable Form Field Component (Client Side Version)
+        This mimics the backend theme component for use in JS
+    -->
+    <t t-name="my_compassion.FormFieldComponent">
+        <div t-attf-class="form-field-container mb-3 #{top_class || ''}">
+            <t t-if="label">
+                <label t-att-for="name" class="text-core-blue body-small bold mb-1">
+                    <t t-esc="label" />
+                </label>
+            </t>
+            <!-- Slot content is simulated by passing value/placeholder -->
+            <input type="text"
+                   t-att-name="name"
+                   t-att-id="name"
+                   t-attf-class="form-control #{input_class || ''}"
+                   t-att-value="value"
+                   t-att-placeholder="placeholder || ''"
+                   t-att-disabled="disabled"/>
+
+            <t t-if="invalid_hint">
+                <div class="invalid-hint text-mid-orange tiny-text mb-1 d-none">
+                    <t t-esc="invalid_hint" />
+                </div>
+            </t>
+        </div>
+    </t>
+
+    <!--
+        Payment Method Update Form
+        Injected data :
+        - is_card: Boolean indicating if the payment method is a card.
+        - ref_number: Reference number or last 4 digits of the card.
+        - holder_name: Name of the cardholder.
+        - expire_date: Expiration date of the card.
+    -->
+     <t t-name="my_compassion.PaymentMethodUpdateForm">
+        <div class="payment-update-form text-left">
+            <t t-if="is_card">
+                <!-- Card Number (Read Only usually) -->
+                <t t-call="my_compassion.FormFieldComponent">
+                    <t t-set="label">Card Number</t>
+                    <t t-set="name">card_number</t>
+                    <t t-set="value" t-value="ref_number"/>
+                </t>
+                <!-- Cardholder Name -->
+                <t t-call="my_compassion.FormFieldComponent">
+                    <t t-set="label">Cardholder Name</t>
+                    <t t-set="name">cardholder_name</t>
+                    <t t-set="value" t-value="holder_name"/>
+                </t>
+                <div class="form-row">
+                    <div class="col-6">
+                        <t t-call="my_compassion.FormFieldComponent">
+                            <t t-set="label">Expiry Date</t>
+                            <t t-set="name">expiry</t>
+                            <t t-set="value" t-value="expire_date"/>
+                            <t t-set="placeholder">MM/YY</t>
+                        </t>
+                    </div>
+                    <div class="col-6">
+                        <t t-call="my_compassion.FormFieldComponent">
+                            <t t-set="label">CVV</t>
+                            <t t-set="name">cvv</t>
+                            <t t-set="placeholder">123</t>
+                        </t>
+                    </div>
+                </div>
+            </t>
+            <t t-else="">
+                <!-- Fallback for non-card methods (like LSV, BVR reference) -->
+                <t t-call="my_compassion.FormFieldComponent">
+                    <t t-set="label">Reference Number</t>
+                    <t t-set="name">ref_number</t>
+                    <t t-set="value" t-value="ref_number"/>
+                </t>
+            </t>
+        </div>
+    </t>
+
 </templates>

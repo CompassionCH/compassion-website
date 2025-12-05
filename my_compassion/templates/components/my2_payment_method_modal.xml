@@ -4,14 +4,15 @@
 
      Injected data:
     - modal_type: Type of modal to display (update, add, change).
-    - payment_methods: List of available payment methods to choose from (in case of 'change' modal).
-    TODO : Add more injected data as needed for payment method options.
-    (for instance, current payment method details, available payment methods list, etc.)
+    - payment_methods: List of available payment methods to choose from (in case of 'change' and 'update' modals).
+
 -->
 <odoo>
     <template id="my2_payment_method_selector" name="Payment Method Selector Component">
         <div class="modal fade"
              t-att-id="'payment_method_selector_modal_' + modal_type"
+             t-att-data-modal-type="modal_type"
+             t-att-data-payment-methods="json.dumps(payment_methods) if payment_methods else None"
              tabindex="-1"
              role="dialog"
              aria-hidden="true"
@@ -36,7 +37,7 @@
                         <div class="pl-4 pr-4 pt-3">
                             <form id="payment_method_form">
                                 <input type="hidden" name="contract_group_id" id="selected_contract_group_id"/>
-                                <div id="modal_description">
+                                <div>
                                     <t t-if="modal_type == 'update'">
                                         <p class="text-center text-muted mb-3">
                                             Update your payment method details below.
@@ -48,23 +49,22 @@
                                         </p>
                                     </t>
                                     <t t-elif="modal_type == 'change'">
-                                        <p class="text-center text-muted mb-3">
+                                        <p class="text-center text-muted mb-3"
+                                           id="modal_description"
+                                        >
                                             Select a new payment method from the options below.
                                         </p>
                                     </t>
                                 </div>
                             </form>
 
-                            <!-- Container for Dynamic Cards -->
-                            <div id="modal_container" class="mb-3">
-                                <!-- JS will inject templates here -->
-                            </div>
-                            <t t-if="modal_type == 'change'">
-
-
+                            <t t-if="modal_type == 'change' or modal_type == 'update'">
+                                <!-- Container for Dynamic Cards -->
+                                <div id="modal_container" class="mb-3">
+                                    <!-- JS will inject templates here -->
+                                </div>
 
                             </t>
-
                             <div class="modal-footer border-top-0">
                                 <a href="#" data-dismiss="modal">
                                     <t t-call="theme_compassion_2025.ThemedButtonComponent">
@@ -89,180 +89,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </template>
-
-    <!--
-            Description:
-            Component to display a payment method option as a selectable card.
-
-            Injected data:
-            - id: Unique identifier for the payment method.
-            - type: Type of the payment method (e.g., credit_card, bank_transfer).
-            - name: Display name of the payment method.
-            - subtitle: Optional subtitle or description for the payment method.
-            - icon_id: Optional ID of the payment method icon image.
-            - selected: Boolean indicating if this payment method is currently selected.
-    -->
-
-    <template id="my2_payment_method_display_card" name="Payment Method Card">
-        <link rel="stylesheet" href="my_compassion/static/src/css/my2_payment_method_card.css"/>
-
-        <div t-attf-class="payment-method-card d-flex align-items-center
-         p-3 mb-2 border rounded cursor-pointer position-relative bg-white transition-all #{ 'selected border-core-blue bg-light-blue-10' if selected else  'border-gray-200 hover-shadow-sm'}"
-             t-att-data-id="id"
-             t-att-data-type="type"
-             onclick="$(this).find('input[type=radio]').prop('checked', true).trigger('change');">
-
-            <!-- Selection Indicator -->
-            <div class="custom-control custom-radio mr-3 pointer-events-none">
-                <input type="radio"
-                       class="custom-control-input"
-                       t-att-name="'payment_method_selection'"
-                       t-att-id="'pm_' + type + '_' + id"
-                       t-att-value="type + '-' + id"
-                       t-att-checked="'checked' if selected else undefined"/>
-                <label class="custom-control-label" t-att-for="'pm_' + type + '_' + id"></label>
-            </div>
-
-            <!-- Icon -->
-            <div class="icon-wrapper mr-3 d-flex align-items-center justify-content-center" style="width: 45px; height: 30px;">
-                <t t-if="icon_id">
-                    <img t-att-src="'/web/image?model=payment.icon&amp;id=%s&amp;field=image&amp;width=50&amp;height=50' % icon_id"
-                         style="width: 28px; height: 28px; object-fit: contain; margin-right: 12px; flex-shrink: 0;"
-                         alt="Payment method"
-                         onerror="this.style.display='none'"
-                    />
-                </t>
-                <t t-else="">
-                    <i class="fa fa-credit-card text-muted fa-lg"/>
-                </t>
-            </div>
-
-            <!-- Info -->
-            <div class="flex-grow-1">
-                <div class="font-weight-bold text-dark-blue leading-tight">
-                    <t t-esc="name"/>
-                </div>
-                <t t-if="subtitle">
-                    <div class="small text-muted mt-1">
-                        <t t-esc="subtitle"/>
-                    </div>
-                </t>
-            </div>
-        </div>
-    </template>
-<!--
-    Description:
-    Form template for updating payment method details.
-    Injected data:
-    - is_card: Boolean indicating if the payment method is a card.
-    - ref_number: Reference number of the payment method.
-    
--->
-    <template id="my2_update_payment_method_form" name="My2 Update Payment Method Form">
-     <div class="payment-update-form text-left">
-            <t t-if="is_card">
-                <!-- Card Number -->
-                <t t-call="theme_compassion_2025.FormFieldComponent">
-                    <t t-set="label">Card Number</t>
-                    <t t-set="name">card_number</t>
-                    <t t-set="value" t-value="ref_number"/>
-                </t>
-
-                <!-- Cardholder Name -->
-                <t t-call="theme_compassion_2025.FormFieldComponent">
-                    <t t-set="label">Cardholder Name</t>
-                    <t t-set="name">cardholder_name</t>
-                    <t t-set="value" t-value="holder_name"/>
-                </t>
-
-                <div class="form-row">
-                    <div class="col-6">
-                        <t t-call="theme_compassion_2025.FormFieldComponent">
-                            <t t-set="label">Expiry Date</t>
-                            <t t-set="name">expiry</t>
-                            <t t-set="value" t-value="expire_date"/>
-                            <t t-set="placeholder">MM/YY</t>
-                        </t>
-                    </div>
-                    <div class="col-6">
-                        <t t-call="theme_compassion_2025.FormFieldComponent">
-                            <t t-set="label">CVV</t>
-                            <t t-set="name">cvv</t>
-                            <t t-set="placeholder">123</t>
-                        </t>
-                    </div>
-                </div>
-            </t>
-
-            <t t-else="">
-                <!-- Fallback for non-card methods (like LSV, BVR reference) -->
-                <t t-call="theme_compassion_2025.FormFieldComponent">
-                    <t t-set="label">Reference Number</t>
-                    <t t-set="name">ref_number</t>
-                    <t t-set="value" t-value="ref_number"/>
-                </t>
-            </t>
-     </div>
-    </template>
-    <!--
-    Description:
-    Payment Method Cards Container Template
-
-    Injected data:
-
-
-         -->
-    <template id="my2_payment_method_card" name="Payment Method Card Component">
-         <div t-attf-class="payment-method-card d-flex align-items-center p-3 mb-2 border
-         rounded cursor-pointer position-relative bg-white transition-all
-          #{ 'selected border-core-blue bg-light-blue' if selected else 'border-gray-200 hover-shadow-sm'}"
-             onclick="$(this).find('input[type=radio]').prop('checked', true).trigger('change');">
-
-            <!--Hidden Radio Input (Functional but invisible)-->
-            <div class="d-none">
-                <input type="radio"
-                       name="payment_method_selection"
-                       t-att-id="'pm_' + type + '_' + (mode_id or id)"
-                       t-att-group-id="group_id or undefined"
-                       t-att-checked="'checked' if selected else undefined"/>
-            </div>
-
-            <!-- Icon -->
-            <div class="icon-wrapper mr-3 d-flex align-items-center justify-content-center">
-                <t t-if="icon">
-                    <img t-attf-src="/web/image?model=payment.icon&amp;id=#{icon}&amp;field=image&amp;width=50&amp;height=50"
-                         style="width: 28px; height: 28px; object-fit: contain; margin-right: 12px; flex-shrink: 0;"
-                         alt="Icon"
-                         onerror="this.style.display='none'"/>
-                </t>
-            </div>
-
-            <!-- Info -->
-            <div class="flex-grow-1">
-                <div class="font-weight-bold text-dark-blue leading-tight">
-                    <t t-esc="label"/>
-                </div>
-
-                <!-- Subtitle Logic: Ref Number or Expire Date or Brand -->
-                <div class="small text-muted mt-1">
-                    <t t-if="ref_number">
-                        <span class="mr-1">Ref: <t t-esc="ref_number"/></span>
-                    </t>
-                    <t t-if="is_card">
-                        <t t-if="expire_date">
-                         <span>Exp: <t t-esc="expire_date"/></span>
-                        </t>
-                    </t>
-                </div>
-            </div>
-
-            <!-- Checkmark for Selected State -->
-            <t t-if="selected">
-                <i class="fa fa-check-circle text-core-blue ml-3"/>
-
-            </t>
         </div>
     </template>
 </odoo>
