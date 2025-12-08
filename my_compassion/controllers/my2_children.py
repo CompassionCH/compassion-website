@@ -7,6 +7,7 @@
 #
 ##############################################################################
 import json
+import babel.dates
 
 from odoo import _, http
 from odoo.exceptions import AccessError
@@ -16,6 +17,52 @@ from odoo.addons.website_sponsorship.controllers.main import WebsiteChild
 
 
 class MyCompassionChildrenController(WebsiteChild):
+    def _get_formatted_birthday(self, child):
+        """
+        Formats the child's birthday based on the current language context.
+        Handles specific rules for EN (US/UK), FR, IT, DE and nordic languages (.
+        """
+        if not child.birthdate:
+            return ""
+
+        lang_code = request.env.lang
+        birthdate = child.birthdate
+        day = birthdate.day
+
+        # Get localized month name
+        month = babel.dates.format_date(birthdate, format='MMMM', locale=lang_code)
+
+        # German, Norwegian, Danish, Finnish: Dot after day (e.g., 24. Januar)
+        # Note: Swedish is excluded here as it typically uses a space (24 januari)
+        if lang_code.startswith('de') or lang_code[:2] in ['no', 'nb', 'nn', 'da', 'fi']:
+            return f"{day}. {month}"
+
+        # Swedish, French, Italian: Space after day (e.g., 24 januari)
+        if lang_code.startswith('fr') or lang_code.startswith('it') or lang_code.startswith('sv'):
+            # French specific: 1st is "1er"
+            if lang_code.startswith('fr') and day == 1:
+                return f"1er {month}"
+            return f"{day} {month}"
+
+        # English Logic
+        if lang_code.startswith('en'):
+            # Suffix calculation
+            # Special cases for 11, 12, 13.
+            if 11 <= day <= 13:
+                suffix = 'th'
+            else:
+                suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(day % 10, 'th')
+
+            # US Format: Month Day+Suffix
+            if lang_code == 'en_US':
+                return f"{month} {day}{suffix}"
+
+            # UK/Other English: Day+Suffix Month
+            return f"{day}{suffix} {month}"
+
+        # Fallback for other languages (Standard Day Month)
+        return f"{day} {month}"
+
     def _check_sponsored_child_access(self, child):
         """
         Private helper to securely fetch a sponsored child.
@@ -218,6 +265,8 @@ class MyCompassionChildrenController(WebsiteChild):
 
         records, total = self._get_timeline_records(child.id, offset, limit)
 
+        birthday_formatted = self._get_formatted_birthday(child)
+
         google_api_key = (
             request.env["ir.config_parameter"].sudo().get_param("google_maps_api_key")
         )
@@ -235,6 +284,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 "google_api_key": google_api_key,
                 "google_custom_map_id": google_custom_map_id,
                 "timezone": child.sudo().project_id.timezone,
+                "birthday_formatted": birthday_formatted,
             },
         )
 
