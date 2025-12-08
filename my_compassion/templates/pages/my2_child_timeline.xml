@@ -123,11 +123,11 @@
                                         <t t-set="suffix" t-value="'rd'" />
                                     </t>
                                     <p class="child-info-text">
-                                        My birthday is
+                                        My birthday is the
                                         <span class="text-core-blue font-weight-bold">
-                                            <t t-esc="month" />
                                             <t t-esc="day" />
                                             <t t-esc="suffix" />
+                                            <t t-esc="month" />
                                         </span>
                                     </p>
                                 </div>
