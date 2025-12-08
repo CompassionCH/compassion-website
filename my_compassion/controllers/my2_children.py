@@ -7,6 +7,7 @@
 #
 ##############################################################################
 import json
+
 import babel.dates
 
 from odoo import _, http
@@ -30,31 +31,41 @@ class MyCompassionChildrenController(WebsiteChild):
         day = birthdate.day
 
         # Get localized month name
-        month = babel.dates.format_date(birthdate, format='MMMM', locale=lang_code)
+        month = babel.dates.format_date(birthdate, format="MMMM", locale=lang_code)
 
         # German, Norwegian, Danish, Finnish: Dot after day (e.g., 24. Januar)
         # Note: Swedish is excluded here as it typically uses a space (24 januari)
-        if lang_code.startswith('de') or lang_code[:2] in ['no', 'nb', 'nn', 'da', 'fi']:
+        if lang_code.startswith("de") or lang_code[:2] in [
+            "no",
+            "nb",
+            "nn",
+            "da",
+            "fi",
+        ]:
             return f"{day}. {month}"
 
         # Swedish, French, Italian: Space after day (e.g., 24 januari)
-        if lang_code.startswith('fr') or lang_code.startswith('it') or lang_code.startswith('sv'):
+        if (
+            lang_code.startswith("fr")
+            or lang_code.startswith("it")
+            or lang_code.startswith("sv")
+        ):
             # French specific: 1st is "1er"
-            if lang_code.startswith('fr') and day == 1:
+            if lang_code.startswith("fr") and day == 1:
                 return f"1er {month}"
             return f"{day} {month}"
 
         # English Logic
-        if lang_code.startswith('en'):
+        if lang_code.startswith("en"):
             # Suffix calculation
             # Special cases for 11, 12, 13.
             if 11 <= day <= 13:
-                suffix = 'th'
+                suffix = "th"
             else:
-                suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(day % 10, 'th')
+                suffix = {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
 
             # US Format: Month Day+Suffix
-            if lang_code == 'en_US':
+            if lang_code == "en_US":
                 return f"{month} {day}{suffix}"
 
             # UK/Other English: Day+Suffix Month
