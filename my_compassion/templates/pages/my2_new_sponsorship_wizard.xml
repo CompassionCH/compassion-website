@@ -228,22 +228,18 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                 <label class="ml-2 mb-0 body-small bold" t-att-for="'sponsorship_plus'">Yes</label>
             </div>
             <div class="mt-3 p-4 bg-high-eggshell rounded-lg body-small">
-                The "Plus" sponsorship includes the "basic" sponsorship of
+                Sponsorship+ includes the basic sponsorship of
                 <t t-esc="currency_name" />
-                42.- and an additional gift of
+                42.-, plus an additional gift of
                 <t t-esc="currency_name" />
                 8.- per month.
                 <br />
                 <br />
-                The
-                <t t-esc="currency_name" />
-                8.- helps to fund urgent needs not covered by the sponsorship (e.g. natural disasters,
+                The extra amount helps to fund urgent needs not covered by the sponsorship (e.g. natural disasters,
                 surgical procedures, malaria prevention, etc.).
                 <br />
                 <br />
-                This solidarity fund is in place
-                <span class="body-small bold">for all children</span>
-                supported through Compassion.
+                This fund is available for all children supported through Compassion.
             </div>
         </t>
     </template>
@@ -577,12 +573,12 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                             <t
                                 t-if="sponsorship.type == 'SWP'"
                                 t-set="description"
-                                t-valuef="You will soon receive all documentation needed to start the Write&amp;Pray in your mailbox."
+                                t-valuef="You’ll receive an email with everything you need to start the Write&amp;Pray soon."
                             />
                             <t
                                 t-else=""
                                 t-set="description"
-                                t-valuef="You will soon receive all documentation needed to start the sponsorship in your mailbox."
+                                t-valuef="You’ll receive an email with everything you need to start the sponsorship soon."
                             />
                         </t>
                     </div>

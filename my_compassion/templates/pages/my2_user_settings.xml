@@ -6,7 +6,7 @@ Page: My Compassion 2 User Settings Page
 Description:
 This page allows authenticated users to view and update their personal information,
 account login details, privacy consents, and communication preferences.
-It is organized into multiple tabs (Personal Information, Account Settings, Privacy Data,
+It is organized into multiple tabs (Personal Information, Account Settings, Privacy & Data Protection,
 Communication Settings) and supports both view and edit modes with inline forms.
 
 Used in route:
@@ -35,7 +35,7 @@ Injected data:
                                     Information
                                 </option>
                                 <option value="#account-settings">Account Settings</option>
-                                <option value="#privacy-data">Privacy Data</option>
+                                <option value="#privacy-data">Privacy &amp; Data Protection</option>
                                 <option value="#communication-settings">
                                     Communication
                                     Settings
@@ -241,7 +241,7 @@ Injected data:
                                 </div>
                                 <div class="row mb-3">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label">Mail address</t>
+                                        <t t-set="label">Email Address</t>
                                         <t t-set="input_id" t-value="'email'" />
                                         <t t-set="top_class" t-value="'col-12'" />
                                         <div class="field-display" data-display-for="email">
@@ -343,7 +343,7 @@ Injected data:
                                 class="p-3 bg-pure-white d-block col-md-8 col-sm-12 mx-auto"
                             >
                                 <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label">Login MyCompassion</t>
+                                    <t t-set="label">MyCompassion Login</t>
                                     <t t-set="input_id" t-value="'login'" />
                                     <div class="field-display" data-display-for="login">
                                         <t t-esc="user.login or ''" />
