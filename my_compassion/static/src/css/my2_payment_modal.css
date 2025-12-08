@@ -34,3 +34,24 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
+.oe_accordion_arrow {
+    transition: transform 0.25s ease-in-out;
+}
+    /* When button has .collapsed class → section is closed → show right arrow */
+.btn.collapsed .oe_accordion_arrow {
+    transform: rotate(-90deg);  /* chevron-down becomes chevron-right */
+}
+
+/* When expanded → keep down (0deg) */
+.btn:not(.collapsed) .oe_accordion_arrow {
+    transform: rotate(0deg);
+}
+
+/* Same logic for payment method cards*/
+.cursor-pointer[aria-expanded="false"] .oe_accordion_arrow {
+    transform: rotate(-90deg);
+}
+
+.cursor-pointer[aria-expanded="true"] .oe_accordion_arrow {
+    transform: rotate(0deg);
+}
