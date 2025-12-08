@@ -105,7 +105,7 @@ odoo.define('my_compassion.my2_donations', function (require) {
         // Render selected card highlighted
         _onMethodSelectionChange: function (ev) {
             var $input = $(ev.currentTarget);
-            var $container = $input.closest('#modal_container');
+            var $container = $input.closest('.payment-methods-container, #payment_methods_switch_container');
 
             $container.find('.payment-method-card')
                 .removeClass('selected border-core-blue bg-light-blue')
@@ -143,7 +143,7 @@ odoo.define('my_compassion.my2_donations', function (require) {
                         ToastService.success(_t("Payment method changed successfully."), _t("Success"));
 
                         // Optional: longer delay if you want them to read it fully
-                        setTimeout(() => window.location.reload(), 2000);
+                        setTimeout(() => window.location.reload(), 1500);
 
                     } else {
                         ToastService.error(result.error || _t("An error occurred while changing the payment method."));
