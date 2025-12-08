@@ -80,13 +80,6 @@ odoo.define('compassion_website.donation_tour', function (require) {
         url: '/my2/gifts',
     }, [
         {
-            content: "Check if we are on the gifts page (Alternative Start Step)",
-            trigger: ".donation-product-container, h1:contains('Gifts'), .my2_gifts_page",
-            run: function () {
-                 console.log("Successfully started on Gifts page");
-            }
-        },
-        {
             content: "Select the Goat Donation Fund from the list",
             trigger: ".card.vignette h3:contains('Goat Donation Fund')",
             run: "click"

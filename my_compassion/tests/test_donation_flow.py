@@ -36,7 +36,7 @@ class TestDonationFlow(HttpCase):
             other_websites.write({'domain': 'ignore.localhost.test'})
 
         # Ziel-Website zur Default-Website für Localhost machen
-        target_website.write({'domain': False})
+        target_website.write({'domain': 'http://127.0.0.1:8069/'})
 
         # Environment auf diese Website zwingen
         self.env = self.env(context={'website_id': target_website.id})
@@ -123,7 +123,8 @@ class TestDonationFlow(HttpCase):
     def test_donation_tour(self):
         _logger.info("START: Donation Tour")
 
-        start_url = "http://mycompassion.localhost:8069/my2/dashboard"
+        #start_url = "http://mycompassion.localhost:8069/my2/dashboard"
+        start_url = "http://127.0.0.1:8069/my2/dashboard"
         self.browser_js(
             url_path=start_url,
             code="odoo.__DEBUG__.services['web_tour.tour'].run('donation_tour_full_cycle_2')",
