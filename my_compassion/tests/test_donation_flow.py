@@ -1,4 +1,5 @@
 import logging
+from sys import dont_write_bytecode
 from unittest.mock import patch
 
 from odoo.tests import tagged
@@ -92,10 +93,11 @@ class TestDonationFlow(HttpCase):
         _logger.info("START TEST RUN: Donation Tour")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
+        tour_name = "donation_tour_full_cycle"
         self.browser_js(
             url_path=start_url,
-            code="odoo.__DEBUG__.services['web_tour.tour'].run('donation_tour_full_cycle_2')",
-            ready="odoo.__DEBUG__.services['web_tour.tour'].tours.donation_tour_full_cycle_2.ready",
+            code=f"odoo.__DEBUG__.services['web_tour.tour'].run('{tour_name}')",
+            ready=f"odoo.__DEBUG__.services['web_tour.tour'].tours.{tour_name}.ready",
             login="admin",
             timeout=180,
         )
