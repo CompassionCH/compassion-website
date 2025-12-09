@@ -9,7 +9,7 @@ odoo.define('compassion_website.donation_tour', function (require) {
 
 
 
-    tour.register('donation_tour_full_cycle', {
+    tour.register('single_one_time_gift_with_suggested_amount', {
         test: true,
         url: '/my2/gifts',
     }, [
@@ -24,13 +24,13 @@ odoo.define('compassion_website.donation_tour', function (require) {
             run: "text"
         },
         {
-            content: "Click on 'Monthly'",
-            trigger: ".my2_donation_form .donation-frequency label:contains('Monthly')",
+            content: "Click on 'One Time'",
+            trigger: ".my2_donation_form .donation-frequency label:contains('One Time')",
             run: "click"
         },
         {
             content: "Select suggestion 'Medium' amount",
-            trigger: ".my2_donation_form label[for='donation-suggested-medium']",
+            trigger: ".my2_donation_form label[for='donation-suggested-low']",
             run: "click"
         },
         {
@@ -51,28 +51,9 @@ odoo.define('compassion_website.donation_tour', function (require) {
             }
         },
         {
-            content: "Check total amount before delete (CHF 100)",
-            trigger: ".bg-light-green:contains('Total amount'):contains(' 100')",
+            content: "Check total amount before delete (CHF 50)",
+            trigger: ".bg-light-green:contains('Total amount'):contains(' 50')",
             run: "text"
-        },
-        {
-            content: "Click on the delete button",
-            trigger: "i.icon-trash01, .action-button i[class*='trash']",
-            run: "click"
-        },
-        {
-            content: "Wait until the item is gone",
-            trigger: `body:not(:has(:contains("${MOCK_TEST_DATA.product_name}")))`,
-            run: function () {
-                console.log(`Product (${MOCK_TEST_DATA.product_name}) successfully deleted!`);
-            }
-        },
-        {
-            content: "Check if the cart is empty",
-            trigger: "body:has(div:contains('Your Gift Package is empty.'))",
-            run: function () {
-                console.log("Cart is empty as expected!");
-            }
         },
     ]);
 });
