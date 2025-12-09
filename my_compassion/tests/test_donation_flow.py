@@ -138,7 +138,7 @@ class TestDonationFlow(HttpCase):
         })
 
     def test_single_one_time_gift_with_suggested_amount(self):
-        _logger.info("START TEST RUN: Donation Tour")
+        _logger.info("START TEST: single_one_time_gift_with_suggested_amount")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
         tour_name = "single_one_time_gift_with_suggested_amount"
@@ -174,7 +174,7 @@ class TestDonationFlow(HttpCase):
         self.assertEqual(current_order.amount_total, self.MOCK_TEST_DATA['price'], "ERROR: The total amount of the order does not match the expected price.")
 
     def test_single_monthly_gift_with_suggested_amount(self):
-        _logger.info("START TEST RUN: Donation Tour")
+        _logger.info("START TEST: single_monthly_gift_with_suggested_amount")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
         tour_name = "single_monthly_gift_with_suggested_amount"
