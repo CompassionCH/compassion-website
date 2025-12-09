@@ -3,18 +3,24 @@ odoo.define('compassion_website.donation_tour', function (require) {
 
     var tour = require('web_tour.tour');
 
+    var MOCK_TEST_DATA = {
+        product_name: 'Test Product',
+    };
+
+
+
     tour.register('donation_tour_full_cycle', {
         test: true,
         url: '/my2/gifts',
     }, [
         {
-            content: "Select the Goat Donation Fund from the list",
-            trigger: ".card.vignette h3:contains('Goat Donation Fund')",
+            content: "Select the Test Product from the list",
+            trigger: `.card.vignette h3:contains("${MOCK_TEST_DATA.product_name}")`,
             run: "click"
         },
         {
             content: "Check if we are on the details page (H2 header)",
-            trigger: ".donation-details-header h2:contains('Goat Donation Fund')",
+            trigger: `.donation-details-header h2:contains("${MOCK_TEST_DATA.product_name}")`,
             run: "text"
         },
         {
@@ -39,7 +45,7 @@ odoo.define('compassion_website.donation_tour', function (require) {
         },
         {
             content: "Check if the product is in the list",
-            trigger: "body:has(div:contains('Goat Donation Fund')), body:has(td:contains('Goat Donation Fund'))",
+            trigger: `body:has(div:contains("${MOCK_TEST_DATA.product_name}")), body:has(td:contains("${MOCK_TEST_DATA.product_name}"))`,
             run: function () {
                 console.log("Product successfully found in cart!");
             }
@@ -56,9 +62,9 @@ odoo.define('compassion_website.donation_tour', function (require) {
         },
         {
             content: "Wait until the item is gone",
-            trigger: "body:not(:has(:contains('Test Donation Goat')))",
+            trigger: `body:not(:has(:contains("${MOCK_TEST_DATA.product_name}")))`,
             run: function () {
-                console.log("Product successfully deleted!");
+                console.log(`Product (${MOCK_TEST_DATA.product_name}) successfully deleted!`);
             }
         },
         {

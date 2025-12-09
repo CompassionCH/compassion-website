@@ -1,5 +1,4 @@
 import logging
-from sys import dont_write_bytecode
 from unittest.mock import patch
 
 from odoo.tests import tagged
@@ -10,7 +9,18 @@ _logger = logging.getLogger(__name__)
 
 @tagged('post_install', '-at_install')
 class TestDonationFlow(HttpCase):
+
     TEST_DOMAIN = "http://127.0.0.1:8069"
+    MOCK_TEST_DATA = {
+        'product_name': 'Test Product',
+        'price': 50.0,
+        'description': 'This is a test product for donation flow testing.',
+        'amounts': {
+            'low': 1,
+            'medium': 2,
+            'high': 3
+        }
+    }
 
     def setUp(self):
         super(TestDonationFlow, self).setUp()
@@ -19,6 +29,7 @@ class TestDonationFlow(HttpCase):
         self._setup_website()
         self._patch_authentication()
         self._patch_browser()
+        self._setup_test_data()
 
     def _setup_website(self):
         """
@@ -89,11 +100,48 @@ class TestDonationFlow(HttpCase):
 
         return self.original_chrome_spawn(browser_instance, cmd)
 
+
+    def _setup_test_data(self):
+        """
+        Sets up transient test data required for the donation flow.
+        Creates a donation product that is valid solely for the duration of this test run
+        and is automatically rolled back (not persisted) upon completion.
+        """
+        _logger.info("SETUP (DATA): Creating donation product for testing.")
+
+        image_b64 = b"R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="
+
+        color = self.env['theme.compassion.colors'].search([], limit=1)
+        if not color:
+            raise AssertionError("FATAL: theme.compassion.colors is not present!")
+
+
+        pictogram = self.env['theme.compassion.pictograms'].search([], limit=1)
+        if not pictogram:
+            raise AssertionError("FATAL: theme.compassion.pictograms is not present!")
+
+        self.donation_product = self.env['product.template'].create({
+            'name': self.MOCK_TEST_DATA['product_name'],
+            'list_price': self.MOCK_TEST_DATA['price'],
+            'activate_for_my_compassion': True,
+            'my_compassion_name': self.MOCK_TEST_DATA['product_name'],
+            'my_compassion_description': self.MOCK_TEST_DATA['description'],
+            'my_compassion_donation_type': 'fund',
+            'my_compassion_color': color.id,
+            'my_compassion_pictogram': pictogram.id,
+            'my_compassion_image': image_b64,
+            'website_published': True,
+            'my_compassion_donation_quantity_low': self.MOCK_TEST_DATA['amounts']['low'],
+            'my_compassion_donation_quantity_medium': self.MOCK_TEST_DATA['amounts']['medium'],
+            'my_compassion_donation_quantity_high': self.MOCK_TEST_DATA['amounts']['high'],
+        })
+
     def test_donation_tour(self):
         _logger.info("START TEST RUN: Donation Tour")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
         tour_name = "donation_tour_full_cycle"
+
         self.browser_js(
             url_path=start_url,
             code=f"odoo.__DEBUG__.services['web_tour.tour'].run('{tour_name}')",
