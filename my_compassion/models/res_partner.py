@@ -43,13 +43,17 @@ class Partner(models.Model):
         ensure the 'can_i_write_letter' access rights and dependencies are evaluated
         correctly.
         """
-        correspondence = self.env["correspondence"].with_user(self.user_id).search(
-            [
-                ("partner_id", "=", self.id),
-                ("email_read", "=", False),
-                ("child_id.can_i_write_letter", "=", True),
-            ],
-            limit=1,
+        correspondence = (
+            self.env["correspondence"]
+            .with_user(self.user_id)
+            .search(
+                [
+                    ("partner_id", "=", self.id),
+                    ("email_read", "=", False),
+                    ("child_id.can_i_write_letter", "=", True),
+                ],
+                limit=1,
+            )
         )
         return bool(correspondence)
 
