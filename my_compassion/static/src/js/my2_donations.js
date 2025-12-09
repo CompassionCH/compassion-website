@@ -87,6 +87,10 @@ odoo.define('my_compassion.my2_donations', function (require) {
             $modalChange.modal('show');
         },
 
+        _onOpenPaymentMethodAdd: function (ev){
+            
+        },
+
         // Helper to render payment methods into a modal
         _renderPaymentMethods: function ($modal, groupId, cardContainer) {
             var paymentMethods = $modal.data('payment-methods');
@@ -187,7 +191,10 @@ odoo.define('my_compassion.my2_donations', function (require) {
                     console.log("Updating Payment Details:", formData);
                     alert("Update logic not implemented in this demo.");
                 }
+            }else if (modalType == 'add'){
+
             }
+        
         },
 
         _onModalHidden: function ($modal) {

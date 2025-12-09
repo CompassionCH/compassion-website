@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 
 from werkzeug.exceptions import BadRequest, NotFound
 
-from odoo import fields, http
+from odoo import fields, http, _
 from odoo.http import request
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
@@ -552,6 +552,65 @@ class MyCompassionDonationsController(CustomerPortal):
     )
     def change_payment_method_group(self, group_id, new_group_id, **kwargs):
         return False
+
+    @http.route(
+        '/my2/donation/add/init',
+        type='json',
+        auth='user',
+        website=True
+    )
+    def init_add_payment_method(self,  **kwargs):
+        """
+        Initialize a validation transaction to save a new payment method (Token).
+        Returns the HTML form to redirect the user to the provider (e.g. PostFinance).
+        """
+        partner = request.env.user.partner_id
+        try:
+            acquirer = self._get_payment_acquirer()
+        except (ValueError, TypeError):
+            return {'success': False, 'error': _('Invalid Acquirer ID.')}
+
+        if not acquirer.exists():
+            return {'success': False, 'error': _('Payment provider not found.')}
+
+        # 1. Generate unique reference
+        # The suffix '_save' helps identify these transactions in the backend
+        reference = request.env['payment.transaction'].sudo().get_next_reference(acquirer.provider + '_save')
+
+        # 2. Create Validation Transaction
+        # amount=0.0 and type='validation' are key for "Add Card" flows
+        transaction = request.env['payment.transaction'].sudo().create({
+            'acquirer_id': acquirer.id,
+            'type': 'validation',
+            'amount': 0.0,
+            'currency_id': request.env.company.currency_id.id,
+            'partner_id': partner.id,
+            'partner_country_id': partner.country_id.id,
+            'reference': reference,
+            'return_url': '/my2/donations',
+        })
+
+        # 3. Generate Form HTML
+        # We use the acquirer's standard render method which computes signatures/hidden fields
+        render_values = {
+            'return_url': '/my2/donations',
+            'partner_id': partner.id,
+            'billing_partner_id': partner.id,
+        }
+
+        # 'render' returns the form HTML string directly
+        form_html = acquirer.render(
+            reference,
+            0.0,
+            request.env.company.currency_id.id,
+            partner_id=partner.id,
+            values=render_values
+        )
+
+        return {
+            'success': True,
+            'form_html': form_html,
+        }
 
     def _get_paginated_paid_invoices(
         self, partner, invoice_page=1, invoice_per_page=12
