@@ -36,11 +36,18 @@ class Partner(models.Model):
                 user.login = partner.user_login
 
     def has_unread_correspondence(self):
-        """Check if partner has at least one correspondence with email_read set."""
-        correspondence = self.env["correspondence"].search(
+        """
+        Check if the partner has at least one unread correspondence.
+
+        This executes in the context of the partner's user (self.user_id) to
+        ensure the 'can_i_write_letter' access rights and dependencies are evaluated
+        correctly.
+        """
+        correspondence = self.env["correspondence"].with_user(self.user_id).search(
             [
                 ("partner_id", "=", self.id),
                 ("email_read", "=", False),
+                ("child_id.can_i_write_letter", "=", True),
             ],
             limit=1,
         )

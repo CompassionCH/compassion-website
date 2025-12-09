@@ -65,7 +65,8 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         to_date = date(year_to, month_to, last_day)
 
         # Build the domain of the filtering of the letters
-        filter_domain = [("partner_id", "=", partner.id)]
+        filter_domain = [("partner_id", "=", partner.id),
+                         ("child_id.can_i_write_letter", "=", True)]
 
         if child:
             try:
