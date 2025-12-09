@@ -35,14 +35,14 @@ class TestDonationFlow(HttpCase):
         if other_websites:
             other_websites.write({'domain': 'ignore.localhost.test'})
 
-        # Ziel-Website zur Default-Website für Localhost machen
+       # must be localhost so that authentication cookies are accepted
         target_website.write({'domain': 'http://127.0.0.1:8069/'})
 
         # Environment auf diese Website zwingen
         self.env = self.env(context={'website_id': target_website.id})
 
         # ------------------------------------------------------------------
-        # FIX 1: Authentifizierung
+        # Authentifizierung
         # ------------------------------------------------------------------
         RegistryResUsers = type(self.env['res.users'])
         self.auth_patcher = patch.object(RegistryResUsers, '_check_credentials', side_effect=None)
@@ -56,32 +56,16 @@ class TestDonationFlow(HttpCase):
 
         def patched_spawn(browser_self, cmd):
             _logger.info("### CHROME PATCH APPLIED ###")
-            for flag in ['--headless', '--no-sandbox', '--disable-gpu']:
-                if flag in cmd:
-                    cmd.remove(flag)
 
             new_args = [
-                '--headless=new',
-                '--remote-allow-origins=*',
-                '--disable-extensions',
-                '--disable-component-extensions-with-background-pages',
-                '--disable-gpu',
-                '--no-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-background-networking',
-                '--ignore-certificate-errors',
-                '--allow-insecure-localhost',
-                '--proxy-bypass-list=*',
-                '--window-size=1920,1080',
+                '--headless=new',  # New headless architecture (required for modern Chrome)
+                '--disable-component-extensions-with-background-pages',  # Disable default extensions of browser
+                '--window-size=1920,1080',  # Important for stable viewport
             ]
 
             for arg in new_args:
                 if arg not in cmd:
                     cmd.append(arg)
-
-            if not any('user-data-dir' in arg for arg in cmd):
-                unique = '/tmp/odoo_chrome_' + str(random.randint(10000, 99999))
-                cmd.append(f'--user-data-dir={unique}')
 
             return original_spawn(browser_self, cmd)
 
@@ -94,36 +78,9 @@ class TestDonationFlow(HttpCase):
         self.browser_patcher.start()
         self.addCleanup(self.browser_patcher.stop)
 
-        # ------------------------------------------------------------------
-        # Daten Setup
-        # ------------------------------------------------------------------
-        self.user_portal = self.env.ref('base.user_admin')
-
-        existing_orders = self.env['sale.order'].sudo().search([
-            ('partner_id', '=', self.user_portal.partner_id.id),
-            ('state', '=', 'draft'),
-        ])
-        if existing_orders:
-            existing_orders.unlink()
-
-        self.env.cr.commit()
-
-    #def tearDown(self):
-    #    super(TestDonationFlow, self).tearDown()
-#
-    #    ICP = self.env['ir.config_parameter'].sudo()
-    #    ICP.set_param('web.base.url.freeze', 'False')
-#
-    #    if self.original_base_url:
-    #        ICP.set_param('web.base.url', self.original_base_url)
-#
-    #    self.env.cr.commit()
-    #    _logger.info("TEARDOWN: Base URL restored to %s", self.original_base_url)
-
     def test_donation_tour(self):
         _logger.info("START: Donation Tour")
 
-        #start_url = "http://mycompassion.localhost:8069/my2/dashboard"
         start_url = "http://127.0.0.1:8069/my2/dashboard"
         self.browser_js(
             url_path=start_url,
