@@ -43,6 +43,11 @@ class Partner(models.Model):
         ensure the 'can_i_write_letter' access rights and dependencies are evaluated
         correctly.
         """
+
+        children_the_sponsor_can_write_to = self.sponsorship_ids.child_id.filtered(
+            "can_i_write_letter"
+        ).ids
+        # Can write to
         correspondence = (
             self.env["correspondence"]
             .with_user(self.user_id)
@@ -50,7 +55,7 @@ class Partner(models.Model):
                 [
                     ("partner_id", "=", self.id),
                     ("email_read", "=", False),
-                    ("child_id.can_i_write_letter", "=", True),
+                    ("child_id", "in", children_the_sponsor_can_write_to),
                 ],
                 limit=1,
             )

@@ -67,7 +67,11 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         # Build the domain of the filtering of the letters
         filter_domain = [
             ("partner_id", "=", partner.id),
-            ("child_id.can_i_write_letter", "=", True),
+            (
+                "child_id",
+                "in",
+                children_sponsored_by_partner.filtered("can_i_write_letter").ids,
+            ),
         ]
 
         if child:
