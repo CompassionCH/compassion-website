@@ -38,16 +38,11 @@ class Partner(models.Model):
     def has_unread_correspondence(self):
         """
         Check if the partner has at least one unread correspondence.
-
-        This executes in the context of the partner's user (self.user_id) to
-        ensure the 'can_i_write_letter' access rights and dependencies are evaluated
-        correctly.
         """
 
-        children_the_sponsor_can_write_to = self.sponsorship_ids.child_id.filtered(
+        writable_child_ids = self.sponsorship_ids.child_id.filtered(
             "can_i_write_letter"
         ).ids
-        # Can write to
         correspondence = (
             self.env["correspondence"]
             .with_user(self.user_id)
@@ -55,7 +50,7 @@ class Partner(models.Model):
                 [
                     ("partner_id", "=", self.id),
                     ("email_read", "=", False),
-                    ("child_id", "in", children_the_sponsor_can_write_to),
+                    ("child_id", "in", writable_child_ids),
                 ],
                 limit=1,
             )
