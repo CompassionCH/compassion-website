@@ -244,3 +244,40 @@ class TestDonationFlow(HttpCase):
         self.assertEqual(target_line.product_uom_qty, 1.0, "FEHLER: Menge sollte 1 sein.")
         self.assertEqual(target_line.frequency, 'monthly', "ERROR: The frequency of the order line is not set to one_time.")
         self.assertEqual(current_order.amount_total, self.MOCK_TEST_DATA['price'], "ERROR: The total amount of the order does not match the expected price.")
+
+
+    def test_single_monthly_gift_with_custom_amount(self):
+        _logger.info("START TEST: single_monthly_gift_with_custom_amount")
+
+        start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
+        tour_name = "single_monthly_gift_with_custom_amount"
+
+        self.browser_js(
+            url_path=start_url,
+            code=f"odoo.__DEBUG__.services['web_tour.tour'].run('{tour_name}')",
+            ready=f"odoo.__DEBUG__.services['web_tour.tour'].tours.{tour_name}.ready",
+            login="admin",
+            timeout=180,
+        )
+
+        # ---------------------------------------------------------
+        # CHECK RESULTS IN DATABASE
+        # ---------------------------------------------------------
+        admin_partner_id = self.env.ref('base.user_admin').partner_id.id
+        # Fetch the current draft sale order for the admin partner
+        current_order = self.env['sale.order'].search([
+            ('partner_id', '=', admin_partner_id),
+            ('state', '=', 'draft'),
+        ], order='id desc', limit=1)
+        # Filter order lines to find the one with our test donation product
+        target_line = current_order.order_line.filtered(
+            lambda line: line.product_id.product_tmpl_id == self.donation_product
+        )
+
+        self.assertTrue(current_order, "ERROR: No current draft order found for the admin partner.")
+        self.assertEqual(len(current_order.order_line), 1, "ERROR: Should be exactly one current draft order.")
+        self.assertEqual(target_line.product_id.id, self.donation_product.id,"ERROR: The product in the order line does not match the test donation product.")
+        self.assertEqual(target_line.price_unit, 75,"ERROR: The price of the order line does not match the expected price.")
+        self.assertEqual(target_line.product_uom_qty, 1.0, "FEHLER: Menge sollte 1 sein.")
+        self.assertEqual(target_line.frequency, 'monthly', "ERROR: The frequency of the order line is not set to one_time.")
+        self.assertEqual(current_order.amount_total, self.MOCK_TEST_DATA['price'], "ERROR: The total amount of the order does not match the expected price.")
