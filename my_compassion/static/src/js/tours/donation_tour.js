@@ -208,4 +208,30 @@ odoo.define('compassion_website.donation_tour', function (require) {
             run: "text"
         },
     ]);
+
+    tour.register('remove_item_from_cart', {
+        test: true,
+        url: '/my2/gift-package',
+    }, [
+        {
+            content: "Check if product is visible in cart",
+            trigger: `.donation-item-container:contains("${MOCK_TEST_DATA.product_name}")`,
+            run: function() { console.log("Item found, ready to delete."); }
+        },
+        {
+            content: "Click on the delete button for this specific product",
+            trigger: `.donation-item-container:contains("${MOCK_TEST_DATA.product_name}") .action-button:has(.icon-trash01)`,
+            run: "click"
+        },
+        {
+            content: "Wait until the item disappears",
+            trigger: `body:not(:has(.donation-item-container:contains("${MOCK_TEST_DATA.product_name}")))`,
+            run: function() { console.log("Item successfully deleted."); }
+        },
+        {
+            content: "Check if cart is empty",
+            trigger: "body:contains('Your Gift Package is empty.')",
+            run: "text"
+        }
+    ]);
 });
