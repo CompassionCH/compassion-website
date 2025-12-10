@@ -180,3 +180,51 @@ class ContractGroup(models.Model):
             })
 
         return group
+
+
+    @api.model
+    def create_from_transaction(self, transaction):
+        """
+        Creates an inactive contract group from a validation transaction.
+        """
+        if not transaction:
+            print("create_from_transaction: No transaction provided.")
+            return self.browse()
+
+        # Check Token
+        if not transaction.payment_token_id:
+            print(f"create_from_transaction: Transaction {transaction.id} has no payment_token_id.")
+            # Optional: Try to refetch if timing issue (though controller fix handles this)
+            # transaction.refresh()
+            return self.browse()
+
+        # Identify Payment Mode
+        journal = transaction.acquirer_id.journal_id
+        if not journal:
+            print(f"create_from_transaction: Acquirer {transaction.acquirer_id.name} has no journal.")
+            return self.browse()
+
+        payment_mode = self.env['account.payment.mode'].sudo().search([
+            ('fixed_journal_id', '=', journal.id)
+        ], limit=1)
+
+        if not payment_mode:
+            print(f"create_from_transaction: No payment mode found for journal {journal.name}.")
+            return self.browse()
+
+        # Construct Name
+        token_name = transaction.payment_token_id.name or 'New Method'
+        ref = f"{token_name} ({fields.Date.today()})"
+
+        vals = {
+            'partner_id': transaction.partner_id.id,
+            'payment_mode_id': payment_mode.id,
+            'ref': ref,
+            'active': False,
+            'recurring_unit': 'monthly',
+            'recurring_value': 1,
+        }
+
+        group = self.create(vals)
+        print(f"Created new inactive contract group {group.id} for partner {transaction.partner_id.name}")
+        return group

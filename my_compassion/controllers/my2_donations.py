@@ -12,6 +12,10 @@ import math
 from collections import defaultdict
 from datetime import datetime, timedelta
 
+import werkzeug
+
+from odoo.addons.payment_postfinance_flex.controllers.main import PostFinanceController
+
 from werkzeug.exceptions import BadRequest, NotFound
 
 from odoo import fields, http, _
@@ -559,26 +563,36 @@ class MyCompassionDonationsController(CustomerPortal):
         auth='user',
         website=True
     )
-    def init_add_payment_method(self,  **kwargs):
+    def init_add_payment_method(self, **kwargs):
         """
         Initialize a validation transaction to save a new payment method (Token).
-        Returns the HTML form to redirect the user to the provider (e.g. PostFinance).
+        Injects session data to force PostFinance to show the generic selection page.
         """
         partner = request.env.user.partner_id
-        try:
-            acquirer = self._get_payment_acquirer()
-        except (ValueError, TypeError):
-            return {'success': False, 'error': _('Invalid Acquirer ID.')}
 
-        if not acquirer.exists():
-            return {'success': False, 'error': _('Payment provider not found.')}
+        # 1. Get the Acquirer (PostFinance)
+        acquirer = self._get_payment_acquirer()
+        if not acquirer or not acquirer.exists():
+            return {'success': False, 'error': _('Payment provider (PostFinance) not found.')}
 
-        # 1. Generate unique reference
-        # The suffix '_save' helps identify these transactions in the backend
-        reference = request.env['payment.transaction'].sudo().get_next_reference(acquirer.provider + '_save')
+        # 2. HACK: Inject "Generic Selection" parameters into Session
+        # This mimics what your CheckoutComponent does via JS, but server-side.
+        # method_id=0 tells PostFinance "Allow all methods".
+        # trans_interface='OFFSITE' tells the module to generate the Redirect URL.
+        request.session['postfinance_payment_method'] = {
+            'method_id': False,
+            'space_id': acquirer.postfinance_api_spaceid,
+            'trans_interface': 'OFFSITE',
+            'one_click_mode': 'ALLOW',  # We generally want to allow saving for "Add Method"
+            'trans_id': False  # Clear any previous transaction reference
+        }
 
-        # 2. Create Validation Transaction
-        # amount=0.0 and type='validation' are key for "Add Card" flows
+        # 3. Generate a unique reference manually (Fixes "get_next_reference" error)
+        import time
+        reference = "VALIDATION-%s-%s" % (partner.id, int(time.time()))
+
+        # 4. Create the Validation Transaction
+        # amount=0.0 and type='validation' implies a "Save Card" intent.
         transaction = request.env['payment.transaction'].sudo().create({
             'acquirer_id': acquirer.id,
             'type': 'validation',
@@ -590,27 +604,33 @@ class MyCompassionDonationsController(CustomerPortal):
             'return_url': '/my2/donations',
         })
 
-        # 3. Generate Form HTML
-        # We use the acquirer's standard render method which computes signatures/hidden fields
+        # 5. Prepare Render Values
+        # Passing partner_id ensures address fields are populated (Avoiding the 'NoneType' crash)
         render_values = {
             'return_url': '/my2/donations',
             'partner_id': partner.id,
             'billing_partner_id': partner.id,
         }
 
-        # 'render' returns the form HTML string directly
-        form_html = acquirer.render(
-            reference,
-            0.0,
-            request.env.company.currency_id.id,
-            partner_id=partner.id,
-            values=render_values
-        )
+        # 6. Render the Form/Widget
+        try:
+            form_html = acquirer.sudo().render(
+                reference,
+                0.0,
+                request.env.company.currency_id.id,
+                partner_id=partner.id,
+                values=render_values
+            )
 
-        return {
-            'success': True,
-            'form_html': form_html,
-        }
+            # Decode bytes to string for JSON serialization
+            if isinstance(form_html, bytes):
+                form_html = form_html.decode('utf-8')
+            return {
+                'success': True,
+                'form_html': form_html,
+            }
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
 
     def _get_paginated_paid_invoices(
         self, partner, invoice_page=1, invoice_per_page=12
@@ -660,3 +680,43 @@ class MyCompassionDonationsController(CustomerPortal):
             )
         )
         return tokens
+
+
+class MyCompassionPostFinanceController(PostFinanceController):
+
+    @http.route(
+        [PostFinanceController._success_url, PostFinanceController._failed_url],
+        type="http",
+        auth="public",
+        csrf=False
+    )
+    def postfinance_form_feedback(self, txnId=None, **post):
+        """
+        Override the default feedback controller to:
+        1. Process the feedback.
+        2. Create a new contract group if it was a validation transaction.
+        3. Redirect to the return_url defined in the transaction.
+        """
+        # 1. Run standard processing
+        # We wrap in try/except because the original method might redirect or raise
+        try:
+            super(MyCompassionPostFinanceController, self).postfinance_form_feedback(txnId, **post)
+        except Exception:
+            # Continue execution to handle our custom redirect if possible
+            pass
+
+        # 2. Custom Logic
+        if txnId:
+            tx = request.env['payment.transaction'].sudo().browse(int(txnId))
+            if tx.exists():
+
+                # Create Group if Validation Success
+                if tx.type == 'validation' and tx.state == 'done':
+                    request.env['recurring.contract.group'].sudo().create_from_transaction(tx)
+
+                # Redirect
+                if tx.return_url:
+                    return werkzeug.utils.redirect(tx.return_url)
+
+        # Fallback
+        return werkzeug.utils.redirect("/payment/process")

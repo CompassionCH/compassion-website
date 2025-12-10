@@ -88,8 +88,57 @@ odoo.define('my_compassion.my2_donations', function (require) {
         },
 
         _onOpenPaymentMethodAdd: function (ev){
+            var $modalAdd = $('#payment_method_selector_modal_add');
+            var $container = $modalAdd.find('#add_payment_method_container');
             
+            this._rpc({
+                route: '/my2/donation/add/init',
+                params: {}
+            }).then(function (result) {
+                 if (result.success) {
+                    console.log("Init success, processing form redirection...");
+                    
+                    // 3. Create a virtual form to handle the redirection
+                    var newForm = document.createElement('form');
+                    newForm.setAttribute("method", "POST");
+                    newForm.setAttribute("provider", "postfinance");
+                    newForm.hidden = true;
+                    
+                    // Inject the inputs we got from the controller
+                    newForm.innerHTML = result.form_html;
+                    
+                    // Use jQuery to find the input within the new form
+                    var $newForm = $(newForm);
+                    var $dataSetInput = $newForm.find('input[name="data_set"]');
+                    
+                    // robustness: try data() first, then attr()
+                    var actionUrl = $dataSetInput.data('actionUrl') || $dataSetInput.attr('data-action-url');
+                    var directUrl = $newForm.find('input[name="postfinance_tx_url"]').val();
+
+                    console.log("Redirection info:", { actionUrl: actionUrl, directUrl: directUrl });
+
+                    if (actionUrl) {
+                        newForm.setAttribute("action", actionUrl);
+                        $('body').append(newForm); // Append to body to ensure submit works
+                        newForm.submit();
+                    } else if (directUrl) {
+                        // Fallback: Direct redirect if Odoo's redirect controller url is missing
+                        window.location = directUrl;
+                    } else {
+                        console.error("No redirection URL found in form HTML", result.form_html);
+                        $container.html($('<div class="alert alert-danger"/>').text(_t("Could not find redirection URL.")));
+                    }
+                    
+                } else {
+                    $container.html($('<div class="alert alert-danger"/>').text(result.error));
+                }
+            }).catch(function (error) {
+                console.error(error);
+            });
+            
+            $modalAdd.modal('show');
         },
+
 
         // Helper to render payment methods into a modal
         _renderPaymentMethods: function ($modal, groupId, cardContainer) {
@@ -191,8 +240,6 @@ odoo.define('my_compassion.my2_donations', function (require) {
                     console.log("Updating Payment Details:", formData);
                     alert("Update logic not implemented in this demo.");
                 }
-            }else if (modalType == 'add'){
-
             }
         
         },
