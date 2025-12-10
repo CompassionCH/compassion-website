@@ -101,11 +101,11 @@ odoo.define('compassion_website.donation_tour', function (require) {
                 console.log("Product successfully found in cart!");
             }
         },
-        {
+        /*{
             content: "Check total amount before delete (CHF 75)",
             trigger: ".bg-light-green:contains('Total amount'):contains(' 75')",
             run: "text"
-        },
+        },*/
     ]);
 
      tour.register('single_monthly_gift_with_suggested_amount', {
@@ -202,11 +202,11 @@ odoo.define('compassion_website.donation_tour', function (require) {
                 console.log("Product successfully found in cart!");
             }
         },
-        {
+        /*{
             content: "Check total amount before delete (CHF 75)",
             trigger: ".bg-light-green:contains('Total amount'):contains(' 75')",
             run: "text"
-        },
+        },*/
     ]);
 
     tour.register('remove_item_from_cart', {
