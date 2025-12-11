@@ -65,6 +65,7 @@
         # My Compassion 2 pages
         "templates/pages/my2_children.xml",
         "templates/pages/my2_child_timeline.xml",
+        "templates/pages/my2_child_timeline_terminated.xml",
         "templates/pages/my2_child_letters.xml",
         "templates/pages/my2_dashboard.xml",
         "templates/pages/my2_donations.xml",
