@@ -103,7 +103,6 @@ class Partner(models.Model):
         # Find groups for this partner that have a payment mode and active contracts
         groups = self.env["recurring.contract.group"].search([
             ("partner_id", "=", self.id),
-            ("active", "=", True),
             ("payment_mode_id", "!=", False),
         ])
 
