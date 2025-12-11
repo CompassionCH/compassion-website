@@ -12,10 +12,6 @@ import math
 from collections import defaultdict
 from datetime import datetime, timedelta
 
-import werkzeug
-
-from odoo.addons.payment_postfinance_flex.controllers.main import PostFinanceController
-
 from werkzeug.exceptions import BadRequest, NotFound
 
 from odoo import fields, http, _
@@ -479,19 +475,6 @@ class MyCompassionDonationsController(CustomerPortal):
 
         return {"html": html}
 
-    @http.route(
-        '/my2/donations/get_all_payment_methods',
-        type='json',
-        auth='user',
-        website=True
-    )
-    def get_available_methods(self, contract_id=None, group_id=None, **kwargs):
-        """
-        Returns a list of available payment methods.
-        """
-        partner = request.env.user.partner_id
-        payment_methods = []
-        return payment_methods
 
     @http.route(
         '/my2/donations/get_payment_methods_sponsor',
@@ -612,7 +595,7 @@ class MyCompassionDonationsController(CustomerPortal):
             'billing_partner_id': partner.id,
         }
 
-        # 6. Render the Form/Widget
+        # 6. Render the hidden form
         try:
             form_html = acquirer.sudo().render(
                 reference,
@@ -680,43 +663,3 @@ class MyCompassionDonationsController(CustomerPortal):
             )
         )
         return tokens
-
-
-class MyCompassionPostFinanceController(PostFinanceController):
-
-    @http.route(
-        [PostFinanceController._success_url, PostFinanceController._failed_url],
-        type="http",
-        auth="public",
-        csrf=False
-    )
-    def postfinance_form_feedback(self, txnId=None, **post):
-        """
-        Override the default feedback controller to:
-        1. Process the feedback.
-        2. Create a new contract group if it was a validation transaction.
-        3. Redirect to the return_url defined in the transaction.
-        """
-        # 1. Run standard processing
-        # We wrap in try/except because the original method might redirect or raise
-        try:
-            super(MyCompassionPostFinanceController, self).postfinance_form_feedback(txnId, **post)
-        except Exception:
-            # Continue execution to handle our custom redirect if possible
-            pass
-
-        # 2. Custom Logic
-        if txnId:
-            tx = request.env['payment.transaction'].sudo().browse(int(txnId))
-            if tx.exists():
-
-                # Create Group if Validation Success
-                if tx.type == 'validation' and tx.state == 'done':
-                    request.env['recurring.contract.group'].sudo().create_from_transaction(tx)
-
-                # Redirect
-                if tx.return_url:
-                    return werkzeug.utils.redirect(tx.return_url)
-
-        # Fallback
-        return werkzeug.utils.redirect("/payment/process")

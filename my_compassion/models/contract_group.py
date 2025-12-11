@@ -14,7 +14,8 @@ class ContractGroup(models.Model):
     _inherit = ["recurring.contract.group", "translatable.model"]
 
     active = fields.Boolean(default=True)
-    gender = fields.Selection(store=False)
+    payment_token_id = fields.Many2one("payment.token", string="Payment Token")
+    gender = fields.Selection(related="partner_id.gender", store=True, readonly=False)
     total_amount = fields.Float(compute="_compute_total_amount")
 
     def _compute_total_amount(self):
@@ -30,14 +31,8 @@ class ContractGroup(models.Model):
         """
         Returns a dict containing display info for the group's payment method.
         Used in MyCompassion2.0 portal.
-
-        Logic:
-        1. Get the Payment Mode from the group.
-        2. Find the associated Payment Acquirer via fixed_journal_id from account.payment.mode
-        3. Check if the partner has a saved Payment Token  for that Acquirer.
         """
         self.ensure_one()
-
 
         # Default / Fallback values
         info = {
@@ -46,8 +41,8 @@ class ContractGroup(models.Model):
             'label': _('Unknown Method'),
             'type': 'manual',  # 'manual', 'mode', or 'token'
             'brand': False,
-            'expire_date' : False,
-            'is_card' : False,
+            'expire_date': False,
+            'is_card': False,
             'mode_id': self.payment_mode_id.id if self.payment_mode_id else False,
             'group_id': self.id,
         }
@@ -56,6 +51,7 @@ class ContractGroup(models.Model):
             return info
 
         # test for icon retrieval
+        # Not that good, could be improved
         all_icons = self.env['payment.icon'].sudo().search([('image', '!=', False)])
         for icon in all_icons:
             if icon.name.lower() in self.payment_mode_id.name.lower():
@@ -67,33 +63,17 @@ class ContractGroup(models.Model):
         info['type'] = 'mode'
         info['ref_number'] = self.bvr_reference if self.bvr_reference else False
 
-        # 2. Resolve Acquirer via Journal (The link between Mode and Provider)
-        # The 'fixed_journal_id' on payment mode usually points to the bank/provider journal
-        journal_id = self.sudo().payment_mode_id.fixed_journal_id.id
-        acquirer = False
+        # 2. Check for Linked Token (Primary Strategy)
+        valid_token = self.payment_token_id
 
-        if journal_id:
-            acquirer = self.env['payment.acquirer'].sudo().search([
-                ('journal_id', '=', journal_id)
-            ], limit=1)
-
-        if acquirer:
-            # 3. Find active Token (Saved Card) for this user + acquirer
-            valid_token = self.env['payment.token'].sudo().search([
-                ('partner_id', '=', self.partner_id.id),
-                ('acquirer_id', '=', acquirer.id),
-                # We usually want the default/active one. If multiple exist, taking the first is standard.
-            ], limit=1)
-
-            if valid_token:
-                info.update({
-                    'type': 'token',
-                    'token_id': valid_token.id,
-                    'ref_number': f"{valid_token.acquirer_id.name} **** {valid_token.last4}",
-                    'is_card': True,
-                    'brand': valid_token.name.split(' ')[0] if valid_token.name else False
-                })
-
+        if valid_token:
+            info.update({
+                'type': 'token',
+                'token_id': valid_token.id,
+                'ref_number': "Not retrieved for now",
+                'is_card': True,
+                'brand': valid_token.name.split(' ')[0] if valid_token.name else False
+            })
 
         return info
 
@@ -192,39 +172,56 @@ class ContractGroup(models.Model):
             return self.browse()
 
         # Check Token
-        if not transaction.payment_token_id:
-            print(f"create_from_transaction: Transaction {transaction.id} has no payment_token_id.")
+        token = transaction.payment_token_id
+        if not token:
             # Optional: Try to refetch if timing issue (though controller fix handles this)
             # transaction.refresh()
             return self.browse()
 
-        # Identify Payment Mode
-        journal = transaction.acquirer_id.journal_id
-        if not journal:
-            print(f"create_from_transaction: Acquirer {transaction.acquirer_id.name} has no journal.")
-            return self.browse()
+        # 1. Check for existing groups with the same token
+        # If we find a group (active or inactive) that is already linked to this exact token, reuse it.
+        existing_group = self.search([
+            ('partner_id', '=', transaction.partner_id.id),
+            ('payment_token_id', '=', token.id)
+        ], limit=1)
 
+        if existing_group:
+            return existing_group
+
+        # 2. Identify Payment Mode from Token Name
+        # Strategy: The first part of the token name (before '-') is the method name (e.g. "MasterCard-123" -> "MasterCard")
+        token_name_parts = token.name.split('-')
+        method_name = token_name_parts[0].strip() if token_name_parts else token.name
+
+        # Search for payment mode matching the brand name
         payment_mode = self.env['account.payment.mode'].sudo().search([
-            ('fixed_journal_id', '=', journal.id)
+            ('name', 'ilike', method_name),
         ], limit=1)
 
         if not payment_mode:
-            print(f"create_from_transaction: No payment mode found for journal {journal.name}.")
-            return self.browse()
+            # Fallback: Try finding via Journal from Acquirer
+            journal = transaction.acquirer_id.journal_id
+            if journal:
+                payment_mode = self.env['account.payment.mode'].sudo().search([
+                    ('fixed_journal_id', '=', journal.id)
+                ], limit=1)
 
-        # Construct Name
-        token_name = transaction.payment_token_id.name or 'New Method'
-        ref = f"{token_name} ({fields.Date.today()})"
+            if not payment_mode:
+                return self.browse()
+
+        # Construct Name/Ref
+        ref = token.name
 
         vals = {
             'partner_id': transaction.partner_id.id,
             'payment_mode_id': payment_mode.id,
+            'payment_token_id': token.id,
+            'gender': token.partner_id.gender,
             'ref': ref,
-            'active': False,
-            'recurring_unit': 'monthly',
+            'active': True,
+            'recurring_unit': 'month',
             'recurring_value': 1,
         }
 
         group = self.create(vals)
-        print(f"Created new inactive contract group {group.id} for partner {transaction.partner_id.name}")
         return group
