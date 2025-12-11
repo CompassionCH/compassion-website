@@ -31,12 +31,17 @@
             </div>
 
             <!-- Icon -->
-            <div class="icon-wrapper mr-3 d-flex align-items-center justify-content-center">
+            <div class="icon-wrapper mr-3 d-flex align-items-center justify-content-center bg-white" style="width: 50px; height: 32px;">
                 <t t-if="icon">
-                    <img t-attf-src="/web/image?model=payment.icon&amp;id=#{icon}&amp;field=image&amp;width=50&amp;height=50"
-                         style="width: 28px; height: 28px; object-fit: contain; margin-right: 12px; flex-shrink: 0;"
+                    <img t-attf-src="/web/image?model=payment.icon&amp;id=#{icon}&amp;field=image"
+                         class="img-fluid"
+                         style="max-height: 100%; max-width: 100%; object-fit: contain;"
                          alt="Icon"
                          onerror="this.style.display='none'"/>
+                </t>
+                <t t-elif="is_card">
+                    <!-- Fallback generic card icon if no specific icon is found -->
+                    <i class="fa fa-credit-card text-muted fa-2x"/>
                 </t>
             </div>
 
