@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Page: My Compassion 2 Child Timeline Page
+
+    Description:
+    This page displays a chronological timeline of key events related to a sponsored child,
+    such as gifts, letters, and other sponsorship activities.
+
+    Used in route:
+    - /my2/children/<model("compassion.child"):child>/
+
+    Injected data:
+    - compassion_child (record): The related child object.
+    - access_scope (string): 'public' or 'sponsor'.
+
+    TO DO: inject a list of significant sponsorship events.
+-->
 <odoo>
     <template id="my2_child_timeline_page" name="My Compassion 2 Child Timeline Page">
         <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile.css" />
