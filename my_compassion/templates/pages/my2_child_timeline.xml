@@ -3,10 +3,11 @@
     <template id="my2_child_timeline_page" name="My Compassion 2 Child Timeline Page">
         <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile.css" />
         <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile_timeline.css" />
+        <t t-set="is_sponsorship_active" t-value="compassion_child.my_sponsorship_id.state=='active'" />
         <t t-call="website.layout">
             <div class="container">
                 <div class="single-column">
-                    <t t-if="sponsorship_active">
+                    <t t-if="is_sponsorship_active">
                         <section class="d-flex flex-column flex-md-row pt-4">
                             <div class="child-details-container">
                                 <t t-call="theme_compassion_2025.PortraitComponent">
@@ -515,7 +516,7 @@
                 </div>
             </section>
         </t>
-        <t t-if="sponsorship_active">
+        <t t-if="is_sponsorship_active">
             <script type="text/javascript" src="/my_compassion/static/src/js/child_profile_tabs.js" />
             <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_center_weather_time.js" />
         </t>
