@@ -513,8 +513,8 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                     <t t-set="variant" t-value="'compact'" />
                     <t t-set="variation" t-value="'filled'" />
-                    <t t-if="wizard.current_step_idx &lt; (wizard.n_steps-1)" t-set="label" t-value="'Continue'" />
-                    <t t-else="" t-set="label" t-value="'Finish'" />
+                    <t t-if="wizard.current_step_idx &lt; (wizard.n_steps-1)" t-set="label">Continue</t>
+                    <t t-else="" t-set="label">Finish</t>
                     <t t-set="color" t-value="'core-blue'" />
                     <t t-set="text_color" t-value="'pure-white'" />
                     <!-- ID used by eBill extension in my_compassion_switzerland -->
