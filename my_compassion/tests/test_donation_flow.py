@@ -515,3 +515,37 @@ class TestDonationFlow(HttpCase):
         self.assertEqual(target_line.frequency, 'one_time', "ERROR: The frequency of the order line is not set to one_time.")
         self.assertEqual(current_order.amount_total, self.MOCK_TEST_DATA['price'], "ERROR: The total amount of the order does not match the expected price.")
 
+    def test_try_to_submit_empty_custom_amount(self):
+        _logger.info("START TEST: try_to_submit_empty_custom_amount")
+
+        start_url = f"{self.TEST_DOMAIN}/my2/gifts"
+
+        # Hier muss der NEUE Name stehen:
+        tour_name = "try_to_submit_empty_custom_amount"
+
+        self.browser_js(
+            url_path=start_url,
+            code=f"odoo.__DEBUG__.services['web_tour.tour'].run('{tour_name}')",
+            ready=f"odoo.__DEBUG__.services['web_tour.tour'].tours.{tour_name}.ready",
+            login="admin",
+            timeout=180,
+        )
+
+        # ---------------------------------------------------------
+        # CHECK RESULTS IN DATABASE
+        # ---------------------------------------------------------
+        admin_partner_id = self.env.ref('base.user_admin').partner_id.id
+
+        current_order = self.env['sale.order'].search([
+            ('partner_id', '=', admin_partner_id),
+            ('state', '=', 'draft'),
+        ], order='id desc', limit=1)
+
+        # Sicherstellen, dass das Produkt NICHT im Warenkorb ist
+        target_line = False
+        if current_order:
+            target_line = current_order.order_line.filtered(
+                lambda line: line.product_id.product_tmpl_id == self.donation_product
+            )
+
+        self.assertFalse(target_line, "ERROR: Product should NOT be in the cart if validation fails.")

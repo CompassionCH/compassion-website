@@ -287,4 +287,41 @@ odoo.define('compassion_website.donation_tour', function (require) {
             run: function() { console.log("New item successfully added to cart."); }
         }
     ]);
+    tour.register('try_to_submit_empty_custom_amount', {
+        test: true,
+        url: '/my2/gifts',
+    }, [
+        {
+            content: "Select the Test Product from the list",
+            trigger: `.card.vignette h3:contains("${MOCK_TEST_DATA.product_name}")`,
+            run: "click"
+        },
+        {
+            content: "Check if we are on the details page",
+            trigger: `.donation-details-header h2:contains("${MOCK_TEST_DATA.product_name}")`,
+            run: "text"
+        },
+        {
+            content: "Select 'One Time' frequency",
+            trigger: ".my2_donation_form .donation-frequency label:contains('One Time')",
+            run: "click"
+        },
+        {
+            content: "Select 'Custom amount' radio button (this enables the empty input)",
+            trigger: ".my2_donation_form label:contains('Custom amount')",
+            run: "click"
+        },
+        {
+            content: "Stress Test: Click 'Add & check out' WITHOUT entering an amount",
+            trigger: ".my2_donation_form button:contains('Add & check out')",
+            run: "click"
+        },
+        {
+            content: "Validation Check: Verify that the error message appears",
+            trigger: `.invalid-hint:contains("Please enter a valid amount"):visible`,
+            run: function () {
+                console.log("Validation success: Error message is visible!");
+            }
+        }
+    ]);
 });
