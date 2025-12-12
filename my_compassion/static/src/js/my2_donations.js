@@ -47,7 +47,7 @@ odoo.define('my_compassion.my2_donations', function (require) {
             $('body').on('change', 'input[name="payment_method_selection"]', this._onMethodSelectionChange.bind(this));
 
             // 3. If a payment method was just added display a sucess toast
-             this._checkAddPaymentMethod();
+            this._checkAddPaymentMethod();
 
             return this._super.apply(this, arguments);
 
@@ -66,21 +66,22 @@ odoo.define('my_compassion.my2_donations', function (require) {
             var paymentMethodResult = urlParams.get('payment_method_result');
             var paymentMethodMessage = urlParams.get('payment_method_message');
 
-
             if (paymentMethodResult === 'Success') {
                 ToastService.success(_t(paymentMethodMessage), _t(paymentMethodResult));
             } else if (paymentMethodResult === 'Error') {
                 ToastService.error(_t(paymentMethodMessage), _t(paymentMethodResult));
-            } else if (paymentMethodResult === 'Already used'){
+            } else if (paymentMethodResult === 'Already Saved') {
                 ToastService.info(_t(paymentMethodMessage), _t(paymentMethodResult));
             }
 
-            if (paymentMethodResult) {
-                // Clean URL (remove param without reload)
-                urlParams.delete('payment_success');
-                var newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
-                window.history.replaceState({}, document.title, newUrl);
-            }
+            // Clean the URL – remove the two parameters we just processed
+            urlParams.delete('payment_method_result');
+            urlParams.delete('payment_method_message');
+
+            var cleanSearch = urlParams.toString();
+            var newUrl = window.location.pathname + (cleanSearch ? '?' + cleanSearch : '');
+
+            window.history.replaceState({}, document.title, newUrl);
         },
 
 
@@ -123,7 +124,7 @@ odoo.define('my_compassion.my2_donations', function (require) {
                 params: {}
             }).then(function (result) {
                 if (result.success) {
-                    
+
                     // Create a virtual form to handle the redirection
                     var postForm = document.createElement('form');
                     postForm.setAttribute("method", "POST");
