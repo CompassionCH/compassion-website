@@ -25,7 +25,7 @@ Description:
                         <div class="d-flex flex-row">
                             <t t-if="icon_id">
                                 <img t-att-src="'/web/image?model=payment.icon&amp;id=%s&amp;field=image&amp;width=50&amp;height=50' % icon_id"
-                                     style="width: 28px; height: 28px; object-fit: contain; margin-right: 12px; flex-shrink: 0;"
+                                     style="width: 50px; height: 32px; object-fit: contain; margin-right: 12px; flex-shrink: 0;"
                                      alt="Payment method"
                                      onerror="this.style.display='none'"
                                 />

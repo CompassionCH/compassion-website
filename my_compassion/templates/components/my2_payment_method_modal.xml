@@ -45,7 +45,7 @@
                                     </t>
                                     <t t-elif="modal_type == 'add'">
                                         <p class="text-center text-muted mb-3">
-                                            Add a new payment method to your account.
+                                            Redirecting to add a new payment method
                                         </p>
                                     </t>
                                     <t t-elif="modal_type == 'change'">
@@ -61,7 +61,7 @@
                             <t t-if="modal_type == 'change' or modal_type == 'update'">
                                 <!-- Container for Dynamic Cards -->
                                 <div id="modal_container" class="payment-methods-container mb-3">
-                                    <!-- JS will inject templates here -->
+                                    <!-- JS will inject2_dona the form here -->
                                 </div>
 
                             </t>
