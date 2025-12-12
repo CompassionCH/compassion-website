@@ -256,4 +256,35 @@ odoo.define('compassion_website.donation_tour', function (require) {
             run: function() { console.log("Item successfully updated to 75."); }
         }
     ]);
+
+    tour.register('single_one_time_gift_through_modal', {
+        test: true,
+        url: '/my2/gift-package',
+    }, [
+        {
+            content: "Click on 'Add a gift' button to go to catalog",
+            trigger: 'a[href="/my2/gift-package/add"]',
+            run: "click"
+        },
+        {
+            content: "Select 'Gift for a child' category",
+            trigger: 'label[for="donation-type-fund"]',
+            run: "click"
+        },
+        {
+            content: "Click 'Add' button on the specific test product card",
+            trigger: `.donation-product-container:contains("${MOCK_TEST_DATA.product_name}") button:contains("Add")`,
+            run: "click"
+        },
+        {
+            content: "Click 'Add & check out' in the opening modal",
+            trigger: ".my2_donation_form button:contains('Add & check out')",
+            run: "click"
+        },
+        {
+            content: "Verify: Check if we are back in cart and product is there",
+            trigger: `.donation-item-container:contains("${MOCK_TEST_DATA.product_name}")`,
+            run: function() { console.log("New item successfully added to cart."); }
+        }
+    ]);
 });
