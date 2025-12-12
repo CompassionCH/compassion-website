@@ -46,7 +46,11 @@ odoo.define('my_compassion.my2_donations', function (require) {
             // Allows handling events even if Bootstrap moves the modal outside our widget's scope
             $('body').on('change', 'input[name="payment_method_selection"]', this._onMethodSelectionChange.bind(this));
 
+            // 3. If a payment method was just added display a sucess toast
+             this._checkAddPaymentMethod();
+
             return this._super.apply(this, arguments);
+
         },
 
         destroy: function () {
@@ -57,6 +61,29 @@ odoo.define('my_compassion.my2_donations', function (require) {
         // -------------------------------------------------------------------------
         // HANDLERS
         // -------------------------------------------------------------------------
+        _checkAddPaymentMethod: function () {
+            var urlParams = new URLSearchParams(window.location.search);
+            var paymentMethodResult = urlParams.get('payment_method_result');
+            var paymentMethodMessage = urlParams.get('payment_method_message');
+
+
+            if (paymentMethodResult === 'Success') {
+                ToastService.success(_t(paymentMethodMessage), _t(paymentMethodResult));
+            } else if (paymentMethodResult === 'Error') {
+                ToastService.error(_t(paymentMethodMessage), _t(paymentMethodResult));
+            } else if (paymentMethodResult === 'Already used'){
+                ToastService.info(_t(paymentMethodMessage), _t(paymentMethodResult));
+            }
+
+            if (paymentMethodResult) {
+                // Clean URL (remove param without reload)
+                urlParams.delete('payment_success');
+                var newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+                window.history.replaceState({}, document.title, newUrl);
+            }
+        },
+
+
 
         _onOpenPaymentMethodUpdate: function (ev) {
             var detail = ev.originalEvent ? ev.originalEvent.detail : ev.detail;
@@ -87,55 +114,53 @@ odoo.define('my_compassion.my2_donations', function (require) {
             $modalChange.modal('show');
         },
 
-        _onOpenPaymentMethodAdd: function (ev){
+        _onOpenPaymentMethodAdd: function (ev) {
             var $modalAdd = $('#payment_method_selector_modal_add');
             var $container = $modalAdd.find('#add_payment_method_container');
-            
+
             this._rpc({
                 route: '/my2/donation/add/init',
                 params: {}
             }).then(function (result) {
-                 if (result.success) {
-                    console.log("Init success, processing form redirection...");
+                if (result.success) {
                     
-                    // 3. Create a virtual form to handle the redirection
-                    var newForm = document.createElement('form');
-                    newForm.setAttribute("method", "POST");
-                    newForm.setAttribute("provider", "postfinance");
-                    newForm.hidden = true;
-                    
+                    // Create a virtual form to handle the redirection
+                    var postForm = document.createElement('form');
+                    postForm.setAttribute("method", "POST");
+                    postForm.setAttribute("provider", "postfinance");
+                    postForm.hidden = true;
+
                     // Inject the inputs we got from the controller
-                    newForm.innerHTML = result.form_html;
-                    
+                    postForm.innerHTML = result.form_html;
+
                     // Use jQuery to find the input within the new form
-                    var $newForm = $(newForm);
-                    var $dataSetInput = $newForm.find('input[name="data_set"]');
-                    
+                    var $postForm = $(postForm);
+                    var $dataSetInput = $postForm.find('input[name="data_set"]');
+
                     // robustness: try data() first, then attr()
                     var actionUrl = $dataSetInput.data('actionUrl') || $dataSetInput.attr('data-action-url');
-                    var directUrl = $newForm.find('input[name="postfinance_tx_url"]').val();
+                    var directUrl = $postForm.find('input[name="postfinance_tx_url"]').val();
 
                     console.log("Redirection info:", { actionUrl: actionUrl, directUrl: directUrl });
 
                     if (actionUrl) {
-                        newForm.setAttribute("action", actionUrl);
-                        $('body').append(newForm); // Append to body to ensure submit works
-                        newForm.submit();
+                        postForm.setAttribute("action", actionUrl);
+                        $('body').append(postForm); // Append to body to ensure submit works
+                        postForm.submit();
                     } else if (directUrl) {
                         // Fallback: Direct redirect if Odoo's redirect controller url is missing
                         window.location = directUrl;
                     } else {
-                        console.error("No redirection URL found in form HTML", result.form_html);
                         $container.html($('<div class="alert alert-danger"/>').text(_t("Could not find redirection URL.")));
                     }
-                    
+
                 } else {
                     $container.html($('<div class="alert alert-danger"/>').text(result.error));
                 }
             }).catch(function (error) {
                 console.error(error);
             });
-            
+
             $modalAdd.modal('show');
         },
 
@@ -241,7 +266,7 @@ odoo.define('my_compassion.my2_donations', function (require) {
                     alert("Update logic not implemented in this demo.");
                 }
             }
-        
+
         },
 
         _onModalHidden: function ($modal) {
