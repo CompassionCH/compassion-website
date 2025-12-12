@@ -24,7 +24,7 @@
             <div class="container">
                 <div class="single-column">
 
-                        <section t-attf-class="d-flex pt-4  #{'flex-md-row flex-column' if not is_sponsorship_active else 'flex-column flex-md-row'}">
+                        <section t-attf-class="d-flex pt-4 flex#{'-md' if is_sponsorship_active else ''}-row flex-column">
                             <div class="child-details-container">
                                 <t t-call="theme_compassion_2025.PortraitComponent">
                                     <t t-set="title" t-value="compassion_child.preferred_name" />
