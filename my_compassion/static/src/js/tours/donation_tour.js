@@ -7,7 +7,7 @@ odoo.define('compassion_website.donation_tour', function (require) {
         product_name: 'Test Product',
     };
 
-    tour.register('single_one_time_gift_with_suggested_amount', {
+    tour.register('single_one_time_fund_with_suggested_amount', {
         test: true,
         url: '/my2/gifts',
     }, [
@@ -37,7 +37,7 @@ odoo.define('compassion_website.donation_tour', function (require) {
             run: "click"
         },
         {
-            content: "Check if we are in the cart (Gift Package)",
+            content: "Check if we are in the cart (Fund Package)",
             trigger: "h1:contains('Gift Package'), .my2_gift_package_page",
             run: "text"
         },
@@ -55,7 +55,7 @@ odoo.define('compassion_website.donation_tour', function (require) {
         },
     ]);
 
-    tour.register('single_one_time_gift_with_custom_amount', {
+    tour.register('single_one_time_fund_with_custom_amount', {
         test: true,
         url: '/my2/gifts',
     }, [
@@ -90,7 +90,7 @@ odoo.define('compassion_website.donation_tour', function (require) {
             run: "click"
         },
         {
-            content: "Check if we are in the cart (Gift Package)",
+            content: "Check if we are in the cart (Fund Package)",
             trigger: "h1:contains('Gift Package'), .my2_gift_package_page",
             run: "text"
         },
@@ -103,7 +103,7 @@ odoo.define('compassion_website.donation_tour', function (require) {
         },
     ]);
 
-     tour.register('single_monthly_gift_with_suggested_amount', {
+     tour.register('single_monthly_fund_with_suggested_amount', {
         test: true,
         url: '/my2/gifts',
     }, [
@@ -133,7 +133,7 @@ odoo.define('compassion_website.donation_tour', function (require) {
             run: "click"
         },
         {
-            content: "Check if we are in the cart (Gift Package)",
+            content: "Check if we are in the cart (Fund Package)",
             trigger: "h1:contains('Gift Package'), .my2_gift_package_page",
             run: "text"
         },
@@ -151,7 +151,7 @@ odoo.define('compassion_website.donation_tour', function (require) {
         },
     ]);
 
-    tour.register('single_monthly_gift_with_custom_amount', {
+    tour.register('single_monthly_fund_with_custom_amount', {
         test: true,
         url: '/my2/gifts',
     }, [
@@ -186,7 +186,7 @@ odoo.define('compassion_website.donation_tour', function (require) {
             run: "click"
         },
         {
-            content: "Check if we are in the cart (Gift Package)",
+            content: "Check if we are in the cart (Fund Package)",
             trigger: "h1:contains('Gift Package'), .my2_gift_package_page",
             run: "text"
         },
@@ -257,17 +257,17 @@ odoo.define('compassion_website.donation_tour', function (require) {
         }
     ]);
 
-    tour.register('single_one_time_gift_through_modal', {
+    tour.register('single_one_time_fund_through_modal', {
         test: true,
         url: '/my2/gift-package',
     }, [
         {
-            content: "Click on 'Add a gift' button to go to catalog",
+            content: "Click on 'Add a fund' button to go to catalog",
             trigger: 'a[href="/my2/gift-package/add"]',
             run: "click"
         },
         {
-            content: "Select 'Gift for a child' category",
+            content: "Select 'fund for a child' category",
             trigger: 'label[for="donation-type-fund"]',
             run: "click"
         },

@@ -153,11 +153,11 @@ class TestDonationFlow(HttpCase):
     # TESTS
     # ---------------------------------------------------------
 
-    def test_single_one_time_gift_with_suggested_amount(self):
-        _logger.info("START TEST: single_one_time_gift_with_suggested_amount")
+    def test_single_one_time_fund_with_suggested_amount(self):
+        _logger.info("START TEST: single_one_time_fund_with_suggested_amount")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
-        tour_name = "single_one_time_gift_with_suggested_amount"
+        tour_name = "single_one_time_fund_with_suggested_amount"
 
         self.browser_js(
             url_path=start_url,
@@ -188,11 +188,11 @@ class TestDonationFlow(HttpCase):
         self.assertEqual(target_line.frequency, 'one_time', "ERROR: The frequency of the order line is not set to one_time.")
         self.assertEqual(current_order.amount_total, self.MOCK_TEST_DATA['price'], "ERROR: The total amount of the order does not match the expected price.")
 
-    def test_single_one_time_gift_with_custom_amount(self):
-        _logger.info("START TEST: single_one_time_gift_with_custom_amount")
+    def test_single_one_time_fund_with_custom_amount(self):
+        _logger.info("START TEST: single_one_time_fund_with_custom_amount")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
-        tour_name = "single_one_time_gift_with_custom_amount"
+        tour_name = "single_one_time_fund_with_custom_amount"
 
         self.browser_js(
             url_path=start_url,
@@ -223,11 +223,11 @@ class TestDonationFlow(HttpCase):
         self.assertEqual(target_line.frequency, 'one_time', "ERROR: The frequency of the order line is not set to one_time.")
         self.assertEqual(current_order.amount_total, self.CUSTOM_AMOUNT_TEST, "ERROR: The total amount of the order does not match the expected price.")
 
-    def test_single_monthly_gift_with_suggested_amount(self):
-        _logger.info("START TEST: single_monthly_gift_with_suggested_amount")
+    def test_single_monthly_fund_with_suggested_amount(self):
+        _logger.info("START TEST: single_monthly_fund_with_suggested_amount")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
-        tour_name = "single_monthly_gift_with_suggested_amount"
+        tour_name = "single_monthly_fund_with_suggested_amount"
 
         self.browser_js(
             url_path=start_url,
@@ -259,13 +259,11 @@ class TestDonationFlow(HttpCase):
         self.assertEqual(current_order.amount_total, self.MOCK_TEST_DATA['price'], "ERROR: The total amount of the order does not match the expected price.")
 
 
-    def test_single_monthly_gift_with_custom_amount(self):
-        _logger.info("START TEST: single_monthly_gift_with_custom_amount")
-
-        CUSTOM_AMOUNT_TEST = 75
+    def test_single_monthly_fund_with_custom_amount(self):
+        _logger.info("START TEST: single_monthly_fund_with_custom_amount")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
-        tour_name = "single_monthly_gift_with_custom_amount"
+        tour_name = "single_monthly_fund_with_custom_amount"
 
         self.browser_js(
             url_path=start_url,
@@ -297,11 +295,11 @@ class TestDonationFlow(HttpCase):
         self.assertEqual(current_order.amount_total, self.CUSTOM_AMOUNT_TEST, "ERROR: The total amount of the order does not match the expected price.")
 
 
-    def test_add_several_gifts(self):
+    def test_add_several_funds(self):
         _logger.info("START TEST: test_full_flow_add_and_remove_item")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
-        tour_name = "single_one_time_gift_with_suggested_amount"
+        tour_name = "single_one_time_fund_with_suggested_amount"
 
         self.browser_js(
             url_path=start_url,
@@ -311,7 +309,7 @@ class TestDonationFlow(HttpCase):
             timeout=180,
         )
 
-        tour_name = "single_monthly_gift_with_custom_amount"
+        tour_name = "single_monthly_fund_with_custom_amount"
 
         self.browser_js(
             url_path=start_url,
@@ -354,7 +352,7 @@ class TestDonationFlow(HttpCase):
         _logger.info("START TEST: test_full_flow_add_and_remove_item")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
-        tour_name = "single_one_time_gift_with_suggested_amount"
+        tour_name = "single_one_time_fund_with_suggested_amount"
 
         self.browser_js(
             url_path=start_url,
@@ -417,7 +415,7 @@ class TestDonationFlow(HttpCase):
         _logger.info("START TEST: test_full_flow_add_and_edit_item_in_cart")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
-        tour_name = "single_one_time_gift_with_suggested_amount"
+        tour_name = "single_one_time_fund_with_suggested_amount"
 
         self.browser_js(
             url_path=start_url,
@@ -480,11 +478,11 @@ class TestDonationFlow(HttpCase):
         self.assertEqual(target_line.frequency, 'one_time', "ERROR: The frequency of the order line is not set to one_time.")
         self.assertEqual(current_order.amount_total, self.CUSTOM_AMOUNT_TEST, "ERROR: The total amount of the order does not match the expected price.")
 
-    def test_single_one_time_gift_through_modal(self):
-        _logger.info("START TEST: single_one_time_gift_through_modal")
+    def test_single_one_time_fund_through_modal(self):
+        _logger.info("START TEST: single_one_time_fund_through_modal")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
-        tour_name = "single_one_time_gift_through_modal"
+        tour_name = "single_one_time_fund_through_modal"
 
         self.browser_js(
             url_path=start_url,
@@ -518,9 +516,7 @@ class TestDonationFlow(HttpCase):
     def test_try_to_submit_empty_custom_amount(self):
         _logger.info("START TEST: try_to_submit_empty_custom_amount")
 
-        start_url = f"{self.TEST_DOMAIN}/my2/gifts"
-
-        # Hier muss der NEUE Name stehen:
+        start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
         tour_name = "try_to_submit_empty_custom_amount"
 
         self.browser_js(
@@ -540,8 +536,7 @@ class TestDonationFlow(HttpCase):
             ('partner_id', '=', admin_partner_id),
             ('state', '=', 'draft'),
         ], order='id desc', limit=1)
-
-        # Sicherstellen, dass das Produkt NICHT im Warenkorb ist
+        # Filter order lines to find the one with our test donation product
         target_line = False
         if current_order:
             target_line = current_order.order_line.filtered(
