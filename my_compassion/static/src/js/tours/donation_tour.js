@@ -101,11 +101,6 @@ odoo.define('compassion_website.donation_tour', function (require) {
                 console.log("Product successfully found in cart!");
             }
         },
-        /*{
-            content: "Check total amount before delete (CHF 75)",
-            trigger: ".bg-light-green:contains('Total amount'):contains(' 75')",
-            run: "text"
-        },*/
     ]);
 
      tour.register('single_monthly_gift_with_suggested_amount', {
@@ -202,11 +197,6 @@ odoo.define('compassion_website.donation_tour', function (require) {
                 console.log("Product successfully found in cart!");
             }
         },
-        /*{
-            content: "Check total amount before delete (CHF 75)",
-            trigger: ".bg-light-green:contains('Total amount'):contains(' 75')",
-            run: "text"
-        },*/
     ]);
 
     tour.register('remove_item_from_cart', {
@@ -232,6 +222,38 @@ odoo.define('compassion_website.donation_tour', function (require) {
             content: "Check if cart is empty",
             trigger: "body:contains('Your Gift Package is empty.')",
             run: "text"
+        }
+    ]);
+
+    tour.register('update_item_in_cart', {
+        test: true,
+        url: '/my2/gift-package',
+    }, [
+        {
+            content: "Click on the edit button (pencil icon) for the specific product",
+            trigger: `.donation-item-container:contains("${MOCK_TEST_DATA.product_name}") .icon-edit05`,
+            run: "click"
+        },
+        {
+            content: "Select 'Custom amount' to enable the input field",
+            trigger: "label[for='donation-suggested-custom']",
+            run: "click"
+        },
+        {
+            content: "Write custom amount of 75 into field",
+
+            trigger: "input[name='custom_amount']",
+            run: "text 75.00"
+        },
+        {
+            content: "Click on Ok button",
+            trigger: "button:contains('Ok')",
+            run: "click"
+        },
+        {
+            content: "Verify update: Check if the price changed to 75",
+            trigger: `.donation-item-container:contains("${MOCK_TEST_DATA.product_name}"):contains("75")`,
+            run: function() { console.log("Item successfully updated to 75."); }
         }
     ]);
 });
