@@ -11,6 +11,7 @@
 import math
 from collections import defaultdict
 from datetime import datetime, timedelta
+import time
 
 from werkzeug.exceptions import BadRequest, NotFound
 
@@ -548,70 +549,55 @@ class MyCompassionDonationsController(CustomerPortal):
     )
     def init_add_payment_method(self, **kwargs):
         """
-        Initialize a validation transaction to save a new payment method (Token).
-        Injects session data to force PostFinance to show the generic selection page.
+        Initialize a zero-amount validation transaction so the donor can save a new
+        payment method (PostFinance token) from the "My Donations" area.
+        Returns the PostFinance redirect form as HTML.
         """
         partner = request.env.user.partner_id
-
-        # 1. Get the Acquirer (PostFinance)
         acquirer = self._get_payment_acquirer()
-        if not acquirer or not acquirer.exists():
-            return {'success': False, 'error': _('Payment provider (PostFinance) not found.')}
 
-        # 2. HACK: Inject "Generic Selection" parameters into Session
-        # This mimics what your CheckoutComponent does via JS, but server-side.
-        # method_id=0 tells PostFinance "Allow all methods".
-        # trans_interface='OFFSITE' tells the module to generate the Redirect URL.
+        if not acquirer:
+            return {'success': False, 'error': _('Payment provider (PostFinance) not configured.')}
+
+        # Force PostFinance to show the generic payment method selection screen
         request.session['postfinance_payment_method'] = {
-            'method_id': False,
+            'method_id': False,  # 0 = let customer choose
             'space_id': acquirer.postfinance_api_spaceid,
             'trans_interface': 'OFFSITE',
-            'one_click_mode': 'ALLOW',  # We generally want to allow saving for "Add Method"
-            'trans_id': False  # Clear any previous transaction reference
+            'one_click_mode': 'ALLOW',
+            'trans_id': False
         }
 
-        # 3. Generate a unique reference manually (Fixes "get_next_reference" error)
-        import time
-        reference = "VALIDATION-%s-%s" % (partner.id, int(time.time()))
-
-        # 4. Create the Validation Transaction
-        # amount=0.0 and type='validation' implies a "Save Card" intent.
-        transaction = request.env['payment.transaction'].sudo().create({
+        # Create validation transaction (amount = 0 → "save card only")
+        reference = f"VALIDATION-{partner.id}-{int(time.time())}"
+        request.env['payment.transaction'].sudo().create({
             'acquirer_id': acquirer.id,
             'type': 'validation',
             'amount': 0.0,
             'currency_id': request.env.company.currency_id.id,
             'partner_id': partner.id,
-            'partner_country_id': partner.country_id.id,
+            'partner_country_id': partner.country_id.id or False,
             'reference': reference,
             'return_url': '/my2/donations',
         })
 
-        # 5. Prepare Render Values
-        # Passing partner_id ensures address fields are populated (Avoiding the 'NoneType' crash)
-        render_values = {
-            'return_url': '/my2/donations',
-            'partner_id': partner.id,
-            'billing_partner_id': partner.id,
-        }
-
-        # 6. Render the hidden form
+        # Render the hidden redirect form
         try:
             form_html = acquirer.sudo().render(
                 reference,
                 0.0,
                 request.env.company.currency_id.id,
                 partner_id=partner.id,
-                values=render_values
+                values={
+                    'return_url': '/my2/donations',
+                    'partner_id': partner.id,
+                    'billing_partner_id': partner.id,
+                }
             )
-
-            # Decode bytes to string for JSON serialization
             if isinstance(form_html, bytes):
                 form_html = form_html.decode('utf-8')
-            return {
-                'success': True,
-                'form_html': form_html,
-            }
+
+            return {'success': True, 'form_html': form_html}
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
@@ -645,21 +631,3 @@ class MyCompassionDonationsController(CustomerPortal):
             .sudo()
             .search([("provider", "=", "postfinance")], limit=1)
         )
-
-
-    # TODO : Add payments tokens for the saved payments methods (If there are not linked to a contract)
-    def _get_payment_token(self, partner_id):
-        """
-        Helper method to retrieve all valid payment token (saved card) for the given partner.
-        """
-        tokens = (
-            request.env["payment.token"]
-            .sudo()
-            .search(
-                [
-                    ("partner_id", "=", partner_id),
-                    ("active", "=", True),
-                ]
-            )
-        )
-        return tokens
