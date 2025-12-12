@@ -20,13 +20,15 @@
         <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile.css" />
         <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile_timeline.css" />
         <t
-            t-set="is_sponsorship_active"
-            t-value="compassion_child.my_sponsorship_id and compassion_child.my_sponsorship_id.state=='active'"
+            t-set="is_sponsorship_terminated"
+            t-value="compassion_child.my_sponsorship_id and compassion_child.my_sponsorship_id.state=='terminated'"
         />
         <t t-call="website.layout">
             <div class="container">
                 <div class="single-column">
-                    <section t-attf-class="d-flex pt-4 flex#{'-md' if is_sponsorship_active else ''}-row flex-column">
+                    <section
+                        t-attf-class="d-flex pt-4 flex#{'-md' if not is_sponsorship_terminated else ''}-row flex-column"
+                    >
                         <div class="child-details-container">
                             <t t-call="theme_compassion_2025.PortraitComponent">
                                 <t t-set="title" t-value="compassion_child.preferred_name" />
@@ -63,7 +65,7 @@
                                 </span>
                             </div>
                         </div>
-                        <div t-if="is_sponsorship_active" class="d-flex flex-column flex-md-column-reverse">
+                        <div t-if="not is_sponsorship_terminated" class="d-flex flex-column flex-md-column-reverse">
                             <div class="child-action-buttons justify-content-md-start ml-md-3 pb-3 p-md-0">
                                 <t
                                     t-if="access_scope == 'sponsor' and compassion_child.can_i_write_letter"
@@ -153,7 +155,7 @@
                             </div>
                         </div>
                     </section>
-                    <section t-if="is_sponsorship_active" class="child-related-information tabs-component">
+                    <section t-if="not is_sponsorship_terminated" class="child-related-information tabs-component">
                         <div class="child-select d-block d-md-none">
                             <select class="form-control custom-select" id="child-info-tabs-mobile">
                                 <option value="#family-tab" selected="1">My Family</option>
@@ -417,7 +419,7 @@
                         </div>
                     </section>
                     <section
-                        t-if="access_scope == 'sponsor' and is_sponsorship_active"
+                        t-if="access_scope == 'sponsor' and not is_sponsorship_terminated"
                         class="cd-weather-map-container js-cd-weather-map-container"
                         style="position: relative;"
                         t-att-data-child-id="compassion_child.id"
@@ -477,7 +479,7 @@
                 </div>
             </section>
         </t>
-        <t t-if="is_sponsorship_active">
+        <t t-if="not is_sponsorship_terminated">
             <script type="text/javascript" src="/my_compassion/static/src/js/child_profile_tabs.js" />
             <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_center_weather_time.js" />
         </t>
