@@ -19,7 +19,7 @@
     <template id="my2_child_timeline_page" name="My Compassion 2 Child Timeline Page">
         <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile.css" />
         <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile_timeline.css" />
-        <t t-set="is_sponsorship_active" t-value="compassion_child.my_sponsorship_id.state=='active'" />
+<t t-set="is_sponsorship_active" t-value="compassion_child.my_sponsorship_id and compassion_child.my_sponsorship_id.state=='active'" />
         <t t-call="website.layout">
             <div class="container">
                 <div class="single-column">
