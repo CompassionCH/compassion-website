@@ -169,7 +169,7 @@ class ContractGroup(models.Model):
         Returns a tuple: (group_record, message_string)
         """
         if not transaction or not transaction.payment_token_id:
-            return self.browse(), _("No valid payment method found.")
+            return self.browse(), "No valid payment method found."
 
         token = transaction.payment_token_id
 
@@ -180,12 +180,12 @@ class ContractGroup(models.Model):
         ], limit=1)
 
         if existing_group:
-            return existing_group, _("This payment method is already saved.")
+            return existing_group, "This payment method was already saved."
 
 
         # 2. Identify Payment Mode from Token Name>
-        # Strategy: The first part of the token name (before '-') is the method name (e.g. "MasterCard-123" -> "MasterCard")
-        token_name_parts = token.name.split('-')
+        # Strategy: The first part of the token name (before '_') is the method name (e.g. "MasterCard_123" -> "MasterCard")
+        token_name_parts = token.name.split('_')
         method_name = token_name_parts[0].strip() if token_name_parts else token.name
 
         # Search for payment mode matching the brand name
@@ -194,8 +194,8 @@ class ContractGroup(models.Model):
         ], limit=1)
 
         if not payment_mode:
-            # Payment mode should have been validated
-            msg = _("Unable to add the payment method.")
+            # Payment mode should have been validated to be used
+            msg = "Unable to add the payment method."
             return self.browse(), msg
 
         # Construct Name/Ref
@@ -212,4 +212,4 @@ class ContractGroup(models.Model):
         }
 
         group = self.create(vals)
-        return group,  _("Payment method added successfully.")
+        return group, "Payment method added successfully."
