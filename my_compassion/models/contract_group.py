@@ -26,7 +26,7 @@ class ContractGroup(models.Model):
                 ).mapped("total_amount")
             )
 
-    # TODO : Revise this method once final logic and needs are clarified
+    # TODO: Revise this method once final logic and needs are clarified
     def get_payment_method_info(self):
         """
         Returns a dict containing display info for the group's payment method.
@@ -166,29 +166,24 @@ class ContractGroup(models.Model):
     def create_from_transaction(self, transaction):
         """
         Creates an inactive contract group from a validation transaction.
+        Returns a tuple: (group_record, message_string)
         """
-        if not transaction:
-            print("create_from_transaction: No transaction provided.")
-            return self.browse()
+        if not transaction or not transaction.payment_token_id:
+            return self.browse(), _("No valid payment method found.")
 
-        # Check Token
         token = transaction.payment_token_id
-        if not token:
-            # Optional: Try to refetch if timing issue (though controller fix handles this)
-            # transaction.refresh()
-            return self.browse()
 
-        # 1. Check for existing groups with the same token
-        # If we find a group (active or inactive) that is already linked to this exact token, reuse it.
-        existing_group = self.search([
+        # Reuse existing inactive group if one already exists for this token + partner
+        existing_group = self.with_context(active_test=False).search([
             ('partner_id', '=', transaction.partner_id.id),
             ('payment_token_id', '=', token.id)
         ], limit=1)
 
         if existing_group:
-            return existing_group
+            return existing_group, _("This payment method is already saved.")
 
-        # 2. Identify Payment Mode from Token Name
+
+        # 2. Identify Payment Mode from Token Name>
         # Strategy: The first part of the token name (before '-') is the method name (e.g. "MasterCard-123" -> "MasterCard")
         token_name_parts = token.name.split('-')
         method_name = token_name_parts[0].strip() if token_name_parts else token.name
@@ -199,15 +194,9 @@ class ContractGroup(models.Model):
         ], limit=1)
 
         if not payment_mode:
-            # Fallback: Try finding via Journal from Acquirer
-            journal = transaction.acquirer_id.journal_id
-            if journal:
-                payment_mode = self.env['account.payment.mode'].sudo().search([
-                    ('fixed_journal_id', '=', journal.id)
-                ], limit=1)
-
-            if not payment_mode:
-                return self.browse()
+            # Payment mode should have been validated
+            msg = _("Unable to add the payment method.")
+            return self.browse(), msg
 
         # Construct Name/Ref
         ref = token.name
@@ -216,7 +205,6 @@ class ContractGroup(models.Model):
             'partner_id': transaction.partner_id.id,
             'payment_mode_id': payment_mode.id,
             'payment_token_id': token.id,
-            'gender': token.partner_id.gender,
             'ref': ref,
             'active': True,
             'recurring_unit': 'month',
@@ -224,4 +212,4 @@ class ContractGroup(models.Model):
         }
 
         group = self.create(vals)
-        return group
+        return group,  _("Payment method added successfully.")
