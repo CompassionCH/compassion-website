@@ -135,7 +135,8 @@ class MyCompassionSponsorshipsController(WebsiteChild):
         child_obj = request.env["compassion.child"]
         total_results = child_obj.search_count(domain)
 
-        child_id = None
+        child = None
+        html_content = ""
         if total_results != 0:
             children = child_obj.search(
                 domain,
@@ -143,10 +144,20 @@ class MyCompassionSponsorshipsController(WebsiteChild):
                 offset=random.randint(0, total_results - 1),
             )
 
-            child_id = children[0].id if children else None
+            if children[0]:
+                child = children[0]
+
+                html_content = request.env["ir.qweb"]._render(
+                    "my_compassion.my2_sponsorships_results_content",
+                    {
+                        "children": children,
+                        "sponsorship_type": post.get("sponsorship_type", "standard"),
+                    },
+                )
 
         return {
-            "child_id": child_id,
+            "child_id": child.id,
+            "html": html_content,
         }
 
     @classmethod

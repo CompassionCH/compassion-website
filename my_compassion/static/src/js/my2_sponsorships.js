@@ -68,6 +68,28 @@ document.addEventListener("DOMContentLoaded", function (event) {
             },
 
             /**
+             * Appends HTML to a container and applies a staggered animation.
+             * * @param {string} htmlContent - The raw HTML string (e.g., data.html)
+             * @param {jQuery} $container  - The jQuery object to append to (e.g., $resultsContainer)
+             */
+            _appendAndAnimate: function (htmlContent, $container) {
+                // 1. Create jQuery objects from the HTML and add the initial class
+                const $newItems = $(htmlContent).addClass("animate-in");
+
+                // 2. Append the new results to the container
+                $container.append($newItems);
+
+                // 3. Loop over each new item to apply the staggered delay
+                $newItems.each(function (index) {
+                    var self = this;
+                    // Apply 100ms base delay + 50ms per item
+                    setTimeout(function () {
+                        $(self).addClass("show");
+                    }, 100 + index * 50);
+                });
+            },
+
+            /**
              * Fetches and displays the next batch of sponsorships from the backend.
              * @private
              */
@@ -107,19 +129,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
                             if (data.count && data.html) {
                                 // Parse the HTML string into jQuery objects and add the initial animation class.
-                                const $newItems = $(data.html).addClass("animate-in");
-
-                                // Append the new results
-                                $resultsContainer.append($newItems);
-
-                                // Loop over each new item to apply a staggered delay
-                                $newItems.each(function (index) {
-                                    // Apply 50ms offset + slight delay to give the browser a moment to apply the initial styles
-                                    var self = this;
-                                    setTimeout(function () {
-                                        $(self).addClass("show");
-                                    }, 100 + index * 50);
-                                });
+                                this._appendAndAnimate(data.html, $resultsContainer);
 
                                 // Update the count of loaded results
                                 this.resultsLoaded += data.count;
@@ -249,9 +259,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     .then(
                         function (data) {
                             if (data.child_id) {
-                                // Redirect to new sponsorship page
-                                window.location.href =
-                                    "/my2/new-sponsorship/" + data.child_id + "?type=" + this.sponsorship_type;
+                                // Delete all the current results
+                                this.$(".sponsorships-results-content").empty();
+                                this._appendAndAnimate(data.html, this.$(".sponsorships-results-content"));
                             }
                             this.$(".btn").prop("disabled", false);
                         }.bind(this)
