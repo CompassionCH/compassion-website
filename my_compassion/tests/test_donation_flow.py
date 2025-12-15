@@ -298,7 +298,7 @@ class TestDonationFlow(HttpCase):
 
 
     def test_add_several_gifts(self):
-        _logger.info("START TEST: test_full_flow_add_and_remove_item")
+        _logger.info("START TEST: test_add_several_gifts")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
         tour_name = "single_one_time_gift_with_suggested_amount"
