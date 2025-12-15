@@ -27,7 +27,7 @@ odoo.define('compassion_website.donation_tour', function (require) {
             run: "click"
         },
         {
-            content: "Select suggestion 'Medium' amount",
+            content: "Select suggestion 'Low' amount",
             trigger: ".my2_donation_form label[for='donation-suggested-low']",
             run: "click"
         },
