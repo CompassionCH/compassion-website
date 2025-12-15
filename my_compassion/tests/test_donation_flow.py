@@ -255,7 +255,7 @@ class TestDonationFlow(HttpCase):
         self.assertEqual(current_order.cart_quantity, 1, "ERROR: Should be exactly one current draft order.")
         self.assertEqual(target_line.price_unit, self.MOCK_TEST_DATA['price'],"ERROR: The price of the order line does not match the expected price.")
         self.assertEqual(target_line.product_uom_qty, 1.0, "ERROR: Amount should be 1.")
-        self.assertEqual(target_line.frequency, 'monthly', "ERROR: The frequency of the order line is not set to one_time.")
+        self.assertEqual(target_line.frequency, 'monthly', "ERROR: The frequency of the order line is not set to 'monthly'.")
         self.assertEqual(current_order.amount_total, self.MOCK_TEST_DATA['price'], "ERROR: The total amount of the order does not match the expected price.")
 
 
