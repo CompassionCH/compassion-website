@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
         var publicWidget = require("web.public.widget");
         var rpc = require("web.rpc");
+        var core = require("web.core");
+        var _t = core._t;
 
         publicWidget.registry.Sponsorships = publicWidget.Widget.extend({
             selector: ".sponsorships-body-container",
@@ -18,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 'change input[type="radio"][name="gender"]': "_onGenderChange",
                 "click #btn-more": "_onShowMore",
                 "click #btn-choose": "_onChooseRandom",
+                "click #btn-choose-again": "_onChooseRandom",
             },
 
             custom_events: {
@@ -42,6 +45,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 this.resultsPerBatch = 20;
                 this.resultsLoaded = 0;
                 this.totalResults = 0;
+                // Id of the randomly sampled child, mostly used to see if sampling happened and condition the UI (Button visibility)
+                // If null, no child sampled. This is reset on each filter change.
+                this.randomlySampledChildId = null;
 
                 this.sponsorship_type = this.$el.data("sponsorship-type");
 
@@ -60,6 +66,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
              */
             _refreshResults: function () {
                 this.$(".sponsorships-results-content").empty();
+                this.randomlySampledChildId = null;
                 this.resultsLoaded = 0;
                 this.totalResults = 0;
                 this._updateTotalResultsLabel();
@@ -179,10 +186,16 @@ document.addEventListener("DOMContentLoaded", function (event) {
              * @private
              */
             _updateChooseForMeButton: function () {
-                if (this.totalResults == 0) {
+                if (this.totalResults == 0 || this.randomlySampledChildId) {
                     this.$("#btn-choose").hide();
+                    if (this.randomlySampledChildId) {
+                        this.$("#btn-choose-again").show().prop("disabled", false);
+                        this.$("#btn-see-all-children").show().prop("disabled", false);
+                    }
                 } else {
                     this.$("#btn-choose").show().prop("disabled", false);
+                    this.$("#btn-choose-again").hide();
+                    this.$("#btn-see-all-children").hide();
                 }
             },
 
@@ -259,8 +272,11 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     .then(
                         function (data) {
                             if (data.child_id) {
+                                this.randomlySampledChildId = data.child_id;
+                                this._updateChooseForMeButton();
                                 // Delete all the current results
                                 this.$(".sponsorships-results-content").empty();
+
                                 this._appendAndAnimate(data.html, this.$(".sponsorships-results-content"));
                             }
                             this.$(".btn").prop("disabled", false);
