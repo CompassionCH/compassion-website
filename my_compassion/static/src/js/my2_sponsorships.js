@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 "click #btn-more": "_onShowMore",
                 "click #btn-choose": "_onChooseRandom",
                 "click #btn-choose-again": "_onChooseRandom",
+                "click #btn-see-all-children": "_refreshResults",
             },
 
             custom_events: {
