@@ -223,11 +223,11 @@ class TestDonationFlow(HttpCase):
         self.assertEqual(target_line.frequency, 'one_time', "ERROR: The frequency of the order line is not set to one_time.")
         self.assertEqual(current_order.amount_total, self.CUSTOM_AMOUNT_TEST, "ERROR: The total amount of the order does not match the expected price.")
 
-    def test_single_monthly_gift_with_suggested_amount(self):
-        _logger.info("START TEST: single_monthly_gift_with_suggested_amount")
+    def test_single_monthly_fund_with_suggested_amount(self):
+        _logger.info("START TEST: single_monthly_fund_with_suggested_amount")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
-        tour_name = "single_monthly_gift_with_suggested_amount"
+        tour_name = "single_monthly_fund_with_suggested_amount"
 
         self.browser_js(
             url_path=start_url,
