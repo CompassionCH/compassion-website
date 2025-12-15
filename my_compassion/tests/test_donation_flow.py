@@ -223,11 +223,11 @@ class TestDonationFlow(HttpCase):
         self.assertEqual(target_line.frequency, 'one_time', "ERROR: The frequency of the order line is not set to one_time.")
         self.assertEqual(current_order.amount_total, self.CUSTOM_AMOUNT_TEST, "ERROR: The total amount of the order does not match the expected price.")
 
-    def test_single_monthly_fund_with_suggested_amount(self):
-        _logger.info("START TEST: single_monthly_fund_with_suggested_amount")
+    def test_single_monthly_gift_with_suggested_amount(self):
+        _logger.info("START TEST: single_monthly_gift_with_suggested_amount")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
-        tour_name = "single_monthly_fund_with_suggested_amount"
+        tour_name = "single_monthly_gift_with_suggested_amount"
 
         self.browser_js(
             url_path=start_url,
@@ -255,7 +255,7 @@ class TestDonationFlow(HttpCase):
         self.assertEqual(current_order.cart_quantity, 1, "ERROR: Should be exactly one current draft order.")
         self.assertEqual(target_line.price_unit, self.MOCK_TEST_DATA['price'],"ERROR: The price of the order line does not match the expected price.")
         self.assertEqual(target_line.product_uom_qty, 1.0, "ERROR: Amount should be 1.")
-        self.assertEqual(target_line.frequency, 'monthly', "ERROR: The frequency of the order line is not set to one_time.")
+        self.assertEqual(target_line.frequency, 'monthly', "ERROR: The frequency of the order line is not set to 'monthly'.")
         self.assertEqual(current_order.amount_total, self.MOCK_TEST_DATA['price'], "ERROR: The total amount of the order does not match the expected price.")
 
 
@@ -296,7 +296,7 @@ class TestDonationFlow(HttpCase):
 
 
     def test_add_several_funds(self):
-        _logger.info("START TEST: test_full_flow_add_and_remove_item")
+        _logger.info("START TEST: test_add_several_gifts")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
         tour_name = "single_one_time_fund_with_suggested_amount"
