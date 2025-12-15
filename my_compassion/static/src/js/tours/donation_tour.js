@@ -44,9 +44,7 @@ odoo.define('compassion_website.donation_tour', function (require) {
         {
             content: "Check if the product is in the list",
             trigger: `body:has(div:contains("${MOCK_TEST_DATA.product_name}")), body:has(td:contains("${MOCK_TEST_DATA.product_name}"))`,
-            run: function () {
-                console.log("Product successfully found in cart!");
-            }
+            run: function () {}
         },
         {
             content: "Check total amount before delete (CHF 50)",
@@ -97,9 +95,7 @@ odoo.define('compassion_website.donation_tour', function (require) {
         {
             content: "Check if the product is in the list",
             trigger: `body:has(div:contains("${MOCK_TEST_DATA.product_name}")), body:has(td:contains("${MOCK_TEST_DATA.product_name}"))`,
-            run: function () {
-                console.log("Product successfully found in cart!");
-            }
+            run: function () {}
         },
     ]);
 
@@ -140,9 +136,7 @@ odoo.define('compassion_website.donation_tour', function (require) {
         {
             content: "Check if the product is in the list",
             trigger: `body:has(div:contains("${MOCK_TEST_DATA.product_name}")), body:has(td:contains("${MOCK_TEST_DATA.product_name}"))`,
-            run: function () {
-                console.log("Product successfully found in cart!");
-            }
+            run: function () {}
         },
         {
             content: "Check total amount before delete (CHF 50)",
@@ -193,9 +187,7 @@ odoo.define('compassion_website.donation_tour', function (require) {
         {
             content: "Check if the product is in the list",
             trigger: `body:has(div:contains("${MOCK_TEST_DATA.product_name}")), body:has(td:contains("${MOCK_TEST_DATA.product_name}"))`,
-            run: function () {
-                console.log("Product successfully found in cart!");
-            }
+            run: function () {}
         },
     ]);
 
