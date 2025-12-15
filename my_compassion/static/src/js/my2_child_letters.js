@@ -13,6 +13,7 @@ odoo.define("my_compassion.my2_child_letters", function (require) {
     document.querySelectorAll(".my2-envelope").forEach((envelope) => {
         envelope.addEventListener("click", function () {
             const letter = envelope.querySelector(".env-letter");
+            const target = envelope.dataset.target || "_self";
 
             if (!envelope.classList.contains("already-read")) {
                 // Iframe
@@ -42,7 +43,7 @@ odoo.define("my_compassion.my2_child_letters", function (require) {
                 setTimeout(function () {
                     const href = envelope.getAttribute("href");
                     if (href) {
-                        window.location.href = href;
+                        window.open(href, target);
                     }
                 }, 1400);
             } else {
@@ -52,7 +53,7 @@ odoo.define("my_compassion.my2_child_letters", function (require) {
                 setTimeout(function () {
                     const href = envelope.getAttribute("href");
                     if (href) {
-                        window.location.href = href;
+                        window.open(href, target);
                     }
                 }, 600);
             }
