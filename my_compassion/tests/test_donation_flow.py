@@ -35,7 +35,8 @@ class TestDonationFlow(HttpCase):
         - Only persists for the duration of the test run.
         """
         _logger.info(
-            "SETUP (WEBSITE): Configuring MyCompassion as target website for the environment."
+            "SETUP (WEBSITE): Configuring MyCompassion as target website for the "
+            "environment."
         )
 
         target_website = (
@@ -137,6 +138,7 @@ class TestDonationFlow(HttpCase):
             {"name": "Test Pictogram Heart", "svg_file": svg_b64}
         )
 
+        amounts = self.MOCK_TEST_DATA["amounts"]
         self.donation_product = self.env["product.template"].create(
             {
                 "name": self.MOCK_TEST_DATA["product_name"],
@@ -149,15 +151,9 @@ class TestDonationFlow(HttpCase):
                 "my_compassion_pictogram": pictogram.id,
                 "my_compassion_image": image_b64,
                 "website_published": True,
-                "my_compassion_donation_quantity_low": self.MOCK_TEST_DATA["amounts"][
-                    "low"
-                ],
-                "my_compassion_donation_quantity_medium": self.MOCK_TEST_DATA[
-                    "amounts"
-                ]["medium"],
-                "my_compassion_donation_quantity_high": self.MOCK_TEST_DATA["amounts"][
-                    "high"
-                ],
+                "my_compassion_donation_quantity_low": amounts["low"],
+                "my_compassion_donation_quantity_medium": amounts["medium"],
+                "my_compassion_donation_quantity_high": amounts["high"],
             }
         )
 
