@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
         var publicWidget = require("web.public.widget");
         var rpc = require("web.rpc");
         var core = require("web.core");
-        var _t = core._t;
 
         publicWidget.registry.Sponsorships = publicWidget.Widget.extend({
             selector: ".sponsorships-body-container",
@@ -180,12 +179,13 @@ document.addEventListener("DOMContentLoaded", function (event) {
              */
             _updateTotalResultsLabel: function () {
                 if (this.randomlySampledChildId) {
+                    // If a child has been randomly sampled, show the appropriate message
                     this.$("#total-children-found-message").hide();
                     this.$("#randomly-chosen-child-message").show();
                 } else {
                     this.$("#total-children-found-message").show();
                     this.$("#randomly-chosen-child-message").hide();
-
+                    // Update the total results count
                     this.$("#total-results").text(this.totalResults);
                 }
             },
