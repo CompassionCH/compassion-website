@@ -179,7 +179,15 @@ document.addEventListener("DOMContentLoaded", function (event) {
              * @private
              */
             _updateTotalResultsLabel: function () {
-                this.$("#total-results").text(this.totalResults);
+                if (this.randomlySampledChildId) {
+                    this.$("#total-children-found-message").hide();
+                    this.$("#randomly-chosen-child-message").show();
+                } else {
+                    this.$("#total-children-found-message").show();
+                    this.$("#randomly-chosen-child-message").hide();
+
+                    this.$("#total-results").text(this.totalResults);
+                }
             },
 
             /**
@@ -189,9 +197,13 @@ document.addEventListener("DOMContentLoaded", function (event) {
             _updateChooseForMeButton: function () {
                 if (this.totalResults == 0 || this.randomlySampledChildId) {
                     this.$("#btn-choose").hide();
+                    // If a child has been randomly sampled, update the UI
                     if (this.randomlySampledChildId) {
+                        //Show the "Choose again" and "See all children" buttons
                         this.$("#btn-choose-again").show().prop("disabled", false);
                         this.$("#btn-see-all-children").show().prop("disabled", false);
+                        //Hide the number of results label
+                        this.$("#total-results-container").hide();
                     }
                 } else {
                     this.$("#btn-choose").show().prop("disabled", false);
@@ -275,6 +287,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                             if (data.child_id) {
                                 this.randomlySampledChildId = data.child_id;
                                 this._updateChooseForMeButton();
+                                this._updateTotalResultsLabel();
                                 // Delete all the current results
                                 this.$(".sponsorships-results-content").empty();
 
