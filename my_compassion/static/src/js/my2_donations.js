@@ -121,48 +121,6 @@ odoo.define('my_compassion.my2_donations', function (require) {
             var $modalAdd = $('#payment_method_selector_modal_add');
             var $container = $modalAdd.find('#add_payment_method_container');
 
-            this._rpc({
-                route: '/my2/donation/add/init',
-                params: {}
-            }).then(function (result) {
-                if (result.success) {
-
-                    // Create a virtual form to handle the redirection
-                    var postForm = document.createElement('form');
-                    postForm.setAttribute("method", "POST");
-                    postForm.setAttribute("provider", "postfinance");
-                    postForm.hidden = true;
-
-                    // Inject the inputs we got from the controller
-                    postForm.innerHTML = result.form_html;
-
-                    // Use jQuery to find the input within the new form
-                    var $postForm = $(postForm);
-                    var $dataSetInput = $postForm.find('input[name="data_set"]');
-
-                    // robustness: try data() first, then attr()
-                    var actionUrl = $dataSetInput.data('actionUrl') || $dataSetInput.attr('data-action-url');
-                    var directUrl = $postForm.find('input[name="postfinance_tx_url"]').val();
-
-                    console.log("Redirection info:", { actionUrl: actionUrl, directUrl: directUrl });
-
-                    if (actionUrl) {
-                        postForm.setAttribute("action", actionUrl);
-                        $('body').append(postForm); // Append to body to ensure submit works
-                        postForm.submit();
-                    } else if (directUrl) {
-                        // Fallback: Direct redirect if Odoo's redirect controller url is missing
-                        window.location = directUrl;
-                    } else {
-                        $container.html($('<div class="alert alert-danger"/>').text(_t("Could not find redirection URL.")));
-                    }
-
-                } else {
-                    $container.html($('<div class="alert alert-danger"/>').text(result.error));
-                }
-            }).catch(function (error) {
-                console.error(error);
-            });
 
             $modalAdd.modal('show');
         },

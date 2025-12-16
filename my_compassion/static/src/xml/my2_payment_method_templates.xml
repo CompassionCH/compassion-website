@@ -108,8 +108,8 @@
                 </div>
             </div>
 
-        <!-- Section 2: Switch Method -->
-        <div class="border-bottom">
+            <!-- Section 2: Switch Method -->
+            <div class="border-bottom">
             <div class="card-header bg-white border-0 p-0" id="headingList">
                 <h5 class="mb-0">
                     <button class="btn btn-link btn-block text-left text-dark-blue font-weight-bold d-flex justify-content-between align-items-center text-decoration-none collapsed"
@@ -119,7 +119,7 @@
                     </button>
                 </h5>
             </div>
-            <div id="collapseList" class="collapse" aria-labelledby="headingList" data-parent="#payment_method_accordion">
+                <div id="collapseList" class="collapse" aria-labelledby="headingList" data-parent="#payment_method_accordion">
                 <div class="pt-3" id="payment_methods_switch_container"/>
             </div>
         </div>
@@ -157,51 +157,15 @@
     <!--
         Payment Method Update Form
         Injected data :
-        - is_card: Boolean indicating if the payment method is a card.
         - ref_number: Reference number or last 4 digits of the card.
-        - holder_name: Name of the cardholder.
-        - expire_date: Expiration date of the card.
     -->
     <t t-name="my_compassion.PaymentMethodUpdateForm">
         <div class="payment-update-form text-left">
-            <t t-if="is_card">
-                <!-- Card Number (Read Only usually) -->
-                <t t-call="my_compassion.FormFieldComponent">
-                    <t t-set="label">Card Number</t>
-                    <t t-set="name">card_number</t>
-                    <t t-set="value" t-value="ref_number"/>
-                </t>
-                <!-- Cardholder Name -->
-                <t t-call="my_compassion.FormFieldComponent">
-                    <t t-set="label">Cardholder Name</t>
-                    <t t-set="name">cardholder_name</t>
-                    <t t-set="value" t-value="holder_name"/>
-                </t>
-                <div class="form-row">
-                    <div class="col-6">
-                        <t t-call="my_compassion.FormFieldComponent">
-                            <t t-set="label">Expiry Date</t>
-                            <t t-set="name">expiry</t>
-                            <t t-set="value" t-value="expire_date"/>
-                            <t t-set="placeholder">MM/YY</t>
-                        </t>
-                    </div>
-                    <div class="col-6">
-                        <t t-call="my_compassion.FormFieldComponent">
-                            <t t-set="label">CVV</t>
-                            <t t-set="name">cvv</t>
-                            <t t-set="placeholder">123</t>
-                        </t>
-                    </div>
-                </div>
-            </t>
-            <t t-else="">
                 <!-- Fallback for non-card methods (like LSV, BVR reference) -->
-                <t t-call="my_compassion.FormFieldComponent">
-                    <t t-set="label">Reference Number</t>
-                    <t t-set="name">ref_number</t>
-                    <t t-set="value" t-value="ref_number"/>
-                </t>
+            <t t-call="my_compassion.FormFieldComponent">
+                <t t-set="label">Reference Number</t>
+                <t t-set="name">ref_number</t>
+                <t t-set="value" t-value="ref_number"/>
             </t>
         </div>
     </t>
