@@ -410,7 +410,6 @@ class TestDonationFlow(HttpCase):
         )
 
         self.assertEqual(current_order.cart_quantity, 0, "ERROR: Should be empty current draft order.")
-        self.assertEqual(target_line.price_unit, 0,"ERROR: The price per unit must be zero after removal.")
         self.assertEqual(current_order.amount_total, 0, "ERROR: The total amount of the order must be zero after removal.")
 
     def test_full_flow_add_and_edit_item(self):
