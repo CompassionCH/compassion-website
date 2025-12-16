@@ -63,6 +63,7 @@
                     <div class="cd-timeline__img bg-core-blue">
                         <a
                             t-att-href="'/b2s_image?id=' + item['record_id'] + '&amp;disposition=inline&amp;file_type=pdf'"
+                            t-att-target="'_blank'"
                             class="flex items-center justify-center w-full h-full rounded-full"
                         >
                             <i class="pictogram pictogram-letter-writing bg-pure-white" />
@@ -71,6 +72,7 @@
                     <a
                         class="cd-timeline__content text-component text-decoration-none"
                         t-att-href="'/b2s_image?id=' + item['record_id'] + '&amp;disposition=inline&amp;file_type=pdf'"
+                        t-att-target="'_blank'"
                     >
                         <p class="modal-title text-core-blue">
                             <t t-esc="item['title']" />
