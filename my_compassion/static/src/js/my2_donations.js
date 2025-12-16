@@ -30,7 +30,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
          * Widget Initialization
          */
         start: function () {
-            console.log("My2Donations Public Widget started.");
             var self = this;
 
             // 1. Global Listener for Modal Hidden (Cleanup)
@@ -103,14 +102,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
             var contractId = detail ? detail.contract_id : null;
             var childName = detail ? detail.child_name : null;
 
-            console.log(
-                "Opening Payment Method Change Modal for Group ID:",
-                groupId,
-                "Contract ID:",
-                contractId,
-                "Child Name:",
-                childName
-            );
             var $modalChange = $("#payment_method_selector_modal_change");
             $modalChange
                 .find("#modal_description")
@@ -167,7 +158,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
             var $modal = $btn.closest(".modal");
             var modalType = $modal.data("modal-type");
 
-            console.log("Saving Payment Method. Type:", modalType);
             $btn.prop("disabled", true).prepend('<i class="fa fa-spinner fa-spin mr-1"/>');
 
             var promise;
@@ -188,7 +178,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 // CASE 2: UPDATE (Group Level) - Merge or Edit Details
             } else if (modalType == "update") {
                 var currentGroupId = $modal.data("group-id");
-                console.log("ID:" + currentGroupId);
 
                 var params = {
                     group_id: currentGroupId,
@@ -224,7 +213,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
                     return;
                 }
 
-                console.log("Updating Group Method params:", params);
                 promise = this._rpc({
                     route: "/my2/donation/change_method_group",
                     params: params,
@@ -247,9 +235,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 } else {
                     $modal.find('input[name="bvr_reference"]').removeClass("is-invalid");
                 }
-
-                console.log("Adding New Method:", { methodType, bvrRef });
-
+                
                 promise = this._rpc({
                     route: "/my2/donation/add_payment_method_group",
                     params: {
