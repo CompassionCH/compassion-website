@@ -198,8 +198,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 if (this.randomlySampledChildId) {
                     // A child has been randomly chosen
                     this.$("#btn-choose").hide();
-                    this.$("#btn-choose-again").show().prop("disabled", false);
-                    this.$("#btn-see-all-children").show().prop("disabled", false);
+                    this.$("#btn-choose-again").show();
+                    this.$("#btn-see-all-children").show();
                 } else {
                     // Normal view (all children or no results)
                     this.$("#btn-choose-again").hide();
