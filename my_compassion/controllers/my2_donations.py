@@ -11,11 +11,10 @@
 import math
 from collections import defaultdict
 from datetime import datetime, timedelta
-import time
 
 from werkzeug.exceptions import BadRequest, NotFound
 
-from odoo import fields, http, _
+from odoo import _, fields, http
 from odoo.http import request
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
@@ -401,7 +400,7 @@ class MyCompassionDonationsController(CustomerPortal):
         active_sponsorships = partner.get_portal_sponsorships("active")
 
         # Group sponsorships by their backend Contract Group
-        sponsorship_groups = active_sponsorships.mapped('group_id')
+        sponsorship_groups = active_sponsorships.mapped("group_id")
 
         # Put all payment methods into an array
         all_groups = partner.get_payment_modes()
@@ -476,12 +475,11 @@ class MyCompassionDonationsController(CustomerPortal):
 
         return {"html": html}
 
-
     @http.route(
-        '/my2/donations/get_payment_methods_sponsor',
+        "/my2/donations/get_payment_methods_sponsor",
         type="json",
-        auth='user',
-        website=True
+        auth="user",
+        website=True,
     )
     def get_payment_methods_sponsor(self, **kwargs):
         """
@@ -496,18 +494,14 @@ class MyCompassionDonationsController(CustomerPortal):
             if not info:
                 continue
             method = dict(info)
-            method['group_id'] = group.id
+            method["group_id"] = group.id
 
             payment_methods.append(method)
 
         return payment_methods
 
-
     @http.route(
-        '/my2/donation/change_method_contract',
-        type='json',
-        auth='user',
-        website=True
+        "/my2/donation/change_method_contract", type="json", auth="user", website=True
     )
     def change_payment_method_contract(self, contract_id, group_id, **kwargs):
         """
@@ -521,23 +515,22 @@ class MyCompassionDonationsController(CustomerPortal):
             raise BadRequest()
         # Verify that the contract belongs to the user
         contract = (
-            request.env['recurring.contract']
+            request.env["recurring.contract"]
             .sudo()
-            .search([('id', '=', int(contract_id)), ('partner_id', '=', partner.id)])
+            .search([("id", "=", int(contract_id)), ("partner_id", "=", partner.id)])
         )
         if not contract:
             raise NotFound()
 
         success = contract.change_contract_group(int(group_id))
-        return {'success': success}
+        return {"success": success}
 
     @http.route(
-        '/my2/donation/change_method_group',
-        type='json',
-        auth='user',
-        website=True
+        "/my2/donation/change_method_group", type="json", auth="user", website=True
     )
-    def change_payment_method_group(self, group_id, new_group_id=None, new_bvr_ref=None, **kwargs):
+    def change_payment_method_group(
+        self, group_id, new_group_id=None, new_bvr_ref=None, **kwargs
+    ):
         """
         Endpoint to change payment method for a sponsorship group.
         Accepts new_group_id (to merge) or new_bvr_ref (to update ref).
@@ -548,22 +541,105 @@ class MyCompassionDonationsController(CustomerPortal):
             raise BadRequest(_("Group ID is required."))
 
         # Security Check: Search ensures the group belongs to the logged-in user
-        group = request.env['recurring.contract.group'].sudo().search([
-            ('id', '=', int(group_id)),
-            ('partner_id', '=', partner.id)
-        ], limit=1)
+        group = (
+            request.env["recurring.contract.group"]
+            .sudo()
+            .search(
+                [("id", "=", int(group_id)), ("partner_id", "=", partner.id)], limit=1
+            )
+        )
 
         if not group:
             raise NotFound(_("Payment group not found or access denied."))
 
         # Call the model method to perform the logic
         success = group.change_payment_method(
-            new_group_id=new_group_id,
-            new_bvr_ref=new_bvr_ref
+            new_group_id=new_group_id, new_bvr_ref=new_bvr_ref
         )
 
-        return {'success': success}
+        return {"success": success}
 
+    # Configuration for supported manual payment methods
+    # Key: frontend 'value' from the select input
+    # Value: 'name' (or partial name) to search for in account.payment.mode
+    _payment_mode_map = {
+        "permanent_order": "Permanent Order",
+        "lsv": "LSV",
+        "bvr": "BVR",
+    }
+
+    @http.route(
+        "/my2/donation/add_payment_method_group", type="json", auth="user", website=True
+    )
+    def add_payment_method_group(
+        self,
+        bvr_reference,
+        recurring_unit="month",
+        method_type="bvr",
+        advance_billing_months=1,
+        **kwargs,
+    ):
+        """
+        Creates a new Contract Group with manual BVR/LSV/Permanent Order details.
+        """
+        partner = request.env.user.partner_id
+
+        if not bvr_reference:
+            return {"success": False, "error": _("Reference is required.")}
+
+        # 1. Resolve Payment Mode Search Term
+        mode_search_term = self._payment_mode_map.get(method_type)
+
+        if not mode_search_term:
+            return {
+                "success": False,
+                "error": _("Invalid payment method type selected."),
+            }
+
+        # 2. Find the Payment Mode
+        # Exact match attempt
+        payment_mode = (
+            request.env["account.payment.mode"]
+            .sudo()
+            .search([("name", "=", mode_search_term)], limit=1)
+        )
+
+        # Fallback: Loose search (ilike) if exact match fails
+        if not payment_mode:
+            payment_mode = (
+                request.env["account.payment.mode"]
+                .sudo()
+                .search([("name", "ilike", mode_search_term)], limit=1)
+            )
+
+        if not payment_mode:
+            return {
+                "success": False,
+                "error": _('Configuration Error: Payment mode "%s" not found.')
+                % mode_search_term,
+            }
+
+        # 3. Create the Group
+        try:
+            new_group = (
+                request.env["recurring.contract.group"]
+                .sudo()
+                .create(
+                    {
+                        "partner_id": partner.id,
+                        "payment_mode_id": payment_mode.id,
+                        "recurring_unit": recurring_unit,
+                        "recurring_value": int(advance_billing_months),
+                        "ref": "/",
+                        "bvr_reference": bvr_reference,
+                        "active": True,
+                    }
+                )
+            )
+            return {"success": True, "group_id": new_group.id}
+
+        except Exception as e:
+            return {"success": False, "error": str(e)}
 
     def _get_paginated_paid_invoices(
         self, partner, invoice_page=1, invoice_per_page=12

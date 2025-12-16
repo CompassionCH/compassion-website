@@ -95,7 +95,10 @@
                         </div>
                         <t t-if="inline_button" t-call="my_compassion.DonationItemButton">
                             <t t-set="button" t-value="inline_button" />
-                            <t t-set="button_top_class" t-value="'mt-1 p-0 border-0 bg-transparent align-self-start shadow-none'" />
+                            <t
+                                t-set="button_top_class"
+                                t-value="'mt-1 p-0 border-0 bg-transparent align-self-start shadow-none'"
+                            />
                         </t>
                     </div>
                     <t t-foreach="secondary_buttons" t-as="button">

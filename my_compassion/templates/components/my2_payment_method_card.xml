@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <!--
 Description:
     Component to display a sponsorship group card with payment method details and associated sponsorships.
@@ -8,74 +8,81 @@ Description:
    -->
 <odoo>
     <template id="my2_sponsorships_group_card" name="Sponsorships Group Card Component">
-
-        <t t-set="info" t-value="group.get_payment_method_info()"/>
+        <t t-set="info" t-value="group.get_payment_method_info()" />
         <div class="sponsorship-group mb-4 sponsorship-group-container">
             <link rel="stylesheet" href="/my_compassion/static/src/css/my2_payment_modal.css" />
             <div class="d-flex flex-column border rounded shadow-sm">
-                <div class="d-flex justify-content-between align-items-center p-3 bg-light cursor-pointer border-bottom rounded-top"
-                     data-toggle="collapse"
-                     t-att-data-target="'#group_collapse_%s' % group.id"
-                     aria-expanded="true">
-
-                    <t t-set="icon_id" t-value="info.get('icon')"/>
-                    <t t-set="expire_date" t-value="info.get('expire_date')"/>
-
+                <div
+                    class="d-flex justify-content-between align-items-center p-3 bg-light cursor-pointer border-bottom rounded-top"
+                    data-toggle="collapse"
+                    t-att-data-target="'#group_collapse_%s' % group.id"
+                    aria-expanded="true"
+                >
+                    <t t-set="icon_id" t-value="info.get('icon')" />
+                    <t t-set="expire_date" t-value="info.get('expire_date')" />
                     <div class="d-flex flex-column">
                         <div class="d-flex flex-row">
                             <t t-if="icon_id">
-                                <img t-att-src="'/web/image?model=payment.icon&amp;id=%s&amp;field=image&amp;width=50&amp;height=50' % icon_id"
-                                     style="width: 50px; height: 32px; object-fit: contain; margin-right: 12px; flex-shrink: 0;"
-                                     alt="Payment method"
-                                     onerror="this.style.display='none'"
+                                <img
+                                    t-att-src="'/web/image?model=payment.icon&amp;id=%s&amp;field=image&amp;width=50&amp;height=50' % icon_id"
+                                    style="width: 50px; height: 32px; object-fit: contain; margin-right: 12px; flex-shrink: 0;"
+                                    alt="Payment method"
+                                    onerror="this.style.display='none'"
                                 />
                             </t>
                             <div class="d-flex flex-column">
                                 <h5 class="m-0 text-dark-blue font-weight-bold d-flex align-items-center">
                                     <span>
-                                        <t t-esc="info.get('label') or 'Unknown Method'"/>
+                                        <t t-esc="info.get('label') or 'Unknown Method'" />
                                     </span>
                                 </h5>
-
                                 <!-- Ref number line – only if exists -->
                                 <t t-if="info.get('ref_number')">
                                     <div class="small text-muted mt-1">
-                                        Ref: <span class="font-weight-medium" t-esc="info.get('ref_number')"/>
+                                        Ref:
+                                        <span class="font-weight-medium" t-esc="info.get('ref_number')" />
                                     </div>
                                 </t>
-
                                 <!-- Expiration line – only if exists -->
                                 <t t-if="expire_date">
                                     <div class="small text-muted mt-1">
-                                        Expires: <span class="font-weight-medium" t-esc="expire_date"/>
+                                        Expires:
+                                        <span class="font-weight-medium" t-esc="expire_date" />
                                     </div>
                                 </t>
                             </div>
                         </div>
-
                         <div class="small mt-1 text-muted d-flex align-items-center">
                             <span>Monthly total:</span>
                             <span class="text-core-blue font-weight-bold ml-1 mr-1">
-                                <t t-set="price" t-value="group.total_amount"/>
+                                <t t-set="price" t-value="group.total_amount" />
                                 <t t-if="price % 1 == 0" t-set="price" t-value="'{0}.-'.format(int(price))" />
-                                <t t-esc="price"/>
-                                <t t-if="group.contract_ids" t-esc="group.contract_ids[0].pricelist_id.currency_id.name"/>
+                                <t t-esc="price" />
+                                <t
+                                    t-if="group.contract_ids"
+                                    t-esc="group.contract_ids[0].pricelist_id.currency_id.name"
+                                />
                             </span>
-                            <span class="mr-1 ml-1"> </span>
+                            <span class="mr-1 ml-1">
+
+                            </span>
                             <span>
-                                <t t-esc="len(group.contract_ids.filtered(lambda s: s.state not in ['terminated', 'cancelled']))"/> sponsorships
+                                <t
+                                    t-esc="len(group.contract_ids.filtered(lambda s: s.state not in ['terminated', 'cancelled']))"
+                                />
+                                sponsorships
                             </span>
                         </div>
                     </div>
-
                     <div class="d-flex align-items-center">
-                        <a href="#"
-                           class="mr-4 text-core-black opacity-50-hover"
-                           data-toggle="modal"
-                           data-target="#payment_method_selector_modal_update"
-                           t-att-data-group-id="group.id"
-                           t-att-data-method-info="json.dumps(info)"
-                           onclick="event.stopPropagation();
+                        <a
+                            href="#"
+                            class="mr-4 text-core-black opacity-50-hover"
+                            data-toggle="modal"
+                            data-target="#payment_method_selector_modal_update"
+                            t-att-data-group-id="group.id"
+                            t-att-data-method-info="json.dumps(info)"
+                            onclick="event.stopPropagation();
                                 this.dispatchEvent(new CustomEvent('open_payment_method_update', {
                                     bubbles: true,
                                     detail: {
@@ -83,33 +90,35 @@ Description:
                                         method_info: JSON.parse(this.dataset.methodInfo),
                                     }
                                 }));
-                           ">
+                           "
+                        >
                             <div class="text-dark-blue">
-                                <i t-attf-class="tiny-text icon-edit02"/>
+                                <i t-attf-class="tiny-text icon-edit02" />
                             </div>
                         </a>
-
                         <div class="text-core-black">
-                            <i class="fa fa-chevron-down oe_accordion_arrow"/>
+                            <i class="fa fa-chevron-down oe_accordion_arrow" />
                         </div>
                     </div>
                 </div>
-
-                <div t-att-id="'group_collapse_%s' % group.id"
-                     class="collapse show rounded mt-3 mr-3 ml-3">
+                <div t-att-id="'group_collapse_%s' % group.id" class="collapse show rounded mt-3 mr-3 ml-3">
                     <t t-foreach="group.contract_ids" t-as="sponsorship">
                         <t t-if="sponsorship">
                             <t t-if="sponsorship.state not in ['terminated', 'cancelled']">
                                 <div class="mb-3">
-                                    <t t-set="profile_button_data" t-value="{
+                                    <t
+                                        t-set="profile_button_data"
+                                        t-value="{
                                         'label': 'See profile',
                                         'pictogram': 'child-sponsorship',
                                         'action': 'link',
                                         'href': '/my2/children/' + str(sponsorship.child_id.id),
                                         'color': 'low-blue'
-                                    }"/>
-
-                                    <t t-set="change_payment_data" t-value="{
+                                    }"
+                                    />
+                                    <t
+                                        t-set="change_payment_data"
+                                        t-value="{
                                         'label': 'Change',
                                         'icon': 'edit02',
                                         'action': 'event',
@@ -119,22 +128,26 @@ Description:
                                                     \'child_name\': \'' + (sponsorship.child_id.preferred_name or '').replace('\'', '') + '\',
                                                     \'group_id\': ' + str(group.id) + '}',
                                         'color': 'low-blue'
-                                    }"/>
-
-                                    <t t-set="secondary_buttons_data" t-value="[
+                                    }"
+                                    />
+                                    <t
+                                        t-set="secondary_buttons_data"
+                                        t-value="[
                                         {
                                             'icon': 'download01',
                                             'color': 'mid-yellow',
                                             'action': 'link',
                                             'href': '/my/download/gift_bvr?child_id=' + str(sponsorship.child_id.id),
                                         }
-                                    ]"/>
-
+                                    ]"
+                                    />
                                     <t t-call="my_compassion.DonationItemComponent">
                                         <t t-set="name" t-value="sponsorship.child_id.preferred_name" />
-                                        <t t-set="image" t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait"/>
+                                        <t
+                                            t-set="image"
+                                            t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait"
+                                        />
                                         <t t-set="price" t-value="sponsorship.total_amount" />
-
                                         <t t-set="inline_button" t-value="profile_button_data" />
                                         <t t-set="primary_button" t-value="change_payment_data" />
                                         <t t-set="monthly_noabbr" t-value="True" />

@@ -1,5 +1,4 @@
-from odoo import fields, models, _
-from odoo.exceptions import UserError
+from odoo import fields, models
 
 
 class RecurringContract(models.Model):
@@ -31,13 +30,13 @@ class RecurringContract(models.Model):
         if self.group_id.id == new_group_id:
             return True
 
-        target_group = self.env['recurring.contract.group'].browse(new_group_id)
+        target_group = self.env["recurring.contract.group"].browse(new_group_id)
 
         if not target_group.exists():
             return False
 
         # Move the contract to the new group
         old_group = self.group_id
-        self.write({'group_id': target_group.id})
+        self.write({"group_id": target_group.id})
 
         return True

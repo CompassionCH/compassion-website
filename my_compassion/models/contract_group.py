@@ -6,7 +6,7 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from odoo import fields, models, _, api
+from odoo import _, fields, models
 
 
 class ContractGroup(models.Model):
@@ -35,28 +35,28 @@ class ContractGroup(models.Model):
 
         # Default / Fallback values
         info = {
-            'icon': False,
-            'ref_number': False,
-            'label': _('Unknown Method'),
-            'expire_date': False,
-            'is_card': False,
-            'mode_id': self.payment_mode_id.id if self.payment_mode_id else False,
-            'group_id': self.id,
+            "icon": False,
+            "ref_number": False,
+            "label": _("Unknown Method"),
+            "expire_date": False,
+            "is_card": False,
+            "mode_id": self.payment_mode_id.id if self.payment_mode_id else False,
+            "group_id": self.id,
         }
 
         if not self.payment_mode_id:
             return info
 
-        all_icons = self.env['payment.icon'].sudo().search([('image', '!=', False)])
+        all_icons = self.env["payment.icon"].sudo().search([("image", "!=", False)])
         for icon in all_icons:
             if icon.name.lower() in self.payment_mode_id.name.lower():
-                info['icon'] = icon.id
+                info["icon"] = icon.id
                 break
 
         # Basic Mode Info
-        info['label'] = self.payment_mode_id.display_name
-        info['type'] = 'mode'
-        info['ref_number'] = self.bvr_reference if self.bvr_reference else False
+        info["label"] = self.payment_mode_id.display_name
+        info["type"] = "mode"
+        info["ref_number"] = self.bvr_reference if self.bvr_reference else False
 
         return info
 
@@ -70,7 +70,9 @@ class ContractGroup(models.Model):
 
         # Merge into another Payment Group
         if new_group_id:
-            target_group = self.env['recurring.contract.group'].browse(int(new_group_id))
+            target_group = self.env["recurring.contract.group"].browse(
+                int(new_group_id)
+            )
 
             # Validation: Target must exist and belong to the same partner
             if not target_group.exists() or target_group.partner_id != self.partner_id:
@@ -81,13 +83,13 @@ class ContractGroup(models.Model):
                 return True
 
             # Move all contracts to the target group
-            self.active_contract_ids.write({'group_id': target_group.id})
+            self.active_contract_ids.write({"group_id": target_group.id})
             return True
 
         # Update Reference (e.g. manual BVR or LSV reference update)
         if new_bvr_ref and self.bvr_reference:
             # Updating the reference for the current group
-            self.write({'bvr_reference': new_bvr_ref})
+            self.write({"bvr_reference": new_bvr_ref})
             return True
 
         return False

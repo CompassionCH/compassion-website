@@ -20,12 +20,12 @@
 }
 
 .payment-method-card.hover-shadow-sm:hover {
-    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
 }
 
 #payment_method_selector_modal .modal-content {
-    max-height: 90vh;    /* limit modal height */
-    overflow: hidden;    /* let inner container scroll */
+    max-height: 90vh; /* limit modal height */
+    overflow: hidden; /* let inner container scroll */
 }
 
 /* scrollable list that fits inside modal (subtract header/footer space) */
@@ -37,9 +37,9 @@
 .oe_accordion_arrow {
     transition: transform 0.25s ease-in-out;
 }
-    /* When button has .collapsed class → section is closed → show right arrow */
+/* When button has .collapsed class → section is closed → show right arrow */
 .btn.collapsed .oe_accordion_arrow {
-    transform: rotate(-90deg);  /* chevron-down becomes chevron-right */
+    transform: rotate(-90deg); /* chevron-down becomes chevron-right */
 }
 
 /* When expanded → keep down (0deg) */
