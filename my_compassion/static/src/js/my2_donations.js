@@ -90,7 +90,7 @@ odoo.define('my_compassion.my2_donations', function (require) {
             var detail = ev.originalEvent ? ev.originalEvent.detail : ev.detail;
             var groupId = detail ? detail.group_id : null;
             var methodInfo = detail ? detail.method_info : null;
-            
+
             var $modalUpdate = $('#payment_method_selector_modal_update');
             // Store the group-id on the modal so _onSavePaymentMethod can find it
             $modalUpdate.data('group-id', groupId);
@@ -221,7 +221,7 @@ odoo.define('my_compassion.my2_donations', function (require) {
                     }
                 });
 
-            // CASE 2: UPDATE (Group Level) - Merge or Edit Details
+                // CASE 2: UPDATE (Group Level) - Merge or Edit Details
             } else if (modalType == 'update') {
                 var currentGroupId = $modal.data('group-id');
                 console.log("ID:" + currentGroupId)
@@ -261,10 +261,10 @@ odoo.define('my_compassion.my2_donations', function (require) {
                 }
 
                 console.log("Updating Group Method params:", params);
-                // promise = this._rpc({
-                //     route: '/my2/donation/change_method_group',
-                //     params: params
-                // });
+                promise = this._rpc({
+                    route: '/my2/donation/change_method_group',
+                    params: params
+                });
             }
 
             // Execute Request

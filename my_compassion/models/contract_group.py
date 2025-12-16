@@ -95,12 +95,7 @@ class ContractGroup(models.Model):
                 return True
 
             # Move all contracts to the target group
-            self.contract_ids.write({'group_id': target_group.id})
-
-            # Deactivate the old group if it is now empty to clean up the UI
-            if not self.contract_ids:
-                self.active = False
-
+            self.active_contract_ids.write({'group_id': target_group.id})
             return True
 
         # Update Reference (e.g. manual BVR or LSV reference update)
@@ -108,7 +103,6 @@ class ContractGroup(models.Model):
             # Updating the reference for the current group
             self.write({'bvr_reference': new_bvr_ref})
             return True
-
 
         return False
 
