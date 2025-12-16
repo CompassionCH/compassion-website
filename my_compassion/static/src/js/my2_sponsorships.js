@@ -195,20 +195,20 @@ document.addEventListener("DOMContentLoaded", function (event) {
              * @private
              */
             _updateChooseForMeButton: function () {
-                if (this.totalResults == 0 || this.randomlySampledChildId) {
+                if (this.randomlySampledChildId) {
+                    // A child has been randomly chosen
                     this.$("#btn-choose").hide();
-                    // If a child has been randomly sampled, update the UI
-                    if (this.randomlySampledChildId) {
-                        //Show the "Choose again" and "See all children" buttons
-                        this.$("#btn-choose-again").show().prop("disabled", false);
-                        this.$("#btn-see-all-children").show().prop("disabled", false);
-                        //Hide the number of results label
-                        this.$("#total-results-container").hide();
-                    }
+                    this.$("#btn-choose-again").show().prop("disabled", false);
+                    this.$("#btn-see-all-children").show().prop("disabled", false);
                 } else {
-                    this.$("#btn-choose").show().prop("disabled", false);
+                    // Normal view (all children or no results)
                     this.$("#btn-choose-again").hide();
                     this.$("#btn-see-all-children").hide();
+                    if (this.totalResults > 0) {
+                        this.$("#btn-choose").show().prop("disabled", false);
+                    } else {
+                        this.$("#btn-choose").hide();
+                    }
                 }
             },
 
