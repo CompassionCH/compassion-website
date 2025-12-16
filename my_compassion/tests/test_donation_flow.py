@@ -123,15 +123,17 @@ class TestDonationFlow(HttpCase):
         _logger.info("SETUP (DATA): Creating donation product for testing.")
 
         image_b64 = b"R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="
+        svg_b64 = b"PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg=="
 
-        color = self.env['theme.compassion.colors'].search([], limit=1)
-        if not color:
-            raise AssertionError("FATAL: theme.compassion.colors is not present!")
+        color = self.env['theme.compassion.colors'].create({
+            'name': 'Test Color Blue',
+            'color': '#0000FF'
+        })
 
-
-        pictogram = self.env['theme.compassion.pictograms'].search([], limit=1)
-        if not pictogram:
-            raise AssertionError("FATAL: theme.compassion.pictograms is not present!")
+        pictogram = self.env['theme.compassion.pictograms'].create({
+            'name': 'Test Pictogram Heart',
+            'svg_file': svg_b64
+        })
 
         self.donation_product = self.env['product.template'].create({
             'name': self.MOCK_TEST_DATA['product_name'],
