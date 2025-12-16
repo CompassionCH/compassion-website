@@ -1,5 +1,14 @@
 /**
  * Handles the new_letter form submission.
+ * Shows a progress bar that updates as the letter is processed by polling the server.
+ * The update works by:
+ * 1) Request the server to create a letter generation task, server returns a gen.Id.
+ * and the maps to build the progress bar steps in the following format:
+ * steps = [ [step_index, generation_status, step_description], ...]
+ * 2) Tell the server to start processing the task while updating the task state.
+ * 3) Poll the server to get the current statusof the task and update the progress bar accordingly.
+ * 4) Once the task is complete, redirect or show a preview based on user choice.
+ *
  * Is used in /templates/pages/my2_new_letter.xml
  *
  */
@@ -7,305 +16,368 @@ document.addEventListener("DOMContentLoaded", function () {
     odoo.define("my_compassion", function (require) {
         "use strict";
 
-        // Import necessary modules (here we need the ToastService for notifications)
-        const ToastService = require("my_compassion.toast_service");
+        const publicWidget = require("web.public.widget");
         const rpc = require("web.rpc");
+        const ToastService = require("my_compassion.toast_service");
+        const _t = require("web.core")._t;
 
-        const form = document.querySelector("form");
-        if (form) {
-            form.addEventListener("submit", onSubmitLetter);
-        }
-        const letterInput = document.getElementById("letter-input");
-        const RE_EMOJI = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
+        publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
+            selector: "#new_letter_form",
 
-        if (letterInput) {
-            letterInput.addEventListener("input", function () {
+            events: {
+                submit: "_onSubmitLetter",
+                "input #letter-input": "_onLetterInput",
+            },
+
+            init: function () {
+                this._super.apply(this, arguments);
+                this.RE_EMOJI = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
+                this.progressBar = null;
+                this.lastDraft = null;
+                this.autoSaveTimer = null;
+            },
+
+            start: function () {
+                // On starting, bind the remove buttons to the existing attachments got from the draft loading
+                const attachmentIds = $(".uploaded-file")
+                    .map(function () {
+                        return $(this).data("file-key");
+                    })
+                    .get();
+                this._bindAttachmentToRemoveButton(attachmentIds);
+            },
+
+            _onSubmitLetter: async function (ev) {
+                ev.preventDefault();
+
+                const submitButton = ev.originalEvent.submitter;
+                const mode = $(submitButton).data("custom");
+
+                // Validation check for mode
+                if (!["send", "preview", "save_draft"].includes(mode)) {
+                    return;
+                }
+
+                let formData;
+                try {
+                    formData = await this._collectFormData();
+                } catch (error) {
+                    ToastService.error(error.message);
+                    return;
+                }
+
+                const creationData = { ...formData, source: "mycompassion", csrf_token: odoo.csrf_token, mode: mode };
+
+                try {
+                    const initialResult = await this._createGenerator(creationData);
+
+                    if (!initialResult.generator_id) {
+                        throw new Error(initialResult.error || _t("Could not save the letter."));
+                    }
+                    if (mode === "save_draft") {
+                        this._handleResponse("save_draft", initialResult, formData.child_id);
+                        ToastService.success(_t("Letter saved!"));
+                        return;
+                    }
+
+                    // --- Send Mode Logic ---
+                    const steps = (initialResult.steps || []).map((step) => step[2]);
+                    const statusMap = (initialResult.steps || []).reduce((map, step) => {
+                        map[step[1]] = step[0];
+                        return map;
+                    }, {});
+
+                    // 1. Create the widget object in memory BEFORE showing the modal.
+                    const ProgressBarWidgetClass = publicWidget.registry.ProgressBarWidget;
+                    this.progressBar = new ProgressBarWidgetClass(this, {
+                        density: "medium",
+                        steps: steps,
+                    });
+
+                    // 2. Use a Promise to wait for the modal and widget rendering to complete.
+                    await new Promise((resolve) => {
+                        const modal = $("#submitModal");
+                        modal.one("shown.bs.modal", async () => {
+                            // 3. The modal is now visible. Append the pre-made widget.
+                            await this.progressBar.appendTo(modal.find("#progress-bar-div"));
+                            this.progressBar.startProgress();
+                            resolve(); // Continue the main function
+                        });
+                        // 4. Trigger the modal to show.
+                        modal.modal({ backdrop: "static", keyboard: false }).modal("show");
+                    });
+
+                    // 5. With UI ready, launch and poll the backend task.
+                    this._launchProcessingRPC({
+                        generator_id: initialResult.generator_id,
+                        child_id: formData.child_id,
+                        mode: mode,
+                        csrf_token: odoo.csrf_token,
+                    }).catch((err) => console.error("Failed to launch letter generation:", err));
+
+                    const updateProgress = (status) => {
+                        if (this.progressBar && status in statusMap) {
+                            this.progressBar.goToStep(statusMap[status]);
+                        }
+                    };
+                    const processingPromise = this._pollForStatus(
+                        {
+                            generator_id: initialResult.generator_id,
+                            child_id: formData.child_id,
+                            mode: mode,
+                            csrf_token: odoo.csrf_token,
+                        },
+                        updateProgress
+                    );
+                    const finalResult = await processingPromise;
+
+                    await this._handleResponse(mode, finalResult, formData.child_id);
+                } catch (error) {
+                    if (this.progressBar) {
+                        this.progressBar.destroy();
+                    }
+                    $("#submitModal").modal("hide");
+                    ToastService.error(
+                        error.message ||
+                            _t(
+                                "An error occurred while processing your letter. Please try again or contact the support."
+                            )
+                    );
+                }
+            },
+
+            _onLetterInput: function (ev) {
+                const autosave_delay = 5000;
+
+                const letterInput = ev.currentTarget;
                 const originalValue = letterInput.value;
-                const cleanedValue = originalValue.replace(RE_EMOJI, "");
+                const cleanedValue = originalValue.replace(this.RE_EMOJI, "");
 
                 if (originalValue !== cleanedValue) {
-                    let warning = document.getElementById("emoji-warning");
-                    if (!warning) {
-                        warning = document.createElement("div");
-                        warning.id = "emoji-warning";
-                        // TODO refactor the styling with a class from the theme when theme is ready
-                        warning.style.color = "red";
-                        warning.style.marginTop = "5px";
-                        letterInput.parentNode.appendChild(warning);
+                    let warning = this.$("#emoji-warning");
+                    if (!warning.length) {
+                        warning = $('<div id="emoji-warning" style="color: red; margin-top: 5px;"></div>');
+                        this.$("#letter-input").parent().append(warning);
                     }
-                    warning.textContent = "Emojis are not supported in letters.";
+                    warning.text(_t("Emojis are not supported in letters."));
                     letterInput.value = cleanedValue;
                 } else {
-                    const warning = document.getElementById("emoji-warning");
-                    if (warning) {
-                        warning.remove();
-                    }
+                    this.$("#emoji-warning").remove();
                 }
-            });
-        }
+                clearTimeout(this.autoSaveTimer);
+                this.autoSaveTimer = setTimeout(() => {
+                    this._autoSaveDraft();
+                }, autosave_delay);
+            },
 
-        /**
-         * Handles the submission of the letter creation form. This function manages Preview and Submit mode
-         *
-         * @async
-         * @function
-         * @param {Event} event - The form submission event.
-         *
-         * @returns {Promise<void>} Resolves once the letter submission process is complete.
-         */
-        async function onSubmitLetter(event) {
-            // Prevent default form submission to handle the process manually
-            event.preventDefault();
+            _collectFormData: async function () {
+                const childId = this.$("#child-dropdown").val();
+                const letterBody = this.$("#letter-input").val();
+                const selectedTemplateImage = document.getElementById("selected-template");
+                let templateId = this.$("#selected-template").attr("data-template-id") || null;
+                if (!templateId) {
+                    const draftTemplate = document.getElementById("draft-template-id");
+                    templateId = draftTemplate ? draftTemplate.value : null;
+                }
+                const fileInput = this.$("#letter-attachments")[0];
+                const generatorId = this.$("input[name='generator_id']").val();
 
-            // Get the button that triggered the form submission (either Preview or Submit)
-            const submitButton = event.submitter;
-            const mode = $(submitButton).data("custom");
+                if (!childId) throw new Error(_t("Please select a child to write to."));
+                if (!templateId) throw new Error(_t("Please select a template for your letter."));
+                if (!letterBody) throw new Error(_t("Please write something in your letter."));
 
-            // Collect the form data
-            let childId, templateId, letterBody, attachments;
-            try {
-                ({ childId, templateId, letterBody, attachments } = await collectFormData());
-            } catch (error) {
-                ToastService.error(error.message);
-                return;
-            }
+                const attachments = await this._encodeAttachments(fileInput.files);
 
-            // Prepare the data to send to the backend
-            const data = {
-                child_id: childId,
-                template_id: templateId,
-                letter_body: letterBody,
-                source: "mycompassion",
-                csrf_token: odoo.csrf_token,
-                attachments: attachments,
-                mode: mode,
-            };
+                return {
+                    child_id: childId,
+                    template_id: templateId,
+                    letter_body: letterBody,
+                    attachments: attachments,
+                    generator_id: generatorId,
+                };
+            },
 
-            let fakeProgressPromise;
-            let timeoutId;
-
-            // If the mode is 'send', show a modal with a fake progress bar
-            if (mode === "send") {
-                // Show the modal and prevents the user to be able to close the modal
-                $("#submitModal")
-                    .modal({
-                        backdrop: "static",
-                        keyboard: false,
-                    })
-                    .modal("show");
-
-                const progressControl = showFakeProgress();
-                fakeProgressPromise = progressControl.promise;
-                timeoutId = progressControl.timeoutId;
-            }
-
-            // Send the data to the server using RPC, either with send or preview mode.
-            const rpcPromise = submitLetterRPC(data);
-
-            try {
-                // Promise.race waits for the first promise to settle (either resolves or rejects)
-                await Promise.race([
-                    // The RPC request promise
-                    rpcPromise.catch((err) => {
-                        throw err;
-                    }),
-                    // If no fake progress is needed (in preview mode),
-                    // use Promise.resolve() to ensure Promise.race always has a valid promise.
-                    fakeProgressPromise || Promise.resolve(),
-                ]);
-
-                const result = await rpcPromise;
-                // Wait for the fake progress to even if backend response was faster
-                // (Yes this is an anti-pattern, I'm sorry, I need to rush)
-                if (fakeProgressPromise) await fakeProgressPromise;
-                await handleResponse(mode, result, childId);
-            } catch (error) {
-                // Remove the modal with the fake progress bar in case of error
-                if (timeoutId) clearTimeout(timeoutId);
-                $("#submitModal").modal("hide");
-                ToastService.error(
-                    "An error occurred while processing your letter. Please try again or contact the support."
+            _encodeAttachments: async function (fileList) {
+                const filePromises = Array.from(fileList).map(
+                    (file) =>
+                        new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.readAsDataURL(file);
+                            reader.onload = () =>
+                                resolve({
+                                    filename: file.name,
+                                    content: reader.result.split(",")[1],
+                                });
+                            reader.onerror = () => reject(_t("Error reading file."));
+                        })
                 );
-                return;
-            }
-        }
+                return Promise.all(filePromises);
+            },
 
-        /**
-         * Collects and prepares all data from the letter submission form.
-         *
-         * This function extracts the selected child ID, letter content,
-         * selected template ID (from the chosen image), and file attachments
-         * from the form. It also encodes the attachments into base64 format.
-         *
-         * @async
-         * @function
-         * @returns {Promise<Object>} A promise that resolves to an object containing:
-         *   @property {string} childId - The ID of the selected child.
-         *   @property {string|null} templateId - The ID of the selected template, or null if not selected.
-         *   @property {string} letterBody - The body text of the letter.
-         *   @property {Array<{filename: string, content: string}>} attachments - The list of base64-encoded attachments.
-         */
-        async function collectFormData() {
-            const childId = document.getElementById("child-dropdown").value;
-            const letterBody = document.getElementById("letter-input").value;
+            _createGenerator: async function (data) {
+                //clear the uploaded files buffer as they are now sent to the server
+                // This ensures that if multiple _creategenerator happen at once, the attachment list is coherent regardless of the time taken by the rpc query
+                uploadedAttachmentLetterFiles = [];
+                const fileInput = this.$("#letter-attachments")[0];
+                fileInput.value = "";
 
-            const selectedTemplateImage = document.getElementById("selected-template");
-            const templateId = selectedTemplateImage ? selectedTemplateImage.getAttribute("data-template-id") : null;
-
-            const fileInput = document.getElementById("letter-attachments");
-
-            // TODO handle in a clean way encoding potential issue with a throw new Error
-            const attachments = await encodeAttachments(fileInput.files);
-
-            // Validate inputs and throw error messages in case of missing value
-            if (!childId) {
-                throw new Error("Please select a child to write to.");
-            }
-
-            if (!templateId) {
-                throw new Error("Please select a template for your letter.");
-            }
-
-            if (!letterBody) {
-                throw new Error("Please write something in your letter");
-            }
-
-            return { childId, templateId, letterBody, attachments };
-        }
-
-        /**
-         * Encodes a list of files into base64 format for backend transmission.
-         *
-         * This function takes a FileList (from an input[type="file"]) and returns
-         * an array of objects, each containing the original filename and its content
-         * as a base64-encoded string (excluding the MIME prefix).
-         *
-         * @async
-         * @function
-         * @param {FileList} fileList - The list of files selected by the user.
-         * @returns {Promise<Array<{filename: string, content: string}>>}
-         *   A promise resolving to an array of attachment objects with:
-         *   - filename: Original name of the file.
-         *   - content: Base64-encoded string (without the data URI prefix).
-         */
-        async function encodeAttachments(fileList) {
-            const filePromises = Array.from(fileList).map((file) => {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.readAsDataURL(file);
-                    reader.onload = () => {
-                        resolve({
-                            filename: file.name,
-                            content: reader.result.split(",")[1],
-                        });
-                    };
-                    reader.onerror = () => reject("Error reading file.");
+                const result = await rpc.query({
+                    route: "/my2/children/letters/create_generator",
+                    params: data,
                 });
-            });
+                // Bind the remove attachment buttons to the newly created attachment IDs
+                // This ensures that any attachments saved on the server can be removed by the user.
+                this._bindAttachmentToRemoveButton(result.image_ids || []);
+                // Update the generator_id in the form to the lastest generated by the server for the current letter.
+                this.$("input[name='generator_id']").val(result.generator_id || "");
 
-            try {
-                return await Promise.all(filePromises);
-            } catch (error) {
-                ToastService.error(
-                    "An error occurred while processing attachments. Please try again or contact the support."
-                );
-                return [];
-            }
-        }
+                return result;
+            },
 
-        /**
-         * Simulates a multi-step progress indicator for letter submission.
-         *
-         * This function fakes progress feedback for the user interface by sequentially
-         * updating a progress bar and text element with predefined steps (e.g., "Sending your letter information…").
-         * Each step is displayed for 1 second before moving to the next, giving the illusion of work being done.
-         *
-         * It returns a Promise that resolves once all progress steps have been displayed,
-         * along with the timeout ID to optionally allow cancelling the progress animation externally.
-         *
-         * @function
-         * @returns {{promise: Promise<void>, timeoutId: number}}
-         *   An object containing:
-         *   - `promise`: Resolves when the last step is complete.
-         *   - `timeoutId`: The ID of the last setTimeout, useful for canceling if needed.
-         */
-        function showFakeProgress() {
-            const steps = [
-                "Sending your letter information…",
-                "Creating your letter…",
-                "Applying the template…",
-                "Adding your text…",
-                "Adding your attachments…",
-                "Finalizing…",
-            ];
+            _launchProcessingRPC: function (data) {
+                return rpc.query({
+                    route: "/my2/children/letters/launch_generation",
+                    params: data,
+                });
+            },
 
-            let currentStep = 0;
-            const progressBar = document.getElementById("progressBar");
-            const progressText = document.getElementById("progressText");
+            _pollForStatus: function (data, onProgressUpdate) {
+                const POLLING_INTERVAL = 400;
+                const MAX_POLLS = 150; // 400ms * 150 = 1 minute timeout
+                let pollCount = 0;
 
-            let timeoutId;
+                return new Promise((resolve, reject) => {
+                    const intervalId = setInterval(async () => {
+                        if (++pollCount > MAX_POLLS) {
+                            clearInterval(intervalId);
+                            reject(new Error("Letter generation timed out."));
+                            return;
+                        }
+                        try {
+                            const response = await rpc.query({
+                                route: "/my2/children/letters/status",
+                                params: data,
+                            });
+                            if (onProgressUpdate) {
+                                onProgressUpdate(response.status);
+                            }
 
-            const promise = new Promise((resolve) => {
-                // TODO currently the progress is "fake", this logic needs to be refactored
-                // in a real progress bar that makes sense.
-                function updateProgress() {
-                    if (currentStep < steps.length) {
-                        const progress = ((currentStep + 1) / steps.length) * 100;
-                        progressBar.style.width = `${progress}%`;
-                        progressText.textContent = steps[currentStep];
-                        currentStep++;
-                        timeoutId = setTimeout(updateProgress, 1000);
-                    } else {
-                        resolve();
+                            if (response.status === "done") {
+                                if (this.progressBar) {
+                                    const lastStep = this.progressBar.options.steps.length - 1;
+                                    this.progressBar.goToStep(lastStep);
+                                }
+                                clearInterval(intervalId);
+                                resolve(response.result);
+                            } else if (response.status === "failed") {
+                                clearInterval(intervalId);
+                                reject(new Error(response.error || "Letter generation failed."));
+                            }
+                        } catch (error) {
+                            clearInterval(intervalId);
+                            reject(error);
+                        }
+                    }, POLLING_INTERVAL);
+                });
+            },
+
+            /**
+             * Handles the final response after a successful task.
+             */
+            _handleResponse: function (mode, result, childId) {
+                if (mode === "send") {
+                    // No cleanup needed here, the page will redirect and clear everything.
+                    window.location.href = `/my2/children/letters/${childId}?new_letter_generator_id=${result.generator_id}`;
+                } else if (mode === "preview") {
+                    // On success for preview, hide the progress modal and destroy the widget.
+                    // This ensures a clean state for the user's next action.
+                    $("#submitModal").modal("hide");
+                    if (this.progressBar) {
+                        this.progressBar.destroy();
+                        this.progressBar = null; // Clean up the reference.
                     }
+
+                    $("#previewImage").attr("src", result.preview_url);
+                    $("#previewModal").modal("show");
+                } else if (mode === "save_draft") {
+                    ToastService.success(result.message || "Draft saved!");
                 }
+            },
+            _autoSaveDraft: async function () {
+                try {
+                    const formData = await this._collectFormData();
+                    const currentDraft = JSON.stringify(formData);
+                    if (this.lastDraft === currentDraft) return;
+                    this.lastDraft = currentDraft;
 
-                updateProgress();
-            });
+                    const data = {
+                        ...formData,
+                        source: "mycompassion",
+                        csrf_token: odoo.csrf_token,
+                        mode: "save_draft",
+                    };
+                    const result = await this._createGenerator(data);
+                    this._handleResponse("save_draft", result, formData.child_id);
+                } catch (error) {
+                    console.warn("Auto-save draft failed:", error.message);
+                }
+            },
 
-            return { promise, timeoutId };
-        }
+            /**
+             * Binds the remove-attachment buttons' click event to the uploaded files.
+             * @param {Array<number>} attachmentIds - A list of attachment IDs.
+             */
+            _bindAttachmentToRemoveButton: function (attachmentIds) {
+                // Select all .uploaded-file elements
+                const uploadedFilesEl = this.$(".uploaded-file");
+                uploadedFilesEl.each((index, element) => {
+                    // Find the button within this element
+                    const $button = this.$(element).find(".remove-attachment-button");
 
-        /**
-         * Sends the letter form data to the backend via RPC.
-         *
-         * The backend is expected to return a preview URL (in preview mode)
-         * and a generator ID for redirection (in send mode).
-         *
-         * @function
-         * @param {Object} data - The data payload to send with the request.
-         *
-         * @returns {Promise<Object>} A promise that resolves with the backend response.
-         */
-        function submitLetterRPC(data) {
-            return rpc.query({
-                route: "/my2/children/letter/new",
-                params: data,
-            });
-        }
+                    // Get the corresponding attachment ID from the input array
+                    // The ids necessarily match the increasing order of the .uploaded-file elements
+                    const attachmentId = attachmentIds[index];
 
-        /**
-         * Handles the server response after submitting or previewing a letter.
-         *
-         * Depending on the mode, this function either redirects the user to the letters
-         * page with a reference to the newly created generator, or displays a preview
-         * image of the letter in a modal dialog.
-         *
-         * @async
-         * @function
-         * @param {string} mode - Submission mode: `'send'` to submit the letter, `'preview'` to show a preview.
-         * @param {Object} result - The result object returned by the server.
-         * @param {string} childId - The ID of the selected child, used in the redirect URL.
-         *
-         * @returns {Promise<void>} Resolves when the UI navigation or update is complete.
-         */
-        async function handleResponse(mode, result, childId) {
-            if (mode === "send") {
-                window.location.href = `/my2/children/letters/${childId}?new_letter_generator_id=${result.generator_id}`;
-            } else if (mode === "preview") {
-                document.getElementById("previewImage").src = result.preview_url;
-                $("#previewModal").modal("show");
-            }
-        }
+                    // Set the data attribute on the PARENT element
+                    element.dataset.fileKey = attachmentId;
+
+                    // Set the button to send a remove_attachment request on click
+                    // .off() prevents binding multiple click events if this function is called again
+                    $button.off("click").on("click", async (event) => {
+                        event.preventDefault();
+                        const idToRemove = element.getAttribute("data-file-key");
+
+                        if (!idToRemove) {
+                            const msg = _t("Attachment ID is missing.");
+                            ToastService.error(msg);
+                            return;
+                        }
+
+                        try {
+                            // Call Odoo route
+                            const result = await rpc.query({
+                                route: "/my2/letter/remove_attachment",
+                                params: { attachment_id: parseInt(idToRemove, 10) },
+                            });
+
+                            // Check server response
+                            if (result.success) {
+                                // Remove the entire '.uploaded-file' element
+                                element.remove();
+                            } else {
+                                const msg = result.error || _t("Error occurred while removing the attachment.");
+                                console.error("Server error:", msg, result);
+                                ToastService.error(msg);
+                            }
+                        } catch (error) {
+                            console.error("JS error while removing attachment:", error);
+                            ToastService.error(_t("Unable to remove the attachment."));
+                        }
+                    });
+                });
+            },
+        });
+
+        return publicWidget.registry.NewLetterForm;
     });
 });

@@ -11,6 +11,7 @@
     Injected data:
     - product ('product.template' record): The donation product.
     - sponsorships ('recurring.contract' records): The list of the user's sponsorships.
+    - donation_limits ('gift.threshold.settings' records): The price limits for different donations types.
 -->
 <odoo>
     <!-- DONATION DETAILS PAGE -->
@@ -20,7 +21,7 @@
         <link rel="stylesheet" href="/my_compassion/static/src/css/my2_donation_details.css" />
         <t t-call="website.layout">
             <!-- HEADER -->
-            <div class="content-column">
+            <div class="single-column">
                 <div
                     class="donation-details-header p-5 w-100 d-flex flex-column align-items-center"
                     t-attf-style="--image_url: url('/web/image/#{product._name}/#{product.id}/my_compassion_image');"
@@ -29,11 +30,11 @@
                         <t t-esc="product.my_compassion_name" />
                     </h2>
                     <div class="mt-2 bg-pure-white" />
-                    <i t-attf-class="pictogram-#{product.my_compassion_pictogram} mt-3 text-pure-white" />
+                    <i t-attf-class="#{product.my_compassion_pictogram.class_name} mt-3 text-pure-white" />
                 </div>
             </div>
             <div class="container">
-                <div class="content-column">
+                <div class="single-column">
                     <div class="my2_donation_details px-3 d-flex flex-column align-items-center">
                         <!-- DESCRIPTION -->
                         <div class="mt-4 body-small bold text-center" t-field="product.my_compassion_description" />
@@ -66,7 +67,7 @@
                         <!-- INFORMATION -->
                         <div t-if="product.my_compassion_show_info" class="mt-3 d-flex flex-column">
                             <t t-call="theme_compassion_2025.TitleComponent">
-                                <t t-set="title_content" t-value="'How does it work?'" />
+                                <t t-set="title_content">How does it work?</t>
                                 <t t-set="color" t-value="'core-blue'" />
                                 <t t-set="show_underline" t-value="True" />
                                 <t t-set="underline_color" t-value="'low-yellow'" />
@@ -81,7 +82,7 @@
                         <!-- TESTIMONY -->
                         <div t-if="product.my_compassion_show_testimony" class="mt-3 d-flex flex-column">
                             <t t-call="theme_compassion_2025.TitleComponent">
-                                <t t-set="title_content" t-value="'Testimony'" />
+                                <t t-set="title_content">Testimony</t>
                                 <t t-set="color" t-value="'core-blue'" />
                                 <t t-set="show_underline" t-value="True" />
                                 <t t-set="underline_color" t-value="'low-yellow'" />
@@ -94,6 +95,7 @@
                         <!-- DONATE -->
                         <t t-call="my_compassion.DonationFormComponent">
                             <t t-set="top_class" t-value="'mt-3 mb-4'" />
+                            <t t-set="limits" t-value="donation_limits" />
                         </t>
                     </div>
                 </div>

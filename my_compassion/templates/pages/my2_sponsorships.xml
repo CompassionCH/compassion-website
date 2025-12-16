@@ -10,12 +10,9 @@ Page: My Compassion 2 Sponsorships Page
     - /my2/sponsorships/fetch
 
     Injected data:
-    - wizard ('new.sponsorship.wizard' record): The associated new sponsorship wizard record.
-    - titles (array of 'res.partner.title' records): The available titles to choose from.
-    - countries (array of 'res.country' records): The list of countries to choose from.
-    - payment_methods (array of 'account.payment.mode' records): The list of payment methods to choose from.
-    - spoken_languages (array of 'res.lang.compassion' records): The list of spoken languages to choose from.
-    - lead_sources (array of 'recurring.contract.origin' records): The list of lead sources to choose from.
+    - countries (array of 'compassion.field.office' records): The list of children's origin countries.
+    - children (array of 'compassion.child' records): The list of children to display.
+    - sponsorship_type (string): Type of sponsorship ('standard' or 'write_and_pray').
 -->
 <odoo>
     <!-- FILTER ITEM -->
@@ -45,54 +42,76 @@ Page: My Compassion 2 Sponsorships Page
         <link rel="stylesheet" href="/my_compassion/static/src/css/my2_sponsorships.css" />
         <t t-call="website.layout">
             <!-- HEADER -->
-            <div class="sponsorships-header d-flex flex-column align-items-center px-3">
-                <i class="pictogram-child-sponsorship text-low-yellow mt-4" />
-                <h2 class="text-pure-white">Sponsor a child</h2>
-                <div class="body-large bold text-pure-white text-center mt-3 mb-2">
-                    Stand alongside the church to see a child released from poverty
+            <div class="sponsorships-foreground pb-4">
+                <div class="sponsorships-background w-100 h-100 bg-core-blue" />
+                <div class="sponsorships-column d-flex flex-column align-items-center px-3">
+                    <i id="sponsorships-title-icon" class="pictogram-child-sponsorship text-low-yellow mt-4" />
+                    <h2 class="text-pure-white text-center">
+                        <t t-if="sponsorship_type == 'write_and_pray'">
+                            You write to and pray for a child, someone else sponsors the relationship
+                        </t>
+                        <t t-else="">Sponsor a child</t>
+                    </h2>
+                    <div class="body-large bold text-pure-white text-center mt-3 mb-2">
+                        <t t-if="sponsorship_type == 'write_and_pray'">
+                            Lifting a child out of poverty can also be a team effort! A donor pays. A sponsor writes to the
+                            child and prays for them. Thanks to the “Write &amp; Pray” sponsorship program set up for young
+                            people under the age of 25, these two acts of generosity can work together.
+                            <br /> <br />
+                            You can choose below (or ask us to choose for you) a child you would like to sponsor. Your
+                            commitment? Pray for them regularly and write to them at least twice a year, sending letters of
+                            support and encouragement.
+                        </t>
+                        <t t-else="">Stand with the Church and See a Child Released from Poverty</t>
+                    </div>
                 </div>
             </div>
-            <!-- BODY -->
-            <div class="sponsorships-body-container d-flex flex-column align-items-center mt-4">
+            <div
+                class="sponsorships-body-container d-flex flex-column align-items-center"
+                t-att-data-sponsorship-type="sponsorship_type"
+            >
                 <!-- FILTERS -->
-                <div
-                    class="p-4 w-100 bg-high-eggshell d-flex flex-column flex-lg-row align-items-center justify-content-center"
-                >
-                    <t t-call="my_compassion.SponsorshipsFilter">
-                        <t t-set="title" t-value="'I\'d like to sponsor a'" />
-                        <div class="gender-select-container d-flex my-2">
-                            <input id="gender-boy" type="radio" name="gender" value="boy" />
-                            <label class="gender-select-button" for="gender-boy">Boy</label>
-                            <input id="gender-girl" type="radio" name="gender" value="girl" />
-                            <label class="gender-select-button" for="gender-girl">Girl</label>
-                            <input id="gender-either" type="radio" name="gender" value="either" checked="" />
-                            <label class="gender-select-button" for="gender-either">Either</label>
-                        </div>
-                    </t>
-                    <t t-call="my_compassion.SponsorshipsFilter">
-                        <t t-set="title" t-value="'Between the ages of'" />
-                        <div class="w-100 mt-2 mb-3">
-                            <div class="range-input-component">
-                                <t t-call="theme_compassion_2025.RangeInputLoadingComponent" />
+                <div class="sponsorships-foreground w-100">
+                    <div class="sponsorships-background w-100 h-50 bg-core-blue" />
+                    <div
+                        class="sponsorships-column p-4 w-100 bg-high-eggshell d-flex flex-column flex-lg-row align-items-center justify-content-center"
+                    >
+                        <t t-call="my_compassion.SponsorshipsFilter">
+                            <t t-set="title">I'd like to sponsor a</t>
+                            <div class="gender-select-container d-flex my-2">
+                                <input id="gender-boy" type="radio" name="gender" value="M" />
+                                <label class="gender-select-button" for="gender-boy">Boy</label>
+                                <input id="gender-girl" type="radio" name="gender" value="F" />
+                                <label class="gender-select-button" for="gender-girl">Girl</label>
+                                <input id="gender-either" type="radio" name="gender" value="either" checked="" />
+                                <label class="gender-select-button" for="gender-either">Either</label>
                             </div>
-                        </div>
-                    </t>
-                    <t t-call="my_compassion.SponsorshipsFilter">
-                        <t t-set="title" t-value="'Who comes from'" />
-                        <div class="my-3 mt-lg-2">
-                            <t t-call="theme_compassion_2025.SelectComponent">
-                                <option value="">Select country</option>
-                                <t t-foreach="countries" t-as="country">
-                                    <option t-att-value="country.id">
-                                        <t t-esc="country.name" />
-                                    </option>
+                        </t>
+                        <t t-call="my_compassion.SponsorshipsFilter">
+                            <t t-set="title">Between the ages of</t>
+                            <div class="w-100 mt-2 mb-3">
+                                <div class="range-input-component">
+                                    <t t-call="theme_compassion_2025.RangeInputLoadingComponent" />
+                                </div>
+                            </div>
+                        </t>
+                        <t t-call="my_compassion.SponsorshipsFilter">
+                            <t t-set="title">Who lives in</t>
+                            <div class="my-3 mt-lg-2">
+                                <t t-call="theme_compassion_2025.SelectComponent">
+                                    <option value="">Select country</option>
+                                    <t t-foreach="countries" t-as="country">
+                                        <option t-att-value="country.field_office_id">
+                                            <t t-esc="country.name" />
+                                        </option>
+                                    </t>
                                 </t>
-                            </t>
-                        </div>
-                    </t>
+                            </div>
+                        </t>
+                    </div>
                 </div>
                 <!-- RESULTS -->
-                <div class="w-100 d-flex flex-column">
+                <div class="sponsorships-column w-100 d-flex flex-column">
                     <!-- TOTAL RESULTS -->
                     <div class="body-large bold text-mid-grey mt-4 mb-2 align-self-center">
                         <i class="results-icon icon-users03 text-mid-grey mr-2" />
@@ -103,12 +122,12 @@ Page: My Compassion 2 Sponsorships Page
                     <div class="sponsorships-results-content row justify-content-center" />
                 </div>
                 <!-- BUTTONS -->
-                <div class="d-flex mt-4 mb-5">
+                <div class="sponsorships-column d-flex mt-4 mb-5">
                     <div id="btn-choose" class="mr-3">
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variant" t-value="'compact'" />
                             <t t-set="variation" t-value="'hollow'" />
-                            <t t-set="label" t-value="'Choose for me'" />
+                            <t t-set="label">Choose for me</t>
                             <t t-set="color" t-value="'dark-blue'" />
                             <t t-set="text_color" t-value="'dark-blue'" />
                         </t>
@@ -117,7 +136,7 @@ Page: My Compassion 2 Sponsorships Page
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variant" t-value="'compact'" />
                             <t t-set="variation" t-value="'hollow'" />
-                            <t t-set="label" t-value="'Show more'" />
+                            <t t-set="label">Show more</t>
                             <t t-set="color" t-value="'dark-blue'" />
                             <t t-set="text_color" t-value="'dark-blue'" />
                         </t>

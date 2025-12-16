@@ -3,6 +3,8 @@
  *
  * Used in /templates/pages/my2_new_letter.xml
  */
+let uploadedAttachmentLetterFiles = [];
+
 document.addEventListener("DOMContentLoaded", () => {
     // Constants
     const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
@@ -13,8 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Retrieve the input where the users put files and the container for displaying the file preview
     const fileInput = document.getElementById("letter-attachments");
     const container = document.getElementById("uploaded-files-container");
-
-    let uploadedFiles = [];
 
     /**
      * Generates a unique key for a file based on its metadata.
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     const updateFileInput = () => {
         const dataTransfer = new DataTransfer();
-        uploadedFiles.forEach((file) => dataTransfer.items.add(file));
+        uploadedAttachmentLetterFiles.forEach((file) => dataTransfer.items.add(file));
         fileInput.files = dataTransfer.files;
     };
 
@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!fileDiv) return;
 
             const fileKey = fileDiv.dataset.fileKey;
-            uploadedFiles = uploadedFiles.filter((f) => generateFileKey(f) !== fileKey);
+            uploadedAttachmentLetterFiles = uploadedAttachmentLetterFiles.filter((f) => generateFileKey(f) !== fileKey);
             fileDiv.remove();
             updateFileInput();
         }
@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     fileInput.addEventListener("change", async () => {
         const newFiles = Array.from(fileInput.files);
-        const existingKeys = new Set(uploadedFiles.map(generateFileKey));
+        const existingKeys = new Set(uploadedAttachmentLetterFiles.map(generateFileKey));
 
         try {
             for (const file of newFiles) {
@@ -192,14 +192,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     // Update collections
                     existingKeys.add(compressedKey);
-                    uploadedFiles.push(compressedFile);
+                    uploadedAttachmentLetterFiles.push(compressedFile);
 
                     // Create and append preview
                     container.appendChild(createFileElement(compressedFile, dataUrl));
                 } catch (error) {
                     console.error("Error processing file:", error);
                     alert(`Failed to process ${file.name}: ${error.message}`);
-                    uploadedFiles = uploadedFiles.filter((f) => generateFileKey(f) !== fileKey);
+                    uploadedAttachmentLetterFiles = uploadedAttachmentLetterFiles.filter(
+                        (f) => generateFileKey(f) !== fileKey
+                    );
                 }
             }
         } finally {

@@ -12,21 +12,50 @@ odoo.define("my_compassion.my2_child_letters", function (require) {
     // Letter animation
     document.querySelectorAll(".my2-envelope").forEach((envelope) => {
         envelope.addEventListener("click", function () {
-            envelope.classList.add("open");
             const letter = envelope.querySelector(".env-letter");
 
-            setTimeout(() => {
-                if (letter) {
-                    letter.style.zIndex = "3";
-                }
-            }, 800);
+            if (!envelope.classList.contains("already-read")) {
+                // Iframe
+                const iframeContainer = envelope.querySelector(".iframe-container");
+                let iframe = iframeContainer.querySelector("iframe");
+                if (!iframe) {
+                    iframe = document.createElement("iframe");
+                    iframe.src = "/b2s_image?id=" + envelope.dataset.letterUuid + "&disposition=inline&file_type=pdf";
+                    iframe.type = "application/pdf";
+                    iframeContainer.appendChild(iframe);
+                    iframeContainer.style.display = "block";
 
-            setTimeout(function () {
-                const href = envelope.getAttribute("href");
-                if (href) {
-                    window.location.href = href;
+                    iframe.addEventListener("load", () => {
+                        envelope.classList.add("open");
+                    });
+                } else {
+                    envelope.classList.add("open");
                 }
-            }, 1200);
+
+                // The z-index has to change dynamically during the animation
+                setTimeout(() => {
+                    if (letter) {
+                        letter.style.zIndex = "3";
+                    }
+                }, 800);
+
+                setTimeout(function () {
+                    const href = envelope.getAttribute("href");
+                    if (href) {
+                        window.location.href = href;
+                    }
+                }, 1400);
+            } else {
+                envelope.classList.remove("open");
+                envelope.classList.add("reopen");
+
+                setTimeout(function () {
+                    const href = envelope.getAttribute("href");
+                    if (href) {
+                        window.location.href = href;
+                    }
+                }, 600);
+            }
         });
     });
 
@@ -55,19 +84,28 @@ odoo.define("my_compassion.my2_child_letters", function (require) {
             const filterYearTo = document.getElementById("yearDropdownTo")?.value || "";
             const filterMonthFrom = document.getElementById("monthDropdownFrom")?.value || "";
             const filterMonthTo = document.getElementById("monthDropdownTo")?.value || "";
+            const filterUnread = document.querySelector('input[name="unreadOptions"]:checked');
+
             const sort = document.querySelector('input[name="sortOptions"]:checked')?.value || "newest";
             const redirect_child_id = document.getElementById("childrenDropdown")?.value || "";
             const selectedType = document.querySelector('input[name="type"]:checked')?.value || "";
 
             const url = new URL(window.location.origin + "/my2/children/letters");
-            if (redirect_child_id) url.pathname += `/${redirect_child_id}`;
+            if (redirect_child_id) url.searchParams.set("child_id", redirect_child_id);
             if (filterYearFrom) url.searchParams.set("year_from", filterYearFrom);
             if (filterYearTo) url.searchParams.set("year_to", filterYearTo);
             if (filterMonthFrom) url.searchParams.set("month_from", filterMonthFrom);
             if (filterMonthTo) url.searchParams.set("month_to", filterMonthTo);
             if (selectedType) url.searchParams.set("type", selectedType);
+
             url.searchParams.set("sort", sort);
             url.searchParams.set("page", 1);
+
+            if (filterUnread && filterUnread.value === "unread") {
+                url.searchParams.set("unread", "true");
+            } else {
+                url.searchParams.delete("unread");
+            }
 
             window.location.href = url.toString();
         });

@@ -41,7 +41,7 @@
                 <t t-set="_link_class" t-value="'nav-link font-weight-bold'" />
             </t>
             <a
-                href="/web/login?redirect=/my2/children"
+                href="/web/login?redirect=/my2/dashboard"
                 class="btn btn-sm btn-outline-primary dropdown-toggle"
                 role="button"
                 groups="base.group_public"
@@ -75,6 +75,9 @@
         </xpath>
         <xpath expr="//li[@t-if='is_connected']" position="attributes">
             <attribute name="t-attf-class">#{_item_class} list-unstyled</attribute>
+        </xpath>
+        <xpath expr="//a[@href='/my/information']" position="replace">
+            <a class="dropdown-item" href="/my2/user_settings" role="menuitem">Settings</a>
         </xpath>
     </template>
 </odoo>

@@ -16,6 +16,11 @@ from . import (
     my2_donations,
     my2_letters,
     my2_user,
+    my2_gifts,
     my2_user_settings,
     my2_sponsorships,
+    my2_login,
+    my2_auth_signup,
+    my2_event_banner,
+    my2_portal,
 )

@@ -21,6 +21,12 @@
             <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
             <field name="groups" eval="[(4, ref('base.group_portal'))]" />
         </record>
+        <record id="correspondence_s2b_generator_access_portal" model="ir.rule">
+            <field name="name">MyCompassion: s2b generator access</field>
+            <field name="model_id" ref="sbc_compassion.model_correspondence_s2b_generator" />
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]" />
+        </record>
         <record id="my_bank_accounts" model="ir.rule">
             <field name="name">MyCompassion: bank accounts access</field>
             <field name="model_id" ref="account.model_res_partner_bank" />
@@ -31,12 +37,6 @@
             <field name="name">MyCompassion: churches</field>
             <field name="model_id" ref="base.model_res_partner" />
             <field name="domain_force">[('is_church', '=', True)]</field>
-            <field name="groups" eval="[(4, ref('base.group_portal'))]" />
-        </record>
-        <record id="sponsorship_timeline_access_portal" model="ir.rule">
-            <field name="name">MyCompassion: sponsorship timeline access</field>
-            <field name="model_id" ref="model_sponsorship_timeline" />
-            <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
             <field name="groups" eval="[(4, ref('base.group_portal'))]" />
         </record>
         <record id="product_template_public_rule" model="ir.rule">

@@ -76,23 +76,29 @@ class CrowdfundingProject(models.Model):
         compute="_compute_product_price", store=True, readonly=False
     )
     product_number_goal = fields.Integer(
-        "Product goal", compute="_compute_product_number_goal"
+        "Product goal",
+        compute="_compute_product_number_goal",
+        inverse="_inverse_product_number_goal",
     )
     product_number_reached = fields.Integer(
         "Product reached", compute="_compute_product_number_reached"
     )
     amount_reached = fields.Integer(compute="_compute_product_number_reached")
     number_sponsorships_goal = fields.Integer(
-        "Sponsorships goal", compute="_compute_number_sponsorships_goal"
+        "Sponsorships goal",
+        compute="_compute_number_sponsorships_goal",
+        inverse="_inverse_sponsorships_goal",
     )
     number_sponsorships_reached = fields.Integer(
         "Sponsorships reached", compute="_compute_number_sponsorships_reached"
     )
     number_csp_goal = fields.Integer(
-        "Sponsorships goal", compute="_compute_number_sponsorships_goal"
+        "Mums&Baby sponsorships goal",
+        compute="_compute_number_sponsorships_goal",
+        inverse="_inverse_csp_goal",
     )
     number_csp_reached = fields.Integer(
-        "Sponsorships reached", compute="_compute_number_sponsorships_reached"
+        "Mums&Baby sponsorships reached", compute="_compute_number_sponsorships_reached"
     )
     product_crowdfunding_impact = fields.Char(compute="_compute_impact_text")
     color_sponsorship = fields.Char(compute="_compute_color_sponsorship")
@@ -357,6 +363,14 @@ class CrowdfundingProject(models.Model):
                 project.participant_ids.mapped("product_number_goal")
             )
 
+    def _inverse_product_number_goal(self):
+        for project in self:
+            project._inverse_goal(
+                "product_number_goal",
+                project.product_number_goal,
+                _("The product goal must be a positive number."),
+            )
+
     def _compute_product_number_reached(self):
         # Compute with SQL query for good performance
         self.env.cr.execute(
@@ -384,6 +398,53 @@ class CrowdfundingProject(models.Model):
             )
             project.number_csp_goal = sum(
                 project.participant_ids.mapped("number_csp_goal")
+            )
+
+    def _inverse_goal(self, goal_field_name, new_goal, error_message):
+        if new_goal < 0:
+            raise ValidationError(error_message)
+        previous_goal = sum(self.participant_ids.mapped(goal_field_name))
+        if previous_goal == 0 and new_goal > 0:
+            participants = self.participant_ids
+            num_participants = len(participants)
+            if num_participants > 0:
+                base_goal = new_goal // num_participants
+                remainder = new_goal % num_participants
+                for participant in participants:
+                    participant[goal_field_name] = base_goal
+                # Add remainder to owner
+                if remainder and self.owner_participant_id:
+                    self.owner_participant_id[goal_field_name] += remainder
+            return
+
+        if new_goal == 0:
+            for participant in self.participant_ids:
+                participant[goal_field_name] = 0
+        elif previous_goal != 0:
+            for participant in self.participant_ids:
+                proportion = participant[goal_field_name] / previous_goal
+                participant[goal_field_name] = int(new_goal * proportion)
+
+            updated_total_goal = sum(self.participant_ids.mapped(goal_field_name))
+            total_diff = new_goal - updated_total_goal
+            # Adjust the difference to the owner
+            if total_diff != 0 and self.owner_participant_id:
+                self.owner_participant_id[goal_field_name] += total_diff
+
+    def _inverse_sponsorships_goal(self):
+        for project in self:
+            project._inverse_goal(
+                "number_sponsorships_goal",
+                project.number_sponsorships_goal,
+                _("The sponsorships goal must be a positive number."),
+            )
+
+    def _inverse_csp_goal(self):
+        for project in self:
+            project._inverse_goal(
+                "number_csp_goal",
+                project.number_csp_goal,
+                _("The Mums&Baby sponsorships goal must be a positive number."),
             )
 
     def _compute_sponsorships(self):

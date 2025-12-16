@@ -2,25 +2,34 @@ odoo.define("my_compassion.donation_form", function (require) {
     "use strict";
 
     var publicWidget = require("web.public.widget");
+    var rpc = require("web.rpc");
 
     publicWidget.registry.DonationForm = publicWidget.Widget.extend({
         selector: ".my2_donation_form",
 
         events: {
-            'change input[type="radio"][name="suggested_amount"]': "_onAmountChange",
+            "change .suggested-amount": "_onAmountChange",
+            "change .SelectComponent": "_onRecipientChange",
             "click .btn-submit": "_onSubmitClick",
+            "click .limits-toggle": "_onLimitsToggleClick",
         },
 
         /**
          * @override
          */
         start: function () {
+            this.edit_mode = this.$el.data("edit-mode");
             this.customAmountInput = this.$("#custom-amount");
 
-            if (this.$("input[name='suggested_amount']:checked").val() !== "custom") {
+            if (this.$(".suggested-amount:checked").val() !== "custom") {
                 this.customAmountInput.hide();
             }
             this.customAmountInput.removeAttr("hidden");
+
+            this.$(".limits-info").hide();
+            this.$(".limits-info").removeAttr("hidden");
+
+            this._onRecipientChange();
 
             return this._super.apply(this, arguments);
         },
@@ -39,6 +48,55 @@ odoo.define("my_compassion.donation_form", function (require) {
         },
 
         /**
+         * Handles the change event for the recipient select.
+         * @private
+         * @param {Event} ev The jQuery event object.
+         */
+        _onRecipientChange: function (ev) {
+            const $recipient_select = this.$("[name='recipient']");
+            if ($recipient_select.length == 0) {
+                return;
+            }
+            if (this.edit_mode) {
+                this.$(".amount-selection").removeAttr("hidden");
+            } else if ($recipient_select.val()) {
+                this.$(".btn").prop("disabled", true);
+                $recipient_select.prop("disabled", true);
+
+                rpc.query({
+                    route: "/my2/gifts/get-limits",
+                    params: {
+                        product_id: this.$("[name='product_id']").val(),
+                        sponsorship_id: $recipient_select.val(),
+                    },
+                })
+                    .then(
+                        function (data) {
+                            this.$(".btn").prop("disabled", false);
+                            $recipient_select.prop("disabled", false);
+
+                            if (data.remaining_donations !== null && data.remaining_donations <= 0) {
+                                this.$(".limit-reached-message").removeAttr("hidden");
+                                this.$(".amount-selection").attr("hidden", true);
+                            } else {
+                                this.$(".amount-selection").removeAttr("hidden");
+                                this.$(".limit-reached-message").attr("hidden", true);
+                            }
+                        }.bind(this)
+                    )
+                    .guardedCatch(
+                        function () {
+                            this.$(".btn").prop("disabled", false);
+                            $recipient_select.prop("disabled", false);
+                        }.bind(this)
+                    );
+            } else {
+                this.$(".amount-selection").attr("hidden", true);
+                this.$(".limit-reached-message").attr("hidden", true);
+            }
+        },
+
+        /**
          * Handles click events on the "Add & check out" button.
          * @param {Event} ev
          */
@@ -52,16 +110,64 @@ odoo.define("my_compassion.donation_form", function (require) {
                 return; // Stop execution if validation fails
             }
 
-            // Trigger submission event
-            this.$el.trigger(this.$(".btn-submit").data("submission-event"), [
-                {
-                    product_id: this.$("[name='product_id']").val(),
-                    frequency: this.$("[name='frequency']:checked").val(),
-                    recipient: this.$("[name='recipient']").val(),
-                    suggested_amount: this.$("[name='suggested_amount']:checked").val(),
-                    custom_amount: this.$("[name='custom_amount']").val(),
+            const sponsorship_id = this.$("[name='recipient']").val();
+            const product_id = this.$("[name='product_id']").val();
+
+            rpc.query({
+                route: "/my2/gifts/get-limits",
+                params: {
+                    product_id: product_id,
+                    sponsorship_id: sponsorship_id,
                 },
-            ]);
+            })
+                .then(
+                    function (data) {
+                        this.$(".btn").prop("disabled", false);
+
+                        // Compute amount
+                        const suggested_amount = this.$(".suggested-amount:checked").val();
+                        const custom_amount = this.$("[name='custom_amount']").val();
+                        let amount = suggested_amount;
+                        if (amount === "custom") {
+                            amount = custom_amount;
+                        }
+
+                        if (
+                            (data.min_amount !== null && amount < data.min_amount) ||
+                            (data.max_amount !== null && amount > data.max_amount) ||
+                            (data.remaining_donations !== null && data.remaining_donations <= 0 && !this.edit_mode)
+                        ) {
+                            this.$(".limit-error-message").removeAttr("hidden");
+                            return;
+                        } else {
+                            this.$(".limit-error-message").attr("hidden", true);
+                        }
+
+                        // Trigger submission event
+                        this.$el.trigger(this.$(".btn-submit").data("submission-event"), [
+                            {
+                                product_id: product_id,
+                                frequency: this.$(".donation-frequency input:checked").val(),
+                                recipient: sponsorship_id,
+                                suggested_amount: suggested_amount,
+                                custom_amount: custom_amount,
+                            },
+                        ]);
+                    }.bind(this)
+                )
+                .guardedCatch(
+                    function () {
+                        this.$(".btn").prop("disabled", false);
+                    }.bind(this)
+                );
+        },
+
+        /**
+         * Handles click events on the donation limits toggle.
+         * @param {Event} ev
+         */
+        _onLimitsToggleClick: function (ev) {
+            this.$(".limits-info").slideToggle("fast");
         },
 
         /**
@@ -75,13 +181,14 @@ odoo.define("my_compassion.donation_form", function (require) {
             this.$("input.is-invalid").removeClass("is-invalid");
 
             // Validate recipient
-            if (this.$('select[name="recipient"]').find(":selected").val() === "") {
+            const $recipient = this.$('select[name="recipient"]');
+            if ($recipient.length && $recipient.find(":selected").val() === "") {
                 isValid = false;
                 this.$('select[name="recipient"]').addClass("is-invalid");
             }
 
             // Validate custom amount
-            if (this.$("input[name='suggested_amount']:checked").val() == "custom") {
+            if (this.$(".suggested-amount:checked").val() === "custom") {
                 const $input = this.$("#custom-amount");
                 const custom_amount = Number($input.val());
 

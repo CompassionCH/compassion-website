@@ -16,7 +16,19 @@ document.addEventListener("DOMContentLoaded", function (event) {
         publicWidget.registry.NewSponsorshipWizard = publicWidget.Widget.extend({
             selector: ".new-sponsorship-wizard-form",
             events: {
-                "click .btn-next, .btn-previous, .btn-finish": "_onStepClick",
+                "click .btn-next, .btn-previous": "_onStepClick",
+                "click .btn-sponsor": "_onSponsorClick",
+                "change .wap-contribute": "_onWAPContributeChange",
+                "change .suggested-amount": "_onAmountChange",
+            },
+
+            /**
+             * @override
+             */
+            start: function () {
+                this._super.apply(this, arguments);
+
+                this._updateUI();
             },
 
             /**
@@ -26,25 +38,32 @@ document.addEventListener("DOMContentLoaded", function (event) {
             _onStepClick: function (ev) {
                 ev.preventDefault();
 
-                var action = $(ev.currentTarget).attr("name"); // 'next', 'previous' or finish
+                const action = $(ev.currentTarget).data("action"); // 'next', 'previous'
+                const sponsorship_type = $(ev.currentTarget).data("sponsorship-type"); // 'standard', 'write_and_pray'
 
                 // Don't validate when moving backwards
                 if (action !== "previous" && !this._validateForm()) {
                     return; // Stop execution if validation fails
                 }
 
+                // Check age for Write&Pray
+                if (action !== "previous" && sponsorship_type == "write_and_pray") {
+                    const dateThreshold = new Date();
+                    dateThreshold.setFullYear(dateThreshold.getFullYear() - 25);
+                    const birthdate = new Date(this.$("#birthdate").val());
+                    if (birthdate < dateThreshold) {
+                        this.$("#wap-age-modal").modal("show");
+                        return;
+                    }
+                }
+
                 // Prevent double clicks
                 this.$(".btn").prop("disabled", true);
-
-                // Submit the form and return if action is finish
-                if (action === "finish") {
-                    $(".new-sponsorship-wizard-form").submit();
-                    return;
-                }
 
                 // Serialize form and add action
                 var formData = this.$el.serializeArray();
                 formData.push({ name: "action", value: action });
+                formData.push({ name: "sponsorship_type", value: sponsorship_type });
 
                 // Use RPC to call the controller method
                 rpc.query({
@@ -53,16 +72,25 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 })
                     .then(
                         function (data) {
+                            // Replace the form's inner content with the new step's HTML
                             if (data.html) {
-                                var $newContent = $(data.html);
-                                this.$(".new-sponsorship-wizard-form-content").empty().append($newContent);
-                                this.trigger_up("widgets_start_request", {
-                                    $target: $newContent,
-                                });
+                                // Destroy modal
+                                const modal = this.$("#wap-age-modal");
+                                if (modal) {
+                                    $(".modal-backdrop").remove();
+                                    $("body").removeClass("modal-open");
+                                }
+
+                                this.$(".new-sponsorship-wizard-form-content").html(data.html);
                                 $("html, body").animate({ scrollTop: 0 }, "slow");
                             }
-                            // Re-enable buttons
-                            this.$(".btn").prop("disabled", false);
+                            if (data.finish) {
+                                this.$el.submit();
+                            } else {
+                                // Re-enable buttons
+                                this.$(".btn").prop("disabled", false);
+                                this._updateUI();
+                            }
                         }.bind(this)
                     )
                     .guardedCatch(
@@ -102,6 +130,43 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     obj[field.name] = field.value;
                 }
                 return obj;
+            },
+
+            /**
+             * Handles the change event for the Write&Pray contribute radio buttons.
+             * @private
+             * @param {Event} ev The jQuery event object.
+             */
+            _onWAPContributeChange: function (ev) {
+                this._updateUI("fast");
+            },
+
+            /**
+             * Handles the change event for the suggested amounts radio buttons.
+             * @private
+             * @param {Event} ev The jQuery event object.
+             */
+            _onAmountChange: function (ev) {
+                this._updateUI("fast");
+            },
+
+            /**
+             * Updates UI
+             * @private
+             * @param speed
+             */
+            _updateUI: function (speed = 0) {
+                if (this.$(".wap-contribute:checked").val() === "true") {
+                    this.$("#wap-contribution-amount").slideDown(speed);
+                } else {
+                    this.$("#wap-contribution-amount").slideUp(speed);
+                }
+
+                if (this.$(".suggested-amount:checked").val() === "custom") {
+                    this.$(".custom-amount-field").slideDown(speed);
+                } else {
+                    this.$(".custom-amount-field").slideUp(speed);
+                }
             },
         });
 

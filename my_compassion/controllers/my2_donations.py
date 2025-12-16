@@ -2,18 +2,25 @@
 #
 #    Copyright (C) 2025 Compassion CH (http://www.compassion.ch)
 #    @author: Nathan Felber <nfelber@compassion.ch>
+#    @author: Elias Keller <elias@compassion.ch>
 #
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
 
+import math
+from collections import defaultdict
+from datetime import datetime, timedelta
+
 from werkzeug.exceptions import BadRequest, NotFound
 
-from odoo import http
+from odoo import fields, http
 from odoo.http import request
 
+from odoo.addons.portal.controllers.portal import CustomerPortal
 
-class MyCompassionDonationsController(http.Controller):
+
+class MyCompassionDonationsController(CustomerPortal):
     @http.route(
         '/my2/gifts/<model("product.template"):product>',
         type="http",
@@ -28,13 +35,17 @@ class MyCompassionDonationsController(http.Controller):
         details page.
         """
         sponsorships = request.env.user.partner_id.sponsorship_ids
+        donation_limits = request.env["gift.threshold.settings"].sudo().search([])
+
+        context = {
+            "product": product,
+            "sponsorships": sponsorships,
+            "donation_limits": donation_limits,
+        }
 
         return request.render(
             "my_compassion.my2_donation_details_page",
-            {
-                "product": product,
-                "sponsorships": sponsorships,
-            },
+            context,
         )
 
     @http.route(
@@ -91,17 +102,14 @@ class MyCompassionDonationsController(http.Controller):
         """
         Edits a donation from the user's gift package.
         """
-        # Retrieve current user's cart
+        # Fetch the order line record from the user's cart
         order = request.website.sale_get_order()
-
-        # Get the order to be edited
-        try:
-            order_line_id = int(post.get("order_line_id"))
-        except (ValueError, TypeError) as e:
-            raise BadRequest() from e
+        order_line_id = post.get("order_line_id")
+        order_line = order and order.order_line.filtered(
+            lambda line: line.id == order_line_id
+        )
 
         # Make sure the order line exists
-        order_line = order.order_line.filtered(lambda line: line.id == order_line_id)
         if not order_line:
             raise NotFound()
 
@@ -110,6 +118,37 @@ class MyCompassionDonationsController(http.Controller):
         order_line.write(
             self._extract_donation_order_line_fields(product_template, post)
         )
+
+    @http.route(
+        "/my2/gifts/get-limits",
+        type="json",
+        auth="user",
+        website=True,
+        methods=["POST"],
+    )
+    def donation_get_limits(self, product_id, sponsorship_id=None, **post):
+        """
+        Returns the donation limits for a product (and optionally a sponsorship)
+        in the form:
+        {
+            "min_amount": int,               # If amount is limited
+            "max_amount": int,               # If amount is limited
+            "remaining_donations": int,      # If frequency is limited
+        }
+        """
+        product = request.env["product.template"].search([("id", "=", product_id)])
+        if not product:
+            return BadRequest()
+        if sponsorship_id is not None:
+            try:
+                sponsorship_id = int(sponsorship_id)
+            except TypeError as e:
+                raise BadRequest() from e
+
+        limits = product.get_donation_limits(
+            request.website.company_id, request.env.user.partner_id, sponsorship_id
+        )
+        return limits
 
     @http.route(
         "/my2/gift-package",
@@ -124,17 +163,23 @@ class MyCompassionDonationsController(http.Controller):
         return: An HTTP response containing a rendered template with the gift
         package page.
         """
-        # Get the current sales order
+        # Get the current sales order and register it as last order
+        # (usually done in a confirmation step that we don't have)
         order = request.website.sale_get_order()
+        request.session["sale_last_order_id"] = order.id
 
         # Fetch gift thresholds
         limits = request.env["gift.threshold.settings"].sudo().search([])
+
+        # Fetch acquirer
+        acquirer = self._get_payment_acquirer()
 
         return request.render(
             "my_compassion.my2_gift_package_page",
             {
                 "order": order,
                 "limits": limits,
+                "acquirer": acquirer,
             },
         )
 
@@ -157,12 +202,17 @@ class MyCompassionDonationsController(http.Controller):
         if not order_line:
             raise NotFound()
 
+        limits = request.env["gift.threshold.settings"].sudo().search([])
+
         render_attrs = {
             "product": order_line.product_template_id,
             "submit_label": "Ok",
             "default_frequency": order_line.frequency,
             "default_suggested_amount": "custom",
             "default_custom_amount": order_line.price_total,
+            "limits": limits,
+            "date": fields.Date.today(),
+            "currency_name": order.pricelist_id.currency_id.name,
         }
 
         if order_line.is_gift:
@@ -208,7 +258,49 @@ class MyCompassionDonationsController(http.Controller):
             },
         )
 
-        return {"html": html_content}
+        return {
+            "html": html_content,
+            "is_order_empty": len(order.order_line) == 0,
+        }
+
+    @http.route(
+        "/my2/gift-package/add",
+        type="http",
+        auth="user",
+        website=True,
+        sitemap=False,
+    )
+    def my2_render_add_a_gift_page(self, **kwargs):
+        """
+        Renders the add a gift page to quickly add a gift to the gift package.
+        return: An HTTP response containing a rendered template with the add a
+        gift page.
+        """
+        # Exclude fund donation that are already in the user's gift package
+        order = request.website.sale_get_order(force_create=True)
+        product_template_ids_in_cart = order.order_line.product_id.product_tmpl_id.ids
+        products = request.env["product.template"].search(
+            [
+                "&",
+                ("activate_for_my_compassion", "=", True),
+                "|",
+                ("my_compassion_donation_type", "=", "gift"),
+                ("id", "not in", product_template_ids_in_cart),
+            ]
+        )
+
+        sponsorships = request.env.user.partner_id.sponsorship_ids
+        limits = request.env["gift.threshold.settings"].sudo().search([])
+
+        return request.render(
+            "my_compassion.my2_add_a_gift_page",
+            {
+                "products": products,
+                "sponsorships": sponsorships,
+                "limits": limits,
+                "currency_name": order.pricelist_id.currency_id.name,
+            },
+        )
 
     @http.route(
         "/my2/gifts/thankyou",
@@ -221,13 +313,10 @@ class MyCompassionDonationsController(http.Controller):
         sale_order_id = request.session.get("sale_last_order_id")
         if sale_order_id:
             sale_order = request.env["sale.order"].sudo().browse(sale_order_id)
-            current_partner = request.env.user.partner_id
-            # Check that the order belongs to the current user
-            if sale_order.partner_id == current_partner:
-                return request.render(
-                    "my_compassion.my2_gifts_thank_you_page",
-                    {"sale_order": sale_order},
-                )
+            return request.render(
+                "my_compassion.my2_gifts_thank_you_page",
+                {"sale_order": sale_order},
+            )
         return request.redirect("/my2/dashboard")
 
     @staticmethod
@@ -235,22 +324,7 @@ class MyCompassionDonationsController(http.Controller):
         # Compute quantity
         price = 0
         amount = post.get("suggested_amount")
-        if amount == "low":
-            price = (
-                product_template.my_compassion_donation_quantity_low
-                * product_template.list_price
-            )
-        elif amount == "medium":
-            price = (
-                product_template.my_compassion_donation_quantity_medium
-                * product_template.list_price
-            )
-        elif amount == "high":
-            price = (
-                product_template.my_compassion_donation_quantity_high
-                * product_template.list_price
-            )
-        elif amount == "custom":
+        if amount == "custom":
             try:
                 price = float(post.get("custom_amount"))
             except (ValueError, TypeError) as e:
@@ -259,7 +333,15 @@ class MyCompassionDonationsController(http.Controller):
             if price <= 0:
                 raise BadRequest()
         else:
-            raise BadRequest()
+            quantities = {
+                "low": product_template.my_compassion_donation_quantity_low,
+                "medium": product_template.my_compassion_donation_quantity_medium,
+                "high": product_template.my_compassion_donation_quantity_high,
+            }
+            quantity = quantities.get(amount)
+            if not quantity:
+                raise BadRequest()
+            price = quantity * product_template.list_price
 
         # Get frequency
         frequency = post.get("frequency")
@@ -275,3 +357,142 @@ class MyCompassionDonationsController(http.Controller):
             order_line_fields["gift_recipient_id"] = post.get("recipient")
 
         return order_line_fields
+
+    def _get_paid_invoices_filter(self, partner):
+        paid_invoices_filter = [
+            ("partner_id", "=", partner.id),
+            ("payment_state", "=", "paid"),
+            ("move_type", "=", "out_invoice"),
+            ("amount_total", "!=", 0),
+        ]
+        return paid_invoices_filter
+
+    def _get_paid_invoices_subset(self, partner, offset, amount):
+        paid_invoices_subset = (
+            request.env["account.move"]
+            .sudo()
+            .search(
+                self._get_paid_invoices_filter(partner),
+                offset=offset,
+                limit=amount,
+            )
+        )
+        return paid_invoices_subset
+
+    def _get_paid_invoices_amount(self, partner):
+        number_of_paid_invoices = (
+            request.env["account.move"]
+            .sudo()
+            .search_count(self._get_paid_invoices_filter(partner))
+        )
+        return number_of_paid_invoices
+
+    @http.route(
+        "/my2/donations",
+        type="http",
+        auth="user",
+        website=True,
+    )
+    def my_donations(self, invoice_page=1, invoice_per_page=12, **kw):
+        partner = request.env.user.partner_id
+
+        # Active sponsorships
+        active_sponsorships = partner.get_portal_sponsorships("active")
+
+        # Due invoices
+        date_filter_up_bound = datetime.today() + timedelta(days=30)
+        due_invoices = (
+            request.env["account.move"]
+            .sudo()
+            .search(
+                [
+                    ("partner_id", "=", partner.id),
+                    ("payment_state", "=", "not_paid"),
+                    ("invoice_category", "=", "sponsorship"),
+                    ("move_type", "=", "out_invoice"),
+                    ("state", "=", "posted"),
+                    ("amount_total", "!=", 0),
+                    ("invoice_date", "<", fields.Date.to_string(date_filter_up_bound)),
+                ]
+            )
+        )
+
+        # Computing the total price of the active sponsorships grouped
+        # per sponsorship frequency and payment method.
+        # group_id groups the invoices that have the same payment method and frequency.
+        tot_cost_per_frequency = defaultdict(lambda: defaultdict(float))
+
+        for sponsorship in active_sponsorships:
+            currency = sponsorship.pricelist_id.currency_id.name
+            tot_cost_per_frequency[sponsorship.group_id.month_interval][
+                currency
+            ] += sponsorship.total_amount
+
+        paid_invoices_data = self._get_paginated_paid_invoices(
+            partner, invoice_page, invoice_per_page
+        )
+
+        values = self._prepare_portal_layout_values()
+        values.update(
+            {
+                "active_sponsorships": active_sponsorships,
+                "tot_cost_per_frequency": tot_cost_per_frequency,
+                "due_invoices": due_invoices,
+                "paid_invoices_subset": paid_invoices_data["paid_invoices_subset"],
+                "current_page": paid_invoices_data["current_page"],
+                "total_pages": paid_invoices_data["total_pages"],
+            }
+        )
+        return request.render("my_compassion.my2_my_donations_page", values)
+
+    @http.route(
+        "/my2/donations/history",
+        type="json",
+        auth="user",
+        methods=["POST"],
+        website=True,
+    )
+    def my_donations_history(self, invoice_page=1, invoice_per_page=12, **kw):
+        partner = request.env.user.partner_id
+
+        history_data = self._get_paginated_paid_invoices(
+            partner, invoice_page, invoice_per_page
+        )
+
+        html = request.env["ir.qweb"]._render(
+            "my_compassion.my2_donations_history_content",
+            values=history_data,
+        )
+
+        return {"html": html}
+
+    def _get_paginated_paid_invoices(
+        self, partner, invoice_page=1, invoice_per_page=12
+    ):
+        """
+        Fetches a paginated subset of paid invoices for a partner and calculates
+        pagination details.
+        """
+        offset = (int(invoice_page) - 1) * invoice_per_page
+
+        subset = self._get_paid_invoices_subset(partner, offset, invoice_per_page)
+
+        total_amount = self._get_paid_invoices_amount(partner)
+
+        total_pages = (
+            math.ceil(total_amount / invoice_per_page) if invoice_per_page > 0 else 0
+        )
+
+        return {
+            "paid_invoices_subset": subset,
+            "current_page": int(invoice_page),
+            "total_pages": total_pages,
+        }
+
+    @staticmethod
+    def _get_payment_acquirer():
+        return (
+            http.request.env["payment.acquirer"]
+            .sudo()
+            .search([("provider", "=", "postfinance")], limit=1)
+        )

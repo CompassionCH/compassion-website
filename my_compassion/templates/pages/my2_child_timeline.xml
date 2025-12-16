@@ -21,7 +21,7 @@
         <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile_timeline.css" />
         <t t-call="website.layout">
             <div class="container">
-                <div class="content-column">
+                <div class="single-column">
                     <!-- ### Child personal information ### -->
                     <section class="d-flex flex-column flex-md-row pt-4">
                         <!-- Portrait -->
@@ -32,42 +32,71 @@
                                     t-set="src"
                                     t-value="'/web/image/compassion.child/' + str(compassion_child.id) + '/portrait'"
                                 />
-                                <t t-set="alt" t-value="'Portrait of ' + compassion_child.preferred_name" />
+                                <t t-set="alt">
+                                    Portrait of
+                                    <t t-esc="compassion_child.preferred_name" />
+                                </t>
                                 <t t-set="size" t-value="'large'" />
                             </t>
+                            <div
+                                t-if="access_scope == 'sponsor' and compassion_child.my_sponsorship_id.state == 'terminated' and compassion_child.my_sponsorship_id.sds_state != 'sub_waiting'"
+                            >
+                                <span
+                                    class="badge bg-low-yellow"
+                                    title="Your sponsorship has ended"
+                                    aria-label="Sponsorship ended"
+                                >
+                                    Sponsorship ended
+                                </span>
+                            </div>
+                            <div
+                                t-if="access_scope == 'sponsor' and compassion_child.my_sponsorship_id.state in ('draft', 'waiting', 'mandate')"
+                            >
+                                <span
+                                    class="badge bg-low-yellow"
+                                    title="Your sponsorship is being confirmed and will become active soon"
+                                    aria-label="Sponsorship pending confirmation"
+                                >
+                                    Pending activation
+                                </span>
+                            </div>
                         </div>
                         <!-- Child info and buttons actions -->
                         <div class="d-flex flex-column flex-md-column-reverse">
                             <!-- Action buttons -->
                             <div class="child-action-buttons justify-content-md-start ml-md-3 pb-3 p-md-0">
                                 <t
-                                    t-if="access_scope == 'sponsor'"
+                                    t-if="access_scope == 'sponsor' and compassion_child.can_i_write_letter"
                                     t-call="theme_compassion_2025.ThemedButtonComponent"
                                 >
                                     <t t-set="variant" t-value="'compact'" />
                                     <t t-set="variation" t-value="'hollow'" />
-                                    <t t-set="label" t-value="'Write a letter'" />
+                                    <t t-set="label">Write a letter</t>
                                     <t t-set="color" t-value="'core-blue'" />
                                     <t t-set="text_color" t-value="'core-blue'" />
                                     <t
                                         t-set="href"
-                                        t-value="'/my2/children/' + str(compassion_child.id) + '/letter/new'"
+                                        t-value="'/my2/children/letters/new' + '?child_id=' + str(compassion_child.id)"
                                     />
                                 </t>
                                 <t
-                                    t-if="access_scope == 'sponsor'"
+                                    t-if="access_scope == 'sponsor' and compassion_child.can_i_make_gift"
                                     t-call="theme_compassion_2025.ThemedButtonComponent"
                                 >
                                     <t t-set="variant" t-value="'compact'" />
                                     <t t-set="variation" t-value="'hollow'" />
-                                    <t t-set="label" t-value="'Give a gift'" />
+                                    <t t-set="label">Give a gift</t>
                                     <t t-set="color" t-value="'core-blue'" />
                                     <t t-set="text_color" t-value="'core-blue'" />
+                                    <t
+                                        t-set="href"
+                                        t-value="'/my2/gifts' + '?type=gift&amp;child_id=' + str(compassion_child.id)"
+                                    />
                                 </t>
                                 <t t-if="access_scope == 'public'" t-call="theme_compassion_2025.ThemedButtonComponent">
                                     <t t-set="variant" t-value="'compact'" />
                                     <t t-set="variation" t-value="'filled'" />
-                                    <t t-set="label" t-value="'Sponsor me'" />
+                                    <t t-set="label">Sponsor me</t>
                                     <t t-set="color" t-value="'dark-blue'" />
                                     <t t-set="text_color" t-value="'pure-white'" />
                                     <t t-set="href" t-value="'/my2/new-sponsorship/' + str(compassion_child.id)" />
@@ -94,11 +123,11 @@
                                         <t t-set="suffix" t-value="'rd'" />
                                     </t>
                                     <p class="child-info-text">
-                                        My birthday is the
+                                        My birthday is
                                         <span class="text-core-blue font-weight-bold">
+                                            <t t-esc="month" />
                                             <t t-esc="day" />
                                             <t t-esc="suffix" />
-                                            <t t-esc="month" />
                                         </span>
                                     </p>
                                 </div>
@@ -259,13 +288,7 @@
                                     </p>
                                 </div>
                                 <div class="map-container mt-3">
-                                    <!--<iframe
-                                        width="100%"
-                                        height="250"
-                                        frameborder="0"
-                                        style="border:0"
-                                        t-att-src="compassion_child.project_id.google_link">
-                                    </iframe>-->
+
                                 </div>
                             </div>
                             <!-- PROJECT TAB CONTENT -->
@@ -415,18 +438,47 @@
                             </div>
                         </div>
                     </section>
+                    <!-- ### Weather and Time Component ### -->
+                    <section
+                        t-if="access_scope == 'sponsor'"
+                        class="cd-weather-map-container js-cd-weather-map-container"
+                        style="position: relative;"
+                        t-att-data-child-id="compassion_child.id"
+                        t-att-data-timezone="timezone"
+                    >
+                        <t t-if="google_api_key">
+                            <t t-call="theme_compassion_2025.MapComponent">
+                                <t t-set="long" t-value="compassion_child.project_id.gps_longitude" />
+                                <t t-set="lat" t-value="compassion_child.project_id.gps_latitude" />
+                                <t t-set="api_key" t-value="google_api_key" />
+                                <t t-set="custom_map_id" t-value="google_custom_map_id" />
+                            </t>
+                        </t>
+                        <div
+                            style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); z-index: 10; padding-bottom: 1rem;"
+                        >
+                            <t t-call="my_compassion.WeatherTimeContainer">
+                                <t t-set="timezone" t-value="timezone" />
+                                <t t-set="fcp_id" t-value="compassion_child.project_id.fcp_id" />
+                                <t t-set="church_name" t-value="compassion_child.project_id.local_church_name" />
+                                <t
+                                    t-set="city_country"
+                                    t-value="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"
+                                />
+                            </t>
+                        </div>
+                    </section>
                     <!-- ### Partner and child timeline title ### -->
                     <t t-if="access_scope == 'sponsor'" t-call="theme_compassion_2025.TitleComponent">
-                        <t t-set="title_content" t-value="'Timeline'" />
+                        <t t-set="title_content">Timeline</t>
                         <t t-set="title_size" t-value="'md'" />
                         <t t-set="color" t-value="'core-blue'" />
                         <t t-set="show_underline" t-value="True" />
                         <t t-set="underline_color" t-value="'low-yellow'" />
-                        <t
-                            t-set="description"
-                            t-value="'Follow the thread of hope and
-                        encouragement you’ve woven together.'"
-                        />
+                        <t t-set="description">
+                            Follow the thread of hope and
+                        encouragement you’ve woven together.
+                        </t>
                     </t>
                 </div>
             </div>
@@ -437,7 +489,7 @@
                 t-att-data-child-id="compassion_child.id"
             >
                 <div class="cd-timeline__container">
-                    <div class="content-column">
+                    <div class="single-column">
                         <t t-call="my_compassion.SponsorChildTimelineBatchComponent">
                             <t t-set="records" t-value="records" />
                         </t>
@@ -454,6 +506,8 @@
         </t>
         <!-- Include Custom Javascript -->
         <script type="text/javascript" src="/my_compassion/static/src/js/child_profile_tabs.js" />
+        <!-- Scripts for the weather and time component -->
+        <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_center_weather_time.js" />
         <script
             t-if="access_scope == 'sponsor'"
             type="text/javascript"

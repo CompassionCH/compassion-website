@@ -6,6 +6,8 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+import json
+
 from odoo import _, http
 from odoo.exceptions import AccessError
 from odoo.http import request
@@ -37,17 +39,121 @@ class MyCompassionChildrenController(WebsiteChild):
                     _("You are not authorized to view this child's information.")
                 )
 
-    def _get_timeline_records(self, partner_id, child_id, offset=0, limit=9):
-        """Private helper to fetch a paginated list of timeline records."""
-        domain = [("child_id", "=", child_id), ("partner_id", "=", partner_id)]
-        timeline_model = request.env["sponsorship.timeline"].sudo()
-        total = timeline_model.search_count(domain)
-        records = timeline_model.search(
-            domain, order="create_date desc", offset=offset, limit=limit
-        )
+    def _get_authorized_partner_ids(self, child):
+        """
+        Get the list of partner IDs authorized to view timeline records.
+        Includes the current partner and potentially the correspondent
+        if portal settings allow.
+        """
+        partner = request.env.user.partner_id
+        sponsorship = child.my_sponsorship_id
+
+        # Include correspondent if user has full info access and isn't the correspondent
+        if (
+            partner != sponsorship.correspondent_id
+            and partner.portal_sponsorships == "all_info"
+        ):
+            partner += sponsorship.correspondent_id
+
+        return partner.ids
+
+    def _get_timeline_count(self, child_id, partner_ids):
+        """Get total count of timeline records (correspondence + gifts)."""
+        sql = """
+            SELECT
+                (SELECT COUNT(*) FROM correspondence
+                 WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
+                +
+                (SELECT COUNT(*) FROM sponsorship_gift
+                 WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
+                AS total
+        """
+        request.env.cr.execute(sql, {"child_id": child_id, "partner_ids": partner_ids})
+        return request.env.cr.fetchone()[0] or 0
+
+    def _get_timeline_data(self, child_id, partner_ids, offset, limit):
+        """Fetch paginated timeline records (correspondence + gifts) ordered by date."""
+        # ruff: noqa: E501 (query is more readable this way)
+        sql = """
+            SELECT * FROM (
+                SELECT
+                    'correspondence' AS model,
+                    c.uuid::text AS record_id,
+                    '' AS amount,
+                    '' AS currency_name,
+                    c.direction AS metadata,
+                    c.create_date,
+                    CASE
+                        WHEN c.direction = 'Beneficiary To Supporter'
+                        THEN %(title_corr_wrote)s
+                        ELSE %(title_corr_received)s
+                    END AS title
+                FROM correspondence c
+                WHERE c.child_id = %(child_id)s
+                  AND c.partner_id = ANY(%(partner_ids)s)
+
+                UNION ALL
+
+                SELECT
+                    'sponsorship_gift' AS model,
+                    s.id::text AS record_id,
+                    s.amount::text AS amount,
+                    COALESCE(rc.name, %(default_currency)s) AS currency_name,
+                    s.gift_type || '|' || COALESCE(s.sponsorship_gift_type, '') AS metadata,
+                    s.create_date,
+                    CASE
+                        WHEN s.sponsorship_gift_type = 'Birthday' THEN %(title_gift_bday)s
+                        WHEN s.sponsorship_gift_type = 'General' THEN %(title_gift_general)s
+                        WHEN s.sponsorship_gift_type = 'Graduation/Final' THEN %(title_gift_grad)s
+                        WHEN s.gift_type = 'Family Gift' THEN %(title_gift_family)s
+                        ELSE %(title_gift_default)s
+                    END AS title
+                FROM sponsorship_gift s
+                LEFT JOIN account_move_line aml ON aml.gift_id = s.id
+                LEFT JOIN res_currency rc ON rc.id = aml.currency_id
+                WHERE s.child_id = %(child_id)s
+                  AND s.partner_id = ANY(%(partner_ids)s)
+            ) AS timeline
+            ORDER BY create_date DESC
+            LIMIT %(limit)s OFFSET %(offset)s
+        """
+
+        params = {
+            "child_id": child_id,
+            "partner_ids": partner_ids,
+            "default_currency": request.env.user.currency_id.name,
+            "title_corr_wrote": _("Wrote you a letter"),
+            "title_corr_received": _("Received your letter"),
+            "title_gift_bday": _("Birthday gift"),
+            "title_gift_general": _("General gift"),
+            "title_gift_grad": _("Graduation/Final gift"),
+            "title_gift_family": _("Family gift"),
+            "title_gift_default": _("Received a gift"),
+            "limit": limit,
+            "offset": offset,
+        }
+
+        request.env.cr.execute(sql, params)
+        return request.env.cr.dictfetchall()
+
+    def _get_timeline_records(self, child_id, offset=0, limit=9):
+        """
+        Fetch timeline records (correspondence and gifts) for a child.
+
+        :param child_id: ID of the child
+        :param offset: Number of records to skip (for pagination)
+        :param limit: Maximum number of records to return
+        :return: Tuple of (records_list, total_count)
+        """
+        child = request.env["compassion.child"].browse(child_id)
+        partner_ids = self._get_authorized_partner_ids(child)
+
+        total = self._get_timeline_count(child_id, partner_ids)
+        records = self._get_timeline_data(child_id, partner_ids, offset, limit)
+
         return records, total
 
-    @http.route("/my2/children/", type="http", auth="user", website=True, sitemap=False)
+    @http.route("/my2/children", type="http", auth="user", website=True, sitemap=False)
     def my2_render_children_page(self, **kwargs):
         """
         Renders the children page related to the logged-in user's sponsorships.
@@ -75,11 +181,17 @@ class MyCompassionChildrenController(WebsiteChild):
         breadcrumbs = [
             {"name": "Children", "url": "/my2/children/", "active": True},
         ]
+        sponsorships = partner.sponsorship_ids.filtered("can_show_on_my_compassion")
 
         return request.render(
             "my_compassion.my2_children_page",
             {
-                "sponsorship_ids": partner.sponsorship_ids,
+                "active_sponsorships": sponsorships.filtered(
+                    lambda s: s.state != "terminated" or s.sds_state == "sub_waiting"
+                ),
+                "ended_sponsorships": sponsorships.filtered(
+                    lambda s: s.state == "terminated" and s.sds_state != "sub_waiting"
+                ),
                 "latest_correspondences_by_child_id": latest_corr_by_child,
                 "breadcrumbs": breadcrumbs,
             },
@@ -99,29 +211,30 @@ class MyCompassionChildrenController(WebsiteChild):
         except AccessError:
             return request.redirect("/my2/children/")
 
-        access_scope = "sponsor" if child.state == "P" else "public"
+        access_scope = "public" if child.is_published else "sponsor"
 
         offset = int(kwargs.get("offset", 0))
         limit = int(kwargs.get("limit", 9))
-        partner = request.env.user.partner_id
 
-        records, total = self._get_timeline_records(partner.id, child.id, offset, limit)
+        records, total = self._get_timeline_records(child.id, offset, limit)
+
+        google_api_key = (
+            request.env["ir.config_parameter"].sudo().get_param("google_maps_api_key")
+        )
+        google_custom_map_id = (
+            request.env["ir.config_parameter"].sudo().get_param("google_custom_map_id")
+        )
 
         return request.render(
             "my_compassion.my2_child_timeline_page",
             {
                 "compassion_child": child.sudo(),
-                "breadcrumbs": [
-                    {"name": "Children", "url": "/my2/children/", "active": False},
-                    {
-                        "name": child.preferred_name,
-                        "url": "/my2/children/" + str(child.id),
-                        "active": True,
-                    },
-                ],
                 "records": records,
                 "has_more_records": total > offset + limit,
                 "access_scope": access_scope,
+                "google_api_key": google_api_key,
+                "google_custom_map_id": google_custom_map_id,
+                "timezone": child.sudo().project_id.timezone,
             },
         )
 
@@ -144,9 +257,7 @@ class MyCompassionChildrenController(WebsiteChild):
         offset = int(kwargs.get("offset", 0))
         limit = int(kwargs.get("limit", 9))
 
-        partner = request.env.user.partner_id
-
-        records, total = self._get_timeline_records(partner.id, child.id, offset, limit)
+        records, total = self._get_timeline_records(child.id, offset, limit)
         has_more = total > offset + limit
 
         html = (
@@ -165,3 +276,34 @@ class MyCompassionChildrenController(WebsiteChild):
             "html": html,
             "has_more_records": has_more,
         }
+
+    @http.route(
+        '/my2/children/<model("compassion.child"):child>/center-weather',
+        type="http",
+        auth="user",
+        website=True,
+    )
+    def get_center_weather(self, child, **kw):
+        """
+        This controller returns the child's center weather as a JSON object.
+        """
+
+        try:
+            self._check_sponsored_child_access(child)
+        except AccessError:
+            return request.make_response(
+                json.dumps({"error": "Access Denied"}),
+                headers=[("Content-Type", "application/json")],
+                status=403,
+            )
+        project = child.sudo().project_id
+        center_temperature = project.current_temperature_celsius
+        weather_icon_id = project.weather_icon_id
+        data = {
+            "current_temperature": center_temperature,
+            "weather_icon_id": weather_icon_id,
+        }
+
+        return request.make_response(
+            json.dumps(data), headers=[("Content-Type", "application/json")]
+        )

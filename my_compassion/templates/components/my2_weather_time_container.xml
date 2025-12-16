@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Page: My Compassion 2 Child center Weather and Time Component
+
+    Description:
+    This component is used to display the current time of the child's center and its current weather along with an icon.
+
+    Used in route:
+    - /my2/children/<model("compassion.child"):child>/
+
+    Check page:
+    - compassion_website.my_compassion2_child_timeline
+
+    Injected data:
+    - timezone (string): timezone of the center.
+    - fcp_id (string): Identifier of the compassion project.
+    - church_name (string): name of the local church associated with the center.
+    - city_country (string): represents where the center is located in the following format city,country.
+
+
+-->
+<!--map info container containing the meteo info, time and location -->
+<odoo>
+    <template id="WeatherTimeContainer" name="Weather and Time Container">
+        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_weather_time_container.css" />
+        <div class="center-info-card d-none">
+            <t t-if="fcp_id and church_name">
+                <div class="center-info-card__header">
+                    <p class="center-info-card__project-info">
+                        <t t-esc="fcp_id" />
+                        ,
+                        <t t-esc="church_name" />
+                    </p>
+                </div>
+            </t>
+            <div t-if="city_country" class="center-info-card__location">
+                <t t-esc="city_country" />
+            </div>
+            <div class="center-info-card__details">
+                <span id="current_time" class="center-info-card__time" />
+                <span class="center-info-card__separator" />
+                <div class="center-info-card__weather">
+                    <i id="weather_icon" class="m-2" />
+                    <span id="current_temperature" class="center-info-card__temperature" />
+                    <span class="small position-relative text-low-grey mt-n1">°C</span>
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>

@@ -9,7 +9,7 @@
 // ----------------------------------
 
 $max-site-width: 1920px !default;
-$container-width: 1280px !default;
+$main-content-width: 1280px !default;
 $single-column-width: 768px !default;
 
 // ----------------------------------
@@ -42,4 +42,4 @@ $breakpoint-2xl: 1536px !default;
 
 $color-bg: #f6f8f8 !default;
 $color-border: #d2d5df !default;
-$color-text: map-get($compassion-colors, "low-black") !default; // Assumed base text color
+$color-text: var(--low-black) !default; // Assumed base text color
