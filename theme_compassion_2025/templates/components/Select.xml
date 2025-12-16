@@ -16,11 +16,20 @@
         - custom-select: Applied to the <select> element for custom styling.
         - select-divider: Visual separator in the UI.
         - select-icon: Displays a dropdown icon (chevron) styled in blue.
+
+    TODO:
+    - remove t-att-required after refactoring of the validation process (TT2591)
 -->
 <odoo>
     <template id="SelectComponent">
         <div class="SelectComponent">
-            <select t-attf-class="custom-select" t-att-name="name" t-att-id="id" t-att-required="required">
+            <select
+                t-attf-class="custom-select"
+                t-att-name="name"
+                t-att-id="id"
+                t-att-required="required"
+                t-att-data-is-required="required"
+            >
                 <t t-raw="0" />
             </select>
             <span class="select-divider" />
