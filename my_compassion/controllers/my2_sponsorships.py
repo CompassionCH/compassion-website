@@ -144,7 +144,7 @@ class MyCompassionSponsorshipsController(WebsiteChild):
                 offset=random.randint(0, total_results - 1),
             )
 
-            if children[0]:
+            if children and len(children) > 0:
                 child = children[0]
 
                 html_content = request.env["ir.qweb"]._render(
@@ -156,7 +156,7 @@ class MyCompassionSponsorshipsController(WebsiteChild):
                 )
 
         return {
-            "child_id": child.id,
+            "child_id": child.id if child else None,
             "html": html_content,
         }
 
