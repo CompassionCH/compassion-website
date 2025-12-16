@@ -39,8 +39,6 @@ class ContractGroup(models.Model):
             'icon': False,
             'ref_number': False,
             'label': _('Unknown Method'),
-            'type': 'manual',  # 'manual', 'mode', or 'token'
-            'brand': False,
             'expire_date': False,
             'is_card': False,
             'mode_id': self.payment_mode_id.id if self.payment_mode_id else False,
@@ -72,49 +70,47 @@ class ContractGroup(models.Model):
                 'token_id': valid_token.id,
                 'ref_number': "Not retrieved for now",
                 'is_card': True,
-                'brand': valid_token.name.split(' ')[0] if valid_token.name else False
             })
 
         return info
 
-    def change_payment_method(self, new_group_id=None, payment_mode_id=None):
+    def change_payment_method(self, new_group_id=None, new_bvr_ref=None):
         """
         Update the contract group by either merging into an existing group
         (if new_group_id provided) or finding/creating a group for a specific
         payment mode (if payment_mode_id provided).
         """
         self.ensure_one()
-        target_group = False
 
+        # Merge into another Payment Group
         if new_group_id:
             target_group = self.env['recurring.contract.group'].browse(int(new_group_id))
-        elif payment_mode_id:
-            target_group = self.find_or_create(
-                self.partner_id.id,
-                int(payment_mode_id),
-                recurring_unit=self.recurring_unit,
-                recurring_value=self.recurring_value
-            )
 
-        if not target_group or not target_group.exists():
-            return False
+            # Validation: Target must exist and belong to the same partner
+            if not target_group.exists() or target_group.partner_id != self.partner_id:
+                return False
 
-        # Ensure we aren't merging into ourselves
-        if self.id == target_group.id:
+            # Avoid self-merge
+            if target_group.id == self.id:
+                return True
+
+            # Move all contracts to the target group
+            self.contract_ids.write({'group_id': target_group.id})
+
+            # Deactivate the old group if it is now empty to clean up the UI
+            if not self.contract_ids:
+                self.active = False
+
             return True
 
-        # Security/Consistency Check
-        if target_group.partner_id != self.partner_id:
-            return False
+        # Update Reference (e.g. manual BVR or LSV reference update)
+        if new_bvr_ref and self.bvr_reference:
+            # Updating the reference for the current group
+            self.write({'bvr_reference': new_bvr_ref})
+            return True
 
-        # Move all contracts from current group to target group
-        self.contract_ids.write({'group_id': target_group.id})
 
-        # Cleanup: deactivate the old group
-        if not self.contract_ids:
-            self.write({'active': False})
-
-        return True
+        return False
 
     @api.model
     def find_or_create(self, partner_id, payment_mode_id, recurring_unit='monthly', recurring_value=1):
@@ -165,7 +161,7 @@ class ContractGroup(models.Model):
     @api.model
     def create_from_transaction(self, transaction):
         """
-        Creates an inactive contract group from a validation transaction.
+        Creates a contract group from a validation transaction.
         Returns a tuple: (group_record, message_string)
         """
         if not transaction or not transaction.payment_token_id:

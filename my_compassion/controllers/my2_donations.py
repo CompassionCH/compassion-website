@@ -531,15 +531,38 @@ class MyCompassionDonationsController(CustomerPortal):
         success = contract.change_contract_group(int(group_id))
         return {'success': success}
 
-
     @http.route(
         '/my2/donation/change_method_group',
         type='json',
         auth='user',
         website=True
     )
-    def change_payment_method_group(self, group_id, new_group_id, **kwargs):
-        return False
+    def change_payment_method_group(self, group_id, new_group_id=None, new_bvr_ref=None, **kwargs):
+        """
+        Endpoint to change payment method for a sponsorship group.
+        Accepts new_group_id (to merge) or new_bvr_ref (to update ref).
+        """
+        partner = request.env.user.partner_id
+
+        if not group_id:
+            raise BadRequest(_("Group ID is required."))
+
+        # Security Check: Search ensures the group belongs to the logged-in user
+        group = request.env['recurring.contract.group'].sudo().search([
+            ('id', '=', int(group_id)),
+            ('partner_id', '=', partner.id)
+        ], limit=1)
+
+        if not group:
+            raise NotFound(_("Payment group not found or access denied."))
+
+        # Call the model method to perform the logic
+        success = group.change_payment_method(
+            new_group_id=new_group_id,
+            new_bvr_ref=new_bvr_ref
+        )
+
+        return {'success': success}
 
     @http.route(
         '/my2/donation/add/init',

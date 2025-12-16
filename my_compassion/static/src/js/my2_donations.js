@@ -90,8 +90,10 @@ odoo.define('my_compassion.my2_donations', function (require) {
             var detail = ev.originalEvent ? ev.originalEvent.detail : ev.detail;
             var groupId = detail ? detail.group_id : null;
             var methodInfo = detail ? detail.method_info : null;
-
+            
             var $modalUpdate = $('#payment_method_selector_modal_update');
+            // Store the group-id on the modal so _onSavePaymentMethod can find it
+            $modalUpdate.data('group-id', groupId);
             var $container = $modalUpdate.find('#modal_container').empty();
             $container.html(QWeb.render('my_compassion.PaymentMethodUpdateAccordion', methodInfo));
 
@@ -204,68 +206,83 @@ odoo.define('my_compassion.my2_donations', function (require) {
             console.log("Saving Payment Method. Type:", modalType);
             $btn.prop('disabled', true).prepend('<i class="fa fa-spinner fa-spin mr-1"/>');
 
+            var promise;
+
+            // CASE 1: CHANGE (Contract Level)
             if (modalType == 'change') {
                 var $selectedInput = $modal.find('input[name="payment_method_selection"]:checked');
                 var new_group_id = $selectedInput.attr('group-id');
-                console.log("Inside the if: new_group_id", new_group_id);
 
-                this._rpc({
+                promise = this._rpc({
                     route: '/my2/donation/change_method_contract',
                     params: {
                         contract_id: $modal.data('contract-id'),
-                        group_id: new_group_id,
+                        group_id: parseInt(new_group_id),
                     }
-                }).then(function (result) {
+                });
+
+            // CASE 2: UPDATE (Group Level) - Merge or Edit Details
+            } else if (modalType == 'update') {
+                var currentGroupId = $modal.data('group-id');
+                console.log("ID:" + currentGroupId)
+
+                var params = {
+                    group_id: currentGroupId
+                };
+
+                // Check for Group Switch (Merge)
+                // We check if a radio button is selected AND if its group-id differs from current
+                var $selectedGroupInput = $modal.find('input[name="payment_method_selection"]:checked');
+                if ($selectedGroupInput.length) {
+                    var selectedGroupId = $selectedGroupInput.attr('group-id');
+                    if (selectedGroupId && parseInt(selectedGroupId) !== parseInt(currentGroupId)) {
+                        params.new_group_id = parseInt(selectedGroupId);
+                    }
+                }
+
+                // Check for Detail Updates (BVR or LSV Reference)
+                // We compare the current input value with its default value (original value)
+                var $bvrInput = $modal.find('input[name="ref_number"]');
+                if ($bvrInput.length) {
+                    var newBvrRef = $bvrInput.val();
+                    var oldBvrRef = $bvrInput.prop('defaultValue');
+
+                    // Only add to params if it actually changed
+                    if (newBvrRef !== oldBvrRef) {
+                        params.new_bvr_ref = newBvrRef;
+                    }
+                }
+
+                // If nothing relevant changed, just close the modal
+                if (!params.new_group_id && !params.new_bvr_ref) {
+                    $modal.modal('hide');
+                    $btn.prop('disabled', false).find('.fa-spinner').remove();
+                    return;
+                }
+
+                console.log("Updating Group Method params:", params);
+                // promise = this._rpc({
+                //     route: '/my2/donation/change_method_group',
+                //     params: params
+                // });
+            }
+
+            // Execute Request
+            if (promise) {
+                promise.then(function (result) {
                     if (result.success) {
                         $modal.modal('hide');
-
-                        ToastService.success(_t("Payment method changed successfully."), _t("Success"));
-
-                        // Optional: longer delay if you want them to read it fully
-                        setTimeout(() => window.location.reload(), 1500);
-
+                        ToastService.success(_t("Payment method updated successfully."), _t("Success"));
+                        setTimeout(() => window.location.reload(), 1000);
                     } else {
-                        ToastService.error(result.error || _t("An error occurred while changing the payment method."));
+                        ToastService.error(result.error || _t("An error occurred while updating the payment method."));
                     }
                 }).finally(function () {
                     $btn.prop('disabled', false).find('.fa-spinner').remove();
                 });
-
-            } else if (modalType == 'update') {
-                if ($modal.find('#collapseList').hasClass('show')) {
-                    // USER IS SWITCHING METHOD
-                    var $selectedInput = $modal.find('input[name="payment_method_selection"]:checked');
-                    var new_group_id = $selectedInput.attr('group-id');
-                    console.log("Switching to Payment Method Group ID:", new_group_id);
-                    this._rpc({
-                        route: '/my2/donation/change_method_group',
-                        params: {
-                            group_id: $modal.data('group-id'),
-                            new_group_id: new_group_id,
-                        }
-                    }).then(function (result) {
-                        if (result.success) {
-                            $modal.modal('hide');
-                            window.location.reload();
-                            console.log("Payment method switched successfully.");
-                            ToastService.success(_t("Payment method switched successfully."));
-                        } else {
-                            ToastService.error(result.error || _t("An error occurred while switching the payment method."));
-                        }
-                    }).finally(function () {
-                        $btn.prop('disabled', false).find('.fa-spinner').remove();
-                        ToastService.info("TEST")
-                    });
-                } else {
-                    // USER IS UPDATING DETAILS (Form)
-                    // TODO: Implement update form submission logic here
-                    var formData = {};
-                    $modal.find('#payment_method_form input').each(function () {
-                        if (this.name) formData[this.name] = $(this).val();
-                    });
-                    console.log("Updating Payment Details:", formData);
-                    alert("Update logic not implemented in this demo.");
-                }
+            } else {
+                // Fallback if promise wasn't created (should be covered by early return above)
+                $btn.prop('disabled', false).find('.fa-spinner').remove();
             }
 
         },
