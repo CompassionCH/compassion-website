@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
         var publicWidget = require("web.public.widget");
         var rpc = require("web.rpc");
-        var core = require("web.core");
 
         publicWidget.registry.Sponsorships = publicWidget.Widget.extend({
             selector: ".sponsorships-body-container",
