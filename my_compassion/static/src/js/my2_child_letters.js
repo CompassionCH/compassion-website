@@ -43,8 +43,7 @@ odoo.define("my_compassion.my2_child_letters", function (require) {
                 setTimeout(function () {
                     const href = envelope.getAttribute("href");
                     if (href) {
-                        window.open(href, target, target === "_blank" ?
-                        "noopener,noreferrer" : null);
+                        window.open(href, target, target === "_blank" ? "noopener,noreferrer" : null);
                     }
                 }, 1400);
             } else {
@@ -54,8 +53,7 @@ odoo.define("my_compassion.my2_child_letters", function (require) {
                 setTimeout(function () {
                     const href = envelope.getAttribute("href");
                     if (href) {
-                        window.open(href, target, target === "_blank" ?
-                        "noopener,noreferrer" : null);
+                        window.open(href, target, target === "_blank" ? "noopener,noreferrer" : null);
                     }
                 }, 600);
             }
