@@ -15,7 +15,7 @@
                         <div class="col-md-6">
                             <t t-call="my_compassion.my_information_personal" />
                         </div>
-                        <!-- Privacy data and child protection -->
+                        <!-- Privacy & Data Protection and child protection -->
                         <div class="col-md-6">
                             <t t-call="my_compassion.my_information_privacy_data" />
                         </div>
@@ -68,14 +68,15 @@
         </template>
         <!-- Display the date at which the partner signed some charters, otherwise propose to sign them -->
         <template id="my_information_privacy_data">
-            <h3 class="mt-4">Privacy data</h3>
+            <h3 class="mt-4">Privacy &amp; Data Protection</h3>
             <p>
-                Compassion knows that children living in extreme poverty are vulnerable. We put their protection as our
-                number one priority.
+                Compassion knows that children living in extreme poverty are vulnerable.
+                Their protection is our number one priority.
                 <t t-if="not partner.date_agreed_child_protection_charter">
-                    We ask our volunteering friends and people that travel to visit their sponsored child to sign a
-                    child protection charter. If you want to make a step further, you can sign this document as well and
-                    show us that you share our values.
+                    We ask those who volunteer and those who visit their sponsored children to sign a child protection
+                    charter.
+                    If you would like to take a step further and show us you share our values, we invite you to sign the
+                    charter as well.
                 </t>
                 <t t-else="">
                     We thank you that you have signed our child protection charter. You can review the document at any
@@ -83,8 +84,8 @@
                 </t>
             </p>
             <p>
-                Compassion is also serious about the protection of your data. All your information is kept private and
-                only used internally. You can sign or review our data protection policy from here.
+                Compassion is also serious about protecting your personal data. We keep your information private,
+                and never share it with outside organizations. You can sign or review our data protection policy here.
             </p>
             <!-- Child protection charter -->
             <div class="row mb-2">
