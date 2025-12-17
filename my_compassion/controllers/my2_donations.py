@@ -484,7 +484,8 @@ class MyCompassionDonationsController(CustomerPortal):
     )
     def get_payment_methods_sponsor(self, **kwargs):
         """
-        Returns a list of payment methods (saved tokens and acquirers) for the current user.
+        Returns a list of payment methods (saved tokens and acquirers) for the current
+        user.
         """
         partner = request.env.user.partner_id
         groups = partner.get_payment_modes()

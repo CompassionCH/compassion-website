@@ -6,7 +6,7 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 
 
 class ContractGroup(models.Model):
@@ -17,6 +17,19 @@ class ContractGroup(models.Model):
     payment_token_id = fields.Many2one("payment.token", string="Payment Token")
     gender = fields.Selection(related="partner_id.gender", store=True, readonly=False)
     total_amount = fields.Float(compute="_compute_total_amount")
+
+    active_contract_count = fields.Integer(
+        string="Active Contracts Count", compute="_compute_active_contract_count"
+    )
+
+    @api.depends("contract_ids.state")
+    def _compute_active_contract_count(self):
+        for group in self:
+            group.active_contract_count = len(
+                group.contract_ids.filtered(
+                    lambda s: s.state not in ["terminated", "cancelled"]
+                )
+            )
 
     def _compute_total_amount(self):
         for group in self:

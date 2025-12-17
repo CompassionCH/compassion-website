@@ -66,9 +66,7 @@ Description:
 
                             </span>
                             <span>
-                                <t
-                                    t-esc="len(group.contract_ids.filtered(lambda s: s.state not in ['terminated', 'cancelled']))"
-                                />
+                                <t t-esc="group.active_contract_count" />
                                 sponsorships
                             </span>
                         </div>
