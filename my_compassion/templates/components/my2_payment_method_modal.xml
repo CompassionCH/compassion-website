@@ -63,21 +63,8 @@
                                             <t t-set="name">method_type</t>
                                             <t t-set="id">new_method_type</t>
                                             <option value="permanent_order" selected="selected">Permanent Order</option>
-                                            <option value="lsv">LSV / Direct Debit</option>
                                             <option value="bvr">BVR</option>
                                         </t>
-                                    </t>
-                                    <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label">Reference</t>
-                                        <t t-set="input_id">new_bvr_reference</t>
-                                        <t t-set="top_class">mb-3</t>
-                                        <input
-                                            type="text"
-                                            name="bvr_reference"
-                                            id="new_bvr_reference"
-                                            class="form-control"
-                                            required="required"
-                                        />
                                     </t>
                                     <div class="form-row">
                                         <div class="col-6">
