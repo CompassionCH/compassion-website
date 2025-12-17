@@ -10,7 +10,6 @@ Description:
     <template id="my2_sponsorships_group_card" name="Sponsorships Group Card Component">
         <t t-set="info" t-value="group.get_payment_method_info()" />
         <div class="sponsorship-group mb-4 sponsorship-group-container">
-            <link rel="stylesheet" href="/my_compassion/static/src/css/my2_payment_modal.css" />
             <div class="d-flex flex-column border rounded shadow-sm">
                 <div
                     class="d-flex justify-content-between align-items-center p-3 bg-light cursor-pointer border-bottom rounded-top"
