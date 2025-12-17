@@ -75,11 +75,10 @@
         <t t-if="href">
             <t t-set="rel_parts" t-value="(rel or '').split()" />
             <t t-if="target == '_blank'">
-                <t t-if="'noopener' not in rel_parts">
-                    <t t-set="rel_parts" t-value="rel_parts + ['noopener']" />
-                </t>
-                <t t-if="'noreferrer' not in rel_parts">
-                    <t t-set="rel_parts" t-value="rel_parts + ['noreferrer']" />
+                <t t-foreach="['noopener', 'noreferrer']" t-as="security_rel">
+                    <t t-if="security_rel not in rel_parts">
+                        <t t-set="rel_parts" t-value="rel_parts + [security_rel]" />
+                    </t>
                 </t>
             </t>
             <t t-set="computed_rel" t-value="' '.join(rel_parts)" />
