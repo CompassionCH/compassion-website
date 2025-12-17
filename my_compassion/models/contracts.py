@@ -33,7 +33,7 @@ class RecurringContract(models.Model):
 
         target_group = self.env["recurring.contract.group"].browse(new_group_id)
 
-        if not target_group.exists():
+        if not target_group.exists() or target_group.partner_id != self.partner_id:
             return False
 
         # Move the contract to the new group
