@@ -56,8 +56,8 @@
             <input type="hidden" name="product_id" t-att-value="product.id" />
             <t t-set="top_class" t-value="None" />
             <t t-call="theme_compassion_2025.TitleComponent">
-                <t t-if="product.my_compassion_donation_type == 'fund'" t-set="title_content" t-value="'Donate'" />
-                <t t-if="product.my_compassion_donation_type == 'gift'" t-set="title_content" t-value="'Send a gift'" />
+                <t t-if="product.my_compassion_donation_type == 'fund'" t-set="title_content">Donate</t>
+                <t t-if="product.my_compassion_donation_type == 'gift'" t-set="title_content">Give</t>
                 <t t-set="color" t-value="'core-blue'" />
                 <t t-set="show_underline" t-value="True" />
                 <t t-set="underline_color" t-value="'low-yellow'" />
@@ -78,9 +78,9 @@
             <!-- TO -->
             <t t-if="product.my_compassion_donation_type == 'gift'" t-call="theme_compassion_2025.FormFieldComponent">
                 <t t-set="top_class" t-value="'mt-3 w-100'" />
-                <t t-set="label" t-value="'To'" />
+                <t t-set="label">To</t>
                 <t t-set="input_id" t-value="'recipient'" />
-                <t t-set="invalid_hint" t-value="'Please select a recipient.'" />
+                <t t-set="invalid_hint">Please select a recipient.</t>
                 <t t-call="theme_compassion_2025.SelectComponent">
                     <t t-set="name" t-value="'recipient'" />
                     <t t-set="id" t-value="'recipient'" />
@@ -106,7 +106,7 @@
             <div class="amount-selection" t-att-hidden="product.my_compassion_donation_type == 'gift'">
                 <t t-call="theme_compassion_2025.FormFieldComponent">
                     <t t-set="top_class" t-value="'mt-4 w-100'" />
-                    <t t-set="label" t-value="'Suggested amounts'" />
+                    <t t-set="label">Suggested amounts</t>
                     <div class="mt-1 d-flex justify-content-between">
                         <div class="donation-suggested-amount flex-grow-1">
                             <input
@@ -169,8 +169,8 @@
                 </t>
                 <t t-call="theme_compassion_2025.FormFieldComponent">
                     <t t-set="top_class" t-value="'my-3 w-100'" />
-                    <t t-set="label" t-value="'Or enter your own amount'" />
-                    <t t-set="invalid_hint" t-value="'Please enter a valid amount.'" />
+                    <t t-set="label">Or enter your own amount</t>
+                    <t t-set="invalid_hint">Please enter a valid amount.</t>
                     <div class="donation-suggested-amount">
                         <input
                             t-attf-id="#{base_name}-suggested-custom"
