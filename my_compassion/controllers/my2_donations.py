@@ -564,7 +564,6 @@ class MyCompassionDonationsController(CustomerPortal):
     # Value: 'name' (or partial name) to search for in account.payment.mode
     _payment_mode_map = {
         "permanent_order": "Permanent Order",
-        "lsv": "LSV",
         "bvr": "BVR",
     }
 
@@ -573,7 +572,6 @@ class MyCompassionDonationsController(CustomerPortal):
     )
     def add_payment_method_group(
         self,
-        bvr_reference,
         recurring_unit="month",
         method_type="bvr",
         advance_billing_months=1,
@@ -583,9 +581,6 @@ class MyCompassionDonationsController(CustomerPortal):
         Creates a new Contract Group with manual BVR/Permanent Order details.
         """
         partner = request.env.user.partner_id
-
-        if not bvr_reference:
-            return {"success": False, "error": _("Reference is required.")}
 
         # 1. Resolve Payment Mode Search Term
         mode_search_term = self._payment_mode_map.get(method_type)
@@ -630,12 +625,14 @@ class MyCompassionDonationsController(CustomerPortal):
                         "payment_mode_id": payment_mode.id,
                         "recurring_unit": recurring_unit,
                         "recurring_value": int(advance_billing_months),
-                        "bvr_reference": bvr_reference,
                         "active": True,
                     }
                 )
             )
-            new_group.compute_partner_bvr_ref()
+            new_bvr_ref = new_group.compute_partner_bvr_ref(partner)
+            if new_bvr_ref:
+                new_group.bvr_reference = new_bvr_ref
+
             return {"success": True, "group_id": new_group.id}
 
         except Exception:
