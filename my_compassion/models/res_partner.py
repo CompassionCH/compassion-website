@@ -100,7 +100,7 @@ class Partner(models.Model):
         Used to display existing methods.
         """
         self.ensure_one()
-        # Find groups for this partner that have a payment mode and active contracts
+        # Find groups for this partner that have a payment mode.
         groups = self.env["recurring.contract.group"].search(
             [
                 ("partner_id", "=", self.id),
