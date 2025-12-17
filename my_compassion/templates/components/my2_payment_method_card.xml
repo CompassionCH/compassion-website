@@ -123,10 +123,12 @@ Description:
                                         'icon': 'edit02',
                                         'action': 'event',
                                         'custom_event': 'open_payment_method_change',
-                                        'detail': '{\'modal_type\': \'Change\',
-                                                    \'contract_id\': ' + str(sponsorship.id) + ',
-                                                    \'child_name\': \'' + (sponsorship.child_id.preferred_name or '').replace('\'', '') + '\',
-                                                    \'group_id\': ' + str(group.id) + '}',
+                                        'detail': json.dumps({
+                                            'modal_type': 'Change',
+                                            'contract_id': sponsorship.id,
+                                            'child_name': sponsorship.child_id.preferred_name or '',
+                                            'group_id': group.id
+                                        }),
                                         'color': 'low-blue'
                                     }"
                                     />
