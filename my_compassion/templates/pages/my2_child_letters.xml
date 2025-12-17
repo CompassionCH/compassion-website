@@ -20,7 +20,7 @@
                 <!-- Title -->
                 <div class="mb-4">
                     <t t-call="theme_compassion_2025.TitleComponent">
-                        <t t-set="title_content" t-value="'Your inbox'" />
+                        <t t-set="title_content">Your inbox</t>
                         <t t-set="color" t-value="'core-blue'" />
                         <t t-set="underline_color" t-value="'low-yellow'" />
                         <t t-set="show_underline" t-value="True" />
@@ -37,7 +37,10 @@
                             <t t-set="variant" t-value="'compact'" />
                             <t t-set="icon" t-value="'icon-filter-lines'" />
                             <t t-set="text_color" t-value="'low-black'" />
-                            <t t-set="label" t-value="str(nr_filters_applied) + ' filters applied'" />
+                            <t t-set="label">
+                                <t t-esc="nr_filters_applied" />
+                                filters applied
+                            </t>
                         </t>
                     </a>
                 </div>
@@ -243,7 +246,7 @@
                                                 <t t-set="color" t-value="'low-orange'" />
                                                 <t t-set="text_color" t-value="'pure-white'" />
                                                 <t t-set="variant" t-value="'compact'" />
-                                                <t t-set="label" t-value="'Cancel'" />
+                                                <t t-set="label">Cancel</t>
                                             </t>
                                         </a>
                                         <a id="filterOkBtn" data-dismiss="modal">
@@ -252,7 +255,7 @@
                                                 <t t-set="color" t-value="'mid-green'" />
                                                 <t t-set="text_color" t-value="'pure-white'" />
                                                 <t t-set="variant" t-value="'compact'" />
-                                                <t t-set="label" t-value="'Ok'" />
+                                                <t t-set="label">Ok</t>
                                             </t>
                                         </a>
                                     </div>
@@ -261,8 +264,8 @@
                         </div>
                     </div>
                 </div>
-                <t t-if="letters">
-                    <!-- Letters -->
+                <!-- Letters -->
+                <t t-if="letter">
                     <div class="container-content d-flex flex-column align-items-center mt-4">
                         <div class="w-100 d-flex flex-column">
                             <div class="row justify-content-center">
@@ -289,7 +292,7 @@
                                     <t t-set="color" t-value="'mid-blue'" />
                                     <t t-set="text_color" t-value="'low-black'" />
                                     <t t-set="variant" t-value="'compact'" />
-                                    <t t-set="label" t-value="'Prev'" />
+                                    <t t-set="label">Prev</t>
                                 </t>
                             </a>
                         </t>
@@ -308,12 +311,9 @@
                                     <t t-set="color" t-value="'mid-blue'" />
                                     <t t-set="text_color" t-value="'low-black'" />
                                     <t t-set="variant" t-value="'compact'" />
-                                    <t t-set="label" t-value="'Next'" />
+                                    <t t-set="label">Next</t>
                                 </t>
                             </a>
-                        </t>
-                        <t t-else="">
-                            <span class="disabled ps-3">Next</span>
                         </t>
                     </div>
                 </t>
