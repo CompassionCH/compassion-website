@@ -125,7 +125,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
             $modalChange
                 .find("#modal_description")
                 .empty()
-                .text("Change your payment method for " + (childName || "your sponsored child") + ".");
+                .text(_.str.sprintf(_t("Change your payment method for %s."), childName || _t("your sponsored child")));
             $modalChange.data("contract-id", contractId);
 
             this._renderPaymentMethods($modalChange, groupId, "#modal_container");
