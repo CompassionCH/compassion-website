@@ -14,6 +14,7 @@ from datetime import datetime, timedelta
 
 from werkzeug.exceptions import BadRequest, NotFound
 
+import odoo
 from odoo import _, fields, http
 from odoo.http import request
 
@@ -635,7 +636,7 @@ class MyCompassionDonationsController(CustomerPortal):
 
             return {"success": True, "group_id": new_group.id}
 
-        except Exception:
+        except odoo.exceptions.ValidationError:
             return {
                 "success": False,
                 "error": _("An unexpected error occurred. Please try again."),
