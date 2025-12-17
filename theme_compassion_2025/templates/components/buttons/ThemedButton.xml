@@ -73,24 +73,23 @@
         </t>
         <!-- Render button or link -->
         <t t-if="href">
-            <t t-set="computed_rel" t-value="rel" />
+            <t t-set="rel_parts" t-value="(rel or '').split()" />
             <t t-if="target == '_blank'">
-                <t t-set="temp_rel" t-value="rel or ''" />
-                <t t-if="'noopener' not in temp_rel">
-                    <t t-set="temp_rel" t-value="temp_rel + ' noopener'" />
+                <t t-if="'noopener' not in rel_parts">
+                    <t t-set="rel_parts" t-value="rel_parts + ['noopener']" />
                 </t>
-                <t t-if="'noreferrer' not in temp_rel">
-                    <t t-set="temp_rel" t-value="temp_rel + ' noreferrer'" />
+                <t t-if="'noreferrer' not in rel_parts">
+                    <t t-set="rel_parts" t-value="rel_parts + ['noreferrer']" />
                 </t>
-                <t t-set="computed_rel" t-value="temp_rel.strip()" />
             </t>
+            <t t-set="computed_rel" t-value="' '.join(rel_parts)" />
             <a
                 t-att-href="href"
                 t-att-id="id"
                 t-attf-class="btn #{btn_class} btn--radius-#{radius} #{style_class} text-#{text_color}"
                 t-att-data-custom="data_custom"
                 t-att-target="target"
-                t-att-rel="computed_rel"
+                t-att-rel="computed_rel or None"
             >
                 <t t-call="theme_compassion_2025.ThemedButtonComponent_Content" />
             </a>
