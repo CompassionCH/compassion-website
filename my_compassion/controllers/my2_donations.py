@@ -630,16 +630,16 @@ class MyCompassionDonationsController(CustomerPortal):
                         "payment_mode_id": payment_mode.id,
                         "recurring_unit": recurring_unit,
                         "recurring_value": int(advance_billing_months),
-                        "ref": "/",
                         "bvr_reference": bvr_reference,
                         "active": True,
                     }
                 )
             )
+            new_group.compute_partner_bvr_ref()
             return {"success": True, "group_id": new_group.id}
 
-        except Exception as e:
-            return {"success": False, "error": str(e)}
+        except Exception:
+            return {"success": False, "error": _("An unexpected error occurred. Please try again.")}
 
     def _get_paginated_paid_invoices(
         self, partner, invoice_page=1, invoice_per_page=12

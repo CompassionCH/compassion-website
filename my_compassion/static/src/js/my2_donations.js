@@ -32,28 +32,37 @@ odoo.define("my_compassion.my2_donations", function (require) {
         start: function () {
             var self = this;
 
+            // Store bound handlers to allow proper unbinding in destroy()
+            // This prevents memory leaks and zombie listeners
+            this._onModalHiddenGlobalBound = this._onModalHiddenGlobal.bind(this);
+            this._onMethodSelectionChangeBound = this._onMethodSelectionChange.bind(this);
+
             // 1. Global Listener for Modal Hidden (Cleanup)
-            $("body").on("hidden.bs.modal", ".modal", function () {
-                // Check if it's one of our payment modals
-                if ($(this).attr("id") && $(this).attr("id").startsWith("payment_method_selector_modal")) {
-                    self._onModalHidden($(this));
-                }
-            });
+            // We bind to 'body' because Bootstrap sometimes moves modals to the end of the DOM
+            $("body").on("hidden.bs.modal", ".modal", this._onModalHiddenGlobalBound);
 
             // 2. Global Listener for Payment Selection Change
-            // Allows handling events even if Bootstrap moves the modal outside our widget's scope
-            $("body").on("change", 'input[name="payment_method_selection"]', this._onMethodSelectionChange.bind(this));
+            $("body").on("change", 'input[name="payment_method_selection"]', this._onMethodSelectionChangeBound);
 
-            // 3. If a payment method was just added display a sucess toast
+            // 3. If a payment method was just added display a success toast
             this._checkAddPaymentMethod();
 
             return this._super.apply(this, arguments);
         },
 
+        /**
+         * Clean up global event listeners
+         */
         destroy: function () {
-            $("body").off("hidden.bs.modal", "#payment_method_selector_modal_update");
+            if (this._onModalHiddenGlobalBound) {
+                $("body").off("hidden.bs.modal", ".modal", this._onModalHiddenGlobalBound);
+            }
+            if (this._onMethodSelectionChangeBound) {
+                $("body").off("change", 'input[name="payment_method_selection"]', this._onMethodSelectionChangeBound);
+            }
             this._super.apply(this, arguments);
         },
+
 
         // -------------------------------------------------------------------------
         // HANDLERS
