@@ -236,7 +236,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 });
 
                 // CASE 3: ADD (New Manual Method)
-            }else if (modalType == "add") {
+            } else if (modalType == "add") {
                 // Retrieve Form Data
                 var methodType = $modal.find('select[name="method_type"]').val();
                 var recurringUnit = $modal.find('select[name="recurring_unit"]').val();
