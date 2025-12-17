@@ -63,7 +63,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
             this._super.apply(this, arguments);
         },
 
-
         // -------------------------------------------------------------------------
         // HANDLERS
         // -------------------------------------------------------------------------
@@ -75,7 +74,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 this._onModalHidden($modal);
             }
         },
-
 
         _checkAddPaymentMethod: function () {
             var urlParams = new URLSearchParams(window.location.search);
@@ -238,7 +236,8 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 });
 
                 // CASE 3: ADD (New Manual Method)
-            } if (modalType == "add") {
+            }
+            if (modalType == "add") {
                 // Retrieve Form Data
                 var methodType = $modal.find('select[name="method_type"]').val();
                 var recurringUnit = $modal.find('select[name="recurring_unit"]').val();
@@ -263,9 +262,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
                             ToastService.success(_t("The operation was successfull."), _t("Success"));
                             setTimeout(() => window.location.reload(), 1000);
                         } else {
-                            ToastService.error(
-                                result.error || _t("An error occurred.")
-                            );
+                            ToastService.error(result.error || _t("An error occurred."));
                         }
                     })
                     .finally(function () {

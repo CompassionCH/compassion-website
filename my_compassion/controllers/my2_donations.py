@@ -636,7 +636,10 @@ class MyCompassionDonationsController(CustomerPortal):
             return {"success": True, "group_id": new_group.id}
 
         except Exception:
-            return {"success": False, "error": _("An unexpected error occurred. Please try again.")}
+            return {
+                "success": False,
+                "error": _("An unexpected error occurred. Please try again."),
+            }
 
     def _get_paginated_paid_invoices(
         self, partner, invoice_page=1, invoice_per_page=12
