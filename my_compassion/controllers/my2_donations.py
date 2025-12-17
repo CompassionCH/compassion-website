@@ -397,7 +397,7 @@ class MyCompassionDonationsController(CustomerPortal):
         partner = request.env.user.partner_id
 
         # Active sponsorships
-        active_sponsorships = partner.get_portal_sponsorships("active")
+        active_sponsorships = partner.get_portal_sponsorships(["active", "mandate"])
 
         # Group sponsorships by their backend Contract Group
         sponsorship_groups = active_sponsorships.mapped("group_id")
@@ -580,7 +580,7 @@ class MyCompassionDonationsController(CustomerPortal):
         **kwargs,
     ):
         """
-        Creates a new Contract Group with manual BVR/LSV/Permanent Order details.
+        Creates a new Contract Group with manual BVR/Permanent Order details.
         """
         partner = request.env.user.partner_id
 

@@ -235,7 +235,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 } else {
                     $modal.find('input[name="bvr_reference"]').removeClass("is-invalid");
                 }
-                
+
                 promise = this._rpc({
                     route: "/my2/donation/add_payment_method_group",
                     params: {

@@ -53,7 +53,7 @@ class Partner(models.Model):
                     "|",
                     ("partner_id", "=", partner.id),
                     ("correspondent_id", "=", partner.id),
-                    ("state", "in", ["waiting", "active"]),
+                    ("state", "in", ["waiting", "mandate", "active"]),
                     ("child_id", "!=", False),
                 ],
             )

@@ -13,6 +13,7 @@ class RecurringContract(models.Model):
         for contract in self:
             contract.can_show_on_my_compassion = contract.state in [
                 "active",
+                "mandate",
                 "terminated",
             ] or (contract.state != "cancelled" and not contract.parent_id)
 
