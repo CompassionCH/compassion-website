@@ -87,7 +87,7 @@ class ContractGroup(models.Model):
             return True
 
         # Update Reference (e.g. manual BVR or LSV reference update)
-        if new_bvr_ref and self.bvr_reference:
+        if new_bvr_ref is not None:
             # Updating the reference for the current group
             self.write({"bvr_reference": new_bvr_ref})
             return True
