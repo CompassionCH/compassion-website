@@ -116,3 +116,13 @@ h1 {
     outline: none; /* Remove default outline */
     box-shadow: 0 0 10px rgba(74, 166, 246, 0.5); /* Glow effect */
 }
+
+/*
+   Global form validation styles
+   Applied to all form fields marked as invalid (`.is-invalid`)
+   within `.form-field-component` across the entire MyCompassion app.
+ */
+.form-field-component .is-invalid {
+    border: 1px solid var(--mid-orange);
+    border-left: 5px solid var(--mid-orange);
+}

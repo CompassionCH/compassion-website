@@ -58,7 +58,7 @@ odoo.define("my_compassion.form_field_validator", function (require) {
             this.$el.data("widget", this);
 
             this.$input = this.$("input, select");
-            this.isRequired = this.$input.data("is-required");
+            this.isRequired = this.$input.prop("required");
             this.validationType = this.$input.data("validate-type");
 
             if (this.isRequired) {
@@ -87,6 +87,7 @@ odoo.define("my_compassion.form_field_validator", function (require) {
          * @returns {boolean}
          */
         validate: function () {
+            console.log("Validating field:", this.$input.attr("name"));
             this._clearError();
             var value = this.$input.val();
 

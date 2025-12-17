@@ -116,16 +116,29 @@ Page: My Compassion 2 New Sponsorship Wizard Page
         <!-- Email -->
         <t t-call="theme_compassion_2025.FormFieldComponent">
             <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label">E-mail</t>
+            <t t-set="label" t-value="'E-mail'" />
             <t t-set="input_id" t-value="'email'" />
-            <input id="email" type="email" name="email" t-att-value="wizard.email" required="" />
+            <input
+                type="email"
+                name="email"
+                t-att-value="wizard.email"
+                data-validate-type="email"
+                required=""
+            />
         </t>
         <!-- Phone -->
         <t t-call="theme_compassion_2025.FormFieldComponent">
             <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label">Phone number</t>
+            <t t-set="label" t-value="'Phone number'" />
             <t t-set="input_id" t-value="'phone'" />
-            <input id="phone" type="tel" name="phone" t-att-value="wizard.phone" required="" />
+            <input
+                id="phone"
+                type="tel"
+                name="phone"
+                t-att-value="wizard.phone"
+                data-is-required="true"
+                data-validate-type="phone"
+            />
         </t>
         <!-- Street -->
         <div class="d-flex">
