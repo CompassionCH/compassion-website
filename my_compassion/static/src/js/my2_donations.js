@@ -67,6 +67,16 @@ odoo.define("my_compassion.my2_donations", function (require) {
         // -------------------------------------------------------------------------
         // HANDLERS
         // -------------------------------------------------------------------------
+
+        _onModalHiddenGlobal: function (ev) {
+            var $modal = $(ev.target);
+            // Check if it's one of our payment modals
+            if ($modal.attr("id") && $modal.attr("id").startsWith("payment_method_selector_modal")) {
+                this._onModalHidden($modal);
+            }
+        },
+
+
         _checkAddPaymentMethod: function () {
             var urlParams = new URLSearchParams(window.location.search);
             var paymentMethodResult = urlParams.get("payment_method_result");
@@ -228,30 +238,18 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 });
 
                 // CASE 3: ADD (New Manual Method)
-            } else if (modalType == "add") {
+            } if (modalType == "add") {
                 // Retrieve Form Data
                 var methodType = $modal.find('select[name="method_type"]').val();
-                var bvrRef = $modal.find('input[name="bvr_reference"]').val();
                 var recurringUnit = $modal.find('select[name="recurring_unit"]').val();
                 var advanceMonths = $modal.find('input[name="advance_billing_months"]').val();
-
-                // Validation: Reference is required
-                if (!bvrRef) {
-                    $modal.find('input[name="bvr_reference"]').addClass("is-invalid");
-                    $btn.prop("disabled", false).find(".fa-spinner").remove();
-                    ToastService.error(_t("Please enter a valid reference."));
-                    return;
-                } else {
-                    $modal.find('input[name="bvr_reference"]').removeClass("is-invalid");
-                }
 
                 promise = this._rpc({
                     route: "/my2/donation/add_payment_method_group",
                     params: {
                         method_type: methodType,
-                        bvr_reference: bvrRef,
                         recurring_unit: recurringUnit,
-                        advance_billing_months: parseInt(advanceMonths) || 1,
+                        advance_billing_months: parseInt(advanceMonths),
                     },
                 });
             }
@@ -262,11 +260,11 @@ odoo.define("my_compassion.my2_donations", function (require) {
                     .then(function (result) {
                         if (result.success) {
                             $modal.modal("hide");
-                            ToastService.success(_t("Payment method updated successfully."), _t("Success"));
+                            ToastService.success(_t("The operation was successfull."), _t("Success"));
                             setTimeout(() => window.location.reload(), 1000);
                         } else {
                             ToastService.error(
-                                result.error || _t("An error occurred while updating the payment method.")
+                                result.error || _t("An error occurred.")
                             );
                         }
                     })
