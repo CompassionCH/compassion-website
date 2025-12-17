@@ -38,6 +38,5 @@ class RecurringContract(models.Model):
 
         # Move the contract to the new group
         self.write({"group_id": target_group.id})
-        self.write({"group_id": target_group.id})
 
         return True
