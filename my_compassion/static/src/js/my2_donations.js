@@ -258,7 +258,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
                     .then(function (result) {
                         if (result.success) {
                             $modal.modal("hide");
-                            ToastService.success(_t("The operation was successfull."), _t("Success"));
+                            ToastService.success(_t("The operation was successful."), _t("Success"));
                             setTimeout(() => window.location.reload(), 1000);
                         } else {
                             ToastService.error(result.error || _t("An error occurred."));
