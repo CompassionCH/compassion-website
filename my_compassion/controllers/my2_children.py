@@ -70,7 +70,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 (CASE WHEN EXISTS (
                     SELECT 1 FROM recurring_contract rc
                     WHERE rc.child_id = %(child_id)s
-                      AND rc.partner_id = (%(current_partner_id)s)
+                      AND rc.partner_id = ANY(%(partner_ids)s)
                       AND rc.state NOT IN ('draft')
                       AND rc.start_date IS NOT NULL
                 )
@@ -82,7 +82,6 @@ class MyCompassionChildrenController(WebsiteChild):
             {
                 "child_id": child_id,
                 "partner_ids": partner_ids,
-                "current_partner_id": partner_ids[0],
             },
         )
         return request.env.cr.fetchone()[0] or 0
