@@ -67,15 +67,12 @@ class MyCompassionChildrenController(WebsiteChild):
                 (SELECT COUNT(*) FROM sponsorship_gift
                  WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
                 +
-                (CASE WHEN EXISTS (
-                    SELECT 1 FROM recurring_contract rc
-                    WHERE rc.child_id = %(child_id)s
-                      AND rc.partner_id = ANY(%(partner_ids)s)
-                      AND rc.state NOT IN ('draft')
-                      AND rc.start_date IS NOT NULL
-                )
-                THEN 1 ELSE 0 END)
-            AS total
+                (SELECT COUNT(*) FROM recurring_contract rc
+                 WHERE rc.child_id = %(child_id)s
+                   AND rc.partner_id = ANY(%(partner_ids)s)
+                   AND rc.state NOT IN ('draft')
+                   AND rc.start_date IS NOT NULL)
+                AS total
         """
         request.env.cr.execute(
             sql,
@@ -141,8 +138,9 @@ class MyCompassionChildrenController(WebsiteChild):
                     %(title_start_sponsorship)s AS title
                 FROM recurring_contract rc
                 WHERE rc.child_id = %(child_id)s
-                  AND rc.partner_id = %(current_partner_id)s
+                  AND rc.partner_id = ANY(%(partner_ids)s)
                   AND rc.state NOT IN ('draft')
+                  AND rc.start_date IS NOT NULL
 
             ) AS timeline
             ORDER BY create_date DESC
@@ -152,7 +150,6 @@ class MyCompassionChildrenController(WebsiteChild):
         params = {
             "child_id": child_id,
             "partner_ids": partner_ids,
-            "current_partner_id": partner_ids[0],
             "default_currency": request.env.user.currency_id.name,
             "title_corr_wrote": _("Wrote you a letter"),
             "title_corr_received": _("Received your letter"),
