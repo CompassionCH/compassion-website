@@ -448,6 +448,7 @@ class MyCompassionDonationsController(CustomerPortal):
                 "active_sponsorships": active_sponsorships,
                 "sponsorship_groups": sponsorship_groups,
                 "payment_methods": payment_methods,
+                "payment_methods_json": json.dumps(payment_methods),
                 "tot_cost_per_frequency": tot_cost_per_frequency,
                 "due_invoices": due_invoices,
                 "paid_invoices_subset": paid_invoices_data["paid_invoices_subset"],
@@ -681,12 +682,13 @@ class MyCompassionDonationsController(CustomerPortal):
         all_groups = partner.get_payment_modes()
         payment_methods = [group.get_payment_method_info() for group in all_groups]
 
+        payment_methods_json = json.dumps(payment_methods)
         return {
             "active_sponsorships": active_sponsorships,
             "sponsorship_groups": sponsorship_groups,
             "tot_cost_per_frequency": tot_cost_per_frequency,
             "payment_methods": payment_methods,
-            "json_dumps": json.dumps,
+            "payment_methods_json": payment_methods_json,
         }
 
     def _get_paginated_paid_invoices(

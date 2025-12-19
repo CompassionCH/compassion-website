@@ -18,6 +18,8 @@ Injected data:
 - sponsorship_groups (recordset): The recurring.contract.group records associated with the active sponsorships.
 - tot_cost_per_frequency (dict): A nested dictionary summing up costs. Structure: { frequency_interval (int): { currency (str): total_amount (float) } }.
 - payment_methods (list): A list of dictionaries containing display info (label, icon, type, id) for all the partner's available payment modes.
+- payment_methods_json (JSON): Available payment methods for the partner in JSON to pass to the JS.
+-
 
 
 Notes:

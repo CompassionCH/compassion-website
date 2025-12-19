@@ -5,6 +5,8 @@ Description:
 
     Injected data:
     - group: The sponsorship group object containing payment method and sponsorship details.
+    - payment_methods_JSON (JSON): Available payment methods for the partner in JSON to pass to the JS.
+
    -->
 <odoo>
     <template id="my2_sponsorships_group_card" name="Sponsorships Group Card Component">
@@ -78,7 +80,7 @@ Description:
                             data-toggle="modal"
                             data-target="#payment_method_selector_modal_update"
                             t-att-data-group-id="group.id"
-                            t-att-data-method-info="json.dumps(info)"
+                            t-att-data-method-info="payment_methods_json"
                             onclick="event.stopPropagation();
                                 this.dispatchEvent(new CustomEvent('open_payment_method_update', {
                                     bubbles: true,
