@@ -51,6 +51,7 @@ class Partner(models.Model):
                     ("partner_id", "=", self.id),
                     ("email_read", "=", False),
                     ("child_id", "in", writable_child_ids),
+                    ("direction", "=", "Beneficiary To Supporter"),
                 ],
                 limit=1,
             )
