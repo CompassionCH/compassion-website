@@ -252,14 +252,22 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 });
             }
 
-            // Execute Request
+            // Execute Request  
             if (promise) {
                 promise
                     .then(function (result) {
                         if (result.success) {
                             $modal.modal("hide");
                             ToastService.success(_t("The operation was successful."), _t("Success"));
+
+                            if (result.html) {
+                                var $newContent = $(result.html);
+                                $('#my_sponsorships_container').replaceWith($newContent);
+                            }
+                            else {
+                            console.log("WOOOPS IT FAILS")
                             setTimeout(() => window.location.reload(), 1000);
+                            }
                         } else {
                             ToastService.error(result.error || _t("An error occurred."));
                         }

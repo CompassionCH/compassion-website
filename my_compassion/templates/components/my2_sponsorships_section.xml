@@ -19,6 +19,7 @@ Injected data:
 - tot_cost_per_frequency (dict): A nested dictionary summing up costs. Structure: { frequency_interval (int): { currency (str): total_amount (float) } }.
 - payment_methods (list): A list of dictionaries containing display info (label, icon, type, id) for all the partner's available payment modes.
 
+
 Notes:
 - This section is isolated to allow "Optimistic UI" updates via the controller's _prepare_sponsorship_values helper.
 
