@@ -70,7 +70,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 (SELECT COUNT(*) FROM recurring_contract rc
                  WHERE rc.child_id = %(child_id)s
                    AND rc.partner_id = ANY(%(partner_ids)s)
-                   AND rc.state NOT IN ('draft')
+                   AND rc.state IN ('active', 'terminated')
                    AND rc.start_date IS NOT NULL)
                 AS total
         """
