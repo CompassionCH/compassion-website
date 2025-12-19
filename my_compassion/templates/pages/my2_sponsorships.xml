@@ -27,7 +27,7 @@ Page: My Compassion 2 Sponsorships Page
     <!-- RESULTS CONTENT -->
     <template id="my2_sponsorships_results_content" name="Sponsorships Results Dynamic Content">
         <t t-foreach="children" t-as="child">
-            <div class="col flex-grow-0">
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
                 <t t-call="my_compassion.my2_children_card_component">
                     <t t-set="child" t-value="child" />
                     <t t-set="show_sponsor_me" t-value="True" />
@@ -119,7 +119,7 @@ Page: My Compassion 2 Sponsorships Page
                         children found
                     </div>
                     <!-- CHILDREN PROFILES -->
-                    <div class="sponsorships-results-content row justify-content-center" />
+                    <div class="sponsorships-results-content row justify-content-center g-4" />
                 </div>
                 <!-- BUTTONS -->
                 <div class="sponsorships-column d-flex mt-4 mb-5">

@@ -13,7 +13,6 @@
 
     Injected data:
     - timezone (string): timezone of the center.
-    - fcp_id (string): Identifier of the compassion project.
     - church_name (string): name of the local church associated with the center.
     - city_country (string): represents where the center is located in the following format city,country.
 
@@ -24,11 +23,9 @@
     <template id="WeatherTimeContainer" name="Weather and Time Container">
         <link rel="stylesheet" href="/my_compassion/static/src/css/my2_weather_time_container.css" />
         <div class="center-info-card d-none">
-            <t t-if="fcp_id and church_name">
+            <t t-if="church_name">
                 <div class="center-info-card__header">
                     <p class="center-info-card__project-info">
-                        <t t-esc="fcp_id" />
-                        ,
                         <t t-esc="church_name" />
                     </p>
                 </div>
