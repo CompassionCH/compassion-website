@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="theme_compassion_pictograms_stylesheet_template" name="Pictograms Stylesheet Template">
+        <t t-translation="off">
 <!-- Base styles for any element using a pictogram class. -->
 <!-- This ensures consistency and leverages the `currentColor` change you made. -->
 [class^="pictogram-"],
@@ -24,5 +25,6 @@
     mask-image: url("/web/image/theme.compassion.pictograms/<t t-esc="pictogram.id"/>/svg_file");
 }
 </t>
+        </t>
     </template>
 </odoo>
