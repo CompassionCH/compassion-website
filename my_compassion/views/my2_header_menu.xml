@@ -2,31 +2,33 @@
 <odoo>
     <template id="my_compassion_dynamic_menu" inherit_id="website.template_header_default">
         <xpath expr="//div[@id='top_menu_collapse']/*[1]" position="before">
-            <ul class="navbar-nav">
-                <t t-set="partner" t-value="request.env.user.partner_id" />
-                <li class="nav-item">
-                    <a class="nav-link" href="/my2/dashboard">Home</a>
-                </li>
-                <t t-if="partner.is_sponsor">
+            <t t-if="request.session.uid">
+                <ul class="navbar-nav">
+                    <t t-set="partner" t-value="request.env.user.partner_id" />
                     <li class="nav-item">
-                        <a class="nav-link" href="/my2/children">My sponsorships</a>
+                        <a class="nav-link" href="/my2/dashboard">Home</a>
                     </li>
+                    <t t-if="partner.is_sponsor">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/my2/children">My sponsorships</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/my2/children/letters">Letters</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/my2/children/letters/new">Write a letter</a>
+                        </li>
+                    </t>
                     <li class="nav-item">
-                        <a class="nav-link" href="/my2/children/letters">Letters</a>
+                        <a class="nav-link" href="/my2/gifts">Give</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/my2/children/letters/new">Write a letter</a>
-                    </li>
-                </t>
-                <li class="nav-item">
-                    <a class="nav-link" href="/my2/gifts">Give</a>
-                </li>
-                <t t-if="partner.is_donor">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/my2/donations">My donations</a>
-                    </li>
-                </t>
-            </ul>
+                    <t t-if="partner.is_donor">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/my2/donations">My donations</a>
+                        </li>
+                    </t>
+                </ul>
+            </t>
         </xpath>
     </template>
     <template
@@ -34,6 +36,10 @@
         inherit_id="website_sale.header_cart_link"
         name="Custom Header Cart Link Redirect"
     >
+        <!-- Hide the cart when user is not logged in -->
+        <xpath expr="//t[@t-set='show_cart']" position="attributes">
+            <attribute name="t-value">request.session.uid</attribute>
+        </xpath>
         <!-- Modify the behavior of the base Odoo cart for custom redirection and design -->
         <xpath expr="//a[@href='/shop/cart']" position="attributes">
             <attribute name="href">/my2/gift-package</attribute>

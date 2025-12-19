@@ -438,7 +438,7 @@
                             </div>
                         </div>
                     </section>
-                    <!-- ### Weather and Time Component ### -->
+                    <!-- ### Weather, Time and Map Component ### -->
                     <section
                         t-if="access_scope == 'sponsor'"
                         class="cd-weather-map-container js-cd-weather-map-container"
@@ -454,9 +454,7 @@
                                 <t t-set="custom_map_id" t-value="google_custom_map_id" />
                             </t>
                         </t>
-                        <div
-                            style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); z-index: 10; padding-bottom: 1rem;"
-                        >
+                        <div class="weather-time-container-wrapper">
                             <t t-call="my_compassion.WeatherTimeContainer">
                                 <t t-set="timezone" t-value="timezone" />
                                 <t t-set="fcp_id" t-value="compassion_child.project_id.fcp_id" />
@@ -475,11 +473,10 @@
                         <t t-set="color" t-value="'core-blue'" />
                         <t t-set="show_underline" t-value="True" />
                         <t t-set="underline_color" t-value="'low-yellow'" />
-                        <t
-                            t-set="description"
-                            t-value="'Follow the thread of hope and
-                        encouragement you’ve woven together.'"
-                        />
+                        <t t-set="description">
+                            Follow the thread of hope and
+                        encouragement you’ve woven together.
+                        </t>
                     </t>
                 </div>
             </div>
