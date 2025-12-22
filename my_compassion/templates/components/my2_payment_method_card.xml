@@ -75,22 +75,27 @@ Description:
                     </div>
                     <div class="d-flex align-items-center">
                         <a
-                            href="#"
-                            class="mr-4 text-core-black opacity-50-hover"
-                            data-toggle="modal"
-                            data-target="#payment_method_selector_modal_update"
-                            t-att-data-group-id="group.id"
-                            onclick="event.stopPropagation();
-                                this.dispatchEvent(new CustomEvent('open_payment_method_update', {
-                                    bubbles: true,
-                                    detail: {
-                                        group_id: this.dataset.groupId,
-                                        method_info: JSON.parse(this.dataset.methodInfo),
-                                    }
-                                }));
-                           "
-                        >
-                            <div class="text-dark-blue">
+                                href="#"
+                                class="mr-4 text-core-black opacity-50-hover"
+                                data-toggle="modal"
+                                data-target="#payment_method_selector_modal_update"
+
+                                t-att-data-group-id="group.id"
+                                t-att-data-ref-number="info.get('ref_number')"
+
+                                onclick="event.stopPropagation();
+                                    this.dispatchEvent(new CustomEvent('open_payment_method_update', {
+                                        bubbles: true,
+                                        detail: {
+                                            group_id: this.dataset.groupId,
+                                            method_info: {
+                                                ref_number: this.dataset.refNumber
+                                            }
+                                        }
+                                    }));
+                               "
+                            >
+                                <div class="text-dark-blue">
                                 <i t-attf-class="tiny-text icon-edit02" />
                             </div>
                         </a>
