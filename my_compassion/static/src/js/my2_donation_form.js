@@ -12,6 +12,8 @@ odoo.define("my_compassion.donation_form", function (require) {
             "change .SelectComponent": "_onRecipientChange",
             "click .btn-submit": "_onSubmitClick",
             "click .limits-toggle": "_onLimitsToggleClick",
+            "click #custom-amount": "_onCustomAmountFocus",
+            "focus #custom-amount": "_onCustomAmountFocus",
         },
 
         /**
@@ -20,10 +22,6 @@ odoo.define("my_compassion.donation_form", function (require) {
         start: function () {
             this.edit_mode = this.$el.data("edit-mode");
             this.customAmountInput = this.$("#custom-amount");
-
-            if (this.$(".suggested-amount:checked").val() !== "custom") {
-                this.customAmountInput.hide();
-            }
             this.customAmountInput.removeAttr("hidden");
 
             this.$(".limits-info").hide();
@@ -40,10 +38,22 @@ odoo.define("my_compassion.donation_form", function (require) {
          * @param {Event} ev The jQuery event object.
          */
         _onAmountChange: function (ev) {
-            if (this.$(ev.currentTarget).val() === "custom") {
-                this.customAmountInput.slideDown("fast");
-            } else {
-                this.customAmountInput.slideUp("fast");
+            // If the user selects a preset (Low/Med/High), we just clear the custom input visual state.
+            if (this.$(ev.currentTarget).val() !== "custom") {
+                this.customAmountInput.val("");
+                this.customAmountInput.removeClass("is-invalid");
+            }
+        },
+
+        /**
+         * Helper to automatically select the 'custom' radio button when the user
+         * interacts with the text input.
+         * @private
+         */
+        _onCustomAmountFocus: function () {
+            var $customRadio = this.$(".suggested-amount[value='custom']");
+            if (!$customRadio.prop("checked")) {
+                $customRadio.prop("checked", true).trigger("change");
             }
         },
 
