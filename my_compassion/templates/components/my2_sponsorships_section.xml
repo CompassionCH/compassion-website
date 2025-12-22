@@ -19,7 +19,6 @@ Injected data:
 - tot_cost_per_frequency (dict): A nested dictionary summing up costs. Structure: { frequency_interval (int): { currency (str): total_amount (float) } }.
 - payment_methods (list): A list of dictionaries containing display info (label, icon, type, id) for all the partner's available payment modes.
 - payment_methods_json (JSON): Available payment methods for the partner in JSON to pass to the JS.
--
 
 
 Notes:
@@ -29,7 +28,7 @@ Notes:
 <odoo>
     <data>
         <template id="my2_sponsorships_section" name="My Sponsorships List Section">
-            <div>
+            <div id="my_sponsorships_container" t-att-data-payment-methods="payment_methods_json">
                 <h3 class="text-dark-blue">My sponsorships</h3>
                 <p>
                     You currently have
@@ -64,10 +63,10 @@ Notes:
                 <!-- ADD PAYMENT METHOD BUTTON -->
                 <div class="d-flex flex-column align-items-center">
                     <a
-                            href="#"
-                            data-toggle="modal"
-                            data-target="#payment_method_selector_modal_add"
-                            onclick="event.preventDefault();
+                        href="#"
+                        data-toggle="modal"
+                        data-target="#payment_method_selector_modal_add"
+                        onclick="event.preventDefault();
                                    this.dispatchEvent(new CustomEvent('open_payment_method_add', {
                                         bubbles: true,
                                         detail: {'modal_type': 'Add'}
@@ -86,6 +85,5 @@ Notes:
                 </div>
             </div>
         </template>
-
     </data>
 </odoo>

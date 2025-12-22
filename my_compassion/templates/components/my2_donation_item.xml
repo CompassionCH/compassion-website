@@ -38,13 +38,19 @@
     <!-- DONATION ITEM BUTTON -->
     <template id="DonationItemButton" name="Donation Item Button">
         <t t-set="color" t-value="button.get('color') or 'dark-blue'" />
-        <t t-if="button.get('action') == 'link'" t-set="onclick" t-valuef="location.href='#{button.get('href')}'" />
-        <t
-            t-elif="button.get('action') == 'event'"
-            t-set="onclick"
-            t-valuef="this.dispatchEvent(new CustomEvent('#{button.get('custom_event')}', {bubbles: true, detail: #{button.get('detail')}}))"
-        />
-        <div t-attf-class="action-button #{button_top_class}" t-att-onclick="onclick">
+        <t t-if="button.get('action') == 'event'">
+            <t t-set="evt_detail" t-value="button.get('detail_js') or button.get('detail') or '{}'" />
+            <t
+                t-set="onclick"
+                t-valuef="event.preventDefault(); this.dispatchEvent(new CustomEvent('#{button.get('custom_event')}', {bubbles: true, detail: #{evt_detail}}))"
+            />
+        </t>
+        <t t-elif="button.get('action') == 'link'" t-set="onclick" t-valuef="location.href='#{button.get('href')}'" />
+        <div
+            t-attf-class="action-button #{button_top_class}"
+            t-att-onclick="onclick"
+            t-att="button.get('attributes') or {}"
+        >
             <i t-if="button.get('icon')" t-attf-class="tiny-text icon-#{button.get('icon')} text-#{color}" />
             <i
                 t-if="button.get('pictogram')"

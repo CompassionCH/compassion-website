@@ -80,7 +80,6 @@ Description:
                             data-toggle="modal"
                             data-target="#payment_method_selector_modal_update"
                             t-att-data-group-id="group.id"
-                            t-att-data-method-info="payment_methods_json"
                             onclick="event.stopPropagation();
                                 this.dispatchEvent(new CustomEvent('open_payment_method_update', {
                                     bubbles: true,
@@ -118,18 +117,29 @@ Description:
                                     <t
                                         t-set="change_payment_data"
                                         t-value="{
-                                        'label': 'Change',
-                                        'icon': 'edit02',
-                                        'action': 'event',
-                                        'custom_event': 'open_payment_method_change',
-                                        'detail': json.dumps({
-                                            'modal_type': 'Change',
-                                            'contract_id': sponsorship.id,
-                                            'child_name': sponsorship.child_id.preferred_name or '',
-                                            'group_id': group.id
-                                        }),
-                                        'color': 'low-blue'
-                                    }"
+                                           'label': 'Change',
+                                           'icon': 'edit02',
+                                           'action': 'event',
+                                           'custom_event': 'open_payment_method_change',
+
+                                           'color': 'low-blue',
+
+
+                                           'attributes': {
+                                               'data-contract-id': sponsorship.id,
+                                               'data-group-id': group.id,
+                                               'data-child-name': sponsorship.child_id.preferred_name or '',
+                                               'data-modal-type': 'Change'
+                                           },
+
+
+                                           'detail_js': '{
+                                               contract_id: this.dataset.contractId,
+                                               group_id: this.dataset.groupId,
+                                               child_name: this.dataset.childName,
+                                               modal_type: this.dataset.modalType
+                                           }'
+                                       }"
                                     />
                                     <t
                                         t-set="secondary_buttons_data"

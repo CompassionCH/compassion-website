@@ -13,7 +13,6 @@
             class="modal fade"
             t-att-id="'payment_method_selector_modal_' + modal_type"
             t-att-data-modal-type="modal_type"
-            t-att-data-payment-methods="json.dumps(payment_methods) if payment_methods else None"
             tabindex="-1"
             role="dialog"
             aria-hidden="true"

@@ -19,7 +19,7 @@ Page: My Compassion 2 Donations Page
     - active_sponsorships (recordset): Sponsorships in active state for the logged-in partner.
     - sponsorship_groups (recordset): Sponsorship groups by payment methods linked to the partner.
     - payment_methods (list): Available payment methods for the partner.
-    - payment_methods_JSON (JSON): Available payment methods for the partner in JSOn to pass to the JS.
+    - payment_methods_json (JSON): Available payment methods for the partner in JSON to pass to the JS.
     - tot_cost_per_frequency (dict): Total sponsorship cost grouped by frequency and currency.
     - due_invoices (recordset): Outstanding invoices not yet paid.
     - paid_invoices_subset (recordset): Subset of paid invoices for donation history.
@@ -77,8 +77,8 @@ Page: My Compassion 2 Donations Page
                                                     <t t-set="name" t-value="'year'" />
                                                     <t t-set="id" t-value="'year'" />
                                                     <t
-                                                            t-foreach="range(int(current_year) - 1, first_year - 1, -1)"
-                                                            t-as="fiscal_year"
+                                                        t-foreach="range(int(current_year) - 1, first_year - 1, -1)"
+                                                        t-as="fiscal_year"
                                                     >
                                                         <option t-att-value="fiscal_year">
                                                             <t t-esc="fiscal_year" />
@@ -99,9 +99,9 @@ Page: My Compassion 2 Donations Page
                             </div>
                         </div>
                         <!-- LIST OF SPONSORSHIPS -->
-                        <div id="my_sponsorships_container">
-                            <t t-call="my_compassion.my2_sponsorships_section"/>
-                        </div>
+                        <t t-call="my_compassion.my2_sponsorships_section">
+                            <t t-set="payment_methods_json" t-value="payment_methods_json" />
+                        </t>
                         <!-- DUE INVOICES -->
                         <div class="mb-4 mt-4">
                             <h3 class="text-dark-blue">Open contributions</h3>
@@ -117,8 +117,8 @@ Page: My Compassion 2 Donations Page
                                 </div>
                                 <t t-foreach="due_invoices" t-as="invoice">
                                     <t
-                                            t-set="children"
-                                            t-value="invoice.invoice_line_ids.mapped('contract_id.child_id')"
+                                        t-set="children"
+                                        t-value="invoice.invoice_line_ids.mapped('contract_id.child_id')"
                                     />
                                     <div class="row mb-3">
                                         <div class="col">

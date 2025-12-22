@@ -8,6 +8,7 @@
 #
 ##############################################################################
 
+import json
 import math
 from collections import defaultdict
 from datetime import datetime, timedelta
@@ -19,8 +20,6 @@ from odoo import _, fields, http
 from odoo.http import request
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
-import json
-
 
 
 class MyCompassionDonationsController(CustomerPortal):
@@ -531,16 +530,22 @@ class MyCompassionDonationsController(CustomerPortal):
         if success:
             # Render the updated list
             values = self._prepare_sponsorship_values(partner)
-            html = request.env['ir.qweb']._render('my_compassion.my2_sponsorships_section', values)
-            return {'success': True, 'html': html}
+            html = request.env["ir.qweb"]._render(
+                "my_compassion.my2_sponsorships_section", values
+            )
+            return {
+                "success": True,
+                "html": html,
+                "payment_methods": values["payment_methods"],
+            }
 
-        return {'success': False, 'error': 'Operation failed'}
+        return {"success": False, "error": "Operation failed"}
 
     @http.route(
         "/my2/donation/change_method_group", type="json", auth="user", website=True
     )
     def change_payment_method_group(
-            self, group_id, new_group_id=None, new_bvr_ref=None, **kwargs
+        self, group_id, new_group_id=None, new_bvr_ref=None, **kwargs
     ):
         """
         Endpoint to update payment method for a sponsorship group.
@@ -564,14 +569,22 @@ class MyCompassionDonationsController(CustomerPortal):
             raise NotFound(_("Payment group not found or access denied."))
 
         # Call the model method to perform the logic
-        success = group.change_payment_method(new_group_id=new_group_id, new_bvr_ref=new_bvr_ref)
+        success = group.change_payment_method(
+            new_group_id=new_group_id, new_bvr_ref=new_bvr_ref
+        )
 
         if success:
             values = self._prepare_sponsorship_values(partner)
-            html = request.env['ir.qweb']._render('my_compassion.my2_sponsorships_section', values)
-            return {'success': True, 'html': html}
+            html = request.env["ir.qweb"]._render(
+                "my_compassion.my2_sponsorships_section", values
+            )
+            return {
+                "success": True,
+                "html": html,
+                "payment_methods": values["payment_methods"],
+            }
 
-        return {'success': False, 'error': 'Operation failed'}
+        return {"success": False, "error": "Operation failed"}
 
     # Configuration for supported manual payment methods
     # Key: frontend 'value' from the select input
@@ -585,11 +598,11 @@ class MyCompassionDonationsController(CustomerPortal):
         "/my2/donation/add_payment_method_group", type="json", auth="user", website=True
     )
     def add_payment_method_group(
-            self,
-            recurring_unit="month",
-            method_type="bvr",
-            advance_billing_months=1,
-            **kwargs,
+        self,
+        recurring_unit="month",
+        method_type="bvr",
+        advance_billing_months=1,
+        **kwargs,
     ):
         """
         Creates a new Contract Group with manual BVR/Permanent Order details.
@@ -625,7 +638,7 @@ class MyCompassionDonationsController(CustomerPortal):
             return {
                 "success": False,
                 "error": _('Configuration Error: Payment mode "%s" not found.')
-                         % mode_search_term,
+                % mode_search_term,
             }
 
         # 3. Create the Group
@@ -649,10 +662,17 @@ class MyCompassionDonationsController(CustomerPortal):
 
             if new_group:
                 values = self._prepare_sponsorship_values(request.env.user.partner_id)
-                html = request.env['ir.qweb']._render('my_compassion.my2_sponsorships_section', values)
-                return {'success': True, 'html': html, 'group_id': new_group.id}
+                html = request.env["ir.qweb"]._render(
+                    "my_compassion.my2_sponsorships_section", values
+                )
+                return {
+                    "success": True,
+                    "html": html,
+                    "group_id": new_group.id,
+                    "payment_methods": values["payment_methods"],
+                }
 
-            return {'success': False}
+            return {"success": False}
 
         except odoo.exceptions.ValidationError:
             return {
@@ -666,33 +686,34 @@ class MyCompassionDonationsController(CustomerPortal):
         Returns a dict of values for QWeb rendering.
         """
         # 1. Fetch Active Sponsorships
-        active_sponsorships = partner.get_portal_sponsorships("active")
+        active_sponsorships = partner.get_portal_sponsorships(["active", "mandate"])
 
         # 2. Fetch Groups
-        sponsorship_groups = active_sponsorships.mapped('group_id')
+        sponsorship_groups = active_sponsorships.mapped("group_id")
 
         # 3. Calculate Totals
         tot_cost_per_frequency = defaultdict(lambda: defaultdict(float))
         for sponsorship in active_sponsorships:
             currency = sponsorship.pricelist_id.currency_id.name
             if sponsorship.group_id:
-                tot_cost_per_frequency[sponsorship.group_id.month_interval][currency] += sponsorship.total_amount
+                tot_cost_per_frequency[sponsorship.group_id.month_interval][
+                    currency
+                ] += sponsorship.total_amount
 
         # 4. Fetch Available Methods (for modals)
         all_groups = partner.get_payment_modes()
         payment_methods = [group.get_payment_method_info() for group in all_groups]
 
-        payment_methods_json = json.dumps(payment_methods)
         return {
             "active_sponsorships": active_sponsorships,
             "sponsorship_groups": sponsorship_groups,
             "tot_cost_per_frequency": tot_cost_per_frequency,
             "payment_methods": payment_methods,
-            "payment_methods_json": payment_methods_json,
+            "payment_methods_json": json.dumps(payment_methods),
         }
 
     def _get_paginated_paid_invoices(
-            self, partner, invoice_page=1, invoice_per_page=12
+        self, partner, invoice_page=1, invoice_per_page=12
     ):
         """
         Fetches a paginated subset of paid invoices for a partner and calculates
