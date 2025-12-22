@@ -21,6 +21,10 @@ odoo.define("my_compassion.form_field_validator", function (require) {
     var publicWidget = require("web.public.widget");
 
     var validationConfig = {
+        required: {
+            suffix: '<span class="text-mid-orange">*</span>',
+            defaultErrorMessage: "This field is required.",
+        },
         email: {
             regex: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
             defaultErrorMessage: "Please enter a valid email address.",
@@ -28,10 +32,6 @@ odoo.define("my_compassion.form_field_validator", function (require) {
         phone: {
             regex: /^\+?(\d[\d\s-]{5,}\d)$/,
             defaultErrorMessage: "Please enter a valid phone number.",
-        },
-        required: {
-            suffix: '<span class="text-mid-orange">*</span>',
-            defaultErrorMessage: "This field is required.",
         },
     };
 
@@ -111,13 +111,13 @@ odoo.define("my_compassion.form_field_validator", function (require) {
          */
         _showError: function (message) {
             this.$input.addClass("is-invalid");
-            var $errorHint = $('<div class="input-invalid-hint text-mid-orange tiny-text mb-1">').text(message);
+            var $errorHint = $('<div class="input-invalid-hint text-mid-orange tiny-text mt-2">').text(message);
 
             var $selectContainer = this.$input.closest(".SelectComponent");
             if ($selectContainer.length > 0) {
-                $selectContainer.before($errorHint);
+                $selectContainer.after($errorHint);
             } else {
-                this.$input.before($errorHint);
+                this.$input.after($errorHint);
             }
         },
 

@@ -125,4 +125,7 @@ h1 {
 .form-field-component .is-invalid {
     border: 1px solid var(--mid-orange);
     border-left: 5px solid var(--mid-orange);
+    /* override bootstrap invalid style */
+    background-image: none;
+    padding-right: 0.75rem;
 }

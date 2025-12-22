@@ -92,6 +92,7 @@ Injected data:
                                                 <t t-call="theme_compassion_2025.SelectComponent">
                                                     <t t-set="id" t-value="'title'" />
                                                     <t t-set="name" t-value="'title'" />
+                                                    <t t-set="required" t-value="True" />
                                                     <t
                                                         t-set="attrs"
                                                         t-value="{'data-original-value': partner.title.id}"
@@ -125,6 +126,7 @@ Injected data:
                                                     class="form-control"
                                                     t-att-value="partner.lastname"
                                                     t-att-data-original-value="partner.lastname"
+                                                    required=""
                                                 />
                                             </div>
                                         </t>
@@ -144,6 +146,7 @@ Injected data:
                                                     class="form-control"
                                                     t-att-value="partner.firstname"
                                                     t-att-data-original-value="partner.firstname"
+                                                    required=""
                                                 />
                                             </div>
                                         </t>
@@ -165,6 +168,7 @@ Injected data:
                                                 class="form-control"
                                                 t-att-value="partner.street"
                                                 t-att-data-original-value="partner.street"
+                                                required=""
                                             />
                                         </div>
                                     </t>
@@ -186,6 +190,7 @@ Injected data:
                                                         class="form-control"
                                                         t-att-value="partner.zip"
                                                         t-att-data-original-value="partner.zip"
+                                                        required=""
                                                     />
                                                 </div>
                                             </t>
@@ -206,6 +211,7 @@ Injected data:
                                                     class="form-control"
                                                     t-att-value="partner.city"
                                                     t-att-data-original-value="partner.city"
+                                                    required=""
                                                 />
                                             </div>
                                         </t>
@@ -255,6 +261,8 @@ Injected data:
                                                 class="form-control"
                                                 t-att-value="partner.email"
                                                 t-att-data-original-value="partner.email"
+                                                data-validate-type="email"
+                                                required=""
                                             />
                                         </div>
                                     </t>
@@ -275,6 +283,8 @@ Injected data:
                                                     class="form-control"
                                                     t-att-value="partner.phone"
                                                     t-att-data-original-value="partner.phone"
+                                                    data-validate-type="phone"
+                                                    required=""
                                                 />
                                             </div>
                                         </t>
@@ -294,6 +304,8 @@ Injected data:
                                                     class="form-control"
                                                     t-att-value="partner.mobile"
                                                     t-att-data-original-value="partner.mobile"
+                                                    data-validate-type="phone"
+                                                    required=""
                                                 />
                                             </div>
                                         </t>

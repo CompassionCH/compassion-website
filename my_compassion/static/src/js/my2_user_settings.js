@@ -289,17 +289,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let originalValues = {};
 
-            const clearErrors = () => {
-                form.querySelectorAll(".is-invalid").forEach((input) => {
-                    input.classList.remove("is-invalid");
-                });
-                form.querySelectorAll(".invalid-hint").forEach((hint) => {
-                    hint.style.display = "none";
-                });
-            };
-
             const showErrors = (errors) => {
-                for (const fieldName in errors) {
+             for (const fieldName in errors) {
                     const input = form.querySelector(`[name="${fieldName}"]`);
                     if (input) {
                         input.classList.add("is-invalid");
@@ -314,7 +305,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
             };
+const validateForm = () => {
+    let isValid = true;
 
+    $(form).find(".form-field-component:visible").each(function () {
+        const fieldWidget = $(this).data("widget");
+
+        if (fieldWidget && typeof fieldWidget.validate === "function") {
+            if (!fieldWidget.validate()) {
+                isValid = false;
+            }
+        }
+    });
+
+    return isValid;
+};
             const storeOriginalValues = () => {
                 fields.forEach((field) => {
                     const input = form.querySelector(`[name="${field}"]`);
@@ -333,18 +338,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
             editButton.addEventListener("click", () => {
                 storeOriginalValues();
-                clearErrors();
                 form.classList.add("is-editing");
             });
 
             cancelButton.addEventListener("click", () => {
                 restoreOriginalValues();
-                clearErrors();
                 form.classList.remove("is-editing");
             });
 
             saveButton.addEventListener("click", () => {
-                clearErrors();
+                validateForm();
                 const payload = {};
                 fields.forEach((field) => {
                     const input = form.querySelector(`[name="${field}"]`);
