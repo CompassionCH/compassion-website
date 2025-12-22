@@ -186,7 +186,7 @@
                             name="custom_amount"
                             t-att-placeholder="'Enter amount in %s' % product.currency_id.name"
                             class="form-control mt-2"
-                            hidden = ""
+                            hidden=""
                             t-att-value="'{:g}'.format(default_custom_amount) if default_custom_amount else ''"
                             onclick="$(this).prev('input[type=radio]').prop('checked', true).trigger('change');"
                             onfocus="$(this).prev('input[type=radio]').prop('checked', true).trigger('change');"
