@@ -199,7 +199,6 @@ class MyCompassionUserController(http.Controller):
             "tax_certificate",
             "letter_delivery_preference",
             "photo_delivery_preference",
-            "calendar",
             "birthday_reminder",
             "sponsorship_anniversary_card",
         }
