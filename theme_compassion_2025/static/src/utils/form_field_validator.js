@@ -87,29 +87,34 @@ odoo.define("my_compassion.form_field_validator", function (require) {
          * @returns {boolean}
          */
         validate: function () {
-            console.log("Validating field:", this.$input.attr("name"));
-            this._clearError();
+            this.clearError();
             var value = this.$input.val();
 
             if (this.isRequired && !value) {
-                this._showError(this.errorMessages.required);
+                this.showError(this.errorMessages.required);
                 return false;
             }
 
             if (this.validationType && value && this.config.regex) {
                 if (!this.config.regex.test(value)) {
-                    this._showError(this.errorMessages.format);
+                    this.showError(this.errorMessages.format);
                     return false;
                 }
             }
 
             return true;
         },
-
+        /**
+         * Removes existing error messages.
+         */
+        clearError: function () {
+            this.$el.find(".input-invalid-hint").remove();
+            this.$input.removeClass("is-invalid");
+        },
         /**
          * Displays an error message.
          */
-        _showError: function (message) {
+        showError: function (message) {
             this.$input.addClass("is-invalid");
             var $errorHint = $('<div class="input-invalid-hint text-mid-orange tiny-text mt-2">').text(message);
 
@@ -119,14 +124,6 @@ odoo.define("my_compassion.form_field_validator", function (require) {
             } else {
                 this.$input.after($errorHint);
             }
-        },
-
-        /**
-         * Removes existing error messages.
-         */
-        _clearError: function () {
-            this.$el.find(".input-invalid-hint").remove();
-            this.$input.removeClass("is-invalid");
         },
     });
 

@@ -289,37 +289,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let originalValues = {};
 
-            const showErrors = (errors) => {
-             for (const fieldName in errors) {
+            const showBackendErrors = (errors) => {
+                for (const fieldName in errors) {
                     const input = form.querySelector(`[name="${fieldName}"]`);
-                    if (input) {
-                        input.classList.add("is-invalid");
-                        const container = input.closest(".form-field-container");
-                        if (container) {
-                            const hintEl = container.querySelector(".invalid-hint");
-                            if (hintEl) {
-                                hintEl.textContent = errors[fieldName];
-                                hintEl.style.display = "block";
-                            }
-                        }
-                    }
+                    if (!input) continue;
+
+                    const fieldComponent = input.closest(".form-field-component");
+                    if (!fieldComponent) continue;
+
+                    const fieldWidget = $(fieldComponent).data("widget");
+                    if (!fieldWidget) continue;
+
+                    fieldWidget.showError(errors[fieldName]);
                 }
             };
-const validateForm = () => {
-    let isValid = true;
 
-    $(form).find(".form-field-component:visible").each(function () {
-        const fieldWidget = $(this).data("widget");
+            const clearErrors = () => {
+                let isValid = true;
 
-        if (fieldWidget && typeof fieldWidget.validate === "function") {
-            if (!fieldWidget.validate()) {
-                isValid = false;
-            }
-        }
-    });
+                $(form).find(".form-field-component:visible").each(function () {
+                    const fieldWidget = $(this).data("widget");
+                    fieldWidget.clearError()
+                });
 
-    return isValid;
-};
+                return isValid;
+            };
+            const validateForm = () => {
+                let isValid = true;
+
+                $(form).find(".form-field-component:visible").each(function () {
+                    const fieldWidget = $(this).data("widget");
+
+                    if (!fieldWidget.validate()) {
+                        isValid = false;
+                    }
+                });
+
+                return isValid;
+            };
             const storeOriginalValues = () => {
                 fields.forEach((field) => {
                     const input = form.querySelector(`[name="${field}"]`);
@@ -338,16 +345,20 @@ const validateForm = () => {
 
             editButton.addEventListener("click", () => {
                 storeOriginalValues();
+                clearErrors();
                 form.classList.add("is-editing");
             });
 
             cancelButton.addEventListener("click", () => {
                 restoreOriginalValues();
+                clearErrors();
                 form.classList.remove("is-editing");
             });
 
             saveButton.addEventListener("click", () => {
-                validateForm();
+                if (!validateForm()) {
+                    return;
+                }
                 const payload = {};
                 fields.forEach((field) => {
                     const input = form.querySelector(`[name="${field}"]`);
@@ -368,7 +379,7 @@ const validateForm = () => {
                             form.classList.remove("is-editing");
                         } else {
                             if (response.errors) {
-                                showErrors(response.errors);
+                                showBackendErrors(response.errors);
                             }
                         }
                     })
