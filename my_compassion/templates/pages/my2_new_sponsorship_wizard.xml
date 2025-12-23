@@ -97,21 +97,42 @@ Page: My Compassion 2 New Sponsorship Wizard Page
             <t t-set="top_class" t-value="'my-3'" />
             <t t-set="label">Surname</t>
             <t t-set="input_id" t-value="'lastname'" />
-            <input id="lastname" type="text" name="lastname" class="form-control" t-att-value="wizard.lastname" required="" />
+            <input
+                id="lastname"
+                type="text"
+                name="lastname"
+                class="form-control"
+                t-att-value="wizard.lastname"
+                required=""
+            />
         </t>
         <!-- Firstname -->
         <t t-call="theme_compassion_2025.FormFieldComponent">
             <t t-set="top_class" t-value="'my-3'" />
             <t t-set="label">Firstname</t>
             <t t-set="input_id" t-value="'firstname'" />
-            <input id="firstname" type="text" name="firstname" class="form-control" t-att-value="wizard.firstname" required="" />
+            <input
+                id="firstname"
+                type="text"
+                name="firstname"
+                class="form-control"
+                t-att-value="wizard.firstname"
+                required=""
+            />
         </t>
         <!-- Date of birth -->
         <t t-call="theme_compassion_2025.FormFieldComponent">
             <t t-set="top_class" t-value="'my-3'" />
             <t t-set="label">Date of birth</t>
             <t t-set="input_id" t-value="'birthdate'" />
-            <input id="birthdate" type="date" name="birthdate" class="form-control" t-att-value="wizard.birthdate" required="" />
+            <input
+                id="birthdate"
+                type="date"
+                name="birthdate"
+                class="form-control"
+                t-att-value="wizard.birthdate"
+                required=""
+            />
         </t>
         <!-- Email -->
         <t t-call="theme_compassion_2025.FormFieldComponent">
@@ -149,7 +170,14 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                     <t t-set="top_class" t-value="'my-3'" />
                     <t t-set="label">Street</t>
                     <t t-set="input_id" t-value="'street'" />
-                    <input id="street" type="text" name="street" class="form-control" t-att-value="wizard.street" required="" />
+                    <input
+                        id="street"
+                        type="text"
+                        name="street"
+                        class="form-control"
+                        t-att-value="wizard.street"
+                        required=""
+                    />
                 </t>
             </div>
             <div class="flex-shrink-1 ml-4">
@@ -183,7 +211,14 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                     <t t-set="top_class" t-value="'my-3'" />
                     <t t-set="label">Locality</t>
                     <t t-set="input_id" t-value="'city'" />
-                    <input id="city" type="text" name="city" class="form-control" t-att-value="wizard.city" required="" />
+                    <input
+                        id="city"
+                        type="text"
+                        name="city"
+                        class="form-control"
+                        t-att-value="wizard.city"
+                        required=""
+                    />
                 </t>
             </div>
         </div>

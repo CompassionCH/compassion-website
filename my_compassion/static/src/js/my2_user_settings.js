@@ -307,23 +307,27 @@ document.addEventListener("DOMContentLoaded", () => {
             const clearErrors = () => {
                 let isValid = true;
 
-                $(form).find(".form-field-component:visible").each(function () {
-                    const fieldWidget = $(this).data("widget");
-                    fieldWidget.clearError()
-                });
+                $(form)
+                    .find(".form-field-component:visible")
+                    .each(function () {
+                        const fieldWidget = $(this).data("widget");
+                        fieldWidget.clearError();
+                    });
 
                 return isValid;
             };
             const validateForm = () => {
                 let isValid = true;
 
-                $(form).find(".form-field-component:visible").each(function () {
-                    const fieldWidget = $(this).data("widget");
+                $(form)
+                    .find(".form-field-component:visible")
+                    .each(function () {
+                        const fieldWidget = $(this).data("widget");
 
-                    if (!fieldWidget.validate()) {
-                        isValid = false;
-                    }
-                });
+                        if (!fieldWidget.validate()) {
+                            isValid = false;
+                        }
+                    });
 
                 return isValid;
             };
