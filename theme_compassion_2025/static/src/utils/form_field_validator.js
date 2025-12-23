@@ -83,7 +83,7 @@ odoo.define("my_compassion.form_field_validator", function (require) {
 
         /**
          * The central validation function. Can also be called externally.
-         * @returns {boolean}
+         * @returns {Boolean}
          */
         validate: function () {
             this.clearError();
