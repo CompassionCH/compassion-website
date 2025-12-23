@@ -70,7 +70,7 @@ odoo.define("my_compassion.form_field_validator", function (require) {
 
             this.errorMessages = {
                 required: this.$input.data("errorRequired") || validationConfig.required.defaultErrorMessage,
-                format: this.$input.data("errorFormat") || this.config?.defaultErrorMessage,
+                format: this.$input.data("errorFormat") || (this.config && this.config.defaultErrorMessage),
             };
         },
 
