@@ -40,7 +40,6 @@ odoo.define("my_compassion.form_field_validator", function (require) {
         events: {
             "blur input": "_onBlur",
             "change select": "_onBlur",
-            "blur select": "_onBlur",
         },
 
         init: function () {
@@ -59,7 +58,7 @@ odoo.define("my_compassion.form_field_validator", function (require) {
 
             this.$input = this.$("input, select");
             this.isRequired = this.$input.prop("required");
-            this.validationType = this.$input.data("validate-type");
+            this.validationType = this.$input.data("validateType");
 
             if (this.isRequired) {
                 this.$el.find("label").append(validationConfig.required.suffix);
@@ -70,8 +69,8 @@ odoo.define("my_compassion.form_field_validator", function (require) {
             }
 
             this.errorMessages = {
-                required: this.$input.data("error-required") || validationConfig.required.defaultErrorMessage,
-                format: this.$input.data("error-format") || this.config?.defaultErrorMessage,
+                required: this.$input.data("errorRequired") || validationConfig.required.defaultErrorMessage,
+                format: this.$input.data("errorFormat") || this.config?.defaultErrorMessage,
             };
         },
 
