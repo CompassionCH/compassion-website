@@ -42,6 +42,7 @@
         "data/my2_website.xml",
         "data/my2_website_redirect.xml",
         "data/auto_letter_templates_updater_cron.xml",
+        "data/product_funds_data.xml",
         # My compassion 2 assets, needs to be placed before others
         "templates/my2_assets.xml",
         "templates/my_account_components.xml",
