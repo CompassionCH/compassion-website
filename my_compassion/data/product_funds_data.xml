@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- XML ID WAS MISSING -->
+    <record id="bridge_health_tg" model="ir.model.data">
+        <field name="name">product_template_fund_hea</field>
+        <field name="module">my_compassion</field>
+        <field name="model">product.template</field>
+        <field name="res_id" search="[('default_code', '=', 'health_TG')]" model="product.template"/>
+        <field name="noupdate">True</field>
+    </record>
+
+    <record id="bridge_food_crisis" model="ir.model.data">
+        <field name="name">product_template_303_33d233eb</field>
+        <field name="module">my_compassion</field>
+        <field name="model">product.template</field>
+        <field name="res_id" search="[('default_code', '=', 'drf_food-business')]" model="product.template"/>
+        <field name="noupdate">True</field>
+    </record>
+
+    <record id="bridge_disaster_et" model="ir.model.data">
+        <field name="name">product_template_238_d12e2b61</field>
+        <field name="module">my_compassion</field>
+        <field name="model">product.template</field>
+        <field name="res_id" search="[('default_code', '=', 'drf_ET')]" model="product.template"/>
+        <field name="noupdate">True</field>
+    </record>
+
+    <!-- PRODUCT REGISTRATION -->
+    <!-- WASH FUND PRODUCT -->
+    <data noupdate="0">
+        <record id="sponsorship_switzerland.product_template_fund_wtp" model="product.template">
+            <field name="activate_for_my_compassion" eval="True"/>
+            <field name="my_compassion_donation_type">fund</field>
+            <field name="my_compassion_name">Water for children Funds</field>
+            <field name="my_compassion_color" ref="theme_compassion_2025.mid_blue"/>
+            <field name="my_compassion_pictogram" ref="theme_compassion_2025.pictogram_water_and_sanitation"/>
+            <field name="my_compassion_description">Access to clean water and safe toilets
+                plays a crucial role in child development. Compassion is committed to
+                building wells, toilets, and sanitation facilities in child development
+                centers or for local communities.
+            </field>
+            <field name="my_compassion_show_impact_statement" eval="True"/>
+            <field name="my_compassion_impact_before_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'description': '2.2 billion people have no access to safe drinking water.'}),
+                (0, 0, {'description': '494 million people still use unimproved sanitation facilities, practicing open defecation.'}),
+                (0, 0, {'description': 'Just CHF 30 is enough to give a child access to safe toilets.'})
+            ]"/>
+            <field name="my_compassion_impact_after_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'description': 'Build life saving wells and water tanks for Compassion-assisted children, their families and their communities.'}),
+                (0, 0, {'description': 'Construct toilet blocks and give children, especially girls, the facilities and privacy they need.'}),
+                (0, 0, {'description': 'Keep children in the classroom by removing the need for them to collect water.'})
+            ]"/>
+            <field name="my_compassion_show_info" eval="False"/>
+            <field name="my_compassion_show_testimony" eval="False"/>
+            <field name="my_compassion_donation_quantity_low">1</field>
+            <field name="my_compassion_donation_quantity_medium">3</field>
+            <field name="my_compassion_donation_quantity_high">5</field>
+        </record>
+    </data>
+
+    <!-- UNSPONSORED CHILDREN FUND PRODUCT -->
+    <data noupdate="0">
+        <record id="sponsorship_switzerland.product_template_fund_usp" model="product.template">
+            <field name="activate_for_my_compassion" eval="True"/>
+            <field name="my_compassion_donation_type">fund</field>
+            <field name="my_compassion_name">Children waiting for a sponsor funds</field>
+            <field name="my_compassion_color" ref="theme_compassion_2025.low_yellow"/>
+            <field name="my_compassion_pictogram" ref="theme_compassion_2025.pictogram_children"/>
+            <field name="my_compassion_description">Independent research proves that
+                Compassion’s sponsorship program gives children a life-changing
+                foundation of primary education, vocational skills  training and a
+                mentor to help them plan for their future. Our Education
+                Interventions enable children to go even further.
+            </field>
+            <field name="my_compassion_show_impact_statement" eval="True"/>
+            <field name="my_compassion_impact_before_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'description': 'Only 52% of secondary-aged school children attend school.'}),
+                (0, 0, {'description': '250 million young people globally are illiterate.'}),
+                (0, 0, {'description': 'The number of children not in school fell by 50 million between 1990 and 2014.'})
+            ]"/>
+            <field name="my_compassion_impact_after_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'description': 'Keep young people in school by offering scholarships and secondary school fees.'}),
+                (0, 0, {'description': 'Provide extra textbooks and resources which support young people in overcoming poverty.'}),
+                (0, 0, {'description': 'Give children and young people access to powerful educational resources such as libraries and computer labs.'})
+            ]"/>
+            <field name="my_compassion_show_info" eval="False"/>
+            <field name="my_compassion_show_testimony" eval="False"/>
+            <field name="my_compassion_donation_quantity_low">1</field>
+            <field name="my_compassion_donation_quantity_medium">3</field>
+            <field name="my_compassion_donation_quantity_high">5</field>
+        </record>
+    </data>
+
+    <!-- HEALTH FUND PRODUCT -->
+    <data noupdate="0">
+        <record id="my_compassion.product_template_fund_hea" model="product.template">
+            <field name="activate_for_my_compassion" eval="True"/>
+            <field name="my_compassion_donation_type">fund</field>
+            <field name="my_compassion_name">Health Funds</field>
+            <field name="my_compassion_color" ref="theme_compassion_2025.mid_green"/>
+            <field name="my_compassion_pictogram" ref="theme_compassion_2025.pictogram_health"/>
+            <field name="my_compassion_description">
+                Compassion’s Health Interventions provide children with quality medical
+                care including life-saving surgery, cancer treatment and more.
+            </field>
+            <field name="my_compassion_show_impact_statement" eval="True"/>
+            <field name="my_compassion_impact_before_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'description': 'Malaria takes the life of a child every minute of every day.'}),
+                (0, 0, {'description': 'In 2019, an estimated 5.2 million children under 5 years old died from preventable and treatable causes.'}),
+                (0, 0, {'description': 'Between 2000 and 2020, the prevalence of stunted growth in children globally declined from 33.1% to 22%.'})
+            ]"/>
+            <field name="my_compassion_impact_after_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'description': 'Assist children in countries where health insurance does not exists.'}),
+                (0, 0, {'description': 'Give children life-saving vaccinations and medical treatment.'}),
+                (0, 0, {'description': 'fund prevention campaigns (against malaria, for example).'})
+            ]"/>
+            <field name="my_compassion_show_info" eval="False"/>
+            <field name="my_compassion_show_testimony" eval="False"/>
+            <field name="my_compassion_donation_quantity_low">1</field>
+            <field name="my_compassion_donation_quantity_medium">3</field>
+            <field name="my_compassion_donation_quantity_high">5</field>
+        </record>
+    </data>
+
+    <!-- FOOD FUND PRODUCT -->
+    <data noupdate="0">
+        <record id="product_template_303_33d233eb" model="product.template">
+            <field name="activate_for_my_compassion" eval="True"/>
+            <field name="my_compassion_donation_type">fund</field>
+            <field name="my_compassion_name">Food aid program</field>
+            <field name="my_compassion_color" ref="theme_compassion_2025.mid_brown"/>
+            <field name="my_compassion_pictogram" ref="theme_compassion_2025.pictogram_food"/>
+            <field name="my_compassion_description">
+                Compassion responds to the massive increase in food prices following the
+                food crisis. Our Food Aid Program involves distributing food reserves
+                and setting up resilience programs through training in subsistence
+                farming.
+            </field>
+            <field name="my_compassion_show_impact_statement" eval="True"/>
+            <field name="my_compassion_impact_before_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'description': 'Food security is a major issue in many countries in the South.'}),
+                (0, 0, {'description': 'Many families do not know if and what they will eat tomorrow.'})
+            ]"/>
+            <field name="my_compassion_impact_after_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'description': 'Distribute food reserves to the most vulnerable families.'}),
+                (0, 0, {'description': 'Equip families through training in subsistence farming.'}),
+                (0, 0, {'description': 'Help build food resilience in the most affected communities.'})
+            ]"/>
+            <field name="my_compassion_show_info" eval="False"/>
+            <field name="my_compassion_show_testimony" eval="False"/>
+            <field name="my_compassion_donation_quantity_low">1</field>
+            <field name="my_compassion_donation_quantity_medium">2</field>
+            <field name="my_compassion_donation_quantity_high">5</field>
+        </record>
+    </data>
+
+    <!-- DISASTER FUND PRODUCT -->
+    <data noupdate="0">
+        <record id="product_template_238_d12e2b61" model="product.template">
+            <field name="activate_for_my_compassion" eval="True"/>
+            <field name="my_compassion_donation_type">fund</field>
+            <field name="my_compassion_name">Emergency Funds</field>
+            <field name="my_compassion_color" ref="theme_compassion_2025.low_orange"/>
+            <field name="my_compassion_pictogram" ref="theme_compassion_2025.pictogram_disaster_relief"/>
+            <field name="my_compassion_description">
+                Compassion’s church partners know their communities inside out and are
+                uniquely  positioned to respond to disasters.
+            </field>
+            <field name="my_compassion_show_impact_statement" eval="True"/>
+            <field name="my_compassion_impact_before_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'description': 'The number of weather-related disasters to hit the world has increased five-fold over the past 50 years.'}),
+                (0, 0, {'description': 'Every year natural disasters kill around 45,000 people and affect close to 200 million people worldwide.'})
+            ]"/>
+            <field name="my_compassion_impact_after_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'description': 'Provide families impacted by crises with emergency shelter, medical supplies, food and water.'}),
+                (0, 0, {'description': 'Build housing for families battling extreme poverty and give children a secure, safe home.'}),
+                (0, 0, {'description': 'Empower parents in poverty by giving them access to income generation training and microfinance programmes.'})
+            ]"/>
+            <field name="my_compassion_show_info" eval="False"/>
+            <field name="my_compassion_show_testimony" eval="False"/>
+            <field name="my_compassion_donation_quantity_low">1</field>
+            <field name="my_compassion_donation_quantity_medium">3</field>
+            <field name="my_compassion_donation_quantity_high">5</field>
+        </record>
+    </data>
+
+    <!-- CHRISTMAS GIFT FUND PRODUCT -->
+    <data noupdate="0">
+        <record id="sponsorship_switzerland.product_template_fund_nol" model="product.template">
+            <field name="activate_for_my_compassion" eval="True"/>
+            <field name="my_compassion_donation_type">gift</field>
+            <field name="my_compassion_name">Christmas Gift</field>
+            <field name="my_compassion_color" ref="theme_compassion_2025.low_orange"/>
+            <field name="my_compassion_pictogram" ref="theme_compassion_2025.pictogram_christmas_gift"/>
+            <field name="my_compassion_description">
+                Every Compassion child should experience the joy of opening a gift at
+                Christmas. Help make it possible with your donation today!
+            </field>
+            <field name="my_compassion_show_impact_statement" eval="False"/>
+            <field name="my_compassion_show_info" eval="True"/>
+            <field name="my_compassion_info_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'title': 'Every Compassion assisted child receives a gift.', 'text': 'When you give to the Christmas Gift Fund, your donation is combined.'}),
+                (0, 0, {'title': 'Gifts are personalized to each child\'s needs.', 'text': 'Staff at the child development centers personally know each child.'})
+            ]"/>
+            <field name="my_compassion_show_testimony" eval="True"/>
+            <field name="my_compassion_testimony_title">The Perfect Gift</field>
+            <field name="my_compassion_testimony_text">
+                One of the highlights of the year for a Compassion center in northern Peru...
+            </field>
+            <field name="my_compassion_donation_quantity_low">1</field>
+            <field name="my_compassion_donation_quantity_medium">3</field>
+            <field name="my_compassion_donation_quantity_high">5</field>
+        </record>
+    </data>
+
+    <!-- SURVIVAL FUND PRODUCT -->
+    <data noupdate="0">
+        <record id="sponsorship_switzerland.product_template_fund_csp" model="product.template">
+            <field name="activate_for_my_compassion" eval="True"/>
+            <field name="my_compassion_donation_type">fund</field>
+            <field name="my_compassion_name">Moms and babies</field>
+            <field name="my_compassion_color" ref="theme_compassion_2025.mid_pink"/>
+            <field name="my_compassion_pictogram" ref="theme_compassion_2025.pictogram_mothers_and_babies"/>
+            <field name="my_compassion_description">
+                The survival program for moms and babies provides support to pregnant women...
+            </field>
+            <field name="my_compassion_show_impact_statement" eval="True"/>
+            <field name="my_compassion_impact_before_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'description': 'Every year more than 2,2 millions of children dies...'}),
+                (0, 0, {'description': 'And every year more than 700 women dies giving birth...'})
+            ]"/>
+            <field name="my_compassion_impact_after_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'description': 'Help to provide essential medical care for a baby\'s crucial first year.'}),
+                (0, 0, {'description': 'Equip families through training in subsistence farming.'})
+            ]"/>
+            <field name="my_compassion_show_info" eval="False"/>
+            <field name="my_compassion_show_testimony" eval="False"/>
+            <field name="my_compassion_donation_quantity_low">2</field>
+            <field name="my_compassion_donation_quantity_medium">3</field>
+            <field name="my_compassion_donation_quantity_high">8</field>
+        </record>
+    </data>
+</odoo>
