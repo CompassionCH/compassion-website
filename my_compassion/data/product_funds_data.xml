@@ -1,34 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- XML ID WAS MISSING -->
-    <record id="bridge_health_tg" model="ir.model.data">
-        <field name="name">product_template_fund_hea</field>
-        <field name="module">my_compassion</field>
-        <field name="model">product.template</field>
-        <field name="res_id" search="[('default_code', '=', 'health_TG')]" model="product.template"/>
-        <field name="noupdate">True</field>
-    </record>
-
-    <record id="bridge_food_crisis" model="ir.model.data">
-        <field name="name">product_template_303_33d233eb</field>
-        <field name="module">my_compassion</field>
-        <field name="model">product.template</field>
-        <field name="res_id" search="[('default_code', '=', 'drf_food-business')]" model="product.template"/>
-        <field name="noupdate">True</field>
-    </record>
-
-    <record id="bridge_disaster_et" model="ir.model.data">
-        <field name="name">product_template_238_d12e2b61</field>
-        <field name="module">my_compassion</field>
-        <field name="model">product.template</field>
-        <field name="res_id" search="[('default_code', '=', 'drf_ET')]" model="product.template"/>
-        <field name="noupdate">True</field>
-    </record>
-
     <!-- PRODUCT REGISTRATION -->
     <!-- WASH FUND PRODUCT -->
-    <data noupdate="1">
+    <data noupdate="0">
         <record id="sponsorship_switzerland.product_template_fund_wtp" model="product.template">
+            <field name="name">"Water for the children" Fund</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
             <field name="my_compassion_name">Water for children Funds</field>
@@ -61,8 +37,9 @@
     </data>
 
     <!-- UNSPONSORED CHILDREN FUND PRODUCT -->
-    <data noupdate="1">
+    <data noupdate="0">
         <record id="sponsorship_switzerland.product_template_fund_usp" model="product.template">
+            <field name="name">Unsponsored Children Fund</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
             <field name="my_compassion_name">Children waiting for a sponsor funds</field>
@@ -96,8 +73,9 @@
     </data>
 
     <!-- HEALTH FUND PRODUCT -->
-    <data noupdate="1">
+    <data noupdate="0">
         <record id="product_template_fund_hea" model="product.template">
+            <field name="name">health in TG</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
             <field name="my_compassion_name">Health Funds</field>
@@ -129,8 +107,9 @@
     </data>
 
     <!-- FOOD FUND PRODUCT -->
-    <data noupdate="1">
+    <data noupdate="0">
         <record id="product_template_303_33d233eb" model="product.template">
+            <field name="name">food crisis</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
             <field name="my_compassion_name">Food aid program</field>
@@ -163,8 +142,9 @@
     </data>
 
     <!-- DISASTER FUND PRODUCT -->
-    <data noupdate="1">
+    <data noupdate="0">
         <record id="product_template_238_d12e2b61" model="product.template">
+            <field name="name">Ethiopia emergency</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
             <field name="my_compassion_name">Emergency Funds</field>
@@ -195,8 +175,9 @@
     </data>
 
     <!-- CHRISTMAS GIFT FUND PRODUCT -->
-    <data noupdate="1">
+    <data noupdate="0">
         <record id="sponsorship_switzerland.product_template_fund_nol" model="product.template">
+            <field name="name">Christmas Gift</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">gift</field>
             <field name="my_compassion_name">Christmas Gift</field>
@@ -225,8 +206,9 @@
     </data>
 
     <!-- SURVIVAL FUND PRODUCT -->
-    <data noupdate="1">
+    <data noupdate="0">
         <record id="sponsorship_switzerland.product_template_fund_csp" model="product.template">
+            <field name="name">Child Survival Program</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
             <field name="my_compassion_name">Moms and babies</field>
