@@ -21,7 +21,7 @@ class MyCompassionChildrenController(WebsiteChild):
     def _get_formatted_birthday(self, child):
         """
         Formats the child's birthday based on the current language context.
-        Handles specific rules for EN (US/UK), FR, IT, DE and nordic languages (.
+        Handles specific rules for EN (US/UK), FR, IT, DE and nordic languages.
         """
         if not child.birthdate:
             return ""
