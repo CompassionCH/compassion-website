@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Template: My Sponsorships Section
+
+Description:
+This partial template renders the list of active sponsorships grouped by their payment method.
+It is designed to be re-rendered and replaced via AJAX calls (Server-Side Rendering)
+when payment methods are added, updated, or changed, ensuring the view remains
+consistent without a full page reload.
+
+Used in:
+- Template: my2_my_donations_page (included for initial load)
+- Controller: /my2/donation/change_method_contract (returns HTML for AJAX replace)
+- Controller: /my2/donation/change_method_group (returns HTML for AJAX replace)
+- Controller: /my2/donation/add_payment_method_group (returns HTML for AJAX replace)
+
+Injected data:
+- active_sponsorships (recordset): A set of recurring.contract records for the partner (filtered for active, waiting, or mandate states).
+- sponsorship_groups (recordset): The recurring.contract.group records associated with the active sponsorships.
+- tot_cost_per_frequency (dict): A nested dictionary summing up costs. Structure: { frequency_interval (int): { currency (str): total_amount (float) } }.
+- payment_methods (list): A list of dictionaries containing display info (label, icon, type, id) for all the partner's available payment modes.
+- payment_methods_json (JSON): Available payment methods for the partner in JSON to pass to the JS.
+
+
+Notes:
+- This section is isolated to allow "Optimistic UI" updates via the controller's _prepare_sponsorship_values helper.
+
+-->
+<odoo>
+    <data>
+        <template id="my2_sponsorships_section" name="My Sponsorships List Section">
+            <div id="my_sponsorships_container" t-att-data-payment-methods="payment_methods_json">
+                <h3 class="text-dark-blue">My sponsorships</h3>
+                <p>
+                    You currently have
+                    <span class="body-small bold">
+                        <t t-esc="len(active_sponsorships)" />
+                    </span>
+                    active
+                    sponsorship(s) for a total of
+                    <!-- Currently only the monthly payments are available
+                     but in the future this should address also the other frequencies-->
+                    <t t-if="1 in tot_cost_per_frequency">
+                        <t t-foreach="tot_cost_per_frequency[1].items()" t-as="currency_total">
+                            <span class="body-small bold">
+                                <t t-esc="'%.2f' % currency_total[1]" />
+                                <t t-esc="currency_total[0]" />
+                                /month.
+                            </span>
+                            <t t-if="not currency_total_last">,</t>
+                        </t>
+                    </t>
+                    <br />
+                    A payment slip is available for download for each of
+                    your sponsored children.
+                </p>
+                <!-- SPONSORSHIP GROUPS -->
+                <t t-foreach="sponsorship_groups" t-as="group">
+                    <t t-call="my_compassion.my2_sponsorships_group_card">
+                        <t t-set="group" t-value="group" />
+                        <t t-set="all_groups" t-value="sponsorship_groups" />
+                    </t>
+                </t>
+                <!-- ADD PAYMENT METHOD BUTTON -->
+                <div class="d-flex flex-column align-items-center">
+                    <a
+                        href="#"
+                        data-toggle="modal"
+                        data-target="#payment_method_selector_modal_add"
+                        onclick="event.preventDefault();
+                                   this.dispatchEvent(new CustomEvent('open_payment_method_add', {
+                                        bubbles: true,
+                                        detail: {'modal_type': 'Add'}
+                                   }));"
+                    >
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variant" t-value="'compact'" />
+                            <t t-set="variation" t-value="'filled'" />
+                            <t t-set="label" t-value="'Add a payment method'" />
+                            <t t-set="icon" t-value="'icon-plus'" />
+                            <t t-set="color" t-value="'dark-blue'" />
+                            <t t-set="text_color" t-value="'pure-white'" />
+                            <t t-set="icon_color" t-value="'pure-white'" />
+                        </t>
+                    </a>
+                </div>
+            </div>
+        </template>
+    </data>
+</odoo>

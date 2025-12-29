@@ -53,7 +53,7 @@ class Partner(models.Model):
                     "|",
                     ("partner_id", "=", partner.id),
                     ("correspondent_id", "=", partner.id),
-                    ("state", "in", ["waiting", "active"]),
+                    ("state", "in", ["waiting", "mandate", "active"]),
                     ("child_id", "!=", False),
                 ],
             )
@@ -93,3 +93,19 @@ class Partner(models.Model):
         donor_ids = {data["partner_id"][0] for data in donors_data}
         for partner in self:
             partner.is_donor = partner.id in donor_ids
+
+    def get_payment_modes(self):
+        """
+        Retrieve all unique payment modes currently linked to the partner.
+        Used to display existing methods.
+        """
+        self.ensure_one()
+        # Find groups for this partner that have a payment mode.
+        groups = self.env["recurring.contract.group"].search(
+            [
+                ("partner_id", "=", self.id),
+                ("payment_mode_id", "!=", False),
+            ]
+        )
+
+        return groups

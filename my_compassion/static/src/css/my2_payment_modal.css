@@ -1,0 +1,66 @@
+/* Define the variable for maintainability */
+:root {
+    /* Represents the total height of modal header/footer or vertical padding to subtract */
+    --modal-vertical-padding: 64px;
+}
+
+/* Card Container */
+.payment-method-card {
+    transition: all 0.2s ease-in-out;
+    border-width: 1px;
+}
+
+/* Selected State */
+.payment-method-card.selected {
+    border-width: 10px;
+}
+
+/* Hover State */
+.payment-method-card:not(.selected):hover {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+}
+
+.payment-method-card .pointer-events-none {
+    pointer-events: none;
+}
+
+.payment-method-card.hover-shadow-sm:hover {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+#payment_method_selector_modal .modal-content {
+    max-height: 90vh; /* limit modal height */
+    overflow: hidden; /* let inner container scroll */
+}
+
+/* scrollable list that fits inside modal (subtract header/footer space) */
+.payment-methods-list {
+    /* Using custom property to calculate available height */
+    max-height: calc(100vh - var(--modal-vertical-padding));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.oe_accordion_arrow {
+    transition: transform 0.25s ease-in-out;
+}
+
+/* When button has .collapsed class → section is closed → show right arrow */
+.btn.collapsed .oe_accordion_arrow {
+    transform: rotate(-90deg); /* chevron-down becomes chevron-right */
+}
+
+/* When expanded → keep down (0deg) */
+.btn:not(.collapsed) .oe_accordion_arrow {
+    transform: rotate(0deg);
+}
+
+/* Same logic for payment method cards*/
+.cursor-pointer[aria-expanded="false"] .oe_accordion_arrow {
+    transform: rotate(-90deg);
+}
+
+.cursor-pointer[aria-expanded="true"] .oe_accordion_arrow {
+    transform: rotate(0deg);
+}

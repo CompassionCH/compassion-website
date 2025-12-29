@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Description:
+
+     Injected data:
+    - modal_type: Type of modal to display (update, add, change).
+    - payment_methods: List of available payment methods to choose from (in case of 'change' and 'update' modals).
+
+-->
+<odoo>
+    <template id="my2_payment_method_selector" name="Payment Method Selector Component">
+        <div
+            class="modal fade"
+            t-att-id="'payment_method_selector_modal_' + modal_type"
+            t-att-data-modal-type="modal_type"
+            tabindex="-1"
+            role="dialog"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content border-0">
+                    <div class="p-0 m-0">
+                        <h3 class="text-center text-core-blue pb-2 pt-3">
+                            <t t-if="modal_type == 'update'">Update Payment Method</t>
+                            <t t-elif="modal_type == 'add'">Add Payment Method</t>
+                            <t t-elif="modal_type == 'change'">Change Payment Method</t>
+                        </h3>
+                        <div class="pl-4 pr-4 pt-3">
+                            <form id="payment_method_form">
+                                <input type="hidden" name="contract_group_id" id="selected_contract_group_id" />
+                                <div>
+                                    <t t-if="modal_type == 'update'">
+                                        <p class="text-center text-muted mb-3">
+                                            Update your payment method details below.
+                                        </p>
+                                    </t>
+                                    <t t-elif="modal_type == 'add'">
+                                        <p class="text-center text-muted mb-3">
+                                            Redirecting to add a new payment method
+                                        </p>
+                                    </t>
+                                    <t t-elif="modal_type == 'change'">
+                                        <p class="text-center text-muted mb-3" id="modal_description">
+                                            Select a new payment method from the options below.
+                                        </p>
+                                    </t>
+                                </div>
+                            </form>
+                            <t t-if="modal_type == 'change' or modal_type == 'update'">
+                                <!-- Container for Dynamic Cards -->
+                                <div id="modal_container" class="payment-methods-container mb-3">
+                                    <!-- JS will inject components here -->
+                                </div>
+                            </t>
+                            <t t-elif="modal_type == 'add'">
+                                <div id="add_payment_method_container" class="mb-3">
+                                    <t t-call="theme_compassion_2025.FormFieldComponent">
+                                        <t t-set="label">Payment Type</t>
+                                        <t t-set="input_id">new_method_type</t>
+                                        <t t-set="top_class">mb-3</t>
+                                        <t t-call="theme_compassion_2025.SelectComponent">
+                                            <t t-set="name">method_type</t>
+                                            <t t-set="id">new_method_type</t>
+                                            <option value="permanent_order" selected="selected">Permanent Order</option>
+                                            <option value="bvr">BVR</option>
+                                        </t>
+                                    </t>
+                                    <div class="form-row">
+                                        <div class="col-6">
+                                            <t t-call="theme_compassion_2025.FormFieldComponent">
+                                                <t t-set="label">Recurring Unit</t>
+                                                <t t-set="input_id">new_recurring_unit</t>
+                                                <t t-set="top_class">mb-3</t>
+                                                <t t-call="theme_compassion_2025.SelectComponent">
+                                                    <t t-set="name">recurring_unit</t>
+                                                    <t t-set="id">new_recurring_unit</t>
+                                                    <option value="month" selected="selected">Monthly</option>
+                                                    <option value="year">Yearly</option>
+                                                </t>
+                                            </t>
+                                        </div>
+                                        <div class="col-6">
+                                            <t t-call="theme_compassion_2025.FormFieldComponent">
+                                                <t t-set="label">Advance Billing (Months)</t>
+                                                <t t-set="input_id">new_advance_billing_months</t>
+                                                <t t-set="top_class">mb-3</t>
+                                                <input
+                                                    type="number"
+                                                    name="advance_billing_months"
+                                                    id="new_advance_billing_months"
+                                                    class="form-control"
+                                                    value="1"
+                                                    min="1"
+                                                />
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                            <div class="modal-footer border-top-0">
+                                <a href="#" data-dismiss="modal">
+                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                        <t t-set="variant" t-value="'compact'" />
+                                        <t t-set="variation" t-value="'hollow'" />
+                                        <t t-set="label" t-value="'Cancel'" />
+                                        <t t-set="color" t-value="'core-blue'" />
+                                        <t t-set="text_color" t-value="'core-blue'" />
+                                    </t>
+                                </a>
+                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                    <t t-set="variant" t-value="'compact'" />
+                                    <t t-set="variation" t-value="'filled'" />
+                                    <t t-set="label" t-value="'Save'" />
+                                    <t t-set="color" t-value="'core-blue'" />
+                                    <t t-set="text_color" t-value="'white'" />
+                                    <t t-set="id" t-value="'btn_save_payment_method'" />
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>

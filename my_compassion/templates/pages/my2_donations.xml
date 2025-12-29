@@ -17,6 +17,9 @@ Page: My Compassion 2 Donations Page
 
     Injected data:
     - active_sponsorships (recordset): Sponsorships in active state for the logged-in partner.
+    - sponsorship_groups (recordset): Sponsorship groups by payment methods linked to the partner.
+    - payment_methods (list): Available payment methods for the partner.
+    - payment_methods_json (JSON): Available payment methods for the partner in JSON to pass to the JS.
     - tot_cost_per_frequency (dict): Total sponsorship cost grouped by frequency and currency.
     - due_invoices (recordset): Outstanding invoices not yet paid.
     - paid_invoices_subset (recordset): Subset of paid invoices for donation history.
@@ -30,8 +33,22 @@ Page: My Compassion 2 Donations Page
     <data>
         <template id="my2_my_donations_page" name="My Account Donations Details">
             <t t-call="website.layout">
-                <div class="container">
-                    <div class="single-column">
+                <div class="container sponsorship-group">
+                    <div class="single-column my2-donations-page">
+                        <!-- 1. UPDATE MODAL (For editing a group) -->
+                        <t t-call="my_compassion.my2_payment_method_selector">
+                            <t t-set="modal_type" t-value="'update'" />
+                            <t t-set="payment_methods" t-value="payment_methods" />
+                        </t>
+                        <!-- 2. CHANGE MODAL (For moving a child to another group) -->
+                        <t t-call="my_compassion.my2_payment_method_selector">
+                            <t t-set="modal_type" t-value="'change'" />
+                            <t t-set="payment_methods" t-value="payment_methods" />
+                        </t>
+                        <!-- 3. ADD MODAL (For creating a new payment method) -->
+                        <t t-call="my_compassion.my2_payment_method_selector">
+                            <t t-set="modal_type" t-value="'add'" />
+                        </t>
                         <!-- TITLE-->
                         <div class="my-5">
                             <t t-call="theme_compassion_2025.TitleComponent">
@@ -81,76 +98,10 @@ Page: My Compassion 2 Donations Page
                                 </div>
                             </div>
                         </div>
-                        <!-- MY SPONSORSHIPS -->
-                        <div>
-                            <h3 class="text-dark-blue">My sponsorships</h3>
-                            <p>
-                                You currently have
-                                <span class="body-small bold">
-                                    <t t-esc="len(active_sponsorships)" />
-                                </span>
-                                active
-                                sponsorship(s) for a total of
-                                <!-- Currently only the monthly payments are available
-                                 but in the future this should address also the other frequencies-->
-                                <t t-if="1 in tot_cost_per_frequency">
-                                    <t t-foreach="tot_cost_per_frequency[1].items()" t-as="currency_total">
-                                        <span class="body-small bold">
-                                            <t t-esc="'%.2f' % currency_total[1]" />
-                                            <t t-esc="currency_total[0]" />
-                                            /month.
-                                        </span>
-                                        <t t-if="not currency_total_last">,</t>
-                                    </t>
-                                </t>
-                                <br />
-                                A payment slip is available for download for each of
-                                your sponsored children.
-                            </p>
-                            <t t-foreach="active_sponsorships" t-as="sponsorship">
-                                <t t-if="sponsorship">
-                                    <div class="mb-4">
-                                        <t
-                                            t-set="primary_button_data"
-                                            t-value="{
-                        'label': 'See profile',
-                        'pictogram': 'child-sponsorship',
-                        'action': 'link',
-                        'href': '/my2/children/' + str(sponsorship.child_id.id),
-                        'color': 'low-blue'
-                    }"
-                                        />
-                                        <t
-                                            t-set="secondary_buttons_data"
-                                            t-value="[
-                        {
-                            'icon': 'download01',
-                            'color': 'mid-yellow',
-                            'action': 'link',
-                            'href': '/my/download/gift_bvr?child_id=' + str(sponsorship.child_id.id),
-                        }
-                    ]"
-                                        />
-                                        <t t-call="my_compassion.DonationItemComponent">
-                                            <t t-set="name" t-value="sponsorship.child_id.preferred_name" />
-                                            <t
-                                                t-set="image"
-                                                t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait"
-                                            />
-                                            <t t-set="subtext" t-value="sponsorship.payment_mode_id.display_name" />
-                                            <t t-set="price" t-value="sponsorship.total_amount" />
-                                            <t t-set="primary_button" t-value="primary_button_data" />
-                                            <t t-set="monthly_noabbr" t-value="True" />
-                                            <t t-set="secondary_buttons" t-value="secondary_buttons_data" />
-                                            <t t-set="bg_color" t-value="'light-blue'" />
-                                            <t t-set="accent_color" t-value="'low-blue'" />
-                                            <t t-set="title_color" t-value="'low-blue'" />
-                                            <t t-set="price_color" t-value="'low-blue'" />
-                                        </t>
-                                    </div>
-                                </t>
-                            </t>
-                        </div>
+                        <!-- LIST OF SPONSORSHIPS -->
+                        <t t-call="my_compassion.my2_sponsorships_section">
+                            <t t-set="payment_methods_json" t-value="payment_methods_json" />
+                        </t>
                         <!-- DUE INVOICES -->
                         <div class="mb-4 mt-4">
                             <h3 class="text-dark-blue">Open contributions</h3>
@@ -191,7 +142,6 @@ Page: My Compassion 2 Donations Page
                         <t t-call="my_compassion.my2_donations_history_content" />
                     </div>
                 </div>
-                <script type="text/javascript" src="/my_compassion/static/src/js/my2_donations.js" />
                 <link rel="stylesheet" href="/my_compassion/static/src/css/my2_donations.css" />
             </t>
         </template>

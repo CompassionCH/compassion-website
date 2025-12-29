@@ -8,13 +8,15 @@
 #
 ##############################################################################
 
+import json
 import math
 from collections import defaultdict
 from datetime import datetime, timedelta
 
 from werkzeug.exceptions import BadRequest, NotFound
 
-from odoo import fields, http
+import odoo
+from odoo import _, fields, http
 from odoo.http import request
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
@@ -397,7 +399,14 @@ class MyCompassionDonationsController(CustomerPortal):
         partner = request.env.user.partner_id
 
         # Active sponsorships
-        active_sponsorships = partner.get_portal_sponsorships("active")
+        active_sponsorships = partner.get_portal_sponsorships(["active", "mandate"])
+
+        # Group sponsorships by their backend Contract Group
+        sponsorship_groups = active_sponsorships.mapped("group_id")
+
+        # Put all payment methods into an array
+        all_groups = partner.get_payment_modes()
+        payment_methods = [group.get_payment_method_info() for group in all_groups]
 
         # Due invoices
         date_filter_up_bound = datetime.today() + timedelta(days=30)
@@ -417,16 +426,16 @@ class MyCompassionDonationsController(CustomerPortal):
             )
         )
 
-        # Computing the total price of the active sponsorships grouped
-        # per sponsorship frequency and payment method.
-        # group_id groups the invoices that have the same payment method and frequency.
+        # Total cost calculation
         tot_cost_per_frequency = defaultdict(lambda: defaultdict(float))
 
         for sponsorship in active_sponsorships:
             currency = sponsorship.pricelist_id.currency_id.name
-            tot_cost_per_frequency[sponsorship.group_id.month_interval][
-                currency
-            ] += sponsorship.total_amount
+            # Ensure group exists
+            if sponsorship.group_id:
+                tot_cost_per_frequency[sponsorship.group_id.month_interval][
+                    currency
+                ] += sponsorship.total_amount
 
         paid_invoices_data = self._get_paginated_paid_invoices(
             partner, invoice_page, invoice_per_page
@@ -436,6 +445,9 @@ class MyCompassionDonationsController(CustomerPortal):
         values.update(
             {
                 "active_sponsorships": active_sponsorships,
+                "sponsorship_groups": sponsorship_groups,
+                "payment_methods": payment_methods,
+                "payment_methods_json": json.dumps(payment_methods),
                 "tot_cost_per_frequency": tot_cost_per_frequency,
                 "due_invoices": due_invoices,
                 "paid_invoices_subset": paid_invoices_data["paid_invoices_subset"],
@@ -465,6 +477,240 @@ class MyCompassionDonationsController(CustomerPortal):
         )
 
         return {"html": html}
+
+    @http.route(
+        "/my2/donations/get_payment_methods_sponsor",
+        type="json",
+        auth="user",
+        website=True,
+    )
+    def get_payment_methods_sponsor(self, **kwargs):
+        """
+        Returns a list of payment methods (saved tokens and acquirers) for the current
+        user.
+        """
+        partner = request.env.user.partner_id
+        groups = partner.get_payment_modes()
+        payment_methods = []
+
+        for group in groups:
+            info = group.get_payment_method_info()
+            if not info:
+                continue
+            method = dict(info)
+            method["group_id"] = group.id
+
+            payment_methods.append(method)
+
+        return payment_methods
+
+    @http.route(
+        "/my2/donation/change_method_contract", type="json", auth="user", website=True
+    )
+    def change_payment_method_contract(self, contract_id, group_id, **kwargs):
+        """
+        Changes the payment method for a specific contract.
+
+        :param contract_id: ID of the recurring.contract to update.
+        :param group_id: ID of an existing group to merge into
+        """
+        partner = request.env.user.partner_id
+        if not contract_id or not group_id:
+            raise BadRequest()
+        # Verify that the contract belongs to the user
+        contract = (
+            request.env["recurring.contract"]
+            .sudo()
+            .search([("id", "=", int(contract_id)), ("partner_id", "=", partner.id)])
+        )
+        if not contract:
+            raise NotFound()
+
+        success = contract.change_contract_group(int(group_id))
+        if success:
+            # Render the updated list
+            values = self._prepare_sponsorship_values(partner)
+            html = request.env["ir.qweb"]._render(
+                "my_compassion.my2_sponsorships_section", values
+            )
+            return {
+                "success": True,
+                "html": html,
+                "payment_methods": values["payment_methods"],
+            }
+
+        return {"success": False, "error": _("Operation failed")}
+
+    @http.route(
+        "/my2/donation/change_method_group", type="json", auth="user", website=True
+    )
+    def change_payment_method_group(
+        self, group_id, new_group_id=None, new_bvr_ref=None, **kwargs
+    ):
+        """
+        Endpoint to update payment method for a sponsorship group.
+        Accepts new_group_id (to merge) or new_bvr_ref (to update ref).
+        """
+        partner = request.env.user.partner_id
+
+        if not group_id:
+            raise BadRequest(_("Group ID is required."))
+
+        # Security Check: Search ensures the group belongs to the logged-in user
+        group = (
+            request.env["recurring.contract.group"]
+            .sudo()
+            .search(
+                [("id", "=", int(group_id)), ("partner_id", "=", partner.id)], limit=1
+            )
+        )
+
+        if not group:
+            raise NotFound(_("Payment group not found or access denied."))
+
+        # Call the model method to perform the logic
+        success = group.change_payment_method(
+            new_group_id=new_group_id, new_bvr_ref=new_bvr_ref
+        )
+
+        if success:
+            values = self._prepare_sponsorship_values(partner)
+            html = request.env["ir.qweb"]._render(
+                "my_compassion.my2_sponsorships_section", values
+            )
+            return {
+                "success": True,
+                "html": html,
+                "payment_methods": values["payment_methods"],
+            }
+
+        return {"success": False, "error": _("Operation failed")}
+
+    # Configuration for supported manual payment methods
+    # Key: frontend 'value' from the select input
+    # Value: 'name' (or partial name) to search for in account.payment.mode
+    _payment_mode_map = {
+        "permanent_order": "Permanent Order",
+        "bvr": "BVR",
+    }
+
+    @http.route(
+        "/my2/donation/add_payment_method_group", type="json", auth="user", website=True
+    )
+    def add_payment_method_group(
+        self,
+        recurring_unit="month",
+        method_type="bvr",
+        advance_billing_months=1,
+        **kwargs,
+    ):
+        """
+        Creates a new Contract Group with manual BVR/Permanent Order details.
+        """
+        partner = request.env.user.partner_id
+
+        # 1. Resolve Payment Mode Search Term
+        mode_search_term = self._payment_mode_map.get(method_type)
+
+        if not mode_search_term:
+            return {
+                "success": False,
+                "error": _("Invalid payment method type selected."),
+            }
+
+        # 2. Find the Payment Mode
+        # Exact match attempt
+        payment_mode = (
+            request.env["account.payment.mode"]
+            .sudo()
+            .search([("name", "=", mode_search_term)], limit=1)
+        )
+
+        # Fallback: Loose search (ilike) if exact match fails
+        if not payment_mode:
+            payment_mode = (
+                request.env["account.payment.mode"]
+                .sudo()
+                .search([("name", "ilike", mode_search_term)], limit=1)
+            )
+
+        if not payment_mode:
+            return {
+                "success": False,
+                "error": _('Configuration Error: Payment mode "%s" not found.')
+                % mode_search_term,
+            }
+
+        # 3. Create the Group
+        try:
+            new_group = (
+                request.env["recurring.contract.group"]
+                .sudo()
+                .create(
+                    {
+                        "partner_id": partner.id,
+                        "payment_mode_id": payment_mode.id,
+                        "recurring_unit": recurring_unit,
+                        "recurring_value": int(advance_billing_months),
+                        "active": True,
+                    }
+                )
+            )
+            new_bvr_ref = new_group.compute_partner_bvr_ref(partner)
+            if new_bvr_ref:
+                new_group.bvr_reference = new_bvr_ref
+
+            if new_group:
+                values = self._prepare_sponsorship_values(request.env.user.partner_id)
+                html = request.env["ir.qweb"]._render(
+                    "my_compassion.my2_sponsorships_section", values
+                )
+                return {
+                    "success": True,
+                    "html": html,
+                    "group_id": new_group.id,
+                    "payment_methods": values["payment_methods"],
+                }
+
+            return {"success": False}
+
+        except odoo.exceptions.ValidationError:
+            return {
+                "success": False,
+                "error": _("An unexpected error occurred. Please try again."),
+            }
+
+    def _prepare_sponsorship_values(self, partner):
+        """
+        Helper to fetch all data required for the sponsorship list view.
+        Returns a dict of values for QWeb rendering.
+        """
+        # 1. Fetch Active Sponsorships
+        active_sponsorships = partner.get_portal_sponsorships(["active", "mandate"])
+
+        # 2. Fetch Groups
+        sponsorship_groups = active_sponsorships.mapped("group_id")
+
+        # 3. Calculate Totals
+        tot_cost_per_frequency = defaultdict(lambda: defaultdict(float))
+        for sponsorship in active_sponsorships:
+            currency = sponsorship.pricelist_id.currency_id.name
+            if sponsorship.group_id:
+                tot_cost_per_frequency[sponsorship.group_id.month_interval][
+                    currency
+                ] += sponsorship.total_amount
+
+        # 4. Fetch Available Methods (for modals)
+        all_groups = partner.get_payment_modes()
+        payment_methods = [group.get_payment_method_info() for group in all_groups]
+
+        return {
+            "active_sponsorships": active_sponsorships,
+            "sponsorship_groups": sponsorship_groups,
+            "tot_cost_per_frequency": tot_cost_per_frequency,
+            "payment_methods": payment_methods,
+            "payment_methods_json": json.dumps(payment_methods),
+        }
 
     def _get_paginated_paid_invoices(
         self, partner, invoice_page=1, invoice_per_page=12
