@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="theme_compassion_icons_stylesheet_template" name="Icons Stylesheet Template">
+        <t t-translation="off">
 <!-- Base styles for any element using an icon class. -->
 <!-- This ensures consistency and leverages the `currentColor` change you made. -->
 [class^="icon-"],
@@ -24,5 +25,6 @@
     mask-image: url("/web/image/theme.compassion.icons/<t t-esc="icon.id"/>/svg_file");
 }
 </t>
+        </t>
     </template>
 </odoo>

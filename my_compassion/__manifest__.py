@@ -78,6 +78,7 @@
         "templates/pages/my2_gift_package.xml",
         "templates/pages/my2_gifts_thank_you.xml",
         "templates/pages/my2_add_a_gift.xml",
+        "templates/http_error_custom.xml",
         # My Compassion 2 components
         "templates/components/my2_children_card.xml",
         "templates/components/my2_letter_card.xml",
@@ -107,6 +108,8 @@
         "website_form",
         "gift_compassion",
         "auth_signup",
+        "http_routing",
+        "website",
         "website_crm_privacy_policy",  # OCA/website
         "auth_signup_verify_email",  # OCA/server-auth
         "queue_job",
