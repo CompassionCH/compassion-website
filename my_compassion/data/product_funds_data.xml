@@ -4,6 +4,22 @@
     <!-- WASH FUND PRODUCT -->
     <data noupdate="0">
         <record id="sponsorship_switzerland.product_template_fund_wtp" model="product.template">
+            <!-- Header information -->
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <!-- General information tab -->
+            <field name="type">service</field>
+            <field name="categ_id" ref="sponsorship_compassion.product_category_fund"/>
+            <field name="default_code">wash</field>
+            <field name="list_price">8.00</field>
+            <field name="description">
+                Thanks to your donation. It allows us to finance water disinfection
+                project to provide sponsored children, their families, their community
+                and villages with drinking water, in the poorest regions of the world.
+                This help would not be possible without you and we are very grateful for
+                your support.
+            </field>
+            <!-- MyCompassion tab -->
             <field name="name">"Water for the children" Fund</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
@@ -39,6 +55,24 @@
     <!-- UNSPONSORED CHILDREN FUND PRODUCT -->
     <data noupdate="0">
         <record id="sponsorship_switzerland.product_template_fund_usp" model="product.template">
+            <!-- Header information -->
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <!-- General information tab -->
+            <field name="type">service</field>
+            <field name="categ_id" ref="sponsorship_compassion.product_category_fund"/>
+            <field name="default_code">sansparrain</field>
+            <field name="list_price">8.00</field>
+            <field name="description">
+                Your donation to the "Unsponsored Children Fund" unlocks the benefits
+                of Compassion's program for children who have been registered but not
+                yet been sponsored. Your gift to this fund also encourages parents and
+                program staff as they see Compassion benefits at work for the children
+                they love, even as they wait — and hope — for sponsors.
+
+                We thank you very much for your precious support.
+            </field>
+            <!-- MyCompassion tab -->
             <field name="name">Unsponsored Children Fund</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
@@ -75,6 +109,15 @@
     <!-- HEALTH FUND PRODUCT -->
     <data noupdate="0">
         <record id="product_template_fund_hea" model="product.template">
+            <!-- Header information -->
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <!-- General information tab -->
+            <field name="type">consu</field>
+            <field name="categ_id" ref="sponsorship_compassion.product_category_fund"/>
+            <field name="default_code">health_TG</field>
+            <field name="list_price">1.00</field>
+            <!-- MyCompassion tab -->
             <field name="name">health in TG</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
@@ -109,6 +152,15 @@
     <!-- FOOD FUND PRODUCT -->
     <data noupdate="0">
         <record id="product_template_303_33d233eb" model="product.template">
+            <!-- Header information -->
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <!-- General information tab -->
+            <field name="type">service</field>
+            <field name="categ_id" ref="sponsorship_compassion.product_category_fund"/>
+            <field name="default_code">drf_food-business</field>
+            <field name="list_price">20.00</field>
+            <!-- MyCompassion tab -->
             <field name="name">food crisis</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
@@ -144,6 +196,16 @@
     <!-- DISASTER FUND PRODUCT -->
     <data noupdate="0">
         <record id="product_template_238_d12e2b61" model="product.template">
+            <!-- Header information -->
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <!-- General information tab -->
+            <field name="type">service</field>
+            <field name="categ_id" ref="sponsorship_compassion.product_category_fund"/>
+            <field name="default_code">drf_ET</field>
+            <field name="list_price">8.00</field>
+            <field name="standard_price">8.00</field>
+            <!-- MyCompassion tab -->
             <field name="name">Ethiopia emergency</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
@@ -177,6 +239,22 @@
     <!-- CHRISTMAS GIFT FUND PRODUCT -->
     <data noupdate="0">
         <record id="sponsorship_switzerland.product_template_fund_nol" model="product.template">
+            <!-- Header information -->
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <!-- General information tab -->
+            <field name="type">service</field>
+            <field name="categ_id" ref="sponsorship_compassion.product_category_fund"/>
+            <field name="default_code">noel</field>
+            <field name="list_price">8.00</field>
+            <field name="description">
+                Thanks to the Christmas Gift Fund, we can offer a Christmas gift to each
+                child registered in a Compassion center. It prevents inequalities
+                between the children at least at this special time of the year. We are
+                very grateful for your donation by which you share the joy of Christmas
+                with each child of Compassion.
+            </field>
+            <!-- MyCompassion tab -->
             <field name="name">Christmas Gift</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">gift</field>
@@ -208,6 +286,26 @@
     <!-- SURVIVAL FUND PRODUCT -->
     <data noupdate="0">
         <record id="sponsorship_switzerland.product_template_fund_csp" model="product.template">
+            <!-- Header information -->
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="True"/>
+            <!-- General information tab -->
+            <field name="type">service</field>
+            <field name="categ_id" ref="sponsorship_compassion.product_category_fund"/>
+            <field name="default_code">survival_survie</field>
+            <field name="list_price">8.00</field>
+            <field name="standard_price">30.00</field>
+            <field name="description">
+                The CSP Fund  (Child Survival Program) allows us to support 3 CSP
+                centers, two in Haiti and one in Ecuador. Each CSP center welcomes
+                around 30 mothers and their babies and pregnant women. These women
+                receive training, practical assistance, food, thorough medical checks on
+                a regular basis and Bible lessons.
+
+                We are very grateful to you for your interest towards mothers and their
+                babies and for the hope you are bringing to them through your help.
+            </field>
+            <!-- MyCompassion tab -->
             <field name="name">Child Survival Program</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
