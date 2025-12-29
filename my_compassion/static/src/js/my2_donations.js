@@ -69,12 +69,10 @@ odoo.define("my_compassion.my2_donations", function (require) {
          */
         _onOpenChangeModal: function (ev) {
             ev.stopPropagation();
+            // detail contains: { contract_id, group_id, child_name } passed via detail_js
             var detail = ev.detail || {};
             var $container = this.$("#my_sponsorships_container");
             this.paymentMethods = $container.data("payment-methods") || [];
-            console.log(this.paymentMethods);
-            // detail contains: { contract_id, group_id, child_name } passed via detail_js
-
             var $modal = $("#payment_method_selector_modal_change");
 
             // Update Description
