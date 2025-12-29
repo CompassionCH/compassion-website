@@ -539,7 +539,7 @@ class MyCompassionDonationsController(CustomerPortal):
                 "payment_methods": values["payment_methods"],
             }
 
-        return {"success": False, "error": "Operation failed"}
+        return {"success": False, "error": _("Operation failed")}
 
     @http.route(
         "/my2/donation/change_method_group", type="json", auth="user", website=True
@@ -584,7 +584,7 @@ class MyCompassionDonationsController(CustomerPortal):
                 "payment_methods": values["payment_methods"],
             }
 
-        return {"success": False, "error": "Operation failed"}
+        return {"success": False, "error": _("Operation failed")}
 
     # Configuration for supported manual payment methods
     # Key: frontend 'value' from the select input
