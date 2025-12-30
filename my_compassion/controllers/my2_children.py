@@ -33,30 +33,22 @@ class MyCompassionChildrenController(WebsiteChild):
         # Get localized month name
         month = babel.dates.format_date(birthdate, format="MMMM", locale=lang_code)
 
+        lang_prefix = lang_code[:2]
+
         # German, Norwegian, Danish, Finnish: Dot after day (e.g., 24. Januar)
         # Note: Swedish is excluded here as it typically uses a space (24 januari)
-        if lang_code.startswith("de") or lang_code[:2] in [
-            "no",
-            "nb",
-            "nn",
-            "da",
-            "fi",
-        ]:
+        if lang_prefix in {"de", "no", "nb", "nn", "da", "fi"}:
             return f"{day}. {month}"
 
         # Swedish, French, Italian: Space after day (e.g., 24 januari)
-        if (
-            lang_code.startswith("fr")
-            or lang_code.startswith("it")
-            or lang_code.startswith("sv")
-        ):
+        elif lang_prefix in {"fr", "it", "sv"}:
             # French specific: 1st is "1er"
-            if lang_code.startswith("fr") and day == 1:
+            if lang_prefix == "fr" and day == 1:
                 return f"1er {month}"
             return f"{day} {month}"
 
         # English Logic
-        if lang_code.startswith("en"):
+        elif lang_prefix == "en":
             # Suffix calculation
             # Special cases for 11, 12, 13.
             if 11 <= day <= 13:
@@ -72,7 +64,8 @@ class MyCompassionChildrenController(WebsiteChild):
             return f"{day}{suffix} {month}"
 
         # Fallback for other languages (Standard Day Month)
-        return f"{day} {month}"
+        else:
+            return f"{day} {month}"
 
     def _check_sponsored_child_access(self, child):
         """
