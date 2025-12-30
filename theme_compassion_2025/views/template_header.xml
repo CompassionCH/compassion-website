@@ -74,7 +74,7 @@
                 <t t-set="radius" t-value="'pill'" />
                 <t t-set="id" t-value="'user-dropdown-toggle'" />
                 <t t-set="label" t-value="'' if is_connected else 'Sign in'" />
-                <t t-set="href" t-value="'#' if is_connected else '/web/login'" />
+                <t t-set="href" t-value="'#' if is_connected else '/web/login?redirect=/my2/dashboard'" />
                 <t t-set="data_toggle" t-value="'dropdown' if is_connected else ''" />
             </t>
         </xpath>
