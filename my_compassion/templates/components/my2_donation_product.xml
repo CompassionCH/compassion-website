@@ -77,7 +77,7 @@
                             <t t-esc="currency_name" />
                             <t
                                 t-set="price"
-                                t-value="product.my_compassion_donation_quantity_low * product.list_price"
+                                t-value="product.my_compassion_donation_amount_low"
                             />
                             <t t-if="price % 1 == 0" t-set="price" t-value="'{0}.-'.format(int(price))" />
                             <t t-else="" t-set="price" t-value="'{0:.2f}'.format(price)" />

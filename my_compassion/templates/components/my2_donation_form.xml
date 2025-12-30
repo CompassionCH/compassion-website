@@ -120,7 +120,7 @@
                             <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-low">
                                 <t
                                     t-set="price"
-                                    t-value="product.my_compassion_donation_quantity_low * product.list_price"
+                                    t-value="product.my_compassion_donation_amount_low"
                                 />
                                 <t t-esc="product.currency_id.name" />
                                 <t t-if="price % 1 == 0" t-esc="int(price)" />
@@ -139,7 +139,7 @@
                             <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-medium">
                                 <t
                                     t-set="price"
-                                    t-value="product.my_compassion_donation_quantity_medium * product.list_price"
+                                    t-value="product.my_compassion_donation_amount_medium"
                                 />
                                 <t t-esc="product.currency_id.name" />
                                 <t t-if="price % 1 == 0" t-esc="int(price)" />
@@ -158,7 +158,7 @@
                             <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-high">
                                 <t
                                     t-set="price"
-                                    t-value="product.my_compassion_donation_quantity_high * product.list_price"
+                                    t-value="product.my_compassion_donation_amount_high"
                                 />
                                 <t t-esc="product.currency_id.name" />
                                 <t t-if="price % 1 == 0" t-esc="int(price)" />
