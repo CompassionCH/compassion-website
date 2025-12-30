@@ -340,7 +340,7 @@ class MyCompassionDonationsController(CustomerPortal):
             }
             price = amounts.get(amount_type)
 
-            if price is None:
+            if price is None or price <= 0:
                 raise BadRequest()
 
         # Get frequency
