@@ -103,23 +103,23 @@ class ProductTemplate(models.Model):
     # Donation suggestions
     my_compassion_donation_amount_low = fields.Monetary(
         string="Lowest Amount",
-        currency_field='currency_id',
+        currency_field="currency_id",
         default=15.0,
-        help="Lowest price suggestion when making a donation"
+        help="Lowest price suggestion when making a donation",
     )
 
     my_compassion_donation_amount_medium = fields.Monetary(
         string="Medium Amount",
-        currency_field='currency_id',
+        currency_field="currency_id",
         default=50.0,
-        help="Medium price suggestion when making a donation"
+        help="Medium price suggestion when making a donation",
     )
 
     my_compassion_donation_amount_high = fields.Monetary(
         string="Highest Amount",
-        currency_field='currency_id',
+        currency_field="currency_id",
         default=100.0,
-        help="Highest price suggestion when making a donation"
+        help="Highest price suggestion when making a donation",
     )
 
     def get_donation_limits(self, company, partner, sponsorship_id=None):
