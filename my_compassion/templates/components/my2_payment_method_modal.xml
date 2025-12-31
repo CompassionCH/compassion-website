@@ -10,12 +10,12 @@
 <odoo>
     <template id="my2_payment_method_selector" name="Payment Method Selector Component">
         <div
-            class="modal fade"
-            t-att-id="'payment_method_selector_modal_' + modal_type"
-            t-att-data-modal-type="modal_type"
-            tabindex="-1"
-            role="dialog"
-            aria-hidden="true"
+                class="modal fade"
+                t-att-id="'payment_method_selector_modal_' + modal_type"
+                t-att-data-modal-type="modal_type"
+                tabindex="-1"
+                role="dialog"
+                aria-hidden="true"
         >
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content border-0">
@@ -85,13 +85,31 @@
                                                 <t t-set="input_id">new_advance_billing_months</t>
                                                 <t t-set="top_class">mb-3</t>
                                                 <input
-                                                    type="number"
-                                                    name="advance_billing_months"
-                                                    id="new_advance_billing_months"
-                                                    class="form-control"
-                                                    value="1"
-                                                    min="1"
+                                                        type="number"
+                                                        name="advance_billing_months"
+                                                        id="new_advance_billing_months"
+                                                        class="form-control"
+                                                        value="1"
+                                                        min="1"
                                                 />
+                                            </t>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4 mt-4">
+                                        <h3 class="text-center text-core-blue pb-2 pt-3">
+                                            Online Payment
+                                        </h3>
+                                        <p class="text-center text-muted mb-3">
+                                            Securely add your credit card or PostFinance card.
+                                        </p>
+                                        <div class="d-flex justify-content-center">
+                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                                <t t-set="variant" t-value="'compact'" />
+                                                <t t-set="variation" t-value="'filled'" />
+                                                <t t-set="label" t-value="'Add Online Payment Method'" />
+                                                <t t-set="color" t-value="'core-blue'" />
+                                                <t t-set="text_color" t-value="'white'" />
+                                                <t t-set="id" t-value="'btn_add_online_payment'" />
                                             </t>
                                         </div>
                                     </div>

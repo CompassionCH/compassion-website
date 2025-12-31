@@ -746,51 +746,56 @@ class MyCompassionDonationsController(CustomerPortal):
     # Endpoint to add a new online payment method (tokenization) via PostFinance
     # (GEMINI suggestion, not sure if it will work...)
     @http.route('/my2/donation/add_payment_method_online', type='json', auth='user', website=True)
-    def add_payment_method_online(self, acquirer_id, recurring_unit='month', recurring_value=1, **kwargs):
+    def add_payment_method_online(self, recurring_unit='month', recurring_value=1, **kwargs):
         """
         Initiates a 'validation' transaction to tokenize a card/method without an immediate charge (or a minimal verification charge).
         """
         partner = request.env.user.partner_id
-        acquirer = request.env['payment.acquirer'].sudo().browse(int(acquirer_id))
+        acquirer = self._get_payment_acquirer()
 
         if not acquirer.exists():
             raise NotFound()
 
-        # Define the return URL (The user comes back here after PostFinance)
         return_url = '/my2/donation/validate_new_method?unit={}&val={}'.format(recurring_unit, recurring_value)
 
-        # Create a transaction specifically for tokenization (validation)
-        # Note: 0.00 validation works for some providers, others require 1.00 auth/void.
-        # PostFinance Checkout usually handles validation via their SDK/Page.
-        reference = request.env['payment.transaction'].sudo()._compute_random_reference(res_model='res.partner')
+        # FIX 1: Generate a valid, unique reference string manually
+        reference = 'ADD-METHOD-{}-{}'.format(partner.id, fields.Datetime.now().strftime('%Y%m%d%H%M%S'))
 
         transaction_values = {
             'acquirer_id': acquirer.id,
             'reference': reference,
-            'amount': 0.0,
+            'amount': 0.0,  # 0.00 for validation/tokenization
             'currency_id': request.website.currency_id.id,
             'partner_id': partner.id,
             'partner_country_id': partner.country_id.id,
-            'type': 'validation',  # Key for saving card
+            'type': 'validation',
             'return_url': return_url,
         }
 
         tx = request.env['payment.transaction'].sudo().create(transaction_values)
-
-        # Store transaction ID in session to verify on return
         request.session['add_method_tx_id'] = tx.id
 
-        # Generate the form/button for the acquirer
+        # HOOK: Check if the specific acquirer module (like PostFinance) can give us a direct URL
+        redirect_url = self._get_online_payment_redirect_url(acquirer, tx, return_url)
+
+        if redirect_url:
+            # OPTION A: We got a URL, send it to JS for immediate redirect
+            return {'success': True, 'redirect_url': redirect_url}
+
+        # OPTION B: Fallback (This generates the HTML form if redirect isn't supported)
+        # FIX 2: We pass the 'reference' variable defined above
         render_values = {
             'partner_id': partner.id,
         }
-
-        # Render the specific form for this acquirer (PostFinance will generate the link/iframe content)
-        # We rely on the standard Odoo mechanism to generate the payment button info
         return {
             'success': True,
-            'render_html': acquirer.sudo().render(reference, 0.0, request.website.currency_id.id, values=transaction_values,
-                                                  partner_id=partner.id)
+            'render_html': acquirer.sudo().render(
+                reference,
+                0.0,
+                request.website.currency_id.id,
+                values=transaction_values,
+                partner_id=partner.id
+            )
         }
 
 
@@ -838,3 +843,4 @@ class MyCompassionDonationsController(CustomerPortal):
             return request.redirect('/my2/donations?error=payment_failed')
 
         return request.redirect('/my2/donations')
+

@@ -6,6 +6,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
     var QWeb = core.qweb;
     const ToastService = require("my_compassion.toast_service");
     var _t = core._t;
+    var ajax = require('web.ajax');
 
     publicWidget.registry.My2Donations = publicWidget.Widget.extend({
         selector: ".my2-donations-page",
@@ -21,6 +22,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
 
             // UI Interaction events
             "click #btn_save_payment_method": "_onSavePaymentMethod",
+            "click #btn_add_online_payment": "_onAddOnlineMethod",
             'change input[name="payment_method_selection"]': "_onMethodSelectionChange",
             "click #history_pager_prev, #history_pager_next": "_onPagerClick",
         },
@@ -58,6 +60,50 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 $("body").off("change", 'input[name="payment_method_selection"]', this._onMethodSelectionChangeBound);
             }
             this._super.apply(this, arguments);
+        },
+        //
+        // NEW IMPLEMENTATION
+        //
+        _onAddOnlineMethod: function (ev) {
+            console.log("Adding online method via PostFinance");
+            ev.preventDefault();
+            var $btn = $(ev.currentTarget);
+            var unit = this.$('select[name="recurring_unit"]').val();
+            var val = 1; // Default or fetch from input
+
+            // Loading state
+            $btn.attr('disabled', true);
+            $btn.prepend('<i class="fa fa-spinner fa-spin mr-1"></i>');
+
+            ajax.jsonRpc('/my2/donation/add_payment_method_online', 'call', {
+                'recurring_unit': unit,
+                'recurring_value': val
+            }).then(function (result) {
+                if (result.success) {
+                    if (result.redirect_url) {
+                        // CASE 1: Direct Redirect (Our PostFinance implementation)
+                        console.log("Redirecting to:", result.redirect_url);
+                        window.location.href = result.redirect_url;
+                    }
+                    else if (result.render_html) {
+                        // CASE 2: HTML Form Fallback
+                        var $content = $(result.render_html);
+                        $content.addClass('d-none');
+                        $('body').append($content);
+                        var $form = $content.find('form');
+                        if ($form.length) {
+                            $form.submit();
+                        } else {
+                            // Sometimes it is just a link button
+                            var $link = $content.find('a[href]');
+                            if ($link.length) window.location.href = $link.attr('href');
+                        }
+                    }
+                } else {
+                    $btn.attr('disabled', false);
+                    alert('Error initializing payment.');
+                }
+            });
         },
 
         // -------------------------------------------------------------------------
