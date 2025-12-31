@@ -7,6 +7,7 @@
 #
 ##############################################################################
 import calendar
+import json
 from datetime import date
 
 import babel
@@ -236,3 +237,28 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             "letter_values": letter_values,
             "generator_id": letter_generator.id,
         }
+
+    @http.route(
+        "/my2/children/letter/templates",
+        type="http",
+        auth="user",
+        website=True,
+    )
+    def get_letter_templates(self, **kw):
+        """
+        This controller returns the currently active letter template.
+        """
+
+        templates = (
+            request.env["my2.correspondence.letter.template"]
+            .sudo()
+            .search([("status", "=", "active")], limit=1)
+        )
+
+        data = {
+            "template_text": templates.text if templates else "",
+        }
+
+        return request.make_response(
+            json.dumps(data), headers=[("Content-Type", "application/json")]
+        )
