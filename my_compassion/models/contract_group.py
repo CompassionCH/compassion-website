@@ -106,3 +106,77 @@ class ContractGroup(models.Model):
             return True
 
         return False
+
+    @api.model
+    def create_from_transaction(self, tx):
+        """
+        Creates or retrieves a contract group from a validation transaction.
+        Returns a tuple: (group_record, message_string)
+        """
+        if not tx or not tx.payment_token_id:
+            return self.browse(), _("No valid payment method found.")
+
+        token = tx.payment_token_id
+
+        # 1. Reuse existing group if this token is already saved for this partner
+        # (Your Logic: prevents duplicates if the user double-clicks or retries)
+        existing_group = self.with_context(active_test=False).search([
+            ('partner_id', '=', tx.partner_id.id),
+            ('payment_token_id', '=', token.id)
+        ], limit=1)
+
+        if existing_group:
+            # Reactivate if it was archived
+            if not existing_group.active:
+                existing_group.active = True
+            return existing_group, _("This payment method was already saved.")
+
+        # 2. Retrieve Recurring Frequency (Unit/Value)
+        # Default to monthly if not specified
+        recurring_unit = 'month'
+        recurring_value = 1
+
+        if tx.return_url:
+            try:
+                from urllib.parse import urlparse, parse_qs
+                parsed = urlparse(tx.return_url)
+                params = parse_qs(parsed.query)
+                if 'unit' in params:
+                    recurring_unit = params['unit'][0]
+                if 'val' in params:
+                    recurring_value = int(params['val'][0])
+            except Exception:
+                pass  # Fallback to defaults
+
+        # 3. Identify Payment Mode
+        domain = [
+            ('payment_method_id.code', '=', 'electronic'),
+            ('company_id', '=', tx.acquirer_id.company_id.id),
+            ('active', '=', True)
+        ]
+
+        # Priority 1: Mode matching the Acquirer Name (e.g., "PostFinance")
+        payment_mode = self.env['account.payment.mode'].search(
+            domain + [('name', 'ilike', tx.acquirer_id.name)], limit=1
+        )
+
+        # Priority 2: Any Electronic Mode (Fallback)
+        if not payment_mode:
+            payment_mode = self.env['account.payment.mode'].search(domain, limit=1)
+
+        if not payment_mode:
+            return self.browse(), _("Configuration Error: No suitable electronic payment mode found.")
+
+        # 4. Create the Group
+        vals = {
+            'partner_id': tx.partner_id.id,
+            'payment_mode_id': payment_mode.id,
+            'payment_token_id': token.id,
+            'recurring_unit': recurring_unit,
+            'recurring_value': recurring_value,
+            'active': True,
+            'ref': token.name,
+        }
+
+        group = self.create(vals)
+        return group, _("Payment method successfully added.")
