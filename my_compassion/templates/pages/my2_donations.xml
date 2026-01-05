@@ -35,7 +35,7 @@ Page: My Compassion 2 Donations Page
                         <!-- TITLE-->
                         <div class="my-5">
                             <t t-call="theme_compassion_2025.TitleComponent">
-                                <t t-set="title_content" t-value="'My donations and documents'" />
+                                <t t-set="title_content">My donations and documents</t>
                                 <t t-set="title_size" t-value="'md'" />
                                 <t t-set="color" t-value="'core-blue'" />
                                 <t t-set="show_underline" t-value="True" />
@@ -54,7 +54,7 @@ Page: My Compassion 2 Donations Page
                                     <form id="tax_receipt_form" action="/my/download/tax_receipt" class="mb-3">
                                         <div class="d-flex flex-row align-items-end">
                                             <t t-call="theme_compassion_2025.FormFieldComponent">
-                                                <t t-set="label" t-value="'Tax receipt'" />
+                                                <t t-set="label">Tax receipt</t>
                                                 <t t-set="top_class" t-value="'mr-2'" />
                                                 <t t-call="theme_compassion_2025.SelectComponent">
                                                     <t t-set="name" t-value="'year'" />
@@ -254,7 +254,7 @@ Page: My Compassion 2 Donations Page
                                         <t t-set="color" t-value="'mid-blue'" />
                                         <t t-set="text_color" t-value="'low-black'" />
                                         <t t-set="variant" t-value="'compact'" />
-                                        <t t-set="label" t-value="'Prev'" />
+                                        <t t-set="label">Prev</t>
                                     </t>
                                 </a>
                             </t>
@@ -273,7 +273,7 @@ Page: My Compassion 2 Donations Page
                                         <t t-set="color" t-value="'mid-blue'" />
                                         <t t-set="text_color" t-value="'low-black'" />
                                         <t t-set="variant" t-value="'compact'" />
-                                        <t t-set="label" t-value="'Next'" />
+                                        <t t-set="label">Next</t>
                                     </t>
                                 </a>
                             </t>

@@ -3,7 +3,7 @@
  *
  * Used in /templates/pages/my2_new_letter.xml
  */
-let uploadedFiles = [];
+let uploadedAttachmentLetterFiles = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     // Constants
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     const updateFileInput = () => {
         const dataTransfer = new DataTransfer();
-        uploadedFiles.forEach((file) => dataTransfer.items.add(file));
+        uploadedAttachmentLetterFiles.forEach((file) => dataTransfer.items.add(file));
         fileInput.files = dataTransfer.files;
     };
 
@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!fileDiv) return;
 
             const fileKey = fileDiv.dataset.fileKey;
-            uploadedFiles = uploadedFiles.filter((f) => generateFileKey(f) !== fileKey);
+            uploadedAttachmentLetterFiles = uploadedAttachmentLetterFiles.filter((f) => generateFileKey(f) !== fileKey);
             fileDiv.remove();
             updateFileInput();
         }
@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     fileInput.addEventListener("change", async () => {
         const newFiles = Array.from(fileInput.files);
-        const existingKeys = new Set(uploadedFiles.map(generateFileKey));
+        const existingKeys = new Set(uploadedAttachmentLetterFiles.map(generateFileKey));
 
         try {
             for (const file of newFiles) {
@@ -192,14 +192,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     // Update collections
                     existingKeys.add(compressedKey);
-                    uploadedFiles.push(compressedFile);
+                    uploadedAttachmentLetterFiles.push(compressedFile);
 
                     // Create and append preview
                     container.appendChild(createFileElement(compressedFile, dataUrl));
                 } catch (error) {
                     console.error("Error processing file:", error);
                     alert(`Failed to process ${file.name}: ${error.message}`);
-                    uploadedFiles = uploadedFiles.filter((f) => generateFileKey(f) !== fileKey);
+                    uploadedAttachmentLetterFiles = uploadedAttachmentLetterFiles.filter(
+                        (f) => generateFileKey(f) !== fileKey
+                    );
                 }
             }
         } finally {
