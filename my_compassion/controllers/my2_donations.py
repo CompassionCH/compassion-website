@@ -743,8 +743,6 @@ class MyCompassionDonationsController(CustomerPortal):
             .search([("provider", "=", "postfinance")], limit=1)
         )
 
-    # Endpoint to add a new online payment method (tokenization) via PostFinance
-    # (GEMINI suggestion, not sure if it will work...)
     @http.route('/my2/donation/add_payment_method_online', type='json', auth='user', website=True)
     def add_payment_method_online(self, recurring_unit='month', recurring_value=1, **kwargs):
         """
@@ -754,17 +752,16 @@ class MyCompassionDonationsController(CustomerPortal):
         acquirer = self._get_payment_acquirer()
 
         if not acquirer.exists():
-            raise NotFound()
+            return {'success': False, 'error': 'No payment provider found'}
 
+        # 2. Prepare Transaction
         return_url = '/my2/donation/validate_new_method?unit={}&val={}'.format(recurring_unit, recurring_value)
-
-        # FIX 1: Generate a valid, unique reference string manually
         reference = 'ADD-METHOD-{}-{}'.format(partner.id, fields.Datetime.now().strftime('%Y%m%d%H%M%S'))
 
         transaction_values = {
             'acquirer_id': acquirer.id,
             'reference': reference,
-            'amount': 0.0,  # 0.00 for validation/tokenization
+            'amount': 0.0,
             'currency_id': request.website.currency_id.id,
             'partner_id': partner.id,
             'partner_country_id': partner.country_id.id,
@@ -775,30 +772,22 @@ class MyCompassionDonationsController(CustomerPortal):
         tx = request.env['payment.transaction'].sudo().create(transaction_values)
         request.session['add_method_tx_id'] = tx.id
 
-        # HOOK: Check if the specific acquirer module (like PostFinance) can give us a direct URL
-        redirect_url = self._get_online_payment_redirect_url(acquirer, tx, return_url)
+        # 3. Get Integration Data (Iframe Only)
+        # This calls the method overridden in 'my_compassion_switzerland'
+        result_data = self._prepare_postfinance_iframe_redirect(acquirer, tx, return_url)
 
-        if redirect_url:
-            # OPTION A: We got a URL, send it to JS for immediate redirect
-            return {'success': True, 'redirect_url': redirect_url}
+        if result_data and isinstance(result_data, dict) and result_data.get('type') == 'iframe':
+            return {
+                'success': True,
+                'iframe_url': result_data['url'],
+                'pf_methods': result_data.get('pf_methods', [])  # List for the dropdown
+            }
 
-        # OPTION B: Fallback (This generates the HTML form if redirect isn't supported)
-        # FIX 2: We pass the 'reference' variable defined above
-        render_values = {
-            'partner_id': partner.id,
-        }
-        return {
-            'success': True,
-            'render_html': acquirer.sudo().render(
-                reference,
-                0.0,
-                request.website.currency_id.id,
-                values=transaction_values,
-                partner_id=partner.id
-            )
-        }
+        # 4. Error if Iframe data is missing (No longer supporting HTML fallback)
+        return {'success': False, 'error': 'Payment interface could not be loaded.'}
 
 
+    # TODO refactor this whole method (return URL are not correct)
     @http.route('/my2/donation/validate_new_method', type='http', auth='user', website=True)
     def validate_new_payment_method(self, unit='month', val=1, **kwargs):
         """

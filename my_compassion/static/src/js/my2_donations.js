@@ -22,10 +22,13 @@ odoo.define("my_compassion.my2_donations", function (require) {
 
             // UI Interaction events
             "click #btn_save_payment_method": "_onSavePaymentMethod",
-            "click #btn_add_online_payment": "_onAddOnlineMethod",
             'change input[name="payment_method_selection"]': "_onMethodSelectionChange",
             "click #history_pager_prev, #history_pager_next": "_onPagerClick",
+
+            'change #new_method_type': '_onAddMethodChange',
+            'click #postfinance-submit-btn': '_onSubmitPostFinance'
         },
+
 
         /**
          * Widget Initialization
@@ -60,50 +63,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 $("body").off("change", 'input[name="payment_method_selection"]', this._onMethodSelectionChangeBound);
             }
             this._super.apply(this, arguments);
-        },
-        //
-        // NEW IMPLEMENTATION
-        //
-        _onAddOnlineMethod: function (ev) {
-            console.log("Adding online method via PostFinance");
-            ev.preventDefault();
-            var $btn = $(ev.currentTarget);
-            var unit = this.$('select[name="recurring_unit"]').val();
-            var val = 1; // Default or fetch from input
-
-            // Loading state
-            $btn.attr('disabled', true);
-            $btn.prepend('<i class="fa fa-spinner fa-spin mr-1"></i>');
-
-            ajax.jsonRpc('/my2/donation/add_payment_method_online', 'call', {
-                'recurring_unit': unit,
-                'recurring_value': val
-            }).then(function (result) {
-                if (result.success) {
-                    if (result.redirect_url) {
-                        // CASE 1: Direct Redirect (Our PostFinance implementation)
-                        console.log("Redirecting to:", result.redirect_url);
-                        window.location.href = result.redirect_url;
-                    }
-                    else if (result.render_html) {
-                        // CASE 2: HTML Form Fallback
-                        var $content = $(result.render_html);
-                        $content.addClass('d-none');
-                        $('body').append($content);
-                        var $form = $content.find('form');
-                        if ($form.length) {
-                            $form.submit();
-                        } else {
-                            // Sometimes it is just a link button
-                            var $link = $content.find('a[href]');
-                            if ($link.length) window.location.href = $link.attr('href');
-                        }
-                    }
-                } else {
-                    $btn.attr('disabled', false);
-                    alert('Error initializing payment.');
-                }
-            });
         },
 
         // -------------------------------------------------------------------------
@@ -165,11 +124,14 @@ odoo.define("my_compassion.my2_donations", function (require) {
         },
 
         /**
-         * Opens the "Add" modal
+         * Opens the "Add" modal and initializes Online Methods
          */
         _onOpenAddModal: function (ev) {
-            ev.stopPropagation();
+            if (ev) ev.stopPropagation();
             $("#payment_method_selector_modal_add").modal("show");
+
+            // Initialize PostFinance methods
+            this._fetchAndPopulateOnlineMethods();
         },
 
         // -------------------------------------------------------------------------
@@ -234,7 +196,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
             // UI Loading State
             $btn.prop("disabled", true).prepend('<i class="fa fa-spinner fa-spin mr-1"/>');
 
-            var promise;
             var params = {};
             var route = "";
 
@@ -314,6 +275,126 @@ odoo.define("my_compassion.my2_donations", function (require) {
                     .finally(function () {
                         self._closeModal($modal, $btn);
                     });
+            }
+        },
+
+        /**
+         * Calls backend to create transaction and get available PostFinance methods.
+         */
+        _fetchAndPopulateOnlineMethods: function () {
+            var self = this;
+            var $select = this.$('#new_method_type');
+
+            // Prevent duplicate loading if already fetched
+            if ($select.data('loaded')) return;
+
+            // Default params for validation transaction
+            var unit = this.$('select[name="recurring_unit"]').val() || 'month';
+            var val = 1;
+
+            ajax.jsonRpc('/my2/donation/add_payment_method_online', 'call', {
+                'recurring_unit': unit,
+                'recurring_value': val
+            }).then(function (result) {
+                if (result.success && result.iframe_url && result.pf_methods) {
+
+                    // A. Load PostFinance Script
+                    $.getScript(result.iframe_url, function () {
+                        console.log("PostFinance JS Loaded");
+                    });
+
+                    // B. Populate Dropdown
+                    var $optGroup = $('<optgroup label="Online Methods">');
+
+                    result.pf_methods.forEach(function (method) {
+                        $optGroup.append($('<option>', {
+                            value: 'pf_' + method.id, // Prefix ID to distinguish from manual methods
+                            text: method.name
+                        }));
+                    });
+
+                    $select.append($optGroup);
+                    $select.data('loaded', true);
+                }
+            }).catch(function (e) {
+                console.error("Error loading online methods", e);
+            });
+        },
+
+
+        /**
+         * Handles dropdown changes. Switches between Manual form and Iframe.
+         */
+        _onAddMethodChange: function (ev) {
+            var value = $(ev.currentTarget).val();
+            var $iframeContainer = this.$('#postfinance-iframe-container');
+            var $footer = this.$('#default-modal-footer');
+            var $paymentForm = this.$('#payment-form');
+            var $submitBtn = this.$('#postfinance-submit-btn');
+
+            // Reset UI
+            $paymentForm.empty();
+            this.pfHandler = null; // Clear current handler reference
+
+            if (value && value.startsWith('pf_')) {
+                // --- ONLINE MODE ---
+                var configurationId = value.split('_')[1];
+
+                $footer.addClass('d-none');       // Hide manual save button
+                $iframeContainer.show();          // Show Iframe area
+                $submitBtn.attr('disabled', false); // Ensure button is enabled
+
+                if (window.IframeCheckoutHandler) {
+                    try {
+                        // 1. Initialize Handler with selected ID
+                        var handler = window.IframeCheckoutHandler(configurationId);
+
+                        // 2. Set Callbacks (Must be before create)
+                        handler.setValidationCallback(function (validationResult) {
+                            if (validationResult.success) {
+                                handler.submit();
+                            } else {
+                                $submitBtn.attr('disabled', false).find('i').remove();
+                                alert("Please check your input.");
+                            }
+                        });
+
+                        handler.setHeightChangeCallback(function (height) {
+                            $paymentForm.height(height);
+                        });
+
+                        // 3. Create Iframe
+                        handler.create('payment-form');
+
+                        // Store handler for the submit button click
+                        this.pfHandler = handler;
+
+                    } catch (e) {
+                        console.error("PostFinance Handler Error:", e);
+                        $iframeContainer.hide();
+                        alert("Technical error loading payment interface.");
+                    }
+                } else {
+                    alert("Payment library still loading... please wait and try again.");
+                }
+
+            } else {
+                // --- MANUAL MODE ---
+                $iframeContainer.hide();
+                $footer.removeClass('d-none');
+            }
+        },
+
+        /**
+         * Custom Submit Button logic for Iframe
+         */
+        _onSubmitPostFinance: function (ev) {
+            ev.preventDefault();
+            if (this.pfHandler) {
+                var $btn = $(ev.currentTarget);
+                $btn.attr('disabled', true).prepend('<i class="fa fa-spinner fa-spin mr-1"></i>');
+                // Triggers the validation callback defined above
+                this.pfHandler.validate();
             }
         },
 
