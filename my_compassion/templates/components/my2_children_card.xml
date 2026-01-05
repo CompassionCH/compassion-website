@@ -22,15 +22,16 @@
         <div class="children-card text-center mb-3 mt-3">
             <div class="p-4 d-flex flex-column align-items-center bg-high-eggshell">
                 <!-- Child Image -->
-                <img class="rounded-circle img-fluid mb-2" t-att-src="child.image_url" alt="Child image" />
-                <!-- TODO: maybe replace src with local image?
-                     t-attf-src="/web/image/compassion.child/{{child.id}}/portrait"
-                -->
+                <img
+                    class="rounded-circle img-fluid mb-2"
+                    t-attf-src="/web/image/compassion.child/{{child.id}}/portrait"
+                    t-attf-alt="Photo of #{child.preferred_name}"
+                />
                 <!-- Child name -->
                 <div class="h2 mb-0">
                     <t t-esc="child.preferred_name" />
                 </div>
-                <div class="small" t-if="sponsorship.state in ('draft', 'waiting', 'mandate')">
+                <div class="small" t-if="sponsorship and sponsorship.state in ('draft', 'waiting', 'mandate')">
                     <span
                         class="badge bg-low-yellow"
                         title="Your sponsorship is being confirmed and will become active soon"
@@ -39,7 +40,7 @@
                         Pending activation
                     </span>
                 </div>
-                <div class="small" t-if="sponsorship.state == 'terminated'">
+                <div class="small" t-if="sponsorship and sponsorship.state == 'terminated'">
                     <span class="badge bg-low-yellow" title="Your sponsorship has ended" aria-label="Sponsorship ended">
                         Sponsorship ended
                     </span>
@@ -81,7 +82,7 @@
                             <t t-set="color" t-value="'mid-green'" />
                             <t t-set="text_color" t-value="'white'" />
                             <t t-set="variant" t-value="'compact'" />
-                            <t t-set="label" t-value="'View profile'" />
+                            <t t-set="label">View profile</t>
                         </t>
                     </a>
                 </div>
@@ -93,7 +94,7 @@
                             <t t-set="color" t-value="'dark-blue'" />
                             <t t-set="text_color" t-value="'white'" />
                             <t t-set="variant" t-value="'compact'" />
-                            <t t-set="label" t-value="'Sponsor me'" />
+                            <t t-set="label">Sponsor me</t>
                         </t>
                     </a>
                 </div>
