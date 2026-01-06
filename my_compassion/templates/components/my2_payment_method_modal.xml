@@ -10,12 +10,12 @@
 <odoo>
     <template id="my2_payment_method_selector" name="Payment Method Selector Component">
         <div
-                class="modal fade"
-                t-att-id="'payment_method_selector_modal_' + modal_type"
-                t-att-data-modal-type="modal_type"
-                tabindex="-1"
-                role="dialog"
-                aria-hidden="true"
+            class="modal fade"
+            t-att-id="'payment_method_selector_modal_' + modal_type"
+            t-att-data-modal-type="modal_type"
+            tabindex="-1"
+            role="dialog"
+            aria-hidden="true"
         >
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content border-0">
@@ -35,9 +35,7 @@
                                         </p>
                                     </t>
                                     <t t-elif="modal_type == 'add'">
-                                        <p class="text-center text-muted mb-3">
-                                            Select a payment method to add.
-                                        </p>
+                                        <p class="text-center text-muted mb-3">Select a payment method to add.</p>
                                     </t>
                                     <t t-elif="modal_type == 'change'">
                                         <p class="text-center text-muted mb-3" id="modal_description">
@@ -46,27 +44,25 @@
                                     </t>
                                 </div>
                             </form>
-
                             <t t-if="modal_type == 'change' or modal_type == 'update'">
                                 <!-- Container for Dynamic Cards -->
                                 <div id="modal_container" class="payment-methods-container mb-3">
                                     <!-- JS will inject components here -->
                                 </div>
                             </t>
-
                             <t t-elif="modal_type == 'add'">
                                 <div id="add_payment_method_container" class="mb-3">
-
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
                                         <t t-set="label">Payment Type</t>
                                         <t t-set="input_id">new_method_type</t>
                                         <select class="form-control" name="method_type" id="new_method_type">
-                                            <option value="" disabled="disabled" selected="selected">Select a method...</option>
+                                            <option value="" disabled="disabled" selected="selected">
+                                                Select a method...
+                                            </option>
                                             <option value="permanent_order">Permanent Order</option>
                                             <option value="bvr">BVR</option>
-                                            </select>
+                                        </select>
                                     </t>
-
                                     <div id="payment_config_fields" class="form-row mb-3 mt-3">
                                         <div class="col-6">
                                             <t t-call="theme_compassion_2025.FormFieldComponent">
@@ -84,30 +80,33 @@
                                             <t t-call="theme_compassion_2025.FormFieldComponent">
                                                 <t t-set="label">Advance Billing (Months)</t>
                                                 <t t-set="input_id">new_advance_billing_months</t>
-                                                <input type="number"
-                                                       name="advance_billing_months"
-                                                       id="new_advance_billing_months"
-                                                       class="form-control"
-                                                       value="1"
-                                                       min="1"/>
+                                                <input
+                                                    type="number"
+                                                    name="advance_billing_months"
+                                                    id="new_advance_billing_months"
+                                                    class="form-control"
+                                                    value="1"
+                                                    min="1"
+                                                />
                                             </t>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div id="postfinance-iframe-container" style="display:none;" class="mb-3 border rounded p-3 bg-light">
+                                <div
+                                    id="postfinance-iframe-container"
+                                    style="display:none;"
+                                    class="mb-3 border rounded p-3 bg-light"
+                                >
                                     <div style="max-height: 60vh; overflow-y: auto; overflow-x: auto; padding: 5px;">
-
                                         <div id="pf-iframe-loading" class="text-center text-muted py-5">
-                                            <i class="fa fa-spinner fa-spin fa-2x"></i><br/>
+                                            <i class="fa fa-spinner fa-spin fa-2x" />
+                                            <br />
                                             <span class="mt-2 d-block">Loading payment interface...</span>
                                         </div>
-
-                                        <div id="payment-form" style="min-height: 100px;"></div>
+                                        <div id="payment-form" style="min-height: 100px;" />
                                     </div>
                                 </div>
                             </t>
-
                             <div class="modal-footer border-top-0" id="default-modal-footer">
                                 <a href="#" data-dismiss="modal">
                                     <t t-call="theme_compassion_2025.ThemedButtonComponent">

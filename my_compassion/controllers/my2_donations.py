@@ -549,7 +549,7 @@ class MyCompassionDonationsController(CustomerPortal):
         "/my2/donation/change_method_group", type="json", auth="user", website=True
     )
     def change_payment_method_group(
-            self, group_id, new_group_id=None, new_bvr_ref=None, **kwargs
+        self, group_id, new_group_id=None, new_bvr_ref=None, **kwargs
     ):
         """
         Endpoint to update payment method for a sponsorship group.
@@ -593,7 +593,13 @@ class MyCompassionDonationsController(CustomerPortal):
     @http.route(
         "/my2/donation/add_payment_method_group", type="json", auth="user", website=True
     )
-    def add_payment_method_group(self, recurring_unit="month", method_type="bvr", advance_billing_months=1, **kwargs):
+    def add_payment_method_group(
+        self,
+        recurring_unit="month",
+        method_type="bvr",
+        advance_billing_months=1,
+        **kwargs,
+    ):
         """
         Creates a new Contract Group with manual BVR/Permanent Order details.
         """
@@ -604,7 +610,8 @@ class MyCompassionDonationsController(CustomerPortal):
         if not payment_mode:
             return {
                 "success": False,
-                "error": _('Configuration Error: Payment mode for "%s" not found.') % method_type,
+                "error": _('Configuration Error: Payment mode for "%s" not found.')
+                % method_type,
             }
 
         # 2. Create the Group
@@ -620,7 +627,9 @@ class MyCompassionDonationsController(CustomerPortal):
 
             # 3. Return HTML
             values = self._prepare_sponsorship_values(partner)
-            html = request.env["ir.qweb"]._render("my_compassion.my2_sponsorships_section", values)
+            html = request.env["ir.qweb"]._render(
+                "my_compassion.my2_sponsorships_section", values
+            )
 
             return {
                 "success": True,
@@ -634,59 +643,79 @@ class MyCompassionDonationsController(CustomerPortal):
         except Exception:
             return {"success": False, "error": _("An unexpected error occurred.")}
 
-
-
-    @http.route('/my2/donation/add_payment_method_online', type='json', auth='user', website=True)
-    def add_payment_method_online(self, recurring_unit='month', recurring_value=1, **kwargs):
+    @http.route(
+        "/my2/donation/add_payment_method_online",
+        type="json",
+        auth="user",
+        website=True,
+    )
+    def add_payment_method_online(
+        self, recurring_unit="month", recurring_value=1, **kwargs
+    ):
         """
-        Initiates a 'validation' transaction to tokenize a card/method without an immediate charge.
+        Initiates a 'validation' transaction to tokenize a card/method.
         Returns data for rendering the PostFinance Iframe with available methods.
         """
         partner = request.env.user.partner_id
         acquirer = self._get_payment_acquirer()
 
         if not acquirer.exists():
-            return {'success': False, 'error': 'No payment provider found'}
+            return {"success": False, "error": "No payment provider found"}
 
         # Prepare Transaction
-        return_url = '/my2/donations?unit={}&val={}'.format(recurring_unit, recurring_value)
-        reference = 'ADD-METHOD-{}-{}'.format(partner.id, fields.Datetime.now().strftime('%Y%m%d%H%M%S'))
+        return_url = "/my2/donations?unit={}&val={}".format(
+            recurring_unit, recurring_value
+        )
+        reference = "ADD-METHOD-{}-{}".format(
+            partner.id, fields.Datetime.now().strftime("%Y%m%d%H%M%S")
+        )
 
         transaction_values = {
-            'acquirer_id': acquirer.id,
-            'reference': reference,
-            'amount': 0.0,
-            'currency_id': request.website.currency_id.id,
-            'partner_id': partner.id,
-            'partner_country_id': partner.country_id.id,
-            'type': 'validation',
-            'return_url': return_url,
+            "acquirer_id": acquirer.id,
+            "reference": reference,
+            "amount": 0.0,
+            "currency_id": request.website.currency_id.id,
+            "partner_id": partner.id,
+            "partner_country_id": partner.country_id.id,
+            "type": "validation",
+            "return_url": return_url,
         }
 
-        tx = request.env['payment.transaction'].sudo().create(transaction_values)
-        request.session['add_method_tx_id'] = tx.id
+        tx = request.env["payment.transaction"].sudo().create(transaction_values)
+        request.session["add_method_tx_id"] = tx.id
 
         # 3. Get Integration Data (Iframe Only)
         # This calls the method overridden in 'my_compassion_switzerland'
-        result_data = self._prepare_postfinance_iframe_redirect(acquirer, tx, return_url)
+        result_data = self._prepare_postfinance_iframe_redirect(
+            acquirer, tx, return_url
+        )
 
-        if result_data and isinstance(result_data, dict) and result_data.get('type') == 'iframe':
+        if (
+            result_data
+            and isinstance(result_data, dict)
+            and result_data.get("type") == "iframe"
+        ):
             return {
-                'success': True,
-                'iframe_url': result_data['url'],
-                'pf_methods': result_data.get('pf_methods', [])
+                "success": True,
+                "iframe_url": result_data["url"],
+                "pf_methods": result_data.get("pf_methods", []),
             }
 
         # 4. Error if Iframe data is missing (No longer supporting HTML fallback)
-        return {'success': False, 'error': 'Payment interface could not be loaded.'}
+        return {"success": False, "error": "Payment interface could not be loaded."}
 
-    @http.route('/my2/donation/set_selected_payment_method', type='json', auth='user', website=True)
+    @http.route(
+        "/my2/donation/set_selected_payment_method",
+        type="json",
+        auth="user",
+        website=True,
+    )
     def set_selected_payment_method(self, method_name):
         """
-        Called by JS when the user selects an online method (e.g. 'Credit Card', 'Visa').
+        Called by JS when the user selects an online method (e.g. 'Credit Card').
         Stores it in the session so we can find the correct Payment Mode later.
         """
-        request.session['add_method_name'] = method_name
+        request.session["add_method_name"] = method_name
         return True
 
     # -------------------------------------------------------------------------
@@ -726,7 +755,7 @@ class MyCompassionDonationsController(CustomerPortal):
         }
 
     def _get_paginated_paid_invoices(
-            self, partner, invoice_page=1, invoice_per_page=12
+        self, partner, invoice_page=1, invoice_per_page=12
     ):
         """
         Fetches a paginated subset of paid invoices for a partner and calculates
@@ -761,7 +790,7 @@ class MyCompassionDonationsController(CustomerPortal):
             "active": True,
         }
         if token:
-            vals['payment_token_id'] = token.id
+            vals["payment_token_id"] = token.id
 
         return request.env["recurring.contract.group"].sudo().create(vals)
 
@@ -781,12 +810,20 @@ class MyCompassionDonationsController(CustomerPortal):
 
         # Search with active_test=False to find modes even if archived/hidden
         domain = [("name", "=", term)]
-        mode = request.env["account.payment.mode"].sudo().with_context(active_test=False).search(domain, limit=1)
+        mode = (
+            request.env["account.payment.mode"]
+            .sudo()
+            .with_context(active_test=False)
+            .search(domain, limit=1)
+        )
 
         # Fallback: Fuzzy search
         if not mode:
-            mode = request.env["account.payment.mode"].sudo().with_context(active_test=False).search(
-                [("name", "ilike", term)], limit=1
+            mode = (
+                request.env["account.payment.mode"]
+                .sudo()
+                .with_context(active_test=False)
+                .search([("name", "ilike", term)], limit=1)
             )
         return mode
 
@@ -797,28 +834,39 @@ class MyCompassionDonationsController(CustomerPortal):
         """
         company_id = request.website.company_id.id
         base_domain = [
-            ('company_id', '=', company_id),
-            ('payment_type', '=', 'inbound'),
-            ('state', '=', 'active')
+            ("company_id", "=", company_id),
+            ("payment_type", "=", "inbound"),
+            ("state", "=", "active"),
         ]
 
         payment_mode = False
 
         # 1. Search by Name (e.g. "Twint")
         if method_name_from_api:
-            payment_mode = request.env['account.payment.mode'].sudo().search(
-                base_domain + [('name', 'ilike', method_name_from_api)], limit=1
+            payment_mode = (
+                request.env["account.payment.mode"]
+                .sudo()
+                .search(
+                    base_domain + [("name", "ilike", method_name_from_api)], limit=1
+                )
             )
 
         # 2. Fallback to Acquirer's Journal
         if not payment_mode and acquirer.journal_id:
-            payment_mode = request.env['account.payment.mode'].sudo().search(
-                base_domain + [('fixed_journal_id', '=', acquirer.journal_id.id)], limit=1
+            payment_mode = (
+                request.env["account.payment.mode"]
+                .sudo()
+                .search(
+                    base_domain + [("fixed_journal_id", "=", acquirer.journal_id.id)],
+                    limit=1,
+                )
             )
 
         # 3. Generic Fallback
         if not payment_mode:
-            payment_mode = request.env['account.payment.mode'].sudo().search(base_domain, limit=1)
+            payment_mode = (
+                request.env["account.payment.mode"].sudo().search(base_domain, limit=1)
+            )
 
         return payment_mode
 

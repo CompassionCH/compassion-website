@@ -112,7 +112,7 @@ class ContractGroup(models.Model):
         """
         Creates or retrieves a contract group from a validation transaction.
         :param tx: payment.transaction record
-        :param payment_mode_name: (optional) Name of the method selected by user (e.g. "Twint")
+        :param payment_mode_name: (optional) Name of the method selected by user
         :return: (group_record, message_string)
         """
         if not tx or not tx.payment_token_id:
@@ -121,10 +121,13 @@ class ContractGroup(models.Model):
         token = tx.payment_token_id
 
         # 1. Reuse existing group (Idempotency)
-        existing_group = self.with_context(active_test=False).search([
-            ('partner_id', '=', tx.partner_id.id),
-            ('payment_token_id', '=', token.id)
-        ], limit=1)
+        existing_group = self.with_context(active_test=False).search(
+            [
+                ("partner_id", "=", tx.partner_id.id),
+                ("payment_token_id", "=", token.id),
+            ],
+            limit=1,
+        )
 
         if existing_group:
             # Reactivate if it was archived
@@ -134,55 +137,59 @@ class ContractGroup(models.Model):
 
         # 2. Retrieve Recurring Frequency (Unit/Value)
         # Default to monthly if not specified
-        recurring_unit = 'month'
+        recurring_unit = "month"
         recurring_value = 1
 
         if tx.return_url:
             try:
-                from urllib.parse import urlparse, parse_qs
+                from urllib.parse import parse_qs, urlparse
+
                 parsed = urlparse(tx.return_url)
                 params = parse_qs(parsed.query)
-                if 'unit' in params:
-                    recurring_unit = params['unit'][0]
-                if 'val' in params:
-                    recurring_value = int(params['val'][0])
+                if "unit" in params:
+                    recurring_unit = params["unit"][0]
+                if "val" in params:
+                    recurring_value = int(params["val"][0])
             except Exception:
                 pass
 
         # 3. Identify Payment Mode
         company_id = tx.acquirer_id.company_id.id
         domain = [
-            ('company_id', '=', company_id),
-            ('payment_type', '=', 'inbound'),
-            ('state', '=', 'active')
+            ("company_id", "=", company_id),
+            ("payment_type", "=", "inbound"),
+            ("state", "=", "active"),
         ]
 
         payment_mode = False
 
         # Strategy A: Use the Name provided by the Controller (User selection)
         if payment_mode_name:
-            payment_mode = self.env['account.payment.mode'].search(
-                domain + [('name', 'ilike', payment_mode_name)], limit=1
+            payment_mode = self.env["account.payment.mode"].search(
+                domain + [("name", "ilike", payment_mode_name)], limit=1
             )
 
         # Strategy B: Fallback to Acquirer's Journal (Standard Odoo Link)
         if not payment_mode and tx.acquirer_id.journal_id:
-            payment_mode = self.env['account.payment.mode'].search(
-                domain + [('fixed_journal_id', '=', tx.acquirer_id.journal_id.id)], limit=1
+            payment_mode = self.env["account.payment.mode"].search(
+                domain + [("fixed_journal_id", "=", tx.acquirer_id.journal_id.id)],
+                limit=1,
             )
 
         if not payment_mode:
-            return self.browse(), _("Configuration Error: No suitable electronic payment mode found.")
+            return self.browse(), _(
+                "Configuration Error: No suitable electronic payment mode found."
+            )
 
         # 4. Create the Group
         vals = {
-            'partner_id': tx.partner_id.id,
-            'payment_mode_id': payment_mode.id,
-            'payment_token_id': token.id,
-            'recurring_unit': recurring_unit,
-            'recurring_value': recurring_value,
-            'active': True,
-            'ref': token.name,
+            "partner_id": tx.partner_id.id,
+            "payment_mode_id": payment_mode.id,
+            "payment_token_id": token.id,
+            "recurring_unit": recurring_unit,
+            "recurring_value": recurring_value,
+            "active": True,
+            "ref": token.name,
         }
 
         group = self.create(vals)
