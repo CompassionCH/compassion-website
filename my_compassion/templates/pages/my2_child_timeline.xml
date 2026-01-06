@@ -11,7 +11,12 @@
 
     Injected data:
     - compassion_child (record): The related child object.
+    - records (list): timeline items to display.
+    - has_more_records (boolean): Indicates if there are more records to load.
     - access_scope (string): 'public' or 'sponsor'.
+    - google_api_key (string): API key for Google Maps integration.
+    - google_custom_map_id (string): Custom map ID for Google Maps integration.
+    - timezone (string): Timezone of the child's project location.
 
     TO DO: inject a list of significant sponsorship events.
 -->
@@ -438,7 +443,7 @@
                             </div>
                         </div>
                     </section>
-                    <!-- ### Weather and Time Component ### -->
+                    <!-- ### Weather, Time and Map Component ### -->
                     <section
                         t-if="access_scope == 'sponsor'"
                         class="cd-weather-map-container js-cd-weather-map-container"
@@ -454,9 +459,7 @@
                                 <t t-set="custom_map_id" t-value="google_custom_map_id" />
                             </t>
                         </t>
-                        <div
-                            style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); z-index: 10; padding-bottom: 1rem;"
-                        >
+                        <div class="weather-time-container-wrapper">
                             <t t-call="my_compassion.WeatherTimeContainer">
                                 <t t-set="timezone" t-value="timezone" />
                                 <t t-set="fcp_id" t-value="compassion_child.project_id.fcp_id" />
