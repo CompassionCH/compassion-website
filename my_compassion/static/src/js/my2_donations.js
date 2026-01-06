@@ -238,12 +238,20 @@ odoo.define("my_compassion.my2_donations", function (require) {
                     return;
                 }
             } else if (modalType == "add") {
-                route = "/my2/donation/add_payment_method_group";
-                params = {
-                    method_type: $modal.find('select[name="method_type"]').val(),
-                    recurring_unit: $modal.find('select[name="recurring_unit"]').val(),
-                    advance_billing_months: parseInt($modal.find('input[name="advance_billing_months"]').val()),
-                };
+                // Check if Method of provider is selected
+                if (this.pfHandler) {
+                    this.pfHandler.validate();
+                    return;
+
+                } else {
+                // Otherwise add a manual (Permanent order or BVR) method
+                    route = "/my2/donation/add_payment_method_group";
+                    params = {
+                        method_type: $modal.find('select[name="method_type"]').val(),
+                        recurring_unit: $modal.find('select[name="recurring_unit"]').val(),
+                        advance_billing_months: parseInt($modal.find('input[name="advance_billing_months"]').val()),
+                    };
+                }
             }
 
             // --- EXECUTE RPC REQUEST ---
@@ -285,12 +293,10 @@ odoo.define("my_compassion.my2_donations", function (require) {
             var self = this;
             var $select = this.$('#new_method_type');
 
-            // Prevent duplicate loading if already fetched
-            if ($select.data('loaded')) return;
+            if ($select.data('loaded')) return; // Avoid duplicate calls
 
-            // Default params for validation transaction
             var unit = this.$('select[name="recurring_unit"]').val() || 'month';
-            var val = 1;
+            var val = this.$('input[name="advance_billing_months"]').val() || 1;
 
             ajax.jsonRpc('/my2/donation/add_payment_method_online', 'call', {
                 'recurring_unit': unit,
@@ -298,90 +304,97 @@ odoo.define("my_compassion.my2_donations", function (require) {
             }).then(function (result) {
                 if (result.success && result.iframe_url && result.pf_methods) {
 
-                    // A. Load PostFinance Script
+                    // Load the JS library
                     $.getScript(result.iframe_url, function () {
                         console.log("PostFinance JS Loaded");
                     });
 
-                    // B. Populate Dropdown
-                    var $optGroup = $('<optgroup label="Online Methods">');
-
+                    // Append options directly to the main select
                     result.pf_methods.forEach(function (method) {
-                        $optGroup.append($('<option>', {
-                            value: 'pf_' + method.id, // Prefix ID to distinguish from manual methods
+                        $select.append($('<option>', {
+                            value: 'pf_' + method.id,
                             text: method.name
                         }));
                     });
 
-                    $select.append($optGroup);
                     $select.data('loaded', true);
                 }
-            }).catch(function (e) {
-                console.error("Error loading online methods", e);
             });
         },
 
-
-        /**
-         * Handles dropdown changes. Switches between Manual form and Iframe.
-         */
+        // --- 2. Handle Selection Change ---
         _onAddMethodChange: function (ev) {
-            var value = $(ev.currentTarget).val();
+            var $target = $(ev.currentTarget);
+            var value = $target.val();
+            var $configFields = this.$('#payment_config_fields');
             var $iframeContainer = this.$('#postfinance-iframe-container');
-            var $footer = this.$('#default-modal-footer');
+            var $loading = this.$('#pf-iframe-loading');
             var $paymentForm = this.$('#payment-form');
-            var $submitBtn = this.$('#postfinance-submit-btn');
 
-            // Reset UI
+            // Reset
             $paymentForm.empty();
-            this.pfHandler = null; // Clear current handler reference
+            this.pfHandler = null;
 
             if (value && value.startsWith('pf_')) {
-                // --- ONLINE MODE ---
-                var configurationId = value.split('_')[1];
+                // === ONLINE MODE ===
+                // 1. Get the readable name (e.g., "Twint", "Visa")
+                var methodName = $target.find('option:selected').text();
+                
+                // 2. Send to Backend immediately
+                ajax.jsonRpc('/my2/donation/set_selected_payment_method', 'call', {
+                    method_name: methodName
+                });
 
-                $footer.addClass('d-none');       // Hide manual save button
-                $iframeContainer.show();          // Show Iframe area
-                $submitBtn.attr('disabled', false); // Ensure button is enabled
+                // 1. Hide Config Fields
+                $configFields.hide();
+
+                // 2. Show Iframe Container
+                $iframeContainer.show();
+                $loading.show();
+                $paymentForm.hide();
+
+                // 3. Initialize Iframe
+                var configurationId = String(value.split('_')[1]);
 
                 if (window.IframeCheckoutHandler) {
                     try {
-                        // 1. Initialize Handler with selected ID
                         var handler = window.IframeCheckoutHandler(configurationId);
 
-                        // 2. Set Callbacks (Must be before create)
                         handler.setValidationCallback(function (validationResult) {
                             if (validationResult.success) {
                                 handler.submit();
                             } else {
-                                $submitBtn.attr('disabled', false).find('i').remove();
+                                var btn = $('#btn_save_payment_method');
+                                btn.attr('disabled', false).find('i').remove();
                                 alert("Please check your input.");
                             }
                         });
 
+                        handler.setInitializeCallback(function () {
+                            $loading.hide();
+                            $paymentForm.show();
+                        });
+
+                        // Handler for height adjustment if needed
                         handler.setHeightChangeCallback(function (height) {
                             $paymentForm.height(height);
                         });
 
-                        // 3. Create Iframe
                         handler.create('payment-form');
-
-                        // Store handler for the submit button click
-                        this.pfHandler = handler;
+                        this.pfHandler = handler; // Save for submit button
 
                     } catch (e) {
-                        console.error("PostFinance Handler Error:", e);
-                        $iframeContainer.hide();
-                        alert("Technical error loading payment interface.");
+                        console.error(e);
+                        $loading.text("Error loading payment interface.");
                     }
                 } else {
-                    alert("Payment library still loading... please wait and try again.");
+                    $loading.text("Payment library still loading...");
                 }
 
             } else {
-                // --- MANUAL MODE ---
+                // === MANUAL MODE ===
+                $configFields.show();
                 $iframeContainer.hide();
-                $footer.removeClass('d-none');
             }
         },
 
@@ -424,18 +437,55 @@ odoo.define("my_compassion.my2_donations", function (require) {
         // TOASTS & HISTORY
         // -------------------------------------------------------------------------
 
+        /**
+         * Checks URL parameters on page load to display Toasts.
+         * The parameters are injected by the PostFinance Feedback Controller.
+         */
         _checkAddPaymentMethod: function () {
             var urlParams = new URLSearchParams(window.location.search);
-            var res = urlParams.get("payment_method_result");
-            var msg = urlParams.get("payment_method_message");
+            
+            var res = urlParams.get("payment_method_result"); // e.g. "Success", "Error", "Already Saved"
+            var msg = urlParams.get("payment_method_message"); // The text from create_from_transaction
 
-            if (res === "Success") ToastService.success(_t(msg), _t(res));
-            else if (res === "Error") ToastService.error(_t(msg), _t(res));
-            else if (res === "Already Saved") ToastService.info(_t(msg), _t(res));
+            if (res && msg) {
+                // Decode URI component to handle spaces and special chars correctly
+                msg = decodeURIComponent(msg);
 
-            if (res) {
-                urlParams.delete("payment_method_result");
-                urlParams.delete("payment_method_message");
+                if (res === "Success") {
+                    ToastService.success(msg, _t("Success"));
+                } 
+                else if (res === "Error") {
+                    ToastService.error(msg, _t("Error"));
+                } 
+                else if (res === "Already Saved") {
+                    // Specific toast for duplicates (info instead of success/error)
+                    ToastService.info(msg, _t("Info"));
+                }
+                else {
+                    // Fallback
+                    ToastService.info(msg, _t("Info"));
+                }
+
+                // Clean URL so the toast doesn't appear again on refresh
+                this._cleanUrlParams(['payment_method_result', 'payment_method_message']);
+            }
+        },
+
+        /**
+         * Helper to remove params from URL without reloading
+         */
+        _cleanUrlParams: function(keysToRemove) {
+            var urlParams = new URLSearchParams(window.location.search);
+            var changed = false;
+            
+            keysToRemove.forEach(function(key) {
+                if (urlParams.has(key)) {
+                    urlParams.delete(key);
+                    changed = true;
+                }
+            });
+
+            if (changed) {
                 var newUrl = window.location.pathname + (urlParams.toString() ? "?" + urlParams.toString() : "");
                 window.history.replaceState({}, document.title, newUrl);
             }

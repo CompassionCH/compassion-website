@@ -108,18 +108,19 @@ class ContractGroup(models.Model):
         return False
 
     @api.model
-    def create_from_transaction(self, tx):
+    def create_from_transaction(self, tx, payment_mode_name=None):
         """
         Creates or retrieves a contract group from a validation transaction.
-        Returns a tuple: (group_record, message_string)
+        :param tx: payment.transaction record
+        :param payment_mode_name: (optional) Name of the method selected by user (e.g. "Twint")
+        :return: (group_record, message_string)
         """
         if not tx or not tx.payment_token_id:
             return self.browse(), _("No valid payment method found.")
 
         token = tx.payment_token_id
 
-        # 1. Reuse existing group if this token is already saved for this partner
-        # (Your Logic: prevents duplicates if the user double-clicks or retries)
+        # 1. Reuse existing group (Idempotency)
         existing_group = self.with_context(active_test=False).search([
             ('partner_id', '=', tx.partner_id.id),
             ('payment_token_id', '=', token.id)
@@ -146,23 +147,29 @@ class ContractGroup(models.Model):
                 if 'val' in params:
                     recurring_value = int(params['val'][0])
             except Exception:
-                pass  # Fallback to defaults
+                pass
 
         # 3. Identify Payment Mode
+        company_id = tx.acquirer_id.company_id.id
         domain = [
-            ('payment_method_id.code', '=', 'electronic'),
-            ('company_id', '=', tx.acquirer_id.company_id.id),
-            ('active', '=', True)
+            ('company_id', '=', company_id),
+            ('payment_type', '=', 'inbound'),
+            ('state', '=', 'active')
         ]
 
-        # Priority 1: Mode matching the Acquirer Name (e.g., "PostFinance")
-        payment_mode = self.env['account.payment.mode'].search(
-            domain + [('name', 'ilike', tx.acquirer_id.name)], limit=1
-        )
+        payment_mode = False
 
-        # Priority 2: Any Electronic Mode (Fallback)
-        if not payment_mode:
-            payment_mode = self.env['account.payment.mode'].search(domain, limit=1)
+        # Strategy A: Use the Name provided by the Controller (User selection)
+        if payment_mode_name:
+            payment_mode = self.env['account.payment.mode'].search(
+                domain + [('name', 'ilike', payment_mode_name)], limit=1
+            )
+
+        # Strategy B: Fallback to Acquirer's Journal (Standard Odoo Link)
+        if not payment_mode and tx.acquirer_id.journal_id:
+            payment_mode = self.env['account.payment.mode'].search(
+                domain + [('fixed_journal_id', '=', tx.acquirer_id.journal_id.id)], limit=1
+            )
 
         if not payment_mode:
             return self.browse(), _("Configuration Error: No suitable electronic payment mode found.")
