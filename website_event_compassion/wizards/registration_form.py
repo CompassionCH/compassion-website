@@ -31,9 +31,9 @@ class RegistrationForm(models.TransientModel):
         for form in forms:
             docs_to_save = {}
             if form.passport:
-                docs_to_save['passport'] = form.passport
+                docs_to_save["passport"] = form.passport
             if form.criminal_record:
-                docs_to_save['criminal_record'] = form.criminal_record
+                docs_to_save["criminal_record"] = form.criminal_record
             if docs_to_save:
                 form.registration_id.sudo().write(docs_to_save)
 

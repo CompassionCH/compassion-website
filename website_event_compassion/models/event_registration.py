@@ -6,13 +6,11 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-import base64
 import logging
 
 from odoo import SUPERUSER_ID, _, api, fields, models
 from odoo.http import request
 from odoo.tools import index_exists
-from odoo.tools.mimetypes import guess_mimetype
 
 from odoo.addons.website.models.website import slugify as slug
 
