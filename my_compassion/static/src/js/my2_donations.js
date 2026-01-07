@@ -27,6 +27,9 @@ odoo.define("my_compassion.my2_donations", function (require) {
 
             "change #new_method_type": "_onAddMethodChange",
             "click #postfinance-submit-btn": "_onSubmitPostFinance",
+
+            // DEBUG btn. TODO: Remove in production
+            'click .btn-debug-charge': '_onDebugCharge',
         },
 
         /**
@@ -62,6 +65,43 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 $("body").off("change", 'input[name="payment_method_selection"]', this._onMethodSelectionChangeBound);
             }
             this._super.apply(this, arguments);
+        },
+
+        // -------------------------------------------------------------------------
+        // DEBUG ACTIONS
+        // -------------------------------------------------------------------------
+        /**
+         * Debug Handler to trigger immediate charge
+         */
+        _onDebugCharge: function(ev) {
+            console.warn("DEBUG: Triggering immediate charge");
+            ev.stopPropagation();
+            ev.preventDefault();
+            
+            var $btn = $(ev.currentTarget);
+            var groupId = $btn.data('group-id');
+
+
+            if(!confirm("DEBUG WARNING:\nThis will immediately charge 1.00 to the real card.\n\nProceed?")) {
+                return;
+            }
+
+            // UI Feedback
+            $btn.prop('disabled', true).find('i').addClass('fa-spin');
+            console.log("DEBUG: Calling charge_token for group ID ", groupId);
+            this._rpc({
+                route: '/my2/debug/charge_token',
+                params: { group_id: groupId }
+            }).then(function(res) {
+                console.log("DEBUG: Charge result", res);
+                $btn.prop('disabled', false).find('i').removeClass('fa-spin');
+                
+                if(res.success) {
+                    alert("✅ SUCCESS!\n\nTransaction ID: " + res.transaction_id + "\nState: " + res.state);
+                } else {
+                    alert("❌ FAILED.\n\nError: " + res.error);
+                }
+            });
         },
 
         // -------------------------------------------------------------------------
