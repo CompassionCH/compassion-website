@@ -26,7 +26,7 @@
                 <input
                     type="radio"
                     name="payment_method_selection"
-                    t-att-id="'pm_' + type + '_' + (mode_id || id)"
+                    t-att-id="'pm_' + (type || 'token') + '_' + (mode_id || group_id)"
                     t-att-group-id="group_id || undefined"
                     t-att-checked="selected ? 'checked' : undefined"
                 />
@@ -59,17 +59,15 @@
                 <div class="small text-muted mt-1">
                     <t t-if="ref_number">
                         <span class="mr-1">
-                            Ref:
+                            <t t-if="is_card">Card: </t>
+                            <t t-else="">Ref: </t>
                             <t t-esc="ref_number" />
                         </span>
                     </t>
-                    <t t-if="is_card">
-                        <t t-if="expire_date">
-                            <span>
-                                Exp:
-                                <t t-esc="expire_date" />
-                            </span>
-                        </t>
+                    <t t-if="is_card and expire_date">
+                        <span class="ml-2 border-left pl-2">
+                            Exp: <t t-esc="expire_date" />
+                        </span>
                     </t>
                 </div>
             </div>
@@ -152,10 +150,7 @@
             </div>
         </div>
     </t>
-    <!--
-        Reusable Form Field Component (Client Side Version)
-        This mimics the backend theme component for use in JS
-    -->
+
     <t t-name="my_compassion.FormFieldComponent">
         <div t-attf-class="form-field-container mb-3 #{top_class || ''}">
             <t t-if="label">
@@ -189,9 +184,19 @@
         <div class="payment-update-form text-left">
             <!-- Fallback for non-card methods (like LSV, BVR reference) -->
             <t t-call="my_compassion.FormFieldComponent">
-                <t t-set="label">Reference Number</t>
+                <t t-set="label">
+                    <t t-if="is_card">Card Number</t>
+                    <t t-else="">Reference Number</t>
+                </t>
                 <t t-set="name">ref_number</t>
                 <t t-set="value" t-value="ref_number" />
+                <t t-set="disabled" t-value="is_card ? 'disabled' : undefined"/>
+            </t>
+
+            <t t-if="is_card">
+                <p class="text-muted small mt-n2 mb-3">
+                    To change your card details, please switch to a new payment method below.
+                </p>
             </t>
         </div>
     </t>

@@ -643,6 +643,8 @@ class MyCompassionDonationsController(CustomerPortal):
         except Exception:
             return {"success": False, "error": _("An unexpected error occurred.")}
 
+
+    # TODO : Maybe it should be better to call it fetch_payment_methods_iframe
     @http.route(
         "/my2/donation/add_payment_method_online",
         type="json",

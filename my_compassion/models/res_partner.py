@@ -104,7 +104,6 @@ class Partner(models.Model):
         groups = self.env["recurring.contract.group"].search(
             [
                 ("partner_id", "=", self.id),
-                ("payment_mode_id", "!=", False),
             ]
         )
 
