@@ -26,11 +26,11 @@ Page: My Compassion 2 Thank you Page
                     <div class="px-3 d-flex flex-column align-items-center">
                         <!-- TITLE -->
                         <t t-call="theme_compassion_2025.TitleComponent">
-                            <t t-set="title_content" t-value="'Thank you'" />
+                            <t t-set="title_content">Thank you</t>
                             <t t-set="color" t-value="'core-blue'" />
                             <t t-set="show_underline" t-value="True" />
                             <t t-set="underline_color" t-value="'low-yellow'" />
-                            <t t-set="description" t-value="'Your generosity changes lives.'" />
+                            <t t-set="description">Your generosity changes lives.</t>
                         </t>
                         <!-- GIFT PACKAGE CONTENT -->
                         <div
@@ -101,7 +101,7 @@ Page: My Compassion 2 Thank you Page
                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                 <t t-set="variant" t-value="'compact'" />
                                 <t t-set="variation" t-value="'filled'" />
-                                <t t-set="label" t-value="'Back to dashboard'" />
+                                <t t-set="label">Back to dashboard</t>
                                 <t t-set="color" t-value="'dark-blue'" />
                                 <t t-set="text_color" t-value="'pure-white'" />
                                 <t t-set="href" t-value="'/my2/dashboard'" />

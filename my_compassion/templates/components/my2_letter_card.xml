@@ -23,6 +23,7 @@
                     t-att-data-letter-id="letter.id"
                     t-att-data-letter-read="letter.email_read"
                     t-att-data-letter-uuid="letter.uuid"
+                    data-target="_blank"
                 >
                     <div class="env-body" />
                     <div class="env-letter">
@@ -81,6 +82,8 @@
                             <a
                                 class="dropdown-item d-flex align-items-center pt-0 pb-0 pl-3 pr-3"
                                 t-attf-href="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf"
+                                t-att-target="'_blank'"
+                                rel="noopener noreferrer"
                             >
                                 Preview
                                 <i class="icon-eye ml-auto" />

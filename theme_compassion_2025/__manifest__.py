@@ -61,6 +61,7 @@
         # Buttons
         "templates/components/buttons/ThemedButton.xml",
         "templates/components/buttons/ToggleButton.xml",
+        "templates/components/LanguageSelector.xml",
         # Styles
         "templates/styles/colors_stylesheet.xml",
         "templates/styles/icons_stylesheet.xml",

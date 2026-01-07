@@ -172,6 +172,9 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
     )
     def my2_render_new_letter_page(self, **kwargs):
         partner = request.env.user.partner_id
+        if not partner.is_writer:
+            return request.redirect("/my2/children/")
+
         child_id = self._safe_int(kwargs.get("child_id"), None)
         child = request.env["compassion.child"].browse(child_id)
         sponsorships = partner.sponsorship_ids.filtered("child_id.can_i_write_letter")
