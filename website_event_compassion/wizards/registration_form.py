@@ -29,8 +29,16 @@ class RegistrationForm(models.TransientModel):
     def create(self, vals_list):
         forms = super().create(vals_list)
         for form in forms:
+            docs_to_save = {}
+            if form.passport:
+                docs_to_save['passport'] = form.passport
+            if form.criminal_record:
+                docs_to_save['criminal_record'] = form.criminal_record
+            if docs_to_save:
+                form.registration_id.sudo().write(docs_to_save)
+
             if form.comments:
-                form.registration_id.message_post(
+                form.registration_id.sudo().message_post(
                     body=form.comments,
                     author_id=form.registration_id.partner_id.id,
                     subtype_xmlid="mail.mt_comment",
