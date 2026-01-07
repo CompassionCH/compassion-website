@@ -386,19 +386,6 @@ class EventRegistration(models.Model):
                 ]
             )
 
-    def _compute_passport(self):
-        for registration in self:
-            attachment = self.env["ir.attachment"].search(
-                [
-                    ("name", "like", "Passport"),
-                    ("res_id", "=", registration.id),
-                    ("res_model", "=", self._name),
-                ],
-                limit=1,
-            )
-            registration.passport = attachment.datas
-            registration.passport_filename = attachment.name
-
     def _compute_surveys(self):
         user_input_obj = self.env["survey.user_input"]
         for registration in self:
