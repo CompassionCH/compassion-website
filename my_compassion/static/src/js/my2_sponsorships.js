@@ -96,6 +96,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
                         $(self).addClass("show");
                     }, 100 + index * 50);
                 });
+            },
+
+            /**
              * Handles RPC errors by displaying the my_compassion2 error toast.
              *
              * @private
