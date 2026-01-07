@@ -432,7 +432,7 @@
                                     <t t-if="field_office.less_than_2_dollars_a_day">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">
-                                                Population living on less than $2/day:
+                                                Population living on less than $3/day:
                                             </strong>
                                             <t
                                                 t-esc="'{:.0f}%'.format(field_office.less_than_2_dollars_a_day * 100 )"
