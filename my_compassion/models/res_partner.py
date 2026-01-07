@@ -12,6 +12,12 @@ class Partner(models.Model):
 
     # True if the partner has ever made a donation
     is_donor = fields.Boolean(compute="_compute_is_donor", compute_sudo=True)
+    # True if the partner can write a letter to a sponsored child
+    is_writer = fields.Boolean(
+        string="Is letter writer",
+        compute="_compute_is_writer",
+        compute_sudo=True,
+    )
 
     user_login = fields.Char(
         string="MyCompassion login",
@@ -93,3 +99,19 @@ class Partner(models.Model):
         donor_ids = {data["partner_id"][0] for data in donors_data}
         for partner in self:
             partner.is_donor = partner.id in donor_ids
+
+    def _compute_is_writer(self):
+        """
+        Compute whether the partner can write letters to sponsored children.
+        """
+        for partner in self:
+            partner.is_writer = bool(
+                partner.sponsorship_ids.filtered_domain(
+                    [
+                        ("can_write_letter", "=", True),
+                        "|",
+                        ("partner_id.portal_sponsorships", "=", "all_info"),
+                        ("correspondent_id", "=", partner.id),
+                    ]
+                )
+            )
