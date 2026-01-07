@@ -46,7 +46,7 @@ class ContractGroup(models.Model):
         """
         self.ensure_one()
 
-        # Default / Fallback values
+        # 1. Initialize Default Values
         info = {
             "icon": False,
             "ref_number": False,
@@ -57,19 +57,55 @@ class ContractGroup(models.Model):
             "group_id": self.id,
         }
 
-        if not self.payment_mode_id:
-            return info
+        icon_search_term = False
 
-        all_icons = self.env["payment.icon"].sudo().search([("image", "!=", False)])
-        for icon in all_icons:
-            if icon.name.lower() in self.payment_mode_id.name.lower():
+        # 2. Case A: Online Token (Credit Card / PostFinance)
+        if self.payment_token_id:
+            info["is_card"] = True
+
+            # Extract Brand from "Brand_ExternalId" format (e.g., "Visa_12345")
+            token_name = self.payment_token_id.name or ""
+            if "_" in token_name:
+                brand_name = token_name.split("_")[0]
+            else:
+                brand_name = token_name
+
+            info["label"] = brand_name
+            icon_search_term = brand_name
+
+        # 3. Case B: Manual Payment Mode (BVR / LSV / Permanent Order)
+        elif self.payment_mode_id:
+            info["type"] = "mode"
+            info["label"] = self.payment_mode_id.name
+
+            if self.bvr_reference:
+                info["ref_number"] = self.bvr_reference
+
+            # Use the mode name to find a matching icon
+            icon_search_term = self.payment_mode_id.name
+
+        # 4. Find the Icon
+        # We search for an icon whose name matches the term we extracted (e.g. "Visa", "BVR")
+        if icon_search_term:
+            # We use 'ilike' for case-insensitive matching.
+            # We look for an icon where the name is contained in our search term or vice-versa.
+            icon = self.env["payment.icon"].sudo().search([
+                ("image", "!=", False),
+                "|",
+                ("name", "ilike", icon_search_term),
+                ("name", "=", icon_search_term)
+            ], limit=1)
+
+            # Fallback: If no direct match, try the reverse (old logic: if icon name is IN the mode name)
+            if not icon and self.payment_mode_id:
+                all_icons = self.env["payment.icon"].sudo().search([("image", "!=", False)])
+                for i in all_icons:
+                    if i.name.lower() in icon_search_term.lower():
+                        icon = i
+                        break
+
+            if icon:
                 info["icon"] = icon.id
-                break
-
-        # Basic Mode Info
-        info["label"] = self.payment_mode_id.display_name
-        info["type"] = "mode"
-        info["ref_number"] = self.bvr_reference if self.bvr_reference else False
 
         return info
 
@@ -158,33 +194,32 @@ class ContractGroup(models.Model):
         domain = [
             ("company_id", "=", company_id),
             ("payment_type", "=", "inbound"),
-            ("state", "=", "active"),
         ]
 
-        payment_mode = False
-
-        # Strategy A: Use the Name provided by the Controller (User selection)
-        if payment_mode_name:
-            payment_mode = self.env["account.payment.mode"].search(
-                domain + [("name", "ilike", payment_mode_name)], limit=1
-            )
-
-        # Strategy B: Fallback to Acquirer's Journal (Standard Odoo Link)
-        if not payment_mode and tx.acquirer_id.journal_id:
-            payment_mode = self.env["account.payment.mode"].search(
-                domain + [("fixed_journal_id", "=", tx.acquirer_id.journal_id.id)],
-                limit=1,
-            )
-
-        if not payment_mode:
-            return self.browse(), _(
-                "Configuration Error: No suitable electronic payment mode found."
-            )
+        # payment_mode = False
+        #
+        # # Strategy A: Use the Name provided by the Controller (User selection)
+        # if payment_mode_name:
+        #     payment_mode = self.env["account.payment.mode"].search(
+        #         domain + [("name", "ilike", payment_mode_name)], limit=1
+        #     )
+        #
+        # # Strategy B: Fallback to Acquirer's Journal (Standard Odoo Link)
+        # if not payment_mode and tx.acquirer_id.journal_id:
+        #     payment_mode = self.env["account.payment.mode"].search(
+        #         domain + [("fixed_journal_id", "=", tx.acquirer_id.journal_id.id)],
+        #         limit=1,
+        #     )
+        #
+        # if not payment_mode:
+        #     return self.browse(), _(
+        #         "Configuration Error: No suitable electronic payment mode found."
+        #     )
 
         # 4. Create the Group
         vals = {
             "partner_id": tx.partner_id.id,
-            "payment_mode_id": payment_mode.id,
+            # "payment_mode_id": payment_mode.id,
             "payment_token_id": token.id,
             "recurring_unit": recurring_unit,
             "recurring_value": recurring_value,
