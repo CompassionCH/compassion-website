@@ -7,6 +7,7 @@
     align-items: center;
     justify-content: center;
     width: fit-content;
+    position: relative;
 }
 
 /* The Button:
@@ -89,7 +90,9 @@
 /* Ensures proper left and right alignment of the dropdown menu */
 .language-selector__dropdown-menu{
       right: 0;
-  left: auto;
+      left: auto;
+      top: 100%;
+      margin-top: 0.25rem;
     }
 @media (max-width: 437px) {
     .language-selector__dropdown-menu {
