@@ -96,6 +96,16 @@
       border-radius: 10px;
     }
 
+/* Forces the items to use the Compassion Blue variable on interaction. */
+.js_language_selector .dropdown-menu .dropdown-item {
+    &:hover, &:focus, &:active, &.active {
+        background-color: var(--compassion-blue) !important;
+        color: #fff !important; /* Ensure text is readable */
+    }
+
+    transition: background-color 0.2s ease;
+}
+
 @include media-breakpoint-down(md) {
 
     .js_language_selector {
