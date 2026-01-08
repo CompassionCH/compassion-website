@@ -448,12 +448,8 @@
                     >
                         <t t-if="google_api_key">
                             <t t-call="theme_compassion_2025.MapComponent">
-                                <t
-                                    t-set="obfuscated_coordinates"
-                                    t-value="compassion_child.project_id.get_obfuscated_coordinates_json()"
-                                />
-                                <t t-set="long" t-value="obfuscated_coordinates['Longitude']" />
-                                <t t-set="lat" t-value="obfuscated_coordinates['Latitude']" />
+                                <t t-set="long" t-value="compassion_child.project_id.gps_longitude_obfuscated" />
+                                <t t-set="lat" t-value="compassion_child.project_id.gps_latitude_obfuscated" />
                                 <t t-set="api_key" t-value="google_api_key" />
                                 <t t-set="custom_map_id" t-value="google_custom_map_id" />
                             </t>
@@ -462,9 +458,10 @@
                             <t t-call="my_compassion.WeatherTimeContainer">
                                 <t t-set="timezone" t-value="timezone" />
                                 <t t-set="fcp_id" t-value="compassion_child.project_id.fcp_id" />
+                                <t t-set="church_default_name">Compassion center</t>
                                 <t
                                     t-set="cdc_name"
-                                    t-value="compassion_child.project_id.child_center_original_name or compassion_child.project_id.name or 'Compassion center' "
+                                    t-value="compassion_child.project_id.child_center_original_name or compassion_child.project_id.name or church_default_name "
                                 />
                                 <t
                                     t-set="city_country"
