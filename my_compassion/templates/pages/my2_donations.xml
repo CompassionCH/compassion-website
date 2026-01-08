@@ -54,7 +54,7 @@ Page: My Compassion 2 Donations Page
                                     <form id="tax_receipt_form" action="/my/download/tax_receipt" class="mb-3">
                                         <div class="d-flex flex-row align-items-end">
                                             <t t-call="theme_compassion_2025.FormFieldComponent">
-                                                <t t-set="label">Tax receipt</t>
+                                                <t t-set="label">Download your tax receipt</t>
                                                 <t t-set="top_class" t-value="'mr-2'" />
                                                 <t t-call="theme_compassion_2025.SelectComponent">
                                                     <t t-set="name" t-value="'year'" />
@@ -125,7 +125,7 @@ Page: My Compassion 2 Donations Page
                                             t-value="[
                         {
                             'icon': 'download01',
-                            'color': 'mid-yellow',
+                            'color': 'low-blue',
                             'action': 'link',
                             'href': '/my/download/gift_bvr?child_id=' + str(sponsorship.child_id.id),
                         }
