@@ -42,13 +42,25 @@ class Partner(models.Model):
                 user.login = partner.user_login
 
     def has_unread_correspondence(self):
-        """Check if partner has at least one correspondence with email_read set."""
-        correspondence = self.env["correspondence"].search(
-            [
-                ("partner_id", "=", self.id),
-                ("email_read", "=", False),
-            ],
-            limit=1,
+        """
+        Check if the partner has at least one unread correspondence.
+        """
+
+        writable_child_ids = self.sponsorship_ids.child_id.filtered(
+            "can_i_write_letter"
+        ).ids
+        correspondence = (
+            self.env["correspondence"]
+            .with_user(self.user_id)
+            .search(
+                [
+                    ("partner_id", "=", self.id),
+                    ("email_read", "=", False),
+                    ("child_id", "in", writable_child_ids),
+                    ("direction", "=", "Beneficiary To Supporter"),
+                ],
+                limit=1,
+            )
         )
         return bool(correspondence)
 
