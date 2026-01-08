@@ -287,6 +287,7 @@
     <!-- SURVIVAL FUND PRODUCT -->
     <data noupdate="0">
         <record id="sponsorship_switzerland.product_template_fund_csp" model="product.template">
+            <field name="name">Moms and babies</field>
             <!-- Header information -->
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="True"/>
@@ -307,25 +308,28 @@
                 babies and for the hope you are bringing to them through your help.
             </field>
             <!-- MyCompassion tab -->
-            <field name="name">Child Survival Program</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
-            <field name="my_compassion_name">Moms and babies</field>
+            <field name="my_compassion_name">Helping Mothers and Babies</field>
             <field name="my_compassion_color" ref="theme_compassion_2025.mid_pink"/>
             <field name="my_compassion_pictogram" ref="theme_compassion_2025.pictogram_mothers_and_babies"/>
             <field name="my_compassion_description">
-                The survival program for moms and babies provides support to pregnant women...
+                To ensure babies get a healthy start in life, Compassion’s Survival
+                Program supports mothers before and after birth through counseling,
+                medical care, and individual support.
             </field>
             <field name="my_compassion_show_impact_statement" eval="True"/>
             <field name="my_compassion_impact_before_ids" eval="[
                 (5, 0, 0),
-                (0, 0, {'description': 'Every year more than 2,2 millions of children dies...'}),
-                (0, 0, {'description': 'And every year more than 700 women dies giving birth...'})
+                (0, 0, {'description': 'Every year, more than 2.3 million children die before their 28th day of life.'}),
+                (0, 0, {'description': 'Over 260,000 women lose their lives during childbirth annually.'})
             ]"/>
             <field name="my_compassion_impact_after_ids" eval="[
                 (5, 0, 0),
-                (0, 0, {'description': 'Help to provide essential medical care for a baby\'s crucial first year.'}),
-                (0, 0, {'description': 'Equip families through training in subsistence farming.'})
+                (0, 0, {'description': 'Medical care during pregnancy, childbirth, and the child\'s first year of life.'}),
+                (0, 0, {'description': 'Nutritious food.'}),
+                (0, 0, {'description': 'Psychosocial and spiritual support.'}),
+                (0, 0, {'description': 'Training to generate a sustainable income in the long term.'})
             ]"/>
             <field name="my_compassion_show_info" eval="False"/>
             <field name="my_compassion_show_testimony" eval="False"/>
