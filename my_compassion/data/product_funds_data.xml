@@ -154,7 +154,8 @@
 
     <!-- FOOD FUND PRODUCT -->
     <data noupdate="0">
-        <record id="product_template_303_33d233eb" model="product.template">
+        <record id="product_template_fund_fda" model="product.template">
+            <field name="name">Food aid program</field>
             <!-- Header information -->
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="True"/>
@@ -164,29 +165,28 @@
             <field name="default_code">drf_food-business</field>
             <field name="list_price">20.00</field>
             <!-- MyCompassion tab -->
-            <field name="name">food crisis</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
-            <field name="my_compassion_name">Food aid program</field>
+            <field name="my_compassion_name">Food Fund</field>
             <field name="my_compassion_color" ref="theme_compassion_2025.mid_brown"/>
             <field name="my_compassion_pictogram" ref="theme_compassion_2025.pictogram_food"/>
             <field name="my_compassion_description">
-                Compassion responds to the massive increase in food prices following the
-                food crisis. Our Food Aid Program involves distributing food reserves
-                and setting up resilience programs through training in subsistence
-                farming.
+                Droughts, crop failures, conflict, and rising prices—for families in
+                extreme poverty, food is becoming less affordable or is often barely
+                available. Through the Food Fund, Compassion steps in during times of
+                shortage. This ensures sponsored children have enough to eat—and not
+                just them, but their parents and siblings too.
             </field>
             <field name="my_compassion_show_impact_statement" eval="True"/>
             <field name="my_compassion_impact_before_ids" eval="[
                 (5, 0, 0),
-                (0, 0, {'description': 'Food security is a major issue in many countries in the South.'}),
-                (0, 0, {'description': 'Many families do not know if and what they will eat tomorrow.'})
+                (0, 0, {'description': 'Food security is a major challenge in many countries in the Global South.'}),
+                (0, 0, {'description': 'Many families often do not know if or what they will eat tomorrow.'})
             ]"/>
             <field name="my_compassion_impact_after_ids" eval="[
                 (5, 0, 0),
-                (0, 0, {'description': 'Distribute food reserves to the most vulnerable families.'}),
-                (0, 0, {'description': 'Equip families through training in subsistence farming.'}),
-                (0, 0, {'description': 'Help build food resilience in the most affected communities.'})
+                (0, 0, {'description': 'Distribute food supplies to families in critical situations.'}),
+                (0, 0, {'description': 'Provide vulnerable families with seeds, fertilizer, and livestock, and offer training in self-sufficient farming.'})
             ]"/>
             <field name="my_compassion_show_info" eval="False"/>
             <field name="my_compassion_show_testimony" eval="False"/>
