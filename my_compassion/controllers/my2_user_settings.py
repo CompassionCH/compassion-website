@@ -64,13 +64,15 @@ class MyCompassionUserController(http.Controller):
             "email": str,
         }
 
+        optional_fields = {"phone", "mobile"}
+
         vals_to_update = {}
         errors = {}
         # Iterate through submitted data and validate it against the allowed fields.
         for field, value in post.items():
             if field in allowed_fields:
                 clean_value = (value or "").strip()
-                if not clean_value:
+                if not clean_value and field not in optional_fields:
                     errors[field] = "This field cannot be empty."
                 else:
                     try:
