@@ -244,6 +244,7 @@
     <!-- CHRISTMAS GIFT FUND PRODUCT -->
     <data noupdate="0">
         <record id="sponsorship_switzerland.product_template_fund_nol" model="product.template">
+            <field name="name">Christmas Gift</field>
             <!-- Header information -->
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="True"/>
@@ -260,28 +261,23 @@
                 with each child of Compassion.
             </field>
             <!-- MyCompassion tab -->
-            <field name="name">Christmas Gift</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">gift</field>
-            <field name="my_compassion_name">Christmas Gift</field>
+            <field name="my_compassion_name">Christmas Gifts</field>
             <field name="my_compassion_color" ref="theme_compassion_2025.low_orange"/>
             <field name="my_compassion_pictogram" ref="theme_compassion_2025.pictogram_christmas_gift"/>
             <field name="my_compassion_description">
-                Every Compassion child should experience the joy of opening a gift at
-                Christmas. Help make it possible with your donation today!
+                Every child in the Compassion program should experience the joy of
+                opening a gift at Christmas. Your donation makes this possible!
             </field>
             <field name="my_compassion_show_impact_statement" eval="False"/>
             <field name="my_compassion_show_info" eval="True"/>
             <field name="my_compassion_info_ids" eval="[
                 (5, 0, 0),
-                (0, 0, {'title': 'Every Compassion assisted child receives a gift.', 'text': 'When you give to the Christmas Gift Fund, your donation is combined.'}),
-                (0, 0, {'title': 'Gifts are personalized to each child\'s needs.', 'text': 'Staff at the child development centers personally know each child.'})
+                (0, 0, {'title': 'A gift for every child', 'text': 'Your donation ensures your sponsored child receives a Christmas gift. You are also welcome to donate extra to provide gifts for unsponsored children, ensuring that every one of the 2.3 million children in our program receives a gift.'}),
+                (0, 0, {'title': 'Meaningful and personal', 'text': 'Staff at the Child Development Centers know every child well. They choose gifts that bring joy while meeting the children\'s specific needs. Some children receive a toy, others clothing or a warm blanket. Still others might receive a goat for milk or food supplies for the whole family.'}),
+                (0, 0, {'title': 'Lighting up children\'s eyes', 'text': 'At the Compassion Child Development Center in northern Peru, the Christmas party is one of the highlights of the year. Carefully prepared by Compassion staff, the celebration is an unforgettable day for the children and their families—full of laughter, gratitude, hope, and genuine community. Yamile (pictured) beams over her Christmas gift, which would not be possible without donations.'})
             ]"/>
-            <field name="my_compassion_show_testimony" eval="True"/>
-            <field name="my_compassion_testimony_title">The Perfect Gift</field>
-            <field name="my_compassion_testimony_text">
-                One of the highlights of the year for a Compassion center in northern Peru...
-            </field>
             <field name="my_compassion_donation_quantity_low">1</field>
             <field name="my_compassion_donation_quantity_medium">3</field>
             <field name="my_compassion_donation_quantity_high">5</field>
