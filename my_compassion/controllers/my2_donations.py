@@ -882,6 +882,7 @@ class MyCompassionDonationsController(CustomerPortal):
 
     # -------------------------------------------------------------------------
     # DEBUG ROUTES
+    # TODO remove before production deployment
     # -------------------------------------------------------------------------
     @http.route('/my2/debug/charge_token', type='json', auth='user', website=True)
     def debug_charge_token(self, group_id):

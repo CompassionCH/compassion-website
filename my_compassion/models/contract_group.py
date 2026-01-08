@@ -136,11 +136,10 @@ class ContractGroup(models.Model):
         return False
 
     @api.model
-    def create_from_transaction(self, tx, payment_mode_name=None):
+    def create_from_transaction(self, tx):
         """
         Creates or retrieves a contract group from a validation transaction.
         :param tx: payment.transaction record
-        :param payment_mode_name: (optional) Name of the method selected by user
         :return: (group_record, message_string)
         """
         if not tx or not tx.payment_token_id:
@@ -195,12 +194,6 @@ class ContractGroup(models.Model):
         if payment_brand:
             payment_mode = self.env["account.payment.mode"].search(
                 domain + [("name", "ilike", "%" + payment_brand + "%")], limit=1
-            )
-
-        # Strategy B: If A failed, try the controller-provided name
-        if not payment_mode and payment_mode_name:
-            payment_mode = self.env["account.payment.mode"].search(
-                domain + [("name", "ilike", "%" + payment_mode_name + "%")], limit=1
             )
 
         # Strategy C: Fallback to Acquirer's Journal (Standard Odoo Link)
