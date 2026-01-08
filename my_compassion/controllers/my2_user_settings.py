@@ -64,7 +64,7 @@ class MyCompassionUserController(http.Controller):
             "email": str,
         }
 
-        optional_fields = {"phone"}
+        optional_fields = {"phone", "mobile"}
 
         vals_to_update = {}
         errors = {}
