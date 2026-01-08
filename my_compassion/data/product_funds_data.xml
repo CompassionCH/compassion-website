@@ -198,7 +198,8 @@
 
     <!-- DISASTER FUND PRODUCT -->
     <data noupdate="0">
-        <record id="product_template_238_d12e2b61" model="product.template">
+        <record id="product_template_fund_dis" model="product.template">
+            <field name="name">Emergency funds</field>
             <!-- Header information -->
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="True"/>
@@ -209,27 +210,28 @@
             <field name="list_price">8.00</field>
             <field name="standard_price">8.00</field>
             <!-- MyCompassion tab -->
-            <field name="name">Ethiopia emergency</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
-            <field name="my_compassion_name">Emergency Funds</field>
+            <field name="my_compassion_name">Disaster Relief Fund</field>
             <field name="my_compassion_color" ref="theme_compassion_2025.low_orange"/>
             <field name="my_compassion_pictogram" ref="theme_compassion_2025.pictogram_disaster_relief"/>
             <field name="my_compassion_description">
-                Compassion’s church partners know their communities inside out and are
-                uniquely  positioned to respond to disasters.
+                Compassion’s church partners are deeply rooted in their communities,
+                allowing them to respond quickly and effectively to disasters. Our
+                Disaster Relief Fund provides centers and affected families with
+                immediate aid, essential supplies, and safe shelter right after a crisis
+                strikes.
             </field>
             <field name="my_compassion_show_impact_statement" eval="True"/>
             <field name="my_compassion_impact_before_ids" eval="[
                 (5, 0, 0),
-                (0, 0, {'description': 'The number of weather-related disasters to hit the world has increased five-fold over the past 50 years.'}),
-                (0, 0, {'description': 'Every year natural disasters kill around 45,000 people and affect close to 200 million people worldwide.'})
+                (0, 0, {'description': 'Weather-related disasters have increased fivefold in the last 50 years.'}),
+                (0, 0, {'description': 'Every year, millions of people worldwide face emergencies due to extreme weather events, which often destroy basic necessities like water, food, shelter, and healthcare access.'})
             ]"/>
             <field name="my_compassion_impact_after_ids" eval="[
                 (5, 0, 0),
-                (0, 0, {'description': 'Provide families impacted by crises with emergency shelter, medical supplies, food and water.'}),
-                (0, 0, {'description': 'Build housing for families battling extreme poverty and give children a secure, safe home.'}),
-                (0, 0, {'description': 'Empower parents in poverty by giving them access to income generation training and microfinance programmes.'})
+                (0, 0, {'description': 'Provide families in acute crisis with emergency shelter, medical care, food, and clean water.'}),
+                (0, 0, {'description': 'Develop sustainable reconstruction plans with local partners to establish long-term stability.'})
             ]"/>
             <field name="my_compassion_show_info" eval="False"/>
             <field name="my_compassion_show_testimony" eval="False"/>
