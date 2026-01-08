@@ -52,8 +52,8 @@ class MyCompassionEventBannerController(http.Controller):
             ("target_route_ids", "=", False),
             ("target_route_ids.path", "in", possible_routes),
             "|",
-            ("target_partner_tags", "=", False),
-            ("target_partner_tags", "in", user_tag_ids),
+            ("target_partner_tag_ids", "=", False),
+            ("target_partner_tag_ids", "in", user_tag_ids),
         ]
 
         banners = (

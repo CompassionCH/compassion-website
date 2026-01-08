@@ -109,7 +109,7 @@ class EventBanner(models.Model):
         "If empty, it is visible on all pages.",
     )
 
-    target_partner_tags = fields.Many2many(
+    target_partner_tag_ids = fields.Many2many(
         comodel_name="res.partner.category",
         string="Target Contact Tags",
         help="If tags are selected, the banner is only visible to users having "
