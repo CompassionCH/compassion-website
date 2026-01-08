@@ -4,6 +4,7 @@
     <!-- WASH FUND PRODUCT -->
     <data noupdate="0">
         <record id="sponsorship_switzerland.product_template_fund_wtp" model="product.template">
+            <field name="name">"Water for children funds</field>
             <!-- Header information -->
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="True"/>
@@ -20,7 +21,6 @@
                 your support.
             </field>
             <!-- MyCompassion tab -->
-            <field name="name">"Clean Water</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
             <field name="my_compassion_name">Clean Water</field>
@@ -55,6 +55,7 @@
     <!-- UNSPONSORED CHILDREN FUND PRODUCT -->
     <data noupdate="0">
         <record id="sponsorship_switzerland.product_template_fund_usp" model="product.template">
+            <field name="name">Children waiting for a sponsor funds</field>
             <!-- Header information -->
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="True"/>
@@ -73,30 +74,29 @@
                 We thank you very much for your precious support.
             </field>
             <!-- MyCompassion tab -->
-            <field name="name">Unsponsored Children Fund</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
-            <field name="my_compassion_name">Children waiting for a sponsor funds</field>
+            <field name="my_compassion_name">Children Waiting for a Sponsor</field>
             <field name="my_compassion_color" ref="theme_compassion_2025.low_yellow"/>
             <field name="my_compassion_pictogram" ref="theme_compassion_2025.pictogram_children"/>
-            <field name="my_compassion_description">Independent research proves that
-                Compassion’s sponsorship program gives children a life-changing
-                foundation of primary education, vocational skills  training and a
-                mentor to help them plan for their future. Our Education
-                Interventions enable children to go even further.
+            <field name="my_compassion_description">Compassion staff on the ground
+                identify highly vulnerable families and offer them the chance to
+                register a child at the local Child Development Center. There, children
+                receive support, protection, and loving care even before a sponsor is
+                found. This fund covers program costs for children during this waiting
+                period, ensuring they don't miss out on vital activities.
             </field>
             <field name="my_compassion_show_impact_statement" eval="True"/>
             <field name="my_compassion_impact_before_ids" eval="[
                 (5, 0, 0),
-                (0, 0, {'description': 'Only 52% of secondary-aged school children attend school.'}),
-                (0, 0, {'description': '250 million young people globally are illiterate.'}),
-                (0, 0, {'description': 'The number of children not in school fell by 50 million between 1990 and 2014.'})
+                (0, 0, {'description': 'Currently, over 400 million children worldwide live in extreme poverty on less than $2.15 a day.'}),
+                (0, 0, {'description': '305,000 children are currently participating in the Compassion program while waiting for a sponsor.'}),
+                (0, 0, {'description': 'The average wait time to be matched with a sponsor is around 180 days.'})
             ]"/>
             <field name="my_compassion_impact_after_ids" eval="[
                 (5, 0, 0),
-                (0, 0, {'description': 'Keep young people in school by offering scholarships and secondary school fees.'}),
-                (0, 0, {'description': 'Provide extra textbooks and resources which support young people in overcoming poverty.'}),
-                (0, 0, {'description': 'Give children and young people access to powerful educational resources such as libraries and computer labs.'})
+                (0, 0, {'description': 'These children can fully participate in the Compassion program and center activities.'}),
+                (0, 0, {'description': 'Children receive support, protection, and loving care while they wait for a sponsor.'})
             ]"/>
             <field name="my_compassion_show_info" eval="False"/>
             <field name="my_compassion_show_testimony" eval="False"/>
