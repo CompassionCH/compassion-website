@@ -58,7 +58,7 @@ class MyCompassionChildrenController(WebsiteChild):
         return partner.ids
 
     def _get_timeline_count(self, child_id, partner_ids):
-        """Get total count of timeline records (correspondence + gifts)."""
+        """Get total count of timeline records (correspondence + gifts + start)."""
         sql = """
             SELECT
                 (SELECT COUNT(*) FROM correspondence
@@ -66,9 +66,21 @@ class MyCompassionChildrenController(WebsiteChild):
                 +
                 (SELECT COUNT(*) FROM sponsorship_gift
                  WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
+                +
+                (SELECT COUNT(*) FROM recurring_contract rc
+                 WHERE rc.child_id = %(child_id)s
+                   AND rc.partner_id = ANY(%(partner_ids)s)
+                   AND rc.state IN ('active', 'terminated')
+                   AND rc.start_date IS NOT NULL)
                 AS total
         """
-        request.env.cr.execute(sql, {"child_id": child_id, "partner_ids": partner_ids})
+        request.env.cr.execute(
+            sql,
+            {
+                "child_id": child_id,
+                "partner_ids": partner_ids,
+            },
+        )
         return request.env.cr.fetchone()[0] or 0
 
     def _get_timeline_data(self, child_id, partner_ids, offset, limit):
@@ -113,6 +125,23 @@ class MyCompassionChildrenController(WebsiteChild):
                 LEFT JOIN res_currency rc ON rc.id = aml.currency_id
                 WHERE s.child_id = %(child_id)s
                   AND s.partner_id = ANY(%(partner_ids)s)
+
+                  UNION ALL
+
+                SELECT
+                    'start_sponsorship' AS model,
+                    rc.id::text AS record_id,
+                    '' AS amount,
+                    '' AS currency_name,
+                    '' AS metadata,
+                    rc.start_date::timestamp AS create_date,
+                    %(title_start_sponsorship)s AS title
+                FROM recurring_contract rc
+                WHERE rc.child_id = %(child_id)s
+                  AND rc.partner_id = ANY(%(partner_ids)s)
+                  AND rc.state IN ('active', 'terminated')
+                  AND rc.start_date IS NOT NULL
+
             ) AS timeline
             ORDER BY create_date DESC
             LIMIT %(limit)s OFFSET %(offset)s
@@ -129,6 +158,7 @@ class MyCompassionChildrenController(WebsiteChild):
             "title_gift_grad": _("Graduation/Final gift"),
             "title_gift_family": _("Family gift"),
             "title_gift_default": _("Received a gift"),
+            "title_start_sponsorship": _("Started sponsorship"),
             "limit": limit,
             "offset": offset,
         }
