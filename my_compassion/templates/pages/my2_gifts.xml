@@ -24,7 +24,7 @@ Page: My Compassion 2 Gifts Page
                 <t t-set="is_gift" t-value="type == 'gift'" />
                 <t t-set="is_fund" t-value="type == 'fund'" />
                 <!-- BANNER -->
-                <div class="container-content mt-4">
+                <div class="container-content">
                     <t t-call="theme_compassion_2025.BannerComponent">
                         <t t-if="is_gift">
                             <t t-set="title">Give the Gift of Compassion</t>
