@@ -109,6 +109,7 @@
     <!-- HEALTH FUND PRODUCT -->
     <data noupdate="0">
         <record id="product_template_fund_hea" model="product.template">
+            <field name="name">health funds</field>
             <!-- Header information -->
             <field name="sale_ok" eval="True"/>
             <field name="purchase_ok" eval="True"/>
@@ -118,28 +119,30 @@
             <field name="default_code">health_TG</field>
             <field name="list_price">1.00</field>
             <!-- MyCompassion tab -->
-            <field name="name">health in TG</field>
             <field name="activate_for_my_compassion" eval="True"/>
             <field name="my_compassion_donation_type">fund</field>
-            <field name="my_compassion_name">Health Funds</field>
+            <field name="my_compassion_name">Medical Assistance</field>
             <field name="my_compassion_color" ref="theme_compassion_2025.mid_green"/>
             <field name="my_compassion_pictogram" ref="theme_compassion_2025.pictogram_health"/>
             <field name="my_compassion_description">
-                Compassion’s Health Interventions provide children with quality medical
-                care including life-saving surgery, cancer treatment and more.
+                Compassion provides children with access to vital medical care—from
+                surgeries and procedures to equipping facilities for children with
+                disabilities.
+
+                Thanks to donations, our local church partners can procure medicines and
+                conduct prevention campaigns, such as those against malaria.
             </field>
             <field name="my_compassion_show_impact_statement" eval="True"/>
             <field name="my_compassion_impact_before_ids" eval="[
                 (5, 0, 0),
-                (0, 0, {'description': 'Malaria takes the life of a child every minute of every day.'}),
-                (0, 0, {'description': 'In 2019, an estimated 5.2 million children under 5 years old died from preventable and treatable causes.'}),
-                (0, 0, {'description': 'Between 2000 and 2020, the prevalence of stunted growth in children globally declined from 33.1% to 22%.'})
+                (0, 0, {'description': 'Almost every minute, a child dies from malaria.'}),
+                (0, 0, {'description': 'In 2023, 4.8 million children under the age of 5 died from preventable or treatable causes.'})
             ]"/>
             <field name="my_compassion_impact_after_ids" eval="[
                 (5, 0, 0),
-                (0, 0, {'description': 'Assist children in countries where health insurance does not exists.'}),
-                (0, 0, {'description': 'Give children life-saving vaccinations and medical treatment.'}),
-                (0, 0, {'description': 'fund prevention campaigns (against malaria, for example).'})
+                (0, 0, {'description': 'Medical support in countries without health insurance systems.'}),
+                (0, 0, {'description': 'Health check-ups and medical treatments.'}),
+                (0, 0, {'description': 'Access to critical prevention programs.'})
             ]"/>
             <field name="my_compassion_show_info" eval="False"/>
             <field name="my_compassion_show_testimony" eval="False"/>
