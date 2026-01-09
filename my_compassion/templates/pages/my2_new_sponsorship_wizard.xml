@@ -235,8 +235,9 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                 8.- per month.
                 <br />
                 <br />
-                The extra amount helps to fund urgent needs not covered by the sponsorship (e.g. natural disasters,
-                surgical procedures, malaria prevention, etc.).
+                The extra amount helps to fund urgent needs not covered by the
+                sponsorship (e.g. natural disasters,
+                medical interventions, malaria prevention, etc.).
                 <br />
                 <br />
                 This fund is available for all children supported through Compassion.
@@ -258,9 +259,9 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                     t-att-checked="wizard.wap_contribution_amount == 0"
                 />
                 <label class="mx-3 mb-0 body-small flex-grow-1" for="contribute-false">
-                    I agree to pray for and write to my godchild regularly. I understand that another person is
+                    I agree to pray for and write to my sponsored child regularly. I understand that another person is
                     providing
-                    financial support for this sponsorship, but that I am the child's official godparent.
+                    financial support for this sponsorship, but that I am the child's official sponsor.
                 </label>
             </div>
             <div class="ml-2 mt-4 d-flex">
@@ -355,7 +356,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
         <t t-call="theme_compassion_2025.FormFieldComponent">
             <t t-set="top_class" t-value="'my-3'" />
             <t t-set="label">Spoken languages</t>
-            <div>For correspondence with my godchild, I also understand the following languages:</div>
+            <div>For correspondence with my sponsored child, I also understand the following languages:</div>
             <t t-foreach="spoken_languages" t-as="language">
                 <div class="ml-2 mt-2 d-flex align-items-center">
                     <input
@@ -513,8 +514,8 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                     <t t-set="variant" t-value="'compact'" />
                     <t t-set="variation" t-value="'filled'" />
-                    <t t-if="wizard.current_step_idx &lt; (wizard.n_steps-1)" t-set="label" t-value="'Continue'" />
-                    <t t-else="" t-set="label" t-value="'Finish'" />
+                    <t t-if="wizard.current_step_idx &lt; (wizard.n_steps-1)" t-set="label">Continue</t>
+                    <t t-else="" t-set="label">Finish</t>
                     <t t-set="color" t-value="'core-blue'" />
                     <t t-set="text_color" t-value="'pure-white'" />
                     <!-- ID used by eBill extension in my_compassion_switzerland -->
