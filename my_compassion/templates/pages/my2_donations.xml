@@ -110,10 +110,11 @@ Page: My Compassion 2 Donations Page
                             <t t-foreach="active_sponsorships" t-as="sponsorship">
                                 <t t-if="sponsorship">
                                     <div class="mb-4">
+                                        <t t-set="label_see_profile">See profile</t>
                                         <t
                                             t-set="primary_button_data"
                                             t-value="{
-                        'label': 'See profile',
+                        'label': label_see_profile,
                         'pictogram': 'child-sponsorship',
                         'action': 'link',
                         'href': '/my2/children/' + str(sponsorship.child_id.id),
