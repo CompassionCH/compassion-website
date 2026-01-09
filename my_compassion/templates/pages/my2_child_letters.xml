@@ -68,7 +68,7 @@
                                         <t t-set="id" t-value="'childrenDropdown'" />
                                         <t t-set="name" t-value="'child'" />
                                         <t t-call="theme_compassion_2025.SelectComponent">
-                                            <option value="">Children</option>
+                                            <option value="">Select child</option>
                                             <t t-foreach="children_list" t-as="child">
                                                 <option
                                                     t-att-value="child.id"

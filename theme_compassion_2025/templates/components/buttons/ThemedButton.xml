@@ -27,6 +27,7 @@
     - href (string, optional): The URL to link to. If provided, an 'a' tag will be rendered instead of a 'button'.
     - radius (string, optional): Radius of the rounded corners: 'pill' (default) or 'small'
     - data_custom (char, optional): data-custom attribute to be added to the button or link element, e.g., `data-custom="value"`
+    - data_toggle (char, optional): data-toggle attribute to be added to the button or link element, e.g., `data-toggle="dropdown"`
 -->
 <odoo>
     <template id="ThemedButtonComponent_Content" name="Button Content">
@@ -74,6 +75,8 @@
                 t-att-id="id"
                 t-attf-class="btn #{btn_class} btn--radius-#{radius} #{style_class} text-#{text_color}"
                 t-att-data-custom="data_custom"
+                t-att-target="target"
+                t-att-data-toggle="data_toggle"
             >
                 <t t-call="theme_compassion_2025.ThemedButtonComponent_Content" />
             </a>
@@ -84,6 +87,7 @@
                 t-attf-class="btn #{btn_class} btn--radius-#{radius} #{style_class} text-#{text_color}"
                 t-att-data-custom="data_custom"
                 t-att-data-mode="mode"
+                t-att-data-toggle="data_toggle"
             >
                 <t t-call="theme_compassion_2025.ThemedButtonComponent_Content" />
             </button>
