@@ -168,7 +168,8 @@ odoo.define("my_compassion.my2_donations", function (require) {
         _onOpenAddModal: function (ev) {
             if (ev) ev.stopPropagation();
             $("#payment_method_selector_modal_add").modal("show");
-
+            
+            console.log("Initializing PostFinance methods...");
             // Initialize PostFinance methods
             this._fetchAndPopulateOnlineMethods();
         },
@@ -330,17 +331,19 @@ odoo.define("my_compassion.my2_donations", function (require) {
         _fetchAndPopulateOnlineMethods: function () {
             var self = this;
             var $select = this.$("#new_method_type");
+            console.log("Fetching PostFinance online methods...");
 
             if ($select.data("loaded")) return; // Avoid duplicate calls
 
             var unit = this.$('select[name="recurring_unit"]').val() || "month";
             var val = this.$('input[name="advance_billing_months"]').val() || 1;
 
-            ajax.jsonRpc("/my2/donation/add_payment_method_online", "call", {
+            ajax.jsonRpc("/my2/donation/fetch_payment_methods_iframe", "call", {
                 recurring_unit: unit,
                 recurring_value: val,
             }).then(function (result) {
                 if (result.success && result.iframe_url && result.pf_methods) {
+                    console.log("Received PostFinance methods:", result.pf_methods);
                     // Load the JS library
                     $.getScript(result.iframe_url, function () {
                         console.log("PostFinance JS Loaded");

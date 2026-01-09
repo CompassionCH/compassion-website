@@ -483,32 +483,6 @@ class MyCompassionDonationsController(CustomerPortal):
         return {"html": html}
 
     @http.route(
-        "/my2/donations/get_payment_methods_sponsor",
-        type="json",
-        auth="user",
-        website=True,
-    )
-    def get_payment_methods_sponsor(self, **kwargs):
-        """
-        Returns a list of payment methods (saved tokens and acquirers) for the current
-        user.
-        """
-        partner = request.env.user.partner_id
-        groups = partner.get_payment_modes()
-        payment_methods = []
-
-        for group in groups:
-            info = group.get_payment_method_info()
-            if not info:
-                continue
-            method = dict(info)
-            method["group_id"] = group.id
-
-            payment_methods.append(method)
-
-        return payment_methods
-
-    @http.route(
         "/my2/donation/change_method_contract", type="json", auth="user", website=True
     )
     def change_payment_method_contract(self, contract_id, group_id, **kwargs):
@@ -644,21 +618,19 @@ class MyCompassionDonationsController(CustomerPortal):
             return {"success": False, "error": _("An unexpected error occurred.")}
 
 
-    # TODO : Maybe it should be better to call it fetch_payment_methods_iframe
     @http.route(
-        "/my2/donation/add_payment_method_online",
+        "/my2/donation/fetch_payment_methods_iframe",
         type="json",
         auth="user",
         website=True,
     )
-    def add_payment_method_online(
+    def fetch_payment_methods_iframe(
         self, recurring_unit="month", recurring_value=1, **kwargs
     ):
         """
         Initiates a 'validation' transaction to tokenize a card/method.
         Returns data for rendering the PostFinance Iframe with available methods.
         """
-        partner = request.env.user.partner_id
         acquirer = self._get_payment_acquirer()
 
         if not acquirer.exists():
@@ -668,28 +640,11 @@ class MyCompassionDonationsController(CustomerPortal):
         return_url = "/my2/donations?unit={}&val={}".format(
             recurring_unit, recurring_value
         )
-        reference = "ADD-METHOD-{}-{}".format(
-            partner.id, fields.Datetime.now().strftime("%Y%m%d%H%M%S")
-        )
 
-        transaction_values = {
-            "acquirer_id": acquirer.id,
-            "reference": reference,
-            "amount": 0.0,
-            "currency_id": request.website.currency_id.id,
-            "partner_id": partner.id,
-            "partner_country_id": partner.country_id.id,
-            "type": "validation",
-            "return_url": return_url,
-        }
-
-        tx = request.env["payment.transaction"].sudo().create(transaction_values)
-        request.session["add_method_tx_id"] = tx.id
-
-        # 3. Get Integration Data (Iframe Only)
+        # 3. Get Integration Data (Iframe)
         # This calls the method overridden in 'my_compassion_switzerland'
         result_data = self._prepare_postfinance_iframe_redirect(
-            acquirer, tx, return_url
+            acquirer, return_url
         )
 
         if (
@@ -828,49 +783,6 @@ class MyCompassionDonationsController(CustomerPortal):
                 .search([("name", "ilike", term)], limit=1)
             )
         return mode
-
-    def _find_online_payment_mode(self, acquirer, method_name_from_api=None):
-        """
-        Smart search for online payment modes (Twint, Visa, etc).
-        Strategy: Name Match -> Journal Match -> Generic Fallback.
-        """
-        company_id = request.website.company_id.id
-        base_domain = [
-            ("company_id", "=", company_id),
-            ("payment_type", "=", "inbound"),
-            ("state", "=", "active"),
-        ]
-
-        payment_mode = False
-
-        # 1. Search by Name (e.g. "Twint")
-        if method_name_from_api:
-            payment_mode = (
-                request.env["account.payment.mode"]
-                .sudo()
-                .search(
-                    base_domain + [("name", "ilike", method_name_from_api)], limit=1
-                )
-            )
-
-        # 2. Fallback to Acquirer's Journal
-        if not payment_mode and acquirer.journal_id:
-            payment_mode = (
-                request.env["account.payment.mode"]
-                .sudo()
-                .search(
-                    base_domain + [("fixed_journal_id", "=", acquirer.journal_id.id)],
-                    limit=1,
-                )
-            )
-
-        # 3. Generic Fallback
-        if not payment_mode:
-            payment_mode = (
-                request.env["account.payment.mode"].sudo().search(base_domain, limit=1)
-            )
-
-        return payment_mode
 
     @staticmethod
     def _get_payment_acquirer():
