@@ -113,11 +113,11 @@
                         <t t-esc="currency_name" />
                         <t t-if="price % 1 == 0" t-set="price" t-value="'{0}.-'.format(int(price))" />
                         <t t-else="" t-set="price" t-value="'{0:.2f}'.format(price)" />
-                        <t t-if="monthly" t-set="monthly" t-value="'/mo.'" />
+                        <t t-if="monthly" t-set="monthly">/mo.</t>
                         <t t-elif="monthly_noabbr">
-                            <t t-set="monthly" t-value="' /month'" />
+                            <t t-set="monthly"> /month</t>
                         </t>
-                        <t t-else="" t-set="monthly" t-value="''" />
+                        <t t-else="" t-set="monthly"></t>
                         <t t-esc="price + monthly" />
                     </div>
                 </div>

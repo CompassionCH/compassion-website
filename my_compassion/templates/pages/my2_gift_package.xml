@@ -38,19 +38,10 @@
                     t-set="image"
                     t-valuef="/web/image/#{line.product_template_id._name}/#{line.product_template_id.id}/my_compassion_image"
                 />
-                <t
+                <t t-set="_txt_Edit_Details_1">Edit Details</t>
+<t
                     t-set="primary_button"
-                    t-value="{
-                    'icon': 'edit05',
-                    'label': 'Edit Details',
-                    'color': 'low-green',
-                    'action': 'event',
-                    'custom_event': 'donation-item:edit',
-                    'detail': {
-                        'order_line_id': line.id,
-                    },
-                }"
-                />
+                    t-value="{'icon': 'edit05', 'label': _txt_Edit_Details_1, 'color': 'low-green', 'action': 'event', 'custom_event': 'donation-item:edit', 'detail': {'order_line_id': line.id}}"/>
                 <t
                     t-set="secondary_buttons"
                     t-value="[
@@ -87,19 +78,10 @@
                     t-set="image"
                     t-valuef="/web/image/#{line.product_template_id._name}/#{line.product_template_id.id}/my_compassion_image"
                 />
-                <t
+                <t t-set="_txt_Edit_Details">Edit Details</t>
+<t
                     t-set="primary_button"
-                    t-value="{
-                    'icon': 'edit05',
-                    'label': 'Edit Details',
-                    'color': 'dark-blue',
-                    'action': 'event',
-                    'custom_event': 'donation-item:edit',
-                    'detail': {
-                        'order_line_id': line.id,
-                    },
-                }"
-                />
+                    t-value="{'icon': 'edit05', 'label': _txt_Edit_Details, 'color': 'dark-blue', 'action': 'event', 'custom_event': 'donation-item:edit', 'detail': {'order_line_id': line.id}}"/>
                 <t
                     t-set="secondary_buttons"
                     t-value="[
