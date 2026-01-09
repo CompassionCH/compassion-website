@@ -13,7 +13,12 @@
 -->
 <odoo>
     <template id="FormFieldComponent" name="Form Field Component">
-        <t t-set="invalid_hint"><t t-if="invalid_hint"><t t-esc="invalid_hint"/></t><t t-else="">Invalid value.</t></t>
+        <t t-set="invalid_hint">
+            <t t-if="invalid_hint">
+                <t t-esc="invalid_hint" />
+            </t>
+            <t t-else="">Invalid value.</t>
+        </t>
         <div t-attf-class="form-field-container #{top_class}">
             <t t-if="label">
                 <label t-att-for="input_id" t-attf-class="text-#{label_color or 'core-blue'} body-small bold mb-1">

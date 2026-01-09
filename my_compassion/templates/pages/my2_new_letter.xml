@@ -82,9 +82,14 @@
                                         <t t-set="variation" t-value="'hollow'" />
                                         <t t-set="label_empty">Select a template</t>
                                         <t t-set="label_id" t-value="'template-selection-label'" />
-                                        <t
-                                            t-set="label"
-                                           ><t t-if="draft and draft.template_id"><t t-esc="draft.template_id.name"/></t><t t-else=""><t t-esc="label_empty"/></t></t>
+                                        <t t-set="label">
+                                            <t t-if="draft and draft.template_id">
+                                                <t t-esc="draft.template_id.name" />
+                                            </t>
+                                            <t t-else="">
+                                                <t t-esc="label_empty" />
+                                            </t>
+                                        </t>
                                         <t t-set="icon" t-value="'icon-image04'" />
                                         <t t-set="color" t-value="'dark-blue'" />
                                         <t t-set="text_color" t-value="'pure_white'" />

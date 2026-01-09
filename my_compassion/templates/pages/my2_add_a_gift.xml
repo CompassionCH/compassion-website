@@ -43,10 +43,11 @@
                         <t t-call="theme_compassion_2025.ToggleButtonComponent">
                             <t t-set="name" t-value="'donation-type'" />
                             <t t-set="_txt_Gift_for_a_child">Gift for a child</t>
-<t t-set="_txt_Gift_of_compassion">Gift of compassion</t>
-<t
+                            <t t-set="_txt_Gift_of_compassion">Gift of compassion</t>
+                            <t
                                 t-set="options"
-                                t-value="[('gift', _txt_Gift_for_a_child), ('fund', _txt_Gift_of_compassion)]"/>
+                                t-value="[('gift', _txt_Gift_for_a_child), ('fund', _txt_Gift_of_compassion)]"
+                            />
                             <t t-set="default" t-value="'gift'" />
                             <t t-set="top_class" t-value="'my-4'" />
                         </t>

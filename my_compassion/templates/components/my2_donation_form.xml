@@ -47,11 +47,21 @@
     <template id="DonationFormComponent" name="Donation Form Component">
         <!-- Default property values -->
         <t t-set="edit_mode" t-value="edit_mode or False" />
-        <t t-set="submit_label"><t t-if="submit_label"><t t-esc="submit_label"/></t><t t-else="">Add &amp; check out</t></t>
+        <t t-set="submit_label">
+            <t t-if="submit_label">
+                <t t-esc="submit_label" />
+            </t>
+            <t t-else="">Add &amp; check out</t>
+        </t>
         <t t-set="submission_event" t-value="submission_event or 'donation-form:submit'" />
         <t t-set="default_frequency" t-value="default_frequency or 'one_time'" />
         <t t-set="default_suggested_amount" t-value="default_suggested_amount or 'low'" />
-        <t t-set="base_name"><t t-if="base_name"><t t-esc="base_name"/></t><t t-else="">donation</t></t>
+        <t t-set="base_name">
+            <t t-if="base_name">
+                <t t-esc="base_name" />
+            </t>
+            <t t-else="">donation</t>
+        </t>
         <div t-attf-class="my2_donation_form donation-inputs-container w-100 d-flex flex-column #{top_class}">
             <input type="hidden" name="product_id" t-att-value="product.id" />
             <t t-set="top_class" t-value="None" />
@@ -66,10 +76,8 @@
             <t t-call="theme_compassion_2025.ToggleButtonComponent">
                 <t t-set="name" t-valuef="'#{base_name}_frequency'" />
                 <t t-set="_txt_One_Time">One Time</t>
-<t t-set="_txt_Monthly">Monthly</t>
-<t
-                    t-set="options"
-                    t-value="[('one_time', _txt_One_Time), ('monthly', _txt_Monthly)]"/>
+                <t t-set="_txt_Monthly">Monthly</t>
+                <t t-set="options" t-value="[('one_time', _txt_One_Time), ('monthly', _txt_Monthly)]" />
                 <t t-set="default" t-value="default_frequency" />
                 <t t-set="top_class" t-value="'mt-3 align-self-center donation-frequency'" />
             </t>

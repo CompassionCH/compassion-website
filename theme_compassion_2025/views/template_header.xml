@@ -83,7 +83,10 @@
                 <t t-set="icon_color" t-value="'core-blue'" />
                 <t t-set="radius" t-value="'pill'" />
                 <t t-set="id" t-value="'user-dropdown-toggle'" />
-                <t t-set="label"><t t-if="is_connected"></t><t t-else="">Sign in</t></t>
+                <t t-set="label">
+                    <t t-if="is_connected" />
+                    <t t-else="">Sign in</t>
+                </t>
                 <t t-set="href" t-value="'#' if is_connected else '/web/login?redirect=/my2/dashboard'" />
                 <t t-set="data_toggle" t-value="'dropdown' if is_connected else ''" />
             </t>

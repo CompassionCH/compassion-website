@@ -63,7 +63,12 @@
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variant" t-value="'default'" />
                             <t t-set="variation" t-value="'filled'" />
-                            <t t-set="label"><t t-if="banner.button_text"><t t-esc="banner.button_text"/></t><t t-else="">Learn more</t></t>
+                            <t t-set="label">
+                                <t t-if="banner.button_text">
+                                    <t t-esc="banner.button_text" />
+                                </t>
+                                <t t-else="">Learn more</t>
+                            </t>
                             <t t-set="color" t-value="banner.button_background_color.class_name" />
                             <t t-set="text_color" t-value="banner.button_text_color.class_name" />
                             <t t-set="radius" t-value="'pill'" />
