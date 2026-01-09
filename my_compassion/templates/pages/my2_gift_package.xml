@@ -118,7 +118,7 @@
         </t>
         <!-- EMPTY CART -->
         <div t-if="len(order.order_line) == 0" class="mt-5 w-100 text-mid-grey text-center body-large bold">
-            Your Gift Package is empty.
+            Your Gift Basket is empty.
         </div>
         <!-- TOTAL AMOUNT -->
         <div
@@ -176,7 +176,7 @@
                     <div class="px-3 mt-4 d-flex flex-column align-items-center">
                         <!-- TITLE -->
                         <t t-call="theme_compassion_2025.TitleComponent">
-                            <t t-set="title_content">Gift Package</t>
+                            <t t-set="title_content">Gift Basket</t>
                             <t t-set="color" t-value="'core-blue'" />
                             <t t-set="show_underline" t-value="True" />
                             <t t-set="underline_color" t-value="'low-yellow'" />
