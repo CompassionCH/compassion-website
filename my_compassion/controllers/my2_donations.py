@@ -637,9 +637,7 @@ class MyCompassionDonationsController(CustomerPortal):
             return {"success": False, "error": "No payment provider found"}
 
         # Prepare Transaction
-        return_url = "/my2/donations?unit={}&val={}".format(
-            recurring_unit, recurring_value
-        )
+        return_url = "/my2/donations"
 
         # 3. Get Integration Data (Iframe)
         # This calls the method overridden in country specific module
@@ -658,7 +656,7 @@ class MyCompassionDonationsController(CustomerPortal):
                 "pf_methods": result_data.get("pf_methods", []),
             }
 
-        # 4. Error if Iframe data is missing (No longer supporting HTML fallback)
+        # Error if Iframe data is missing (No longer supporting HTML fallback)
         return {"success": False, "error": "Payment interface could not be loaded."}
 
     @http.route(
@@ -791,6 +789,10 @@ class MyCompassionDonationsController(CustomerPortal):
             .sudo()
             .search([("provider", "=", "postfinance")], limit=1)
         )
+
+    def _prepare_iframe_redirect(self, acquirer, return_url):
+        """ Method to be overridden by country/provider specific modules """
+        return False
 
     # -------------------------------------------------------------------------
     # DEBUG ROUTES
