@@ -642,8 +642,8 @@ class MyCompassionDonationsController(CustomerPortal):
         )
 
         # 3. Get Integration Data (Iframe)
-        # This calls the method overridden in 'my_compassion_switzerland'
-        result_data = self._prepare_postfinance_iframe_redirect(
+        # This calls the method overridden in country specific module
+        result_data = self._prepare_iframe_redirect(
             acquirer, return_url
         )
 
