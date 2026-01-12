@@ -1,6 +1,5 @@
 from openupgradelib import openupgrade
 
-
 # Specific Product IDs (Production Database)
 PRODUCT_ID_SURVIVAL = 15
 PRODUCT_ID_CHRISTMAS = 31
@@ -20,6 +19,7 @@ TARGET_PRODUCT_IDS = (
     PRODUCT_ID_FOOD,
     PRODUCT_ID_HEALTH,
 )
+
 
 @openupgrade.migrate()
 def migrate(env, version):
@@ -114,6 +114,5 @@ def migrate(env, version):
     # Cleanup Info Lines
     # Applies ONLY to Christmas Gift product
     cr.execute(
-        "DELETE FROM donation_info_line WHERE donation_id = %s",
-        (PRODUCT_ID_CHRISTMAS,)
+        "DELETE FROM donation_info_line WHERE donation_id = %s", (PRODUCT_ID_CHRISTMAS,)
     )
