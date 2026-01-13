@@ -17,7 +17,7 @@ class ContractGroup(models.Model):
 
     active = fields.Boolean(default=True)
     payment_token_id = fields.Many2one("payment.token", string="Payment Token")
-    gender = fields.Selection(related="partner_id.gender", store=True, readonly=False)
+    gender = fields.Selection(related="partner_id.gender", store=True, readonly=True)
     total_amount = fields.Float(compute="_compute_total_amount")
 
     active_contract_count = fields.Integer(
