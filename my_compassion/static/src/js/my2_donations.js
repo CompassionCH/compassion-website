@@ -63,6 +63,11 @@ odoo.define("my_compassion.my2_donations", function (require) {
             this._super.apply(this, arguments);
         },
 
+        // PLEASE NOTE:
+        // Before deep diving into this code note that there's a documentation
+        // page explaining the overall architecture and flow of this code.
+        // https://compassion.odoo.com/odoo/knowledge/205 
+
         // -------------------------------------------------------------------------
         // MODAL OPEN HANDLERS
         // -------------------------------------------------------------------------
