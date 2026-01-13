@@ -143,8 +143,11 @@ class ContractGroup(models.Model):
         :return: (group_record, message_string)
         """
         if not tx or not tx.payment_token_id:
-            return self.browse(), _("No valid payment method found.")
-
+            return {
+                'group': self.browse(),
+                'status': 'error',
+                'message': _("No valid payment method found.")
+            }
         token = tx.payment_token_id
 
         # 1. Reuse existing group (Idempotency)
@@ -160,8 +163,11 @@ class ContractGroup(models.Model):
             # Reactivate if it was archived
             if not existing_group.active:
                 existing_group.active = True
-            return existing_group, _("This payment method was already saved.")
-
+            return {
+                'group': existing_group,
+                'status': 'existing',
+                'message': _("This payment method was already saved.")
+            }
         # 2. Retrieve Recurring Frequency (Unit/Value)
         # Default to monthly if not specified
         recurring_unit = "month"
@@ -177,6 +183,8 @@ class ContractGroup(models.Model):
                     recurring_unit = params["unit"][0]
                 if "val" in params:
                     recurring_value = int(params["val"][0])
+                # Clean up URL params
+
             except Exception:
                 pass
 
@@ -220,4 +228,8 @@ class ContractGroup(models.Model):
         }
 
         group = self.create(vals)
-        return group, _("Payment method successfully added.")
+        return {
+            'group': group,
+            'status': 'new',
+            'message': _("Payment method successfully added.")
+        }
