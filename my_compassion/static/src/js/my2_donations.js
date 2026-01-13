@@ -410,7 +410,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
                             } else {
                                 var btn = $("#btn_save_payment_method");
                                 btn.attr("disabled", false).find("i").remove();
-                                alert("Please check your input.");
+                                ToastService.error(_t("Please check your input."));
                             }
                         });
 
