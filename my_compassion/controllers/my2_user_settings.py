@@ -8,7 +8,7 @@
 ##############################################################################
 from datetime import date
 
-from odoo import api, http
+from odoo import _, api, http
 from odoo.exceptions import ValidationError
 from odoo.http import request
 from odoo.tools import html_escape
@@ -73,12 +73,12 @@ class MyCompassionUserController(http.Controller):
             if field in allowed_fields:
                 clean_value = (value or "").strip()
                 if not clean_value and field not in optional_fields:
-                    errors[field] = "This field cannot be empty."
+                    errors[field] = _("This field cannot be empty.")
                 else:
                     try:
                         vals_to_update[field] = allowed_fields[field](clean_value)
                     except (ValueError, TypeError):
-                        errors[field] = "Invalid value for %s." % field
+                        errors[field] = _("Invalid value.")
 
         if errors:
             # If any errors were found, return them to the frontend,
@@ -103,7 +103,7 @@ class MyCompassionUserController(http.Controller):
 
             # Prepare change summary for notification
             changes = []
-            for field, _ in vals_to_update.items():
+            for field in vals_to_update.items():
                 # those are compute
                 if field in ("zip_id", "email_bounced", "preferred_name"):
                     continue
@@ -159,7 +159,7 @@ class MyCompassionUserController(http.Controller):
         new_login = (post.get("login") or "").strip()
 
         if not new_login:
-            return {"success": False, "errors": {"login": "Login cannot be empty."}}
+            return {"success": False, "errors": {"login": _("Login cannot be empty.")}}
 
         # Check if login is already taken by another user
         if (
@@ -170,7 +170,7 @@ class MyCompassionUserController(http.Controller):
             return {
                 "success": False,
                 "errors": {
-                    "login": "This email is already used as a login by another user."
+                    "login": _("This email is already used as a login by another user.")
                 },
             }
 
@@ -233,7 +233,7 @@ class MyCompassionUserController(http.Controller):
         if partner.has_sponsorships:
             return {
                 "success": False,
-                "error": "Account cannot be deleted due to active sponsorships.",
+                "error": _("Account cannot be deleted due to active sponsorships."),
             }
         try:
             request.env["res.partner"].with_user(api.SUPERUSER_ID).browse(
@@ -243,5 +243,6 @@ class MyCompassionUserController(http.Controller):
         except Exception as e:
             return {
                 "success": False,
-                "error": "Account cannot be deleted due to exception:" + str(e),
+                "error": _("Account could not be deleted, please contact us. ")
+                + str(e),
             }
