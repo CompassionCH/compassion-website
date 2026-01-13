@@ -305,9 +305,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
                         if (result.html) {
                             var $newContent = $(result.html);
                             self.$("#my_sponsorships_container").replaceWith($newContent);
-                        } else {
-                            // Fallback if no HTML returned
-                            setTimeout(() => window.location.reload(), 1000);
                         }
 
                         // Update Client-Side Data State
@@ -383,6 +380,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
             var $iframeContainer = this.$("#postfinance-iframe-container");
             var $loading = this.$("#pf-iframe-loading");
             var $paymentForm = this.$("#payment-form");
+            console.log("Selected new method type:", value);
 
             // Reset
             $paymentForm.empty();
@@ -390,16 +388,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
 
             if (value && value.startsWith("pf_")) {
                 // === Payment acquirer mode ===
-                // 1. Get the readable name (e.g., "Twint", "Visa")
-                var methodName = $target.find("option:selected").text();
-
-                // 2. Send to Backend immediately
-                this._rpc({
-                    route: "/my2/donation/create_payment_transaction",
-                    params: {
-                        method_name: methodName,
-                    },
-                });
 
                 // 1. Hide Config Fields
                 $configFields.hide();
@@ -444,6 +432,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 } else {
                     $loading.text("Payment library still loading...");
                 }
+                console.log("PostFinance Iframe initialized.");
             } else {
                 // === MANUAL MODE ===
                 $configFields.show();
