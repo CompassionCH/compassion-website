@@ -192,7 +192,7 @@ class ContractGroup(models.Model):
                     recurring_value = int(params["val"][0])
                 # Clean up URL params
 
-            except Exception:
+            except (ValueError, KeyError):
                 pass
 
         # 3. Identify Payment Mode
@@ -242,3 +242,16 @@ class ContractGroup(models.Model):
             "status": "new",
             "message": _("Payment method successfully added."),
         }
+
+    # save icons to not reload them each time
+    def get_payment_method_icons(self):
+        """Returns a dictionary of payment method icons for quick access."""
+        icons = {}
+        icon_records = (
+            self.env["payment.icon"]
+            .sudo()
+            .search([("image", "!=", False)])
+        )
+        for icon in icon_records:
+            icons[icon.name.lower()] = icon.id
+        return icons
