@@ -6,7 +6,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
     var QWeb = core.qweb;
     const ToastService = require("my_compassion.toast_service");
     var _t = core._t;
-    var ajax = require("web.ajax");
 
     publicWidget.registry.My2Donations = publicWidget.Widget.extend({
         selector: ".my2-donations-page",
@@ -184,7 +183,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 .addClass("selected border-core-blue bg-light-blue")
                 .removeClass("border-gray-200 hover-shadow-sm");
         },
-        
+
         /**
          * 
          * @param {*} ev 
@@ -339,14 +338,20 @@ odoo.define("my_compassion.my2_donations", function (require) {
 
             var unit = this.$('select[name="recurring_unit"]').val() || "month";
             var val = this.$('input[name="advance_billing_months"]').val() || 1;
-
-            ajax.jsonRpc("/my2/donation/fetch_payment_methods_iframe", "call", {
-                recurring_unit: unit,
-                recurring_value: val,
+            this._rpc({
+                route: "/my2/donation/fetch_payment_methods_iframe",
+                params: {
+                    recurring_unit: unit,
+                    recurring_value: val,
+                },
             }).then(function (result) {
                 if (result.success && result.iframe_url && result.pf_methods) {
+                    console.log("Received PostFinance methods:", result.pf_methods);
+
                     // Load the JS library
-                    $.getScript(result.iframe_url, function () {});
+                    $.getScript(result.iframe_url, function () {
+                        console.log("PostFinance JS Loaded");
+                    });
 
                     // Append options directly to the main select
                     result.pf_methods.forEach(function (method) {
@@ -377,14 +382,17 @@ odoo.define("my_compassion.my2_donations", function (require) {
             this.pfHandler = null;
 
             if (value && value.startsWith("pf_")) {
-                // === ONLINE MODE ===
+                // === Payment acquirer mode ===
                 // 1. Get the readable name (e.g., "Twint", "Visa")
                 var methodName = $target.find("option:selected").text();
 
                 // 2. Send to Backend immediately
-                ajax.jsonRpc("/my2/donation/set_selected_payment_method", "call", {
-                    method_name: methodName,
-                });
+                this._rpc({
+                    route: "/my2/donation/create_payment_transaction",
+                    params: {
+                        method_name: methodName,
+                    },
+                })
 
                 // 1. Hide Config Fields
                 $configFields.hide();

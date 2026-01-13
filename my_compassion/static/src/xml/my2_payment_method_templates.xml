@@ -72,16 +72,6 @@
                 </div>
             </div>
             <!-- Checkmark for Selected State -->
-            <t t-if="is_card">
-                <button
-                        type="button"
-                        class="btn btn-sm btn-danger btn-debug-charge ml-2"
-                        t-att-data-group-id="group_id"
-                        title="Test Charge 1.00"
-                >
-                    <i class="fa fa-bolt"/> Test
-                </button>
-            </t>
             <t t-if="selected">
                 <i class="fa fa-check-circle text-core-blue ml-3" />
             </t>

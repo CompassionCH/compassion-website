@@ -637,7 +637,9 @@ class MyCompassionDonationsController(CustomerPortal):
             return {"success": False, "error": "No payment provider found"}
 
         # Prepare Transaction
-        return_url = "/my2/donations"
+        return_url = "/my2/donations?unit={}&val={}".format(
+            recurring_unit, recurring_value
+        )
 
         # 3. Get Integration Data (Iframe)
         # This calls the method overridden in country specific module
@@ -656,7 +658,7 @@ class MyCompassionDonationsController(CustomerPortal):
                 "pf_methods": result_data.get("pf_methods", []),
             }
 
-        # Error if Iframe data is missing (No longer supporting HTML fallback)
+        # Error if Iframe data is missing
         return {"success": False, "error": "Payment interface could not be loaded."}
 
     @http.route(
@@ -677,7 +679,8 @@ class MyCompassionDonationsController(CustomerPortal):
     # PRIVATE HELPERS (Rendering Data Preparation)
     # -------------------------------------------------------------------------
 
-    def _prepare_sponsorship_values(self, partner):
+    @staticmethod
+    def _prepare_sponsorship_values(partner):
         """
         Helper to fetch all data required for the sponsorship list view.
         Returns a dict of values for QWeb rendering.
@@ -772,15 +775,11 @@ class MyCompassionDonationsController(CustomerPortal):
             .search(domain, limit=1)
         )
 
-        # Fallback: Fuzzy search
-        if not mode:
-            mode = (
-                request.env["account.payment.mode"]
-                .sudo()
-                .with_context(active_test=False)
-                .search([("name", "ilike", term)], limit=1)
-            )
         return mode
+
+    def _prepare_iframe_redirect(self, acquirer, return_url):
+        """ Method to be overridden by country/provider specific modules """
+        return False
 
     @staticmethod
     def _get_payment_acquirer():
@@ -789,46 +788,3 @@ class MyCompassionDonationsController(CustomerPortal):
             .sudo()
             .search([("provider", "=", "postfinance")], limit=1)
         )
-
-    def _prepare_iframe_redirect(self, acquirer, return_url):
-        """ Method to be overridden by country/provider specific modules """
-        return False
-
-    # -------------------------------------------------------------------------
-    # DEBUG ROUTES
-    # TODO remove before production deployment
-    # -------------------------------------------------------------------------
-    @http.route('/my2/debug/charge_token', type='json', auth='user', website=True)
-    def debug_charge_token(self, group_id):
-        """
-        QUICK DEBUG: Trigger a 1.00 CHF charge on the token linked to this group.
-        """
-        # 1. Fetch Group & Token
-        group = request.env['recurring.contract.group'].sudo().browse(int(group_id))
-        if not group.payment_token_id:
-            return {'success': False, 'error': 'No token found for this group'}
-
-        acquirer = group.payment_token_id.acquirer_id
-        if acquirer.provider != 'postfinance':
-            return {'success': False, 'error': 'Not a PostFinance token'}
-
-        # 2. Setup Charge Data
-        # Unique reference to prevent duplicates
-        import datetime
-        ref = f"DEBUG-{group.id}-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
-
-        # Charge 1.00 Unit of website currency
-        currency = request.website.currency_id
-        amount = 1.00
-
-        # 3. Execute Charge
-        # Use sudo() to ensure permissions for creating transactions
-        result = acquirer.sudo().postfinance_charge_token(
-            group.payment_token_id,
-            amount,
-            currency,
-            ref,
-            group.partner_id
-        )
-
-        return result
