@@ -16,33 +16,33 @@
     -->
     <t t-name="my_compassion.PaymentMethodCard">
         <div
-                t-attf-class="payment-method-card d-flex align-items-center p-3 mb-2 border
+            t-attf-class="payment-method-card d-flex align-items-center p-3 mb-2 border
          rounded cursor-pointer position-relative bg-white transition-all
           #{selected ? 'selected border-core-blue bg-light-blue' : 'border-gray-200 hover-shadow-sm'}"
-                onclick="$(this).find('input[type=radio]').prop('checked', true).trigger('change');"
+            onclick="$(this).find('input[type=radio]').prop('checked', true).trigger('change');"
         >
             <!--Hidden Radio Input (Functional but invisible)-->
             <div class="d-none">
                 <input
-                        type="radio"
-                        name="payment_method_selection"
-                        t-att-id="'pm_' + (type || 'token') + '_' + (mode_id || group_id)"
-                        t-att-group-id="group_id || undefined"
-                        t-att-checked="selected ? 'checked' : undefined"
+                    type="radio"
+                    name="payment_method_selection"
+                    t-att-id="'pm_' + (type || 'token') + '_' + (mode_id || group_id)"
+                    t-att-group-id="group_id || undefined"
+                    t-att-checked="selected ? 'checked' : undefined"
                 />
             </div>
             <!-- Icon -->
             <div
-                    class="icon-wrapper mr-3 d-flex align-items-center justify-content-center bg-white"
-                    style="width: 50px; height: 32px;"
+                class="icon-wrapper mr-3 d-flex align-items-center justify-content-center bg-white"
+                style="width: 50px; height: 32px;"
             >
                 <t t-if="icon">
                     <img
-                            t-attf-src="/web/image?model=payment.icon&amp;id=#{icon}&amp;field=image"
-                            class="img-fluid"
-                            style="max-height: 100%; max-width: 100%; object-fit: contain;"
-                            alt="Icon"
-                            onerror="this.style.display='none'"
+                        t-attf-src="/web/image?model=payment.icon&amp;id=#{icon}&amp;field=image"
+                        class="img-fluid"
+                        style="max-height: 100%; max-width: 100%; object-fit: contain;"
+                        alt="Icon"
+                        onerror="this.style.display='none'"
                     />
                 </t>
                 <t t-elif="is_card">
@@ -59,14 +59,15 @@
                 <div class="small text-muted mt-1">
                     <t t-if="ref_number">
                         <span class="mr-1">
-                            <t t-if="is_card">Card: </t>
-                            <t t-else="">Ref: </t>
+                            <t t-if="is_card">Card:</t>
+                            <t t-else="">Ref:</t>
                             <t t-esc="ref_number" />
                         </span>
                     </t>
                     <t t-if="is_card and expire_date">
                         <span class="ml-2 border-left pl-2">
-                            Exp: <t t-esc="expire_date" />
+                            Exp:
+                            <t t-esc="expire_date" />
                         </span>
                     </t>
                 </div>
@@ -75,8 +76,6 @@
             <t t-if="selected">
                 <i class="fa fa-check-circle text-core-blue ml-3" />
             </t>
-
-
         </div>
     </t>
     <!-- Loading Template -->
@@ -86,13 +85,11 @@
             <p class="text-muted small">Loading payment methods...</p>
         </div>
     </t>
-
     <t t-name="my_compassion.PaymentMethodUpdateAccordion">
         <div id="payment_method_switch_wrapper">
-             <div class="pt-2" id="payment_methods_switch_container" />
+            <div class="pt-2" id="payment_methods_switch_container" />
         </div>
     </t>
-
     <t t-name="my_compassion.FormFieldComponent">
         <div t-attf-class="form-field-container mb-3 #{top_class || ''}">
             <t t-if="label">
@@ -102,13 +99,13 @@
             </t>
             <!-- Slot content is simulated by passing value/placeholder -->
             <input
-                    type="text"
-                    t-att-name="name"
-                    t-att-id="name"
-                    t-attf-class="form-control #{input_class || ''}"
-                    t-att-value="value"
-                    t-att-placeholder="placeholder || ''"
-                    t-att-disabled="disabled"
+                type="text"
+                t-att-name="name"
+                t-att-id="name"
+                t-attf-class="form-control #{input_class || ''}"
+                t-att-value="value"
+                t-att-placeholder="placeholder || ''"
+                t-att-disabled="disabled"
             />
             <t t-if="invalid_hint">
                 <div class="invalid-hint text-mid-orange tiny-text mb-1 d-none">
@@ -132,9 +129,8 @@
                 </t>
                 <t t-set="name">ref_number</t>
                 <t t-set="value" t-value="ref_number" />
-                <t t-set="disabled" t-value="is_card ? 'disabled' : undefined"/>
+                <t t-set="disabled" t-value="is_card ? 'disabled' : undefined" />
             </t>
-
             <t t-if="is_card">
                 <p class="text-muted small mt-n2 mb-3">
                     To change your card details, please switch to a new payment method below.

@@ -22,6 +22,7 @@ from odoo.http import request
 from odoo.addons.portal.controllers.portal import CustomerPortal
 
 
+# TODO: Refactor payment-related methods into a separate controller
 class MyCompassionDonationsController(CustomerPortal):
     @http.route(
         '/my2/gifts/<model("product.template"):product>',
@@ -617,7 +618,6 @@ class MyCompassionDonationsController(CustomerPortal):
         except Exception:
             return {"success": False, "error": _("An unexpected error occurred.")}
 
-
     @http.route(
         "/my2/donation/fetch_payment_methods_iframe",
         type="json",
@@ -643,9 +643,7 @@ class MyCompassionDonationsController(CustomerPortal):
 
         # 3. Get Integration Data (Iframe)
         # This calls the method overridden in country specific module
-        result_data = self._prepare_iframe_redirect(
-            acquirer, return_url
-        )
+        result_data = self._prepare_iframe_redirect(acquirer, return_url)
 
         if (
             result_data
@@ -735,7 +733,8 @@ class MyCompassionDonationsController(CustomerPortal):
             "total_pages": total_pages,
         }
 
-    def _create_contract_group(self, partner, payment_mode, unit, value, token=None):
+    @staticmethod
+    def _create_contract_group(partner, payment_mode, unit, value, token=None):
         """
         Centralized method to create a recurring contract group.
         Used by both Manual (BVR) and Online (Credit Card) flows.
@@ -752,7 +751,8 @@ class MyCompassionDonationsController(CustomerPortal):
 
         return request.env["recurring.contract.group"].sudo().create(vals)
 
-    def _find_manual_payment_mode(self, method_key):
+    @staticmethod
+    def _find_manual_payment_mode(method_key):
         """
         Finds a payment mode based on the frontend key (bvr/permanent).
         Handles case-insensitive search and archiving.
@@ -778,7 +778,7 @@ class MyCompassionDonationsController(CustomerPortal):
         return mode
 
     def _prepare_iframe_redirect(self, acquirer, return_url):
-        """ Method to be overridden by country/provider specific modules """
+        """Method to be overridden by country/provider specific modules"""
         return False
 
     @staticmethod

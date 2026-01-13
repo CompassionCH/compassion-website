@@ -6,6 +6,8 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+from urllib.parse import parse_qs, urlparse
+
 from odoo import _, api, fields, models
 
 
@@ -85,16 +87,23 @@ class ContractGroup(models.Model):
             icon_search_term = self.payment_mode_id.name
 
         # 4. Find the Icon
-        # We search for an icon whose name matches the term we extracted (e.g. "Visa", "BVR")
+        # We search for an icon whose name matches the extracted term (e.g. "Visa").
         if icon_search_term:
             # We use 'ilike' for case-insensitive matching.
-            # We look for an icon where the name is contained in our search term or vice-versa.
-            icon = self.env["payment.icon"].sudo().search([
-                ("image", "!=", False),
-                "|",
-                ("name", "ilike", icon_search_term),
-                ("name", "=", icon_search_term)
-            ], limit=1)
+            # We look for an icon where the name is contained in our search term.
+            icon = (
+                self.env["payment.icon"]
+                .sudo()
+                .search(
+                    [
+                        ("image", "!=", False),
+                        "|",
+                        ("name", "ilike", icon_search_term),
+                        ("name", "=", icon_search_term),
+                    ],
+                    limit=1,
+                )
+            )
 
             if icon:
                 info["icon"] = icon.id
@@ -144,9 +153,9 @@ class ContractGroup(models.Model):
         """
         if not tx or not tx.payment_token_id:
             return {
-                'group': self.browse(),
-                'status': 'error',
-                'message': _("No valid payment method found.")
+                "group": self.browse(),
+                "status": "error",
+                "message": _("No valid payment method found."),
             }
         token = tx.payment_token_id
 
@@ -164,9 +173,9 @@ class ContractGroup(models.Model):
             if not existing_group.active:
                 existing_group.active = True
             return {
-                'group': existing_group,
-                'status': 'existing',
-                'message': _("This payment method was already saved.")
+                "group": existing_group,
+                "status": "existing",
+                "message": _("This payment method was already saved."),
             }
         # 2. Retrieve Recurring Frequency (Unit/Value)
         # Default to monthly if not specified
@@ -175,8 +184,6 @@ class ContractGroup(models.Model):
 
         if tx.return_url:
             try:
-                from urllib.parse import parse_qs, urlparse
-
                 parsed = urlparse(tx.return_url)
                 params = parse_qs(parsed.query)
                 if "unit" in params:
@@ -197,14 +204,16 @@ class ContractGroup(models.Model):
 
         payment_mode = False
 
-        # Strategy A: Use token name to find matching mode
-        payment_brand = token.name.split("_")[0] if token.name and "_" in token.name else token.name
+        # Use token name to find matching mode
+        payment_brand = (
+            token.name.split("_")[0] if token.name and "_" in token.name else token.name
+        )
         if payment_brand:
             payment_mode = self.env["account.payment.mode"].search(
                 domain + [("name", "ilike", "%" + payment_brand + "%")], limit=1
             )
 
-        # Strategy C: Fallback to Acquirer's Journal (Standard Odoo Link)
+        # Fallback to Acquirer's Journal (Standard Odoo Link)
         if not payment_mode and tx.acquirer_id and tx.acquirer_id.journal_id:
             payment_mode = self.env["account.payment.mode"].search(
                 domain + [("fixed_journal_id", "=", tx.acquirer_id.journal_id.id)],
@@ -229,7 +238,7 @@ class ContractGroup(models.Model):
 
         group = self.create(vals)
         return {
-            'group': group,
-            'status': 'new',
-            'message': _("Payment method successfully added.")
+            "group": group,
+            "status": "new",
+            "message": _("Payment method successfully added."),
         }

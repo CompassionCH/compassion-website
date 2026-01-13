@@ -185,8 +185,8 @@ odoo.define("my_compassion.my2_donations", function (require) {
         },
 
         /**
-         * 
-         * @param {*} ev 
+         *
+         * @param {*} ev
          */
         _onSavePaymentMethod: function (ev) {
             ev.preventDefault();
@@ -197,11 +197,11 @@ odoo.define("my_compassion.my2_donations", function (require) {
             var requestData = null;
 
             // 1. Delegate to specific strategy
-            if (modalType === 'change') {
+            if (modalType === "change") {
                 requestData = this._getChangeParams($modal);
-            } else if (modalType === 'update') {
+            } else if (modalType === "update") {
                 requestData = this._getUpdateParams($modal, $btn);
-            } else if (modalType === 'add') {
+            } else if (modalType === "add") {
                 requestData = this._getAddParams($modal);
             }
 
@@ -219,11 +219,11 @@ odoo.define("my_compassion.my2_donations", function (require) {
             var new_group_id = $selectedInput.attr("group-id");
 
             return {
-                route: '/my2/donation/change_method_contract',
+                route: "/my2/donation/change_method_contract",
                 params: {
                     contract_id: $modal.data("contract-id"),
                     group_id: parseInt(new_group_id),
-                }
+                },
             };
         },
 
@@ -251,8 +251,8 @@ odoo.define("my_compassion.my2_donations", function (require) {
             }
 
             return {
-                route: '/my2/donation/change_method_group',
-                params: params
+                route: "/my2/donation/change_method_group",
+                params: params,
             };
         },
 
@@ -269,12 +269,12 @@ odoo.define("my_compassion.my2_donations", function (require) {
 
             // Manual Methods
             return {
-                route: '/my2/donation/add_payment_method_group',
+                route: "/my2/donation/add_payment_method_group",
                 params: {
                     method_type: $modal.find('select[name="method_type"]').val(),
                     recurring_unit: $modal.find('select[name="recurring_unit"]').val(),
                     advance_billing_months: parseInt($modal.find('input[name="advance_billing_months"]').val()),
-                }
+                },
             };
         },
 
@@ -290,40 +290,42 @@ odoo.define("my_compassion.my2_donations", function (require) {
             this._rpc({
                 route: route,
                 params: params,
-            }).then(function (result) {
-                if (result.success) {
-                    $modal.modal("hide");
-                    ToastService.success(_t("The operation was successful."), _t("Success"));
+            })
+                .then(function (result) {
+                    if (result.success) {
+                        $modal.modal("hide");
+                        ToastService.success(_t("The operation was successful."), _t("Success"));
 
-                    // Optimistic UI Update (Server-Side Rendered HTML)
-                    if (result.html) {
-                        var $newContent = $(result.html);
-                        self.$("#my_sponsorships_container").replaceWith($newContent);
+                        // Optimistic UI Update (Server-Side Rendered HTML)
+                        if (result.html) {
+                            var $newContent = $(result.html);
+                            self.$("#my_sponsorships_container").replaceWith($newContent);
+                        } else {
+                            // Fallback if no HTML returned
+                            setTimeout(() => window.location.reload(), 1000);
+                        }
+
+                        // Update Client-Side Data State
+                        if (result.payment_methods) {
+                            self.paymentMethods = result.payment_methods;
+                        }
                     } else {
-                        // Fallback if no HTML returned
-                        setTimeout(() => window.location.reload(), 1000);
+                        ToastService.error(result.error || _t("An error occurred."));
                     }
-
-                    // Update Client-Side Data State
-                    if (result.payment_methods) {
-                        self.paymentMethods = result.payment_methods;
-                    }
-                } else {
-                    ToastService.error(result.error || _t("An error occurred."));
-                }
-            }).finally(function () {
-                // Ensure button is reset even if we didn't reload
-                $btn.prop("disabled", false).find('.fa-spinner').remove();
-            });
+                })
+                .finally(function () {
+                    // Ensure button is reset even if we didn't reload
+                    $btn.prop("disabled", false).find(".fa-spinner").remove();
+                });
         },
 
         /**
          * Utility: Helper to close modal cleanly
          */
         _closeModal: function ($modal, $btn) {
-            $modal.modal('hide');
+            $modal.modal("hide");
             if ($btn) {
-                $btn.prop('disabled', false).find('.fa-spinner').remove();
+                $btn.prop("disabled", false).find(".fa-spinner").remove();
             }
         },
 
@@ -392,7 +394,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
                     params: {
                         method_name: methodName,
                     },
-                })
+                });
 
                 // 1. Hide Config Fields
                 $configFields.hide();
