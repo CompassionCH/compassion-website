@@ -256,7 +256,7 @@ class MyCompassionChildrenController(WebsiteChild):
         )
 
         # Generate the obfuscated if necessary (eg: the first time the values are read)
-        child.sudo().project_id._compute_gps_obfuscated(is_onchange_call=False)
+        child.sudo().project_id._update_gps_obfuscated()
 
         return request.render(
             "my_compassion.my2_child_timeline_page",
