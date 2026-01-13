@@ -27,9 +27,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
 
             "change #new_method_type": "_onAddMethodChange",
             "click #postfinance-submit-btn": "_onSubmitPostFinance",
-
-            // DEBUG btn. TODO: Remove in production
-            'click .btn-debug-charge': '_onDebugCharge',
         },
 
         /**
@@ -65,43 +62,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 $("body").off("change", 'input[name="payment_method_selection"]', this._onMethodSelectionChangeBound);
             }
             this._super.apply(this, arguments);
-        },
-
-        // -------------------------------------------------------------------------
-        // DEBUG ACTIONS
-        // -------------------------------------------------------------------------
-        /**
-         * Debug Handler to trigger immediate charge
-         */
-        _onDebugCharge: function(ev) {
-            console.warn("DEBUG: Triggering immediate charge");
-            ev.stopPropagation();
-            ev.preventDefault();
-            
-            var $btn = $(ev.currentTarget);
-            var groupId = $btn.data('group-id');
-
-
-            if(!confirm("DEBUG WARNING:\nThis will immediately charge 1.00 to the real card.\n\nProceed?")) {
-                return;
-            }
-
-            // UI Feedback
-            $btn.prop('disabled', true).find('i').addClass('fa-spin');
-            console.log("DEBUG: Calling charge_token for group ID ", groupId);
-            this._rpc({
-                route: '/my2/debug/charge_token',
-                params: { group_id: groupId }
-            }).then(function(res) {
-                console.log("DEBUG: Charge result", res);
-                $btn.prop('disabled', false).find('i').removeClass('fa-spin');
-                
-                if(res.success) {
-                    alert("✅ SUCCESS!\n\nTransaction ID: " + res.transaction_id + "\nState: " + res.state);
-                } else {
-                    alert("❌ FAILED.\n\nError: " + res.error);
-                }
-            });
         },
 
         // -------------------------------------------------------------------------
@@ -168,8 +128,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
         _onOpenAddModal: function (ev) {
             if (ev) ev.stopPropagation();
             $("#payment_method_selector_modal_add").modal("show");
-            
-            console.log("Initializing PostFinance methods...");
+
             // Initialize PostFinance methods
             this._fetchAndPopulateOnlineMethods();
         },
@@ -225,103 +184,147 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 .addClass("selected border-core-blue bg-light-blue")
                 .removeClass("border-gray-200 hover-shadow-sm");
         },
-
+        
+        /**
+         * 
+         * @param {*} ev 
+         */
         _onSavePaymentMethod: function (ev) {
             ev.preventDefault();
-            var self = this;
             var $btn = $(ev.currentTarget);
             var $modal = $btn.closest(".modal");
             var modalType = $modal.data("modal-type");
 
-            // UI Loading State
-            $btn.prop("disabled", true).prepend('<i class="fa fa-spinner fa-spin mr-1"/>');
+            var requestData = null;
 
-            var params = {};
-            var route = "";
+            // 1. Delegate to specific strategy
+            if (modalType === 'change') {
+                requestData = this._getChangeParams($modal);
+            } else if (modalType === 'update') {
+                requestData = this._getUpdateParams($modal, $btn);
+            } else if (modalType === 'add') {
+                requestData = this._getAddParams($modal);
+            }
 
-            // --- PREPARE PARAMETERS BASED ON MODAL TYPE ---
-            if (modalType == "change") {
-                var $selectedInput = $modal.find('input[name="payment_method_selection"]:checked');
-                var new_group_id = $selectedInput.attr("group-id");
+            // 2. Execute if we got valid data back
+            if (requestData) {
+                this._executePaymentRequest($btn, $modal, requestData.route, requestData.params);
+            }
+        },
 
-                route = "/my2/donation/change_method_contract";
-                params = {
+        /**
+         * Change (Contract Level)
+         */
+        _getChangeParams: function ($modal) {
+            var $selectedInput = $modal.find('input[name="payment_method_selection"]:checked');
+            var new_group_id = $selectedInput.attr("group-id");
+
+            return {
+                route: '/my2/donation/change_method_contract',
+                params: {
                     contract_id: $modal.data("contract-id"),
                     group_id: parseInt(new_group_id),
-                };
-            } else if (modalType == "update") {
-                var currentGroupId = $modal.data("group-id");
-                route = "/my2/donation/change_method_group";
-                params = { group_id: currentGroupId };
-
-                // 1. Check for Group Switch
-                var $selectedGroupInput = $modal.find('input[name="payment_method_selection"]:checked');
-                if ($selectedGroupInput.length) {
-                    var selectedGroupId = $selectedGroupInput.attr("group-id");
-                    if (selectedGroupId && parseInt(selectedGroupId) !== parseInt(currentGroupId)) {
-                        params.new_group_id = parseInt(selectedGroupId);
-                    }
                 }
+            };
+        },
 
-                // 2. Check for Detail Updates
-                var $bvrInput = $modal.find('input[name="ref_number"]');
-                if ($bvrInput.length) {
-                    var newBvrRef = $bvrInput.val();
-                    var oldBvrRef = $bvrInput.prop("defaultValue");
-                    if (newBvrRef !== oldBvrRef) {
-                        params.new_bvr_ref = newBvrRef;
-                    }
-                }
+        /**
+         * Update (Group Level)
+         * Returns null if no changes were detected.
+         */
+        _getUpdateParams: function ($modal, $btn) {
+            var currentGroupId = $modal.data("group-id");
+            var params = { group_id: currentGroupId };
 
-                if (!params.new_group_id && !params.new_bvr_ref) {
-                    this._closeModal($modal, $btn);
-                    return;
-                }
-            } else if (modalType == "add") {
-                // Check if Method of provider is selected
-                if (this.pfHandler) {
-                    this.pfHandler.validate();
-                    return;
-                } else {
-                    // Otherwise add a manual (Permanent order or BVR) method
-                    route = "/my2/donation/add_payment_method_group";
-                    params = {
-                        method_type: $modal.find('select[name="method_type"]').val(),
-                        recurring_unit: $modal.find('select[name="recurring_unit"]').val(),
-                        advance_billing_months: parseInt($modal.find('input[name="advance_billing_months"]').val()),
-                    };
+            // Check for Group Switch (Merge)
+            var $selectedGroupInput = $modal.find('input[name="payment_method_selection"]:checked');
+            if ($selectedGroupInput.length) {
+                var selectedGroupId = $selectedGroupInput.attr("group-id");
+                if (selectedGroupId && parseInt(selectedGroupId) !== parseInt(currentGroupId)) {
+                    params.new_group_id = parseInt(selectedGroupId);
                 }
             }
 
-            // --- EXECUTE RPC REQUEST ---
-            if (route) {
-                this._rpc({
-                    route: route,
-                    params: params,
-                })
-                    .then(function (result) {
-                        if (result.success) {
-                            $modal.modal("hide");
-                            ToastService.success(_t("The operation was successful."), _t("Success"));
+            // Early Exit: No changes
+            if (!params.new_group_id && !params.new_bvr_ref) {
+                this._closeModal($modal, $btn);
+                return null;
+            }
 
-                            // A. UPDATE HTML (Server-Side Rendered List)
-                            if (result.html) {
-                                var $newContent = $(result.html);
-                                // Replace the specific container
-                                self.$("#my_sponsorships_container").replaceWith($newContent);
-                            }
+            return {
+                route: '/my2/donation/change_method_group',
+                params: params
+            };
+        },
 
-                            // B. UPDATE STATE (Client-Side Data)
-                            if (result.payment_methods) {
-                                self.paymentMethods = result.payment_methods;
-                            }
-                        } else {
-                            ToastService.error(result.error || _t("An error occurred."));
-                        }
-                    })
-                    .finally(function () {
-                        self._closeModal($modal, $btn);
-                    });
+        /**
+         * Strategy 3: Add (New Method)
+         * Handles PostFinance special case internally.
+         */
+        _getAddParams: function ($modal) {
+            // PostFinance Handler
+            if (this.pfHandler) {
+                this.pfHandler.validate();
+                return null; // The handler takes over, no standard RPC needed here
+            }
+
+            // Manual Methods
+            return {
+                route: '/my2/donation/add_payment_method_group',
+                params: {
+                    method_type: $modal.find('select[name="method_type"]').val(),
+                    recurring_unit: $modal.find('select[name="recurring_unit"]').val(),
+                    advance_billing_months: parseInt($modal.find('input[name="advance_billing_months"]').val()),
+                }
+            };
+        },
+
+        /**
+         * Shared Executor: Handles UI state, RPC call, HTML replacement, and Toast feedback.
+         */
+        _executePaymentRequest: function ($btn, $modal, route, params) {
+            var self = this;
+
+            // UI Loading State
+            $btn.prop("disabled", true).prepend('<i class="fa fa-spinner fa-spin mr-1"/>');
+
+            this._rpc({
+                route: route,
+                params: params,
+            }).then(function (result) {
+                if (result.success) {
+                    $modal.modal("hide");
+                    ToastService.success(_t("The operation was successful."), _t("Success"));
+
+                    // Optimistic UI Update (Server-Side Rendered HTML)
+                    if (result.html) {
+                        var $newContent = $(result.html);
+                        self.$("#my_sponsorships_container").replaceWith($newContent);
+                    } else {
+                        // Fallback if no HTML returned
+                        setTimeout(() => window.location.reload(), 1000);
+                    }
+
+                    // Update Client-Side Data State
+                    if (result.payment_methods) {
+                        self.paymentMethods = result.payment_methods;
+                    }
+                } else {
+                    ToastService.error(result.error || _t("An error occurred."));
+                }
+            }).finally(function () {
+                // Ensure button is reset even if we didn't reload
+                $btn.prop("disabled", false).find('.fa-spinner').remove();
+            });
+        },
+
+        /**
+         * Utility: Helper to close modal cleanly
+         */
+        _closeModal: function ($modal, $btn) {
+            $modal.modal('hide');
+            if ($btn) {
+                $btn.prop('disabled', false).find('.fa-spinner').remove();
             }
         },
 
@@ -331,7 +334,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
         _fetchAndPopulateOnlineMethods: function () {
             var self = this;
             var $select = this.$("#new_method_type");
-            console.log("Fetching PostFinance online methods...");
 
             if ($select.data("loaded")) return; // Avoid duplicate calls
 
@@ -343,11 +345,8 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 recurring_value: val,
             }).then(function (result) {
                 if (result.success && result.iframe_url && result.pf_methods) {
-                    console.log("Received PostFinance methods:", result.pf_methods);
                     // Load the JS library
-                    $.getScript(result.iframe_url, function () {
-                        console.log("PostFinance JS Loaded");
-                    });
+                    $.getScript(result.iframe_url, function () {});
 
                     // Append options directly to the main select
                     result.pf_methods.forEach(function (method) {
@@ -425,7 +424,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
                         handler.create("payment-form");
                         this.pfHandler = handler; // Save for submit button
                     } catch (e) {
-                        console.error(e);
                         $loading.text("Error loading payment interface.");
                     }
                 } else {
@@ -449,11 +447,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 // Triggers the validation callback defined above
                 this.pfHandler.validate();
             }
-        },
-
-        _closeModal: function ($modal, $btn) {
-            $modal.modal("hide");
-            $btn.prop("disabled", false).find(".fa-spinner").remove();
         },
 
         _onModalHidden: function ($modal) {
