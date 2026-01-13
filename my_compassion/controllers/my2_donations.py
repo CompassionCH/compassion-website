@@ -25,7 +25,7 @@ from odoo.addons.portal.controllers.portal import CustomerPortal
 # TODO: Refactor payment-related methods into a separate controller
 # PLEASE NOTE:
 # Before deep diving into this code note that there's a documentation
-# page explaining the overall architecture and flow this code.
+# page explaining the overall architecture and flow of this code.
 # https://compassion.odoo.com/odoo/knowledge/202 and
 # https://compassion.odoo.com/odoo/knowledge/205
 class MyCompassionDonationsController(CustomerPortal):
