@@ -22,6 +22,6 @@ from . import (
     my2_login,
     my2_auth_signup,
     my2_event_banner,
-    my2_portal,
     my2_home_redirect,
+    my2_portal,
 )
