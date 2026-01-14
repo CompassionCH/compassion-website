@@ -184,7 +184,7 @@
                             id="custom-amount"
                             type="text"
                             name="custom_amount"
-                            t-att-placeholder="'Enter amount in %s' % product.currency_id.name"
+                            t-att-placeholder="_('Enter amount in %(currency)s') % {'currency': product.currency_id.name}"
                             class="form-control mt-2"
                             t-att-value="'{:g}'.format(default_custom_amount) if default_custom_amount else ''"
                         />
