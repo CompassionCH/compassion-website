@@ -25,12 +25,16 @@
     <template id="my2_child_timeline_page" name="My Compassion 2 Child Timeline Page">
         <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile.css" />
         <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile_timeline.css" />
+        <t
+            t-set="is_sponsorship_terminated"
+            t-value="compassion_child.my_sponsorship_id and compassion_child.my_sponsorship_id.state=='terminated'"
+        />
         <t t-call="website.layout">
             <div class="container">
                 <div class="single-column">
-                    <!-- ### Child personal information ### -->
-                    <section class="d-flex flex-column flex-md-row pt-4">
-                        <!-- Portrait -->
+                    <section
+                        t-attf-class="d-flex pt-4 flex#{'-md' if not is_sponsorship_terminated else ''}-row flex-column"
+                    >
                         <div class="child-details-container">
                             <t t-call="theme_compassion_2025.PortraitComponent">
                                 <t t-set="title" t-value="compassion_child.preferred_name" />
@@ -67,9 +71,7 @@
                                 </span>
                             </div>
                         </div>
-                        <!-- Child info and buttons actions -->
-                        <div class="d-flex flex-column flex-md-column-reverse">
-                            <!-- Action buttons -->
+                        <div t-if="not is_sponsorship_terminated" class="d-flex flex-column flex-md-column-reverse">
                             <div class="child-action-buttons justify-content-md-start ml-md-3 pb-3 p-md-0">
                                 <t
                                     t-if="access_scope == 'sponsor' and compassion_child.can_i_write_letter"
@@ -108,7 +110,6 @@
                                     <t t-set="href" t-value="'/my2/new-sponsorship/' + str(compassion_child.id)" />
                                 </t>
                             </div>
-                            <!-- Child personal information -->
                             <div class="child-personal-information d-flex flex-column flex-grow-1 mt-md-3 ml-md-3">
                                 <t t-if="birthday_formatted">
                                     <div class="child-info-item d-flex align-items-center">
@@ -148,9 +149,7 @@
                             </div>
                         </div>
                     </section>
-                    <!-- ### Child related information (family, project and country) ### -->
-                    <section class="child-related-information tabs-component">
-                        <!-- Mobile Dropdown (Visible on small screens) -->
+                    <section t-if="not is_sponsorship_terminated" class="child-related-information tabs-component">
                         <div class="child-select d-block d-md-none">
                             <select class="form-control custom-select" id="child-info-tabs-mobile">
                                 <option value="#family-tab" selected="1">My Family</option>
@@ -158,7 +157,6 @@
                                 <option value="#country-tab">My Country</option>
                             </select>
                         </div>
-                        <!-- Desktop Tabs (Visible on medium screens and up) -->
                         <ul class="nav nav-tabs d-none d-md-flex" id="child-info-tabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <a
@@ -200,9 +198,7 @@
                                 </a>
                             </li>
                         </ul>
-                        <!-- Tab Content -->
                         <div class="tab-content" id="child-info-tabs-content">
-                            <!-- FAMILY TAB CONTENT -->
                             <div
                                 class="tab-pane fade show active"
                                 id="family-tab"
@@ -252,8 +248,7 @@
                                     </p>
                                     <p>
                                         <t
-                                            t-if="compassion_child.household_id.father_living_with_child and
-                                                compassion_child.household_id.male_guardian_job_type != 'Not Employed'"
+                                            t-if="compassion_child.household_id.father_living_with_child and compassion_child.household_id.male_guardian_job_type != 'Not Employed'"
                                         >
                                             My father works on
                                             <t
@@ -264,26 +259,20 @@
                                             .
                                         </t>
                                         <t
-                                            t-if="compassion_child.household_id.mother_living_with_child and
-                                                compassion_child.household_id.female_guardian_job_type != 'Not Employed'"
+                                            t-if="compassion_child.household_id.mother_living_with_child and compassion_child.household_id.female_guardian_job_type != 'Not Employed'"
                                         >
                                             My mother works as a
                                             <t
                                                 t-set="value"
-                                                t-value="request.env['ir.advanced.translation']
-                                               .get(compassion_child.household_id.translate('female_guardian_job'),
-                                               female=True)"
+                                                t-value="request.env['ir.advanced.translation'].get(compassion_child.household_id.translate('female_guardian_job'), female=True)"
                                             />
                                             <t t-esc="value" />
                                             .
                                         </t>
                                     </p>
                                 </div>
-                                <div class="map-container mt-3">
-
-                                </div>
+                                <div class="map-container mt-3" />
                             </div>
-                            <!-- PROJECT TAB CONTENT -->
                             <div
                                 class="tab-pane fade"
                                 id="project-tab"
@@ -318,10 +307,8 @@
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Most Common Occupation:</strong>
                                         <t
-                                            t-set="value"
-                                            t-value="compassion_child.get_list('project_id.primary_adults_occupation_ids.value')"
+                                            t-esc="compassion_child.get_list('project_id.primary_adults_occupation_ids.value')"
                                         />
-                                        <t t-esc="value" />
                                     </li>
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Typical House Construction:</strong>
@@ -329,15 +316,10 @@
                                     </li>
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Regional Diet:</strong>
-                                        <t
-                                            t-set="value"
-                                            t-value="compassion_child.get_list('project_id.primary_diet_ids.value')"
-                                        />
-                                        <t t-esc="value" />
+                                        <t t-esc="compassion_child.get_list('project_id.primary_diet_ids.value')" />
                                     </li>
                                 </ul>
                             </div>
-                            <!-- COUNTRY TAB CONTENT -->
                             <div
                                 class="tab-pane fade"
                                 id="country-tab"
@@ -430,9 +412,9 @@
                             </div>
                         </div>
                     </section>
-                    <!-- ### Weather, Time and Map Component ### -->
+                    <!-- ### Weather and Time Component ### -->
                     <section
-                        t-if="access_scope == 'sponsor'"
+                        t-if="access_scope == 'sponsor' and not is_sponsorship_terminated"
                         class="cd-weather-map-container js-cd-weather-map-container"
                         style="position: relative;"
                         t-att-data-child-id="compassion_child.id"
@@ -458,8 +440,7 @@
                             </t>
                         </div>
                     </section>
-                    <!-- ### Partner and child timeline title ### -->
-                    <t t-if="access_scope == 'sponsor'" t-call="theme_compassion_2025.TitleComponent">
+                    <t t-if="access_scope == 'sponsor' and records" t-call="theme_compassion_2025.TitleComponent">
                         <t t-set="title_content">Timeline</t>
                         <t t-set="title_size" t-value="'md'" />
                         <t t-set="color" t-value="'core-blue'" />
@@ -474,7 +455,7 @@
             </div>
             <!-- ### Partner and child timeline component ### -->
             <section
-                t-if="access_scope == 'sponsor'"
+                t-if="access_scope == 'sponsor' and records"
                 class="cd-timeline js-cd-timeline"
                 t-att-data-child-id="compassion_child.id"
             >
@@ -485,19 +466,17 @@
                         </t>
                     </div>
                 </div>
-                <!-- cd-timeline__container -->
                 <div id="timeline-loader" class="text-center py-5" style="display:none;">
                     <div class="spinner-border text-primary" role="status">
                         <span class="sr-only">Loading...</span>
                     </div>
                 </div>
             </section>
-            <!-- cd-timeline -->
         </t>
-        <!-- Include Custom Javascript -->
-        <script type="text/javascript" src="/my_compassion/static/src/js/child_profile_tabs.js" />
-        <!-- Scripts for the weather and time component -->
-        <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_center_weather_time.js" />
+        <t t-if="not is_sponsorship_terminated">
+            <script type="text/javascript" src="/my_compassion/static/src/js/child_profile_tabs.js" />
+            <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_center_weather_time.js" />
+        </t>
         <script
             t-if="access_scope == 'sponsor'"
             type="text/javascript"
