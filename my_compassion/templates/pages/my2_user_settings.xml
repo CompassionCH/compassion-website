@@ -6,7 +6,7 @@ Page: My Compassion 2 User Settings Page
 Description:
 This page allows authenticated users to view and update their personal information,
 account login details, privacy consents, and communication preferences.
-It is organized into multiple tabs (Personal Information, Account Settings, Privacy Data,
+It is organized into multiple tabs (Personal Information, Account Settings, Privacy & Data Protection,
 Communication Settings) and supports both view and edit modes with inline forms.
 
 Used in route:
@@ -35,7 +35,7 @@ Injected data:
                                     Information
                                 </option>
                                 <option value="#account-settings">Account Settings</option>
-                                <option value="#privacy-data">Privacy Data</option>
+                                <option value="#privacy-data">Privacy &amp; Data Protection</option>
                                 <option value="#communication-settings">
                                     Communication
                                     Settings
@@ -74,7 +74,7 @@ Injected data:
                             <div id="personal-information-form" class="bg-pure-white col-md-12 col-sm-12">
                                 <div class="row col-12 mb-3">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label" t-value="'My reference'" />
+                                        <t t-set="label">My reference</t>
                                         <div>
                                             <t t-esc="partner.ref if partner.ref else ''" />
                                         </div>
@@ -82,7 +82,7 @@ Injected data:
                                 </div>
                                 <div class="row col-12 mb-3">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label" t-value="'Title'" />
+                                        <t t-set="label">Title</t>
                                         <t t-set="input_id" t-value="'title'" />
                                         <div class="field-display" data-display-for="title">
                                             <t t-esc="partner.title.name or ''" />
@@ -112,7 +112,7 @@ Injected data:
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <t t-call="theme_compassion_2025.FormFieldComponent">
-                                            <t t-set="label" t-value="'Surname'" />
+                                            <t t-set="label">Surname</t>
                                             <t t-set="input_id" t-value="'lastname'" />
                                             <div class="field-display" data-display-for="lastname">
                                                 <t t-esc="partner.lastname or ''" />
@@ -131,7 +131,7 @@ Injected data:
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <t t-call="theme_compassion_2025.FormFieldComponent">
-                                            <t t-set="label" t-value="'Name'" />
+                                            <t t-set="label">Name</t>
                                             <t t-set="input_id" t-value="'firstname'" />
                                             <div class="field-display" data-display-for="firstname">
                                                 <t t-esc="partner.firstname or ''" />
@@ -151,7 +151,7 @@ Injected data:
                                 </div>
                                 <div class="row mb-3">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label" t-value="'Address'" />
+                                        <t t-set="label">Address</t>
                                         <t t-set="input_id" t-value="'street'" />
                                         <t t-set="top_class" t-value="'col-12'" />
                                         <div class="field-display" data-display-for="street">
@@ -173,7 +173,7 @@ Injected data:
                                     <t t-if="partner.country_id.zip_required">
                                         <div class="col-md-6 mb-3">
                                             <t t-call="theme_compassion_2025.FormFieldComponent">
-                                                <t t-set="label" t-value="'Zip'" />
+                                                <t t-set="label">Zip</t>
                                                 <t t-set="input_id" t-value="'zip'" />
                                                 <div class="field-display" data-display-for="zip">
                                                     <t t-esc="partner.zip or ''" />
@@ -193,7 +193,7 @@ Injected data:
                                     </t>
                                     <div class="col-md-6 mb-3">
                                         <t t-call="theme_compassion_2025.FormFieldComponent">
-                                            <t t-set="label" t-value="'City'" />
+                                            <t t-set="label">City</t>
                                             <t t-set="input_id" t-value="'city'" />
                                             <div class="field-display" data-display-for="city">
                                                 <t t-esc="partner.city or ''" />
@@ -213,7 +213,7 @@ Injected data:
                                 </div>
                                 <div class="row mb-3">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label" t-value="'Country'" />
+                                        <t t-set="label">Country</t>
                                         <t t-set="input_id" t-value="'country_id'" />
                                         <t t-set="top_class" t-value="'col-12'" />
                                         <div class="field-display" data-display-for="country_id">
@@ -241,7 +241,7 @@ Injected data:
                                 </div>
                                 <div class="row mb-3">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label" t-value="'Mail address'" />
+                                        <t t-set="label">Email Address</t>
                                         <t t-set="input_id" t-value="'email'" />
                                         <t t-set="top_class" t-value="'col-12'" />
                                         <div class="field-display" data-display-for="email">
@@ -262,7 +262,7 @@ Injected data:
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <t t-call="theme_compassion_2025.FormFieldComponent">
-                                            <t t-set="label" t-value="'Phone number'" />
+                                            <t t-set="label">Phone number</t>
                                             <t t-set="input_id" t-value="'phone'" />
                                             <div class="field-display" data-display-for="phone">
                                                 <t t-esc="partner.phone or ''" />
@@ -281,7 +281,7 @@ Injected data:
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <t t-call="theme_compassion_2025.FormFieldComponent">
-                                            <t t-set="label" t-value="'Mobile phone number'" />
+                                            <t t-set="label">Mobile phone number</t>
                                             <t t-set="input_id" t-value="'mobile'" />
                                             <div class="field-display" data-display-for="mobile">
                                                 <t t-esc="partner.mobile or ''" />
@@ -306,7 +306,7 @@ Injected data:
                                                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                                     <t t-set="variant" t-value="'default'" />
                                                     <t t-set="variation" t-value="'filled'" />
-                                                    <t t-set="label" t-value="'Edit my profile'" />
+                                                    <t t-set="label">Edit my profile</t>
                                                     <t t-set="color" t-value="'core-blue'" />
                                                     <t t-set="text_color" t-value="'pure-white'" />
                                                 </t>
@@ -318,7 +318,7 @@ Injected data:
                                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                                 <t t-set="variant" t-value="'default'" />
                                                 <t t-set="variation" t-value="'filled'" />
-                                                <t t-set="label" t-value="'Save settings'" />
+                                                <t t-set="label">Save settings</t>
                                                 <t t-set="color" t-value="'mid-green'" />
                                                 <t t-set="text_color" t-value="'pure-white'" />
                                             </t>
@@ -327,7 +327,7 @@ Injected data:
                                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                                 <t t-set="variant" t-value="'default'" />
                                                 <t t-set="variation" t-value="'filled'" />
-                                                <t t-set="label" t-value="'Cancel'" />
+                                                <t t-set="label">Cancel</t>
                                                 <t t-set="color" t-value="'low-orange'" />
                                                 <t t-set="text_color" t-value="'pure-white'" />
                                             </t>
@@ -343,7 +343,7 @@ Injected data:
                                 class="p-3 bg-pure-white d-block col-md-8 col-sm-12 mx-auto"
                             >
                                 <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label" t-value="'Login MyCompassion'" />
+                                    <t t-set="label">MyCompassion Login</t>
                                     <t t-set="input_id" t-value="'login'" />
                                     <div class="field-display" data-display-for="login">
                                         <t t-esc="user.login or ''" />
@@ -366,7 +366,7 @@ Injected data:
                                                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                                     <t t-set="variant" t-value="'default'" />
                                                     <t t-set="variation" t-value="'filled'" />
-                                                    <t t-set="label" t-value="'Edit account settings'" />
+                                                    <t t-set="label">Edit account settings</t>
                                                     <t t-set="color" t-value="'core-blue'" />
                                                     <t t-set="text_color" t-value="'pure-white'" />
                                                 </t>
@@ -380,7 +380,7 @@ Injected data:
                                                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                                     <t t-set="variant" t-value="'default'" />
                                                     <t t-set="variation" t-value="'filled'" />
-                                                    <t t-set="label" t-value="'Change password'" />
+                                                    <t t-set="label">Change password</t>
                                                     <t t-set="color" t-value="'core-blue'" />
                                                     <t t-set="text_color" t-value="'pure-white'" />
                                                 </t>
@@ -396,7 +396,7 @@ Injected data:
                                                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                                     <t t-set="variant" t-value="'default'" />
                                                     <t t-set="variation" t-value="'filled'" />
-                                                    <t t-set="label" t-value="'Delete my account'" />
+                                                    <t t-set="label">Delete my account</t>
                                                     <t t-set="color" t-value="'low-orange'" />
                                                     <t t-set="text_color" t-value="'pure-white'" />
                                                 </t>
@@ -408,7 +408,7 @@ Injected data:
                                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                                 <t t-set="variant" t-value="'default'" />
                                                 <t t-set="variation" t-value="'filled'" />
-                                                <t t-set="label" t-value="'Save settings'" />
+                                                <t t-set="label">Save settings</t>
                                                 <t t-set="color" t-value="'mid-green'" />
                                                 <t t-set="text_color" t-value="'pure-white'" />
                                             </t>
@@ -417,7 +417,7 @@ Injected data:
                                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                                 <t t-set="variant" t-value="'default'" />
                                                 <t t-set="variation" t-value="'filled'" />
-                                                <t t-set="label" t-value="'Cancel'" />
+                                                <t t-set="label">Cancel</t>
                                                 <t t-set="color" t-value="'low-orange'" />
                                                 <t t-set="text_color" t-value="'pure-white'" />
                                             </t>
@@ -513,7 +513,7 @@ Injected data:
                                                                     />
                                                                     <t t-set="variant" t-value="'default'" />
                                                                     <t t-set="variation" t-value="'filled'" />
-                                                                    <t t-set="label" t-value="'Delete'" />
+                                                                    <t t-set="label">Delete</t>
                                                                     <t t-set="color" t-value="'low-orange'" />
                                                                     <t t-set="text_color" t-value="'pure-white'" />
                                                                 </t>
@@ -528,7 +528,7 @@ Injected data:
                                                             <t t-set="id" t-value="'DeleteAccountContinueButton'" />
                                                             <t t-set="variant" t-value="'default'" />
                                                             <t t-set="variation" t-value="'filled'" />
-                                                            <t t-set="label" t-value="'Continue'" />
+                                                            <t t-set="label">Continue</t>
                                                             <t t-set="color" t-value="'core-blue'" />
                                                             <t t-set="text_color" t-value="'pure-white'" />
                                                         </t>
@@ -584,7 +584,7 @@ Injected data:
                                                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                                     <t t-set="variant" t-value="'default'" />
                                                     <t t-set="variation" t-value="'filled'" />
-                                                    <t t-set="label" t-value="'Sign Child protection Charter'" />
+                                                    <t t-set="label">Sign Child protection Charter</t>
                                                     <t t-set="color" t-value="'core-blue'" />
                                                     <t t-set="text_color" t-value="'pure-white'" />
                                                 </t>
@@ -614,7 +614,7 @@ Injected data:
                                                 <t t-set="id" t-value="'SignLegalAgreementButton'" />
                                                 <t t-set="variant" t-value="'default'" />
                                                 <t t-set="variation" t-value="'filled'" />
-                                                <t t-set="label" t-value="'Sign the agreement'" />
+                                                <t t-set="label">Sign the agreement</t>
                                                 <t t-set="color" t-value="'core-blue'" />
                                                 <t t-set="text_color" t-value="'pure-white'" />
                                             </t>
@@ -636,20 +636,6 @@ Injected data:
                                     />
                                     <label class="custom-control-label" for="newsletterCheck">
                                         I would like to receive the Compassion Newsletter
-                                    </label>
-                                </div>
-                                <div class="custom-control custom-switch  mb-2">
-                                    <input
-                                        type="checkbox"
-                                        class="custom-control-input"
-                                        id="calendarCheck"
-                                        data-field="calendar"
-                                        t-att-checked="partner.calendar"
-                                    />
-                                    <label class="custom-control-label" for="calendarCheck">
-                                        I
-                                        would like to receive the Compassion
-                                        Calendar
                                     </label>
                                 </div>
                                 <div class="custom-control custom-switch  mb-2">
@@ -681,7 +667,7 @@ Injected data:
                                 </div>
                                 <div class="w-md-50 mb-3">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label" t-value="'Letter Delivery Preference'" />
+                                        <t t-set="label">Letter Delivery Preference</t>
                                         <t t-call="theme_compassion_2025.SelectComponent">
                                             <t t-set="id" t-value="'letter_preference_select'" />
                                             <option
@@ -713,7 +699,7 @@ Injected data:
                                 </div>
                                 <div class="w-md-50 mb-3">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label" t-value="'Photo Delivery Preference'" />
+                                        <t t-set="label">Photo Delivery Preference</t>
                                         <t t-call="theme_compassion_2025.SelectComponent">
                                             <t t-set="id" t-value="'photo_preference_select'" />
                                             <option
@@ -744,7 +730,7 @@ Injected data:
                                     </t>
                                 </div>
                                 <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label" t-value="'Tax Delivery Preference'" />
+                                    <t t-set="label">Tax Delivery Preference</t>
                                     <t t-set="top_class" t-value="'w-md-50'" />
                                     <t t-call="theme_compassion_2025.SelectComponent">
                                         <t t-set="id" t-value="'tax_preference_select'" />

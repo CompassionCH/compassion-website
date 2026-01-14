@@ -20,6 +20,11 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     - payment_methods (array of 'account.payment.mode' records): The list of payment methods to choose from.
     - spoken_languages (array of 'res.lang.compassion' records): The list of spoken languages to choose from.
     - lead_sources (array of 'recurring.contract.origin' records): The list of lead sources to choose from.
+
+    Note:
+    The element IDs #payment_method and #finish_button are used by the
+    Compassion Switzerland eBill extension (my_compassion_switzerland addon).
+    If renamed or modified, make sure to update the corresponding logic there as well.
 -->
 <odoo>
     <!-- NEW SPONSORSHIP STEP PROGRESS BAR -->
@@ -73,7 +78,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
         <!-- Salutation -->
         <t t-call="theme_compassion_2025.FormFieldComponent">
             <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label" t-value="'Salutation'" />
+            <t t-set="label">Salutation</t>
             <t t-set="input_id" t-value="'title'" />
             <t t-call="theme_compassion_2025.SelectComponent">
                 <t t-set="name" t-value="'title'" />
@@ -90,35 +95,35 @@ Page: My Compassion 2 New Sponsorship Wizard Page
         <!-- Surname -->
         <t t-call="theme_compassion_2025.FormFieldComponent">
             <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label" t-value="'Surname'" />
+            <t t-set="label">Surname</t>
             <t t-set="input_id" t-value="'lastname'" />
             <input id="lastname" type="text" name="lastname" t-att-value="wizard.lastname" required="" />
         </t>
         <!-- Firstname -->
         <t t-call="theme_compassion_2025.FormFieldComponent">
             <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label" t-value="'Firstname'" />
+            <t t-set="label">Firstname</t>
             <t t-set="input_id" t-value="'firstname'" />
             <input id="firstname" type="text" name="firstname" t-att-value="wizard.firstname" required="" />
         </t>
         <!-- Date of birth -->
         <t t-call="theme_compassion_2025.FormFieldComponent">
             <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label" t-value="'Date of birth'" />
+            <t t-set="label">Date of birth</t>
             <t t-set="input_id" t-value="'birthdate'" />
             <input id="birthdate" type="date" name="birthdate" t-att-value="wizard.birthdate" required="" />
         </t>
         <!-- Email -->
         <t t-call="theme_compassion_2025.FormFieldComponent">
             <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label" t-value="'E-mail'" />
+            <t t-set="label">E-mail</t>
             <t t-set="input_id" t-value="'email'" />
             <input id="email" type="email" name="email" t-att-value="wizard.email" required="" />
         </t>
         <!-- Phone -->
         <t t-call="theme_compassion_2025.FormFieldComponent">
             <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label" t-value="'Phone number'" />
+            <t t-set="label">Phone number</t>
             <t t-set="input_id" t-value="'phone'" />
             <input id="phone" type="tel" name="phone" t-att-value="wizard.phone" required="" />
         </t>
@@ -127,7 +132,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
             <div class="w-100 flex-grow-1">
                 <t t-call="theme_compassion_2025.FormFieldComponent">
                     <t t-set="top_class" t-value="'my-3'" />
-                    <t t-set="label" t-value="'Street'" />
+                    <t t-set="label">Street</t>
                     <t t-set="input_id" t-value="'street'" />
                     <input id="street" type="text" name="street" t-att-value="wizard.street" required="" />
                 </t>
@@ -135,7 +140,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
             <div class="flex-shrink-1 ml-4">
                 <t t-call="theme_compassion_2025.FormFieldComponent">
                     <t t-set="top_class" t-value="'my-3'" />
-                    <t t-set="label" t-value="'N°'" />
+                    <t t-set="label">N°</t>
                     <t t-set="input_id" t-value="'street_number'" />
                     <input
                         id="street_number"
@@ -152,7 +157,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
             <div class="flex-shrink-1 mr-4">
                 <t t-call="theme_compassion_2025.FormFieldComponent">
                     <t t-set="top_class" t-value="'my-3'" />
-                    <t t-set="label" t-value="'Code'" />
+                    <t t-set="label">Code</t>
                     <t t-set="input_id" t-value="'zip'" />
                     <input id="zip" type="text" name="zip" t-att-value="wizard.zip" required="" />
                 </t>
@@ -160,7 +165,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
             <div class="w-100 flex-grow-1">
                 <t t-call="theme_compassion_2025.FormFieldComponent">
                     <t t-set="top_class" t-value="'my-3'" />
-                    <t t-set="label" t-value="'Locality'" />
+                    <t t-set="label">Locality</t>
                     <t t-set="input_id" t-value="'city'" />
                     <input id="city" type="text" name="city" t-att-value="wizard.city" required="" />
                 </t>
@@ -169,7 +174,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
         <!-- Country -->
         <t t-call="theme_compassion_2025.FormFieldComponent">
             <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label" t-value="'Country'" />
+            <t t-set="label">Country</t>
             <t t-set="input_id" t-value="'country'" />
             <t t-call="theme_compassion_2025.SelectComponent">
                 <t t-set="name" t-value="'country'" />
@@ -189,10 +194,11 @@ Page: My Compassion 2 New Sponsorship Wizard Page
         <!-- Payment method -->
         <t t-call="theme_compassion_2025.FormFieldComponent">
             <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label" t-value="'Payment method'" />
+            <t t-set="label">Payment method</t>
             <t t-set="input_id" t-value="'payment_method'" />
             <t t-call="theme_compassion_2025.SelectComponent">
                 <t t-set="name" t-value="'payment_method'" />
+                <!-- ID used by eBill extension in my_compassion_switzerland -->
                 <t t-set="id" t-value="'payment_method'" />
                 <t t-set="required" t-value="True" />
                 <option value="">Please select</option>
@@ -210,7 +216,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
         <input type="hidden" name="sponsorship_plus" value="" />
         <t t-call="theme_compassion_2025.FormFieldComponent">
             <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label" t-value="'Sponsorship plus'" />
+            <t t-set="label">Sponsorship plus</t>
             <div class="d-flex align-items-center">
                 <input
                     type="checkbox"
@@ -222,22 +228,19 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                 <label class="ml-2 mb-0 body-small bold" t-att-for="'sponsorship_plus'">Yes</label>
             </div>
             <div class="mt-3 p-4 bg-high-eggshell rounded-lg body-small">
-                The "Plus" sponsorship includes the "basic" sponsorship of
+                Sponsorship+ includes the basic sponsorship of
                 <t t-esc="currency_name" />
-                42.- and an additional gift of
+                42.-, plus an additional gift of
                 <t t-esc="currency_name" />
                 8.- per month.
                 <br />
                 <br />
-                The
-                <t t-esc="currency_name" />
-                8.- helps to fund urgent needs not covered by the sponsorship (e.g. natural disasters,
-                surgical procedures, malaria prevention, etc.).
+                The extra amount helps to fund urgent needs not covered by the
+                sponsorship (e.g. natural disasters,
+                medical interventions, malaria prevention, etc.).
                 <br />
                 <br />
-                This solidarity fund is in place
-                <span class="body-small bold">for all children</span>
-                supported through Compassion.
+                This fund is available for all children supported through Compassion.
             </div>
         </t>
     </template>
@@ -256,9 +259,9 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                     t-att-checked="wizard.wap_contribution_amount == 0"
                 />
                 <label class="mx-3 mb-0 body-small flex-grow-1" for="contribute-false">
-                    I agree to pray for and write to my godchild regularly. I understand that another person is
+                    I agree to pray for and write to my sponsored child regularly. I understand that another person is
                     providing
-                    financial support for this sponsorship, but that I am the child's official godparent.
+                    financial support for this sponsorship, but that I am the child's official sponsor.
                 </label>
             </div>
             <div class="ml-2 mt-4 d-flex">
@@ -287,7 +290,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                 />
                 <t t-call="theme_compassion_2025.FormFieldComponent">
                     <t t-set="top_class" t-value="'mt-4 w-100'" />
-                    <t t-set="label" t-value="'Suggested amounts'" />
+                    <t t-set="label">Suggested amounts</t>
                     <div class="mt-1 d-flex justify-content-between">
                         <t t-foreach="amounts" t-as="amount">
                             <t t-if="amount_index &gt; 0" t-set="margin" t-value="'ml-3'" />
@@ -310,7 +313,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                 </t>
                 <t t-call="theme_compassion_2025.FormFieldComponent">
                     <t t-set="top_class" t-value="'mt-3 w-100'" />
-                    <t t-set="label" t-value="'Or enter your own amount'" />
+                    <t t-set="label">Or enter your own amount</t>
                     <div class="contribution-suggested-amount">
                         <input
                             t-attf-id="suggested-custom"
@@ -352,8 +355,8 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     >
         <t t-call="theme_compassion_2025.FormFieldComponent">
             <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label" t-value="'Spoken languages'" />
-            <div>For correspondence with my godchild, I also understand the following languages:</div>
+            <t t-set="label">Spoken languages</t>
+            <div>For correspondence with my sponsored child, I also understand the following languages:</div>
             <t t-foreach="spoken_languages" t-as="language">
                 <div class="ml-2 mt-2 d-flex align-items-center">
                     <input
@@ -373,7 +376,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
         <!-- Lead source -->
         <t t-call="theme_compassion_2025.FormFieldComponent">
             <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label" t-value="'How did you hear about Compassion?'" />
+            <t t-set="label">How did you hear about Compassion?</t>
             <t t-set="input_id" t-value="'lead_source'" />
             <t t-call="theme_compassion_2025.SelectComponent">
                 <t t-set="name" t-value="'lead_source'" />
@@ -391,7 +394,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
         <input type="hidden" name="volunteering" value="" />
         <t t-call="theme_compassion_2025.FormFieldComponent">
             <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label" t-value="'Volunteering'" />
+            <t t-set="label">Volunteering</t>
             <div class="d-flex align-items-center">
                 <input
                     type="checkbox"
@@ -511,10 +514,12 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                     <t t-set="variant" t-value="'compact'" />
                     <t t-set="variation" t-value="'filled'" />
-                    <t t-if="wizard.current_step_idx &lt; (wizard.n_steps-1)" t-set="label" t-value="'Continue'" />
-                    <t t-else="" t-set="label" t-value="'Finish'" />
+                    <t t-if="wizard.current_step_idx &lt; (wizard.n_steps-1)" t-set="label">Continue</t>
+                    <t t-else="" t-set="label">Finish</t>
                     <t t-set="color" t-value="'core-blue'" />
                     <t t-set="text_color" t-value="'pure-white'" />
+                    <!-- ID used by eBill extension in my_compassion_switzerland -->
+                    <t t-set="id" t-value="'finish_button'" />
                 </t>
             </div>
             <div
@@ -569,12 +574,12 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                             <t
                                 t-if="sponsorship.type == 'SWP'"
                                 t-set="description"
-                                t-valuef="You will soon receive all documentation needed to start the Write&amp;Pray in your mailbox."
+                                t-valuef="You’ll receive an email with everything you need to start the Write&amp;Pray soon."
                             />
                             <t
                                 t-else=""
                                 t-set="description"
-                                t-valuef="You will soon receive all documentation needed to start the sponsorship in your mailbox."
+                                t-valuef="You’ll receive an email with everything you need to start the sponsorship soon."
                             />
                         </t>
                     </div>
@@ -598,7 +603,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                 <t t-set="variant" t-value="'compact'" />
                                 <t t-set="variation" t-value="'filled'" />
-                                <t t-set="label" t-value="'Review my preferences now'" />
+                                <t t-set="label">Review my preferences now</t>
                                 <t t-set="color" t-value="'core-blue'" />
                                 <t t-set="text_color" t-value="'pure-white'" />
                             </t>

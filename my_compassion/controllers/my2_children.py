@@ -8,6 +8,8 @@
 ##############################################################################
 import json
 
+import babel.dates
+
 from odoo import _, http
 from odoo.exceptions import AccessError
 from odoo.http import request
@@ -16,6 +18,55 @@ from odoo.addons.website_sponsorship.controllers.main import WebsiteChild
 
 
 class MyCompassionChildrenController(WebsiteChild):
+    def _get_formatted_birthday(self, child):
+        """
+        Formats the child's birthday based on the current language context.
+        Handles specific rules for EN (US/UK), FR, IT, DE and nordic languages.
+        """
+        if not child.birthdate:
+            return ""
+
+        lang_code = request.env.lang
+        birthdate = child.birthdate
+        day = birthdate.day
+
+        # Get localized month name
+        month = babel.dates.format_date(birthdate, format="MMMM", locale=lang_code)
+
+        lang_prefix = lang_code[:2]
+
+        # German, Norwegian, Danish, Finnish: Dot after day (e.g., 24. Januar)
+        # Note: Swedish is excluded here as it typically uses a space (24 januari)
+        if lang_prefix in {"de", "no", "nb", "nn", "da", "fi"}:
+            return f"{day}. {month}"
+
+        # Swedish, French, Italian: Space after day (e.g., 24 januari)
+        elif lang_prefix in {"fr", "it", "sv"}:
+            # French specific: 1st is "1er"
+            if lang_prefix == "fr" and day == 1:
+                return f"1er {month}"
+            return f"{day} {month}"
+
+        # English Logic
+        elif lang_prefix == "en":
+            # Suffix calculation
+            # Special cases for 11, 12, 13.
+            if 11 <= day <= 13:
+                suffix = "th"
+            else:
+                suffix = {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
+
+            # US Format: Month Day+Suffix
+            if lang_code == "en_US":
+                return f"{month} {day}{suffix}"
+
+            # UK/Other English: Day+Suffix Month
+            return f"{day}{suffix} {month}"
+
+        # Fallback for other languages (Standard Day Month)
+        else:
+            return f"{day} {month}"
+
     def _check_sponsored_child_access(self, child):
         """
         Private helper to securely fetch a sponsored child.
@@ -58,7 +109,7 @@ class MyCompassionChildrenController(WebsiteChild):
         return partner.ids
 
     def _get_timeline_count(self, child_id, partner_ids):
-        """Get total count of timeline records (correspondence + gifts)."""
+        """Get total count of timeline records (correspondence + gifts + child_pictures + start)."""
         sql = """
             SELECT
                 (SELECT COUNT(*) FROM correspondence
@@ -69,69 +120,101 @@ class MyCompassionChildrenController(WebsiteChild):
                 +
                 (SELECT COUNT(*) FROM compassion_child_pictures
                  WHERE child_id = %(child_id)s)
+                +
+                (SELECT COUNT(*) FROM recurring_contract rc
+                 WHERE rc.child_id = %(child_id)s
+                   AND rc.partner_id = ANY(%(partner_ids)s)
+                   AND rc.state IN ('active', 'terminated')
+                   AND rc.start_date IS NOT NULL)
                 AS total
         """
-        request.env.cr.execute(sql, {"child_id": child_id, "partner_ids": partner_ids})
+        request.env.cr.execute(
+            sql,
+            {
+                "child_id": child_id,
+                "partner_ids": partner_ids,
+            },
+        )
         return request.env.cr.fetchone()[0] or 0
 
     def _get_timeline_data(self, child_id, partner_ids, offset, limit):
         """Fetch paginated timeline records (correspondence + gifts) ordered by date."""
         # ruff: noqa: E501 (query is more readable this way)
         sql = """
-              SELECT *
-              FROM (
-                       SELECT 'correspondence' AS model,
-                              c.uuid::text AS record_id, '' AS amount,
-                              '' AS currency_name,
-                              c.direction AS metadata,
-                              c.create_date,
-                              CASE
-                                  WHEN c.direction = 'Beneficiary To Supporter' THEN %(title_corr_wrote)s
-                                  ELSE %(title_corr_received)s
-                              END AS title,
-                              c.child_id AS child_id
-                       FROM correspondence c
-                       WHERE c.child_id = %(child_id)s
-                         AND c.partner_id = ANY (%(partner_ids)s)
+            SELECT * FROM (
+                SELECT
+                    'correspondence' AS model,
+                    c.uuid::text AS record_id,
+                    '' AS amount,
+                    '' AS currency_name,
+                    c.direction AS metadata,
+                    c.create_date,
+                    CASE
+                        WHEN c.direction = 'Beneficiary To Supporter'
+                        THEN %(title_corr_wrote)s
+                        ELSE %(title_corr_received)s
+                    END AS title,
+                    c.child_id AS child_id
+                FROM correspondence c
+                WHERE c.child_id = %(child_id)s
+                  AND c.partner_id = ANY(%(partner_ids)s)
 
-                       UNION ALL
+                UNION ALL
 
-                       SELECT 'sponsorship_gift' AS model,
-                              s.id::text AS record_id,
-                              s.amount::text AS amount,
-                              COALESCE(rc.name, %(default_currency)s) AS currency_name,
-                              s.gift_type || '|' || COALESCE(s.sponsorship_gift_type, '') AS metadata,
-                              s.create_date,
-                              CASE
-                                  WHEN s.sponsorship_gift_type = 'Birthday' THEN %(title_gift_bday)s
-                                  WHEN s.sponsorship_gift_type = 'General' THEN %(title_gift_general)s
-                                  WHEN s.sponsorship_gift_type = 'Graduation/Final' THEN %(title_gift_grad)s
-                                  WHEN s.gift_type = 'Family Gift' THEN %(title_gift_family)s
-                                  ELSE %(title_gift_default)s
-                              END AS title,
-                              s.child_id AS child_id
-                       FROM sponsorship_gift s
-                            LEFT JOIN account_move_line aml ON aml.gift_id = s.id
-                            LEFT JOIN res_currency rc ON rc.id = aml.currency_id
-                       WHERE s.child_id = %(child_id)s
-                         AND s.partner_id = ANY (%(partner_ids)s)
+                SELECT
+                    'sponsorship_gift' AS model,
+                    s.id::text AS record_id,
+                    s.amount::text AS amount,
+                    COALESCE(rc.name, %(default_currency)s) AS currency_name,
+                    s.gift_type || '|' || COALESCE(s.sponsorship_gift_type, '') AS metadata,
+                    s.create_date,
+                    CASE
+                        WHEN s.sponsorship_gift_type = 'Birthday' THEN %(title_gift_bday)s
+                        WHEN s.sponsorship_gift_type = 'General' THEN %(title_gift_general)s
+                        WHEN s.sponsorship_gift_type = 'Graduation/Final' THEN %(title_gift_grad)s
+                        WHEN s.gift_type = 'Family Gift' THEN %(title_gift_family)s
+                        ELSE %(title_gift_default)s
+                    END AS title,
+                    s.child_id AS child_id
+                FROM sponsorship_gift s
+                LEFT JOIN account_move_line aml ON aml.gift_id = s.id
+                LEFT JOIN res_currency rc ON rc.id = aml.currency_id
+                WHERE s.child_id = %(child_id)s
+                  AND s.partner_id = ANY(%(partner_ids)s)
+                
+                UNION ALL
 
-                       UNION ALL
+                SELECT 'child_picture' AS model,
+                    p.id::text AS record_id,
+                    '' AS amount,
+                    '' AS currency_name,
+                    COALESCE(p.gender, '') AS metadata,
+                    p.create_date,
+                    %(title_child_picture)s AS title,
+                    p.child_id AS child_id
+                FROM compassion_child_pictures p
+                WHERE p.child_id = %(child_id)s
+                
+                UNION ALL
 
-                       SELECT 'child_picture' AS model,
-                              p.id::text AS record_id,
-                              '' AS amount,
-                              '' AS currency_name,
-                              COALESCE(p.gender, '') AS metadata,
-                              p.create_date,
-                              %(title_child_picture)s AS title,
-                              p.child_id AS child_id
-                       FROM compassion_child_pictures p
-                       WHERE p.child_id = %(child_id)s
-                   ) AS timeline
-              ORDER BY create_date DESC
-              LIMIT %(limit)s
-              OFFSET %(offset)s
+                SELECT
+                    'start_sponsorship' AS model,
+                    rc.id::text AS record_id,
+                    '' AS amount,
+                    '' AS currency_name,
+                    '' AS metadata,
+                    rc.start_date::timestamp AS create_date,
+                    %(title_start_sponsorship)s AS title,
+                    rc.child_id AS child_id
+                FROM recurring_contract rc
+                WHERE rc.child_id = %(child_id)s
+                  AND rc.partner_id = ANY(%(partner_ids)s)
+                  AND rc.state IN ('active', 'terminated')
+                  AND rc.start_date IS NOT NULL
+                
+            ) AS timeline
+            ORDER BY create_date DESC
+            LIMIT %(limit)s OFFSET %(offset)s
         """
 
         params = {
@@ -146,6 +229,7 @@ class MyCompassionChildrenController(WebsiteChild):
             "title_gift_family": _("Family gift"),
             "title_gift_default": _("Received a gift"),
             "title_child_picture": _("New picture"),
+            "title_start_sponsorship": _("Started sponsorship"),
             "limit": limit,
             "offset": offset,
         }
@@ -195,7 +279,9 @@ class MyCompassionChildrenController(WebsiteChild):
             if child_id not in latest_corr_by_child:
                 latest_corr_by_child[child_id] = corr
 
-        breadcrumbs = [{"name": "Children", "url": "/my2/children/", "active": True}]
+        breadcrumbs = [
+            {"name": "Children", "url": "/my2/children/", "active": True},
+        ]
         sponsorships = partner.sponsorship_ids.filtered("can_show_on_my_compassion")
 
         return request.render(
@@ -220,15 +306,20 @@ class MyCompassionChildrenController(WebsiteChild):
         sitemap=False,
     )
     def my2_render_child_timeline_page(self, child, **kwargs):
+        """Renders the main timeline page with the initial batch of records."""
         try:
             self._check_sponsored_child_access(child)
         except AccessError:
             return request.redirect("/my2/children/")
 
         access_scope = "public" if child.is_published else "sponsor"
+
         offset = int(kwargs.get("offset", 0))
         limit = int(kwargs.get("limit", 9))
+
         records, total = self._get_timeline_records(child.id, offset, limit)
+
+        birthday_formatted = self._get_formatted_birthday(child)
 
         google_api_key = (
             request.env["ir.config_parameter"].sudo().get_param("google_maps_api_key")
@@ -247,6 +338,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 "google_api_key": google_api_key,
                 "google_custom_map_id": google_custom_map_id,
                 "timezone": child.sudo().project_id.timezone,
+                "birthday_formatted": birthday_formatted,
             },
         )
 
@@ -258,13 +350,17 @@ class MyCompassionChildrenController(WebsiteChild):
         sitemap=False,
     )
     def my2_get_child_timeline_items(self, child, **kwargs):
+        """API endpoint for infinite scroll. Returns a rendered HTML snippet."""
         try:
             self._check_sponsored_child_access(child)
         except AccessError:
+            # For an API, it's better to return an empty or error response
+            # than to redirect.
             return request.make_response("", headers={"Content-Type": "text/html"})
 
         offset = int(kwargs.get("offset", 0))
         limit = int(kwargs.get("limit", 9))
+
         records, total = self._get_timeline_records(child.id, offset, limit)
         has_more = total > offset + limit
 
@@ -280,7 +376,10 @@ class MyCompassionChildrenController(WebsiteChild):
             else ""
         )
 
-        return {"html": html, "has_more_records": has_more}
+        return {
+            "html": html,
+            "has_more_records": has_more,
+        }
 
     @http.route(
         '/my2/children/<model("compassion.child"):child>/center-weather',
@@ -289,6 +388,10 @@ class MyCompassionChildrenController(WebsiteChild):
         website=True,
     )
     def get_center_weather(self, child, **kw):
+        """
+        This controller returns the child's center weather as a JSON object.
+        """
+
         try:
             self._check_sponsored_child_access(child)
         except AccessError:
