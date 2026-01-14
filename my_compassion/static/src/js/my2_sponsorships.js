@@ -263,8 +263,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                         function (data) {
                             if (data.child_id) {
                                 // Redirect to new sponsorship page
-                                window.location.href =
-                                    "/my2/new-sponsorship/" + data.child_id + "?type=" + this.sponsorship_type;
+                                window.location.href = `/my2/new-sponsorship/${data.child_id}?sponsorship_type=${this.sponsorship_type}`;
                             }
                             this.$(".btn").prop("disabled", false);
                         }.bind(this)
