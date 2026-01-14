@@ -109,7 +109,7 @@ class MyCompassionChildrenController(WebsiteChild):
         return partner.ids
 
     def _get_timeline_count(self, child_id, partner_ids):
-        """Get total count of timeline records (correspondence + gifts + start)."""
+        """Get total count of timeline records (correspondence + gifts + child_pictures + start)."""
         sql = """
             SELECT
                 (SELECT COUNT(*) FROM correspondence
@@ -117,6 +117,9 @@ class MyCompassionChildrenController(WebsiteChild):
                 +
                 (SELECT COUNT(*) FROM sponsorship_gift
                  WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
+                +
+                (SELECT COUNT(*) FROM compassion_child_pictures
+                 WHERE child_id = %(child_id)s)
                 +
                 (SELECT COUNT(*) FROM recurring_contract rc
                  WHERE rc.child_id = %(child_id)s
@@ -150,7 +153,8 @@ class MyCompassionChildrenController(WebsiteChild):
                         WHEN c.direction = 'Beneficiary To Supporter'
                         THEN %(title_corr_wrote)s
                         ELSE %(title_corr_received)s
-                    END AS title
+                    END AS title,
+                    c.child_id AS child_id
                 FROM correspondence c
                 WHERE c.child_id = %(child_id)s
                   AND c.partner_id = ANY(%(partner_ids)s)
@@ -170,14 +174,28 @@ class MyCompassionChildrenController(WebsiteChild):
                         WHEN s.sponsorship_gift_type = 'Graduation/Final' THEN %(title_gift_grad)s
                         WHEN s.gift_type = 'Family Gift' THEN %(title_gift_family)s
                         ELSE %(title_gift_default)s
-                    END AS title
+                    END AS title,
+                    s.child_id AS child_id
                 FROM sponsorship_gift s
                 LEFT JOIN account_move_line aml ON aml.gift_id = s.id
                 LEFT JOIN res_currency rc ON rc.id = aml.currency_id
                 WHERE s.child_id = %(child_id)s
                   AND s.partner_id = ANY(%(partner_ids)s)
 
-                  UNION ALL
+                UNION ALL
+
+                SELECT 'child_picture' AS model,
+                    p.id::text AS record_id,
+                    '' AS amount,
+                    '' AS currency_name,
+                    COALESCE(p.gender, '') AS metadata,
+                    p.create_date,
+                    %(title_child_picture)s AS title,
+                    p.child_id AS child_id
+                FROM compassion_child_pictures p
+                WHERE p.child_id = %(child_id)s
+
+                UNION ALL
 
                 SELECT
                     'start_sponsorship' AS model,
@@ -186,7 +204,8 @@ class MyCompassionChildrenController(WebsiteChild):
                     '' AS currency_name,
                     '' AS metadata,
                     rc.start_date::timestamp AS create_date,
-                    %(title_start_sponsorship)s AS title
+                    %(title_start_sponsorship)s AS title,
+                    rc.child_id AS child_id
                 FROM recurring_contract rc
                 WHERE rc.child_id = %(child_id)s
                   AND rc.partner_id = ANY(%(partner_ids)s)
@@ -209,6 +228,7 @@ class MyCompassionChildrenController(WebsiteChild):
             "title_gift_grad": _("Graduation/Final gift"),
             "title_gift_family": _("Family gift"),
             "title_gift_default": _("Received a gift"),
+            "title_child_picture": _("New picture"),
             "title_start_sponsorship": _("Started sponsorship"),
             "limit": limit,
             "offset": offset,
