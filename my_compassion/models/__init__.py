@@ -25,4 +25,5 @@ from . import (
     my2_website_route,
     compassion_child,
     contracts,
+    ir_http,
 )

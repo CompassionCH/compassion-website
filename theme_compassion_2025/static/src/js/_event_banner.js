@@ -37,7 +37,7 @@ odoo.define("theme_compassion_2025.event_banner", function (require) {
             }
 
             const dismissedBanners = JSON.parse(localStorage.getItem("dismissedBanners") || "[]");
-            const $container = $("main .container").first();
+            const $container = $("main");
 
             items
                 .slice()
