@@ -181,7 +181,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 LEFT JOIN res_currency rc ON rc.id = aml.currency_id
                 WHERE s.child_id = %(child_id)s
                   AND s.partner_id = ANY(%(partner_ids)s)
-                
+
                 UNION ALL
 
                 SELECT 'child_picture' AS model,
@@ -194,7 +194,7 @@ class MyCompassionChildrenController(WebsiteChild):
                     p.child_id AS child_id
                 FROM compassion_child_pictures p
                 WHERE p.child_id = %(child_id)s
-                
+
                 UNION ALL
 
                 SELECT
@@ -211,7 +211,7 @@ class MyCompassionChildrenController(WebsiteChild):
                   AND rc.partner_id = ANY(%(partner_ids)s)
                   AND rc.state IN ('active', 'terminated')
                   AND rc.start_date IS NOT NULL
-                
+
             ) AS timeline
             ORDER BY create_date DESC
             LIMIT %(limit)s OFFSET %(offset)s
