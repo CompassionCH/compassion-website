@@ -176,7 +176,22 @@ class ContractGroup(models.Model):
                     recurring_unit = params["unit"][0]
                 if "val" in params:
                     recurring_value = int(params["val"][0])
-                # Clean up URL params
+                # Clean Arguments(Remove used keys)
+                # We use pop(key, None) to avoid errors if the key is missing
+                params.pop("unit", None)
+                params.pop("val", None)
+
+                # Rebuild the return_url without the used parameters
+                new_query = urlencode(params, doseq=True)
+
+                # Convert named tuple to list to make it mutable
+                url_parts = list(parsed)
+                url_parts[4] = new_query  # Replace query string
+
+                new_url = urlunparse(url_parts)
+
+                # 5. Save to Transaction (so the Controller uses the clean version)
+                tx.write({"return_url": new_url})
 
             except (ValueError, KeyError):
                 pass
