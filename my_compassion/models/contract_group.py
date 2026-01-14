@@ -43,72 +43,55 @@ class ContractGroup(models.Model):
 
     def get_payment_method_info(self):
         """
-        Returns a dict containing display info for the group's payment method.
-        Used in MyCompassion2.0 portal.
+        Returns a dictionary mapping group IDs to their payment method info.
+        The info includes icon ID, reference number, label, expiration date,
+        whether it's a card, payment mode ID, and group ID.
         """
-        self.ensure_one()
+        # 1. Prefetch all icons to avoid N+1 queries
+        all_icons = self.env["payment.icon"].sudo().search([("image", "!=", False)])
 
-        # 1. Initialize Default Values
-        info = {
-            "icon": False,
-            "ref_number": False,
-            "label": _("Unknown Method"),
-            "expire_date": False,
-            "is_card": False,
-            "mode_id": self.payment_mode_id.id if self.payment_mode_id else False,
-            "group_id": self.id,
-        }
+        result_map = {}
 
-        icon_search_term = False
+        for group in self:
+            info = {
+                "icon": False,
+                "ref_number": False,
+                "label": _("Unknown Method"),
+                "expire_date": False,
+                "is_card": False,
+                "mode_id": group.payment_mode_id.id if group.payment_mode_id else False,
+                "group_id": group.id,
+            }
 
-        # 2. Case A: Online Token (Credit Card / PostFinance)
-        if self.payment_token_id:
-            info["is_card"] = True
+            search_term = False
 
-            # Extract Brand from "Brand_ExternalId" format (e.g., "Visa_12345")
-            token_name = self.payment_token_id.name or ""
-            if "_" in token_name:
-                brand_name = token_name.split("_")[0]
-            else:
-                brand_name = token_name
+            # Logic: Online Token
+            if group.payment_token_id:
+                info["is_card"] = True
+                token_name = group.payment_token_id.name or ""
+                brand_name = token_name.split("_")[0] if "_" in token_name else token_name
+                info["label"] = brand_name
+                search_term = brand_name
 
-            info["label"] = brand_name
-            icon_search_term = brand_name
+            # Logic: Manual Mode
+            elif group.payment_mode_id:
+                info["type"] = "mode"
+                info["label"] = group.payment_mode_id.name
+                if group.bvr_reference:
+                    info["ref_number"] = group.bvr_reference
+                search_term = group.payment_mode_id.name
 
-        # 3. Case B: Manual Payment Mode (BVR / LSV / Permanent Order)
-        elif self.payment_mode_id:
-            info["type"] = "mode"
-            info["label"] = self.payment_mode_id.name
-
-            if self.bvr_reference:
-                info["ref_number"] = self.bvr_reference
-
-            # Use the mode name to find a matching icon
-            icon_search_term = self.payment_mode_id.name
-
-        # 4. Find the Icon
-        # We search for an icon whose name matches the extracted term (e.g. "Visa").
-        if icon_search_term:
-            # We use 'ilike' for case-insensitive matching.
-            # We look for an icon where the name is contained in our search term.
-            icon = (
-                self.env["payment.icon"]
-                .sudo()
-                .search(
-                    [
-                        ("image", "!=", False),
-                        "|",
-                        ("name", "ilike", icon_search_term),
-                        ("name", "=", icon_search_term),
-                    ],
-                    limit=1,
+            # Icon Lookup (In-Memory)
+            if search_term:
+                found_icon = all_icons.filtered(
+                    lambda i: i.name.lower() == search_term.lower() or search_term.lower() in i.name.lower()
                 )
-            )
+                if found_icon:
+                    info["icon"] = found_icon[0].id
 
-            if icon:
-                info["icon"] = icon.id
+            result_map[group.id] = info
 
-        return info
+        return result_map
 
     def change_payment_method(self, new_group_id=None, new_bvr_ref=None):
         """

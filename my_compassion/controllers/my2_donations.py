@@ -416,7 +416,7 @@ class MyCompassionDonationsController(CustomerPortal):
 
         # Put all payment methods into an array
         all_groups = partner.get_payment_modes()
-        payment_methods = [group.get_payment_method_info() for group in all_groups]
+        payment_info_map = all_groups.get_payment_method_info()
 
         # Due invoices
         date_filter_up_bound = datetime.today() + timedelta(days=30)
@@ -456,8 +456,8 @@ class MyCompassionDonationsController(CustomerPortal):
             {
                 "active_sponsorships": active_sponsorships,
                 "sponsorship_groups": sponsorship_groups,
-                "payment_methods": payment_methods,
-                "payment_methods_json": json.dumps(payment_methods),
+                "payment_info_map": payment_info_map,
+                "payment_methods_json": json.dumps(payment_info_map),
                 "tot_cost_per_frequency": tot_cost_per_frequency,
                 "due_invoices": due_invoices,
                 "paid_invoices_subset": paid_invoices_data["paid_invoices_subset"],
@@ -520,7 +520,7 @@ class MyCompassionDonationsController(CustomerPortal):
             return {
                 "success": True,
                 "html": html,
-                "payment_methods": values["payment_methods"],
+                "payment_info_map": values["payment_info_map"],
             }
 
         return {"success": False, "error": _("Operation failed")}
@@ -565,7 +565,7 @@ class MyCompassionDonationsController(CustomerPortal):
             return {
                 "success": True,
                 "html": html,
-                "payment_methods": values["payment_methods"],
+                "payment_info_map": values["payment_info_map"],
             }
 
         return {"success": False, "error": _("Operation failed")}
@@ -615,7 +615,7 @@ class MyCompassionDonationsController(CustomerPortal):
                 "success": True,
                 "html": html,
                 "group_id": new_group.id,
-                "payment_methods": values["payment_methods"],
+                "payment_info_map": values["payment_info_map"],
             }
 
         except odoo.exceptions.ValidationError as e:
@@ -705,14 +705,14 @@ class MyCompassionDonationsController(CustomerPortal):
 
         # 4. Fetch Available Methods (for modals)
         all_groups = partner.get_payment_modes()
-        payment_methods = [group.get_payment_method_info() for group in all_groups]
+        payment_info_map = all_groups.get_payment_method_info()
 
         return {
             "active_sponsorships": active_sponsorships,
             "sponsorship_groups": sponsorship_groups,
             "tot_cost_per_frequency": tot_cost_per_frequency,
-            "payment_methods": payment_methods,
-            "payment_methods_json": json.dumps(payment_methods),
+            "payment_info_map": payment_info_map,
+            "payment_methods_json": json.dumps(payment_info_map),
         }
 
     def _get_paginated_paid_invoices(

@@ -18,7 +18,7 @@ Page: My Compassion 2 Donations Page
     Injected data:
     - active_sponsorships (recordset): Sponsorships in active state for the logged-in partner.
     - sponsorship_groups (recordset): Sponsorship groups by payment methods linked to the partner.
-    - payment_methods (list): Available payment methods for the partner.
+    - payment_info_map (dict): Mapping of payment method info for sponsorship groups.
     - payment_methods_json (JSON): Available payment methods for the partner in JSON to pass to the JS.
     - tot_cost_per_frequency (dict): Total sponsorship cost grouped by frequency and currency.
     - due_invoices (recordset): Outstanding invoices not yet paid.
@@ -38,12 +38,12 @@ Page: My Compassion 2 Donations Page
                         <!-- 1. UPDATE MODAL (For editing a group) -->
                         <t t-call="my_compassion.my2_payment_method_selector">
                             <t t-set="modal_type" t-value="'update'" />
-                            <t t-set="payment_methods" t-value="payment_methods" />
+                            <t t-set="payment_info_map" t-value="payment_info_map" />
                         </t>
                         <!-- 2. CHANGE MODAL (For moving a child to another group) -->
                         <t t-call="my_compassion.my2_payment_method_selector">
                             <t t-set="modal_type" t-value="'change'" />
-                            <t t-set="payment_methods" t-value="payment_methods" />
+                            <t t-set="payment_info_map" t-value="payment_info_map" />
                         </t>
                         <!-- 3. ADD MODAL (For creating a new payment method) -->
                         <t t-call="my_compassion.my2_payment_method_selector">

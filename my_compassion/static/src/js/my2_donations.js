@@ -37,7 +37,8 @@ odoo.define("my_compassion.my2_donations", function (require) {
             // 1. Initialize Local State
             // Read the initial list of payment methods passed from the backend template
             var $container = this.$("#my_sponsorships_container");
-            this.paymentMethods = $container.data("payment-methods") || [];
+            this.payment_info_map = $container.data("payment-info-map") || [];
+            console.log("Initial Payment Info Map:", this.payment_info_map);
 
             // 2. Global Bindings (Cleanup & Modal behaviors)
             this._onModalHiddenGlobalBound = this._onModalHiddenGlobal.bind(this);
@@ -80,7 +81,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
             // detail contains: { contract_id, group_id, child_name } passed via detail_js
             var detail = ev.detail || {};
             var $container = this.$("#my_sponsorships_container");
-            this.paymentMethods = $container.data("payment-methods") || [];
+            this.payment_info_map = $container.data("payment-info-map") || [];
             var $modal = $("#payment_method_selector_modal_change");
 
             // Update Description
@@ -142,31 +143,27 @@ odoo.define("my_compassion.my2_donations", function (require) {
         // -------------------------------------------------------------------------
 
         /**
-         * Renders the list of payment method cards into a specific container
-         * Uses the local `this.paymentMethods` state.
-         */
+        * Renders the list of payment method cards into a specific container.
+        * Optimized to render the whole list in one pass using QWeb.
+        */
         _renderPaymentMethodsList: function ($modal, currentGroupId, containerSelector) {
             var $container = $modal.find(containerSelector);
-            $container.empty();
 
-            if (!this.paymentMethods || this.paymentMethods.length === 0) {
+            // Check if data exists (for Object/Map)
+            if (!this.payment_info_map || Object.keys(this.payment_info_map).length === 0) {
                 $container.html(QWeb.render("my_compassion.PaymentMethodLoading"));
                 return;
             }
 
-            var self = this;
-            // Iterate over local state
-            _.each(this.paymentMethods, function (method) {
-                // Clone data to avoid mutating state
-                var data = _.extend({}, method, {
-                    // Mark as selected if it matches the current group of the child
-                    selected: method.group_id == currentGroupId,
-                });
-
-                // Render Client-Side Template
-                var $card = $(QWeb.render("my_compassion.PaymentMethodCard", data));
-                $container.append($card);
+            // 2. Render the entire list at once (Performance optimization)
+            // We pass the map and the 'currentGroupId' for the selected state logic
+            console.log("PAyment Methods:", this.payment_info_map);
+            var content = QWeb.render("my_compassion.PaymentMethodList", {
+                methods: this.payment_info_map,
+                current_group_id: parseInt(currentGroupId) || 0,
             });
+
+            $container.html(content);
         },
 
         // -------------------------------------------------------------------------
@@ -308,8 +305,8 @@ odoo.define("my_compassion.my2_donations", function (require) {
                         }
 
                         // Update Client-Side Data State
-                        if (result.payment_methods) {
-                            self.paymentMethods = result.payment_methods;
+                        if (result.payment_info_map) {
+                            self.payment_info_map = result.payment_info_map;
                         }
                     } else {
                         ToastService.error(result.error || _t("An error occurred."));

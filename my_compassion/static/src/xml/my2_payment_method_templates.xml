@@ -4,21 +4,30 @@
         Card component for a single payment method.
         Injected data:
         - icon: ID of the payment method icon image.
-        - ref_number: Reference number or last 4 digits of the card.
+        - ref_number: Reference number
         - label: Display name of the payment method.
         - type: Type of the payment method.
         - expire_date: Expiration date of the payment method (if applicable).
         - brand: Brand of the card (if applicable).
         - is_card (Boolean): Flag indicating if the payment method is a card.
         - group_id: The group ID associated with this payment method.
-        - mode_id: The mode ID associated with this payment method.
         - selected (Boolean): A flag indicating if this specific payment method is currently selected.
     -->
     <t t-name="my_compassion.PaymentMethodList">
         <div class="payment-methods-list">
-            <t t-foreach="methods" t-as="method">
+            <t t-foreach="methods" t-as="group_id">
+                <t t-set="method" t-value="methods[group_id]"/>
+
                 <t t-call="my_compassion.PaymentMethodCard">
                     <t t-set="method" t-value="method"/>
+                    <t t-set="icon" t-value="method['icon']"/>
+                    <t t-set="ref_number" t-value="method['ref_number']"/>
+                    <t t-set="label" t-value="method['label']"/>
+                    <t t-set="type" t-value="method['type']"/>
+                    <t t-set="expire_date" t-value="method['expire_date']"/>
+                    <t t-set="brand" t-value="method['brand']"/>
+                    <t t-set="is_card" t-value="method['is_card']"/>
+                    <t t-set="group_id" t-value="group_id"/>
                     <t t-set="selected" t-value="method.group_id == current_group_id"/>
 
                 </t>

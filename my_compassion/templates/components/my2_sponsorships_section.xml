@@ -17,7 +17,7 @@ Injected data:
 - active_sponsorships (recordset): A set of recurring.contract records for the partner (filtered for active, waiting, or mandate states).
 - sponsorship_groups (recordset): The recurring.contract.group records associated with the active sponsorships.
 - tot_cost_per_frequency (dict): A nested dictionary summing up costs. Structure: { frequency_interval (int): { currency (str): total_amount (float) } }.
-- payment_methods (list): A list of dictionaries containing display info (label, icon, type, id) for all the partner's available payment modes.
+- payment_methods (dict): A dictionary mapping group IDs to their available payment methods. of dictionaries containing display info (label, icon, type, id).
 - payment_methods_json (JSON): Available payment methods for the partner in JSON to pass to the JS.
 
 
@@ -28,7 +28,7 @@ Notes:
 <odoo>
     <data>
         <template id="my2_sponsorships_section" name="My Sponsorships List Section">
-            <div id="my_sponsorships_container" t-att-data-payment-methods="payment_methods_json">
+            <div id="my_sponsorships_container" t-att-data-payment-info-map="payment_methods_json">
                 <h3 class="text-dark-blue">My sponsorships</h3>
                 <p>
                     You currently have
@@ -57,6 +57,7 @@ Notes:
                 <t t-foreach="sponsorship_groups" t-as="group">
                     <t t-call="my_compassion.my2_sponsorships_group_card">
                         <t t-set="group" t-value="group" />
+                        <t t-set="info" t-value="payment_info_map.get(group.id)" />
                         <t t-set="all_groups" t-value="sponsorship_groups" />
                     </t>
                 </t>

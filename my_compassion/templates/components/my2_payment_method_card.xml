@@ -10,7 +10,6 @@ Description:
    -->
 <odoo>
     <template id="my2_sponsorships_group_card" name="Sponsorships Group Card Component">
-        <t t-set="info" t-value="group.get_payment_method_info()" />
         <div class="sponsorship-group mb-4 sponsorship-group-container">
             <div class="d-flex flex-column border rounded shadow-sm">
                 <div
