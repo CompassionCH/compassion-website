@@ -26,7 +26,7 @@ class WebsiteHomeRedirect(Website):
 
         if request.website == request.env.ref("my_compassion.my2_website"):
             if request.session.uid:
-                return request.redirect("/my2/dashboard/")
+                return request.redirect("/my2/dashboard")
             else:
                 return request.redirect("/web/login")
         return super().home(*args, **kw)
