@@ -23,6 +23,10 @@ class WebsiteHomeRedirect(Website):
         If the user is not logged in, they are redirected to the login page.
         `my2_login.py` handles the redirection from the login page to the dashboard.
         """
+
         if request.website == request.env.ref("my_compassion.my2_website"):
-            return request.redirect("/my2/dashboard/")
-        return super().home(*args, **kwargs)
+            if request.session.uid:
+                return request.redirect("/my2/dashboard/")
+            else:
+                return request.redirect("/web/login")
+        return super().home(*args, **kw)
