@@ -16,25 +16,22 @@
     <t t-name="my_compassion.PaymentMethodList">
         <div class="payment-methods-list">
             <t t-foreach="methods" t-as="group_id">
-                <t t-set="method" t-value="methods[group_id]"/>
-
+                <t t-set="method" t-value="methods[group_id]" />
                 <t t-call="my_compassion.PaymentMethodCard">
-                    <t t-set="method" t-value="method"/>
-                    <t t-set="icon" t-value="method['icon']"/>
-                    <t t-set="ref_number" t-value="method['ref_number']"/>
-                    <t t-set="label" t-value="method['label']"/>
-                    <t t-set="type" t-value="method['type']"/>
-                    <t t-set="expire_date" t-value="method['expire_date']"/>
-                    <t t-set="brand" t-value="method['brand']"/>
-                    <t t-set="is_card" t-value="method['is_card']"/>
-                    <t t-set="group_id" t-value="group_id"/>
-                    <t t-set="selected" t-value="method.group_id == current_group_id"/>
-
+                    <t t-set="method" t-value="method" />
+                    <t t-set="icon" t-value="method['icon']" />
+                    <t t-set="ref_number" t-value="method['ref_number']" />
+                    <t t-set="label" t-value="method['label']" />
+                    <t t-set="type" t-value="method['type']" />
+                    <t t-set="expire_date" t-value="method['expire_date']" />
+                    <t t-set="brand" t-value="method['brand']" />
+                    <t t-set="is_card" t-value="method['is_card']" />
+                    <t t-set="group_id" t-value="group_id" />
+                    <t t-set="selected" t-value="method.group_id == current_group_id" />
                 </t>
             </t>
         </div>
     </t>
-
     <t t-name="my_compassion.PaymentMethodCard">
         <div
             t-attf-class="payment-method-card d-flex align-items-center p-3 mb-2 border

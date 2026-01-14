@@ -67,7 +67,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
         // PLEASE NOTE:
         // Before deep diving into this code note that there's a documentation
         // page explaining the overall architecture and flow of this code.
-        // https://compassion.odoo.com/odoo/knowledge/205 
+        // https://compassion.odoo.com/odoo/knowledge/205
 
         // -------------------------------------------------------------------------
         // MODAL OPEN HANDLERS
@@ -143,9 +143,9 @@ odoo.define("my_compassion.my2_donations", function (require) {
         // -------------------------------------------------------------------------
 
         /**
-        * Renders the list of payment method cards into a specific container.
-        * Optimized to render the whole list in one pass using QWeb.
-        */
+         * Renders the list of payment method cards into a specific container.
+         * Optimized to render the whole list in one pass using QWeb.
+         */
         _renderPaymentMethodsList: function ($modal, currentGroupId, containerSelector) {
             var $container = $modal.find(containerSelector);
 

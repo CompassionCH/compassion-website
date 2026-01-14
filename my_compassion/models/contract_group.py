@@ -69,7 +69,9 @@ class ContractGroup(models.Model):
             if group.payment_token_id:
                 info["is_card"] = True
                 token_name = group.payment_token_id.name or ""
-                brand_name = token_name.split("_")[0] if "_" in token_name else token_name
+                brand_name = (
+                    token_name.split("_")[0] if "_" in token_name else token_name
+                )
                 info["label"] = brand_name
                 search_term = brand_name
 
@@ -84,7 +86,8 @@ class ContractGroup(models.Model):
             # Icon Lookup (In-Memory)
             if search_term:
                 found_icon = all_icons.filtered(
-                    lambda i: i.name.lower() == search_term.lower() or search_term.lower() in i.name.lower()
+                    lambda i, term=search_term: i.name.lower() == term.lower()
+                    or term.lower() in i.name.lower()
                 )
                 if found_icon:
                     info["icon"] = found_icon[0].id
@@ -230,11 +233,7 @@ class ContractGroup(models.Model):
     def get_payment_method_icons(self):
         """Returns a dictionary of payment method icons for quick access."""
         icons = {}
-        icon_records = (
-            self.env["payment.icon"]
-            .sudo()
-            .search([("image", "!=", False)])
-        )
+        icon_records = self.env["payment.icon"].sudo().search([("image", "!=", False)])
         for icon in icon_records:
             icons[icon.name.lower()] = icon.id
         return icons
