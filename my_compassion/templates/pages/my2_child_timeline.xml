@@ -11,7 +11,13 @@
 
     Injected data:
     - compassion_child (record): The related child object.
+    - records (list): timeline items to display.
+    - has_more_records (boolean): Indicates if there are more records to load.
     - access_scope (string): 'public' or 'sponsor'.
+    - google_api_key (string): API key for Google Maps integration.
+    - google_custom_map_id (string): Custom map ID for Google Maps integration.
+    - timezone (string): Timezone of the child's project location.
+    - birthday_formatted (str): Date of birth according to the specificities of the language.
 
     TO DO: inject a list of significant sponsorship events.
 -->
@@ -105,31 +111,19 @@
                                 </t>
                             </div>
                             <div class="child-personal-information d-flex flex-column flex-grow-1 mt-md-3 ml-md-3">
-                                <div class="child-info-item d-flex align-items-center">
-                                    <div class="frame bg-core-blue mr-2">
-                                        <i class="icon icon-calendar-heart02 text-pure-white m-2" />
+                                <t t-if="birthday_formatted">
+                                    <div class="child-info-item d-flex align-items-center">
+                                        <div class="frame bg-core-blue mr-2">
+                                            <i class="icon icon-calendar-heart02 text-pure-white m-2" />
+                                        </div>
+                                        <p class="child-info-text">
+                                            My birthday is
+                                            <span class="text-core-blue font-weight-bold">
+                                                <t t-esc="birthday_formatted" />
+                                            </span>
+                                        </p>
                                     </div>
-                                    <t t-set="day" t-value="compassion_child.birthdate.day" />
-                                    <t t-set="month" t-value="compassion_child.birthdate.strftime('%B')" />
-                                    <t t-set="suffix" t-value="'th'" />
-                                    <t t-if="day in [1, 21, 31]">
-                                        <t t-set="suffix" t-value="'st'" />
-                                    </t>
-                                    <t t-elif="day in [2, 22]">
-                                        <t t-set="suffix" t-value="'nd'" />
-                                    </t>
-                                    <t t-elif="day in [3, 23]">
-                                        <t t-set="suffix" t-value="'rd'" />
-                                    </t>
-                                    <p class="child-info-text">
-                                        My birthday is
-                                        <span class="text-core-blue font-weight-bold">
-                                            <t t-esc="month" />
-                                            <t t-esc="day" />
-                                            <t t-esc="suffix" />
-                                        </span>
-                                    </p>
-                                </div>
+                                </t>
                                 <div class="child-info-item d-flex align-items-center">
                                     <div class="frame bg-mid-green mr-2">
                                         <i class="icon icon-heart text-pure-white m-2" />
@@ -407,7 +401,7 @@
                                     <t t-if="field_office.less_than_2_dollars_a_day">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">
-                                                Population living on less than $2/day:
+                                                Population living on less than $3/day:
                                             </strong>
                                             <t
                                                 t-esc="'{:.0f}%'.format(field_office.less_than_2_dollars_a_day * 100 )"

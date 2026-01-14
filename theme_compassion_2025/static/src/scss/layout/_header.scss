@@ -1,0 +1,32 @@
+/**
+* layout/_header.scss
+* ===========
+* Header Sign in / Profile button styles for Compassion Switzerland website
+*/
+
+/* High Specificity Selector
+   We prepend '#wrapwrap .navbar .nav-item' to the selector.
+   This creates a selector with 1 ID and 4+ classes, which is strong enough
+   to beat Odoo's default overlay header styles (which use 1 ID + multiple classes).
+*/
+#wrapwrap .navbar .nav-item .dropdown-menu.c-user-menu-fix {
+
+  /* Container Layout & Shape */
+  min-width: auto !important;
+  width: max-content !important;
+  border-radius: 10px !important;
+  overflow: hidden;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+
+  /* Dropdown Item Styling */
+  a.dropdown-item {
+    transition: all 0.2s ease;
+
+    &:hover, &:focus, &:active, &.active {
+      background-color: var(--compassion-blue) !important;
+      color: #ffffff !important;
+      text-decoration: none;
+    }
+  }
+}

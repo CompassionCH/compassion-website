@@ -68,7 +68,13 @@
         <t t-set="secondary_buttons" t-value="secondary_buttons or []" />
         <!-- Estimate component minimum width -->
         <t t-set="min_width" t-valuef="#{300 + 24 * len(secondary_buttons)}px" />
-        <!-- Component definition -->
+        <!--Small image on the card  -->
+        <t t-set="small_thumbnail_content">
+            <div
+                class="thumbnail responsive-sm mr-3 flex-shrink-0 rounded-lg"
+                t-attf-style="--image_url: url('#{image}');"
+            />
+        </t>
         <div
             t-attf-class="donation-item-container p-2 d-flex rounded-lg bg-#{bg_color} border-#{accent_color} #{top_class}"
             t-attf-style="min-width: #{min_width}"
@@ -77,12 +83,10 @@
                 class="thumbnail responsive-lg mr-3 flex-shrink-0 rounded-lg"
                 t-attf-style="--image_url: url('#{image}');"
             />
+            <t t-if="not primary_button" t-raw="small_thumbnail_content" />
             <div class="w-100 d-flex flex-column justify-content-between">
                 <div class="d-flex align-items-start">
-                    <div
-                        class="thumbnail responsive-sm mr-3 flex-shrink-0 rounded-lg"
-                        t-attf-style="--image_url: url('#{image}');"
-                    />
+                    <t t-if="primary_button" t-raw="small_thumbnail_content" />
                     <div class="flex-grow-1 d-flex flex-column">
                         <div t-attf-class="text-#{title_color} body-large bold">
                             <t t-esc="name" />
@@ -109,11 +113,11 @@
                         <t t-esc="currency_name" />
                         <t t-if="price % 1 == 0" t-set="price" t-value="'{0}.-'.format(int(price))" />
                         <t t-else="" t-set="price" t-value="'{0:.2f}'.format(price)" />
-                        <t t-if="monthly" t-set="monthly" t-value="'/mo.'" />
+                        <t t-if="monthly" t-set="monthly">/mo.</t>
                         <t t-elif="monthly_noabbr">
-                            <t t-set="monthly" t-value="' /month'" />
+                            <t t-set="monthly">&#160;/month</t>
                         </t>
-                        <t t-else="" t-set="monthly" t-value="''" />
+                        <t t-else="" t-set="monthly" />
                         <t t-esc="price + monthly" />
                     </div>
                 </div>

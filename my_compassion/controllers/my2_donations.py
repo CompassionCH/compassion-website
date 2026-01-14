@@ -343,8 +343,15 @@ class MyCompassionDonationsController(CustomerPortal):
                 raise BadRequest()
             price = quantity * product_template.list_price
 
-        # Get frequency
-        frequency = post.get("frequency")
+        # Get frequency and force one_time for gifts
+        if product_template.my_compassion_donation_type == "gift":
+            frequency = "one_time"
+        else:
+            frequency = post.get("frequency")
+            if frequency not in ("one_time", "monthly"):
+                raise BadRequest(
+                    "A valid frequency is required for this type of donation."
+                )
 
         product = product_template.product_variant_id
         order_line_fields = {

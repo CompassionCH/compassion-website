@@ -8,15 +8,10 @@
 .donation-item-container .thumbnail {
     width: 90px;
     height: 90px;
-
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
     background-image: var(--image_url);
-}
-
-.donation-item-container .thumbnail.responsive-lg {
-    display: none;
 }
 
 .donation-item-container .action-button {
@@ -27,12 +22,16 @@
     text-decoration: underline;
 }
 
+.donation-item-container .thumbnail.responsive-lg {
+    display: none;
+}
+
 @container donation-item-container (width > 500px) {
-    .thumbnail.responsive-sm {
+    .donation-item-container .thumbnail.responsive-sm {
         display: none;
     }
 
-    .thumbnail.responsive-lg {
+    .donation-item-container .thumbnail.responsive-lg {
         display: block;
     }
 }

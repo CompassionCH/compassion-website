@@ -42,12 +42,11 @@
                         <!-- DONATION TYPE -->
                         <t t-call="theme_compassion_2025.ToggleButtonComponent">
                             <t t-set="name" t-value="'donation-type'" />
+                            <t t-set="_txt_Gift_for_a_child">Gift for a child</t>
+                            <t t-set="_txt_Gift_of_compassion">Gift of compassion</t>
                             <t
                                 t-set="options"
-                                t-value="[
-                                    ('gift', 'Gift for a child'),
-                                    ('fund', 'Gift of compassion'),
-                                ]"
+                                t-value="[('gift', _txt_Gift_for_a_child), ('fund', _txt_Gift_of_compassion)]"
                             />
                             <t t-set="default" t-value="'gift'" />
                             <t t-set="top_class" t-value="'my-4'" />
@@ -90,7 +89,7 @@
                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                 <t t-set="variant" t-value="'compact'" />
                                 <t t-set="variation" t-value="'filled'" />
-                                <t t-set="label">Back to Gift Package</t>
+                                <t t-set="label">Back to Gift Basket</t>
                                 <t t-set="color" t-value="'dark-blue'" />
                                 <t t-set="text_color" t-value="'pure-white'" />
                                 <t t-set="href" t-value="'/my2/gift-package'" />
