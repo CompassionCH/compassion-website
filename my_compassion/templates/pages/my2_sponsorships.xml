@@ -27,7 +27,7 @@ Page: My Compassion 2 Sponsorships Page
     <!-- RESULTS CONTENT -->
     <template id="my2_sponsorships_results_content" name="Sponsorships Results Dynamic Content">
         <t t-foreach="children" t-as="child">
-            <div class="col flex-grow-0">
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
                 <t t-call="my_compassion.my2_children_card_component">
                     <t t-set="child" t-value="child" />
                     <t t-set="show_sponsor_me" t-value="True" />
@@ -48,18 +48,21 @@ Page: My Compassion 2 Sponsorships Page
                     <i id="sponsorships-title-icon" class="pictogram-child-sponsorship text-low-yellow mt-4" />
                     <h2 class="text-pure-white text-center">
                         <t t-if="sponsorship_type == 'write_and_pray'">
-                            You write to and pray for a child, someone else sponsors the relationship
+                            You write to and pray for a child, while someone else pays for the sponsorship.
                         </t>
                         <t t-else="">Sponsor a child</t>
                     </h2>
                     <div class="body-large bold text-pure-white text-center mt-3 mb-2">
                         <t t-if="sponsorship_type == 'write_and_pray'">
-                            Lifting a child out of poverty can also be a team effort! A donor pays. A sponsor writes to the
-                            child and prays for them. Thanks to the “Write &amp; Pray” sponsorship program set up for young
-                            people under the age of 25, these two acts of generosity can work together.
-                            <br /> <br />
+                            Lifting a child out of poverty can also be a team effort! A donor pays. A sponsor writes to
+                            the
+                            child and prays for them. Thanks to the “Write&amp;Pray” sponsorship program set up for young
+                            people under the age of 25, These two acts of generosity can team up.
+                            <br />
+                            <br />
                             You can choose below (or ask us to choose for you) a child you would like to sponsor. Your
-                            commitment? Pray for them regularly and write to them at least twice a year, sending letters of
+                            commitment? Pray for them regularly and write to them at least twice a year, sending letters
+                            of
                             support and encouragement.
                         </t>
                         <t t-else="">Stand with the Church and See a Child Released from Poverty</t>
@@ -119,7 +122,7 @@ Page: My Compassion 2 Sponsorships Page
                         children found
                     </div>
                     <!-- CHILDREN PROFILES -->
-                    <div class="sponsorships-results-content row justify-content-center" />
+                    <div class="sponsorships-results-content row justify-content-center g-4" />
                 </div>
                 <!-- BUTTONS -->
                 <div class="sponsorships-column d-flex mt-4 mb-5">

@@ -26,10 +26,10 @@ Page: My Compassion 2 Dashboard Page
         <t t-call="website.layout">
             <div class="container">
                 <!-- BANNER -->
-                <div class="dashboard-banner d-none d-lg-block mt-4">
+                <div class="dashboard-banner d-none d-lg-block">
                     <div class="position-absolute m-5 pl-5 pt-2">
                         <h1 class="text-pure-white">
-                            Welcome to the new
+                            Welcome to
                             <br />
                             <span class="text-low-yellow">my</span>
                             Compassion
@@ -96,15 +96,17 @@ Page: My Compassion 2 Dashboard Page
                         />
                     </t>
                 </t>
-                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                    <t t-set="variant" t-value="'default'" />
-                    <t t-set="variation" t-value="'filled'" />
-                    <t t-set="label">Write to Your Child</t>
-                    <t t-set="icon" t-value="'pictogram-letter-writing'" />
-                    <t t-set="color" t-value="'core-blue'" />
-                    <t t-set="icon_color" t-value="'low-yellow'" />
-                    <t t-set="text_color" t-value="'pure-white'" />
-                    <t t-set="href" t-value="'/my2/children/letters/new'" />
+                <t t-if="partner.is_writer">
+                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                        <t t-set="variant" t-value="'default'" />
+                        <t t-set="variation" t-value="'filled'" />
+                        <t t-set="label">Write to Your sponsored child</t>
+                        <t t-set="icon" t-value="'pictogram-letter-writing'" />
+                        <t t-set="color" t-value="'core-blue'" />
+                        <t t-set="icon_color" t-value="'low-yellow'" />
+                        <t t-set="text_color" t-value="'pure-white'" />
+                        <t t-set="href" t-value="'/my2/children/letters/new'" />
+                    </t>
                 </t>
             </t>
             <!-- If an ex-sponsor, creates a button to see old sponsorships  -->
@@ -140,7 +142,7 @@ Page: My Compassion 2 Dashboard Page
                     <t t-set="label">My donations</t>
                     <t t-set="icon" t-value="'pictogram-letter-writing'" />
                     <t t-set="color" t-value="'mid-brown'" />
-                    <t t-set="icon_color" t-value="'high-brown'" />
+                    <t t-set="icon_color" t-value="'pure-white'" />
                     <t t-set="text_color" t-value="'pure-white'" />
                     <t t-set="href" t-value="'/my2/donations'" />
                 </t>

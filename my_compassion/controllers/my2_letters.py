@@ -65,7 +65,14 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         to_date = date(year_to, month_to, last_day)
 
         # Build the domain of the filtering of the letters
-        filter_domain = [("partner_id", "=", partner.id)]
+        filter_domain = [
+            ("partner_id", "=", partner.id),
+            (
+                "child_id",
+                "in",
+                children_sponsored_by_partner.filtered("can_i_write_letter").ids,
+            ),
+        ]
 
         if child:
             try:
@@ -172,6 +179,9 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
     )
     def my2_render_new_letter_page(self, **kwargs):
         partner = request.env.user.partner_id
+        if not partner.is_writer:
+            return request.redirect("/my2/children/")
+
         child_id = self._safe_int(kwargs.get("child_id"), None)
         child = request.env["compassion.child"].browse(child_id)
         sponsorships = partner.sponsorship_ids.filtered("child_id.can_i_write_letter")

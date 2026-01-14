@@ -33,6 +33,7 @@ class StylesheetGeneratorMixin(models.AbstractModel):
     render_key = None
     css_template_xml_id = None
     css_attachment_xml_id = None
+    website_name = "MyCompassion"
 
     def _check_required_attributes(self):
         """Ensure that the inheriting class has defined the required attributes."""
@@ -53,6 +54,16 @@ class StylesheetGeneratorMixin(models.AbstractModel):
         """
         self._check_required_attributes()
 
+        website_id = (
+            self.env["website"].search([("name", "=", self.website_name)], limit=1).id
+        )
+
+        if not website_id:
+            _logger.warning(
+                f"Website '{self.website_name}' not found.Skip CSS generation for model"
+                f"'{self._name}'."
+            )
+            return
         view_template = self.env.ref(self.css_template_xml_id, raise_if_not_found=False)
         if not view_template:
             _logger.warning(
@@ -79,7 +90,7 @@ class StylesheetGeneratorMixin(models.AbstractModel):
                 f"'{self._name}'. Skipping CSS update."
             )
             return
-        attachment.write({"datas": css_content_b64})
+        attachment.write({"datas": css_content_b64, "website_id": website_id})
         _logger.info(f"Successfully updated {attachment.name} file.")
 
         # force bundle invalidation
