@@ -24,23 +24,7 @@ Page: My Compassion 2 Children Page
                         <t t-set="color" t-value="'core-blue'" />
                         <t t-set="underline_color" t-value="'low-yellow'" />
                         <t t-set="show_underline" t-value="True" />
-                        <t t-set="description">
-                            Many thanks for your support – every sponsorship changes a life!
-Would you like to bring hope to another child?
-                        </t>
                     </t>
-                    <!-- NEW SPONSORSHIP BUTTON -->
-                    <div class="row justify-content-center mb-3">
-                        <a t-attf-href="/my2/sponsorships">
-                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                <t t-set="variation" t-value="'filled'" />
-                                <t t-set="color" t-value="'low-blue'" />
-                                <t t-set="text_color" t-value="'white'" />
-                                <t t-set="variant" t-value="'default'" />
-                                <t t-set="label">New sponsorship</t>
-                            </t>
-                        </a>
-                    </div>
                 </div>
                 <!-- ACTIVE SPONSORSHIPS CHILDREN-->
                 <div class="container-content d-flex flex-column align-items-center mt-4 mb-5">
@@ -59,6 +43,25 @@ Would you like to bring hope to another child?
                                 </div>
                             </t>
                         </div>
+                    </div>
+                </div>
+                <!-- TEXT DESCRIPTION -->
+                <div class="single-column">
+                    <p class="title-description text-low-black text-center mb-3">
+                        Many thanks for your support – every sponsorship changes a life!
+Would you like to bring hope to another child?
+                    </p>
+                    <!-- NEW SPONSORSHIP BUTTON -->
+                    <div class="row justify-content-center mb-3">
+                        <a t-attf-href="/my2/sponsorships">
+                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                <t t-set="variation" t-value="'filled'" />
+                                <t t-set="color" t-value="'low-blue'" />
+                                <t t-set="text_color" t-value="'white'" />
+                                <t t-set="variant" t-value="'default'" />
+                                <t t-set="label">New sponsorship</t>
+                            </t>
+                        </a>
                     </div>
                 </div>
                 <!-- TERMINATED SPONSORSHIPS CHILDREN -->
