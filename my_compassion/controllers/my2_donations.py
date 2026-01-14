@@ -414,7 +414,7 @@ class MyCompassionDonationsController(CustomerPortal):
         # Group sponsorships by their backend Contract Group
         sponsorship_groups = active_sponsorships.mapped("group_id")
 
-        # Put all payment methods into an array
+        # Put all payment methods into a dict of group_id -> method info
         all_groups = partner.get_payment_modes()
         payment_info_map = all_groups.get_payment_method_info()
 
@@ -664,20 +664,6 @@ class MyCompassionDonationsController(CustomerPortal):
         # Error if Iframe data is missing
         return {"success": False, "error": "Payment interface could not be loaded."}
 
-    @http.route(
-        "/my2/donation/set_selected_payment_method",
-        type="json",
-        auth="user",
-        website=True,
-    )
-    def set_selected_payment_method(self, method_name):
-        """
-        Called by JS when the user selects an online method (e.g. 'Credit Card').
-        Stores it in the session so we can find the correct Payment Mode later.
-        """
-        request.session["add_method_name"] = method_name
-        return True
-
     # -------------------------------------------------------------------------
     # PRIVATE HELPERS (Rendering Data Preparation)
     # -------------------------------------------------------------------------
@@ -742,7 +728,7 @@ class MyCompassionDonationsController(CustomerPortal):
     def _create_contract_group(partner, payment_mode, unit, value, token=None):
         """
         Centralized method to create a recurring contract group.
-        Used by both Manual (BVR) and Online (Credit Card) flows.
+        Used by both Manual (BVR, etc.) and Online (Credit Card, etc.) flows.
         """
         vals = {
             "partner_id": partner.id,

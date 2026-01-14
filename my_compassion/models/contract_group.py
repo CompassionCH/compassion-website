@@ -6,7 +6,7 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, urlparse, urlencode, urlunparse
 
 from odoo import _, api, fields, models
 
@@ -98,9 +98,13 @@ class ContractGroup(models.Model):
 
     def change_payment_method(self, new_group_id=None, new_bvr_ref=None):
         """
-        Update the contract group by either merging into an existing group
-        (if new_group_id provided) or finding/creating a group for a specific
-        payment mode (if payment_mode_id provided).
+        Update the contract group by merging into an existing group
+        (if new_group_id provided) or updating the BVR reference
+        (if new_bvr_ref provided).
+
+        :param new_group_id: ID of the target group to merge into
+        :param new_bvr_ref: New BVR reference string
+        :return: True if successful, False otherwise
         """
         self.ensure_one()
 
@@ -134,6 +138,7 @@ class ContractGroup(models.Model):
     def create_from_transaction(self, tx):
         """
         Creates or retrieves a contract group from a validation transaction.
+
         :param tx: payment.transaction record
         :return: (group_record, message_string)
         """
@@ -145,7 +150,7 @@ class ContractGroup(models.Model):
             }
         token = tx.payment_token_id
 
-        # 1. Reuse existing group (Idempotency)
+        # Reuse existing group if available
         existing_group = self.with_context(active_test=False).search(
             [
                 ("partner_id", "=", tx.partner_id.id),
@@ -163,7 +168,7 @@ class ContractGroup(models.Model):
                 "status": "existing",
                 "message": _("This payment method was already saved."),
             }
-        # 2. Retrieve Recurring Frequency (Unit/Value)
+        # Retrieve Recurring Frequency (Unit/Value)
         # Default to monthly if not specified
         recurring_unit = "month"
         recurring_value = 1
@@ -183,20 +188,16 @@ class ContractGroup(models.Model):
 
                 # Rebuild the return_url without the used parameters
                 new_query = urlencode(params, doseq=True)
-
-                # Convert named tuple to list to make it mutable
                 url_parts = list(parsed)
-                url_parts[4] = new_query  # Replace query string
+                url_parts[4] = new_query
 
                 new_url = urlunparse(url_parts)
-
-                # 5. Save to Transaction (so the Controller uses the clean version)
                 tx.write({"return_url": new_url})
 
             except (ValueError, KeyError):
                 pass
 
-        # 3. Identify Payment Mode
+        # Identify Payment Mode
         company_id = tx.acquirer_id.company_id.id
         domain = [
             ("company_id", "=", company_id),
@@ -226,7 +227,7 @@ class ContractGroup(models.Model):
                 "Configuration Error: No suitable electronic payment mode found."
             )
 
-        # 4. Create the Group
+        # Create the Group
         vals = {
             "partner_id": tx.partner_id.id,
             "payment_mode_id": payment_mode.id,
@@ -243,12 +244,3 @@ class ContractGroup(models.Model):
             "status": "new",
             "message": _("Payment method successfully added."),
         }
-
-    # save icons to not reload them each time
-    def get_payment_method_icons(self):
-        """Returns a dictionary of payment method icons for quick access."""
-        icons = {}
-        icon_records = self.env["payment.icon"].sudo().search([("image", "!=", False)])
-        for icon in icon_records:
-            icons[icon.name.lower()] = icon.id
-        return icons
