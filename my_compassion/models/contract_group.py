@@ -6,7 +6,7 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from urllib.parse import parse_qs, urlparse, urlencode, urlunparse
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 from odoo import _, api, fields, models
 

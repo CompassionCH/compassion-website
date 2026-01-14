@@ -8,7 +8,6 @@
         - label: Display name of the payment method.
         - type: Type of the payment method.
         - expire_date: Expiration date of the payment method (if applicable).
-        - brand: Brand of the card (if applicable).
         - is_card (Boolean): Flag indicating if the payment method is a card.
         - group_id: The group ID associated with this payment method.
         - selected (Boolean): A flag indicating if this specific payment method is currently selected.
@@ -24,7 +23,6 @@
                     <t t-set="label" t-value="method['label']" />
                     <t t-set="type" t-value="method['type']" />
                     <t t-set="expire_date" t-value="method['expire_date']" />
-                    <t t-set="brand" t-value="method['brand']" />
                     <t t-set="is_card" t-value="method['is_card']" />
                     <t t-set="group_id" t-value="group_id" />
                     <t t-set="selected" t-value="method.group_id == current_group_id" />
@@ -73,7 +71,7 @@
                 <div class="font-weight-bold text-dark-blue leading-tight">
                     <t t-esc="label" />
                 </div>
-                <!-- Subtitle Logic: Ref Number or Expire Date or Brand -->
+                <!-- Subtitle Logic: Ref Number or Expire Date -->
                 <div class="small text-muted mt-1">
                     <t t-if="ref_number">
                         <span class="mr-1">

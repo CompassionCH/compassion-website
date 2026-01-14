@@ -121,7 +121,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
             var formHtml = QWeb.render("my_compassion.PaymentMethodUpdateAccordion", detail.method_info || {});
             $modal.find("#modal_container").empty().html(formHtml);
 
-            // 2. Render the "Switch" list in the accordion
+            // 2. Render the "Switch" list
             this._renderPaymentMethodsList($modal, detail.group_id, "#payment_methods_switch_container");
 
             $modal.modal("show");
@@ -139,7 +139,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
         },
 
         // -------------------------------------------------------------------------
-        // RENDERING HELPERS
+        // RENDERING HELPER
         // -------------------------------------------------------------------------
 
         /**
@@ -186,10 +186,6 @@ odoo.define("my_compassion.my2_donations", function (require) {
                 .removeClass("border-gray-200 hover-shadow-sm");
         },
 
-        /**
-         *
-         * @param {*} ev
-         */
         _onSavePaymentMethod: function (ev) {
             ev.preventDefault();
             var $btn = $(ev.currentTarget);
@@ -259,7 +255,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
         },
 
         /**
-         * Strategy 3: Add (New Method)
+         * Add (New Method)
          * Handles PostFinance special case internally.
          */
         _getAddParams: function ($modal) {
@@ -369,7 +365,10 @@ odoo.define("my_compassion.my2_donations", function (require) {
             });
         },
 
-        // --- 2. Handle Selection Change ---
+        /**
+         * Handles changes in the "Add New Method" select dropdown.
+         * Initializes PostFinance iframe if selected.
+         */
         _onAddMethodChange: function (ev) {
             var $target = $(ev.currentTarget);
             var value = $target.val();
@@ -438,7 +437,7 @@ odoo.define("my_compassion.my2_donations", function (require) {
         },
 
         /**
-         * Custom Submit Button logic for Iframe
+         * Custom Submit Button logic for Postfinance Checkout Iframe
          */
         _onSubmitPostFinance: function (ev) {
             ev.preventDefault();
