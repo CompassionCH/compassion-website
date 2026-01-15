@@ -26,7 +26,10 @@ class MyCompassionGiftController(http.Controller):
             ("my_compassion_donation_type", "=", type),
         ]
 
-        my_compassion_gifts = request.env["product.template"].search(domain)
+        my_compassion_gifts = request.env["product.template"].search(
+            domain,
+            order='sequence'
+        )
         return request.render(
             "my_compassion.my2_gifts_page",
             {
