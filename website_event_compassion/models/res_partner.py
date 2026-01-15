@@ -18,3 +18,13 @@ class ResPartner(models.Model):
         "Event registrations",
         readonly=False,
     )
+
+    passport = fields.Binary(attachment=True)
+    passport_name = fields.Char(compute="_compute_passport_name")
+
+    def _compute_passport_name(self):
+        for partner in self:
+            if partner.passport:
+                partner.passport_name = f"Passport_{partner.name}"
+            else:
+                partner.passport_name = False
