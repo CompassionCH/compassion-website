@@ -8,6 +8,8 @@
 ##############################################################################
 import json
 
+import babel.dates
+
 from odoo import _, http
 from odoo.exceptions import AccessError
 from odoo.http import request
@@ -16,6 +18,55 @@ from odoo.addons.website_sponsorship.controllers.main import WebsiteChild
 
 
 class MyCompassionChildrenController(WebsiteChild):
+    def _get_formatted_birthday(self, child):
+        """
+        Formats the child's birthday based on the current language context.
+        Handles specific rules for EN (US/UK), FR, IT, DE and nordic languages.
+        """
+        if not child.birthdate:
+            return ""
+
+        lang_code = request.env.lang
+        birthdate = child.birthdate
+        day = birthdate.day
+
+        # Get localized month name
+        month = babel.dates.format_date(birthdate, format="MMMM", locale=lang_code)
+
+        lang_prefix = lang_code[:2]
+
+        # German, Norwegian, Danish, Finnish: Dot after day (e.g., 24. Januar)
+        # Note: Swedish is excluded here as it typically uses a space (24 januari)
+        if lang_prefix in {"de", "no", "nb", "nn", "da", "fi"}:
+            return f"{day}. {month}"
+
+        # Swedish, French, Italian: Space after day (e.g., 24 januari)
+        elif lang_prefix in {"fr", "it", "sv"}:
+            # French specific: 1st is "1er"
+            if lang_prefix == "fr" and day == 1:
+                return f"1er {month}"
+            return f"{day} {month}"
+
+        # English Logic
+        elif lang_prefix == "en":
+            # Suffix calculation
+            # Special cases for 11, 12, 13.
+            if 11 <= day <= 13:
+                suffix = "th"
+            else:
+                suffix = {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
+
+            # US Format: Month Day+Suffix
+            if lang_code == "en_US":
+                return f"{month} {day}{suffix}"
+
+            # UK/Other English: Day+Suffix Month
+            return f"{day}{suffix} {month}"
+
+        # Fallback for other languages (Standard Day Month)
+        else:
+            return f"{day} {month}"
+
     def _check_sponsored_child_access(self, child):
         """
         Private helper to securely fetch a sponsored child.
@@ -58,7 +109,7 @@ class MyCompassionChildrenController(WebsiteChild):
         return partner.ids
 
     def _get_timeline_count(self, child_id, partner_ids):
-        """Get total count of timeline records (correspondence + gifts + start)."""
+        """Get total count of timeline records (correspondence + gifts + child_pictures + start)."""
         sql = """
             SELECT
                 (SELECT COUNT(*) FROM correspondence
@@ -66,6 +117,9 @@ class MyCompassionChildrenController(WebsiteChild):
                 +
                 (SELECT COUNT(*) FROM sponsorship_gift
                  WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
+                +
+                (SELECT COUNT(*) FROM compassion_child_pictures
+                 WHERE child_id = %(child_id)s)
                 +
                 (SELECT COUNT(*) FROM recurring_contract rc
                  WHERE rc.child_id = %(child_id)s
@@ -99,7 +153,8 @@ class MyCompassionChildrenController(WebsiteChild):
                         WHEN c.direction = 'Beneficiary To Supporter'
                         THEN %(title_corr_wrote)s
                         ELSE %(title_corr_received)s
-                    END AS title
+                    END AS title,
+                    c.child_id AS child_id
                 FROM correspondence c
                 WHERE c.child_id = %(child_id)s
                   AND c.partner_id = ANY(%(partner_ids)s)
@@ -119,14 +174,28 @@ class MyCompassionChildrenController(WebsiteChild):
                         WHEN s.sponsorship_gift_type = 'Graduation/Final' THEN %(title_gift_grad)s
                         WHEN s.gift_type = 'Family Gift' THEN %(title_gift_family)s
                         ELSE %(title_gift_default)s
-                    END AS title
+                    END AS title,
+                    s.child_id AS child_id
                 FROM sponsorship_gift s
                 LEFT JOIN account_move_line aml ON aml.gift_id = s.id
                 LEFT JOIN res_currency rc ON rc.id = aml.currency_id
                 WHERE s.child_id = %(child_id)s
                   AND s.partner_id = ANY(%(partner_ids)s)
 
-                  UNION ALL
+                UNION ALL
+
+                SELECT 'child_picture' AS model,
+                    p.id::text AS record_id,
+                    '' AS amount,
+                    '' AS currency_name,
+                    COALESCE(p.gender, '') AS metadata,
+                    p.create_date,
+                    %(title_child_picture)s AS title,
+                    p.child_id AS child_id
+                FROM compassion_child_pictures p
+                WHERE p.child_id = %(child_id)s
+
+                UNION ALL
 
                 SELECT
                     'start_sponsorship' AS model,
@@ -135,7 +204,8 @@ class MyCompassionChildrenController(WebsiteChild):
                     '' AS currency_name,
                     '' AS metadata,
                     rc.start_date::timestamp AS create_date,
-                    %(title_start_sponsorship)s AS title
+                    %(title_start_sponsorship)s AS title,
+                    rc.child_id AS child_id
                 FROM recurring_contract rc
                 WHERE rc.child_id = %(child_id)s
                   AND rc.partner_id = ANY(%(partner_ids)s)
@@ -158,6 +228,7 @@ class MyCompassionChildrenController(WebsiteChild):
             "title_gift_grad": _("Graduation/Final gift"),
             "title_gift_family": _("Family gift"),
             "title_gift_default": _("Received a gift"),
+            "title_child_picture": _("New picture"),
             "title_start_sponsorship": _("Started sponsorship"),
             "limit": limit,
             "offset": offset,
@@ -248,6 +319,8 @@ class MyCompassionChildrenController(WebsiteChild):
 
         records, total = self._get_timeline_records(child.id, offset, limit)
 
+        birthday_formatted = self._get_formatted_birthday(child)
+
         google_api_key = (
             request.env["ir.config_parameter"].sudo().get_param("google_maps_api_key")
         )
@@ -265,6 +338,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 "google_api_key": google_api_key,
                 "google_custom_map_id": google_custom_map_id,
                 "timezone": child.sudo().project_id.timezone,
+                "birthday_formatted": birthday_formatted,
             },
         )
 
