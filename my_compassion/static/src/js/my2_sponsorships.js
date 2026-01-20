@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
             /**
              * Appends HTML to a container and applies a staggered animation.
-             * * @param {string} htmlContent - The raw HTML string (e.g., data.html)
+             * @param {string} htmlContent - The raw HTML string (e.g., data.html)
              * @param {jQuery} $container  - The jQuery object to append to (e.g., $resultsContainer)
              */
             _appendAndAnimate: function (htmlContent, $container) {
