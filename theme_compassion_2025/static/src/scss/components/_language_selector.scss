@@ -8,6 +8,7 @@
     justify-content: center;
     width: fit-content;
     position: relative;
+    height: 48px;
 }
 
 /* The Button:
@@ -106,11 +107,12 @@
     transition: background-color 0.2s ease;
 }
 
-@include media-breakpoint-down(md) {
+@include media-breakpoint-down(sm) {
 
     .js_language_selector {
         flex-direction: column;
         align-items: stretch;
+        height: 100%;
     }
 
     .language-selector__dropdown-menu {
