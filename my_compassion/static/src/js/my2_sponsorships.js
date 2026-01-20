@@ -21,6 +21,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 'change input[type="radio"][name="gender"]': "_onGenderChange",
                 "click #btn-more": "_onShowMore",
                 "click #btn-choose": "_onChooseRandom",
+                "click #btn-choose-again": "_onChooseRandom",
+                "click #btn-see-all-children": "_refreshResults",
             },
 
             custom_events: {
@@ -45,6 +47,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 this.resultsPerBatch = 20;
                 this.resultsLoaded = 0;
                 this.totalResults = 0;
+                // Id of the randomly sampled child, mostly used to see if sampling happened and condition the UI (Button visibility)
+                // If null, no child sampled. This is reset on each filter change.
+                this.randomlySampledChildId = null;
 
                 this.sponsorship_type = this.$el.data("sponsorship-type");
 
@@ -63,11 +68,34 @@ document.addEventListener("DOMContentLoaded", function (event) {
              */
             _refreshResults: function () {
                 this.$(".sponsorships-results-content").empty();
+                this.randomlySampledChildId = null;
                 this.resultsLoaded = 0;
                 this.totalResults = 0;
                 this._updateTotalResultsLabel();
                 this._updateShowMoreButton();
                 this._fetchSponsorships();
+            },
+
+            /**
+             * Appends HTML to a container and applies a staggered animation.
+             * @param {string} htmlContent - The raw HTML string (e.g., data.html)
+             * @param {jQuery} $container  - The jQuery object to append to (e.g., $resultsContainer)
+             */
+            _appendAndAnimate: function (htmlContent, $container) {
+                // 1. Create jQuery objects from the HTML and add the initial class
+                const $newItems = $(htmlContent).addClass("animate-in");
+
+                // 2. Append the new results to the container
+                $container.append($newItems);
+
+                // 3. Loop over each new item to apply the staggered delay
+                $newItems.each(function (index) {
+                    var self = this;
+                    // Apply 100ms base delay + 50ms per item
+                    setTimeout(function () {
+                        $(self).addClass("show");
+                    }, 100 + index * 50);
+                });
             },
 
             /**
@@ -126,19 +154,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
                             if (data.count && data.html) {
                                 // Parse the HTML string into jQuery objects and add the initial animation class.
-                                const $newItems = $(data.html).addClass("animate-in");
-
-                                // Append the new results
-                                $resultsContainer.append($newItems);
-
-                                // Loop over each new item to apply a staggered delay
-                                $newItems.each(function (index) {
-                                    // Apply 50ms offset + slight delay to give the browser a moment to apply the initial styles
-                                    var self = this;
-                                    setTimeout(function () {
-                                        $(self).addClass("show");
-                                    }, 100 + index * 50);
-                                });
+                                this._appendAndAnimate(data.html, $resultsContainer);
 
                                 // Update the count of loaded results
                                 this.resultsLoaded += data.count;
@@ -174,7 +190,16 @@ document.addEventListener("DOMContentLoaded", function (event) {
              * @private
              */
             _updateTotalResultsLabel: function () {
-                this.$("#total-results").text(this.totalResults);
+                if (this.randomlySampledChildId) {
+                    // If a child has been randomly sampled, show the appropriate message
+                    this.$("#total-children-found-message").hide();
+                    this.$("#randomly-chosen-child-message").show();
+                } else {
+                    this.$("#total-children-found-message").show();
+                    this.$("#randomly-chosen-child-message").hide();
+                    // Update the total results count
+                    this.$("#total-results").text(this.totalResults);
+                }
             },
 
             /**
@@ -182,10 +207,20 @@ document.addEventListener("DOMContentLoaded", function (event) {
              * @private
              */
             _updateChooseForMeButton: function () {
-                if (this.totalResults == 0) {
+                if (this.randomlySampledChildId) {
+                    // A child has been randomly chosen
                     this.$("#btn-choose").hide();
+                    this.$("#btn-choose-again").show();
+                    this.$("#btn-see-all-children").show();
                 } else {
-                    this.$("#btn-choose").show().prop("disabled", false);
+                    // Normal view (all children or no results)
+                    this.$("#btn-choose-again").hide();
+                    this.$("#btn-see-all-children").hide();
+                    if (this.totalResults > 0) {
+                        this.$("#btn-choose").show().prop("disabled", false);
+                    } else {
+                        this.$("#btn-choose").hide();
+                    }
                 }
             },
 
@@ -262,8 +297,13 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     .then(
                         function (data) {
                             if (data.child_id) {
-                                // Redirect to new sponsorship page
-                                window.location.href = `/my2/new-sponsorship/${data.child_id}?sponsorship_type=${this.sponsorship_type}`;
+                                this.randomlySampledChildId = data.child_id;
+                                this._updateChooseForMeButton();
+                                this._updateTotalResultsLabel();
+                                // Delete all the current results
+                                this.$(".sponsorships-results-content").empty();
+
+                                this._appendAndAnimate(data.html, this.$(".sponsorships-results-content"));
                             }
                             this.$(".btn").prop("disabled", false);
                         }.bind(this)
