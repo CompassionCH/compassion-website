@@ -331,19 +331,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             };
 
-            editButton.addEventListener("click", () => {
+            editButton.addEventListener("click", (e) => {
+                e.preventDefault();
                 storeOriginalValues();
                 clearErrors();
                 form.classList.add("is-editing");
             });
 
-            cancelButton.addEventListener("click", () => {
+            cancelButton.addEventListener("click", (e) => {
+                e.preventDefault();
                 restoreOriginalValues();
                 clearErrors();
                 form.classList.remove("is-editing");
             });
 
-            saveButton.addEventListener("click", () => {
+            saveButton.addEventListener("click", (e) => {
+                e.preventDefault();
                 clearErrors();
                 const payload = {};
                 fields.forEach((field) => {

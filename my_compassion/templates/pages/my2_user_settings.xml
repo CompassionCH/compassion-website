@@ -71,7 +71,7 @@ Injected data:
                     <div class="single-column tab-content pt-4" id="UserSettingsTabContent">
                         <!-- Personal info tab -->
                         <div class="tab-pane fade" id="personal-information" role="tabpanel">
-                            <div id="personal-information-form" class="bg-pure-white col-md-12 col-sm-12">
+                            <form id="personal-information-form" class="bg-pure-white col-md-12 col-sm-12" novalidate="novalidate">
                                 <div class="row col-12 mb-3">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
                                         <t t-set="label">My reference</t>
@@ -114,29 +114,34 @@ Injected data:
                                         <t t-call="theme_compassion_2025.FormFieldComponent">
                                             <t t-set="label">Surname</t>
                                             <t t-set="input_id" t-value="'lastname'" />
-                                            <div class="field-display" data-display-for="lastname">
-                                                <t t-esc="partner.lastname or ''" />
-                                            </div>
-                                            <div class="field-edit">
-                                                <input
-                                                    type="text"
-                                                    id="lastname"
-                                                    name="lastname"
-                                                    class="form-control"
-                                                    t-att-value="partner.lastname"
-                                                    t-att-data-original-value="partner.lastname"
-                                                />
-                                            </div>
+                                            <t t-set="invalid_hint">Surname can not be emtpy</t>
+                                            <t t-set="display_content">
+                                                <div class="field-display" data-display-for="lastname">
+                                                    <t t-esc="partner.lastname or ''" />
+                                                </div>
+                                            </t>
+                                            <t t-set="edit_field" t-value="True"/>
+                                            <input
+                                                type="text"
+                                                id="lastname"
+                                                name="lastname"
+                                                class="form-control"
+                                                t-att-value="partner.lastname"
+                                                required="required"
+                                            />
                                         </t>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <t t-call="theme_compassion_2025.FormFieldComponent">
                                             <t t-set="label">Name</t>
                                             <t t-set="input_id" t-value="'firstname'" />
-                                            <div class="field-display" data-display-for="firstname">
-                                                <t t-esc="partner.firstname or ''" />
-                                            </div>
-                                            <div class="field-edit">
+                                            <t t-set="invalid_hint">Name can not be emtpy</t>
+                                            <t t-set="display_content">
+                                                <div class="field-display" data-display-for="firstname">
+                                                    <t t-esc="partner.firstname or ''" />
+                                                </div>
+                                            </t>
+                                            <t t-set="edit_field" t-value="True"/>
                                                 <input
                                                     type="text"
                                                     id="firstname"
@@ -144,8 +149,8 @@ Injected data:
                                                     class="form-control"
                                                     t-att-value="partner.firstname"
                                                     t-att-data-original-value="partner.firstname"
+                                                    required="required"
                                                 />
-                                            </div>
                                         </t>
                                     </div>
                                 </div>
@@ -334,7 +339,7 @@ Injected data:
                                         </a>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                         <!-- Account settings tab -->
                         <div class="tab-pane fade" id="account-settings" role="tabpanel">
