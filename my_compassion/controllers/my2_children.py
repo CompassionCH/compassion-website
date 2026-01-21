@@ -109,7 +109,7 @@ class MyCompassionChildrenController(WebsiteChild):
         return partner.ids
 
     def _get_timeline_count(self, child_id, partner_ids):
-        """Get total count of timeline records (correspondence + gifts + child_pictures + start)."""
+        """Get total count of timeline records (correspondence + gifts + child_pictures + start + end)."""
         sql = """
             SELECT
                 (SELECT COUNT(*) FROM correspondence
@@ -122,10 +122,14 @@ class MyCompassionChildrenController(WebsiteChild):
                  WHERE child_id = %(child_id)s)
                 +
                 (SELECT COUNT(*) FROM recurring_contract rc
+                    CROSS JOIN LATERAL (
+                        VALUES ('start'), ('end')
+                    ) as v(event_type)
                  WHERE rc.child_id = %(child_id)s
                    AND rc.partner_id = ANY(%(partner_ids)s)
-                   AND rc.state IN ('active', 'terminated')
-                   AND rc.start_date IS NOT NULL)
+                   AND rc.start_date IS NOT NULL
+                   AND (v.event_type = 'start' OR
+                      v.event_type = 'end' AND rc.state = 'terminated'))
                 AS total
         """
         request.env.cr.execute(
@@ -198,20 +202,27 @@ class MyCompassionChildrenController(WebsiteChild):
                 UNION ALL
 
                 SELECT
-                    'start_sponsorship' AS model,
+                    v.event_type  AS model,
                     rc.id::text AS record_id,
                     '' AS amount,
                     '' AS currency_name,
                     '' AS metadata,
-                    rc.start_date::timestamp AS create_date,
-                    %(title_start_sponsorship)s AS title,
+                    v.event_date::timestamp AS create_date,
+                    CASE v.event_type
+                        WHEN 'start_sponsorship' THEN %(title_start_sponsorship)s
+                        ELSE %(title_end_sponsorship)s
+                    END AS title,
                     rc.child_id AS child_id
-                FROM recurring_contract rc
-                WHERE rc.child_id = %(child_id)s
+                  FROM recurring_contract rc
+                  CROSS JOIN LATERAL (
+                      VALUES
+                          ('start_sponsorship', rc.start_date),
+                          ('end_sponsorship', rc.end_date)
+                      ) AS v(event_type, event_date)
+                  WHERE rc.child_id = %(child_id)s
                   AND rc.partner_id = ANY(%(partner_ids)s)
-                  AND rc.state IN ('active', 'terminated')
-                  AND rc.start_date IS NOT NULL
-
+                  AND v.event_date IS NOT NULL
+                  AND (v.event_type = 'start_sponsorship' OR rc.state = 'terminated')
             ) AS timeline
             ORDER BY create_date DESC
             LIMIT %(limit)s OFFSET %(offset)s
@@ -230,6 +241,7 @@ class MyCompassionChildrenController(WebsiteChild):
             "title_gift_default": _("Received a gift"),
             "title_child_picture": _("New picture"),
             "title_start_sponsorship": _("Started sponsorship"),
+            "title_end_sponsorship": _("Ended sponsorship"),
             "limit": limit,
             "offset": offset,
         }
