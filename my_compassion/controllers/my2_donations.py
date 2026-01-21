@@ -91,7 +91,7 @@ class MyCompassionDonationsController(CustomerPortal):
                 ]
             )
         )
-        # Agregate the matching line if necessary
+        # Aggregate the matching line if necessary
         if matching_lines:
             aggregated_line = matching_lines[0]
             aggregated_price = aggregated_line.price_unit
