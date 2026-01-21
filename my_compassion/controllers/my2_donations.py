@@ -75,21 +75,46 @@ class MyCompassionDonationsController(CustomerPortal):
 
         # Get current cart content
         order = request.website.sale_get_order(force_create=True)
-
-        # Add product to the cart
-        order.write(
-            {
-                "order_line": [
-                    (
-                        0,
-                        0,
-                        self._extract_donation_order_line_fields(
-                            product_template, post
-                        ),
-                    )
-                ]
-            }
+        current_order_line_fields = self._extract_donation_order_line_fields(
+            product_template, post
         )
+        # See if an existing row for the same product and the same child exist
+        # If it's the case, just increment the amount of the donation
+        matching_lines = (
+            request.env["sale.order.line"]
+            .sudo()
+            .search(
+                [
+                    ("order_id", "=", order.id),
+                    ("product_id.product_tmpl_id", "=", product_template.id),
+                    ("gift_recipient_id", "=", int(post.get("recipient"))),
+                ]
+            )
+        )
+        # Agregate the matching line if necessary
+        if matching_lines:
+            aggregated_line = matching_lines[0]
+            aggregated_price = aggregated_line.price_unit
+            for line in matching_lines[1:]:
+                aggregated_price += line.price_unit
+                line.unlink()
+            # Add to the aggregated price the one of the current donation
+            aggregated_price += current_order_line_fields["price_unit"]
+            aggregated_line.price_unit = aggregated_price
+
+        else:
+            # Add product to the cart
+            order.write(
+                {
+                    "order_line": [
+                        (
+                            0,
+                            0,
+                            current_order_line_fields,
+                        )
+                    ]
+                }
+            )
 
     @http.route(
         "/my2/gifts/edit",
