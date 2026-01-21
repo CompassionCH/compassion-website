@@ -80,18 +80,24 @@ class MyCompassionDonationsController(CustomerPortal):
         )
         # See if an existing row for the same product and the same child exist
         # If it's the case, just increment the amount of the donation
-        matching_lines = (
-            request.env["sale.order.line"]
-            .sudo()
-            .search(
-                [
-                    ("order_id", "=", order.id),
-                    ("product_id.product_tmpl_id", "=", product_template.id),
-                    ("gift_recipient_id", "=", int(post.get("recipient"))),
-                ]
+        domain = [
+            ("order_id", "=", order.id),
+            ("product_id.product_tmpl_id", "=", product_template.id),
+        ]
+        if current_order_line_fields.get("is_gift") and current_order_line_fields.get(
+            "gift_recipient_id"
+        ):
+            domain.append(
+                (
+                    "gift_recipient_id",
+                    "=",
+                    int(current_order_line_fields.get("gift_recipient_id")),
+                )
             )
-        )
-        # Aggregate the matching line if necessary
+
+        matching_lines = request.env["sale.order.line"].sudo().search(domain)
+
+        # Aggregate the matching lines if necessary
         if matching_lines:
             aggregated_line = matching_lines[0]
             aggregated_price = aggregated_line.price_unit
