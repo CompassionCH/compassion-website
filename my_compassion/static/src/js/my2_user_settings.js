@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
          */
         function initializeUserSettings() {
             // Hides the error messages of the select components
-            document.querySelectorAll(".invalid-hint").forEach((hint) => {
+            document.querySelectorAll(".invalid-feedback").forEach((hint) => {
                 hint.style.display = "none";
             });
 
@@ -369,7 +369,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 form.classList.remove("is-editing");
             });
 
-            saveButton.addEventListener("click", (e) => {
+           saveButton.addEventListener("click", (e) => {
                 e.preventDefault();
                 clearValidation();
 
@@ -400,9 +400,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 if (!isValid) return; // return if any of the input values are not valid
+                 // hide buttons and show loader
+                const buttonsForm = document.getElementById("user-settings-buttons");
+                const loader = document.getElementById("user-settings-loader");
+
+                if (buttonsForm) buttonsForm.classList.add("d-none");
+                if (loader) {
+                    loader.classList.remove("d-none");
+                    loader.classList.add("d-flex");
+                }
+
+                const restoreUI = () => {
+                    if (loader) {
+                        loader.classList.add("d-none");
+                        loader.classList.remove("d-flex");
+                    }
+                    if (buttonsForm) buttonsForm.classList.remove("d-none");
+                };
+
 
                 rpc.query({ route: endpoint, params: payload })
                     .then((response) => {
+                        restoreUI();
                         if (response.success) {
                             fields.forEach((field) => {
                                 const input = form.querySelector(`[name="${field}"]`);
@@ -420,6 +439,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     })
                     .catch((err) => {
+                        restoreUI();
                         console.error("RPC Error:", err);
                         Dialog.alert(null, "An unexpected error occurred. Please try again later.");
                     });
