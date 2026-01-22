@@ -307,16 +307,13 @@ class MyCompassionDonationsController(CustomerPortal):
         return: An HTTP response containing a rendered template with the add a
         gift page.
         """
-        # Exclude fund donation that are already in the user's gift package
         order = request.website.sale_get_order(force_create=True)
-        product_template_ids_in_cart = order.order_line.product_id.product_tmpl_id.ids
         products = request.env["product.template"].search(
             [
-                "&",
                 ("activate_for_my_compassion", "=", True),
                 "|",
                 ("my_compassion_donation_type", "=", "gift"),
-                ("id", "not in", product_template_ids_in_cart),
+                ("my_compassion_donation_type", "=", "fund"),
             ]
         )
 
