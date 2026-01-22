@@ -303,7 +303,7 @@ class MyCompassionDonationsController(CustomerPortal):
     )
     def my2_render_add_a_gift_page(self, **kwargs):
         """
-        Renders the add a gift page to quickly add a gift to the gift package.
+        Renders the add a gift page to add a gift to the gift package.
         return: An HTTP response containing a rendered template with the add a
         gift page.
         """
