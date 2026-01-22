@@ -289,11 +289,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let originalValues = {};
 
-            const clearErrors = () => {
-                form.querySelectorAll(".is-invalid").forEach((input) => {
+            const clearValidation = () => {
+                form.querySelectorAll(".is-invalid, .is-valid").forEach((input) => {
                     input.classList.remove("is-invalid");
+                    input.classList.remove("is-valid");
+                    const container = input.closest(".form-field-container");
+                    if (container) container.classList.remove("has-error");
                 });
-                form.querySelectorAll(".invalid-hint").forEach((hint) => {
+                form.querySelectorAll(".invalid-feedback").forEach((hint) => {
                     hint.style.display = "none";
                 });
             };
@@ -302,10 +305,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 for (const fieldName in errors) {
                     const input = form.querySelector(`[name="${fieldName}"]`);
                     if (input) {
+                        input.classList.remove("is-valid");
                         input.classList.add("is-invalid");
                         const container = input.closest(".form-field-container");
                         if (container) {
-                            const hintEl = container.querySelector(".invalid-hint");
+                            container.classList.add("has-error");
+                            const hintEl = container.querySelector(".invalid-feedback");
                             if (hintEl) {
                                 hintEl.textContent = errors[fieldName];
                                 hintEl.style.display = "block";
@@ -331,28 +336,70 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             };
 
+            // Validation listener on all input fields
+            form.querySelectorAll(".form-control").forEach((input) => {
+                input.addEventListener("input", function () {
+
+                    if (!form.classList.contains("is-editing")) return;
+
+                    if (this.checkValidity()) {
+                        this.classList.remove("is-invalid");
+                        const container = this.closest(".form-field-container");
+                        if (container) container.classList.remove("has-error");
+                        this.classList.add("is-valid");
+                        const hintEl = container.querySelector(".invalid-feedback");
+                        if (hintEl) hintEl.style.display = "none";
+                    } else {
+                        this.classList.remove("is-valid");
+                    }
+                })
+            })
+
             editButton.addEventListener("click", (e) => {
                 e.preventDefault();
                 storeOriginalValues();
-                clearErrors();
+                clearValidation();
                 form.classList.add("is-editing");
             });
 
             cancelButton.addEventListener("click", (e) => {
                 e.preventDefault();
                 restoreOriginalValues();
-                clearErrors();
+                clearValidation();
                 form.classList.remove("is-editing");
             });
 
             saveButton.addEventListener("click", (e) => {
                 e.preventDefault();
-                clearErrors();
+                clearValidation();
+
+                let isValid = true;
                 const payload = {};
-                fields.forEach((field) => {
+
+                for (let i = 0; i < fields.length; i++) {
+                    const field = fields[i];
                     const input = form.querySelector(`[name="${field}"]`);
-                    if (input) payload[field] = input.value;
-                });
+
+                    if (!input || input.offsetParent === null) continue; // Skip hidden/missing inputs
+
+                    if (!input.checkValidity()) { // input not valid
+                        isValid = false;
+
+                        input.classList.remove("is-valid");
+                        input.classList.add("is-invalid");
+
+                        const container = input.closest(".form-field-container");
+                        if (container) container.classList.add("has-error");
+                        const hintEl = container.querySelector(".invalid-feedback");
+                        if (hintEl) hintEl.style.display = "block";
+                    } else { // input valid
+                        input.classList.remove("is-invalid");
+                        input.classList.add("is-valid");
+                        payload[field] = input.value;
+                    }
+                }
+
+                if (!isValid) return; // return if any of the input values are not valid
 
                 rpc.query({ route: endpoint, params: payload })
                     .then((response) => {
