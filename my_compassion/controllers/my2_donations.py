@@ -72,13 +72,13 @@ class MyCompassionDonationsController(CustomerPortal):
         # Make sure the product is available
         if not product_template.activate_for_my_compassion:
             raise NotFound()
-
-        # Get current cart content
-        order = request.website.sale_get_order(force_create=True)
+        # Extract order line for the current product
         current_order_line_fields = self._extract_donation_order_line_fields(
             product_template, post
         )
-        # See if an existing row for the same product and the same child exist
+        # Get current cart content
+        order = request.website.sale_get_order(force_create=True)
+        # See if an existing row for the same product and the same sponsorship exists
         # If it's the case, just increment the amount of the donation
         domain = [
             ("order_id", "=", order.id),
@@ -94,7 +94,7 @@ class MyCompassionDonationsController(CustomerPortal):
                     int(current_order_line_fields.get("gift_recipient_id")),
                 )
             )
-
+        # Order lines for the same product (same sponsorship, same product)
         matching_lines = request.env["sale.order.line"].sudo().search(domain)
 
         # Aggregate the matching lines if necessary
@@ -109,7 +109,7 @@ class MyCompassionDonationsController(CustomerPortal):
             aggregated_line.price_unit = aggregated_price
 
         else:
-            # Add product to the cart
+            # Add the new product to the cart
             order.write(
                 {
                     "order_line": [
