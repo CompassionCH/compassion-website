@@ -73,17 +73,17 @@
                 <t t-set="underline_color" t-value="'low-yellow'" />
             </t>
             <!-- DONATION FREQUENCY -->
-            <t
-                t-if="product.my_compassion_donation_type != 'gift'"
-                t-call="theme_compassion_2025.ToggleButtonComponent"
-            >
-                <t t-set="name" t-valuef="'#{base_name}_frequency'" />
-                <t t-set="_txt_One_Time">One Time</t>
-                <t t-set="_txt_Monthly">Monthly</t>
-                <t t-set="options" t-value="[('one_time', _txt_One_Time), ('monthly', _txt_Monthly)]" />
-                <t t-set="default" t-value="default_frequency" />
-                <t t-set="top_class" t-value="'mt-3 align-self-center donation-frequency'" />
-            </t>
+            <!--            <t-->
+            <!--                t-if="product.my_compassion_donation_type != 'gift'"-->
+            <!--                t-call="theme_compassion_2025.ToggleButtonComponent"-->
+            <!--            >-->
+            <!--                <t t-set="name" t-valuef="'#{base_name}_frequency'" />-->
+            <!--                <t t-set="_txt_One_Time">One Time</t>-->
+            <!--                <t t-set="_txt_Monthly">Monthly</t>-->
+            <!--                <t t-set="options" t-value="[('one_time', _txt_One_Time), ('monthly', _txt_Monthly)]" />-->
+            <!--                <t t-set="default" t-value="default_frequency" />-->
+            <!--                <t t-set="top_class" t-value="'mt-3 align-self-center donation-frequency'" />-->
+            <!--            </t>-->
             <!-- TO -->
             <t t-if="product.my_compassion_donation_type == 'gift'" t-call="theme_compassion_2025.FormFieldComponent">
                 <t t-set="top_class" t-value="'mt-3 w-100'" />

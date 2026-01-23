@@ -1,8 +1,8 @@
 odoo.define("my_compassion.donation_form", function (require) {
     "use strict";
 
-    var publicWidget = require("web.public.widget");
-    var rpc = require("web.rpc");
+    const publicWidget = require("web.public.widget");
+    const rpc = require("web.rpc");
 
     publicWidget.registry.DonationForm = publicWidget.Widget.extend({
         selector: ".my2_donation_form",
@@ -54,7 +54,7 @@ odoo.define("my_compassion.donation_form", function (require) {
          */
         _onRecipientChange: function (ev) {
             const $recipient_select = this.$("[name='recipient']");
-            if ($recipient_select.length == 0) {
+            if ($recipient_select.length === 0) {
                 return;
             }
             if (this.edit_mode) {
@@ -147,7 +147,7 @@ odoo.define("my_compassion.donation_form", function (require) {
                         this.$el.trigger(this.$(".btn-submit").data("submission-event"), [
                             {
                                 product_id: product_id,
-                                frequency: this.$(".donation-frequency input:checked").val(),
+                                frequency: this.$(".donation-frequency input:checked").val() || "one_time",
                                 recipient: sponsorship_id,
                                 suggested_amount: suggested_amount,
                                 custom_amount: custom_amount,
@@ -175,7 +175,7 @@ odoo.define("my_compassion.donation_form", function (require) {
          * @returns {boolean} - True if valid, false otherwise.
          */
         _validateForm: function () {
-            var isValid = true;
+            let isValid = true;
 
             // Remove previous error messages and styles
             this.$("input.is-invalid").removeClass("is-invalid");
