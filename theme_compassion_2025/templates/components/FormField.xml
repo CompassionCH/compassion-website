@@ -21,14 +21,14 @@
                 </label>
             </t>
             <t t-if="display_content">
-                <t t-raw="display_content"/>
+                <t t-raw="display_content" />
             </t>
             <t t-if="edit_field">
                 <div class="field-edit">
                     <t t-raw="0" />
                     <div class="invalid-feedback text-mid-orange tiny-text mb-1">
                         <t t-esc="final_invalid_hint" />
-                     </div>
+                    </div>
                 </div>
             </t>
             <t t-else="">
