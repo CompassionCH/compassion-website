@@ -339,7 +339,6 @@ document.addEventListener("DOMContentLoaded", () => {
             // Validation listener on all input fields
             form.querySelectorAll(".form-control").forEach((input) => {
                 input.addEventListener("input", function () {
-
                     if (!form.classList.contains("is-editing")) return;
 
                     if (this.checkValidity()) {
@@ -352,8 +351,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     } else {
                         this.classList.remove("is-valid");
                     }
-                })
-            })
+                });
+            });
 
             editButton.addEventListener("click", (e) => {
                 e.preventDefault();
@@ -369,7 +368,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 form.classList.remove("is-editing");
             });
 
-           saveButton.addEventListener("click", (e) => {
+            saveButton.addEventListener("click", (e) => {
                 e.preventDefault();
                 clearValidation();
 
@@ -382,7 +381,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     if (!input || input.offsetParent === null) continue; // Skip hidden/missing inputs
 
-                    if (!input.checkValidity()) { // input not valid
+                    if (!input.checkValidity()) {
+                        // input not valid
                         isValid = false;
 
                         input.classList.remove("is-valid");
@@ -392,7 +392,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (container) container.classList.add("has-error");
                         const hintEl = container.querySelector(".invalid-feedback");
                         if (hintEl) hintEl.style.display = "block";
-                    } else { // input valid
+                    } else {
+                        // input valid
                         input.classList.remove("is-invalid");
                         input.classList.add("is-valid");
                         payload[field] = input.value;
@@ -400,7 +401,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 if (!isValid) return; // return if any of the input values are not valid
-                 // hide buttons and show loader
+                // hide buttons and show loader
                 const buttonsForm = document.getElementById("user-settings-buttons");
                 const loader = document.getElementById("user-settings-loader");
 
@@ -417,7 +418,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                     if (buttonsForm) buttonsForm.classList.remove("d-none");
                 };
-
 
                 rpc.query({ route: endpoint, params: payload })
                     .then((response) => {

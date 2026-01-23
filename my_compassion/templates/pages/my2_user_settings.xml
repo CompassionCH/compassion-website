@@ -71,7 +71,11 @@ Injected data:
                     <div class="single-column tab-content pt-4" id="UserSettingsTabContent">
                         <!-- Personal info tab -->
                         <div class="tab-pane fade" id="personal-information" role="tabpanel">
-                            <form id="personal-information-form" class="bg-pure-white col-md-12 col-sm-12" novalidate="novalidate">
+                            <form
+                                id="personal-information-form"
+                                class="bg-pure-white col-md-12 col-sm-12"
+                                novalidate="novalidate"
+                            >
                                 <div class="row col-12 mb-3">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
                                         <t t-set="label">My reference</t>
@@ -120,7 +124,7 @@ Injected data:
                                                     <t t-esc="partner.lastname or ''" />
                                                 </div>
                                             </t>
-                                            <t t-set="edit_field" t-value="True"/>
+                                            <t t-set="edit_field" t-value="True" />
                                             <input
                                                 type="text"
                                                 id="lastname"
@@ -142,17 +146,17 @@ Injected data:
                                                     <t t-esc="partner.firstname or ''" />
                                                 </div>
                                             </t>
-                                            <t t-set="edit_field" t-value="True"/>
-                                                <input
-                                                    type="text"
-                                                    id="firstname"
-                                                    name="firstname"
-                                                    class="form-control"
-                                                    t-att-value="partner.firstname"
-                                                    t-att-data-original-value="partner.firstname"
-                                                    required="required"
-                                                    pattern="[a-zA-Z]{0,50}"
-                                                />
+                                            <t t-set="edit_field" t-value="True" />
+                                            <input
+                                                type="text"
+                                                id="firstname"
+                                                name="firstname"
+                                                class="form-control"
+                                                t-att-value="partner.firstname"
+                                                t-att-data-original-value="partner.firstname"
+                                                required="required"
+                                                pattern="[a-zA-Z]{0,50}"
+                                            />
                                         </t>
                                     </div>
                                 </div>
@@ -167,16 +171,16 @@ Injected data:
                                                 <t t-esc="partner.street or ''" />
                                             </div>
                                         </t>
-                                        <t t-set="edit_field" t-value="True"/>
-                                            <input
-                                                type="text"
-                                                id="street"
-                                                name="street"
-                                                class="form-control"
-                                                t-att-value="partner.street"
-                                                t-att-data-original-value="partner.street"
-                                                required="required"
-                                            />
+                                        <t t-set="edit_field" t-value="True" />
+                                        <input
+                                            type="text"
+                                            id="street"
+                                            name="street"
+                                            class="form-control"
+                                            t-att-value="partner.street"
+                                            t-att-data-original-value="partner.street"
+                                            required="required"
+                                        />
                                     </t>
                                 </div>
                                 <div class="row">
@@ -191,18 +195,18 @@ Injected data:
                                                         <t t-esc="partner.zip or ''" />
                                                     </div>
                                                 </t>
-                                                <t t-set="edit_field" t-value="True"/>
-                                                    <input
-                                                        type="text"
-                                                        id="zip"
-                                                        name="zip"
-                                                        class="form-control"
-                                                        t-att-value="partner.zip"
-                                                        t-att-data-original-value="partner.zip"
-                                                        required="required"
-                                                        pattern="[0-9]{4}"
-                                                        inputmode="numeric"
-                                                    />
+                                                <t t-set="edit_field" t-value="True" />
+                                                <input
+                                                    type="text"
+                                                    id="zip"
+                                                    name="zip"
+                                                    class="form-control"
+                                                    t-att-value="partner.zip"
+                                                    t-att-data-original-value="partner.zip"
+                                                    required="required"
+                                                    pattern="[0-9]{4}"
+                                                    inputmode="numeric"
+                                                />
                                             </t>
                                         </div>
                                     </t>
@@ -265,16 +269,16 @@ Injected data:
                                                 <t t-esc="partner.email or ''" />
                                             </div>
                                         </t>
-                                        <t t-set="edit_field" t-value="True"/>
-                                            <input
-                                                type="email"
-                                                id="email"
-                                                name="email"
-                                                class="form-control"
-                                                t-att-value="partner.email"
-                                                t-att-data-original-value="partner.email"
-                                                required="required"
-                                            />
+                                        <t t-set="edit_field" t-value="True" />
+                                        <input
+                                            type="email"
+                                            id="email"
+                                            name="email"
+                                            class="form-control"
+                                            t-att-value="partner.email"
+                                            t-att-data-original-value="partner.email"
+                                            required="required"
+                                        />
                                     </t>
                                 </div>
                                 <div class="row">
@@ -288,17 +292,17 @@ Injected data:
                                                     <t t-esc="partner.phone or ''" />
                                                 </div>
                                             </t>
-                                            <t t-set="edit_field" t-value="True"/>
-                                                <input
-                                                    type="tel"
-                                                    id="phone"
-                                                    name="phone"
-                                                    class="form-control"
-                                                    t-att-value="partner.phone"
-                                                    t-att-data-original-value="partner.phone"
-                                                    pattern="[0-9\+\s\(\)]{7,20}"
-                                                    inputmode="numeric"
-                                                />
+                                            <t t-set="edit_field" t-value="True" />
+                                            <input
+                                                type="tel"
+                                                id="phone"
+                                                name="phone"
+                                                class="form-control"
+                                                t-att-value="partner.phone"
+                                                t-att-data-original-value="partner.phone"
+                                                pattern="[0-9\+\s\(\)]{7,20}"
+                                                inputmode="numeric"
+                                            />
                                         </t>
                                     </div>
                                     <div class="col-md-6 mb-3">
@@ -311,25 +315,27 @@ Injected data:
                                                     <t t-esc="partner.mobile or ''" />
                                                 </div>
                                             </t>
-                                            <t t-set="edit_field" t-value="True"/>
-                                                <input
-                                                    type="mobile"
-                                                    id="mobile"
-                                                    name="mobile"
-                                                    class="form-control"
-                                                    t-att-value="partner.mobile"
-                                                    t-att-data-original-value="partner.mobile"
-                                                    pattern="[0-9\+\s\(\)]{7,20}"
-                                                    inputmode="numeric"
-                                                />
+                                            <t t-set="edit_field" t-value="True" />
+                                            <input
+                                                type="mobile"
+                                                id="mobile"
+                                                name="mobile"
+                                                class="form-control"
+                                                t-att-value="partner.mobile"
+                                                t-att-data-original-value="partner.mobile"
+                                                pattern="[0-9\+\s\(\)]{7,20}"
+                                                inputmode="numeric"
+                                            />
                                         </t>
                                     </div>
                                 </div>
-
-                                <div id="user-settings-buttons" class="form-actions d-flex position-relative justify-content-center mt-4">
+                                <div
+                                    id="user-settings-buttons"
+                                    class="form-actions d-flex position-relative justify-content-center mt-4"
+                                >
                                     <div id="user-settings-loader" class="d-none">
                                         <span class="spinner-rotate">
-                                            <i class="fa fa-spinner fa-5x text-core-blue"></i>
+                                            <i class="fa fa-spinner fa-5x text-core-blue" />
                                         </span>
                                     </div>
                                     <div class="w-md-50 view-mode">
