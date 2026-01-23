@@ -83,6 +83,7 @@ class MyCompassionDonationsController(CustomerPortal):
         domain = [
             ("order_id", "=", order.id),
             ("product_id.product_tmpl_id", "=", product_template.id),
+            ("frequency", "=", current_order_line_fields.get("frequency")),
         ]
         if current_order_line_fields.get("is_gift") and current_order_line_fields.get(
             "gift_recipient_id"
