@@ -117,11 +117,15 @@
 /* Spinner styling */
 #user-settings-loader {
     background: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    width: 100%;
+    top: -20px;
+    height: fit-content;
 }
 
 .spinner-rotate {
-    display: inline-block;
     animation: custom-spin 1.5s infinite linear !important;
+    margin: auto;
 }
 
 @keyframes custom-spin {
