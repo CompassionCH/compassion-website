@@ -17,11 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
          * Main setup function to initialize all event listeners.
          */
         function initializeUserSettings() {
-            // Hides the error messages of the select components
-            document.querySelectorAll(".invalid-feedback").forEach((hint) => {
-                hint.style.display = "none";
-            });
-
             initTabNavigation();
             initCommunicationSettings();
             initAgreementsForm();
@@ -150,28 +145,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         /**
-         * Attaches a standardized event listener to an agreement checkbox.
-         * When checked, it calls a specific RPC route.
-         */
-
-        function attachAgreementListener(checkbox, route) {
-            checkbox.addEventListener("change", function () {
-                // Only proceed if the checkbox is being checked
-                if (!this.checked) return;
-
-                rpc.query({ route, params: {} })
-                    .then(() => {
-                        window.location.reload();
-                    })
-                    .catch((err) => {
-                        console.error("RPC Error:", err);
-                        this.checked = false; // Revert the checkbox state on error
-                        Dialog.alert(null, "Could not save your confirmation. Please try again.");
-                    });
-            });
-        }
-
-        /**
          * Initializes the privacy checkbox.
          */
         function initAgreementsForm() {
@@ -289,17 +262,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let originalValues = {};
 
-            const clearValidation = () => {
-                form.querySelectorAll(".is-invalid, .is-valid").forEach((input) => {
-                    input.classList.remove("is-invalid");
-                    input.classList.remove("is-valid");
-                    const container = input.closest(".form-field-container");
-                    if (container) container.classList.remove("has-error");
-                });
-                form.querySelectorAll(".invalid-feedback").forEach((hint) => {
-                    hint.style.display = "none";
+            // --- HELPER FUNCTION ---
+
+            const storeOriginalValues = () => {
+                fields.forEach((field) => {
+                    const input = form.querySelector(`[name="${field}"]`);
+                    if (input) originalValues[field] = input.value;
                 });
             };
+
+            const restoreOriginalValues = () => {
+                fields.forEach((field) => {
+                    const input = form.querySelector(`[name="${field}"]`);
+                    if (input && originalValues[field] !== undefined) {
+                        input.value = originalValues[field];
+                    }
+                });
+            };
+
+            const resetErrorUI = () => {
+                form.querySelectorAll(".is-invalid, .is-valid").forEach((el) =>
+                    el.classList.remove("is-invalid", "is-valid")
+                );
+                form.querySelectorAll(".invalid-feedback").forEach((el) => (el.style.display = "none"));
+                form.querySelectorAll(".form-field-container.has-error").forEach((el) =>
+                    el.classList.remove("has-error")
+                );
+            };
+
+            function toggleEdit(isEditing) {
+                resetErrorUI();
+                form.classList.toggle("is-editing", isEditing);
+            }
+
+            function toggleLoader(isLoading) {
+                const loader = document.getElementById("user-settings-loader");
+
+                if (isLoading) {
+                    loader?.classList.remove("d-none");
+                } else {
+                    loader?.classList.add("d-none");
+                }
+            }
 
             const showErrors = (errors) => {
                 for (const fieldName in errors) {
@@ -320,34 +324,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             };
 
-            const storeOriginalValues = () => {
-                fields.forEach((field) => {
-                    const input = form.querySelector(`[name="${field}"]`);
-                    if (input) originalValues[field] = input.value;
-                });
-            };
-
-            const restoreOriginalValues = () => {
-                fields.forEach((field) => {
-                    const input = form.querySelector(`[name="${field}"]`);
-                    if (input && originalValues[field] !== undefined) {
-                        input.value = originalValues[field];
-                    }
-                });
-            };
+            // --- EVENT LISTENERS ---
 
             // Validation listener on all input fields
             form.querySelectorAll(".form-control").forEach((input) => {
                 input.addEventListener("input", function () {
                     if (!form.classList.contains("is-editing")) return;
 
-                    if (this.checkValidity()) {
+                    if (this.checkValidity() && this.value !== "") {
                         this.classList.remove("is-invalid");
+
                         const container = this.closest(".form-field-container");
-                        if (container) container.classList.remove("has-error");
-                        this.classList.add("is-valid");
-                        const hintEl = container.querySelector(".invalid-feedback");
-                        if (hintEl) hintEl.style.display = "none";
+                        if (container) {
+                            container.classList.remove("has-error");
+                            this.classList.add("is-valid");
+                            const hintEl = container.querySelector(".invalid-feedback");
+                            if (hintEl) hintEl.style.display = "none";
+                        }
                     } else {
                         this.classList.remove("is-valid");
                     }
@@ -357,71 +350,49 @@ document.addEventListener("DOMContentLoaded", () => {
             editButton.addEventListener("click", (e) => {
                 e.preventDefault();
                 storeOriginalValues();
-                clearValidation();
-                form.classList.add("is-editing");
+                toggleEdit(true);
             });
 
             cancelButton.addEventListener("click", (e) => {
                 e.preventDefault();
                 restoreOriginalValues();
-                clearValidation();
-                form.classList.remove("is-editing");
+                toggleEdit(false);
             });
 
             saveButton.addEventListener("click", (e) => {
                 e.preventDefault();
-                clearValidation();
+                resetErrorUI();
 
                 let isValid = true;
                 const payload = {};
 
-                for (let i = 0; i < fields.length; i++) {
-                    const field = fields[i];
+                for (const field of fields) {
                     const input = form.querySelector(`[name="${field}"]`);
-
                     if (!input || input.offsetParent === null) continue; // Skip hidden/missing inputs
 
                     if (!input.checkValidity()) {
-                        // input not valid
                         isValid = false;
-
-                        input.classList.remove("is-valid");
                         input.classList.add("is-invalid");
+                        input.classList.remove("is-valid");
 
                         const container = input.closest(".form-field-container");
-                        if (container) container.classList.add("has-error");
-                        const hintEl = container.querySelector(".invalid-feedback");
-                        if (hintEl) hintEl.style.display = "block";
+                        if (container) {
+                            container.classList.add("has-error");
+                            const errorMsg = container.querySelector(".invalid-feedback");
+                            if (errorMsg) errorMsg.style.display = "block";
+                        }
                     } else {
-                        // input valid
-                        input.classList.remove("is-invalid");
-                        input.classList.add("is-valid");
                         payload[field] = input.value;
                     }
                 }
 
                 if (!isValid) return; // return if any of the input values are not valid
-                // hide buttons and show loader
-                const buttonsForm = document.getElementById("user-settings-buttons");
-                const loader = document.getElementById("user-settings-loader");
-
-                if (buttonsForm) buttonsForm.classList.add("d-none");
-                if (loader) {
-                    loader.classList.remove("d-none");
-                    loader.classList.add("d-flex");
-                }
-
-                const restoreUI = () => {
-                    if (loader) {
-                        loader.classList.add("d-none");
-                        loader.classList.remove("d-flex");
-                    }
-                    if (buttonsForm) buttonsForm.classList.remove("d-none");
-                };
+                toggleLoader(true);
 
                 rpc.query({ route: endpoint, params: payload })
                     .then((response) => {
-                        restoreUI();
+                        toggleLoader(false);
+
                         if (response.success) {
                             fields.forEach((field) => {
                                 const input = form.querySelector(`[name="${field}"]`);
@@ -431,7 +402,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 displayEl.textContent =
                                     input.tagName === "SELECT" ? input.options[input.selectedIndex].text : input.value;
                             });
-                            form.classList.remove("is-editing");
+                            toggleEdit(false);
                         } else {
                             if (response.errors) {
                                 showErrors(response.errors);
@@ -439,7 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     })
                     .catch((err) => {
-                        restoreUI();
+                        toggleLoader(false);
                         console.error("RPC Error:", err);
                         Dialog.alert(null, "An unexpected error occurred. Please try again later.");
                     });

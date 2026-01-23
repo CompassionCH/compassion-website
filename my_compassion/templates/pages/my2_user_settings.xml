@@ -118,7 +118,9 @@ Injected data:
                                         <t t-call="theme_compassion_2025.FormFieldComponent">
                                             <t t-set="label">Surname</t>
                                             <t t-set="input_id" t-value="'lastname'" />
-                                            <t t-set="invalid_hint">Surname is required (max 50 characters)</t>
+                                            <t t-set="invalid_hint">
+                                                Surname is required (max 50 characters, no numbers)
+                                            </t>
                                             <t t-set="display_content">
                                                 <div class="field-display" data-display-for="lastname">
                                                     <t t-esc="partner.lastname or ''" />
@@ -132,7 +134,7 @@ Injected data:
                                                 class="form-control"
                                                 t-att-value="partner.lastname"
                                                 required="required"
-                                                pattern="[a-zA-Z]{0,50}"
+                                                pattern="[^0-9]{0,50}"
                                             />
                                         </t>
                                     </div>
@@ -140,7 +142,7 @@ Injected data:
                                         <t t-call="theme_compassion_2025.FormFieldComponent">
                                             <t t-set="label">Name</t>
                                             <t t-set="input_id" t-value="'firstname'" />
-                                            <t t-set="invalid_hint">Name is required (max 50 characters)</t>
+                                            <t t-set="invalid_hint">Name is required (max 50 characters, no numbers)</t>
                                             <t t-set="display_content">
                                                 <div class="field-display" data-display-for="firstname">
                                                     <t t-esc="partner.firstname or ''" />
@@ -153,9 +155,8 @@ Injected data:
                                                 name="firstname"
                                                 class="form-control"
                                                 t-att-value="partner.firstname"
-                                                t-att-data-original-value="partner.firstname"
                                                 required="required"
-                                                pattern="[a-zA-Z]{0,50}"
+                                                pattern="[^0-9]{0,50}"
                                             />
                                         </t>
                                     </div>
@@ -165,7 +166,7 @@ Injected data:
                                         <t t-set="label">Address</t>
                                         <t t-set="input_id" t-value="'street'" />
                                         <t t-set="top_class" t-value="'col-12'" />
-                                        <t t-set="invalid_hint">Address can not be emtpy</t>
+                                        <t t-set="invalid_hint">Address can not be empty</t>
                                         <t t-set="display_content">
                                             <div class="field-display" data-display-for="street">
                                                 <t t-esc="partner.street or ''" />
@@ -317,7 +318,7 @@ Injected data:
                                             </t>
                                             <t t-set="edit_field" t-value="True" />
                                             <input
-                                                type="mobile"
+                                                type="tel"
                                                 id="mobile"
                                                 name="mobile"
                                                 class="form-control"

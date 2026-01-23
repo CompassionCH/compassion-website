@@ -121,6 +121,7 @@
     width: 100%;
     top: -20px;
     height: fit-content;
+    display: flex;
 }
 
 .spinner-rotate {
@@ -136,13 +137,5 @@
     100% {
         -webkit-transform: rotate(359deg);
         transform: rotate(359deg);
-    }
-}
-
-/* Mobile version override */
-@media (max-width: 767px) {
-    #user-settings-loader .spinner-rotate {
-        display: inline-block !important;
-        visibility: visible; !important;
     }
 }
