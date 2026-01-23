@@ -129,10 +129,7 @@
                                         <i class="icon icon-heart text-pure-white m-2" />
                                     </div>
                                     <p class="child-info-text">
-                                        <span class="text-mid-green font-weight-bold">
-                                            I
-                                            love
-                                        </span>
+                                        <span class="text-mid-green font-weight-bold">I love</span>
                                         <t t-esc="compassion_child.get_list('hobby_ids.value')" />
                                     </p>
                                 </div>
@@ -155,10 +152,7 @@
                     <section t-if="not is_sponsorship_terminated" class="child-related-information tabs-component">
                         <div class="child-select d-block d-md-none">
                             <select class="form-control custom-select" id="child-info-tabs-mobile">
-                                <option value="#family-tab" selected="1">
-                                    My
-                                    Family
-                                </option>
+                                <option value="#family-tab" selected="1">My Family</option>
                                 <option value="#project-tab">My Project</option>
                                 <option value="#country-tab">My Country</option>
                             </select>
@@ -218,6 +212,12 @@
                                             t-esc="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"
                                         />
                                         with
+                                        <t
+                                            t-if="compassion_child.household_id.father_living_with_child and compassion_child.household_id.mother_living_with_child"
+                                        >
+                                            both of my parents and the rest of my family.
+                                        </t>
+                                        <t t-else="">my family.</t>
                                         <t
                                             t-if="compassion_child.household_id.nb_brothers or compassion_child.household_id.nb_sisters"
                                         >
@@ -279,10 +279,7 @@
                             >
                                 <ul class="tab-items">
                                     <li class="tab-item">
-                                        <strong class="tab-item-title">
-                                            Church
-                                            partner:
-                                        </strong>
+                                        <strong class="tab-item-title">Church partner:</strong>
                                         <t t-esc="compassion_child.project_id.local_church_name" />
                                     </li>
                                     <li class="tab-item">
@@ -290,10 +287,7 @@
                                         <t t-esc="compassion_child.project_id.country_id.name" />
                                     </li>
                                     <li class="tab-item">
-                                        <strong class="tab-item-title">
-                                            Closest Major
-                                            City:
-                                        </strong>
+                                        <strong class="tab-item-title">Closest Major City:</strong>
                                         <t t-esc="compassion_child.project_id.closest_city" />
                                     </li>
                                     <li class="tab-item">
@@ -301,40 +295,25 @@
                                         <t t-esc="compassion_child.project_id.community_locale" />
                                     </li>
                                     <li class="tab-item">
-                                        <strong class="tab-item-title">
-                                            Most Commonly
-                                            Spoken Language:
-                                        </strong>
+                                        <strong class="tab-item-title">Most Commonly Spoken Language:</strong>
                                         <t t-esc="compassion_child.project_id.primary_language_id.name" />
                                     </li>
                                     <li class="tab-item">
-                                        <strong class="tab-item-title">
-                                            No. of
-                                            Residents:
-                                        </strong>
+                                        <strong class="tab-item-title">No. of Residents:</strong>
                                         <t t-esc="compassion_child.project_id.nb_cdsp_kids" />
                                     </li>
                                     <li class="tab-item">
-                                        <strong class="tab-item-title">
-                                            Most Common
-                                            Occupation:
-                                        </strong>
+                                        <strong class="tab-item-title">Most Common Occupation:</strong>
                                         <t
                                             t-esc="compassion_child.get_list('project_id.primary_adults_occupation_ids.value')"
                                         />
                                     </li>
                                     <li class="tab-item">
-                                        <strong class="tab-item-title">
-                                            Typical House
-                                            Construction:
-                                        </strong>
+                                        <strong class="tab-item-title">Typical House Construction:</strong>
                                         <t t-esc="compassion_child.project_id.typical_wall_material" />
                                     </li>
                                     <li class="tab-item">
-                                        <strong class="tab-item-title">
-                                            Regional
-                                            Diet:
-                                        </strong>
+                                        <strong class="tab-item-title">Regional Diet:</strong>
                                         <t t-esc="compassion_child.get_list('project_id.primary_diet_ids.value')" />
                                     </li>
                                 </ul>
@@ -348,18 +327,12 @@
                                 <t t-set="field_office" t-value="compassion_child.field_office_id" />
                                 <ul class="tab-items">
                                     <li class="tab-item">
-                                        <strong class="tab-item-title">
-                                            Official Country
-                                            Name:
-                                        </strong>
+                                        <strong class="tab-item-title">Official Country Name:</strong>
                                         <t t-esc="compassion_child.project_id.country_id.name" />
                                     </li>
                                     <t t-if="field_office.capital_city">
                                         <li class="tab-item">
-                                            <strong class="tab-item-title">
-                                                Capital
-                                                City:
-                                            </strong>
+                                            <strong class="tab-item-title">Capital City:</strong>
                                             <t t-esc="field_office.capital_city" />
                                         </li>
                                     </t>
@@ -371,20 +344,14 @@
                                     </t>
                                     <t t-if="field_office.male_life_expectancy">
                                         <li class="tab-item">
-                                            <strong class="tab-item-title">
-                                                Male life
-                                                expectancy:
-                                            </strong>
+                                            <strong class="tab-item-title">Male life expectancy:</strong>
                                             <t t-esc="field_office.male_life_expectancy" />
                                             <span>Years Old</span>
                                         </li>
                                     </t>
                                     <t t-if="field_office.female_life_expectancy">
                                         <li class="tab-item">
-                                            <strong class="tab-item-title">
-                                                Female life
-                                                expectancy:
-                                            </strong>
+                                            <strong class="tab-item-title">Female life expectancy:</strong>
                                             <t t-esc="field_office.female_life_expectancy" />
                                             <span>Years Old</span>
                                         </li>
@@ -392,8 +359,7 @@
                                     <t t-if="field_office.urban_water_access">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">
-                                                Urban population with drinking water
-                                                access:
+                                                Urban population with drinking water access:
                                             </strong>
                                             <t t-esc="'{:.0f}%'.format(field_office.urban_water_access * 100)" />
                                         </li>
@@ -401,36 +367,26 @@
                                     <t t-if="field_office.rural_water_access">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">
-                                                Rural population with drinking water
-                                                access:
+                                                Rural population with drinking water access:
                                             </strong>
                                             <t t-esc="'{:.0f}%'.format(field_office.rural_water_access * 100)" />
                                         </li>
                                     </t>
                                     <t t-if="field_office.adult_literacy_rate">
                                         <li class="tab-item">
-                                            <strong class="tab-item-title">
-                                                Adult
-                                                literacy rate:
-                                            </strong>
+                                            <strong class="tab-item-title">Adult literacy rate:</strong>
                                             <t t-esc="'{:.0f}%'.format(field_office.adult_literacy_rate * 100)" />
                                         </li>
                                     </t>
                                     <t t-if="field_office.infant_mortality_rate">
                                         <li class="tab-item">
-                                            <strong class="tab-item-title">
-                                                Infant
-                                                mortality rate:
-                                            </strong>
+                                            <strong class="tab-item-title">Infant mortality rate:</strong>
                                             <t t-esc="'{:.0f}%'.format(field_office.infant_mortality_rate * 100)" />
                                         </li>
                                     </t>
                                     <t t-if="field_office.under_five_mortality_rate">
                                         <li class="tab-item">
-                                            <strong class="tab-item-title">
-                                                Under-five
-                                                mortality rate:
-                                            </strong>
+                                            <strong class="tab-item-title">Under-five mortality rate:</strong>
                                             <t t-esc="'{:.0f}%'.format(field_office.under_five_mortality_rate * 100)" />
                                         </li>
                                     </t>
@@ -490,7 +446,7 @@
                         <t t-set="underline_color" t-value="'low-yellow'" />
                         <t t-set="description">
                             Follow the thread of hope and
-                            encouragement you’ve woven together.
+                        encouragement you’ve woven together.
                         </t>
                     </t>
                 </div>
