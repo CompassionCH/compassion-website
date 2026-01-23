@@ -73,6 +73,10 @@
                 <t t-set="underline_color" t-value="'low-yellow'" />
             </t>
             <!-- DONATION FREQUENCY -->
+            <!--
+              TODO enable back this component when monthly fund payment is implemented.
+              This code was intentionally disabled by task [T2917]
+            -->
             <!--            <t-->
             <!--                t-if="product.my_compassion_donation_type != 'gift'"-->
             <!--                t-call="theme_compassion_2025.ToggleButtonComponent"-->
