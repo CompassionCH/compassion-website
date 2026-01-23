@@ -16,9 +16,3 @@ class WebsiteSaleDonation(WebsiteSale):
     )
     def product(self, product, category="", search="", **kwargs):
         return super().product(product, category, search, **kwargs)
-
-    @http.route(
-        ["/shop/terms"], type="http", auth="public", website=True, sitemap=False
-    )
-    def terms(self, **kw):
-        return super().terms(**kw)
