@@ -105,7 +105,15 @@ def migrate(env, version):
         pid for pid in TARGET_PRODUCT_IDS if pid != PRODUCT_ID_CHRISTMAS
     )
 
-    if impact_ids_to_clean:
+    # Check if table exists,
+    # could not be the case if environment is upgrading from MC1 to MC2
+    cr.execute("SELECT to_regclass('donation_impact_line')")
+    impact_table_exists = cr.fetchone()[0]
+
+    cr.execute("SELECT to_regclass('donation_info_line')")
+    info_table_exists = cr.fetchone()[0]
+
+    if impact_ids_to_clean and impact_table_exists:
         cr.execute(
             "DELETE FROM donation_impact_line WHERE donation_id IN %s",
             (impact_ids_to_clean,),
@@ -113,6 +121,7 @@ def migrate(env, version):
 
     # Cleanup Info Lines
     # Applies ONLY to Christmas Gift product
-    cr.execute(
-        "DELETE FROM donation_info_line WHERE donation_id = %s", (PRODUCT_ID_CHRISTMAS,)
-    )
+    if info_table_exists:
+        cr.execute(
+            "DELETE FROM donation_info_line WHERE donation_id = %s", (PRODUCT_ID_CHRISTMAS,)
+        )
