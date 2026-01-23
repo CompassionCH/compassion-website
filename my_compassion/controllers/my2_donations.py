@@ -101,10 +101,12 @@ class MyCompassionDonationsController(CustomerPortal):
         # Aggregate the matching lines if necessary
         if matching_lines:
             aggregated_line = matching_lines[0]
-            aggregated_price = aggregated_line.price_unit
-            for line in matching_lines[1:]:
-                aggregated_price += line.price_unit
-                line.unlink()
+            aggregated_price = sum(line.price_unit for line in matching_lines)
+
+            # Unlink all but the first one in a single call
+            if len(matching_lines) > 1:
+                matching_lines[1:].unlink()
+
             # Add to the aggregated price the one of the current donation
             aggregated_price += current_order_line_fields["price_unit"]
             aggregated_line.price_unit = aggregated_price
