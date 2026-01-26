@@ -51,7 +51,7 @@
             <t t-if="submit_label">
                 <t t-esc="submit_label" />
             </t>
-            <t t-else="">Add &amp;amp; check out</t>
+            <t t-else="">Add &amp; check out</t>
         </t>
         <t t-set="submission_event" t-value="submission_event or 'donation-form:submit'" />
         <t t-set="default_frequency" t-value="default_frequency or 'one_time'" />
