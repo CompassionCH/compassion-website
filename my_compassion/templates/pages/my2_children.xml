@@ -79,7 +79,7 @@ Would you like to bring hope to another child?
                         <div class="w-100 d-flex flex-column">
                             <div class="row justify-content-center">
                                 <t t-foreach="ended_sponsorships" t-as="sponsorship">
-                                    <div class="col-12 col-md-6 col-lg-4">
+                                    <div class="col-12 col-md-6 col-lg-4  mb-3">
                                         <t t-call="my_compassion.my2_children_card_component">
                                             <t t-set="child" t-value="sponsorship.child_id" />
                                             <t t-set="sponsorship_end_date" t-value="sponsorship.end_date" />
