@@ -108,7 +108,7 @@ Page: My Compassion 2 Sponsorships Page
                                     <option value="">Select country</option>
                                     <t t-foreach="countries" t-as="country">
                                         <option t-att-value="country.field_office_id">
-                                            <t t-esc="country.name" />
+                                            <t t-esc="country.country_id.name" />
                                         </option>
                                     </t>
                                 </t>
