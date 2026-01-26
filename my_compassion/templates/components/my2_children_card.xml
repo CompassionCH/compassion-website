@@ -51,17 +51,11 @@
                         <span class="border-bottom border-2 border-high-orange">
                             <t t-if="sponsorship_end_date">
                                 Sponsorship terminated on
-                                <t
-                                    t-esc="sponsorship_end_date"
-                                    t-options="{'widget': 'date', 'format': 'dd MMMM yyyy'}"
-                                />
+                                <t t-esc="sponsorship_end_date.strftime('%d %B %Y')" />
                             </t>
                             <t t-elif="latest_correspondence">
                                 Last contact
-                                <t
-                                    t-esc="latest_correspondence.write_date"
-                                    t-options="{'widget': 'date', 'format': 'dd MMMM yyyy'}"
-                                />
+                                <t t-esc="latest_correspondence.write_date.strftime('%d %B %Y')" />
                             </t>
                             <t t-else="">No correspondences</t>
                         </span>
