@@ -71,8 +71,8 @@
                         <t t-esc="child.age" />
                         years old
                         <i class="icon-user01 bg-low-yellow mx-1" />
-                        <t t-if="child.gender == 'M'">Male</t>
-                        <t t-elif="child.gender == 'F'">Female</t>
+                        <t t-if="child.gender == 'M'">Boy</t>
+                        <t t-elif="child.gender == 'F'">Girl</t>
                         <t t-else="">Not specified</t>
                     </div>
                     <div>
