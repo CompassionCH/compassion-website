@@ -133,8 +133,8 @@ Page: My Compassion 2 Sponsorships Page
                     <div class="sponsorships-results-content row justify-content-center g-4" />
                 </div>
                 <!-- BUTTONS -->
-                <div class="sponsorships-column d-flex mt-4 mb-5">
-                    <div id="btn-choose" class="mr-3">
+                <div class="sponsorships-column d-flex flex-column flex-sm-row mt-4 mb-5 align-items-center">
+                    <div id="btn-choose" class="m-3">
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variant" t-value="'compact'" />
                             <t t-set="variation" t-value="'hollow'" />
@@ -143,7 +143,7 @@ Page: My Compassion 2 Sponsorships Page
                             <t t-set="text_color" t-value="'dark-blue'" />
                         </t>
                     </div>
-                    <div id="btn-choose-again" class="mr-3" style="display: none;">
+                    <div id="btn-choose-again" class="m-3" style="display: none;">
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variant" t-value="'compact'" />
                             <t t-set="variation" t-value="'hollow'" />
@@ -152,7 +152,7 @@ Page: My Compassion 2 Sponsorships Page
                             <t t-set="text_color" t-value="'dark-blue'" />
                         </t>
                     </div>
-                    <div id="btn-see-all-children" class="mr-3" style="display: none;">
+                    <div id="btn-see-all-children" class="m-3" style="display: none;">
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variant" t-value="'compact'" />
                             <t t-set="variation" t-value="'hollow'" />
@@ -161,7 +161,7 @@ Page: My Compassion 2 Sponsorships Page
                             <t t-set="text_color" t-value="'dark-blue'" />
                         </t>
                     </div>
-                    <div id="btn-more" class="ml-3">
+                    <div id="btn-more" class="m-3">
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variant" t-value="'compact'" />
                             <t t-set="variation" t-value="'hollow'" />
