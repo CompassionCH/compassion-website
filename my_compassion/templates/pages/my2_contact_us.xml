@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Page My Compassion 2 Contact us page
+
+    Description:
+    This page is the contact us page which users can land on when they
+    click on the link "contact us" on the login page.
+
+    Used in route:
+    -/contactus
+-->
+<odoo>
+    <template id="my2_contactus_page" inherit_id="website.contactus" name="My Compassion 2 Contact us page">
+        <xpath expr="//div[@id='wrap']" position="replace">
+            <div id="wrap" class="oe_structure">
+                <div class="container">
+                    <div class="single-column pt-3">
+                        <t t-call="theme_compassion_2025.TitleComponent">
+                            <t t-set="title_content">Contact us</t>
+                            <t t-set="title_size" t-value="'md'"/>
+                            <t t-set="color" t-value="'core-blue'"/>
+                            <t t-set="show_underline" t-value="True"/>
+                            <t t-set="underline_color" t-value="'low-yellow'"/>
+                            <p>
+                                We'd love to hear from you!
+                            </p>
+                        </t>
+                    </div>
+                </div>
+            </div>
+            <div id="contactus_form_top" class="bg-core-blue text-center py-5">
+                <div class="single-column mx-3 mx-md-auto">
+                    <t t-call="theme_compassion_2025.TitleComponent">
+                        <t t-set="title_content">Get in touch</t>
+                        <t t-set="title_size" t-value="'md'"/>
+                        <t t-set="color" t-value="'pure-white'"/>
+                        <t t-set="show_underline" t-value="False"/>
+                        <t t-set="description">
+                            Have a question or want to learn more about our
+                            work? Fill out the form below, and we'll get back to
+                            you as soon as possible.
+                        </t>
+                        <t t-set="description_color" t-value="'pure-white'"/>
+                    </t>
+                    <form class="contactus-form" role="form">
+                        <div class="row text-left">
+                            <!-- Title Mr. or Mrs -->
+                            <t t-call="theme_compassion_2025.FormFieldComponent">
+                                <t t-set="top_class" t-value="'col-12 mb-3'"/>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio"
+                                           name="title" id="mrs" value="Mrs."/>
+                                    <label class="form-check-label text-pure-white"
+                                           for="mrs">
+                                        Mrs.
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio"
+                                           name="title" id="mr" value="Mr."/>
+                                    <label class="form-check-label text-pure-white"
+                                           for="mr">
+                                        Mr.
+                                    </label>
+                                </div>
+                            </t>
+                            <!-- First Name and Last Name -->
+                            <t t-call="theme_compassion_2025.FormFieldComponent">
+                                <t t-set="label">First Name</t>
+                                <t t-set="label_color" t-value="'pure-white'"/>
+                                <t t-set="top_class" t-value="'col-12 col-md-6 mb-3'"/>
+                                <t t-set="input_id" t-value="contactus_form_firstname"/>
+                                <input d="contactus_form_firstname" type="text"
+                                       name="firstname" class="form-control"
+                                       placeholder="First Name" required="required"
+                                />
+                            </t>
+                            <t t-call="theme_compassion_2025.FormFieldComponent">
+                                <t t-set="label">Last Name</t>
+                                <t t-set="label_color" t-value="'pure-white'"/>
+                                <t t-set="top_class" t-value="'col-12 col-md-6 mb-3'"/>
+                                <t t-set="input_id" t-value="contactus_form_lastname"/>
+                                <input id="contactus_form_lastname" type="text"
+                                       name="lastname" class="form-control"
+                                       placeholder="Last Name" required="required"
+                                />
+                            </t>
+                            <!-- Phone number and E-mail -->
+                            <t t-call="theme_compassion_2025.FormFieldComponent">
+                                <t t-set="label">Phone number</t>
+                                <t t-set="label_color" t-value="'pure-white'"/>
+                                <t t-set="top_class" t-value="'col-12 col-md-6 mb-3'"/>
+                                <t t-set="input_id" t-value="contactus_form_phone_number"/>
+                                <input id="contactus_form_phone_number"
+                                       type="text" name="phone_number"
+                                       class="form-control" placeholder="0041244342124"
+                                       required="required"
+                                />
+                            </t>
+                            <t t-call="theme_compassion_2025.FormFieldComponent">
+                                <t t-set="label">E-mail</t>
+                                <t t-set="label_color" t-value="'pure-white'"/>
+                                <t t-set="top_class" t-value="'col-12 col-md-6 mb-3'"/>
+                                <t t-set="input_id" t-value="contactus_form_email"/>
+                                <input id="contactus_form_email" type="email"
+                                       name="email" class="form-control"
+                                       placeholder="info@compassion.ch"
+                                       required="required"
+                                />
+                            </t>
+                        <!-- Subject -->
+                            <t t-call="theme_compassion_2025.FormFieldComponent">
+                                <t t-set="label">Subject</t>
+                                <t t-set="label_color" t-value="'pure-white'"/>
+                                <t t-set="top_class" t-value="'col-12'"/>
+                                <t t-set="input_id" t-value="contactus_subject"/>
+                                <input id="contactus_subject"
+                                       type="text" name="subject"
+                                       class="form-control" placeholder="Hi"
+                                       required="required"
+                                />
+                            </t>
+                            <!-- Message -->
+                            <t t-call="theme_compassion_2025.FormFieldComponent">
+                                <t t-set="label">Message</t>
+                                <t t-set="label_color" t-value="'pure-white'"/>
+                                <t t-set="top_class" t-value="'col-12 mb-3'"/>
+                                <t t-set="input_id" t-value="contactus_message"/>
+                                <textarea id="contactus_message" name="message"
+                                       class="form-control"
+                                       required="required"
+                                       rows="4"
+                                />
+                            </t>
+                            <!-- Contact us button -->
+                            <div class="w-100 mt-3 d-flex justify-content-center">
+                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                <t t-set="variant" t-value="'compact'"/>
+                                <t t-set="variation" t-value="'filled'"/>
+                                <t t-set="label">Send the message</t>
+                                <t t-set="color" t-value="'pure-white'"/>
+                                <t t-set="text_color" t-value="'core-blue'"/>
+                            </t>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>
