@@ -265,10 +265,16 @@ class MyCompassionChildrenController(WebsiteChild):
         # To keep a list of the latest correspondence with each sponsored child:
         latest_corr_by_child = {}
         correspondences_table = request.env["correspondence"].sudo()
-
+        children_sponsored_by_partner = partner.sponsorship_ids.child_id
         received_correspondences = correspondences_table.search(
             [
+                "|",
                 ("partner_id", "=", partner.id),
+                (
+                    "child_id",
+                    "in",
+                    children_sponsored_by_partner.filtered("can_i_write_letter").ids,
+                ),
                 ("direction", "=", "Beneficiary To Supporter"),
             ],
             order="create_date desc",
