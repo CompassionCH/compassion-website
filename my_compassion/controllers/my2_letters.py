@@ -70,7 +70,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         # Authorized means either the partner is the direct correspondent or the sponsor
         # has read-write rights on the letters of the child (eg: if the partner is the
         # parent of young Write-only sponsors, in this case the parent res_partner has
-        # portal_info = all_info)
+        # portal_sponsorships = all_info)
         filter_domain = [
             "|",
             ("partner_id", "=", partner.id),
