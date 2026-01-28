@@ -262,8 +262,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let originalValues = {};
 
-            // --- HELPER FUNCTION ---
+            const showBackendErrors = (errors) => {
+                for (const fieldName in errors) {
+                    const input = form.querySelector(`[name="${fieldName}"]`);
+                    if (!input) continue;
 
+                    const fieldComponent = input.closest(".form-field-component");
+                    if (!fieldComponent) continue;
+
+                    const fieldWidget = $(fieldComponent).data("widget");
+                    if (!fieldWidget) continue;
+
+                    fieldWidget.showError(errors[fieldName]);
+                }
+            };
+
+            const clearErrors = () => {
+                let isValid = true;
+
+                $(form)
+                    .find(".form-field-component:visible")
+                    .each(function () {
+                        const fieldWidget = $(this).data("widget");
+                        fieldWidget.clearError();
+                    });
+
+                return isValid;
+            };
+            const validateForm = () => {
+                let isValid = true;
+
+                $(form)
+                    .find(".form-field-component:visible")
+                    .each(function () {
+                        const fieldWidget = $(this).data("widget");
+
+                        if (!fieldWidget.validate()) {
+                            isValid = false;
+                        }
+                    });
+
+                return isValid;
+            };
             const storeOriginalValues = () => {
                 fields.forEach((field) => {
                     const input = form.querySelector(`[name="${field}"]`);
@@ -295,55 +335,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 form.classList.toggle("is-editing", isEditing);
             }
 
-            function toggleLoader(isLoading) {
-                const loader = document.getElementById("user-settings-loader");
-
-                if (isLoading) {
-                    loader?.classList.remove("d-none");
-                } else {
-                    loader?.classList.add("d-none");
+            saveButton.addEventListener("click", () => {
+                if (!validateForm()) {
+                    return;
                 }
-            }
-
-            const showErrors = (errors) => {
-                for (const fieldName in errors) {
-                    const input = form.querySelector(`[name="${fieldName}"]`);
-                    if (input) {
-                        input.classList.remove("is-valid");
-                        input.classList.add("is-invalid");
-                        const container = input.closest(".form-field-container");
-                        if (container) {
-                            container.classList.add("has-error");
-                            const hintEl = container.querySelector(".invalid-feedback");
-                            if (hintEl) {
-                                hintEl.textContent = errors[fieldName];
-                                hintEl.style.display = "block";
-                            }
-                        }
-                    }
-                }
-            };
-
-            // --- EVENT LISTENERS ---
-
-            // Validation listener on all input fields
-            form.querySelectorAll(".form-control").forEach((input) => {
-                input.addEventListener("input", function () {
-                    if (!form.classList.contains("is-editing")) return;
-
-                    if (this.checkValidity() && this.value !== "") {
-                        this.classList.remove("is-invalid");
-
-                        const container = this.closest(".form-field-container");
-                        if (container) {
-                            container.classList.remove("has-error");
-                            this.classList.add("is-valid");
-                            const hintEl = container.querySelector(".invalid-feedback");
-                            if (hintEl) hintEl.style.display = "none";
-                        }
-                    } else {
-                        this.classList.remove("is-valid");
-                    }
+                const payload = {};
+                fields.forEach((field) => {
+                    const input = form.querySelector(`[name="${field}"]`);
+                    if (input) payload[field] = input.value;
                 });
             });
 
@@ -405,7 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             toggleEdit(false);
                         } else {
                             if (response.errors) {
-                                showErrors(response.errors);
+                                showBackendErrors(response.errors);
                             }
                         }
                     })

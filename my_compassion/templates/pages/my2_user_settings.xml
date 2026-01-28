@@ -96,6 +96,7 @@ Injected data:
                                                 <t t-call="theme_compassion_2025.SelectComponent">
                                                     <t t-set="id" t-value="'title'" />
                                                     <t t-set="name" t-value="'title'" />
+                                                    <t t-set="required" t-value="True" />
                                                     <t
                                                         t-set="attrs"
                                                         t-value="{'data-original-value': partner.title.id}"
@@ -118,46 +119,40 @@ Injected data:
                                         <t t-call="theme_compassion_2025.FormFieldComponent">
                                             <t t-set="label">Surname</t>
                                             <t t-set="input_id" t-value="'lastname'" />
-                                            <t t-set="invalid_hint">
-                                                Surname is required (max 50 characters, no numbers)
-                                            </t>
-                                            <t t-set="display_content">
-                                                <div class="field-display" data-display-for="lastname">
-                                                    <t t-esc="partner.lastname or ''" />
-                                                </div>
-                                            </t>
-                                            <t t-set="edit_field" t-value="True" />
-                                            <input
-                                                type="text"
-                                                id="lastname"
-                                                name="lastname"
-                                                class="form-control"
-                                                t-att-value="partner.lastname"
-                                                required="required"
-                                                pattern="[^0-9]{0,50}"
-                                            />
+                                            <div class="field-display" data-display-for="lastname">
+                                                <t t-esc="partner.lastname or ''" />
+                                            </div>
+                                            <div class="field-edit">
+                                                <input
+                                                    type="text"
+                                                    id="lastname"
+                                                    name="lastname"
+                                                    class="form-control"
+                                                    t-att-value="partner.lastname"
+                                                    t-att-data-original-value="partner.lastname"
+                                                    required=""
+                                                />
+                                            </div>
                                         </t>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <t t-call="theme_compassion_2025.FormFieldComponent">
                                             <t t-set="label">Name</t>
                                             <t t-set="input_id" t-value="'firstname'" />
-                                            <t t-set="invalid_hint">Name is required (max 50 characters, no numbers)</t>
-                                            <t t-set="display_content">
-                                                <div class="field-display" data-display-for="firstname">
-                                                    <t t-esc="partner.firstname or ''" />
-                                                </div>
-                                            </t>
-                                            <t t-set="edit_field" t-value="True" />
-                                            <input
-                                                type="text"
-                                                id="firstname"
-                                                name="firstname"
-                                                class="form-control"
-                                                t-att-value="partner.firstname"
-                                                required="required"
-                                                pattern="[^0-9]{0,50}"
-                                            />
+                                            <div class="field-display" data-display-for="firstname">
+                                                <t t-esc="partner.firstname or ''" />
+                                            </div>
+                                            <div class="field-edit">
+                                                <input
+                                                    type="text"
+                                                    id="firstname"
+                                                    name="firstname"
+                                                    class="form-control"
+                                                    t-att-value="partner.firstname"
+                                                    t-att-data-original-value="partner.firstname"
+                                                    required=""
+                                                />
+                                            </div>
                                         </t>
                                     </div>
                                 </div>
@@ -166,22 +161,20 @@ Injected data:
                                         <t t-set="label">Address</t>
                                         <t t-set="input_id" t-value="'street'" />
                                         <t t-set="top_class" t-value="'col-12'" />
-                                        <t t-set="invalid_hint">Address can not be empty</t>
-                                        <t t-set="display_content">
-                                            <div class="field-display" data-display-for="street">
-                                                <t t-esc="partner.street or ''" />
-                                            </div>
-                                        </t>
-                                        <t t-set="edit_field" t-value="True" />
-                                        <input
-                                            type="text"
-                                            id="street"
-                                            name="street"
-                                            class="form-control"
-                                            t-att-value="partner.street"
-                                            t-att-data-original-value="partner.street"
-                                            required="required"
-                                        />
+                                        <div class="field-display" data-display-for="street">
+                                            <t t-esc="partner.street or ''" />
+                                        </div>
+                                        <div class="field-edit">
+                                            <input
+                                                type="text"
+                                                id="street"
+                                                name="street"
+                                                class="form-control"
+                                                t-att-value="partner.street"
+                                                t-att-data-original-value="partner.street"
+                                                required=""
+                                            />
+                                        </div>
                                     </t>
                                 </div>
                                 <div class="row">
@@ -190,24 +183,20 @@ Injected data:
                                             <t t-call="theme_compassion_2025.FormFieldComponent">
                                                 <t t-set="label">Zip</t>
                                                 <t t-set="input_id" t-value="'zip'" />
-                                                <t t-set="invalid_hint">Enter a 4-digit zip code.</t>
-                                                <t t-set="display_content">
-                                                    <div class="field-display" data-display-for="zip">
-                                                        <t t-esc="partner.zip or ''" />
-                                                    </div>
-                                                </t>
-                                                <t t-set="edit_field" t-value="True" />
-                                                <input
-                                                    type="text"
-                                                    id="zip"
-                                                    name="zip"
-                                                    class="form-control"
-                                                    t-att-value="partner.zip"
-                                                    t-att-data-original-value="partner.zip"
-                                                    required="required"
-                                                    pattern="[0-9]{4}"
-                                                    inputmode="numeric"
-                                                />
+                                                <div class="field-display" data-display-for="zip">
+                                                    <t t-esc="partner.zip or ''" />
+                                                </div>
+                                                <div class="field-edit">
+                                                    <input
+                                                        type="text"
+                                                        id="zip"
+                                                        name="zip"
+                                                        class="form-control"
+                                                        t-att-value="partner.zip"
+                                                        t-att-data-original-value="partner.zip"
+                                                        required=""
+                                                    />
+                                                </div>
                                             </t>
                                         </div>
                                     </t>
@@ -226,6 +215,7 @@ Injected data:
                                                     class="form-control"
                                                     t-att-value="partner.city"
                                                     t-att-data-original-value="partner.city"
+                                                    required=""
                                                 />
                                             </div>
                                         </t>
@@ -264,22 +254,21 @@ Injected data:
                                         <t t-set="label">Email Address</t>
                                         <t t-set="input_id" t-value="'email'" />
                                         <t t-set="top_class" t-value="'col-12'" />
-                                        <t t-set="invalid_hint">Please use a valid email address.</t>
-                                        <t t-set="display_content">
-                                            <div class="field-display" data-display-for="email">
-                                                <t t-esc="partner.email or ''" />
-                                            </div>
-                                        </t>
-                                        <t t-set="edit_field" t-value="True" />
-                                        <input
-                                            type="email"
-                                            id="email"
-                                            name="email"
-                                            class="form-control"
-                                            t-att-value="partner.email"
-                                            t-att-data-original-value="partner.email"
-                                            required="required"
-                                        />
+                                        <div class="field-display" data-display-for="email">
+                                            <t t-esc="partner.email or ''" />
+                                        </div>
+                                        <div class="field-edit">
+                                            <input
+                                                type="email"
+                                                id="email"
+                                                name="email"
+                                                class="form-control"
+                                                t-att-value="partner.email"
+                                                t-att-data-original-value="partner.email"
+                                                data-validate-type="email"
+                                                required=""
+                                            />
+                                        </div>
                                     </t>
                                 </div>
                                 <div class="row">
@@ -287,46 +276,42 @@ Injected data:
                                         <t t-call="theme_compassion_2025.FormFieldComponent">
                                             <t t-set="label">Phone number</t>
                                             <t t-set="input_id" t-value="'phone'" />
-                                            <t t-set="invalid_hint">Please use a valid phone number.</t>
-                                            <t t-set="display_content">
-                                                <div class="field-display" data-display-for="phone">
-                                                    <t t-esc="partner.phone or ''" />
-                                                </div>
-                                            </t>
-                                            <t t-set="edit_field" t-value="True" />
-                                            <input
-                                                type="tel"
-                                                id="phone"
-                                                name="phone"
-                                                class="form-control"
-                                                t-att-value="partner.phone"
-                                                t-att-data-original-value="partner.phone"
-                                                pattern="[0-9\+\s\(\)]{7,20}"
-                                                inputmode="numeric"
-                                            />
+                                            <div class="field-display" data-display-for="phone">
+                                                <t t-esc="partner.phone or ''" />
+                                            </div>
+                                            <div class="field-edit">
+                                                <input
+                                                    type="tel"
+                                                    id="phone"
+                                                    name="phone"
+                                                    class="form-control"
+                                                    t-att-value="partner.phone"
+                                                    t-att-data-original-value="partner.phone"
+                                                    data-validate-type="phone"
+                                                    required=""
+                                                />
+                                            </div>
                                         </t>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <t t-call="theme_compassion_2025.FormFieldComponent">
                                             <t t-set="label">Mobile phone number</t>
                                             <t t-set="input_id" t-value="'mobile'" />
-                                            <t t-set="invalid_hint">Please use a valid mobile number.</t>
-                                            <t t-set="display_content">
-                                                <div class="field-display" data-display-for="mobile">
-                                                    <t t-esc="partner.mobile or ''" />
-                                                </div>
-                                            </t>
-                                            <t t-set="edit_field" t-value="True" />
-                                            <input
-                                                type="tel"
-                                                id="mobile"
-                                                name="mobile"
-                                                class="form-control"
-                                                t-att-value="partner.mobile"
-                                                t-att-data-original-value="partner.mobile"
-                                                pattern="[0-9\+\s\(\)]{7,20}"
-                                                inputmode="numeric"
-                                            />
+                                            <div class="field-display" data-display-for="mobile">
+                                                <t t-esc="partner.mobile or ''" />
+                                            </div>
+                                            <div class="field-edit">
+                                                <input
+                                                    type="mobile"
+                                                    id="mobile"
+                                                    name="mobile"
+                                                    class="form-control"
+                                                    t-att-value="partner.mobile"
+                                                    t-att-data-original-value="partner.mobile"
+                                                    data-validate-type="phone"
+                                                    required=""
+                                                />
+                                            </div>
                                         </t>
                                     </div>
                                 </div>
