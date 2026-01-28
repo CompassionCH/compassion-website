@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Component: Donation Form
+
+    Description:
+    A form to make a donation by choosing a recipient, frequency and amount.
+
+    Props:                                                                                           Default:
+    - product (product.template): The associated product.                                            -required-
+    - limits (list[gift.threshold.settings]): The price limits for different donations types.        -required-
+    - date (date): The date to use for price conversions.                                            [today]
+    - submit_label (string): The label of the submit button.                                         ['Add & check out']
+    - submission_event (string): The custom submission event name.                                   ['donation-form:submit']
+    - sponsorships (list[recurring.contract]) [only if product is a gift]: The user's sponsorships.  [none]
+    - default_sponsorship_id (int) [only if product is a gift]: The id of the default sponsorship.   [none]
+    - default_frequency (string): The default frequency.                                             ['one_time']
+    - default_suggested_amount (string): The default suggested amount.                               ['low']
+    - default_custom_amount (float): The default custom amount.                                      [none]
+    - base_name (string): Base name for radio inputs (to avoid collisions).                          ['donation']
+    - top_class (string): Classes to add to the top element of the item.                             [none]
+-->
+<odoo>
+    <template id="DonationFormLimitsInfo">
+        <div class="limits-info my-3" hidden="">
+            <t t-call="my_compassion.GivingLimitsTableComponent" />
+            <div class="mt-3 p-3 rounded-lg bg-light-blue">
+                <div class="tiny-text">
+                    If you'd like to make a large donation to support the work of  Compassion, please get in
+                    touch with us directly and we can suggest how  your donation can make the greatest
+                    impact.
+                </div>
+                <div class="mt-3 tiny-text">
+                    <i class="mr-1 icon-phone body-small" />
+                    <a href="tel:+41244342124" class="text-low-black">+41 (0)24 434 21 24</a>
+                    (Mo-Fri: 9.00-14.00)
+                </div>
+                <div class="mt-2 tiny-text">
+                    <i class="mr-1 icon-mail01 body-small" />
+                    <a t-attf-href="mailto:#{request.env.company.email}" class="text-low-black">
+                        <t t-esc="request.env.company.email" />
+                    </a>
+                </div>
+            </div>
+        </div>
+    </template>
+    <!-- DONATION FORM COMPONENT -->
+    <template id="DonationFormComponent" name="Donation Form Component">
+        <!-- Default property values -->
+        <t t-set="edit_mode" t-value="edit_mode or False" />
+        <t t-set="submit_label">
+            <t t-if="submit_label">
+                <t t-esc="submit_label" />
+            </t>
+            <t t-else="">Add &amp; check out</t>
+        </t>
+        <t t-set="submission_event" t-value="submission_event or 'donation-form:submit'" />
+        <t t-set="default_frequency" t-value="default_frequency or 'one_time'" />
+        <t t-set="default_suggested_amount" t-value="default_suggested_amount or 'low'" />
+        <t t-set="base_name">
+            <t t-if="base_name">
+                <t t-esc="base_name" />
+            </t>
+            <t t-else="">donation</t>
+        </t>
+        <div t-attf-class="my2_donation_form donation-inputs-container w-100 d-flex flex-column #{top_class}">
+            <input type="hidden" name="product_id" t-att-value="product.id" />
+            <t t-set="top_class" t-value="None" />
+            <t t-call="theme_compassion_2025.TitleComponent">
+                <t t-if="product.my_compassion_donation_type == 'fund'" t-set="title_content">Donate</t>
+                <t t-if="product.my_compassion_donation_type == 'gift'" t-set="title_content">Give</t>
+                <t t-set="color" t-value="'core-blue'" />
+                <t t-set="show_underline" t-value="True" />
+                <t t-set="underline_color" t-value="'low-yellow'" />
+            </t>
+            <!-- DONATION FREQUENCY -->
+            <!--
+              TODO enable back this component when monthly fund payment is implemented.
+              This code was intentionally disabled by task [T2917]
+            -->
+            <!--            <t-->
+            <!--                t-if="product.my_compassion_donation_type != 'gift'"-->
+            <!--                t-call="theme_compassion_2025.ToggleButtonComponent"-->
+            <!--            >-->
+            <!--                <t t-set="name" t-valuef="'#{base_name}_frequency'" />-->
+            <!--                <t t-set="_txt_One_Time">One Time</t>-->
+            <!--                <t t-set="_txt_Monthly">Monthly</t>-->
+            <!--                <t t-set="options" t-value="[('one_time', _txt_One_Time), ('monthly', _txt_Monthly)]" />-->
+            <!--                <t t-set="default" t-value="default_frequency" />-->
+            <!--                <t t-set="top_class" t-value="'mt-3 align-self-center donation-frequency'" />-->
+            <!--            </t>-->
+            <!-- TO -->
+            <t t-if="product.my_compassion_donation_type == 'gift'" t-call="theme_compassion_2025.FormFieldComponent">
+                <t t-set="top_class" t-value="'mt-3 w-100'" />
+                <t t-set="label">To</t>
+                <t t-set="input_id" t-value="'recipient'" />
+                <t t-set="invalid_hint">Please select a recipient.</t>
+                <t t-call="theme_compassion_2025.SelectComponent">
+                    <t t-set="name" t-value="'recipient'" />
+                    <t t-set="id" t-value="'recipient'" />
+                    <t t-set="required" t-value="True" />
+                    <option value="">Select child</option>
+                    <t t-foreach="sponsorships" t-as="sponsorship">
+                        <option t-att-value="sponsorship.id" t-att-selected="sponsorship.id == default_sponsorship_id">
+                            <t t-esc="sponsorship.preferred_name" />
+                        </option>
+                    </t>
+                </t>
+            </t>
+            <div class="limit-reached-message" hidden="">
+                <div class="mt-3 text-mid-grey text-center body-large bold">
+                    Donation limit reached for this donation type.
+                </div>
+                <div class="mb-3 tiny-text bold text-center">
+                    <span class="limits-toggle text-core-blue">Learn more</span>
+                </div>
+                <t t-call="my_compassion.DonationFormLimitsInfo" />
+                <div class="mb-3" />
+            </div>
+            <div class="amount-selection" t-att-hidden="product.my_compassion_donation_type == 'gift'">
+                <t t-call="theme_compassion_2025.FormFieldComponent">
+                    <t t-set="top_class" t-value="'mt-4 w-100'" />
+                    <t t-set="label">Suggested amounts</t>
+                    <div class="mt-1 d-flex justify-content-between">
+                        <div class="donation-suggested-amount flex-grow-1">
+                            <input
+                                t-attf-id="#{base_name}-suggested-low"
+                                type="radio"
+                                t-attf-name="#{base_name}_suggested_amount"
+                                value="low"
+                                t-att-checked="default_suggested_amount == 'low'"
+                                class="suggested-amount"
+                            />
+                            <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-low">
+                                <t
+                                    t-set="price"
+                                    t-value="product.my_compassion_donation_quantity_low * product.list_price"
+                                />
+                                <t t-esc="product.currency_id.name" />
+                                <t t-if="price % 1 == 0" t-esc="int(price)" />
+                                <t t-else="" t-esc="'{0:.2f}'.format(price)" />
+                            </label>
+                        </div>
+                        <div class="donation-suggested-amount mx-3 flex-grow-1">
+                            <input
+                                t-attf-id="#{base_name}-suggested-medium"
+                                type="radio"
+                                t-attf-name="#{base_name}_suggested_amount"
+                                value="medium"
+                                t-att-checked="default_suggested_amount == 'medium'"
+                                class="suggested-amount"
+                            />
+                            <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-medium">
+                                <t
+                                    t-set="price"
+                                    t-value="product.my_compassion_donation_quantity_medium * product.list_price"
+                                />
+                                <t t-esc="product.currency_id.name" />
+                                <t t-if="price % 1 == 0" t-esc="int(price)" />
+                                <t t-else="" t-esc="'{0:.2f}'.format(price)" />
+                            </label>
+                        </div>
+                        <div class="donation-suggested-amount flex-grow-1">
+                            <input
+                                t-attf-id="#{base_name}-suggested-high"
+                                type="radio"
+                                t-attf-name="#{base_name}_suggested_amount"
+                                value="high"
+                                t-att-checked="default_suggested_amount == 'high'"
+                                class="suggested-amount"
+                            />
+                            <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-high">
+                                <t
+                                    t-set="price"
+                                    t-value="product.my_compassion_donation_quantity_high * product.list_price"
+                                />
+                                <t t-esc="product.currency_id.name" />
+                                <t t-if="price % 1 == 0" t-esc="int(price)" />
+                                <t t-else="" t-esc="'{0:.2f}'.format(price)" />
+                            </label>
+                        </div>
+                    </div>
+                </t>
+                <t t-call="theme_compassion_2025.FormFieldComponent">
+                    <t t-set="top_class" t-value="'my-3 w-100'" />
+                    <t t-set="label">Or enter your own amount</t>
+                    <t t-set="invalid_hint">Please enter a valid amount.</t>
+                    <div class="donation-suggested-amount">
+                        <input
+                            t-attf-id="#{base_name}-suggested-custom"
+                            type="radio"
+                            t-attf-name="#{base_name}_suggested_amount"
+                            value="custom"
+                            t-att-checked="default_suggested_amount == 'custom'"
+                            class="suggested-amount"
+                        />
+                        <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-custom">Custom amount</label>
+                    </div>
+                    <input
+                        id="custom-amount"
+                        type="text"
+                        name="custom_amount"
+                        t-att-placeholder="'Enter amount in %s' % product.currency_id.name"
+                        class="form-control mt-2"
+                        hidden=""
+                        t-att-value="'{:g}'.format(default_custom_amount) if default_custom_amount else ''"
+                    />
+                </t>
+                <div class="limit-error-message" hidden="">
+                    <div class="mt-3 tiny-text text-center text-mid-orange">
+                        The amount must comply with our
+                        <span class="limits-toggle text-core-blue">donation limits</span>
+                    </div>
+                    <t t-call="my_compassion.DonationFormLimitsInfo" />
+                </div>
+                <div
+                    class="btn-submit align-self-stretch my-2 d-flex flex-column align-items-stretch"
+                    t-att-data-submission-event="submission_event"
+                >
+                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                        <t t-set="variant" t-value="'default'" />
+                        <t t-set="variation" t-value="'filled'" />
+                        <t t-set="label" t-value="submit_label" />
+                        <t t-set="color" t-value="'mid-green'" />
+                        <t t-set="text_color" t-value="'pure-white'" />
+                    </t>
+                </div>
+            </div>
+            <div class="mb-4" />
+        </div>
+    </template>
+</odoo>

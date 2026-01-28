@@ -1,0 +1,53 @@
+/**
+    * Title Component Styles
+    * =============
+    * This file contains the styles for the title component, which includes
+    * a main heading, an optional underline, and an optional description.
+    */
+
+.title-component {
+    text-align: center;
+    @media (max-width: $breakpoint-sm) {
+        &--align-sm-left {
+            text-align: left;
+        }
+        &--align-sm-center {
+            text-align: center;
+        }
+        &--align-sm-right {
+            text-align: right;
+        }
+    }
+
+    // The main <h1> element
+    .title-heading {
+        // Default size if none is specified
+        font-size: 32px;
+
+        // Size modifiers
+        &.title-size-sm {
+            font-size: 20px;
+        }
+        &.title-size-md {
+            font-size: 32px;
+        }
+        &.title-size-lg {
+            font-size: 48px;
+        }
+    }
+
+    // The decorative underline
+    .title-underline {
+        width: 60px;
+        border-width: 2px;
+        border-style: solid;
+        // Uses margin-left/right: auto for centering
+        margin: 10px auto 15px;
+    }
+}
+
+@media (max-width: $breakpoint-sm) {
+    .title-component-sm-left-alignment {
+        text-align: left !important;
+    }
+}

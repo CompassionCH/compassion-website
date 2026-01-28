@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Page: My Compassion 2 Children Page
+
+    Description:
+    This page displays all sponsorships linked to the user, categorized into active and terminated sponsorships.
+
+    Used in route:
+    - /my2/children/
+
+    Injected data:
+    - active_sponsorships (array of 'recurring_contract' records): The sponsorships associated with the user.
+    - ended_sponsorships (array of 'recurring_contract' records): The terminated sponsorships associated with the user.
+-->
+<odoo>
+    <template id="my2_children_page" name="My Compassion 2 Children Page">
+        <t t-call="website.layout">
+            <div class="container">
+                <!-- Title -->
+                <div class="single-column">
+                    <t t-call="theme_compassion_2025.TitleComponent">
+                        <t t-set="title_content">My Sponsorships</t>
+                        <t t-set="title_size" t-value="'md'" />
+                        <t t-set="color" t-value="'core-blue'" />
+                        <t t-set="underline_color" t-value="'low-yellow'" />
+                        <t t-set="show_underline" t-value="True" />
+                    </t>
+                </div>
+                <!-- ACTIVE SPONSORSHIPS CHILDREN-->
+                <div class="container-content d-flex flex-column align-items-center mt-4 mb-5">
+                    <div class="w-100 d-flex flex-column">
+                        <div class="row justify-content-center align-items-stretch">
+                            <t t-foreach="active_sponsorships" t-as="sponsorship">
+                                <div class="col-12 col-md-6 col-lg-4 mb-3">
+                                    <t t-call="my_compassion.my2_children_card_component">
+                                        <t t-set="child" t-value="sponsorship.child_id" />
+                                        <t t-set="sponsorship_end_date" t-value="sponsorship.end_date" />
+                                        <t
+                                            t-set="latest_correspondence"
+                                            t-value="latest_correspondences_by_child_id.get(sponsorship.child_id.id)"
+                                        />
+                                    </t>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+                <!-- TEXT DESCRIPTION -->
+                <div class="single-column">
+                    <p class="title-description text-low-black text-center mb-3">
+                        Many thanks for your support – every sponsorship changes a life!
+Would you like to bring hope to another child?
+                    </p>
+                    <!-- NEW SPONSORSHIP BUTTON -->
+                    <div class="row justify-content-center mb-3">
+                        <a t-attf-href="/my2/sponsorships">
+                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                <t t-set="variation" t-value="'filled'" />
+                                <t t-set="color" t-value="'low-blue'" />
+                                <t t-set="text_color" t-value="'white'" />
+                                <t t-set="variant" t-value="'default'" />
+                                <t t-set="label">New sponsorship</t>
+                            </t>
+                        </a>
+                    </div>
+                </div>
+                <!-- TERMINATED SPONSORSHIPS CHILDREN -->
+                <t t-if="ended_sponsorships">
+                    <div class="single-column mt-4">
+                        <t t-call="theme_compassion_2025.TitleComponent">
+                            <t t-set="title_content">Ended Sponsorships</t>
+                            <t t-set="title_size" t-value="'md'" />
+                            <t t-set="color" t-value="'core-blue'" />
+                            <t t-set="underline_color" t-value="'low-yellow'" />
+                            <t t-set="show_underline" t-value="True" />
+                        </t>
+                    </div>
+                    <div class="container-content d-flex flex-column align-items-center mb-5">
+                        <div class="w-100 d-flex flex-column">
+                            <div class="row justify-content-center">
+                                <t t-foreach="ended_sponsorships" t-as="sponsorship">
+                                    <div class="col-12 col-md-6 col-lg-4  mb-3">
+                                        <t t-call="my_compassion.my2_children_card_component">
+                                            <t t-set="child" t-value="sponsorship.child_id" />
+                                            <t t-set="sponsorship_end_date" t-value="sponsorship.end_date" />
+                                            <t
+                                                t-set="latest_correspondence"
+                                                t-value="latest_correspondences_by_child_id.get(sponsorship.child_id.id)"
+                                            />
+                                        </t>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+</odoo>

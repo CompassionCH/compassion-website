@@ -1,0 +1,12 @@
+<!-- Used in my2_login_template.xml -->
+<!-- Used to know if we are on the login page of MyCompassion -->
+<odoo>
+    <data noupdate="1">
+        <record id="my2_website" model="website">
+            <field name="name">MyCompassion</field>
+            <field name="domain">mycompassion.ch</field>
+            <field name="default_lang_id" ref="base.lang_en" />
+            <field name="auth_signup_uninvited">b2c</field>
+        </record>
+    </data>
+</odoo>

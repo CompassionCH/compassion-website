@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Page: My Compassion 2 New Letter Page
+
+    Description:
+    This page allows the user to write a new letter to a sponsored child,
+    with options to select a child, a letter template, and a text input for the letter content.
+
+    Used in route:
+    - /my2/children/letters/new
+
+    Injected data:
+    - sponsorship_ids (array of 'recurring_contract' records): The list of sponsorships linked to the user
+    - templates (array of 'template' records): The available letter templates to choose from.
+    - selected_child ('compassion_child' record): The pre-selected child.
+-->
+<odoo>
+    <template id="my2_new_letter_page" name="My Compassion 2 New Letter Page">
+        <link rel="stylesheet" href="/my_compassion/static/src/css/template_image.css" />
+        <link rel="stylesheet" href="/my_compassion/static/src/css/add_a_picture_input.css" />
+        <link rel="stylesheet" href="/my_compassion/static/src/css/delete_a_picture_input.css" />
+        <t t-call="website.layout">
+            <div class="container">
+                <!-- Calling breadcrumb component -->
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <t t-call="theme_compassion_2025.TitleComponent">
+                            <t t-set="title_content">Write a letter</t>
+                            <t t-set="color" t-value="'core-blue'" />
+                            <t t-set="underline_color" t-value="'low-yellow'" />
+                            <t t-set="show_underline" t-value="True" />
+                            <t t-set="title_size" t-value="'md'" />
+                        </t>
+                    </div>
+                </div>
+                <form id="new_letter_form" class="col-12 col-md-10 col-lg-8 mx-auto">
+                    <input type="hidden" name="generator_id" t-att-value="draft.id" />
+                    <div class="row align-items-center mb-3">
+                        <div class="col-7">
+                            <div class="form-group">
+                                <label class="text-core-blue" for="child-dropdown">To</label>
+                                <t t-call="theme_compassion_2025.SelectComponent">
+                                    <t t-set="id" t-value="'child-dropdown'" />
+                                    <!-- Loop through children_sponsored_by_partner -->
+                                    <t t-foreach="sponsorship_ids" t-as="sponsorship">
+                                        <!-- Shows only active sponsorships as selections -->
+                                        <t t-if="sponsorship.state == 'active'">
+                                            <option
+                                                t-att-value="sponsorship.child_id.id"
+                                                t-att-selected="'selected' if sponsorship.child_id.id == selected_child.id else None"
+                                            >
+                                                <t t-esc="sponsorship.child_id.preferred_name" />
+                                            </option>
+                                        </t>
+                                    </t>
+                                </t>
+                            </div>
+                        </div>
+                        <div class="col-5 d-flex justify-content-end">
+                            <t t-call="theme_compassion_2025.PortraitComponent">
+                                <t
+                                    t-set="src"
+                                    t-value="'/web/image/compassion.child/' + str(selected_child.id) + '/portrait'"
+                                />
+                                <t t-set="alt">
+                                    <t t-esc="selected_child.id" />
+                                    portrait image
+                                </t>
+                                <t t-set="size" t-value="'small'" />
+                            </t>
+                        </div>
+                    </div>
+                    <!-- Button to open the modal for selecting a letter template -->
+                    <div class="row align-items-center mb-3">
+                        <div class="col-7">
+                            <div class="form-group">
+                                <label class="text-core-blue" for="template-selection">Template</label>
+                                <div class="d-block">
+                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                        <t t-set="id" t-value="'template-selection'" />
+                                        <t t-set="variant" t-value="'default'" />
+                                        <t t-set="variation" t-value="'hollow'" />
+                                        <t t-set="label_empty">Select a template</t>
+                                        <t t-set="label_id" t-value="'template-selection-label'" />
+                                        <t t-set="label">
+                                            <t t-if="draft and draft.template_id">
+                                                <t t-esc="draft.template_id.name" />
+                                            </t>
+                                            <t t-else="">
+                                                <t t-esc="label_empty" />
+                                            </t>
+                                        </t>
+                                        <t t-set="icon" t-value="'icon-image04'" />
+                                        <t t-set="color" t-value="'dark-blue'" />
+                                        <t t-set="text_color" t-value="'pure_white'" />
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-5 text-right">
+                            <div id="template-reactive-img">
+                                <t t-if="draft and draft.template_id">
+                                    <img
+                                        id="selected-template"
+                                        t-att-data-template-name="draft.template_id.name"
+                                        t-att-data-template-id="draft.template_id.id"
+                                        class="img-fluid border shadow-sm"
+                                        t-att-src="draft.template_id.template_image_url"
+                                    />
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal showed when the user clicks on the button for selecting a template -->
+                    <div class="modal fade" id="templateSelectionModal" tabindex="-1">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="templateSelectionModalLabel">
+                                        Select a
+                                        Template
+                                    </h5>
+                                    <button type="button" class="close" data-dismiss="modal" t-translation="off">
+                                        x
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <t t-foreach="templates" t-as="template" t-key="template.id">
+                                            <div class="col-6 col-md-4 col-lg-3 text-center mb-3">
+                                                <!-- Display the template image -->
+                                                <img
+                                                    data-dismiss="modal"
+                                                    t-att-src="template.template_image_url"
+                                                    t-att-data-template-id="template.id"
+                                                    t-att-data-template-name="template.name"
+                                                    class="img-fluid border shadow-sm template-image"
+                                                />
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Text area for letter writing -->
+                    <div class="form-group">
+                        <div class="d-flex justify-content-between">
+                            <label class="text-core-blue" for="letter-input">Text</label>
+                            <label class="text-core-blue" for="letter-input">
+                                page
+                                0/15
+                            </label>
+                        </div>
+                        <!-- prettier-ignore-start -->
+                        <!-- oca-hooks:disable=line-too-long -->
+                        <textarea id="letter-input" class="form-control" rows="10"><t
+                                t-esc="draft.body" t-if="draft.body"/></textarea>
+                        <!-- prettier-ignore-end -->
+                    </div>
+                    <!-- Add attachments box input -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="file-upload-placeholder">
+                                <input
+                                    type="file"
+                                    class="file-upload-input"
+                                    id="letter-attachments"
+                                    multiple="true"
+                                    accept="image/*"
+                                />
+                                <div class="text-center p-3">
+                                    <i class="icon-image-plus fa-2x text-dark-blue mb-3" />
+                                    <br />
+                                    <span class="text-mid-grey">
+                                        supported format:
+                                        jpeg,
+                                    </span>
+                                    <br />
+                                    <span class="text-mid-grey">png, webp</span>
+                                    <br />
+                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                        <t t-set="variant" t-value="'default'" />
+                                        <t t-set="variation" t-value="'filled'" />
+                                        <t t-set="label">Select picture</t>
+                                        <t t-set="icon" t-value="'icon-download01'" />
+                                        <t t-set="color" t-value="'dark-blue'" />
+                                        <t t-set="text_color" t-value="'pure_white'" />
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Container to display uploaded files -->
+                    <div class="row" id="uploaded-files-container">
+                        <!-- Uploaded files will be displayed here -->
+                        <t t-foreach="draft.image_ids.sorted(reverse=True)" t-as="att">
+                            <div class="col-4 uploaded-file position-relative" t-att-data-file-key="att.id">
+                                <img
+                                    t-attf-src="data:#{att.mimetype or 'image/png'};base64,#{att.datas}"
+                                    class="img-fluid"
+                                />
+                                <p>
+                                    <t t-esc="att.name" />
+                                </p>
+                                <button
+                                    class="btn btn-danger remove-attachment-button text-center"
+                                    t-att-data-id="att.id"
+                                >
+                                    ×
+                                </button>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="row mb-5">
+                        <div class="col-12 d-flex align-items-center">
+                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                <t t-set="variant" t-value="'default'" />
+                                <t t-set="variation" t-value="'hollow'" />
+                                <t t-set="label">Save draft</t>
+                                <t t-set="icon" t-value="'icon-save01'" />
+                                <t t-set="color" t-value="'dark-blue'" />
+                                <t t-set="text_color" t-value="'pure_white'" />
+                                <t t-set="data_custom" t-value="'save_draft'" />
+                            </t>
+                            <div id="clear-letter-button-container" class="ml-4" style="display: none;">
+                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                    <t t-set="variant" t-value="'default'" />
+                                    <t t-set="variation" t-value="'hollow'" />
+                                    <t t-set="label">Start over</t>
+                                    <t t-set="icon" t-value="'icon-trash01'" />
+                                    <t t-set="color" t-value="'low-pink'" />
+                                    <t t-set="text_color" t-value="'pure_white'" />
+                                    <t t-set="data_custom" t-value="'clear_letter'" />
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-6 ">
+                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                <t t-set="variant" t-value="'default'" />
+                                <t t-set="variation" t-value="'filled'" />
+                                <t t-set="label">Preview Letter</t>
+                                <t t-set="icon" t-value="'icon-eye'" />
+                                <t t-set="color" t-value="'dark-blue'" />
+                                <t t-set="text_color" t-value="'pure_white'" />
+                                <t t-set="data_custom" t-value="'preview'" />
+                            </t>
+                        </div>
+                        <div class="col-6 text-right ">
+                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                <t t-set="variant" t-value="'default'" />
+                                <t t-set="variation" t-value="'filled'" />
+                                <t t-set="label">Send</t>
+                                <t t-set="icon" t-value="'icon-send01'" />
+                                <t t-set="color" t-value="'dark-blue'" />
+                                <t t-set="text_color" t-value="'pure_white'" />
+                                <t t-set="data_custom" t-value="'send'" />
+                            </t>
+                        </div>
+                    </div>
+                </form>
+                <div
+                    class="modal fade"
+                    id="previewModal"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="previewModalLabel"
+                    aria-hidden="true"
+                >
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content h-100">
+                            <div class="modal-header align-items-center">
+                                <h5 class="modal-title title-heading text-core-blue " id="previewModalLabel">
+                                    Letter Preview
+                                </h5>
+                                <button
+                                    type="button"
+                                    class="close"
+                                    data-dismiss="modal"
+                                    aria-label="Close"
+                                    style="opacity: 1;"
+                                >
+                                    <h3 aria-hidden="true" class="text-core-blue">x</h3>
+                                </button>
+                            </div>
+                            <div class="modal-body text-center h-100">
+                                <iframe id="previewImage" src="" class="w-100 h-100 border-0" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="modal fade"
+                    id="submitModal"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="submitModalLabel"
+                    aria-hidden="true"
+                >
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content text-center p-4">
+                            <div class="modal-body">
+                                <div id="progress-bar-div" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+        <!-- Include Owl library -->
+        <script type="text/javascript" src="/web/static/lib/owl/owl.js" />
+        <!-- Include Custom Javascript -->
+        <script type="text/javascript" src="/my_compassion/static/src/js/my2_new_letter_child_selector_image.js" />
+        <script type="text/javascript" src="/my_compassion/static/src/js/my2_new_letter_template_image_selection.js" />
+        <script type="text/javascript" src="/my_compassion/static/src/js/my2_new_letter.js" />
+        <script type="text/javascript" src="/my_compassion/static/src/js/my2_new_letter_add_a_picture_input.js" />
+        <script type="text/javascript" src="/my_compassion/static/src/js/my2_letter_template_loader.js" />
+        <script type="text/javascript" src="/my_compassion/static/src/js/my2_new_letter_clear_button.js" />
+    </template>
+</odoo>

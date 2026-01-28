@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Description:
+    Displays a child's profile.
+    If the related sponsorship is terminated, the card will have a different background.
+    The card contains the latest correspondence with the partner.
+
+    Props:                                                                  Default:
+    - child (record): The child related object.                             [None]
+    - show_sponsor_me (bool): Show sponsor me button.                       [False]
+    - sponsorship_type (string): Type of sponsorship.                       ['standard']
+    - show_status (bool): Show correspondence status.                       [True]
+    - sponsorship_end_date (date): Display sponsorship end date.            [None]
+    - latest_correspondence (date): Display latest correspondence date.     [None]
+-->
+<odoo>
+    <template id="my2_children_card_component" name="Children Card Component">
+        <!-- Default property values -->
+        <t t-set="show_sponsor_me" t-value="show_sponsor_me or False" />
+        <t t-set="sponsorship_type" t-value="sponsorship_type or 'standard'" />
+        <t t-set="show_status" t-value="not show_status == False" />
+        <div class="children-card text-center mb-3 mt-3">
+            <div class="p-4 d-flex flex-column align-items-center bg-high-eggshell">
+                <!-- Child Image -->
+                <img
+                    class="rounded-circle img-fluid mb-2"
+                    t-attf-src="/web/image/compassion.child/{{child.id}}/portrait"
+                    t-attf-alt="Photo of #{child.preferred_name}"
+                />
+                <!-- Child name -->
+                <div class="h2 mb-0">
+                    <t t-esc="child.preferred_name" />
+                </div>
+                <div class="small" t-if="sponsorship and sponsorship.state in ('draft', 'waiting', 'mandate')">
+                    <span
+                        class="badge bg-low-yellow"
+                        title="Your sponsorship is being confirmed and will become active soon"
+                        aria-label="Sponsorship pending confirmation"
+                    >
+                        Pending activation
+                    </span>
+                </div>
+                <div class="small" t-if="sponsorship and sponsorship.state == 'terminated'">
+                    <span class="badge bg-low-yellow" title="Your sponsorship has ended" aria-label="Sponsorship ended">
+                        Sponsorship ended
+                    </span>
+                </div>
+                <!-- Correspondence Status and info section -->
+                <div class="body-small mt-3">
+                    <div t-if="show_status" class="mb-3 pl-3 pr-3">
+                        <span class="border-bottom border-2 border-high-orange">
+                            <t t-if="sponsorship_end_date">
+                                Sponsorship terminated on
+                                <t
+                                    t-esc="sponsorship_end_date"
+                                    t-options="{'widget': 'date', 'format': 'dd MMMM yyyy'}"
+                                />
+                            </t>
+                            <t t-elif="latest_correspondence">
+                                Last contact
+                                <t
+                                    t-esc="latest_correspondence.write_date"
+                                    t-options="{'widget': 'date', 'format': 'dd MMMM yyyy'}"
+                                />
+                            </t>
+                            <t t-else="">No correspondences</t>
+                        </span>
+                    </div>
+                    <div class="mb-2">
+                        <i class="icon-gift02 bg-low-yellow mx-1" />
+                        <t t-esc="child.age" />
+                        years old
+                        <i class="icon-user01 bg-low-yellow mx-1" />
+                        <t t-if="child.gender == 'M'">Boy</t>
+                        <t t-elif="child.gender == 'F'">Girl</t>
+                        <t t-else="">Not specified</t>
+                    </div>
+                    <div>
+                        <i class="icon-map01 bg-low-yellow mx-1" />
+                        <span t-field="child.field_office_id.country_id.name" />
+                    </div>
+                </div>
+                <!-- Profile Button -->
+                <div class="mb-2 mt-auto">
+                    <a t-attf-href="/my2/children/{{child.id}}">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variation" t-value="'filled'" />
+                            <t t-set="color" t-value="'mid-green'" />
+                            <t t-set="text_color" t-value="'white'" />
+                            <t t-set="variant" t-value="'compact'" />
+                            <t t-set="label">View profile</t>
+                        </t>
+                    </a>
+                </div>
+                <!-- Sponsor me Button-->
+                <div t-if="show_sponsor_me" class="mt-1 mb-2">
+                    <a t-attf-href="/my2/new-sponsorship/{{child.id}}?sponsorship_type=#{sponsorship_type}">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variation" t-value="'filled'" />
+                            <t t-set="color" t-value="'dark-blue'" />
+                            <t t-set="text_color" t-value="'white'" />
+                            <t t-set="variant" t-value="'compact'" />
+                            <t t-set="label">Sponsor me</t>
+                        </t>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>

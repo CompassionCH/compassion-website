@@ -11,32 +11,27 @@
                             <div class="col-4 text-center">
                                 <t t-if="project.cover_photo">
                                     <img
-                    t-attf-src="data:image/png;base64, #{ project.cover_photo }"
-                    class="rounded-img img-fluid"
-                  />
+                                        t-attf-src="data:image/png;base64, #{ project.cover_photo }"
+                                        class="rounded-img img-fluid"
+                                    />
                                 </t>
                                 <t t-else="">
                                     <img
-                    src="/crowdfunding_compassion/static/src/img/astronaut_600.jpg"
-                    class="rounded-img img-fluid"
-                  />
+                                        src="/crowdfunding_compassion/static/src/img/astronaut_600.jpg"
+                                        class="rounded-img img-fluid"
+                                    />
                                 </t>
                             </div>
                         </div>
                         <t t-if="not project">
-                            <h2
-                class="text-primary text-uppercase text-center"
-              >Create a new project</h2>
+                            <h2 class="text-primary text-uppercase text-center">Create a new project</h2>
                             <h3 class="text-center text-secondary">
                                 You are only 3 steps away from releasing children from extreme
                                 poverty thanks to your project!
                             </h3>
                         </t>
                         <t t-else="">
-                            <h3
-                class="text-primary text-uppercase text-center"
-                t-esc="title"
-              />
+                            <h3 class="text-primary text-uppercase text-center" t-esc="title" />
                             <h2 class="text-center" t-field="project.name" />
                         </t>
                         <div class="row justify-content-center">
@@ -62,14 +57,10 @@
                                         <a>
                                             <div class="row">
                                                 <div class="col-sm-12">
-                                                    <span
-                            class="circle"
-                          >1</span>
+                                                    <span class="circle">1</span>
                                                 </div>
                                                 <div class="col-sm-12">
-                                                    <span
-                            class="label"
-                          >Your project</span>
+                                                    <span class="label">Your project</span>
                                                 </div>
                                             </div>
                                         </a>
@@ -79,21 +70,13 @@
                                         <a>
                                             <div class="row">
                                                 <div class="col-sm-12">
-                                                    <span
-                            class="circle"
-                          >2</span>
+                                                    <span class="circle">2</span>
                                                 </div>
                                                 <div class="col-sm-12">
-                                                    <span
-                            class="label"
-                            t-if="not product"
-                          >Your fund</span>
+                                                    <span class="label" t-if="not product">Your fund</span>
                                                 </div>
                                                 <div class="col-sm-12">
-                                                    <span
-                            class="label"
-                            t-if="product"
-                          >Your goal</span>
+                                                    <span class="label" t-if="product">Your goal</span>
                                                 </div>
                                             </div>
                                         </a>
@@ -103,14 +86,10 @@
                                         <a>
                                             <div class="row">
                                                 <div class="col-sm-12">
-                                                    <span
-                            class="circle"
-                          >3</span>
+                                                    <span class="circle">3</span>
                                                 </div>
                                                 <div class="col-sm-12">
-                                                    <span
-                            class="label"
-                          >Your personal information</span>
+                                                    <span class="label">Your personal information</span>
                                                 </div>
                                             </div>
                                         </a>
@@ -122,26 +101,16 @@
                 </header>
                 <section class="bg-primary py-3 mb-3 text-center">
                     <div t-if="page == 1">
-                        <h3
-              class="text-center text-uppercase py-3"
-            >Describe your project</h3>
+                        <h3 class="text-center text-uppercase py-3">Describe your project</h3>
                     </div>
                     <div t-if="page == 2">
-                        <h3
-              class="text-center text-uppercase py-3"
-              t-if="not product"
-            >
+                        <h3 class="text-center text-uppercase py-3" t-if="not product">
                             Choose for what you want to invest in
                         </h3>
-                        <h3
-              class="text-center text-uppercase py-3"
-              t-if="product"
-            >Set your personal goal</h3>
+                        <h3 class="text-center text-uppercase py-3" t-if="product">Set your personal goal</h3>
                     </div>
                     <div t-if="page == 3">
-                        <h3
-              class="text-center text-uppercase"
-            >Your personal information</h3>
+                        <h3 class="text-center text-uppercase">Your personal information</h3>
                         <h5 class="text-center">
                             Please enter your personal information below. You can always modify this later on your
                             profile.
@@ -152,44 +121,20 @@
                     <div class="row justify-content-center">
                         <div class="col">
                             <div>
-                                <div
-                  id="collective_media_help"
-                  style="display:none"
-                >
+                                <div id="collective_media_help" style="display:none">
                                     If there is any social media pages for your event, you can link them on the project
                                     page. Please don't put any personal profiles here. You will be able to put your
                                     personal social media accounts in the last step.
                                 </div>
-                                <div
-                  id="collective_url_help"
-                  style="display:none"
-                >Project web page</div>
-                                <div
-                  id="individual_media_help"
-                  style="display:none"
-                >
+                                <div id="collective_url_help" style="display:none">Project web page</div>
+                                <div id="individual_media_help" style="display:none">
                                     If you have any social media account that you use to promote your project, you can
                                     link them to your personal page.
                                 </div>
-                                <div
-                  id="individual_url_help"
-                  style="display:none"
-                >Personal web page</div>
-                                <div
-                  id="create_form1"
-                  t-call="crowdfunding_compassion.step1_form"
-                  t-if="page == 1"
-                />
-                                <div
-                  id="create_form2"
-                  t-call="crowdfunding_compassion.step2_form"
-                  t-if="page == 2"
-                />
-                                <div
-                  id="create_form3"
-                  t-call="crowdfunding_compassion.step3_form"
-                  t-if="page == 3"
-                />
+                                <div id="individual_url_help" style="display:none">Personal web page</div>
+                                <div id="create_form1" t-call="crowdfunding_compassion.step1_form" t-if="page == 1" />
+                                <div id="create_form2" t-call="crowdfunding_compassion.step2_form" t-if="page == 2" />
+                                <div id="create_form3" t-call="crowdfunding_compassion.step3_form" t-if="page == 3" />
                             </div>
                         </div>
                     </div>
