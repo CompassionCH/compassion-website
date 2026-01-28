@@ -133,10 +133,14 @@
                                         <t t-esc="compassion_child.get_list('hobby_ids.value')" />
                                     </p>
                                 </div>
-
-                                <t t-set="school_education_level" t-value="compassion_child.translate('education_level').lower()"/>
-                                <t t-set="school_prefered_subject" t-value="compassion_child.get_list('subject_ids.value')"/>
-
+                                <t
+                                    t-set="school_education_level"
+                                    t-value="compassion_child.translate('education_level').lower()"
+                                />
+                                <t
+                                    t-set="school_prefered_subject"
+                                    t-value="compassion_child.get_list('subject_ids.value')"
+                                />
                                 <div class="child-info-item d-flex align-items-center" t-if="school_education_level">
                                     <div class="frame bg-mid-pink mr-2">
                                         <i class="icon icon-graduation-hat02 text-pure-white m-2" />
@@ -147,8 +151,8 @@
                                             <t t-esc="school_education_level" />
                                         </span>
                                         <t t-if="school_prefered_subject">
-                                        <span>and my favourite subjects are</span>
-                                        <t t-esc="school_prefered_subject" />
+                                            <span>and my favourite subjects are</span>
+                                            <t t-esc="school_prefered_subject" />
                                         </t>
                                     </p>
                                 </div>
