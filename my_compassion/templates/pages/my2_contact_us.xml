@@ -16,13 +16,15 @@ Page My Compassion 2 Contact us page
                 <div class="container">
                     <div class="single-column pt-3">
                         <t t-call="theme_compassion_2025.TitleComponent">
-                            <t t-set="title_content">Contact us</t>
+                            <t t-set="title_content">Get in touch</t>
                             <t t-set="title_size" t-value="'md'"/>
                             <t t-set="color" t-value="'core-blue'"/>
                             <t t-set="show_underline" t-value="True"/>
                             <t t-set="underline_color" t-value="'low-yellow'"/>
                             <p>
-                                We'd love to hear from you!
+                                Have a question or want to learn more about our
+                                work? Fill out the form below, and we'll get back to
+                                you as soon as possible.
                             </p>
                         </t>
                     </div>
@@ -30,18 +32,6 @@ Page My Compassion 2 Contact us page
             </div>
             <div id="contactus_form_top" class="bg-core-blue text-center py-5">
                 <div class="single-column mx-3 mx-md-auto">
-                    <t t-call="theme_compassion_2025.TitleComponent">
-                        <t t-set="title_content">Get in touch</t>
-                        <t t-set="title_size" t-value="'md'"/>
-                        <t t-set="color" t-value="'pure-white'"/>
-                        <t t-set="show_underline" t-value="False"/>
-                        <t t-set="description">
-                            Have a question or want to learn more about our
-                            work? Fill out the form below, and we'll get back to
-                            you as soon as possible.
-                        </t>
-                        <t t-set="description_color" t-value="'pure-white'"/>
-                    </t>
                     <form class="contactus-form" role="form">
                         <div class="row text-left">
                             <!-- Title Mr. or Mrs -->
@@ -116,7 +106,7 @@ Page My Compassion 2 Contact us page
                                 <t t-set="input_id" t-value="contactus_subject"/>
                                 <input id="contactus_subject"
                                        type="text" name="subject"
-                                       class="form-control" placeholder="Hi"
+                                       class="form-control" placeholder="Greetings"
                                        required="required"
                                 />
                             </t>
