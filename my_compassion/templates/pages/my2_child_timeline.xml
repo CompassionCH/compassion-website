@@ -134,26 +134,41 @@
                                     </p>
                                 </div>
                                 <t
-                                    t-set="school_education_level"
-                                    t-value="compassion_child.translate('education_level').lower()"
+                                    t-set="child_school_education_level"
+                                    t-value="(compassion_child.translate('education_level') or '').lower()"
+                                />
+                                <t
+                                    t-set="child_is_enrolled_at_school"
+                                    t-value="compassion_child.education_level and compassion_child.education_level != 'Not Enrolled'"
                                 />
                                 <t
                                     t-set="school_prefered_subject"
                                     t-value="compassion_child.get_list('subject_ids.value')"
                                 />
-                                <div class="child-info-item d-flex align-items-center" t-if="school_education_level">
+                                <div
+                                    class="child-info-item d-flex align-items-center"
+                                    t-if="child_school_education_level"
+                                >
                                     <div class="frame bg-mid-pink mr-2">
                                         <i class="icon icon-graduation-hat02 text-pure-white m-2" />
                                     </div>
                                     <p class="child-info-text">
-                                        I'm in
-                                        <span class="text-mid-pink font-weight-bold">
-                                            <t t-esc="school_education_level" />
-                                        </span>
-                                        <t t-if="school_prefered_subject">
-                                            <span>and my favourite subjects are</span>
-                                            <t t-esc="school_prefered_subject" />
+                                        <t t-if="child_is_enrolled_at_school">
+                                            I'm in
+                                            <span class="text-mid-pink font-weight-bold">
+                                                <t t-esc="child_school_education_level" />
+                                            </span>
+                                            <t t-if="school_prefered_subject">
+                                                <span
+                                                    t-if="',' in school_prefered_subject or ' and ' in school_prefered_subject"
+                                                >
+                                                    and my favourite subjects are
+                                                </span>
+                                                <span t-else="">and my favourite subject is</span>
+                                                <t t-esc="school_prefered_subject" />
+                                            </t>
                                         </t>
+                                        <t t-else="">I'm not enrolled in school</t>
                                     </p>
                                 </div>
                             </div>
