@@ -24,11 +24,9 @@ class WebsiteHomeRedirect(Website):
         `my2_login.py` handles the redirection from the login page to the dashboard.
         """
 
-        if request.website == request.env.ref(
-            "my_compassion.my2_website", raise_if_not_found=False
-        ):
+        if request.website == request.env.ref("my_compassion.my2_website"):
             if request.session.uid:
                 return request.redirect("/my2/dashboard")
             else:
                 return request.redirect("/web/login")
-        return super().index(*args, **kw)
+        return super().home(*args, **kw)
