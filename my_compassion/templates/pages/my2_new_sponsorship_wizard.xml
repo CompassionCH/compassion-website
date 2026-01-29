@@ -458,7 +458,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                     <t t-set="variant" t-value="'default'" />
                                     <t t-set="variation" t-value="'filled'" />
-                                    <t t-set="label" t-valuef="Sponsor #{wizard.child_id.preferred_name}" />
+                                    <t t-set="label">Sponsor&#160;<t t-esc="wizard.child_id.preferred_name"/></t>
                                     <t t-set="color" t-value="'core-blue'" />
                                     <t t-set="text_color" t-value="'pure-white'" />
                                 </t>
@@ -494,13 +494,11 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                 <t
                     t-if="wizard.sponsorship_type == 'write_and_pray'"
                     t-set="description"
-                    t-valuef="Let's set up your Write&amp;Pray and introduce you to #{wizard.child_id.preferred_name}."
-                />
+                   >Let's set up your Write&amp;Pray and introduce you to&#160;<t t-esc="wizard.child_id.preferred_name"/>.</t>
                 <t
                     t-else=""
                     t-set="description"
-                    t-valuef="Let's set up your sponsorship and introduce you to #{wizard.child_id.preferred_name}."
-                />
+                   >Let's set up your sponsorship and introduce you to&#160;<t t-esc="wizard.child_id.preferred_name"/>.</t>
             </t>
         </div>
         <div class="p-1 d-flex flex-column">
@@ -566,21 +564,18 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                         <t t-call="theme_compassion_2025.TitleComponent">
                             <t
                                 t-set="title_content"
-                                t-valuef="Thank you for sponsoring #{sponsorship.child_id.preferred_name}"
-                            />
+                               >Thank you for sponsoring&#160;<t t-esc="sponsorship.child_id.preferred_name"/></t>
                             <t t-set="color" t-value="'core-blue'" />
                             <t t-set="show_underline" t-value="True" />
                             <t t-set="underline_color" t-value="'low-yellow'" />
                             <t
                                 t-if="sponsorship.type == 'SWP'"
                                 t-set="description"
-                                t-valuef="You’ll receive an email with everything you need to start the Write&amp;Pray soon."
-                            />
+                               >You’ll receive an email with everything you need to start the Write&amp;Pray soon.</t>
                             <t
                                 t-else=""
                                 t-set="description"
-                                t-valuef="You’ll receive an email with everything you need to start the sponsorship soon."
-                            />
+                               >You’ll receive an email with everything you need to start the sponsorship soon.</t>
                         </t>
                     </div>
                     <!-- CHILD PROFILE -->
