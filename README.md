@@ -14,6 +14,13 @@ All modules extending website capabilities of Compassion.
 <!-- prettier-ignore-start -->
 [//]: # (addons)
 
+Available addons
+----------------
+addon | version | maintainers | summary
+--- | --- | --- | ---
+[website_remove_shop](website_remove_shop/) | 18.0.1.0.0 |  | Website - Hide Shop
+
+
 Unported addons
 ---------------
 addon | version | maintainers | summary
@@ -29,7 +36,6 @@ addon | version | maintainers | summary
 [website_child_protection](website_child_protection/) | 14.0.1.0.0 (unported) | <a href='https://github.com/ecino'><img src='https://github.com/ecino.png' width='32' height='32' style='border-radius:50%;' alt='ecino'/></a> | Adds a form for letting partners agree with the child protection
 [website_crm_request](website_crm_request/) | 14.0.1.0.0 (unported) |  | Website CRM Request
 [website_event_compassion](website_event_compassion/) | 14.0.1.3.0 (unported) | <a href='https://github.com/ecino'><img src='https://github.com/ecino.png' width='32' height='32' style='border-radius:50%;' alt='ecino'/></a> | Public website pages for Compassion Events with registration
-[website_remove_shop](website_remove_shop/) | 14.0.1.0.0 (unported) |  | Website - Hide Shop
 [website_sale_donation](website_sale_donation/) | 14.0.1.1.0 (unported) | <a href='https://github.com/ecino'><img src='https://github.com/ecino.png' width='32' height='32' style='border-radius:50%;' alt='ecino'/></a> | Allows to have a product considered as a donation
 [website_sponsorship](website_sponsorship/) | 14.0.1.0.0 (unported) |  | Website - Sponsor a child form
 
