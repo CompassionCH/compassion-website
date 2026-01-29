@@ -135,7 +135,7 @@
                                 </div>
                                 <t
                                     t-set="child_school_education_level"
-                                    t-value="(compassion_child.translate('education_level') or '').lower()"
+                                    t-value="(compassion_child.translate('education_level') or '')"
                                 />
                                 <t
                                     t-set="child_is_enrolled_at_school"
