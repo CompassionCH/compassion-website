@@ -171,7 +171,7 @@ class MyCompassionChildrenController(WebsiteChild):
                     s.amount::text AS amount,
                     COALESCE(rc.name, %(default_currency)s) AS currency_name,
                     s.gift_type || '|' || COALESCE(s.sponsorship_gift_type, '') AS metadata,
-                    s.create_date as event_date,
+                    s.create_date AS event_date,
                     CASE
                         WHEN s.sponsorship_gift_type = 'Birthday' THEN %(title_gift_bday)s
                         WHEN s.sponsorship_gift_type = 'General' THEN %(title_gift_general)s
@@ -193,7 +193,7 @@ class MyCompassionChildrenController(WebsiteChild):
                     '' AS amount,
                     '' AS currency_name,
                     COALESCE(p.gender, '') AS metadata,
-                    p.create_date as event_date,
+                    p.create_date AS event_date,
                     %(title_child_picture)s AS title,
                     p.child_id AS child_id
                 FROM compassion_child_pictures p
