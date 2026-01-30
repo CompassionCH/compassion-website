@@ -1,0 +1,20 @@
+/* ******* Styles related to the child protection charter ******* */
+
+.child-protection-list {
+    list-style: none;
+}
+
+.child-protection-list li::before {
+    font-family: 'FontAwesome', serif;
+    content: "\f054";
+    color: #fdb518;
+    font-weight: bold;
+    display: inline-block;
+    margin-left: -1em;
+}
+
+.child-protection-list.agreement li::before {
+    content: "\f096";
+    color: black;
+    font-weight: 100;
+}
