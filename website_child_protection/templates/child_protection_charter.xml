@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <template id="child_protection_charter_text" name="Child Protection Charter">
-        <link
-                rel="stylesheet"
-                href="/website_child_protection/static/src/css/child_protection_charter.css"
-        />
+        <link rel="stylesheet" href="/website_child_protection/static/src/css/child_protection_charter.css" />
         <div id="child_protection_charter" class="single-column pl-3 pr-3">
             <h2 class="mb-4 text-center text-md-left">
                 Code of Conduct for Child and Youth Protection and
@@ -63,9 +60,7 @@
                 at the child and youth development center and with program
                 participants, regardless of age.
             </h3>
-            <h5 class="mb-2 text-center text-md-left text-core-blue">
-                Expected/Acceptable Behaviors
-            </h5>
+            <h5 class="mb-2 text-center text-md-left text-core-blue">Expected/Acceptable Behaviors</h5>
             <ul class="child-protection-list mb-3">
                 <li class="mb-2">
                     I will always uphold the trust and confidence placed in me
@@ -136,10 +131,7 @@
                     recommendations provided to me.
                 </li>
             </ul>
-
-            <h5 class="mb-2 text-center text-md-left text-core-blue text-core-blue">
-                Unacceptable Behaviors
-            </h5>
+            <h5 class="mb-2 text-center text-md-left text-core-blue text-core-blue">Unacceptable Behaviors</h5>
             <ul class="child-protection-list">
                 <li class="mb-2">
                     I will not solicit a romantic/dating relationship and will never
@@ -193,9 +185,7 @@
                     Compassion International, and/or International Partner.
                 </li>
             </ul>
-            <h3 class="mb-3 text-center text-md-left text-core-blue">
-                Updates
-            </h3>
+            <h3 class="mb-3 text-center text-md-left text-core-blue">Updates</h3>
             <ul class="child-protection-list">
                 <li class="mb-2">
                     I understand the Code of Conduct for Child and Youth
@@ -234,14 +224,14 @@
                             data-success-mode="redirect"
                             t-attf-data-success-page="/partner/#{partner_uuid}/child-protection-charter#{'?redirect=' + redirect if redirect else ''}"
                             data-model_name="cms.form.partner.child.protection.charter"
-                            >
-                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        >
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
                             <div class="s_website_form_rows row">
                                 <t t-call="website_child_protection.child_protection_charter_text" />
                                 <p class="pl-3 pr-3">
                                     I,
                                     <span class="text-core-blue">
-                                        <t t-esc="partner_name or ''"/>
+                                        <t t-esc="partner_name or ''" />
                                     </span>
                                     , affirm that:
                                 </p>
@@ -303,13 +293,13 @@
                                     </li>
                                     <li class="mb-2 d-flex">
                                         <input
-                                                type="checkbox"
-                                                value="Yes"
-                                                class="s_website_form_input"
-                                                name="agreed"
-                                                required="true"
-                                                id="understand_update"
-                                            />
+                                            type="checkbox"
+                                            value="Yes"
+                                            class="s_website_form_input"
+                                            name="agreed"
+                                            required="true"
+                                            id="understand_update"
+                                        />
                                         <div class="ml-2">
                                             I understand the Code of Conduct may be updated
                                             in the future. I may be asked to review and re-affirm
@@ -334,13 +324,16 @@
                                     t-att-value="partner_uuid"
                                 />
                                 <div id="s_website_form_result" class="col-12 text-center" />
-                                <div class="form-group col-12 s_website_form_submit d-flex justify-content-center justify-content-md-start" data-name="Submit Button">
+                                <div
+                                    class="form-group col-12 s_website_form_submit d-flex justify-content-center justify-content-md-start"
+                                    data-name="Submit Button"
+                                >
                                     <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                         <t t-set="variant" t-value="'compact'" />
                                         <t t-set="variation" t-value="'filled'" />
                                         <t t-set="label">Submit</t>
                                         <t t-set="color" t-value="'core-blue'" />
-                                        <t t-set="text_color" t-value="'pure-white s_website_form_send'"/>
+                                        <t t-set="text_color" t-value="'pure-white s_website_form_send'" />
                                     </t>
                                 </div>
                             </div>
@@ -379,7 +372,8 @@
                         <div class="row s_nb_column_fixed">
                             <div
                                 class="col-lg-6 jumbotron rounded o_cc o_cc1 pt32 pb32 o_colored_level"
-                                data-name="Box">
+                                data-name="Box"
+                            >
                                 <t t-call="theme_compassion_2025.TitleComponent">
                                     <t t-set="title_content">Thank you!</t>
                                     <t t-set="title_size" t-value="'md'" />
@@ -397,7 +391,7 @@
                                         <t t-set="variation" t-value="'filled'" />
                                         <t t-set="label">Continue</t>
                                         <t t-set="color" t-value="'core-blue'" />
-                                        <t t-set="text_color" t-value="'pure-white'"/>
+                                        <t t-set="text_color" t-value="'pure-white'" />
                                         <t t-set="href" t-value="redirect" />
                                     </t>
                                 </div>
