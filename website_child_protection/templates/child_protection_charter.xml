@@ -229,12 +229,13 @@
                             action="/website_form/"
                             method="post"
                             enctype="multipart/form-data"
-                            class="o_mark_required"
+                            class="o_mark_required s_website_form"
                             data-mark="*"
                             data-success-mode="redirect"
                             t-attf-data-success-page="/partner/#{partner_uuid}/child-protection-charter#{'?redirect=' + redirect if redirect else ''}"
                             data-model_name="cms.form.partner.child.protection.charter"
                             >
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                             <div class="s_website_form_rows row">
                                 <t t-call="website_child_protection.child_protection_charter_text" />
                                 <p class="pl-3 pr-3">
@@ -356,48 +357,50 @@
     >
         <t t-call="website.layout">
             <div id="wrap">
-                <div class="oe_structure">
-                    <section
-                        class="s_title parallax s_parallax_is_fixed bg-black-50 pt24 pb24 o_colored_level"
-                        data-vcss="001"
-                        data-snippet="s_title"
-                        data-scroll-background-ratio="1"
-                        data-name="Title"
-                    >
-                        <span
-                            class="s_parallax_bg oe_img_bg"
-                            style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"
-                        />
-                        <div class="o_we_bg_filter bg-black-50" />
-                        <div class="container">
-                            <h1>Child Protection Charter</h1>
-                        </div>
-                    </section>
-                </div>
                 <section
-                    class="s_banner parallax s_parallax_is_fixed pt96 pb96 o_colored_level o_full_screen_height"
+                    class="s_banner parallax s_parallax_is_fixed o_colored_level o_full_screen_height"
                     data-scroll-background-ratio="1"
                     data-snippet="s_banner"
                     data-name="Banner"
                 >
                     <span
-                        class="s_parallax_bg oe_img_bg"
+                        class="s_parallax_bg oe_img_bg d-none d-sm-block"
                         style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"
                     />
+                    <div class="position-absolute fixed-top mt-5 w-100 text-center">
+                        <t t-call="theme_compassion_2025.TitleComponent">
+                            <t t-set="title_content">Child Protection Charter</t>
+                            <t t-set="title_size" t-value="'md'" />
+                            <t t-set="color" t-value="'core-blue'" />
+                            <t t-set="show_underline" t-value="False" />
+                        </t>
+                    </div>
                     <div class="container">
                         <div class="row s_nb_column_fixed">
                             <div
                                 class="col-lg-6 jumbotron rounded o_cc o_cc1 pt32 pb32 o_colored_level"
-                                data-name="Box"
-                            >
-                                <h1>Thank you!</h1>
-                                <p class="lead">
-                                    We successfully received your agreement to the Child
-                                    Protection Charter.
-                                </p>
-                                <a t-att-href="redirect" class="btn btn-primary mb-2 o_default_snippet_text">
-                                    Continue
-                                </a>
+                                data-name="Box">
+                                <t t-call="theme_compassion_2025.TitleComponent">
+                                    <t t-set="title_content">Thank you!</t>
+                                    <t t-set="title_size" t-value="'md'" />
+                                    <t t-set="color" t-value="'core-blue'" />
+                                    <t t-set="show_underline" t-value="True" />
+                                    <t t-set="underline_color" t-value="'low-yellow'" />
+                                    <p>
+                                        We successfully received your agreement to
+                                        the Child Protection Charter.
+                                    </p>
+                                </t>
+                                <div class="d-flex justify-content-center">
+                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                        <t t-set="variant" t-value="'compact'" />
+                                        <t t-set="variation" t-value="'filled'" />
+                                        <t t-set="label">Continue</t>
+                                        <t t-set="color" t-value="'core-blue'" />
+                                        <t t-set="text_color" t-value="'pure-white'"/>
+                                        <t t-set="href" t-value="redirect" />
+                                    </t>
+                                </div>
                             </div>
                         </div>
                     </div>
