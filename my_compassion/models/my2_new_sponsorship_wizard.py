@@ -242,7 +242,7 @@ class NewSponsorshipWizardStep(models.Model):
     _name = "new.sponsorship.wizard.step"
     _description = "New Sponsorship Wizard Step"
 
-    title = fields.Char()
+    title = fields.Char(translate=True)
 
     template = fields.Many2one(
         "ir.ui.view",
