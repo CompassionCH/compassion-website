@@ -133,8 +133,14 @@
                                         <t t-esc="compassion_child.get_list('hobby_ids.value')" />
                                     </p>
                                 </div>
-                                <t t-set="child_education_data" t-value="compassion_child.get_education_status_data()" />
-                                <div class="child-info-item d-flex align-items-center" t-if="child_education_data.get('level')">
+                                <t
+                                    t-set="child_education_data"
+                                    t-value="compassion_child.get_education_status_data()"
+                                />
+                                <div
+                                    class="child-info-item d-flex align-items-center"
+                                    t-if="child_education_data.get('level')"
+                                >
                                     <div class="frame bg-mid-pink mr-2">
                                         <i class="icon icon-graduation-hat02 text-pure-white m-2" />
                                     </div>
