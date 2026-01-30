@@ -186,89 +186,40 @@
                     data-for="child_protection_form"
                     t-att-data-values="{'partner_uuid': partner_uuid}"
                 />
-                <section
-                    class="s_website_form pt16 pb16 o_colored_level"
-                    data-vcss="001"
-                    data-snippet="s_website_form"
-                    data-name="Form"
-                >
+                <section class="pt16 pb48">
                     <div class="container">
-                        <form
-                            id="child_protection_form"
-                            action="/website_form/"
-                            method="post"
-                            enctype="multipart/form-data"
-                            class="o_mark_required"
-                            data-mark="*"
-                            data-success-mode="redirect"
-                            t-attf-data-success-page="/partner/#{partner_uuid}/child-protection-charter#{'?redirect=' + redirect if redirect else ''}"
-                            data-model_name="cms.form.partner.child.protection.charter"
-                        >
-                            <div class="s_website_form_rows row s_col_no_bgcolor">
-                                <div
-                                    class="form-group s_website_form_field col-12  s_website_form_model_required  "
-                                    data-type="boolean"
-                                    data-name="Field"
+                        <div class="row">
+                            <div class="col-12">
+                                <form
+                                    action="/partner/child-protection-charter/submit"
+                                    method="post"
+                                    enctype="multipart/form-data"
                                 >
-                                    <div class="row s_col_no_resize s_col_no_bgcolor">
-                                        <label
-                                            class="col-sm-auto s_website_form_label"
-                                            style="width: 200px"
-                                            for="partner_uuid"
-                                        >
-                                            <span class="s_website_form_label_content">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                                    <input type="hidden" name="partner_uuid" t-att-value="partner_uuid" />
+                                    <input type="hidden" name="redirect" t-att-value="redirect" />
+                                    <div class="d-flex align-items-center">
+                                        <label class="form-check-label me-2" for="agreed">
+                                            <b>
                                                 Check to agree to this charter
-                                            </span>
-                                            <span class="s_website_form_mark">*</span>
+                                                <span class="text-danger">*</span>
+                                            </b>
                                         </label>
-                                        <div class="col-sm">
-                                            <input
-                                                type="checkbox"
-                                                value="Yes"
-                                                class="s_website_form_input"
-                                                name="agreed"
-                                                required="true"
-                                                id="agreed"
-                                            />
-                                        </div>
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            name="agreed"
+                                            id="agreed"
+                                            required="required"
+                                            style="margin-top:0;"
+                                        />
                                     </div>
-                                </div>
-                                <div
-                                    class="form-group s_website_form_field col-12  s_website_form_model_required  s_website_form_dnone"
-                                    data-type="hidden"
-                                    data-name="Field"
-                                >
-                                    <div class="row s_col_no_resize s_col_no_bgcolor">
-                                        <label
-                                            class="col-form-label col-sm-auto s_website_form_label "
-                                            style="width: 200px"
-                                            for="agreed"
-                                        >
-                                            <span class="s_website_form_label_content">UUID</span>
-                                        </label>
-                                        <div class="col-sm">
-                                            <input
-                                                type="hidden"
-                                                class="form-control s_website_form_input"
-                                                name="partner_uuid"
-                                                id="partner_uuid"
-                                            />
-                                        </div>
+                                    <div class="mt-4 text-center">
+                                        <button type="submit" class="btn btn-primary btn-lg px-5">Submit</button>
                                     </div>
-                                </div>
-                                <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
-                                    <div style="width: 200px;" class="s_website_form_label" />
-                                    <a
-                                        href="#"
-                                        role="button"
-                                        class="btn btn-primary btn-lg s_website_form_send o_default_snippet_text"
-                                    >
-                                        Submit
-                                    </a>
-                                    <span id="s_website_form_result" />
-                                </div>
+                                </form>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </section>
                 <div class="oe_structure mt-2" />
