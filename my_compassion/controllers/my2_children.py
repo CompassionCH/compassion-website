@@ -154,7 +154,7 @@ class MyCompassionChildrenController(WebsiteChild):
                             THEN %(title_corr_wrote)s
                         WHEN c.state = 'Printed and sent to ICP'
                             THEN %(title_corr_received)s
-                        WHEN c.state = 'Field Office translation queue' OR c.state = 'Global Partner translation queue'
+                        WHEN c.state IN ('Field Office translation queue', 'Global Partner translation queue')
                             THEN %(title_corr_translating)s
                         ELSE %(title_corr_processing)s
                     END AS title,
