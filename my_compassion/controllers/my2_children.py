@@ -148,7 +148,7 @@ class MyCompassionChildrenController(WebsiteChild):
                     '' AS amount,
                     '' AS currency_name,
                     c.direction AS metadata,
-                    c.create_date,
+                    c.sent_date AS timeline_date,
                     CASE
                         WHEN c.direction = 'Beneficiary To Supporter'
                         THEN %(title_corr_wrote)s
@@ -158,6 +158,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 FROM correspondence c
                 WHERE c.child_id = %(child_id)s
                   AND c.partner_id = ANY(%(partner_ids)s)
+                  AND c.state = 'Published to Global Partner'
 
                 UNION ALL
 
@@ -167,7 +168,7 @@ class MyCompassionChildrenController(WebsiteChild):
                     s.amount::text AS amount,
                     COALESCE(rc.name, %(default_currency)s) AS currency_name,
                     s.gift_type || '|' || COALESCE(s.sponsorship_gift_type, '') AS metadata,
-                    s.create_date,
+                    s.create_date AS timeline_date,
                     CASE
                         WHEN s.sponsorship_gift_type = 'Birthday' THEN %(title_gift_bday)s
                         WHEN s.sponsorship_gift_type = 'General' THEN %(title_gift_general)s
@@ -189,7 +190,7 @@ class MyCompassionChildrenController(WebsiteChild):
                     '' AS amount,
                     '' AS currency_name,
                     COALESCE(p.gender, '') AS metadata,
-                    p.create_date,
+                    p.create_date AS timeline_date,
                     %(title_child_picture)s AS title,
                     p.child_id AS child_id
                 FROM compassion_child_pictures p
@@ -203,7 +204,7 @@ class MyCompassionChildrenController(WebsiteChild):
                     '' AS amount,
                     '' AS currency_name,
                     '' AS metadata,
-                    rc.start_date::timestamp AS create_date,
+                    rc.start_date::timestamp AS timeline_date,
                     %(title_start_sponsorship)s AS title,
                     rc.child_id AS child_id
                 FROM recurring_contract rc
@@ -213,7 +214,7 @@ class MyCompassionChildrenController(WebsiteChild):
                   AND rc.start_date IS NOT NULL
 
             ) AS timeline
-            ORDER BY create_date DESC
+            ORDER BY timeline_date DESC 
             LIMIT %(limit)s OFFSET %(offset)s
         """
 

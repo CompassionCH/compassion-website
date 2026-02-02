@@ -67,6 +67,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         # Build the domain of the filtering of the letters
         filter_domain = [
             ("partner_id", "=", partner.id),
+            ("state", "=", "Published to Global Partner"),
             (
                 "child_id",
                 "in",
@@ -82,8 +83,8 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             except AccessError:
                 child = None
 
-        filter_domain.append(("create_date", ">=", from_date))
-        filter_domain.append(("create_date", "<=", to_date))
+        filter_domain.append(("sent_date", ">=", from_date))
+        filter_domain.append(("sent_date", "<=", to_date))
 
         if unread_filter == "true":
             filter_domain.append(("email_read", "=", False))
@@ -100,7 +101,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             filter_domain.append(("direction", "=", letter_type))
             nr_filters_applied += 1
 
-        order = "create_date DESC" if sort_order == "newest" else "create_date ASC"
+        order = "sent_date DESC" if sort_order == "newest" else "sent_date ASC"
 
         if sort_order == "oldest":
             nr_filters_applied += 1
