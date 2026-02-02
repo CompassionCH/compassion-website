@@ -162,7 +162,12 @@ class MyCompassionChildrenController(WebsiteChild):
                 FROM correspondence c
                 WHERE c.child_id = %(child_id)s
                   AND c.partner_id = ANY(%(partner_ids)s)
-                  AND c.state = 'Published to Global Partner'
+                  -- Updated Filtering Logic
+                  AND (
+                      (c.state = 'Published to Global Partner' AND c.direction = 'Beneficiary To Supporter')
+                      OR
+                      (c.state = 'Printed and sent to ICP' AND c.direction = 'Supporter To Beneficiary')
+                  )
 
                 UNION ALL
 
@@ -221,7 +226,6 @@ class MyCompassionChildrenController(WebsiteChild):
             ORDER BY event_date DESC
             LIMIT %(limit)s OFFSET %(offset)s
         """
-
         params = {
             "child_id": child_id,
             "partner_ids": partner_ids,
