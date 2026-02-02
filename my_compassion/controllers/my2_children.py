@@ -162,6 +162,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 FROM correspondence c
                 WHERE c.child_id = %(child_id)s
                   AND c.partner_id = ANY(%(partner_ids)s)
+                  AND c.state = 'Published to Global Partner'
 
                 UNION ALL
 
