@@ -67,12 +67,18 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         # Build the domain of the filtering of the letters
         filter_domain = [
             ("partner_id", "=", partner.id),
-            ("state", "=", "Published to Global Partner"),
             (
                 "child_id",
                 "in",
                 children_sponsored_by_partner.filtered("can_i_write_letter").ids,
             ),
+            "|",
+            "&",
+            # Only show B->S letters that are published.
+            ("direction", "=", "Beneficiary To Supporter"),
+            ("state", "=", "Published to Global Partner"),
+            # Whatever the state of the letters S -> B is, just show them.
+            ("direction", "=", "Supporter To Beneficiary"),
         ]
 
         if child:

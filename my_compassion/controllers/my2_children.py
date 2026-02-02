@@ -148,7 +148,11 @@ class MyCompassionChildrenController(WebsiteChild):
                     '' AS amount,
                     '' AS currency_name,
                     c.direction AS metadata,
-                    c.sent_date AS timeline_date,
+                    -- Logic: Use write_date for Supporter->Beneficiary, otherwise sent_date
+                    CASE 
+                        WHEN c.direction = 'Supporter To Beneficiary' THEN c.status_date 
+                        ELSE c.sent_date 
+                    END AS timeline_date,
                     CASE
                         WHEN c.direction = 'Beneficiary To Supporter'
                         THEN %(title_corr_wrote)s
@@ -158,7 +162,12 @@ class MyCompassionChildrenController(WebsiteChild):
                 FROM correspondence c
                 WHERE c.child_id = %(child_id)s
                   AND c.partner_id = ANY(%(partner_ids)s)
-                  AND c.state = 'Published to Global Partner'
+                  -- Updated Filtering Logic
+                  AND (
+                      (c.state = 'Published to Global Partner' AND c.direction = 'Beneficiary To Supporter')
+                      OR
+                      (c.state = 'Printed and sent to ICP' AND c.direction = 'Supporter To Beneficiary')
+                  )
 
                 UNION ALL
 
@@ -214,10 +223,9 @@ class MyCompassionChildrenController(WebsiteChild):
                   AND rc.start_date IS NOT NULL
 
             ) AS timeline
-            ORDER BY timeline_date DESC 
+            ORDER BY timeline_date DESC
             LIMIT %(limit)s OFFSET %(offset)s
         """
-
         params = {
             "child_id": child_id,
             "partner_ids": partner_ids,
