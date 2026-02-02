@@ -121,15 +121,14 @@ class MyCompassionChildrenController(WebsiteChild):
                 (SELECT COUNT(*) FROM compassion_child_pictures
                  WHERE child_id = %(child_id)s)
                 +
-                (SELECT COUNT(*) FROM recurring_contract rc
-                    CROSS JOIN LATERAL (
-                        VALUES ('start'), ('end')
-                    ) as v(event_type)
-                 WHERE rc.child_id = %(child_id)s
-                   AND rc.partner_id = ANY(%(partner_ids)s)
-                   AND rc.start_date IS NOT NULL
-                   AND (v.event_type = 'start' OR
-                      v.event_type = 'end' AND rc.state = 'terminated'))
+                (SELECT SUM(
+                        CASE WHEN rc.start_date IS NOT NULL THEN 1 ELSE 0 END
+                            +
+                        CASE WHEN rc.state = 'terminated' AND rc.end_date IS NOT NULL THEN 1 ELSE 0 END
+                        ) as count
+                FROM recurring_contract rc
+                WHERE rc.child_id = %(child_id)s
+                AND rc.partner_id = ANY(%(partner_ids)s))
                 AS total
         """
         request.env.cr.execute(
