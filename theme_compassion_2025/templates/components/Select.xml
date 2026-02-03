@@ -22,10 +22,10 @@
     <template id="SelectComponent">
         <div class="SelectComponent">
             <select
-                    t-attf-class="custom-select #{select_class or ''}"
-                    t-att-name="name"
-                    t-att-id="id"
-                    t-att-required="required"
+                t-attf-class="custom-select #{select_class or ''}"
+                t-att-name="name"
+                t-att-id="id"
+                t-att-required="required"
             >
                 <t t-raw="0" />
             </select>
