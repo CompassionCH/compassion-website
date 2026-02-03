@@ -119,7 +119,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             filter_domain.append(("direction", "=", letter_type))
             nr_filters_applied += 1
 
-        order = "sent_date DESC" if sort_order == "newest" else "sent_date ASC"
+        order = "status_date DESC" if sort_order == "newest" else "status_date ASC"
 
         if sort_order == "oldest":
             nr_filters_applied += 1
