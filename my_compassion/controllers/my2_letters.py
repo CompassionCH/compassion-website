@@ -92,13 +92,14 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         filter_domain += [
             "|",
             # If B->S: Check 'sent_date'
-            "&", "&",
+            "&",
+            "&",
             ("direction", "=", "Beneficiary To Supporter"),
             ("sent_date", ">=", from_date),
             ("sent_date", "<=", to_date),
-
             # If S->B: Check 'status_date'
-            "&", "&",
+            "&",
+            "&",
             ("direction", "=", "Supporter To Beneficiary"),
             ("status_date", ">=", from_date),
             ("status_date", "<=", to_date),
