@@ -445,7 +445,7 @@ class MyCompassionDonationsController(CustomerPortal):
                 "active_sponsorships": active_sponsorships,
                 "tot_cost_per_frequency": tot_cost_per_frequency,
                 "due_invoices": due_invoices,
-                "paid_invoices_subset": paid_invoices_data["paid_invoices_subset"],
+                "paid_invoices_subset": paid_invoices_data["paid_invoices_subset"].sorted(key=lambda r: r.last_payment, reverse=True),
                 "current_page": paid_invoices_data["current_page"],
                 "total_pages": paid_invoices_data["total_pages"],
             }
