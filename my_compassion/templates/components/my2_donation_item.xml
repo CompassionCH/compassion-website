@@ -127,16 +127,11 @@
     <template id="SponsorshipDonationItem" name="Sponsorship Donation Item">
         <t t-set="label_see_profile">See profile</t>
         <t t-if="sponsorship.type == 'CSP'">
-
-
             <t t-set="templates" t-value="sponsorship.contract_line_ids.product_id.product_tmpl_id" />
             <t t-set="csp_my_compassion_name" t-value="templates.mapped('my_compassion_name')[0]" />
             <t t-set="csp_thanks_name" t-value="templates.mapped('thanks_name')[0]" />
-            <t t-set="displayed_title" t-value="csp_my_compassion_name if csp_my_compassion_name else csp_thanks_name" />
-
-
-
-
+            <t t-set="csp_default_name">Compassion survival program"</t>
+            <t t-set="displayed_title" t-value="csp_my_compassion_name or csp_thanks_name or csp_default_name" />
             <t
                 t-set="secondary_buttons_data"
                 t-value="[
