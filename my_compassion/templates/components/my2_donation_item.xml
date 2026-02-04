@@ -44,10 +44,7 @@
         />
         <div t-attf-class="action-button #{button_top_class}" t-att-onclick="onclick">
             <i t-if="button.get('icon')" t-attf-class="tiny-text icon-#{button.get('icon')} text-#{color}" />
-            <i
-                t-if="button.get('pictogram')"
-                t-attf-class="tiny-text pictogram-#{button.get('pictogram')} text-#{color}"
-            />
+            <i t-if="button.get('pictogram')" t-attf-class="tiny-text #{button.get('pictogram')} text-#{color}" />
             <span t-if="button.get('label')" t-attf-class="tiny-text bold text-#{color}">
                 <t t-esc="button.get('label')" />
             </span>
@@ -125,22 +122,26 @@
     </template>
     <template id="SponsorshipDonationItem" name="Sponsorship Donation Item">
         <t t-set="label_see_profile">See profile</t>
+        <t t-set="label_see_more">See more</t>
         <t t-if="sponsorship.type == 'CSP'">
             <t t-set="product_template" t-value="sponsorship.contract_line_ids.product_id.product_tmpl_id[0]" />
             <t t-set="csp_my_compassion_name" t-value="product_template.my_compassion_name" />
             <t t-set="csp_thanks_name" t-value="product_template.thanks_name" />
             <t t-set="csp_default_name">Compassion survival program"</t>
             <t t-set="displayed_title" t-value="csp_my_compassion_name or csp_thanks_name or csp_default_name" />
-            <t
-                t-set="primary_button_data"
-                t-value="{
-            'label': label_see_profile,
-            'pictogram': product_template.my_compassion_pictogram.class_name or 'gift-donation-general',
+            <t t-if="product_template.is_published">
+                <t t-set="displayed_image" t-value="website.image_url(product_template, 'my_compassion_image')" />
+                <t
+                    t-set="primary_button_data"
+                    t-value="{
+            'label': label_see_more,
+            'pictogram': product_template.my_compassion_pictogram.class_name or 'pictogram-gift-donation-general',
             'action': 'link',
             'href': '/my2/gifts/' + str(product_template.id),
             'color': 'low-blue'
         }"
-            />
+                />
+            </t>
             <t
                 t-set="secondary_buttons_data"
                 t-value="[
@@ -155,11 +156,12 @@
         </t>
         <t t-else="">
             <t t-set="displayed_title" t-value="sponsorship.child_id.preferred_name" />
+            <t t-set="displayed_image" t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait" />
             <t
                 t-set="primary_button_data"
                 t-value="{
             'label': label_see_profile,
-            'pictogram': 'child-sponsorship',
+            'pictogram': 'pictogram-child-sponsorship',
             'action': 'link',
             'href': '/my2/children/' + str(sponsorship.child_id.id),
             'color': 'low-blue'
@@ -179,7 +181,7 @@
         </t>
         <t t-call="my_compassion.DonationItemComponent">
             <t t-set="name" t-value="displayed_title" />
-            <t t-set="image" t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait" />
+            <t t-set="image" t-value="displayed_image" />
             <t t-set="subtext" t-value="sponsorship.payment_mode_id.display_name" />
             <t t-set="price" t-value="sponsorship.total_amount" />
             <!--            <t t-set="currency_name" t-value="sponsorship.currency_id.name" />-->
