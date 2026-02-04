@@ -68,7 +68,7 @@
         <!--Small image on the card  -->
         <t t-set="small_thumbnail_content">
             <div
-                class="thumbnail responsive-sm mr-3 flex-shrink-0 rounded-lg"
+                t-attf-class="thumbnail responsive-sm mr-3 flex-shrink-0 rounded-lg #{not image and image_fallback_pictogram or ''}"
                 t-attf-style="--image_url: url('#{image}');"
             />
         </t>
@@ -125,42 +125,44 @@
         <t t-set="label_see_profile">See profile</t>
         <t t-set="label_see_more">See more</t>
         <t t-if="sponsorship.type == 'CSP'">
-            <t t-set="product_template" t-value="sponsorship.contract_line_ids.product_id.product_tmpl_id[0]" />
-            <t t-set="csp_my_compassion_name" t-value="product_template.my_compassion_name" />
-            <t t-set="csp_thanks_name" t-value="product_template.thanks_name" />
-            <t t-set="csp_default_name">Compassion survival program"</t>
-            <t t-set="displayed_title" t-value="csp_my_compassion_name or csp_thanks_name or csp_default_name" />
-            <t
-                t-set="image_fallback_pictogram"
-                t-value="product_template.my_compassion_pictogram.class_name or 'pictogram-gift-donation-general'"
-            />
-            <t t-if="product_template.is_published">
-                <t t-set="displayed_image" t-value="website.image_url(product_template, 'my_compassion_image')" />
+            <t t-set="product_template" t-value="sponsorship.contract_line_ids[:1].product_id.product_tmpl_id" />
+            <t t-if="product_template">
+                <t t-set="csp_my_compassion_name" t-value="product_template.my_compassion_name" />
+                <t t-set="csp_thanks_name" t-value="product_template.thanks_name" />
+                <t t-set="csp_default_name">Compassion survival program</t>
+                <t t-set="displayed_title" t-value="csp_my_compassion_name or csp_thanks_name or csp_default_name" />
                 <t
-                    t-set="primary_button_data"
-                    t-value="{
-            'label': label_see_more,
-            'pictogram': product_template.my_compassion_pictogram.class_name or 'pictogram-gift-donation-general',
-            'action': 'link',
-            'href': '/my2/gifts/' + str(product_template.id),
-            'color': 'low-blue'
-        }"
+                    t-set="image_fallback_pictogram"
+                    t-value="product_template.my_compassion_pictogram.class_name or 'pictogram-gift-donation-general'"
+                />
+                <t t-if="product_template.is_published">
+                    <t t-set="displayed_image" t-value="website.image_url(product_template, 'my_compassion_image')" />
+                    <t
+                        t-set="primary_button_data"
+                        t-value="{
+                'label': label_see_more,
+                'pictogram': product_template.my_compassion_pictogram.class_name or 'pictogram-gift-donation-general',
+                'action': 'link',
+                'href': '/my2/gifts/' + str(product_template.id),
+                'color': 'low-blue'
+            }"
+                    />
+                </t>
+                <t
+                    t-set="secondary_buttons_data"
+                    t-value="[
+                {
+                    'icon': 'download01',
+                    'color': 'low-blue',
+                    'action': 'link',
+                    'href': '/my/download/csp_bvr?csp_id=' + str(sponsorship.id),
+                }
+            ]"
                 />
             </t>
-            <t
-                t-set="secondary_buttons_data"
-                t-value="[
-            {
-                'icon': 'download01',
-                'color': 'low-blue',
-                'action': 'link',
-                'href': '/my/download/csp_bvr?csp_id=' + str(sponsorship.id),
-            }
-        ]"
-            />
         </t>
         <t t-else="">
-            <t t-set="image_fallback_pictogram" t-value="'pictogram-child-sponsorship'"/>
+            <t t-set="image_fallback_pictogram" t-value="'pictogram-child-sponsorship'" />
             <t t-set="displayed_title" t-value="sponsorship.child_id.preferred_name" />
             <t t-set="displayed_image" t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait" />
             <t
