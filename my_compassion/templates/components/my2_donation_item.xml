@@ -22,6 +22,7 @@
     - primary_button (dict): Primary button with custom action (see Button).                 [none]
     - recipient (string): Item recipient.                                                    [none]
     - subtext (string): Text under name and recipient.                                       [none]
+    - image_fallback_pictogram : Pictogram to display instead of the image when it's None              [none]
     - title_color (string): Color of the title.                                              [dark-blue]
     - accent_color (string): Color of the left border accent.                                [dark-blue]
     - price_color (string): Color of the price.                                              [dark-blue]
@@ -76,7 +77,7 @@
             t-attf-style="min-width: #{min_width}"
         >
             <div
-                class="thumbnail responsive-lg mr-3 flex-shrink-0 rounded-lg"
+                t-attf-class="thumbnail responsive-lg mr-3 flex-shrink-0 rounded-lg #{not image and image_fallback_pictogram or ''}"
                 t-attf-style="--image_url: url('#{image}');"
             />
             <t t-if="not primary_button" t-raw="small_thumbnail_content" />
@@ -129,6 +130,10 @@
             <t t-set="csp_thanks_name" t-value="product_template.thanks_name" />
             <t t-set="csp_default_name">Compassion survival program"</t>
             <t t-set="displayed_title" t-value="csp_my_compassion_name or csp_thanks_name or csp_default_name" />
+            <t
+                t-set="image_fallback_pictogram"
+                t-value="product_template.my_compassion_pictogram.class_name or 'pictogram-gift-donation-general'"
+            />
             <t t-if="product_template.is_published">
                 <t t-set="displayed_image" t-value="website.image_url(product_template, 'my_compassion_image')" />
                 <t
@@ -180,6 +185,7 @@
             />
         </t>
         <t t-call="my_compassion.DonationItemComponent">
+            <t t-set="image_fallback_pictogram" t-value="image_fallback_pictogram" />
             <t t-set="name" t-value="displayed_title" />
             <t t-set="image" t-value="displayed_image" />
             <t t-set="subtext" t-value="sponsorship.payment_mode_id.display_name" />
