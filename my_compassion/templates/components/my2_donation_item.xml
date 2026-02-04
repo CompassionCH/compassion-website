@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <!--
     Component: Donation Item
 
@@ -127,11 +126,21 @@
     <template id="SponsorshipDonationItem" name="Sponsorship Donation Item">
         <t t-set="label_see_profile">See profile</t>
         <t t-if="sponsorship.type == 'CSP'">
-            <t t-set="templates" t-value="sponsorship.contract_line_ids.product_id.product_tmpl_id" />
-            <t t-set="csp_my_compassion_name" t-value="templates.mapped('my_compassion_name')[0]" />
-            <t t-set="csp_thanks_name" t-value="templates.mapped('thanks_name')[0]" />
+            <t t-set="product_template" t-value="sponsorship.contract_line_ids.product_id.product_tmpl_id[0]" />
+            <t t-set="csp_my_compassion_name" t-value="product_template.my_compassion_name" />
+            <t t-set="csp_thanks_name" t-value="product_template.thanks_name" />
             <t t-set="csp_default_name">Compassion survival program"</t>
             <t t-set="displayed_title" t-value="csp_my_compassion_name or csp_thanks_name or csp_default_name" />
+            <t
+                t-set="primary_button_data"
+                t-value="{
+            'label': label_see_profile,
+            'pictogram': product_template.my_compassion_pictogram.class_name or 'gift-donation-general',
+            'action': 'link',
+            'href': '/my2/gifts/' + str(product_template.id),
+            'color': 'low-blue'
+        }"
+            />
             <t
                 t-set="secondary_buttons_data"
                 t-value="[
