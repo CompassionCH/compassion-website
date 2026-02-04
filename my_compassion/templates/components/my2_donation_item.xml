@@ -22,7 +22,7 @@
     - primary_button (dict): Primary button with custom action (see Button).                 [none]
     - recipient (string): Item recipient.                                                    [none]
     - subtext (string): Text under name and recipient.                                       [none]
-    - image_fallback_pictogram : Pictogram to display instead of the image when it's None              [none]
+    - image_fallback_pictogram : Pictogram to display instead of the image when it's None    [none]
     - title_color (string): Color of the title.                                              [dark-blue]
     - accent_color (string): Color of the left border accent.                                [dark-blue]
     - price_color (string): Color of the price.                                              [dark-blue]
@@ -190,7 +190,6 @@
             <t t-set="image" t-value="displayed_image" />
             <t t-set="subtext" t-value="sponsorship.payment_mode_id.display_name" />
             <t t-set="price" t-value="sponsorship.total_amount" />
-            <!--            <t t-set="currency_name" t-value="sponsorship.currency_id.name" />-->
             <t t-set="primary_button" t-value="primary_button_data" />
             <t t-set="secondary_buttons" t-value="secondary_buttons_data" />
             <t t-set="monthly_noabbr" t-value="True" />
