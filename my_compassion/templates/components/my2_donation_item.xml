@@ -160,6 +160,7 @@
             />
         </t>
         <t t-else="">
+            <t t-set="image_fallback_pictogram" t-value="'pictogram-child-sponsorship'"/>
             <t t-set="displayed_title" t-value="sponsorship.child_id.preferred_name" />
             <t t-set="displayed_image" t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait" />
             <t
