@@ -16,7 +16,7 @@
         - model (string): the model of the item (e.g., 'sponsorship_gift', 'correspondence').
         - title (string): title of the item.
         - content (string): content or description of the item.
-        - create_date (string): date when the item was created.
+        - event_date (string): date when the item was last updated.
         - pageable (object): pagination object if applicable, used for loading more items.
         - additional fields as needed based on the model
 -->
@@ -52,7 +52,7 @@
                         </t>
                         <div class="flex justify-between items-center">
                             <span class="cd-timeline__date">
-                                <t t-esc="item['create_date']" t-options='{"widget": "date"}' />
+                                <t t-esc="item['event_date']" t-options='{"widget": "date"}' />
                             </span>
                         </div>
                     </div>
@@ -87,7 +87,7 @@
                         </t>
                         <div class="flex justify-between items-center">
                             <span class="cd-timeline__date">
-                                <t t-esc="item['create_date']" t-options='{"widget": "date"}' />
+                                <t t-esc="item['event_date']" t-options='{"widget": "date"}' />
                             </span>
                         </div>
                     </a>
@@ -112,7 +112,7 @@
                         </p>
                         <div class="flex justify-between items-center">
                             <span class="cd-timeline__date">
-                                <t t-esc="item['create_date']" t-options='{"widget": "date"}' />
+                                <t t-esc="item['event_date']" t-options='{"widget": "date"}' />
                             </span>
                         </div>
                     </a>
@@ -129,7 +129,7 @@
                         </p>
                         <div class="flex justify-between items-center">
                             <span class="cd-timeline__date">
-                                <t t-esc="item['create_date']" t-options='{"widget": "date"}' />
+                                <t t-esc="item['event_date']" t-options='{"widget": "date"}' />
                             </span>
                         </div>
                     </div>
