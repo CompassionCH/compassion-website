@@ -193,11 +193,12 @@
                             t-att-checked="default_suggested_amount == 'custom'"
                             class="suggested-amount d-none"
                         />
+                        <t t-set="placeholder_text">Enter amount in</t>
                         <input
                             id="custom-amount"
                             type="text"
                             name="custom_amount"
-                            t-att-placeholder="_('Enter amount in %(currency)s') % {'currency': product.currency_id.name}"
+                            t-att-placeholder="placeholder_text + ' ' + product.currency_id.name"
                             class="form-control mt-2"
                             t-att-value="'{:g}'.format(default_custom_amount) if default_custom_amount else ''"
                         />
