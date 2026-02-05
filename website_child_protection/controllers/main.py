@@ -54,6 +54,7 @@ class ChildProtectionCharterController(http.Controller):
         else:
             values = {
                 "partner_uuid": partner_uuid,
+                "partner_name": partner.name,
                 "redirect": kwargs.get("redirect"),
             }
             return request.render(

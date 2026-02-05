@@ -133,17 +133,32 @@
                                         <t t-esc="compassion_child.get_list('hobby_ids.value')" />
                                     </p>
                                 </div>
-                                <div class="child-info-item d-flex align-items-center">
+                                <t
+                                    t-set="child_education_data"
+                                    t-value="compassion_child.get_education_status_data()"
+                                />
+                                <div
+                                    class="child-info-item d-flex align-items-center"
+                                    t-if="child_education_data.get('level')"
+                                >
                                     <div class="frame bg-mid-pink mr-2">
                                         <i class="icon icon-graduation-hat02 text-pure-white m-2" />
                                     </div>
                                     <p class="child-info-text">
-                                        I'm in
-                                        <span class="text-mid-pink font-weight-bold">
-                                            <t t-esc="compassion_child.translate('education_level')" />
-                                        </span>
-                                        <span>and my favourite subjects are</span>
-                                        <t t-esc="compassion_child.get_list('subject_ids.value')" />
+                                        <t t-if="child_education_data['is_enrolled']">
+                                            I'm in
+                                            <span class="text-mid-pink font-weight-bold">
+                                                <t t-esc="child_education_data['level']" />
+                                            </span>
+                                            <t t-if="child_education_data['has_subjects']">
+                                                <span t-if="child_education_data['has_multiple_subjects']">
+                                                    and my favourite subjects are
+                                                </span>
+                                                <span t-else="">and my favourite subject is</span>
+                                                <t t-esc="child_education_data['subjects_str']" />
+                                            </t>
+                                        </t>
+                                        <t t-else="">I'm not enrolled in school</t>
                                     </p>
                                 </div>
                             </div>
