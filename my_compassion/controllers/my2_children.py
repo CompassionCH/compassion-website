@@ -166,7 +166,7 @@ class MyCompassionChildrenController(WebsiteChild):
                   AND (
                       (c.state = 'Published to Global Partner' AND c.direction = 'Beneficiary To Supporter')
                       OR
-                      (c.state = 'Printed and sent to ICP' AND c.direction = 'Supporter To Beneficiary')
+                      (c.state NOT IN ('Exception', 'Quality check unsuccessful') AND c.direction = 'Supporter To Beneficiary')
                   )
 
                 UNION ALL
