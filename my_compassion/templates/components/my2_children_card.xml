@@ -51,11 +51,17 @@
                         <span class="border-bottom border-2 border-high-orange">
                             <t t-if="sponsorship_end_date">
                                 Sponsorship terminated on
-                                <t t-esc="sponsorship_end_date.strftime('%d %B %Y')" />
+                                <t
+                                    t-esc="sponsorship_end_date"
+                                    t-options="{'widget': 'date', 'format': 'dd MMMM yyyy'}"
+                                />
                             </t>
                             <t t-elif="latest_correspondence">
                                 Last contact
-                                <t t-esc="latest_correspondence.write_date.strftime('%d %B %Y')" />
+                                <t
+                                    t-esc="latest_correspondence.write_date"
+                                    t-options="{'widget': 'date', 'format': 'dd MMMM yyyy'}"
+                                />
                             </t>
                             <t t-else="">No correspondences</t>
                         </span>
@@ -65,13 +71,13 @@
                         <t t-esc="child.age" />
                         years old
                         <i class="icon-user01 bg-low-yellow mx-1" />
-                        <t t-if="child.gender == 'M'">Male</t>
-                        <t t-elif="child.gender == 'F'">Female</t>
+                        <t t-if="child.gender == 'M'">Boy</t>
+                        <t t-elif="child.gender == 'F'">Girl</t>
                         <t t-else="">Not specified</t>
                     </div>
                     <div>
                         <i class="icon-map01 bg-low-yellow mx-1" />
-                        <t t-esc="child.field_office_id.name" />
+                        <span t-field="child.field_office_id.country_id.name" />
                     </div>
                 </div>
                 <!-- Profile Button -->

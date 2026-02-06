@@ -13,9 +13,12 @@ document.addEventListener("DOMContentLoaded", function (event) {
             start: function () {
                 // Create password elements
 
-                for (var $password of this.$(".password")) {
-                    var password = new publicWidget.registry.Password(this);
-                    password.replace($password);
+                for (var passwordElement of this.$(".password")) {
+                    var $passwordElement = $(passwordElement);
+                    var password = new publicWidget.registry.Password(this, {
+                        inputName: $passwordElement.data("name"),
+                    });
+                    password.replace($passwordElement);
                 }
 
                 return this._super.apply(this, arguments);

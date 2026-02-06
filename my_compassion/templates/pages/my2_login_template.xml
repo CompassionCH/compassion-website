@@ -153,13 +153,13 @@
                 <t t-if="only_passwords" t-call="theme_compassion_2025.FormFieldComponent">
                     <t t-set="top_class" t-value="'mt-2'" />
                     <t t-set="label">Password</t>
-                    <div class="password" />
+                    <div class="password" data-name="password" />
                 </t>
                 <!-- Confirm password -->
                 <t t-if="only_passwords" t-call="theme_compassion_2025.FormFieldComponent">
                     <t t-set="top_class" t-value="'mt-2'" />
                     <t t-set="label">Confirm Password</t>
-                    <div class="password" />
+                    <div class="password" data-name="confirm_password" />
                 </t>
                 <!-- Accept terms & conditions -->
                 <div class="mt-3 d-flex">

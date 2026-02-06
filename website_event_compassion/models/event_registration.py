@@ -97,7 +97,9 @@ class EventRegistration(models.Model):
         readonly=True, compute="_compute_amount_raised_percent"
     )
     currency_id = fields.Many2one("res.currency", related="company_id.currency_id")
-    is_published = fields.Boolean(compute="_compute_is_published", store=True)
+    is_published = fields.Boolean(
+        compute="_compute_is_published", inverse="_inverse_is_published", store=True
+    )
     host_url = fields.Char(compute="_compute_host_url")
     sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
     event_name = fields.Char(related="event_id.name", tracking=True)
@@ -224,6 +226,10 @@ class EventRegistration(models.Model):
     def _compute_is_published(self):
         for registration in self:
             registration.is_published = registration.state in ("open", "done")
+
+    def _inverse_is_published(self):
+        # Allow setting is_published manually
+        pass
 
     def _create_payment_link(self, move, description):
         payment_link = (
