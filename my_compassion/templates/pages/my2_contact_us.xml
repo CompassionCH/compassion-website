@@ -61,23 +61,11 @@ Page My Compassion 2 Contact us page
                             <t t-call="theme_compassion_2025.FormFieldComponent">
                                 <t t-set="top_class" t-value="'col-12 mb-3'" />
                                 <div class="form-check form-check-inline">
-                                    <input
-                                        class="form-check-input js_combine_name"
-                                        type="radio"
-                                        name="title"
-                                        id="mrs"
-                                        value="Mrs."
-                                    />
+                                    <input class="form-check-input" type="radio" name="title" id="mrs" value="Mrs." />
                                     <label class="form-check-label text-pure-white" for="mrs">Mrs.</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input
-                                        class="form-check-input js_combine_name"
-                                        type="radio"
-                                        name="title"
-                                        id="mr"
-                                        value="Mr."
-                                    />
+                                    <input class="form-check-input" type="radio" name="title" id="mr" value="Mr." />
                                     <label class="form-check-label text-pure-white" for="mr">Mr.</label>
                                 </div>
                             </t>
@@ -94,7 +82,7 @@ Page My Compassion 2 Contact us page
                                     id="contactus_form_firstname"
                                     type="text"
                                     name="firstname"
-                                    class="form-control js_combine_name s_website_form_input"
+                                    class="form-control s_website_form_input"
                                     placeholder="First Name"
                                     required="required"
                                 />
@@ -111,7 +99,7 @@ Page My Compassion 2 Contact us page
                                     id="contactus_form_lastname"
                                     type="text"
                                     name="lastname"
-                                    class="form-control js_combine_name s_website_form_input"
+                                    class="form-control s_website_form_input"
                                     placeholder="Last Name"
                                     required="required"
                                 />
@@ -124,17 +112,19 @@ Page My Compassion 2 Contact us page
                                 <t t-set="input_id" t-value="contactus_form_phone_number" />
                                 <input
                                     id="contactus_form_phone_number"
-                                    type="text"
+                                    type="tel"
                                     name="partner_phone"
                                     class="form-control s_website_form_input"
                                     placeholder="0041244342124"
-                                    required="required"
                                 />
                             </t>
                             <t t-call="theme_compassion_2025.FormFieldComponent">
                                 <t t-set="label">E-mail</t>
                                 <t t-set="label_color" t-value="'pure-white'" />
-                                <t t-set="top_class" t-value="'col-12 col-md-6 mb-3 s_website_form_field'" />
+                                <t
+                                    t-set="top_class"
+                                    t-value="'col-12 col-md-6 mb-3 s_website_form_field s_website_form_required'"
+                                />
                                 <t t-set="input_id" t-value="contactus_form_email" />
                                 <input
                                     id="contactus_form_email"
@@ -149,7 +139,7 @@ Page My Compassion 2 Contact us page
                             <t t-call="theme_compassion_2025.FormFieldComponent">
                                 <t t-set="label">Subject</t>
                                 <t t-set="label_color" t-value="'pure-white'" />
-                                <t t-set="top_class" t-value="'col-12 s_website_form_field'" />
+                                <t t-set="top_class" t-value="'col-12 s_website_form_field s_website_form_required'" />
                                 <t t-set="input_id" t-value="contactus_subject" />
                                 <input
                                     id="contactus_subject"
@@ -164,7 +154,10 @@ Page My Compassion 2 Contact us page
                             <t t-call="theme_compassion_2025.FormFieldComponent">
                                 <t t-set="label">Message</t>
                                 <t t-set="label_color" t-value="'pure-white'" />
-                                <t t-set="top_class" t-value="'col-12 mb-3 s_website_form_field'" />
+                                <t
+                                    t-set="top_class"
+                                    t-value="'col-12 mb-3 s_website_form_field s_website_form_required'"
+                                />
                                 <t t-set="input_id" t-value="contactus_message" />
                                 <textarea
                                     id="contactus_message"
