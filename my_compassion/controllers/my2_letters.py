@@ -85,7 +85,9 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             ("direction", "=", "Beneficiary To Supporter"),
             ("state", "=", "Published to Global Partner"),
             # Whatever the state of the letters S -> B is, just show them.
+            "&",
             ("direction", "=", "Supporter To Beneficiary"),
+            ("state", "not in", ["Exception", "Quality check unsuccessful"]),
         ]
 
         if child:
@@ -104,10 +106,10 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             nr_filters_applied += 1
 
         if (
-                year_from > 1900
-                or year_to < current_year
-                or month_from > 1
-                or month_to < 12
+            year_from > 1900
+            or year_to < current_year
+            or month_from > 1
+            or month_to < 12
         ):
             nr_filters_applied += 1
         if letter_type:
@@ -138,16 +140,16 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         # from the user's perspective as the sponsor only knows when they've created it.
         letters = letters.sorted(
             key=lambda l: (
-                              l.status_date.date()
-                              if l.direction == "Beneficiary To Supporter"
-                              else l.create_date.date()
-                          )
-                          or date.min,
+                l.status_date.date()
+                if l.direction == "Beneficiary To Supporter"
+                else l.create_date.date()
+            )
+            or date.min,
             reverse=(sort_order == "newest"),
         )
 
         # Pagination slice
-        letters = letters[offset: offset + letters_per_page]
+        letters = letters[offset : offset + letters_per_page]
 
         # Month names in the current language
         lang = request.env.context.get("lang", partner.lang)
