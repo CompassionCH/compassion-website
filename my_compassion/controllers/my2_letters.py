@@ -134,18 +134,19 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
 
         # Sort in Python using the conditional logic
         # B->S uses status_date, S->B uses create_date (converted to date)
+        # If direction is S->B the create_date is the proper one to use
+        # from the user's perspective as the sponsor only knows when they've created it.
         letters = letters.sorted(
             key=lambda l: (
                               l.status_date.date()
                               if l.direction == "Beneficiary To Supporter"
-                              # If direction is S->B the create date is the proper one to use from the user's perspective
                               else l.create_date.date()
                           )
                           or date.min,
             reverse=(sort_order == "newest"),
         )
 
-        # Manual Pagination slice
+        # Pagination slice
         letters = letters[offset: offset + letters_per_page]
 
         # Month names in the current language
