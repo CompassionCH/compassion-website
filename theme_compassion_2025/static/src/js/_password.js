@@ -20,6 +20,7 @@ odoo.define("theme_compassion_2025.password", function (require) {
         init: function (parent, options) {
             this._super.apply(this, arguments);
             this.required = (options && options.required) || false;
+            this.inputName = (options && options.inputName) || "password";
         },
 
         /**
