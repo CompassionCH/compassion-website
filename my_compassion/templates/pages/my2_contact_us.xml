@@ -53,13 +53,6 @@ Page My Compassion 2 Contact us page
                         role="form"
                     >
                         <div class="row text-left">
-                            <input
-                                type="hidden"
-                                name="Your Name"
-                                id="contact_us_full_name"
-                                class="s_website_form_input"
-                                value=""
-                            />
                             <!-- Title Mr. or Mrs -->
                             <t t-call="theme_compassion_2025.FormFieldComponent">
                                 <t t-set="top_class" t-value="'col-12 mb-3'" />
