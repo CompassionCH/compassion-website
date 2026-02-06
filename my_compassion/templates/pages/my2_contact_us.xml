@@ -11,8 +11,11 @@ Page My Compassion 2 Contact us page
 -->
 <odoo>
     <template id="my2_contactus_page" inherit_id="website.contactus" name="My Compassion 2 Contact us page">
-        <xpath expr="//div[@id='wrap']" position="replace">
-            <div id="wrap" class="oe_structure">
+        <xpath expr="//div[@id='wrap']" position="attributes">
+            <attribute name="class" add="d-none" separator=" " />
+        </xpath>
+        <xpath expr="//div[@id='wrap']" position="after">
+            <div id="wrap_custom" class="oe_structure">
                 <div class="container">
                     <div class="single-column pt-3">
                         <t t-call="theme_compassion_2025.TitleComponent">
