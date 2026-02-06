@@ -104,17 +104,15 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             nr_filters_applied += 1
 
         if (
-            year_from > 1900
-            or year_to < current_year
-            or month_from > 1
-            or month_to < 12
+                year_from > 1900
+                or year_to < current_year
+                or month_from > 1
+                or month_to < 12
         ):
             nr_filters_applied += 1
         if letter_type:
             filter_domain.append(("direction", "=", letter_type))
             nr_filters_applied += 1
-
-        order = "status_date DESC" if sort_order == "newest" else "status_date ASC"
 
         if sort_order == "oldest":
             nr_filters_applied += 1
@@ -131,9 +129,24 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             tracking_disable=True
         )
 
-        letters = correspondence_model.search(
-            filter_domain, order=order, offset=offset, limit=letters_per_page
+        # Fetch all records without order/limit/offset first
+        letters = correspondence_model.search(filter_domain)
+
+        # Sort in Python using the conditional logic
+        # B->S uses status_date, S->B uses create_date (converted to date)
+        letters = letters.sorted(
+            key=lambda l: (
+                              l.status_date.date()
+                              if l.direction == "Beneficiary To Supporter"
+                              # If direction is S->B the create date is the proper one to use from the user's perspective
+                              else l.create_date.date()
+                          )
+                          or date.min,
+            reverse=(sort_order == "newest"),
         )
+
+        # Manual Pagination slice
+        letters = letters[offset: offset + letters_per_page]
 
         # Month names in the current language
         lang = request.env.context.get("lang", partner.lang)
