@@ -109,7 +109,7 @@ class MyCompassionChildrenController(WebsiteChild):
         return partner.ids
 
     def _get_timeline_count(self, child_id, partner_ids):
-        """Get total count of timeline records (correspondence + gifts + child_pictures + start)."""
+        """Get total count of timeline records (correspondence + gifts + biennial photos + start)."""
         sql = """
             SELECT
                 (SELECT COUNT(*) FROM correspondence
@@ -118,8 +118,14 @@ class MyCompassionChildrenController(WebsiteChild):
                 (SELECT COUNT(*) FROM sponsorship_gift
                  WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
                 +
-                (SELECT COUNT(*) FROM compassion_child_pictures
-                 WHERE child_id = %(child_id)s)
+                (SELECT COUNT(*)
+                 FROM partner_communication_job pcj
+                 JOIN communication_job_config cjc ON pcj.config_id = cjc.id
+                 JOIN mail_source ms ON cjc.source_id = ms.id
+                 WHERE ms.name = 'New Biennial'
+                   AND pcj.partner_id = ANY(%(partner_ids)s)
+                   -- Robust split check: look for child_id surrounded by delimiters
+                   AND (',' || pcj.object_ids || ',') LIKE ('%%,' || %(child_id)s || ',%%'))
                 +
                 (SELECT COUNT(*) FROM recurring_contract rc
                  WHERE rc.child_id = %(child_id)s
@@ -131,14 +137,14 @@ class MyCompassionChildrenController(WebsiteChild):
         request.env.cr.execute(
             sql,
             {
-                "child_id": child_id,
+                "child_id": str(child_id),  # Cast to string for SQL LIKE matching
                 "partner_ids": partner_ids,
             },
         )
         return request.env.cr.fetchone()[0] or 0
 
     def _get_timeline_data(self, child_id, partner_ids, offset, limit):
-        """Fetch paginated timeline records (correspondence + gifts) ordered by date."""
+        """Fetch paginated timeline records (correspondence + gifts + biennial photos) ordered by date."""
         # ruff: noqa: E501 (query is more readable this way)
         sql = """
             SELECT * FROM (
@@ -194,16 +200,21 @@ class MyCompassionChildrenController(WebsiteChild):
 
                 UNION ALL
 
-                SELECT 'child_picture' AS model,
-                    p.id::text AS record_id,
+                SELECT 'partner_communication_job' AS model,
+                    pcj.id::text AS record_id,
                     '' AS amount,
                     '' AS currency_name,
-                    COALESCE(p.gender, '') AS metadata,
-                    p.create_date AS event_date,
+                    'New Picture' AS metadata,
+                    pcj.write_date AS event_date,
                     %(title_child_picture)s AS title,
-                    p.child_id AS child_id
-                FROM compassion_child_pictures p
-                WHERE p.child_id = %(child_id)s
+                    %(child_id_int)s AS child_id
+                FROM partner_communication_job pcj
+                JOIN communication_job_config cjc ON pcj.config_id = cjc.id
+                JOIN mail_source ms ON cjc.source_id = ms.id
+                WHERE ms.name = 'New Biennial'
+                  AND pcj.partner_id = ANY(%(partner_ids)s)
+                  -- Check if child_id exists in the comma-separated object_ids string
+                  AND (',' || pcj.object_ids || ',') LIKE ('%%,' || %(child_id)s || ',%%')
 
                 UNION ALL
 
@@ -227,7 +238,8 @@ class MyCompassionChildrenController(WebsiteChild):
             LIMIT %(limit)s OFFSET %(offset)s
         """
         params = {
-            "child_id": child_id,
+            "child_id": str(child_id), # Passed as string for LIKE matching
+            "child_id_int": child_id,  # Passed as int for column selection
             "partner_ids": partner_ids,
             "default_currency": request.env.user.currency_id.name,
             "title_corr_wrote": _("Wrote you a letter"),
