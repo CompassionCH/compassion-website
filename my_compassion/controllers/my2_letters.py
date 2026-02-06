@@ -65,13 +65,27 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         to_date = date(year_to, month_to, last_day)
 
         # Build the domain of the filtering of the letters
+
+        # Matches letters sent to the partner or their authorized sponsored children
+        # Authorized means either the partner is the direct correspondent or the sponsor
+        # has read-write rights on the letters of the child (eg: if the partner is the
+        # parent of young Write-only sponsors, in this case the parent res_partner has
+        # portal_sponsorships = all_info)
         filter_domain = [
+            "|",
             ("partner_id", "=", partner.id),
             (
                 "child_id",
                 "in",
                 children_sponsored_by_partner.filtered("can_i_write_letter").ids,
             ),
+            "|",
+            "&",
+            # Only show B->S letters that are published.
+            ("direction", "=", "Beneficiary To Supporter"),
+            ("state", "=", "Published to Global Partner"),
+            # Whatever the state of the letters S -> B is, just show them.
+            ("direction", "=", "Supporter To Beneficiary"),
         ]
 
         if child:
@@ -82,8 +96,8 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             except AccessError:
                 child = None
 
-        filter_domain.append(("create_date", ">=", from_date))
-        filter_domain.append(("create_date", "<=", to_date))
+        filter_domain.append(("status_date", ">=", from_date))
+        filter_domain.append(("status_date", "<=", to_date))
 
         if unread_filter == "true":
             filter_domain.append(("email_read", "=", False))
@@ -100,7 +114,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             filter_domain.append(("direction", "=", letter_type))
             nr_filters_applied += 1
 
-        order = "create_date DESC" if sort_order == "newest" else "create_date ASC"
+        order = "status_date DESC" if sort_order == "newest" else "status_date ASC"
 
         if sort_order == "oldest":
             nr_filters_applied += 1

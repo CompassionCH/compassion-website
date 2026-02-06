@@ -12,6 +12,7 @@
 
     Props:
     - (t-raw): Placeholder for injecting <option> elements dynamically.
+    - select_class (string, optional): styling classes to the select element
     - CSS Classes:
         - custom-select: Applied to the <select> element for custom styling.
         - select-divider: Visual separator in the UI.
@@ -24,11 +25,10 @@
     <template id="SelectComponent">
         <div class="SelectComponent">
             <select
-                t-attf-class="custom-select"
+                t-attf-class="custom-select #{select_class or ''}"
                 t-att-name="name"
                 t-att-id="id"
                 t-att-required="required"
-                t-att-data-is-required="required"
             >
                 <t t-raw="0" />
             </select>

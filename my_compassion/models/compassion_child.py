@@ -68,3 +68,20 @@ class CompassionChild(models.Model):
             child.can_i_make_gift = (
                 sponsorship.can_make_gift and partner == sponsorship.partner_id
             )
+
+    def get_education_status_data(self):
+        """
+        Returns a dictionary with education status
+        """
+        self.ensure_one()
+
+        subject_count = len(self.subject_ids)
+        is_enrolled = self.education_level and self.education_level != "Not Enrolled"
+
+        return {
+            "level": self.translate("education_level"),
+            "is_enrolled": is_enrolled,
+            "subjects_str": self.get_list("subject_ids.value"),
+            "has_multiple_subjects": subject_count > 1,
+            "has_subjects": subject_count > 0,
+        }

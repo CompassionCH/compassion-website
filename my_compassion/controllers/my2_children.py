@@ -148,16 +148,26 @@ class MyCompassionChildrenController(WebsiteChild):
                     '' AS amount,
                     '' AS currency_name,
                     c.direction AS metadata,
-                    c.create_date,
+                    c.status_date AS event_date,
                     CASE
-                        WHEN c.direction = 'Beneficiary To Supporter'
-                        THEN %(title_corr_wrote)s
-                        ELSE %(title_corr_received)s
+                        WHEN c.state = 'Published to Global Partner'
+                            THEN %(title_corr_wrote)s
+                        WHEN c.state = 'Printed and sent to ICP'
+                            THEN %(title_corr_received)s
+                        WHEN c.state IN ('Field Office translation queue', 'Global Partner translation queue')
+                            THEN %(title_corr_translating)s
+                        ELSE %(title_corr_processing)s
                     END AS title,
                     c.child_id AS child_id
                 FROM correspondence c
                 WHERE c.child_id = %(child_id)s
                   AND c.partner_id = ANY(%(partner_ids)s)
+                  -- Updated Filtering Logic
+                  AND (
+                      (c.state = 'Published to Global Partner' AND c.direction = 'Beneficiary To Supporter')
+                      OR
+                      (c.state NOT IN ('Exception', 'Quality check unsuccessful') AND c.direction = 'Supporter To Beneficiary')
+                  )
 
                 UNION ALL
 
@@ -167,7 +177,7 @@ class MyCompassionChildrenController(WebsiteChild):
                     s.amount::text AS amount,
                     COALESCE(rc.name, %(default_currency)s) AS currency_name,
                     s.gift_type || '|' || COALESCE(s.sponsorship_gift_type, '') AS metadata,
-                    s.create_date,
+                    s.create_date AS event_date,
                     CASE
                         WHEN s.sponsorship_gift_type = 'Birthday' THEN %(title_gift_bday)s
                         WHEN s.sponsorship_gift_type = 'General' THEN %(title_gift_general)s
@@ -189,7 +199,7 @@ class MyCompassionChildrenController(WebsiteChild):
                     '' AS amount,
                     '' AS currency_name,
                     COALESCE(p.gender, '') AS metadata,
-                    p.create_date,
+                    p.create_date AS event_date,
                     %(title_child_picture)s AS title,
                     p.child_id AS child_id
                 FROM compassion_child_pictures p
@@ -203,7 +213,7 @@ class MyCompassionChildrenController(WebsiteChild):
                     '' AS amount,
                     '' AS currency_name,
                     '' AS metadata,
-                    rc.start_date::timestamp AS create_date,
+                    rc.start_date::timestamp AS event_date,
                     %(title_start_sponsorship)s AS title,
                     rc.child_id AS child_id
                 FROM recurring_contract rc
@@ -213,16 +223,17 @@ class MyCompassionChildrenController(WebsiteChild):
                   AND rc.start_date IS NOT NULL
 
             ) AS timeline
-            ORDER BY create_date DESC
+            ORDER BY event_date DESC
             LIMIT %(limit)s OFFSET %(offset)s
         """
-
         params = {
             "child_id": child_id,
             "partner_ids": partner_ids,
             "default_currency": request.env.user.currency_id.name,
             "title_corr_wrote": _("Wrote you a letter"),
             "title_corr_received": _("Received your letter"),
+            "title_corr_translating": _("Translating letter"),
+            "title_corr_processing": _("Processing letter"),
             "title_gift_bday": _("Birthday gift"),
             "title_gift_general": _("General gift"),
             "title_gift_grad": _("Graduation/Final gift"),
@@ -265,10 +276,16 @@ class MyCompassionChildrenController(WebsiteChild):
         # To keep a list of the latest correspondence with each sponsored child:
         latest_corr_by_child = {}
         correspondences_table = request.env["correspondence"].sudo()
-
+        children_sponsored_by_partner = partner.sponsorship_ids.child_id
         received_correspondences = correspondences_table.search(
             [
+                "|",
                 ("partner_id", "=", partner.id),
+                (
+                    "child_id",
+                    "in",
+                    children_sponsored_by_partner.filtered("can_i_write_letter").ids,
+                ),
                 ("direction", "=", "Beneficiary To Supporter"),
             ],
             order="create_date desc",
