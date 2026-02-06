@@ -80,6 +80,7 @@
         "templates/pages/my2_add_a_gift.xml",
         "templates/http_error_custom.xml",
         "templates/pages/my2_contact_us.xml",
+        "templates/pages/my2_contactus_thank_you.xml",
         # My Compassion 2 components
         "templates/components/my2_children_card.xml",
         "templates/components/my2_letter_card.xml",
