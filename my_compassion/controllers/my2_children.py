@@ -204,7 +204,7 @@ class MyCompassionChildrenController(WebsiteChild):
                     pcj.id::text AS record_id,
                     '' AS amount,
                     '' AS currency_name,
-                    'New Picture' AS metadata,
+                    '' AS metadata,
                     pcj.write_date AS event_date,
                     %(title_child_picture)s AS title,
                     %(child_id_int)s AS child_id
