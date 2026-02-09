@@ -97,18 +97,16 @@
                 <div class="cd-timeline__block">
                     <div class="cd-timeline__img bg-high-eggshell">
                         <a
-                            t-if="item.get('picture_id')"
                             t-att-href="'/web/image/compassion.child.pictures/' + item['picture_id'] +'/fullshot/'"
                             class="flex items-center justify-center w-full h-full rounded-full"
-                            title="Download Picture"
                         >
                             <i class="pictogram pictogram-Child-Focused bg-low-black" />
                         </a>
-                        <div t-else="" class="flex items-center justify-center w-full h-full rounded-full">
-                            <i class="pictogram pictogram-Child-Focused bg-low-black" />
-                        </div>
                     </div>
-                    <div class="cd-timeline__content text-component text-decoration-none">
+                    <a
+                        class="cd-timeline__content text-component text-decoration-none"
+                        t-att-href="'/web/image/compassion.child.pictures/' + item['picture_id'] +'/fullshot/'"
+                    >
                         <p class="modal-title text-core-blue">
                             <t t-esc="item['title']" />
                         </p>
@@ -116,16 +114,8 @@
                             <span class="cd-timeline__date">
                                 <t t-esc="item['event_date']" t-options='{"widget": "date"}' />
                             </span>
-                            <a
-                                t-if="item.get('picture_id')"
-                                t-att-href="'/web/image/compassion.child.pictures/' + item['picture_id'] +'/fullshot/'"
-                                class="text-sm text-gray-500 hover:text-core-blue"
-                            >
-                                <i class="fa fa-download" />
-                                Download
-                            </a>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </t>
             <t t-elif="item['model'] == 'start_sponsorship'">
