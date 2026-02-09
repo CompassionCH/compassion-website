@@ -215,7 +215,7 @@ class MyCompassionChildrenController(WebsiteChild):
                   AND pcj.partner_id = ANY(%(partner_ids)s)
                   AND pcj.state = 'done'
                   -- Check if child_id exists in the comma-separated object_ids string
-                  AND (',' || pcj.object_ids || ',') LIKE ('%%,' || %(child_id)s || ',%%')
+                  AND (%(child_id)s = ANY(string_to_array(pcj.object_ids, ',')))
 
                 UNION ALL
 
