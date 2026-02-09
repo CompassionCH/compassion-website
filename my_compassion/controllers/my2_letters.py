@@ -72,6 +72,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         # parent of young Write-only sponsors, in this case the parent res_partner has
         # portal_sponsorships = all_info)
         filter_domain = [
+            "&",
             "|",
             ("partner_id", "=", partner.id),
             (
