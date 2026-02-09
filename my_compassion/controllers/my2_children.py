@@ -258,7 +258,32 @@ class MyCompassionChildrenController(WebsiteChild):
         }
 
         request.env.cr.execute(sql, params)
-        return request.env.cr.dictfetchall()
+        results = request.env.cr.dictfetchall()
+
+        # --- POST-PROCESSING: Add Attachments & Access Tokens ---
+        # We use sudo() to ensure we can read the job and its attachments regardless of portal rules
+        CommunicationJob = request.env["partner.communication.job"].sudo()
+
+        for record in results:
+            if record["model"] == "child_picture_notification":
+                job_id = int(record["record_id"])
+                job = CommunicationJob.browse(job_id)
+
+                # Get the first attachment (if any)
+                attachment = job.ir_attachment_ids[:1]
+
+                if attachment:
+                    # Generate token if missing (required for public/portal download)
+
+                    attachment.generate_access_token()
+
+                    record["attachment_id"] = attachment.id
+                    record["access_token"] = attachment.access_token
+                else:
+                    record["attachment_id"] = False
+                    record["access_token"] = False
+
+        return results
 
     def _get_timeline_records(self, child_id, offset=0, limit=9):
         """
