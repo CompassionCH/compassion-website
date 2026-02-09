@@ -261,7 +261,7 @@ class MyCompassionChildrenController(WebsiteChild):
         request.env.cr.execute(sql, params)
         results = request.env.cr.dictfetchall()
 
-        # --- POST-PROCESSING: Match Pictures to Notifications ---
+        # --- POST-PROCESSING: Match Pictures to child_picture_notification ---
         photos_ids = (
             request.env["compassion.child.pictures"]
             .sudo()
