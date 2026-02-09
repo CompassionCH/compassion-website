@@ -260,28 +260,27 @@ class MyCompassionChildrenController(WebsiteChild):
         request.env.cr.execute(sql, params)
         results = request.env.cr.dictfetchall()
 
-        # --- POST-PROCESSING: Add Attachments & Access Tokens ---
-        # We use sudo() to ensure we can read the job and its attachments regardless of portal rules
-        CommunicationJob = request.env["partner.communication.job"].sudo()
+        # --- POST-PROCESSING: Match Pictures to Notifications ---
+        photos_ids = (
+            request.env["compassion.child.pictures"]
+            .sudo()
+            .search([("child_id", "=", child_id)], order="create_date desc")
+        )
 
         for record in results:
+            record["picture_id"] = False
             if record["model"] == "child_picture_notification":
-                job_id = int(record["record_id"])
-                job = CommunicationJob.browse(job_id)
+                # The event_date from SQL is pcj.write_date (or create_date)
+                event_date = record["event_date"]
 
-                # Get the first attachment (if any)
-                attachment = job.ir_attachment_ids[:1]
-
-                if attachment:
-                    # Generate token if missing (required for public/portal download)
-
-                    attachment.generate_access_token()
-
-                    record["attachment_id"] = attachment.id
-                    record["access_token"] = attachment.access_token
-                else:
-                    record["attachment_id"] = False
-                    record["access_token"] = False
+                # Find the first photo created before or on the date of this communication.
+                # Since photos_ids is sorted DESC (newest first), the first record
+                # meeting this criterion is the 'latest' photo relative to the job.
+                matching_photo = photos_ids.filtered(
+                    lambda picture, d=event_date: picture.create_date <= d
+                )[:1]
+                if matching_photo:
+                    record["picture_id"] = str(matching_photo.id)
 
         return results
 
