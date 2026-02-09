@@ -139,10 +139,10 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         # If direction is S->B the create_date is the proper one to use
         # from the user's perspective as the sponsor only knows when they've created it.
         letters = letters.sorted(
-            key=lambda l: (
-                l.status_date.date()
-                if l.direction == "Beneficiary To Supporter"
-                else l.create_date.date()
+            key=lambda letter: (
+                letter.status_date.date()
+                if letter.direction == "Beneficiary To Supporter"
+                else letter.create_date.date()
             )
             or date.min,
             reverse=(sort_order == "newest"),
