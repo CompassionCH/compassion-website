@@ -213,6 +213,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 JOIN utm_source ms ON cjc.source_id = ms.id
                 WHERE ms.name = 'New Biennial'
                   AND pcj.partner_id = ANY(%(partner_ids)s)
+                  AND pcj.state = 'done'
                   -- Check if child_id exists in the comma-separated object_ids string
                   AND (',' || pcj.object_ids || ',') LIKE ('%%,' || %(child_id)s || ',%%')
 
