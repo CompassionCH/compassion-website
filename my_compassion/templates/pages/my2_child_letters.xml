@@ -270,7 +270,6 @@
                         <div class="w-100 d-flex flex-column">
                             <div class="row justify-content-center">
                                 <t t-foreach="letters" t-as="letter" t-foreach-index="i">
-                                    <!--TODO ASK EMMA WHY NOT USING CREATE DATE IF S->B-->
                                     <div
                                         class="col-12 col-md-6 col-lg-4 my-3 letter-card"
                                         t-att-data-create_date="letter.status_date if letter.direction == 'Beneficiary To Supporter' else letter.create_date"

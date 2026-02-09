@@ -137,7 +137,7 @@ class MyCompassionChildrenController(WebsiteChild):
         request.env.cr.execute(
             sql,
             {
-                "child_id": str(child_id),  # Cast to string for SQL LIKE matching
+                "child_id": str(child_id),
                 "partner_ids": partner_ids,
             },
         )
