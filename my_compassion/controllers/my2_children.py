@@ -124,8 +124,7 @@ class MyCompassionChildrenController(WebsiteChild):
                  JOIN utm_source ms ON cjc.source_id = ms.id
                  WHERE ms.name = 'New Biennial'
                    AND pcj.partner_id = ANY(%(partner_ids)s)
-                   -- Use string_to_array for consistency with _get_timeline_data
-                   AND %(child_id)s = ANY(string_to_array(pcj.object_ids, ','))
+                   AND %(child_id)s = ANY(string_to_array(pcj.object_ids, ',')))
                 +
                 (SELECT COUNT(*) FROM recurring_contract rc
                  WHERE rc.child_id = %(child_id)s
