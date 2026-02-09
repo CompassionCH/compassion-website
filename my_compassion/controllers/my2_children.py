@@ -120,8 +120,8 @@ class MyCompassionChildrenController(WebsiteChild):
                 +
                 (SELECT COUNT(*)
                  FROM partner_communication_job pcj
-                 JOIN communication_job_config cjc ON pcj.config_id = cjc.id
-                 JOIN mail_source ms ON cjc.source_id = ms.id
+                 JOIN partner_communication_config cjc ON pcj.config_id = cjc.id
+                 JOIN utm_source ms ON cjc.source_id = ms.id
                  WHERE ms.name = 'New Biennial'
                    AND pcj.partner_id = ANY(%(partner_ids)s)
                    -- Robust split check: look for child_id surrounded by delimiters
@@ -200,7 +200,7 @@ class MyCompassionChildrenController(WebsiteChild):
 
                 UNION ALL
 
-                SELECT 'partner_communication_job' AS model,
+                SELECT 'child_picture_notification' AS model,
                     pcj.id::text AS record_id,
                     '' AS amount,
                     '' AS currency_name,
@@ -209,8 +209,8 @@ class MyCompassionChildrenController(WebsiteChild):
                     %(title_child_picture)s AS title,
                     %(child_id_int)s AS child_id
                 FROM partner_communication_job pcj
-                JOIN communication_job_config cjc ON pcj.config_id = cjc.id
-                JOIN mail_source ms ON cjc.source_id = ms.id
+                JOIN partner_communication_config cjc ON pcj.config_id = cjc.id
+                JOIN utm_source ms ON cjc.source_id = ms.id
                 WHERE ms.name = 'New Biennial'
                   AND pcj.partner_id = ANY(%(partner_ids)s)
                   -- Check if child_id exists in the comma-separated object_ids string
@@ -238,7 +238,7 @@ class MyCompassionChildrenController(WebsiteChild):
             LIMIT %(limit)s OFFSET %(offset)s
         """
         params = {
-            "child_id": str(child_id), # Passed as string for LIKE matching
+            "child_id": str(child_id),  # Passed as string for LIKE matching
             "child_id_int": child_id,  # Passed as int for column selection
             "partner_ids": partner_ids,
             "default_currency": request.env.user.currency_id.name,
