@@ -386,12 +386,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 if (!isValid) return; // return if any of the input values are not valid
-                toggleLoader(true);
 
                 rpc.query({ route: endpoint, params: payload })
                     .then((response) => {
-                        toggleLoader(false);
-
                         if (response.success) {
                             fields.forEach((field) => {
                                 const input = form.querySelector(`[name="${field}"]`);
@@ -409,7 +406,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     })
                     .catch((err) => {
-                        toggleLoader(false);
                         console.error("RPC Error:", err);
                         Dialog.alert(null, "An unexpected error occurred. Please try again later.");
                     });

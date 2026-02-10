@@ -18,11 +18,11 @@
 odoo.define("my_compassion.form_field_validator", function (require) {
     "use strict";
 
-    var publicWidget = require("web.public.widget");
+    const publicWidget = require("web.public.widget");
 
-    var validationConfig = {
+    const validationConfig = {
         required: {
-            suffix: '<span class="text-mid-orange">*</span>',
+            suffix: '<span class="text-mid-orange required-asterisk">*</span>',
             defaultErrorMessage: "This field is required.",
         },
         email: {
@@ -87,7 +87,7 @@ odoo.define("my_compassion.form_field_validator", function (require) {
          */
         validate: function () {
             this.clearError();
-            var value = this.$input.val();
+            const value = this.$input.val();
 
             if (this.isRequired && !value) {
                 this.showError(this.errorMessages.required);
@@ -115,9 +115,14 @@ odoo.define("my_compassion.form_field_validator", function (require) {
          */
         showError: function (message) {
             this.$input.addClass("is-invalid");
-            var $errorHint = $('<div class="input-invalid-hint text-mid-orange tiny-text mt-2">').text(message);
 
-            var $selectContainer = this.$input.closest(".SelectComponent");
+            const isDark = this.$input.hasClass("dark-bg");
+            const colorClass = isDark ? "text-pure-white" : "text-mid-orange";
+            const classes = `input-invalid-hint ${colorClass} tiny-text mt-2`;
+
+            const $errorHint = $(`<div class="${classes}">`).text(message);
+
+            const $selectContainer = this.$input.closest(".SelectComponent");
             if ($selectContainer.length > 0) {
                 $selectContainer.after($errorHint);
             } else {
