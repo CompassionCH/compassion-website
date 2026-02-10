@@ -309,8 +309,9 @@ class MyCompassionChildrenController(WebsiteChild):
                 ),
                 "ended_sponsorships": sponsorships.filtered(
                     lambda s: s.state == "terminated"
-                              and s.sds_state != "sub_waiting"
-                            and s.end_reason_id.name not in ["Subreject","Mistake from our staff"]
+                    and s.sds_state != "sub_waiting"
+                    and s.end_reason_id.name
+                    not in ["Subreject", "Mistake from our staff"]
                 ),
                 "latest_correspondences_by_child_id": latest_corr_by_child,
                 "breadcrumbs": breadcrumbs,
