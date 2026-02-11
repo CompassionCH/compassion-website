@@ -109,7 +109,7 @@ class MyCompassionChildrenController(WebsiteChild):
         return partner.ids
 
     def _get_timeline_count(self, child_id, partner_ids):
-        """Get total count of timeline records (correspondence + gifts + biennial photos + start)."""
+        """Get total count of timeline records (correspondence + gifts + child_pictures + start + end)."""
         sql = """
             SELECT
                 (SELECT COUNT(*) FROM correspondence
@@ -118,33 +118,30 @@ class MyCompassionChildrenController(WebsiteChild):
                 (SELECT COUNT(*) FROM sponsorship_gift
                  WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
                 +
-                (SELECT COUNT(*)
-                 FROM partner_communication_job pcj
-                 JOIN partner_communication_config cjc ON pcj.config_id = cjc.id
-                 JOIN utm_source ms ON cjc.source_id = ms.id
-                 WHERE ms.name = 'New Biennial'
-                   AND pcj.partner_id = ANY(%(partner_ids)s)
-                   AND pcj.state = 'done'
-                   AND %(child_id)s = ANY(string_to_array(pcj.object_ids, ',')))
+                (SELECT COUNT(*) FROM compassion_child_pictures
+                 WHERE child_id = %(child_id)s)
                 +
-                (SELECT COUNT(*) FROM recurring_contract rc
-                 WHERE rc.child_id = %(child_id)s
-                   AND rc.partner_id = ANY(%(partner_ids)s)
-                   AND rc.state IN ('active', 'terminated')
-                   AND rc.start_date IS NOT NULL)
+                (SELECT SUM(
+                        CASE WHEN rc.start_date IS NOT NULL THEN 1 ELSE 0 END
+                            +
+                        CASE WHEN rc.state = 'terminated' AND rc.end_date IS NOT NULL THEN 1 ELSE 0 END
+                        ) as count
+                FROM recurring_contract rc
+                WHERE rc.child_id = %(child_id)s
+                AND rc.partner_id = ANY(%(partner_ids)s))
                 AS total
         """
         request.env.cr.execute(
             sql,
             {
-                "child_id": str(child_id),
+                "child_id": child_id,
                 "partner_ids": partner_ids,
             },
         )
         return request.env.cr.fetchone()[0] or 0
 
     def _get_timeline_data(self, child_id, partner_ids, offset, limit):
-        """Fetch paginated timeline records (correspondence + gifts + biennial photos) ordered by date."""
+        """Fetch paginated timeline records (correspondence + gifts) ordered by date."""
         # ruff: noqa: E501 (query is more readable this way)
         sql = """
             SELECT * FROM (
@@ -200,47 +197,47 @@ class MyCompassionChildrenController(WebsiteChild):
 
                 UNION ALL
 
-                SELECT 'child_picture_notification' AS model,
-                    pcj.id::text AS record_id,
+                SELECT 'child_picture' AS model,
+                    p.id::text AS record_id,
                     '' AS amount,
                     '' AS currency_name,
-                    '' AS metadata,
-                    pcj.write_date AS event_date,
+                    COALESCE(p.gender, '') AS metadata,
+                    p.create_date AS event_date,
                     %(title_child_picture)s AS title,
-                    %(child_id_int)s AS child_id
-                FROM partner_communication_job pcj
-                JOIN partner_communication_config cjc ON pcj.config_id = cjc.id
-                JOIN utm_source ms ON cjc.source_id = ms.id
-                WHERE ms.name = 'New Biennial'
-                  AND pcj.partner_id = ANY(%(partner_ids)s)
-                  AND pcj.state = 'done'
-                  -- Check if child_id exists in the comma-separated object_ids string
-                  AND (%(child_id)s = ANY(string_to_array(pcj.object_ids, ',')))
+                    p.child_id AS child_id
+                FROM compassion_child_pictures p
+                WHERE p.child_id = %(child_id)s
 
                 UNION ALL
 
                 SELECT
-                    'start_sponsorship' AS model,
+                    v.event_type  AS model,
                     rc.id::text AS record_id,
                     '' AS amount,
                     '' AS currency_name,
                     '' AS metadata,
-                    rc.start_date::timestamp AS event_date,
-                    %(title_start_sponsorship)s AS title,
+                    v.event_date::timestamp AS event_date,
+                    CASE v.event_type
+                        WHEN 'start_sponsorship' THEN %(title_start_sponsorship)s
+                        ELSE %(title_end_sponsorship)s
+                    END AS title,
                     rc.child_id AS child_id
-                FROM recurring_contract rc
-                WHERE rc.child_id = %(child_id)s
+                  FROM recurring_contract rc
+                  CROSS JOIN LATERAL (
+                      VALUES
+                          ('start_sponsorship', rc.start_date),
+                          ('end_sponsorship', rc.end_date)
+                      ) AS v(event_type, event_date)
+                  WHERE rc.child_id = %(child_id)s
                   AND rc.partner_id = ANY(%(partner_ids)s)
-                  AND rc.state IN ('active', 'terminated')
-                  AND rc.start_date IS NOT NULL
-
+                  AND v.event_date IS NOT NULL
+                  AND (v.event_type = 'start_sponsorship' OR rc.state = 'terminated')
             ) AS timeline
             ORDER BY event_date DESC
             LIMIT %(limit)s OFFSET %(offset)s
         """
         params = {
-            "child_id": str(child_id),  # Passed as string for LIKE matching
-            "child_id_int": child_id,  # Passed as int for column selection
+            "child_id": child_id,
             "partner_ids": partner_ids,
             "default_currency": request.env.user.currency_id.name,
             "title_corr_wrote": _("Wrote you a letter"),
@@ -254,36 +251,13 @@ class MyCompassionChildrenController(WebsiteChild):
             "title_gift_default": _("Received a gift"),
             "title_child_picture": _("New picture"),
             "title_start_sponsorship": _("Started sponsorship"),
+            "title_end_sponsorship": _("Ended sponsorship"),
             "limit": limit,
             "offset": offset,
         }
 
         request.env.cr.execute(sql, params)
-        results = request.env.cr.dictfetchall()
-
-        # --- POST-PROCESSING: Match Pictures to child_picture_notification ---
-        photos_ids = (
-            request.env["compassion.child.pictures"]
-            .sudo()
-            .search([("child_id", "=", child_id)], order="create_date desc")
-        )
-
-        for record in results:
-            record["picture_id"] = False
-            if record["model"] == "child_picture_notification":
-                # The event_date from SQL is pcj.write_date (or create_date)
-                event_date = record["event_date"]
-
-                # Find the first photo created before or on the date of this communication.
-                # Since photos_ids is sorted DESC (newest first), the first record
-                # meeting this criterion is the 'latest' photo relative to the job.
-                matching_photo = photos_ids.filtered(
-                    lambda picture, d=event_date: picture.create_date <= d
-                )[:1]
-                if matching_photo:
-                    record["picture_id"] = str(matching_photo.id)
-
-        return results
+        return request.env.cr.dictfetchall()
 
     def _get_timeline_records(self, child_id, offset=0, limit=9):
         """
@@ -345,7 +319,10 @@ class MyCompassionChildrenController(WebsiteChild):
                     lambda s: s.state != "terminated" or s.sds_state == "sub_waiting"
                 ),
                 "ended_sponsorships": sponsorships.filtered(
-                    lambda s: s.state == "terminated" and s.sds_state != "sub_waiting"
+                    lambda s: s.state == "terminated"
+                    and s.sds_state != "sub_waiting"
+                    and s.end_reason_id.name
+                    not in ["Subreject", "Mistake from our staff"]
                 ),
                 "latest_correspondences_by_child_id": latest_corr_by_child,
                 "breadcrumbs": breadcrumbs,
