@@ -118,7 +118,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 (SELECT COUNT(*) FROM sponsorship_gift
                  WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
                 +
-                (SELECT COUNT(*) 
+                (SELECT COUNT(*)
                  FROM compassion_child_pictures p
                  JOIN recurring_contract rc ON rc.child_id = p.child_id
                  WHERE p.child_id = %(child_id)s
@@ -214,7 +214,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 JOIN recurring_contract rc ON rc.child_id = p.child_id
                 WHERE p.child_id = %(child_id)s
                 AND rc.partner_id = ANY(%(partner_ids)s)
-                AND rc.start_date <= p.create_date 
+                AND rc.start_date <= p.create_date
 
                 UNION ALL
 
