@@ -54,17 +54,31 @@ Page My Compassion 2 Contact us page
                     >
                         <div class="row text-left">
                             <!-- Title Mr. or Mrs -->
-                            <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="top_class" t-value="'col-12 mb-3'" />
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="title" id="mrs" value="Mrs." />
-                                    <label class="form-check-label text-pure-white" for="mrs">Mrs.</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="title" id="mr" value="Mr." />
-                                    <label class="form-check-label text-pure-white" for="mr">Mr.</label>
-                                </div>
-                            </t>
+                            <div class="w-100">
+                                <t t-call="theme_compassion_2025.FormFieldComponent">
+                                    <t t-set="label">Title</t>
+                                    <t t-set="label_color" t-value="'pure-white'" />
+                                    <t
+                                        t-set="top_class"
+                                        t-value="' d-flex flex-column col-12 col-md-6 mb-3 s_website_form_field s_website_form_required'"
+                                    />
+                                    <t t-set="input_id" t-value="'contactus_form_firstname'" />
+                                    <t t-call="theme_compassion_2025.SelectComponent">
+                                        <t t-set="id" t-value="'title'" />
+                                        <t t-set="name" t-value="'title'" />
+                                        <t t-set="select_class" t-value="'bg-white'" />
+                                        <t t-set="required" t-value="True" />
+                                        <option value="" disabled="disabled" selected="selected" hidden="true">
+                                            Please Select
+                                        </option>
+                                        <t t-foreach="titles" t-as="t">
+                                            <option t-att-value="t.id">
+                                                <t t-esc="t.name" />
+                                            </option>
+                                        </t>
+                                    </t>
+                                </t>
+                            </div>
                             <!-- First Name and Last Name -->
                             <t t-call="theme_compassion_2025.FormFieldComponent">
                                 <t t-set="label">First Name</t>
