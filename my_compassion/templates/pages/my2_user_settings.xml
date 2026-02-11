@@ -78,6 +78,14 @@ Injected data:
                             >
                                 <div class="row col-12 mb-3">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
+                                        <t t-set="label">My reference</t>
+                                        <div>
+                                            <t t-esc="partner.ref if partner.ref else ''" />
+                                        </div>
+                                    </t>
+                                </div>
+                                <div class="row col-12 mb-3">
+                                    <t t-call="theme_compassion_2025.FormFieldComponent">
                                         <t t-set="label">Title</t>
                                         <t t-set="input_id" t-value="'title'" />
                                         <div class="field-display" data-display-for="title">
