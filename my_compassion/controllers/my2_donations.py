@@ -382,6 +382,7 @@ class MyCompassionDonationsController(CustomerPortal):
                 self._get_paid_invoices_filter(partner),
                 offset=offset,
                 limit=amount,
+                order="last_payment desc",
             )
         )
         return paid_invoices_subset
