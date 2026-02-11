@@ -262,52 +262,62 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let originalValues = {};
 
+            const getFieldWidget = (fieldName) => {
+                const input = form.querySelector(`[name="${fieldName}"]`);
+                if (!input) return null;
+
+                return $(input).closest(".form-field-component").data("widget");
+            };
+
+            function toggleLoader(isLoading) {
+                const loader = document.getElementById("user-settings-loader");
+
+                if (isLoading) {
+                    loader?.classList.remove("d-none");
+                } else {
+                    loader?.classList.add("d-none");
+                }
+            }
+
             const showBackendErrors = (errors) => {
                 for (const fieldName in errors) {
-                    const input = form.querySelector(`[name="${fieldName}"]`);
-                    if (!input) continue;
-
-                    const fieldComponent = input.closest(".form-field-component");
-                    if (!fieldComponent) continue;
-
-                    const fieldWidget = $(fieldComponent).data("widget");
-                    if (!fieldWidget) continue;
-
-                    fieldWidget.showError(errors[fieldName]);
+                    const widget = getFieldWidget(fieldName);
+                    if (widget) {
+                        widget.showError(errors[fieldName]);
+                    } else {
+                        console.warn(`No widget found for field ${fieldName} to display error: ${errors[fieldName]}`);
+                    }
                 }
             };
 
             const clearErrors = () => {
-                let isValid = true;
-
-                $(form)
-                    .find(".form-field-component:visible")
-                    .each(function () {
-                        const fieldWidget = $(this).data("widget");
-                        fieldWidget.clearError();
-                    });
-
-                return isValid;
+                fields.forEach((field) => {
+                    const widget = getFieldWidget(field);
+                    if (widget) {
+                        widget.clearError();
+                    }
+                });
             };
+
             const validateForm = () => {
                 let isValid = true;
 
-                $(form)
-                    .find(".form-field-component:visible")
-                    .each(function () {
-                        const fieldWidget = $(this).data("widget");
-
-                        if (!fieldWidget.validate()) {
+                fields.forEach((field) => {
+                    const widget = getFieldWidget(field);
+                    if (widget) {
+                        if (!widget.validate()) {
                             isValid = false;
                         }
-                    });
+                    }
+                });
 
                 return isValid;
             };
+
             const storeOriginalValues = () => {
                 fields.forEach((field) => {
                     const input = form.querySelector(`[name="${field}"]`);
-                    if (input) originalValues[field] = input.value;
+                    if (input) originalValues[field] = input.type === "checkbox" ? input.checked : input.value;
                 });
             };
 
@@ -315,36 +325,29 @@ document.addEventListener("DOMContentLoaded", () => {
                 fields.forEach((field) => {
                     const input = form.querySelector(`[name="${field}"]`);
                     if (input && originalValues[field] !== undefined) {
-                        input.value = originalValues[field];
+                        if (input.type === "checkbox") {
+                            input.checked = originalValues[field];
+                        } else {
+                            input.value = originalValues[field];
+                        }
                     }
                 });
             };
 
-            const resetErrorUI = () => {
-                form.querySelectorAll(".is-invalid, .is-valid").forEach((el) =>
-                    el.classList.remove("is-invalid", "is-valid")
-                );
-                form.querySelectorAll(".invalid-feedback").forEach((el) => (el.style.display = "none"));
-                form.querySelectorAll(".form-field-container.has-error").forEach((el) =>
-                    el.classList.remove("has-error")
-                );
+            const anyValueUpdated = () => {
+                return fields.some((field) => {
+                    const input = form.querySelector(`[name="${field}"]`);
+                    if (input) {
+                        const valueToCheck = input.type === "checkbox" ? input.checked : input.value;
+                        return valueToCheck !== originalValues[field];
+                    }
+                });
             };
 
             function toggleEdit(isEditing) {
-                resetErrorUI();
+                clearErrors();
                 form.classList.toggle("is-editing", isEditing);
             }
-
-            saveButton.addEventListener("click", () => {
-                if (!validateForm()) {
-                    return;
-                }
-                const payload = {};
-                fields.forEach((field) => {
-                    const input = form.querySelector(`[name="${field}"]`);
-                    if (input) payload[field] = input.value;
-                });
-            });
 
             editButton.addEventListener("click", (e) => {
                 e.preventDefault();
@@ -360,32 +363,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
             saveButton.addEventListener("click", (e) => {
                 e.preventDefault();
-                resetErrorUI();
+                clearErrors();
 
-                let isValid = true;
+                if (!validateForm()) return;
+                toggleLoader(true);
+
+                if (!anyValueUpdated()) {
+                    toggleLoader(false);
+                    toggleEdit(false);
+                    return;
+                }
+
                 const payload = {};
-
                 for (const field of fields) {
                     const input = form.querySelector(`[name="${field}"]`);
                     if (!input || input.offsetParent === null) continue; // Skip hidden/missing inputs
-
-                    if (!input.checkValidity()) {
-                        isValid = false;
-                        input.classList.add("is-invalid");
-                        input.classList.remove("is-valid");
-
-                        const container = input.closest(".form-field-container");
-                        if (container) {
-                            container.classList.add("has-error");
-                            const errorMsg = container.querySelector(".invalid-feedback");
-                            if (errorMsg) errorMsg.style.display = "block";
-                        }
-                    } else {
-                        payload[field] = input.value;
-                    }
+                    payload[field] = input.type === "checkbox" ? input.checked : input.value;
                 }
-
-                if (!isValid) return; // return if any of the input values are not valid
 
                 rpc.query({ route: endpoint, params: payload })
                     .then((response) => {
@@ -399,15 +393,18 @@ document.addEventListener("DOMContentLoaded", () => {
                                     input.tagName === "SELECT" ? input.options[input.selectedIndex].text : input.value;
                             });
                             toggleEdit(false);
+                            toggleLoader(false);
                         } else {
                             if (response.errors) {
                                 showBackendErrors(response.errors);
                             }
+                            toggleLoader(false);
                         }
                     })
                     .catch((err) => {
                         console.error("RPC Error:", err);
                         Dialog.alert(null, "An unexpected error occurred. Please try again later.");
+                        toggleLoader(false);
                     });
             });
         }
