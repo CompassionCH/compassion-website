@@ -73,7 +73,7 @@ Page My Compassion 2 Contact us page
                                     t-set="top_class"
                                     t-value="' d-flex flex-column col-12 col-md-6 mb-3 s_website_form_field s_website_form_required'"
                                 />
-                                <t t-set="input_id" t-value="contactus_form_firstname" />
+                                <t t-set="input_id" t-value="'contactus_form_firstname'" />
                                 <input
                                     id="contactus_form_firstname"
                                     type="text"
@@ -91,7 +91,7 @@ Page My Compassion 2 Contact us page
                                     t-set="top_class"
                                     t-value="'d-flex flex-column col-12 col-md-6 mb-3 s_website_form_field s_website_form_required'"
                                 />
-                                <t t-set="input_id" t-value="contactus_form_lastname" />
+                                <t t-set="input_id" t-value="'contactus_form_lastname'" />
                                 <input
                                     id="contactus_form_lastname"
                                     type="text"
@@ -110,7 +110,7 @@ Page My Compassion 2 Contact us page
                                     t-set="top_class"
                                     t-value="'d-flex flex-column col-12 col-md-6 mb-3 s_website_form_field'"
                                 />
-                                <t t-set="input_id" t-value="contactus_form_phone_number" />
+                                <t t-set="input_id" t-value="'contactus_form_phone_number'" />
                                 <input
                                     id="contactus_form_phone_number"
                                     type="tel"
@@ -127,7 +127,7 @@ Page My Compassion 2 Contact us page
                                     t-set="top_class"
                                     t-value="'d-flex flex-column col-12 col-md-6 mb-3 s_website_form_field s_website_form_required'"
                                 />
-                                <t t-set="input_id" t-value="contactus_form_email" />
+                                <t t-set="input_id" t-value="'contactus_form_email'" />
                                 <input
                                     id="contactus_form_email"
                                     type="email"
@@ -141,7 +141,10 @@ Page My Compassion 2 Contact us page
                             <t t-call="theme_compassion_2025.FormFieldComponent">
                                 <t t-set="label">Subject</t>
                                 <t t-set="label_color" t-value="'pure-white'" />
-                                <t t-set="top_class" t-value="'col-12 s_website_form_field s_website_form_required'" />
+                                <t
+                                    t-set="top_class"
+                                    t-value="'col-12 s_website_form_field mb-3 s_website_form_required'"
+                                />
                                 <t t-set="input_id" t-value="contactus_subject" />
                                 <input
                                     id="contactus_subject"
@@ -160,7 +163,7 @@ Page My Compassion 2 Contact us page
                                     t-set="top_class"
                                     t-value="'col-12 mb-3 s_website_form_field s_website_form_required'"
                                 />
-                                <t t-set="input_id" t-value="contactus_message" />
+                                <t t-set="input_id" t-value="'contactus_message'" />
                                 <textarea
                                     id="contactus_message"
                                     name="description"
