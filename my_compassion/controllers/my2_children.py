@@ -359,8 +359,10 @@ class MyCompassionChildrenController(WebsiteChild):
             request.env["ir.config_parameter"].sudo().get_param("google_custom_map_id")
         )
 
-        # Generate the obfuscated if necessary (eg: the first time the values are read)
-        child.sudo().project_id._compute_gps_obfuscated()
+        # Generate the obfuscated if necessary
+        obfuscated = child.project_id.gps_latitude_obfuscated
+        if not obfuscated or int(obfuscated) == obfuscated:
+            child.sudo().project_id._compute_gps_obfuscated()
 
         return request.render(
             "my_compassion.my2_child_timeline_page",
