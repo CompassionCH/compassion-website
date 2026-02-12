@@ -118,8 +118,13 @@ class MyCompassionChildrenController(WebsiteChild):
                 (SELECT COUNT(*) FROM sponsorship_gift
                  WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
                 +
-                (SELECT COUNT(*) FROM compassion_child_pictures
-                 WHERE child_id = %(child_id)s)
+                (SELECT COUNT(*)
+                 FROM compassion_child_pictures p
+                 JOIN recurring_contract rc ON rc.child_id = p.child_id
+                 WHERE p.child_id = %(child_id)s
+                 AND rc.partner_id = ANY(%(partner_ids)s)
+                 AND rc.start_date <= p.create_date
+                )
                 +
                 (SELECT SUM(
                         CASE WHEN rc.start_date IS NOT NULL THEN 1 ELSE 0 END
@@ -143,6 +148,7 @@ class MyCompassionChildrenController(WebsiteChild):
     def _get_timeline_data(self, child_id, partner_ids, offset, limit):
         """Fetch paginated timeline records (correspondence + gifts) ordered by date."""
         # ruff: noqa: E501 (query is more readable this way)
+        # MODIFIED: Added JOIN on recurring_contract in the child_picture UNION block
         sql = """
             SELECT * FROM (
                 SELECT
@@ -206,7 +212,10 @@ class MyCompassionChildrenController(WebsiteChild):
                     %(title_child_picture)s AS title,
                     p.child_id AS child_id
                 FROM compassion_child_pictures p
+                JOIN recurring_contract rc ON rc.child_id = p.child_id
                 WHERE p.child_id = %(child_id)s
+                AND rc.partner_id = ANY(%(partner_ids)s)
+                AND rc.start_date <= p.create_date
 
                 UNION ALL
 
