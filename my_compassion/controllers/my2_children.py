@@ -148,7 +148,6 @@ class MyCompassionChildrenController(WebsiteChild):
     def _get_timeline_data(self, child_id, partner_ids, offset, limit):
         """Fetch paginated timeline records (correspondence + gifts) ordered by date."""
         # ruff: noqa: E501 (query is more readable this way)
-        # MODIFIED: Added JOIN on recurring_contract in the child_picture UNION block
         sql = """
             SELECT * FROM (
                 SELECT
