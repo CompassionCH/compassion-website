@@ -347,20 +347,9 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             if isinstance(file, dict) and "content" in file
         ]
 
-        body_text = post.get("letter_body", "")
-        detected_lang = request.env["langdetect"].detect_language(body_text)
-        if detected_lang:
-            language_id = detected_lang.id
-        else:
-            english_lang = request.env["res.lang.compassion"].search(
-                [("code_iso", "=", "eng")], limit=1
-            )
-            language_id = english_lang.id if english_lang else None
-
         letter_values = {
             "name": f"{post.get('source')}-{child.local_id}",
-            "body": body_text,
-            "language_id": language_id,
+            "body": post.get("letter_body", ""),
             "template_id": template_id,
             "image_ids": attachments,
             "source": post.get("source"),
