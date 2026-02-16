@@ -355,7 +355,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             english_lang = request.env["res.lang.compassion"].search(
                 [("code_iso", "=", "eng")], limit=1
             )
-            language_id = english_lang.id
+            language_id = english_lang.id if english_lang else None
 
         letter_values = {
             "name": f"{post.get('source')}-{child.local_id}",
