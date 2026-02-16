@@ -349,7 +349,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
 
         letter_values = {
             "name": f"{post.get('source')}-{child.local_id}",
-            "body": post.get("letter_body"),
+            "body": post.get("letter_body", ""),
             "template_id": template_id,
             "image_ids": attachments,
             "source": post.get("source"),
