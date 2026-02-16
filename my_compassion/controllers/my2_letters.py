@@ -352,7 +352,9 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         if detected_lang:
             language_id = detected_lang.id
         else:
-            english_lang = request.env["res.lang.compassion"].search([("code_iso", "=", "eng")], limit=1)
+            english_lang = request.env["res.lang.compassion"].search(
+                [("code_iso", "=", "eng")], limit=1
+            )
             language_id = english_lang.id
 
         letter_values = {
