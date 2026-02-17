@@ -12,10 +12,7 @@
     "license": "AGPL-3",
     "application": False,
     "installable": True,
-    "depends": [
-        "website_form",
-        "child_protection"
-    ],
+    "depends": ["website_form", "child_protection"],
     "data": [
         "security/ir.model.access.csv",
         "templates/assets.xml",

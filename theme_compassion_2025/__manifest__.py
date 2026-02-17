@@ -43,6 +43,7 @@
         "views/images_content.xml",
         "views/template_header.xml",
         "views/footer.xml",
+        "views/child_protection_override.xml",
         # Data
         "data/colors.xml",
         "data/icons.xml",

@@ -7,7 +7,7 @@
 #
 ##############################################################################
 
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
 
@@ -24,12 +24,14 @@ class ChildProtectionForm(models.TransientModel):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            if not all([
-                vals.get('read_check'),
-                vals.get('validation_check'),
-                vals.get('legal_check'),
-                vals.get('understand_check')
-            ]):
+            if not all(
+                [
+                    vals.get("read_check"),
+                    vals.get("validation_check"),
+                    vals.get("legal_check"),
+                    vals.get("understand_check"),
+                ]
+            ):
                 raise ValidationError(_("You must check all boxes to proceed."))
 
         forms = super(ChildProtectionForm, self).create(vals_list)
