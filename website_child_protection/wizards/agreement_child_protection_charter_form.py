@@ -34,7 +34,7 @@ class ChildProtectionForm(models.TransientModel):
             ):
                 raise ValidationError(_("You must check all boxes to proceed."))
 
-        forms = super(ChildProtectionForm, self).create(vals_list)
+        forms = super().create(vals_list)
         for form in forms:
             if form.partner_uuid:
                 partner = (

@@ -5,9 +5,12 @@
         inherit_id="website_child_protection.child_protection_charter_page"
         name="Theme 2025 Child Protection Override"
     >
-        <xpath expr="//div[@id='submit_botton_container']" position="replace">
+        <xpath expr="//div[@id='submit_button_container']" position="attributes">
+            <attribute name="t-if">False</attribute>
+        </xpath>
+        <xpath expr="//div[@id='submit_button_container']" position="after">
             <div
-                id="submit_botton_container"
+                id="submit_button_container"
                 class="form-group col-12 s_website_form_submit d-flex justify-content-center"
                 data-name="Submit Button"
             >
@@ -26,7 +29,10 @@
         inherit_id="website_child_protection.child_protection_charter_confirmation_page"
         name="Theme 2025 Thank You Page Override"
     >
-        <xpath expr="//div[@id='thank_you_page_title']" position="replace">
+        <xpath expr="//div[@id='thank_you_page_title']" position="attributes">
+            <attribute name="t-if">False</attribute>
+        </xpath>
+        <xpath expr="//div[@id='thank_you_page_title']" position="after">
             <div id="thank_you_page_title" class="position-absolute fixed-top mt-5 w-100 text-center">
                 <t t-call="theme_compassion_2025.TitleComponent">
                     <t t-set="title_content">Child Protection Charter</t>
@@ -36,7 +42,10 @@
                 </t>
             </div>
         </xpath>
-        <xpath expr="//div[@id='thank_you_page_card']" position="replace">
+        <xpath expr="//div[@id='thank_you_page_card']" position="attributes">
+            <attribute name="t-if">False</attribute>
+        </xpath>
+        <xpath expr="//div[@id='thank_you_page_card']" position="after">
             <div id="thank_you_page_card" class="container">
                 <div class="row s_nb_column_fixed">
                     <div class="col-lg-6 jumbotron rounded o_cc o_cc1 pt32 pb32 o_colored_level" data-name="Box">
