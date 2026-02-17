@@ -580,7 +580,7 @@ Injected data:
                                             href="/partner/child-protection-charter?redirect=/my2/user_settings?current_tab=privacy-data"
                                             class="text-decoration-none"
                                         >
-                                            <div class="w-md-50 d-flex flex-column align-items-stretch">
+                                            <div class="w-md-50 d-flex flex-column align-items-stretch m-auto">
                                                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                                     <t t-set="variant" t-value="'default'" />
                                                     <t t-set="variation" t-value="'filled'" />
@@ -592,15 +592,16 @@ Injected data:
                                         </a>
                                     </t>
                                 </div>
-                                <div>
+                                <div class="d-flex flex-column text-center">
                                     <h5>Data protection and legal agreement</h5>
                                     <t t-if="partner.legal_agreement_date">
-                                        <span>Signing date:</span>
-                                        <t t-esc="partner.get_date('legal_agreement_date', 'date_short')" />
-                                        <a href="/legal" target="_blank">
-                                            (view
-                                            agreement)
-                                        </a>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="mr-2">Signing date:</div>
+                                            <div class="mr-2">
+                                                <t t-esc="partner.get_date('legal_agreement_date', 'date_short')" />
+                                            </div>
+                                            <a href="/legal" target="_blank">(view agreement)</a>
+                                        </div>
                                     </t>
                                     <t t-else="" enctype="application/x-www-form-urlencoded">
                                         <div class="form-check mb-2">
@@ -609,7 +610,7 @@ Injected data:
                                                 <t t-call="website_legal_page.acceptance_full" />
                                             </label>
                                         </div>
-                                        <div class="w-md-50 d-flex flex-column align-items-stretch">
+                                        <div class="w-md-50 d-flex flex-column align-items-stretch m-auto">
                                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                                 <t t-set="id" t-value="'SignLegalAgreementButton'" />
                                                 <t t-set="variant" t-value="'default'" />
