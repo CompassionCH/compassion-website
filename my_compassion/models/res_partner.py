@@ -130,7 +130,7 @@ class Partner(models.Model):
                 )
             )
 
-    def _compute_is_translator(self) -> bool:
+    def _compute_is_translator(self) -> None:
         """
         Compute whether the partner is a translator
         """
