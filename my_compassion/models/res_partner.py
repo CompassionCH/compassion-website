@@ -25,6 +25,8 @@ class Partner(models.Model):
         inverse="_inverse_user_login",
         tracking=True,
     )
+    # True if the partner is a translator and has a translator id
+    is_translator = fields.Boolean(compute="_compute_is_translator", compute_sudo=True)
 
     def _compute_user_login(self):
         for partner in self:
@@ -127,3 +129,10 @@ class Partner(models.Model):
                     ]
                 )
             )
+
+    def _compute_is_translator(self) -> bool:
+        """
+        Compute whether the partner is a translator
+        """
+        for partner in self:
+            partner.is_translator = bool(partner.translation_user_id)
