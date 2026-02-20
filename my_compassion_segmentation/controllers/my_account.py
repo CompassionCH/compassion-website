@@ -10,6 +10,7 @@ from odoo.http import request, route
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
 
+
 class MyAccountControllerSurvey(CustomerPortal):
     @route(["/my", "/my/home"], type="http", auth="user", website=True)
     def home(self, redirect=None, **post):
