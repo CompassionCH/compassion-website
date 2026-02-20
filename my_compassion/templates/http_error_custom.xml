@@ -2,13 +2,11 @@
 <odoo>
     <template id="http_error_custom">
         <div id="wrap" class="d-flex justify-content-center align-items-center min-vh-100 p-3">
-            <div class="d-flex flex-column flex-md-row align-items-center text-center text-md-start">
+            <div class="d-flex flex-column flex-md-row align-items-center text-center text-md-left">
                 <div class="mb-4 mb-md-0">
-                    <i class="pictogram-critical-needs fa-8x fa-md-10x text-dark-blue" />
+                    <i class="pictogram-critical-needs fa-5x text-dark-blue" />
                 </div>
-                <div
-                    class="ms-md-4 d-flex flex-column align-items-center align-items-md-start text-center text-md-start"
-                >
+                <div class="d-flex flex-column align-items-center align-items-md-start ml-md-4">
                     <h2 class="mb-3 text-core-blue">
                         <t t-esc="error_code" />
                         -
