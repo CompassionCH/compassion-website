@@ -8,7 +8,6 @@
 ##############################################################################
 import base64
 import secrets
-from datetime import datetime, timedelta
 from os import path, remove
 from urllib.parse import urlencode
 from zipfile import ZipFile
@@ -16,14 +15,12 @@ from zipfile import ZipFile
 from passlib.context import CryptContext
 from werkzeug.exceptions import NotFound
 
-from odoo import _, fields
+from odoo import _
 from odoo.exceptions import UserError
 from odoo.http import local_redirect, request, route
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
 from odoo.addons.web.controllers.main import content_disposition
-
-from .auto_texts import CHRISTMAS_TEXTS
 
 IMG_URL = "/web/image/compassion.child.pictures/{id}/fullshot/"
 
@@ -188,7 +185,12 @@ class MyAccountController(CustomerPortal):
         partner = res_partner.search([["uuid", "=", partner_uuid]], limit=1)
         partner = partner.sudo()
 
-        redirect_page_request = local_redirect(f"/my/{redirect_page}", kwargs)
+        # Check if the requested page is already formatted for MyCompassion 2.0
+        if redirect_page.startswith("my2/"):
+            redirect_page_request = local_redirect(f"/{redirect_page}", kwargs)
+        else:
+            # Handles dead redirections in case the link is from MyCompassion 1.0
+            redirect_page_request = local_redirect(f"/my/{redirect_page}", kwargs)
 
         if not partner:
             # partner does not exist
@@ -250,185 +252,41 @@ class MyAccountController(CustomerPortal):
 
     @route(["/my", "/my/home"], type="http", auth="user", website=True)
     def home(self, redirect=None, **post):
-        # All this paths needs to be redirected
-        partner = request.env.user.partner_id
-        if partner.sponsorship_ids:
-            return request.redirect("/my/children")
-        else:
-            return request.redirect("/my/information")
+        """
+        This is a dead route of MyCompassion 1.0
+        From MyCompassion 2.0, we ensured a proper redirection
+        for user using old links.
+        """
+        return request.redirect("/my2/dashboard")
 
     @route("/my/letter", type="http", auth="user", website=True)
-    def my_letter(self, child_id=None, template_id=None, **kwargs):
+    def redirect_old_my_letter(self, child_id=None, template_id=None, **kwargs):
         """
-        The route to write new letters to a selected child
-        :param child_id: the id of the selected child
-        :param template_id: the id of the selected template
-        :param kwargs: additional arguments (optional)
-        :return: a redirection to a webpage
+        This is a dead route of MyCompassion 1.0
+        From MyCompassion 2.0, we ensured a proper redirection
+        for user using old links.
         """
-        children = _get_user_children("write")
-        if len(children) == 0:
-            return request.render("my_compassion.sponsor_a_child", {})
+        target = "/my2/children/letters/new"
+        params = {}
+        if child_id:
+            params["child_id"] = child_id
+        if template_id:
+            params["template_id"] = template_id
 
-        if not child_id:
-            return request.redirect(
-                f"/my/letter?child_id={children[0].id}&template_id={template_id or ''}"
-                f"&{urlencode(kwargs)}"
-            )
-
-        child = children.filtered(lambda c: c.id == int(child_id))
-        if not child:  # The user does not sponsor this child_id
-            return request.redirect(f"/my/letter?child_id={children[0].id}")
-        templates = (
-            request.env["correspondence.template"]
-            .search(
-                [
-                    ("active", "=", True),
-                    ("website_published", "=", True),
-                ]
-            )
-            .sorted(lambda t: "0" if "christmas" in t.name else t.name)
-        )
-        if not template_id and len(templates) > 0:
-            template_id = templates[0].id
-        template = templates.filtered(lambda t: t.id == int(template_id))
-        auto_texts = {}
-        if "auto_christmas" in kwargs:
-            for c in children:
-                auto_texts[c.id] = CHRISTMAS_TEXTS.get(
-                    c.field_office_id.primary_language_id.code_iso,
-                    CHRISTMAS_TEXTS["eng"],
-                ) % (c.preferred_name, request.env.user.partner_id.firstname)
-        return request.render(
-            "my_compassion.letter_page_template",
-            {
-                "child_id": child,
-                "template_id": template,
-                "children": children,
-                "templates": templates,
-                "partner": request.env.user.partner_id,
-                "auto_texts": auto_texts,
-            },
-        )
+        if params:
+            target += f"?{urlencode(params)}"
+        return request.redirect(target)
 
     @route("/my/children", type="http", auth="user", website=True)
-    def my_child(self, state="active", child_id=None, **kwargs):
+    def redirect_old_my_child(self, state="active", child_id=None, **kwargs):
         """
-        The route to see all the partner's children information
-        :param state: the state of the children's sponsorships (active or
-        terminated)
-        :param child_id: the id of the child
-        :param kwargs: optional additional arguments
-        :return: a redirection to a webpage
+        This is a dead route of MyCompassion 1.0
+        From MyCompassion 2.0, we ensured a proper redirection
+        for user using old links.
         """
-        actives = _get_user_children("active")
-        terminated = _get_user_children("terminated") - actives
-
-        display_state = True
-        # User can choose among groups if none of the two is empty
-        if len(actives) == 0 or len(terminated) == 0:
-            display_state = False
-
-        # We get the children group that we want to display
-        if state == "active" and len(actives) > 0:
-            children = actives
-        else:
-            children = terminated
-            state = "terminated"
-
-        # No sponsor children
-        if len(children) == 0:
-            return request.render("my_compassion.sponsor_a_child", {})
-
-        # No child is selected, we pick the first one by default
-        if not child_id:
-            return request.redirect(f"/my/children?child_id={children[0].id}")
-
-        # A child is selected
-        child = children.filtered(lambda c: c.id == int(child_id))
-
-        # The user does not sponsor this child_id
-        if not child:
-            return request.redirect(
-                f"/my/children?state={state}&child_id={children[0].id}"
-            )
-
-        # This child is sponsored by this user and is selected
-        partner = request.env.user.partner_id
-        correspondence_obj = request.env["correspondence"]
-        correspondent = partner
-
-        if partner.portal_sponsorships == "all_info":
-            correspondent |= child.sponsorship_ids.filtered(
-                lambda x: x.is_active
-            ).mapped("correspondent_id")
-            correspondence_obj = correspondence_obj.sudo()
-
-        letters = correspondence_obj.search(
-            [
-                ("partner_id", "in", correspondent.ids),
-                ("child_id", "=", int(child_id)),
-                "|",
-                "&",
-                ("direction", "=", "Supporter To Beneficiary"),
-                ("state", "!=", "Quality check unsuccessful"),
-                "&",
-                "&",
-                ("state", "=", "Published to Global Partner"),
-                ("letter_image", "!=", False),
-                "|",
-                ("communication_id", "=", False),
-                ("sent_date", "!=", False),
-            ],
-            order="scanned_date DESC",
-        )
-        gift_categ = request.env.ref("sponsorship_compassion.product_category_gift")
-        lines = (
-            request.env["account.move.line"]
-            .sudo()
-            .search(
-                [
-                    ("partner_id", "=", partner.id),
-                    ("payment_state", "=", "paid"),
-                    ("contract_id.child_id", "=", child.id),
-                    ("product_id.categ_id", "=", gift_categ.id),
-                    ("price_total", "!=", 0),
-                ]
-            )
-        )
-        request.session["child_id"] = child.id
-
-        wordpress = (
-            request.env["wordpress.configuration"].sudo().get_config(raise_error=False)
-        )
-        partner_profile_info = {
-            "child_ref": child.local_id,
-            "pname": partner.firstname + " " + partner.lastname,
-            "pstreet": partner.street,
-            "pzip": partner.zip,
-            "pcity": partner.city,
-            "pcountry": partner.country_id.name,
-            "email": partner.email,
-            # Add any other fields you want to prefill in the form
-        }
-        # Construct query string with user profile info
-        query_string = urlencode(partner_profile_info)
-        url_child_gift = (
-            (f"https://{wordpress.host}{wordpress.child_gift_url}?{query_string}")
-            if wordpress and partner_profile_info
-            else "#"
-        )
-
-        context = {
-            "child_id": child,
-            "children": children,
-            "letters": letters,
-            "lines": lines,
-            "state": state,
-            "display_state": display_state,
-            "url_child_gift": url_child_gift,
-        }
-        return request.render("my_compassion.my_children_page_template", context)
+        if child_id:
+            return request.redirect(f"/my2/children/{child_id}")
+        return request.redirect("/my2/children")
 
     @route(
         [
@@ -439,110 +297,22 @@ class MyAccountController(CustomerPortal):
         auth="user",
         website=True,
     )
-    def my_donations(self, invoice_page=1, invoice_per_page=12, **kw):
+    def redirect_old_my_donations(self, invoice_page=1, invoice_per_page=12, **kw):
         """
-        The route to the donations and invoicing page
-        :param invoice_page: index of the invoice pagination
-        :param invoice_per_page: the number of invoices to display per page
-        :param form_id: the id of the filled form or None
-        :param kw: additional optional arguments
-        :return: a redirection to a webpage
+        This is a dead route of MyCompassion 1.0
+        From MyCompassion 2.0, we ensured a proper redirection
+        for user using old links.
         """
-        partner = request.env.user.partner_id
-
-        invoice_search_criteria = [
-            ("partner_id", "=", partner.id),
-            ("payment_state", "=", "paid"),
-            ("move_type", "=", "out_invoice"),
-            ("amount_total", "!=", 0),
-        ]
-
-        move_obj = request.env["account.move"].sudo()
-        # invoice to show for the given pagination index
-        all_invoices = move_obj.read_group(
-            invoice_search_criteria,
-            ["amount_total"],
-            ["last_payment:day"],
-            orderby="last_payment desc",
-            limit=HISTORY_LIMIT,
-        )
-        offset = (invoice_page - 1) * invoice_per_page
-        invoices_per_day = all_invoices[offset : offset + invoice_per_page]
-        for invoice_group in invoices_per_day:
-            # Agrement data for displaying all invoices
-            invoices = move_obj.search(invoice_group["__domain"])
-            invoice_group["description"] = invoices.get_my_account_display_name()
-            invoice_group["last_payment"] = invoices[0].get_date(
-                "last_payment", "d MMM yyyy"
-            )
-            invoice_group["amount"] = (
-                f"{int(invoice_group['amount_total']):,d} "
-                f"{invoices[0].currency_id.name}"
-            )
-
-        in_one_month = datetime.today() + timedelta(days=30)
-        due_invoices = move_obj.search(
-            [
-                ("partner_id", "=", partner.id),
-                ("payment_state", "=", "not_paid"),
-                ("invoice_category", "=", "sponsorship"),
-                ("move_type", "=", "out_invoice"),
-                ("state", "=", "posted"),
-                ("amount_total", "!=", 0),
-                ("invoice_date", "<", fields.Date.to_string(in_one_month)),
-            ]
-        )
-
-        active_sponsorships = _get_sponsorships(partner, state="active")
-        currency = active_sponsorships.mapped("pricelist_id.currency_id")[:1].name
-
-        # Dict of groups mapped to their sponsorships, and total amount
-        # {group: (<sponsorships recordset>, total_amount string), ...}
-        sponsorships_by_group = {}
-        for g in active_sponsorships.mapped("group_id"):
-            sponsorships = active_sponsorships.filtered(lambda s, g=g: s.group_id == g)
-            total = int(sum(sponsorships.mapped("total_amount")))
-            sponsorships_by_group[g] = (sponsorships, f"{total:,d} {currency}")
-
-        values = self._prepare_portal_layout_values()
-        pager = request.website.pager(
-            url=request.httprequest.path.partition("/page/")[0],
-            total=len(all_invoices),
-            page=invoice_page,
-            step=invoice_per_page,
-            url_args=kw,
-        )
-        values.update(
-            {
-                "partner": partner,
-                "sponsorships_by_group": sponsorships_by_group,
-                "invoices_per_day": invoices_per_day,
-                "pager": pager,
-                "due_invoices": due_invoices,
-            }
-        )
-        return request.render("my_compassion.my_donations_page_template", values)
+        return request.redirect("/my2/donations")
 
     @route("/my/information", type="http", auth="user", website=True)
-    def my_information(self, form_id=None, privacy_policy=None, **kw):
+    def redirect_old_my_information(self, form_id=None, privacy_policy=None, **kw):
         """
-        The route to display the information about the partner
-        :param form_id: the form that has been filled or None
-        :param kw: the additional optional arguments
-        :return: a redirection to a webpage
+        This is a dead route of MyCompassion 1.0
+        From MyCompassion 2.0, we ensured a proper redirection
+        for user using old links.
         """
-        partner = request.env.user.partner_id
-        values = self._prepare_portal_layout_values()
-        values.update(
-            {
-                "partner": partner,
-            }
-        )
-
-        if privacy_policy == "accepted" and not partner.legal_agreement_date:
-            partner.legal_agreement_date = datetime.now()
-
-        return request.render("my_compassion.my_information_page_template", values)
+        return request.redirect("/my2/user_settings")
 
     @route("/my/download/<source>", type="http", auth="user", website=True)
     def download_file(self, source, **kw):
