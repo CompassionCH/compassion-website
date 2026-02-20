@@ -1,49 +1,48 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-
     <template id="http_error_custom">
         <div id="wrap" class="d-flex justify-content-center align-items-center min-vh-100 p-3">
             <div class="d-flex flex-column flex-md-row align-items-center text-center text-md-start">
                 <!-- Icône -->
                 <div class="mb-4 mb-md-0">
-                    <i class="pictogram-critical-needs fa-8x fa-md-10x text-dark-blue"/>
+                    <i class="pictogram-critical-needs fa-8x fa-md-10x text-dark-blue" />
                 </div>
-
                 <!-- Texte et boutons -->
-                <div class="ms-md-4 d-flex flex-column align-items-center align-items-md-start text-center text-md-start">
-
+                <div
+                    class="ms-md-4 d-flex flex-column align-items-center align-items-md-start text-center text-md-start"
+                >
                     <h2 class="mb-3 text-core-blue">
-                        <t t-esc="error_code"/>
+                        <t t-esc="error_code" />
                         -
-                        <t t-esc="error_name"/>
+                        <t t-esc="error_name" />
                     </h2>
                     <p class="lead">
-                        <t t-esc="'An unexpected error occurred.'"/>
+                        <t t-esc="'An unexpected error occurred.'" />
                     </p>
                     <p class="lead">
-                        <t t-esc="'Don\'t panic. If you think this is our mistake, please send us a message on this page.'"/>
+                        <t
+                            t-esc="'Don\'t panic. If you think this is our mistake, please send us a message on this page.'"
+                        />
                     </p>
-
                     <div class="mt-4 d-flex">
                         <div class="mr-3">
                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                <t t-set="variant" t-value="'default'"/>
-                                <t t-set="variation" t-value="'filled'"/>
+                                <t t-set="variant" t-value="'default'" />
+                                <t t-set="variation" t-value="'filled'" />
                                 <t t-set="label">Home</t>
-                                <t t-set="color" t-value="'dark-blue'"/>
-                                <t t-set="text_color" t-value="'pure_white'"/>
-                                <t t-set="data_custom" t-value="'dashboard'"/>
+                                <t t-set="color" t-value="'dark-blue'" />
+                                <t t-set="text_color" t-value="'pure_white'" />
+                                <t t-set="data_custom" t-value="'dashboard'" />
                             </t>
                         </div>
-
                         <div>
                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                <t t-set="variant" t-value="'default'"/>
-                                <t t-set="variation" t-value="'hollow'"/>
+                                <t t-set="variant" t-value="'default'" />
+                                <t t-set="variation" t-value="'hollow'" />
                                 <t t-set="label">Contact us</t>
-                                <t t-set="color" t-value="'dark-blue'"/>
-                                <t t-set="text_color" t-value="'pure_white'"/>
-                                <t t-set="data_custom" t-value="'contact_us'"/>
+                                <t t-set="color" t-value="'dark-blue'" />
+                                <t t-set="text_color" t-value="'pure_white'" />
+                                <t t-set="data_custom" t-value="'contact_us'" />
                             </t>
                         </div>
                     </div>
@@ -58,7 +57,7 @@
         </xpath>
         <xpath expr="//div[@id='wrap']" position="after">
             <t t-call="my_compassion.http_error_custom">
-                <t t-set="error_code" t-value="'404'"/>
+                <t t-set="error_code" t-value="'404'" />
                 <t t-set="error_name">Page Not Found</t>
                 <t t-set="error_message">We couldn't find the page you were looking for!</t>
             </t>
@@ -66,7 +65,7 @@
     </template>
     <template id="assets_frontend" inherit_id="web.assets_frontend">
         <xpath expr="." position="inside">
-            <script type="text/javascript" t-att-src="'/my_compassion/static/src/js/error_page_redirect.js'"/>
+            <script type="text/javascript" t-att-src="'/my_compassion/static/src/js/error_page_redirect.js'" />
         </xpath>
     </template>
 </odoo>
