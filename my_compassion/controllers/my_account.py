@@ -160,7 +160,7 @@ def _download_image(child_id, obj_id):
 
 class MyAccountController(CustomerPortal):
     @route(
-        "/my/login/<partner_uuid>/<redirect_page>",
+        "/my/login/<partner_uuid>/<path:redirect_page>",
         type="http",
         auth="public",
         website=True,
