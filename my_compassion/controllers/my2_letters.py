@@ -449,6 +449,9 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         if generator.generation_status == "failed":
             return {"error": generator.generation_error_message}
 
+        if post.get("mode") == "preview" and generator.generation_status != "failed":
+            generator.write({"generation_status": "done"})
+
         return {
             "preview_url": f"{request.httprequest.host_url}web/image"
             f"/{generator._name}/{generator.id}/preview_pdf",
