@@ -110,8 +110,8 @@
             t-if="len(order.order_line) &gt;= 1"
             class="mt-5 w-100 bg-light-green d-flex justify-content-between"
         >
-            <div class="text-low-green body-large bold">Total amount</div>
-            <div class="text-low-green body-large bold d-flex align-items-center m-0">
+            <div class="text-off-black body-large bold">Total amount</div>
+            <div class="text-off-black body-large bold d-flex align-items-center m-0">
                 <t t-set="amount" t-value="order.amount_total" />
                 <t t-esc="order.currency_id.name" />
                 <t t-if="amount % 1 == 0" t-esc="int(amount)" />
