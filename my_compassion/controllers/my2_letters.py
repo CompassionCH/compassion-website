@@ -444,12 +444,10 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             # Run a preview to check if the letter's length is acceptable
             generator.preview()
             if generator.generation_status != "failed":
-                generator.isolated_write({"generation_status": "finalizing"})
+                generator.write({"generation_status": "finalizing"})
                 generator.generate_letters_job()
         if generator.generation_status == "failed":
             return {"error": generator.generation_error_message}
-
-        generator.isolated_write({"generation_status": "done"})
 
         return {
             "preview_url": f"{request.httprequest.host_url}web/image"
