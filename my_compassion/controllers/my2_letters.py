@@ -403,15 +403,16 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
     )
     def my2_launch_letter_generation(self, **post):
         """
-        Handles the launch of the letter generation process for a specific child.
+        Triggers async letter generation and returns immediately.
+        The frontend polls /my2/children/letters/status for progress and result.
+
         Args:
             post (dict): A dictionary containing the following keys:
-                - "child_id" (int): The ID of the child to whom the letter is generated.
                 - "generator_id" (int): The ID of the letter generator instance.
+                - "mode" (str): Either "preview" or "send".
 
         Returns:
             dict: A dictionary containing:
-                - "preview_url" (str): The URL to preview the generated letter PDF.
                 - "generator_id" (int): The ID of the letter generator instance.
 
         Raises:
@@ -437,26 +438,21 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 )
             }
 
+        # Run generation asynchronously to avoid locking the generator row in the
+        # HTTP request's transaction. Mixing isolated_write (for intermediate status
+        # updates) with a regular write on the same row within one transaction causes
+        # a self-referential deadlock (T1 waits for isolated T2, T2 waits for T1's
+        # row lock). Running in a background job gives each step its own cursor.
         if post.get("mode") == "preview":
-            generator.preview()
-
+            generator.with_delay().preview()
         elif post.get("mode") == "send":
-            # Run a preview to check if the letter's length is acceptable
-            generator.preview()
-            if generator.generation_status != "failed":
-                generator.write({"generation_status": "finalizing"})
-                generator.generate_letters_job()
-        if generator.generation_status == "failed":
-            return {"error": generator.generation_error_message}
+            # generate_letters() sets generation_status="finalizing" then enqueues
+            # generate_letters_job() via with_delay() internally.
+            generator.generate_letters()
 
-        if post.get("mode") == "preview" and generator.generation_status != "failed":
-            generator.write({"generation_status": "done"})
-
-        return {
-            "preview_url": f"{request.httprequest.host_url}web/image"
-            f"/{generator._name}/{generator.id}/preview_pdf",
-            "generator_id": generator.id,
-        }
+        # Return immediately. The client must poll /my2/children/letters/status
+        # to track progress and obtain the preview_url once generation is done.
+        return {"generator_id": generator.id, "status": "processing"}
 
     @http.route(
         "/my2/children/letters/status",
