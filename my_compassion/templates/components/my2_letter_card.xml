@@ -67,7 +67,7 @@
                     <!-- Dots button & dropdown menu -->
                     <div class="dropdown">
                         <button
-                            t-attf-class="btn btn-link p-0 border-0 {{'blue' if letter.direction != 'Supporter To Beneficiary' else 'green'}}"
+                            t-attf-class="btn btn-link p-0 border-0 {{'text-low-blue' if letter.direction != 'Supporter To Beneficiary' else 'text-low-green'}}"
                             type="button"
                             t-att-id="'dropdownMenuButton' + str(letter.id)"
                             data-toggle="dropdown"

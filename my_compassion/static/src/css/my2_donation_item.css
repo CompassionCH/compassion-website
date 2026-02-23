@@ -2,8 +2,6 @@
     container-type: inline-size;
     container-name: donation-item-container;
     font-size: 18px;
-    border-radius: 25px;
-    padding: 10px 15px;
 }
 
 .donation-item-container .thumbnail {
@@ -17,6 +15,8 @@
 
 .donation-item-container .action-button {
     cursor: pointer;
+    position: relative;
+    z-index: 1;
 }
 
 .donation-item-container .action-button:hover span {

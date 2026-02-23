@@ -47,12 +47,11 @@
             t-set="onclick"
             t-valuef="event.stopPropagation(); this.dispatchEvent(new CustomEvent('#{button.get('custom_event')}', {bubbles: true, detail: #{button.get('detail')}}))"
         />
-        <div t-attf-class="action-button #{button_top_class}" t-att-onclick="onclick" style="z-index: 2;">
+        <div t-attf-class="action-button #{button_top_class}" t-att-onclick="onclick">
             <i
                 t-if="button.get('icon')"
-                t-attf-class="{{'' if large_icon else 'tiny-tex'}} icon-#{button.get('icon')} text-#{color}"
+                t-attf-class="{{'' if large_icon else 'tiny-text'}} icon-#{button.get('icon')} text-#{color}"
             />
-            <i t-if="button.get('pictogram')" t-attf-class="tiny-text #{button.get('pictogram')} text-#{color}" />
             <span
                 t-if="button.get('label')"
                 t-attf-class="tiny-text {{'font-italic' if large_icon else ''}} bold text-#{color}"
@@ -86,7 +85,7 @@
         <t t-set="redirect_label" t-value="redirect_label or ''" />
         <!-- Donation item container -->
         <div
-            t-attf-class="donation-item-container d-flex bg-#{bg_color} border-#{accent_color} #{top_class} position-relative"
+            t-attf-class="donation-item-container d-flex bg-#{bg_color} border-#{accent_color} #{top_class} position-relative rounded-pill padding-pill"
             t-attf-style="min-width: #{min_width}"
         >
             <t t-if="redirect_link">
@@ -155,13 +154,16 @@
             t-set="image"
             t-value="website.image_url(pt, 'my_compassion_image') if is_csp else '/web/image/compassion.child/%s/portrait' % sponsorship.child_id.id"
         />
-        <!--        <t t-set="pictogram" t-value="(pt.my_compassion_pictogram.class_name or 'pictogram-gift-donation-general') if is_csp else 'pictogram-child-sponsorship'"/>-->
+        <t
+            t-set="pictogram"
+            t-value="(pt.my_compassion_pictogram.class_name or 'pictogram-gift-donation-general') if is_csp else 'pictogram-child-sponsorship'"
+        />
         <t t-set="href" t-value="'/my2/gifts/%s' % pt.id if is_csp else '/my2/children/%s' % sponsorship.child_id.id" />
         <!-- donations page or child profile page -->
         <t t-call="my_compassion.DonationItemComponent">
             <t t-set="image_fallback_pictogram" t-value="pictogram" />
             <t t-set="name" t-value="name" />
-            <t t-set="image" t-value="image" />
+            <t t-set="image" t-value="image if not is_csp else ''" />
             <t t-set="subtext" t-value="sponsorship.payment_mode_id.display_name" />
             <t t-set="price" t-value="sponsorship.total_amount" />
             <t

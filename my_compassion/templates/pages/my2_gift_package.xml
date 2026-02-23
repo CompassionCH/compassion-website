@@ -106,9 +106,8 @@
         </div>
         <!-- TOTAL AMOUNT -->
         <div
-            id="gifts-total-container"
             t-if="len(order.order_line) &gt;= 1"
-            class="mt-5 w-100 bg-light-green d-flex justify-content-between"
+            class="mt-5 w-100 bg-light-green d-flex justify-content-between rounded-pill padding-pill"
         >
             <div class="text-off-black body-large bold">Total amount</div>
             <div class="text-off-black body-large bold d-flex align-items-center m-0">
