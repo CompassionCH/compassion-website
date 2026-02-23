@@ -19,8 +19,9 @@
         <t t-set="show_sponsor_me" t-value="show_sponsor_me or False" />
         <t t-set="sponsorship_type" t-value="sponsorship_type or 'standard'" />
         <t t-set="show_status" t-value="not show_status == False" />
-        <div class="children-card text-center mb-3 mt-3">
-            <div class="p-4 d-flex flex-column align-items-center bg-low-eggshell">
+        <div class="children-card text-center mb-3 mt-3" >
+            <div class="p-4 d-flex flex-column align-items-center bg-low-eggshell position-relative">
+                <a t-attf-href="/my2/children/{{child.id}}" class="stretched-link" aria-label="Child profile"></a>
                 <!-- Child Image -->
                 <img
                     class="rounded-circle img-fluid mb-2"
