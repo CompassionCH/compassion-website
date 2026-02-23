@@ -37,17 +37,26 @@
     <!-- DONATION ITEM BUTTON -->
     <template id="DonationItemButton" name="Donation Item Button">
         <t t-set="color" t-value="button.get('color') or 'dark-blue'" />
-        <t t-if="button.get('action') == 'link'"
-           t-set="onclick"
-           t-valuef="event.stopPropagation(); location.href='#{button.get('href')}'" />
-        <t t-elif="button.get('action') == 'event'"
-           t-set="onclick"
-           t-valuef="event.stopPropagation(); this.dispatchEvent(new CustomEvent('#{button.get('custom_event')}', {bubbles: true, detail: #{button.get('detail')}}))"
+        <t
+            t-if="button.get('action') == 'link'"
+            t-set="onclick"
+            t-valuef="event.stopPropagation(); location.href='#{button.get('href')}'"
+        />
+        <t
+            t-elif="button.get('action') == 'event'"
+            t-set="onclick"
+            t-valuef="event.stopPropagation(); this.dispatchEvent(new CustomEvent('#{button.get('custom_event')}', {bubbles: true, detail: #{button.get('detail')}}))"
         />
         <div t-attf-class="action-button #{button_top_class}" t-att-onclick="onclick" style="z-index: 2;">
-            <i t-if="button.get('icon')" t-attf-class="{{'' if large_icon else 'tiny-tex'}} icon-#{button.get('icon')} text-#{color}" />
+            <i
+                t-if="button.get('icon')"
+                t-attf-class="{{'' if large_icon else 'tiny-tex'}} icon-#{button.get('icon')} text-#{color}"
+            />
             <i t-if="button.get('pictogram')" t-attf-class="tiny-text #{button.get('pictogram')} text-#{color}" />
-            <span t-if="button.get('label')" t-attf-class="tiny-text {{'font-italic' if large_icon else ''}} bold text-#{color}">
+            <span
+                t-if="button.get('label')"
+                t-attf-class="tiny-text {{'font-italic' if large_icon else ''}} bold text-#{color}"
+            >
                 <t t-esc="button.get('label')" />
             </span>
         </div>
@@ -81,7 +90,7 @@
             t-attf-style="min-width: #{min_width}"
         >
             <t t-if="redirect_link">
-                <a t-attf-href="{{redirect_link}}" class="stretched-link" t-attf-aria-label="{{redirect_label}}"></a>
+                <a t-attf-href="{{redirect_link}}" class="stretched-link" t-attf-aria-label="{{redirect_label}}" />
             </t>
             <div
                 t-attf-class="thumbnail responsive-lg mr-3 flex-shrink-0 rounded-lg #{not image and image_fallback_pictogram or ''}"
@@ -134,129 +143,139 @@
         </div>
     </template>
     <template id="SponsorshipDonationItem" name="Sponsorship Donation Item">
-        <t t-set="is_csp" t-value="sponsorship.type == 'CSP'"/> <!-- is Compassion Survival Program ? -->
-        <t t-set="pt" t-value="is_csp and sponsorship.contract_line_ids[:1].product_id.product_tmpl_id"/> <!-- product template -->
-        <t t-set="name" t-value="pt.my_compassion_name or pt.thanks_name or 'Compassion survival program' if is_csp else sponsorship.child_id.preferred_name"/>
-        <t t-set="image" t-value="website.image_url(pt, 'my_compassion_image') if is_csp else '/web/image/compassion.child/%s/portrait' % sponsorship.child_id.id"/>
-<!--        <t t-set="pictogram" t-value="(pt.my_compassion_pictogram.class_name or 'pictogram-gift-donation-general') if is_csp else 'pictogram-child-sponsorship'"/>-->
-        <t t-set="href" t-value="'/my2/gifts/%s' % pt.id if is_csp else '/my2/children/%s' % sponsorship.child_id.id"/> <!-- donations page or child profile page -->
-
+        <t t-set="is_csp" t-value="sponsorship.type == 'CSP'" />
+        <!-- is Compassion Survival Program ? -->
+        <t t-set="pt" t-value="is_csp and sponsorship.contract_line_ids[:1].product_id.product_tmpl_id" />
+        <!-- product template -->
+        <t
+            t-set="name"
+            t-value="pt.my_compassion_name or pt.thanks_name or 'Compassion survival program' if is_csp else sponsorship.child_id.preferred_name"
+        />
+        <t
+            t-set="image"
+            t-value="website.image_url(pt, 'my_compassion_image') if is_csp else '/web/image/compassion.child/%s/portrait' % sponsorship.child_id.id"
+        />
+        <!--        <t t-set="pictogram" t-value="(pt.my_compassion_pictogram.class_name or 'pictogram-gift-donation-general') if is_csp else 'pictogram-child-sponsorship'"/>-->
+        <t t-set="href" t-value="'/my2/gifts/%s' % pt.id if is_csp else '/my2/children/%s' % sponsorship.child_id.id" />
+        <!-- donations page or child profile page -->
         <t t-call="my_compassion.DonationItemComponent">
-            <t t-set="image_fallback_pictogram" t-value="pictogram"/>
+            <t t-set="image_fallback_pictogram" t-value="pictogram" />
             <t t-set="name" t-value="name" />
             <t t-set="image" t-value="image" />
             <t t-set="subtext" t-value="sponsorship.payment_mode_id.display_name" />
             <t t-set="price" t-value="sponsorship.total_amount" />
-
-            <t t-set="secondary_buttons" t-value="[{
+            <t
+                t-set="secondary_buttons"
+                t-value="[{
                 'icon': 'download01',
                 'color': 'low-blue',
                 'action': 'link',
                 'href': ('/my/download/csp_bvr?csp_id=%s' % sponsorship.id) if is_csp else ('/my/download/gift_bvr?child_id=%s' % sponsorship.child_id.id),
-            }]"/>
-
-            <t t-set="monthly_noabbr" t-value="True"/>
-            <t t-set="bg_color" t-value="'light-blue'"/>
-            <t t-set="accent_color" t-value="'low-blue'"/>
-            <t t-set="title_color" t-value="'low-blue'"/>
-            <t t-set="price_color" t-value="'low-blue'"/>
+            }]"
+            />
+            <t t-set="monthly_noabbr" t-value="True" />
+            <t t-set="bg_color" t-value="'light-blue'" />
+            <t t-set="accent_color" t-value="'low-blue'" />
+            <t t-set="title_color" t-value="'low-blue'" />
+            <t t-set="price_color" t-value="'low-blue'" />
             <t t-set="large_icon" t-value="True" />
-
             <t t-if="not is_csp">
-                <t t-set="primary_button" t-value="{
+                <t
+                    t-set="primary_button"
+                    t-value="{
                 'label': 'Click to see profile',
                 'pictogram': pictogram,
                 'action': 'link',
                 'href': href,
                 'color': 'low-blue'
-                }" />
-                <t t-set="redirect_link" t-value="href"/>
-                <t t-set="redirect_label" t-value="'See child profile'"/>
+                }"
+                />
+                <t t-set="redirect_link" t-value="href" />
+                <t t-set="redirect_label" t-value="'See child profile'" />
             </t>
         </t>
-
-<!--        <t t-set="label_see_profile">See profile</t>-->
-<!--        <t t-set="label_see_more">See more</t>-->
-<!--        <t t-set="redirect_link" t-value="''" />-->
-<!--        <t t-if="sponsorship.type == 'CSP'">-->
-<!--            <t t-set="product_template" t-value="sponsorship.contract_line_ids[:1].product_id.product_tmpl_id" />-->
-<!--            <t t-if="product_template">-->
-<!--                <t t-set="csp_my_compassion_name" t-value="product_template.my_compassion_name" />-->
-<!--                <t t-set="csp_thanks_name" t-value="product_template.thanks_name" />-->
-<!--                <t t-set="csp_default_name">Compassion survival program</t>-->
-<!--                <t t-set="displayed_title" t-value="csp_my_compassion_name or csp_thanks_name or csp_default_name" />-->
-<!--                <t-->
-<!--                    t-set="image_fallback_pictogram"-->
-<!--                    t-value="product_template.my_compassion_pictogram.class_name or 'pictogram-gift-donation-general'"-->
-<!--                />-->
-<!--                <t t-if="product_template.is_published">-->
-<!--                    <t t-set="displayed_image" t-value="website.image_url(product_template, 'my_compassion_image')" />-->
-<!--                    <t t-set="redirect_link" t-value="'/my2/gifts/' + str(product_template.id)" />-->
-<!--                    <t-->
-<!--                        t-set="primary_button_data"-->
-<!--                        t-value="{-->
-<!--                'label': label_see_more,-->
-<!--                'pictogram': product_template.my_compassion_pictogram.class_name or 'pictogram-gift-donation-general',-->
-<!--                'action': 'link',-->
-<!--                'href': redirect_link,-->
-<!--                'color': 'low-blue'-->
-<!--            }"-->
-<!--                    />-->
-<!--                </t>-->
-<!--                <t-->
-<!--                    t-set="secondary_buttons_data"-->
-<!--                    t-value="[-->
-<!--                {-->
-<!--                    'icon': 'download01',-->
-<!--                    'color': 'low-blue',-->
-<!--                    'action': 'link',-->
-<!--                    'href': '/my/download/csp_bvr?csp_id=' + str(sponsorship.id),-->
-<!--                }-->
-<!--            ]"-->
-<!--                />-->
-<!--            </t>-->
-<!--        </t>-->
-<!--        <t t-else="">-->
-<!--            <t t-set="image_fallback_pictogram" t-value="'pictogram-child-sponsorship'" />-->
-<!--            <t t-set="displayed_title" t-value="sponsorship.child_id.preferred_name" />-->
-<!--            <t t-set="displayed_image" t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait" />-->
-<!--            <t-->
-<!--                t-set="primary_button_data"-->
-<!--                t-value="{-->
-<!--            'label': label_see_profile,-->
-<!--            'pictogram': 'pictogram-child-sponsorship',-->
-<!--            'action': 'link',-->
-<!--            'href': '/my2/children/' + str(sponsorship.child_id.id),-->
-<!--            'color': 'low-blue'-->
-<!--        }"-->
-<!--            />-->
-<!--            <t-->
-<!--                t-set="secondary_buttons_data"-->
-<!--                t-value="[-->
-<!--            {-->
-<!--                'icon': 'download01',-->
-<!--                'color': 'low-blue',-->
-<!--                'action': 'link',-->
-<!--                'href': '/my/download/gift_bvr?child_id=' + str(sponsorship.child_id.id),-->
-<!--            }-->
-<!--        ]"-->
-<!--            />-->
-<!--        </t>-->
-<!--        <t t-call="my_compassion.DonationItemComponent">-->
-<!--            <t t-set="image_fallback_pictogram" t-value="image_fallback_pictogram" />-->
-<!--            <t t-set="name" t-value="displayed_title" />-->
-<!--            <t t-set="image" t-value="displayed_image" />-->
-<!--            <t t-set="subtext" t-value="sponsorship.payment_mode_id.display_name" />-->
-<!--            <t t-set="price" t-value="sponsorship.total_amount" />-->
-<!--            <t t-set="primary_button" t-value="primary_button_data" />-->
-<!--            <t t-set="secondary_buttons" t-value="secondary_buttons_data" />-->
-<!--            <t t-set="monthly_noabbr" t-value="True" />-->
-<!--            <t t-set="bg_color" t-value="'light-blue'" />-->
-<!--            <t t-set="accent_color" t-value="'low-blue'" />-->
-<!--            <t t-set="title_color" t-value="'low-blue'" />-->
-<!--            <t t-set="price_color" t-value="'low-blue'" />-->
-<!--            <t t-set="redirect_link" t-value="'/my2/children/' + str(sponsorship.child_id.id)"/>-->
-<!--            <t t-set="redirect_label" t-value="'See child profile'" />-->
-<!--        </t>-->
+        <!--        <t t-set="label_see_profile">See profile</t>-->
+        <!--        <t t-set="label_see_more">See more</t>-->
+        <!--        <t t-set="redirect_link" t-value="''" />-->
+        <!--        <t t-if="sponsorship.type == 'CSP'">-->
+        <!--            <t t-set="product_template" t-value="sponsorship.contract_line_ids[:1].product_id.product_tmpl_id" />-->
+        <!--            <t t-if="product_template">-->
+        <!--                <t t-set="csp_my_compassion_name" t-value="product_template.my_compassion_name" />-->
+        <!--                <t t-set="csp_thanks_name" t-value="product_template.thanks_name" />-->
+        <!--                <t t-set="csp_default_name">Compassion survival program</t>-->
+        <!--                <t t-set="displayed_title" t-value="csp_my_compassion_name or csp_thanks_name or csp_default_name" />-->
+        <!--                <t-->
+        <!--                    t-set="image_fallback_pictogram"-->
+        <!--                    t-value="product_template.my_compassion_pictogram.class_name or 'pictogram-gift-donation-general'"-->
+        <!--                />-->
+        <!--                <t t-if="product_template.is_published">-->
+        <!--                    <t t-set="displayed_image" t-value="website.image_url(product_template, 'my_compassion_image')" />-->
+        <!--                    <t t-set="redirect_link" t-value="'/my2/gifts/' + str(product_template.id)" />-->
+        <!--                    <t-->
+        <!--                        t-set="primary_button_data"-->
+        <!--                        t-value="{-->
+        <!--                'label': label_see_more,-->
+        <!--                'pictogram': product_template.my_compassion_pictogram.class_name or 'pictogram-gift-donation-general',-->
+        <!--                'action': 'link',-->
+        <!--                'href': redirect_link,-->
+        <!--                'color': 'low-blue'-->
+        <!--            }"-->
+        <!--                    />-->
+        <!--                </t>-->
+        <!--                <t-->
+        <!--                    t-set="secondary_buttons_data"-->
+        <!--                    t-value="[-->
+        <!--                {-->
+        <!--                    'icon': 'download01',-->
+        <!--                    'color': 'low-blue',-->
+        <!--                    'action': 'link',-->
+        <!--                    'href': '/my/download/csp_bvr?csp_id=' + str(sponsorship.id),-->
+        <!--                }-->
+        <!--            ]"-->
+        <!--                />-->
+        <!--            </t>-->
+        <!--        </t>-->
+        <!--        <t t-else="">-->
+        <!--            <t t-set="image_fallback_pictogram" t-value="'pictogram-child-sponsorship'" />-->
+        <!--            <t t-set="displayed_title" t-value="sponsorship.child_id.preferred_name" />-->
+        <!--            <t t-set="displayed_image" t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait" />-->
+        <!--            <t-->
+        <!--                t-set="primary_button_data"-->
+        <!--                t-value="{-->
+        <!--            'label': label_see_profile,-->
+        <!--            'pictogram': 'pictogram-child-sponsorship',-->
+        <!--            'action': 'link',-->
+        <!--            'href': '/my2/children/' + str(sponsorship.child_id.id),-->
+        <!--            'color': 'low-blue'-->
+        <!--        }"-->
+        <!--            />-->
+        <!--            <t-->
+        <!--                t-set="secondary_buttons_data"-->
+        <!--                t-value="[-->
+        <!--            {-->
+        <!--                'icon': 'download01',-->
+        <!--                'color': 'low-blue',-->
+        <!--                'action': 'link',-->
+        <!--                'href': '/my/download/gift_bvr?child_id=' + str(sponsorship.child_id.id),-->
+        <!--            }-->
+        <!--        ]"-->
+        <!--            />-->
+        <!--        </t>-->
+        <!--        <t t-call="my_compassion.DonationItemComponent">-->
+        <!--            <t t-set="image_fallback_pictogram" t-value="image_fallback_pictogram" />-->
+        <!--            <t t-set="name" t-value="displayed_title" />-->
+        <!--            <t t-set="image" t-value="displayed_image" />-->
+        <!--            <t t-set="subtext" t-value="sponsorship.payment_mode_id.display_name" />-->
+        <!--            <t t-set="price" t-value="sponsorship.total_amount" />-->
+        <!--            <t t-set="primary_button" t-value="primary_button_data" />-->
+        <!--            <t t-set="secondary_buttons" t-value="secondary_buttons_data" />-->
+        <!--            <t t-set="monthly_noabbr" t-value="True" />-->
+        <!--            <t t-set="bg_color" t-value="'light-blue'" />-->
+        <!--            <t t-set="accent_color" t-value="'low-blue'" />-->
+        <!--            <t t-set="title_color" t-value="'low-blue'" />-->
+        <!--            <t t-set="price_color" t-value="'low-blue'" />-->
+        <!--            <t t-set="redirect_link" t-value="'/my2/children/' + str(sponsorship.child_id.id)"/>-->
+        <!--            <t t-set="redirect_label" t-value="'See child profile'" />-->
+        <!--        </t>-->
     </template>
 </odoo>

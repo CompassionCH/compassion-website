@@ -36,7 +36,9 @@
 <odoo>
     <template id="ThemedButtonComponent_Content" name="Button Content">
         <t t-if="icon">
-            <span t-attf-class="btn__icon #{'btn__icon--' + variant if label else ''} text-#{icon_color} d-flex align-items-center justify-content-center">
+            <span
+                t-attf-class="btn__icon #{'btn__icon--' + variant if label else ''} text-#{icon_color} d-flex align-items-center justify-content-center"
+            >
                 <i t-att-class="icon" />
             </span>
         </t>
