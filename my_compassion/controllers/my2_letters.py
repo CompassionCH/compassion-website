@@ -420,15 +420,16 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
     )
     def my2_launch_letter_generation(self, **post):
         """
-        Handles the launch of the letter generation process for a specific child.
+        Triggers async letter generation and returns immediately.
+        The frontend polls /my2/children/letters/status for progress and result.
+
         Args:
             post (dict): A dictionary containing the following keys:
-                - "child_id" (int): The ID of the child to whom the letter is generated.
                 - "generator_id" (int): The ID of the letter generator instance.
+                - "mode" (str): Either "preview" or "send".
 
         Returns:
             dict: A dictionary containing:
-                - "preview_url" (str): The URL to preview the generated letter PDF.
                 - "generator_id" (int): The ID of the letter generator instance.
 
         Raises:
@@ -456,23 +457,12 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
 
         if post.get("mode") == "preview":
             generator.preview()
-
         elif post.get("mode") == "send":
-            # Run a preview to check if the letter's length is acceptable
-            generator.preview()
-            if generator.generation_status != "failed":
-                generator.isolated_write({"generation_status": "finalizing"})
-                generator.generate_letters_job()
-        if generator.generation_status == "failed":
-            return {"error": generator.generation_error_message}
+            generator.generate_letters()
 
-        generator.isolated_write({"generation_status": "done"})
-
-        return {
-            "preview_url": f"{request.httprequest.host_url}web/image"
-            f"/{generator._name}/{generator.id}/preview_pdf",
-            "generator_id": generator.id,
-        }
+        # Return immediately. The client must poll /my2/children/letters/status
+        # to track progress and obtain the preview_url once generation is done.
+        return {"generator_id": generator.id, "status": "processing"}
 
     @http.route(
         "/my2/children/letters/status",
