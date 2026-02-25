@@ -39,6 +39,7 @@
     ],
     "depends": [
         "my_compassion",
+        "theme_compassion_2025",
         "partner_segmentation",
     ],
     "demo": [],

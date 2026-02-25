@@ -1,0 +1,79 @@
+.o_survey_form .o_survey_question_text_box, .o_survey_form .o_survey_question_date, .o_survey_form .o_survey_question_datetime, .o_survey_form .o_survey_question_numerical_box, .o_survey_print .o_survey_question_text_box, .o_survey_print .o_survey_question_date, .o_survey_print .o_survey_question_datetime, .o_survey_print .o_survey_question_numerical_box, .o_survey_session_manage .o_survey_question_text_box, .o_survey_session_manage .o_survey_question_date, .o_survey_session_manage .o_survey_question_datetime, .o_survey_session_manage .o_survey_question_numerical_box, .o_survey_quick_access .o_survey_question_text_box, .o_survey_quick_access .o_survey_question_date, .o_survey_quick_access .o_survey_question_datetime, .o_survey_quick_access .o_survey_question_numerical_box {
+    border-bottom: 1px solid var(--mid-blue)!important;
+}
+
+.o_survey_form .o_survey_choice_btn, .o_survey_print .o_survey_choice_btn, .o_survey_session_manage .o_survey_choice_btn, .o_survey_quick_access .o_survey_choice_btn {
+    color: var(--mid-blue)!important;
+}
+
+.o_survey_form .o_survey_question_matrix th, .o_survey_session_manage .o_survey_question_matrix th {
+    background-color: var(--mid-blue)!important;
+}
+
+.o_survey_form .o_survey_question_matrix td, .o_survey_session_manage .o_survey_question_matrix td {
+    background-color: var(--high-blue)!important;
+}
+
+.o_survey_form .o_survey_question_matrix td:hover {
+    background-color: var(--high-blue)!important;
+}
+
+.o_survey_matrix_btn.text-primary {
+  color: var(--low-blue)!important;
+}
+
+td.o_survey_matrix_btn {
+    vertical-align: middle !important;
+    text-align: center !important;
+    padding: 0 !important;
+
+    i {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        position: relative;
+        top: 0;
+        left: 0;
+        transform: none;
+    }
+
+    .fa-check-circle {
+        margin-top: -1.2em;
+    }
+}
+
+label.o_survey_choice_btn {
+    border-radius: 25px !important;
+    padding: 10px 15px !important;
+    background-color: var(--light-grey) !important;
+    box-shadow: #000000 0 0 0 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & div {
+        display: none !important;
+    }
+
+    & i {
+        display: none !important;
+    }
+
+    & span {
+        color: var(--off-black) !important;
+        display: flex;
+        text-align: center;
+    }
+}
+
+label.o_survey_choice_btn:hover {
+    background-color: var(--high-blue) !important;
+}
+
+label.o_survey_choice_btn.o_survey_selected {
+    background-color: var(--mid-blue) !important;
+
+    & span {
+        color: var(--pure-white) !important;
+    }
+}
