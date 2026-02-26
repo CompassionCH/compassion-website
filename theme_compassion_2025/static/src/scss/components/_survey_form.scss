@@ -1,27 +1,41 @@
+/* ============================================================================
+   MyCompassion 2025 Theme - Survey Overrides
+   ============================================================================
+   This file overrides the default Odoo 14 Survey module styling to match
+   the MyCompassion 2.0 design system.
+   ============================================================================ */
+
+/* Transforms standard boxed inputs into minimal "bottom-border only" inputs */
 .o_survey_form .o_survey_question_text_box, .o_survey_form .o_survey_question_date, .o_survey_form .o_survey_question_datetime, .o_survey_form .o_survey_question_numerical_box, .o_survey_print .o_survey_question_text_box, .o_survey_print .o_survey_question_date, .o_survey_print .o_survey_question_datetime, .o_survey_print .o_survey_question_numerical_box, .o_survey_session_manage .o_survey_question_text_box, .o_survey_session_manage .o_survey_question_date, .o_survey_session_manage .o_survey_question_datetime, .o_survey_session_manage .o_survey_question_numerical_box, .o_survey_quick_access .o_survey_question_text_box, .o_survey_quick_access .o_survey_question_date, .o_survey_quick_access .o_survey_question_datetime, .o_survey_quick_access .o_survey_question_numerical_box {
     border-bottom: 1px solid var(--mid-blue)!important;
 }
 
+/* Sets the default text color for standard survey choice options. */
 .o_survey_form .o_survey_choice_btn, .o_survey_print .o_survey_choice_btn, .o_survey_session_manage .o_survey_choice_btn, .o_survey_quick_access .o_survey_choice_btn {
     color: var(--mid-blue)!important;
 }
 
+/* Applies the primary theme color to the top row and left column headers. */
 .o_survey_form .o_survey_question_matrix th, .o_survey_session_manage .o_survey_question_matrix th {
     background-color: var(--mid-blue)!important;
 }
 
+/* Sets the default background color for the clickable matrix cells. */
 .o_survey_form .o_survey_question_matrix td, .o_survey_session_manage .o_survey_question_matrix td {
     background-color: var(--high-blue)!important;
 }
 
+/* Overrides table row hover effect. */
 .o_survey_form .o_survey_question_matrix td:hover {
     background-color: var(--high-blue)!important;
 }
 
+/* Forces the active/selected radio icon to use the theme's low-blue. */
 .o_survey_matrix_btn.text-primary {
   color: var(--low-blue)!important;
 }
 
+/* Centers the radio icons within the matrix cells and adjusts the checkmark position. */
 td.o_survey_matrix_btn {
     vertical-align: middle !important;
     text-align: center !important;
@@ -42,6 +56,7 @@ td.o_survey_matrix_btn {
     }
 }
 
+/* Transforms the standard survey choice buttons into pill-shaped options with centered text. */
 label.o_survey_choice_btn {
     border-radius: 25px !important;
     padding: 10px 15px !important;
@@ -51,14 +66,17 @@ label.o_survey_choice_btn {
     justify-content: center;
     align-items: center;
 
+    /* Hides the Odoo selection key letters (A, B, C...) */
     & div {
         display: none !important;
     }
 
+    /* Hides the FontAwesome radio/checkbox icons */
     & i {
         display: none !important;
     }
 
+    /* Centers and styles the actual answer text */
     & span {
         color: var(--off-black) !important;
         display: flex;
@@ -66,14 +84,23 @@ label.o_survey_choice_btn {
     }
 }
 
+/* Adds a subtle visual highlight when a user mouses over an unselected option. */
 label.o_survey_choice_btn:hover {
     background-color: var(--high-blue) !important;
 }
 
+/* Highlights the chosen answer(s) with a solid theme color and white text. */
 label.o_survey_choice_btn.o_survey_selected {
     background-color: var(--mid-blue) !important;
 
     & span {
         color: var(--pure-white) !important;
+    }
+}
+
+/* Hide default done button */
+.done-description {
+    a.btn, .mt-4 {
+        display: none!important
     }
 }
