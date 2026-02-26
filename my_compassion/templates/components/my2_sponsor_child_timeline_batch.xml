@@ -26,7 +26,7 @@
             <t t-if="item['model'] == 'sponsorship_gift'">
                 <div class="cd-timeline__block">
                     <t t-if="'Birthday' in item['metadata']">
-                        <div class="cd-timeline__img bg-mid-yellow">
+                        <div class="cd-timeline__img bg-high-pink">
                             <i class="pictogram pictogram-birthday-gift bg-low-black" />
                         </div>
                     </t>
@@ -120,8 +120,8 @@
             </t>
             <t t-elif="item['model'] == 'start_sponsorship'">
                 <div class="cd-timeline__block">
-                    <div class="cd-timeline__img bg-mid-green">
-                        <i class="pictogram pictogram-child-sponsorship bg-pure-white" />
+                    <div class="cd-timeline__img bg-high-green">
+                        <i class="pictogram pictogram-child-sponsorship bg-low-black" />
                     </div>
                     <div class="cd-timeline__content text-component">
                         <p class="modal-title text-core-blue">
