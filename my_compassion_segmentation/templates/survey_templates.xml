@@ -74,7 +74,7 @@
         </xpath>
         <!-- Hide 'or press Enter' -->
         <xpath
-            expr="(//button[@type='submit'])[3]/following-sibling::span[contains(text(), 'or press Enter')]"
+            expr="(//button[@type='submit'])[3]/following-sibling::span[hasclass('text-muted')]"
             position="attributes"
         >
             <attribute name="class">d-none</attribute>
