@@ -1,5 +1,13 @@
 <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
 <odoo>
+    <record id="compassion_footer_hook" model="ir.ui.view">
+        <field name="name">Compassion Generic Footer Hook</field>
+        <field name="type">qweb</field>
+        <field name="key">theme_compassion_2025.compassion_footer_hook</field>
+        <field name="arch" type="xml">
+            <div id="compassion_dynamic_footer_links" class="w-100" />
+        </field>
+    </record>
     <template id="footer_2025" inherit_id="website.layout">
         <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
         <xpath expr="//div[@id='footer']" position="replace">
@@ -12,6 +20,7 @@
                         <div class="h-100 w-25 bg-low-green" />
                     </div>
                 </section>
+                <t t-call="theme_compassion_2025.compassion_footer_hook" />
                 <section class="pt24">
                     <div class="container">
                         <div class="row justify-content-center">
