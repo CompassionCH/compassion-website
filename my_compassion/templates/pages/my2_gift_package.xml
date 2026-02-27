@@ -29,9 +29,9 @@
                 <t t-if="line.is_gift" t-set="recipient" t-value="line.gift_recipient_id.preferred_name" />
                 <t t-set="title_color" t-value="'low-black'" />
                 <t t-set="accent_color" t-value="'mid-green'" />
-                <t t-set="price_color" t-value="'low-green'" />
-                <t t-set="recipient_color" t-value="'low-green'" />
-                <t t-set="bg_color" t-value="'mid-eggshell'" />
+                <t t-set="price_color" t-value="'mid-green'" />
+                <t t-set="recipient_color" t-value="'mid-green'" />
+                <t t-set="bg_color" t-value="'low-eggshell'" />
                 <t t-set="price" t-value="line.price_total" />
                 <t t-set="currency_name" t-value="line.currency_id.name" />
                 <t
@@ -41,7 +41,7 @@
                 <t t-set="_txt_Edit_Details_1">Edit Details</t>
                 <t
                     t-set="primary_button"
-                    t-value="{'icon': 'edit05', 'label': _txt_Edit_Details_1, 'color': 'low-green', 'action': 'event', 'custom_event': 'donation-item:edit', 'detail': {'order_line_id': line.id}}"
+                    t-value="{'icon': 'edit05', 'label': _txt_Edit_Details_1, 'color': 'mid-green', 'action': 'event', 'custom_event': 'donation-item:edit', 'detail': {'order_line_id': line.id}}"
                 />
                 <t
                     t-set="secondary_buttons"
@@ -107,10 +107,10 @@
         <!-- TOTAL AMOUNT -->
         <div
             t-if="len(order.order_line) &gt;= 1"
-            class="mt-5 px-3 pt-3 pb-2 w-100 rounded-lg bg-light-green d-flex justify-content-between"
+            class="mt-5 w-100 bg-light-green d-flex justify-content-between rounded-pill padding-pill"
         >
-            <div class="text-mid-green body-large bold">Total amount</div>
-            <div class="text-dark-blue body-large bold">
+            <div class="text-off-black body-large bold">Total amount</div>
+            <div class="text-off-black body-large bold d-flex align-items-center m-0">
                 <t t-set="amount" t-value="order.amount_total" />
                 <t t-esc="order.currency_id.name" />
                 <t t-if="amount % 1 == 0" t-esc="int(amount)" />
