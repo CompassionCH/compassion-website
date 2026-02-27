@@ -12,15 +12,16 @@
 <odoo>
     <template id="my2_letter_card_component" name="Letter Card Component">
         <t t-set="child" t-value="letter.child_id" />
+        <t t-set="is_from_suporter" t-value="letter.direction == 'Supporter To Beneficiary'" />
         <link rel="stylesheet" href="/my_compassion/static/src/css/letter_card.css" />
         <div
-            t-attf-class="position-relative d-flex shadow rounded-4 h-100 {{'bg-high-green' if letter.direction == 'Supporter To Beneficiary' else 'bg-high-blue'}}"
+            t-attf-class="position-relative d-flex shadow rounded-4 h-100 {{'bg-high-green' if is_from_suporter else 'bg-high-blue'}}"
         >
             <!-- Icon at the left -->
             <div>
                 <div
                     id="envelope-{{ letter.uuid }}"
-                    t-attf-class="ml-2 mt-4 my2-envelope {{ 'already-read' if letter.email_read else '' }} {{ 'envelope--blue' if letter.direction != 'Supporter To Beneficiary' else 'envelope--green' }}"
+                    t-attf-class="ml-2 mt-4 my2-envelope {{ 'already-read' if letter.email_read else '' }} {{ 'envelope--green' if is_from_suporter else 'envelope--blue' }}"
                     t-attf-href="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf"
                     t-att-data-letter-id="letter.id"
                     t-att-data-letter-read="letter.email_read"
@@ -54,8 +55,8 @@
             <div class="flex-grow-1 d-flex flex-column ml-2 mr-2 mb-2 mt-4">
                 <!-- Top row: Title (left) and Dropdown (right) -->
                 <div class="d-flex justify-content-between align-items-start mb-4">
-                    <div t-attf-class="h5 #{'text-off-black'}">
-                        <t t-if="letter.direction != 'Supporter To Beneficiary'">
+                    <div class="h5 text-off-black">
+                        <t t-if="not is_from_suporter">
                             <span>From</span>
                             <t t-esc="child.preferred_name" />
                         </t>
@@ -67,7 +68,7 @@
                     <!-- Dots button & dropdown menu -->
                     <div class="dropdown">
                         <button
-                            t-attf-class="btn btn-link p-0 border-0 {{'text-low-blue' if letter.direction != 'Supporter To Beneficiary' else 'text-low-green'}}"
+                            t-attf-class="btn btn-link p-0 border-0 {{'text-low-green' if is_from_suporter else 'text-low-blue'}}"
                             type="button"
                             t-att-id="'dropdownMenuButton' + str(letter.id)"
                             data-toggle="dropdown"
