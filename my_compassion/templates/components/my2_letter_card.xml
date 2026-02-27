@@ -13,7 +13,9 @@
     <template id="my2_letter_card_component" name="Letter Card Component">
         <t t-set="child" t-value="letter.child_id" />
         <link rel="stylesheet" href="/my_compassion/static/src/css/letter_card.css" />
-        <div class="position-relative d-flex shadow-sm rounded-4 h-100">
+        <div
+            t-attf-class="position-relative d-flex shadow rounded-4 h-100 {{'bg-high-green' if letter.direction == 'Supporter To Beneficiary' else 'bg-high-blue'}}"
+        >
             <!-- Icon at the left -->
             <div>
                 <div
@@ -52,9 +54,7 @@
             <div class="flex-grow-1 d-flex flex-column ml-2 mr-2 mb-2 mt-4">
                 <!-- Top row: Title (left) and Dropdown (right) -->
                 <div class="d-flex justify-content-between align-items-start mb-4">
-                    <div
-                        t-attf-class="h5 #{'text-core-blue' if letter.direction != 'Supporter To Beneficiary' else ''}"
-                    >
+                    <div t-attf-class="h5 #{'text-off-black'}">
                         <t t-if="letter.direction != 'Supporter To Beneficiary'">
                             <span>From</span>
                             <t t-esc="child.preferred_name" />
@@ -67,7 +67,7 @@
                     <!-- Dots button & dropdown menu -->
                     <div class="dropdown">
                         <button
-                            class="btn btn-link p-0 border-0"
+                            t-attf-class="btn btn-link p-0 border-0 {{'text-low-blue' if letter.direction != 'Supporter To Beneficiary' else 'text-low-green'}}"
                             type="button"
                             t-att-id="'dropdownMenuButton' + str(letter.id)"
                             data-toggle="dropdown"
@@ -121,7 +121,7 @@
                     </div>
                 </div>
                 <!-- Letter date -->
-                <div class="mt-auto align-self-end tiny-text text-mid-grey">
+                <div class="mt-auto align-self-end tiny-text text-low-grey">
                     <span t-field="letter.create_date" t-options='{"widget": "date","format": "dd MMM. yyyy"}' />
                 </div>
             </div>
