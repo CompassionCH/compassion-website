@@ -17,7 +17,10 @@ Page My Compassion 2 Contact us page
         <field name="key">my_compassion.my2_contactus_page</field>
         <field name="type">qweb</field>
         <field name="arch" type="xml">
-            <xpath expr="//div[@id='wrap']" position="replace">
+            <xpath expr="//div[@id='wrap']" position="attributes">
+                <attribute name="class">d-none</attribute>
+            </xpath>
+            <xpath expr="//div[@id='wrap']" position="after">
                 <div id="wrap_custom" class="oe_structure">
                     <div class="container">
                         <div class="single-column pt-3">
