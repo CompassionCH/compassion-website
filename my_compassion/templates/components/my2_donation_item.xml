@@ -166,8 +166,8 @@
             <t t-set="image" t-value="image if not is_csp else ''" />
             <t t-set="subtext" t-value="sponsorship.payment_mode_id.display_name" />
             <t t-set="price" t-value="sponsorship.total_amount" />
-            <t t-if="is_csp" t-set="download_href" t-valuef="/my/download/csp_bvr?csp_id=#{sponsorship.id}"/>
-            <t t-else="" t-set="download_href" t-valuef="/my/download/gift_bvr?child_id=#{sponsorship.child_id.id}"/>
+            <t t-if="is_csp" t-set="download_href" t-valuef="/my/download/csp_bvr?csp_id=#{sponsorship.id}" />
+            <t t-else="" t-set="download_href" t-valuef="/my/download/gift_bvr?child_id=#{sponsorship.child_id.id}" />
             <t
                 t-set="secondary_buttons"
                 t-value="[{
