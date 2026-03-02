@@ -206,6 +206,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                     <option
                         t-att-selected="payment_method.id == wizard.payment_method.id"
                         t-att-value="payment_method.id"
+                        t-att-data-payment-code="payment_method.payment_method_id.code"
                     >
                         <t t-esc="payment_method.name" />
                     </option>
