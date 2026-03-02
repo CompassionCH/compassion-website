@@ -79,6 +79,7 @@
         "templates/pages/my2_gifts_thank_you.xml",
         "templates/pages/my2_add_a_gift.xml",
         "templates/http_error_custom.xml",
+        "templates/pages/child_protection_override.xml",
         # My Compassion 2 components
         "templates/components/my2_children_card.xml",
         "templates/components/my2_letter_card.xml",
