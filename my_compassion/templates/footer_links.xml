@@ -6,7 +6,7 @@
     >
         <xpath expr="//div[@id='compassion_dynamic_footer_links']" position="inside">
             <t t-set="partner" t-value="request.env.user.partner_id" />
-            <t t-if="partner">
+            <t t-if="partner and partner.primary_segment_id.link_ids">
                 <section class="footer-my-compassion-links pt48">
                     <div class="container">
                         <div class="row">
