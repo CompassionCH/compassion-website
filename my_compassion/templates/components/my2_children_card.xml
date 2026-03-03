@@ -52,7 +52,11 @@
                     class="small"
                     t-if="sponsorship and sponsorship.state == 'terminated' and sponsorship.sds_state == 'sub_waiting'"
                 >
-                    <span class="badge bg-low-yellow" title="Your sponsorship has ended" aria-label="Sponsorship ended">
+                    <span
+                        class="badge bg-low-yellow"
+                        title="The sponsorship has ended, awaiting substitute sponsorship"
+                        aria-label="Sponsorship ended waiting for sub"
+                    >
                         Awaiting substitute sponsorship
                     </span>
                 </div>
