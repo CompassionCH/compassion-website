@@ -40,9 +40,14 @@
                         Pending activation
                     </span>
                 </div>
-                <div class="small" t-if="sponsorship and sponsorship.state == 'terminated'">
+                <div class="small" t-if="sponsorship and sponsorship.state == 'terminated' and sponsorship.sds_state != 'sub_waiting'">
                     <span class="badge bg-low-yellow" title="Your sponsorship has ended" aria-label="Sponsorship ended">
                         Sponsorship ended
+                    </span>
+                </div>
+                <div class="small" t-if="sponsorship and sponsorship.state == 'terminated' and sponsorship.sds_state == 'sub_waiting'">
+                    <span class="badge bg-low-yellow" title="Your sponsorship has ended" aria-label="Sponsorship ended">
+                        Awaiting substitute sponsorship
                     </span>
                 </div>
                 <!-- Correspondence Status and info section -->
