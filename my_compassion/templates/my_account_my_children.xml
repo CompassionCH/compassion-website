@@ -300,6 +300,7 @@
                             <li class="m-2">
                                 <div class="card d-flex text-center border-0" style="width: 12rem; height: auto;">
                                     <img
+                                        t-att-alt="picture.fname or 'Child Picture'"
                                         class="mx-auto"
                                         t-attf-src='/web/image/compassion.child.pictures/{{picture.id}}/fullshot/'
                                         style="max-width: 120px; width: 100%; height: auto;"
