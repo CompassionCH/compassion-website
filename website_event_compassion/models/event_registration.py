@@ -184,6 +184,7 @@ class EventRegistration(models.Model):
             invoice_lines = (
                 self.env["account.move.line"]
                 .sudo()
+                .with_context(lang="en_US")
                 .search(
                     [
                         ("user_id", "=", partner.id),
