@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <!-- This template overrides the default website title to 'MyCompassion' -->
-    <template id="layout" inherit_id="website.layout">
-        <xpath expr="//title" position="replace">
-            <title>MyCompassion</title>
-        </xpath>
-    </template>
+    <!-- This record overrides the default MyCompassion website title to 'MyCompassion' -->
+    <record id="mycompassion_website_title_override" model="ir.ui.view">
+        <field name="name">MyCompassion Layout Title</field>
+        <field name="inherit_id" ref="website.layout" />
+        <field name="website_id" ref="my_compassion.my2_website" />
+        <field name="type">qweb</field>
+        <field name="arch" type="xml">
+            <xpath expr="//title" position="replace">
+                <title>MyCompassion</title>
+            </xpath>
+        </field>
+    </record>
 </odoo>
