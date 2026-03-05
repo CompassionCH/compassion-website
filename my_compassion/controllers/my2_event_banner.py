@@ -92,5 +92,5 @@ class MyCompassionEventBannerController(http.Controller):
                     "theme_compassion_2025.EventBannerComponent", {"banner": banner}
                 ),
             }
-            for banner in (banners or [])
+            for banner in banners
         ]
