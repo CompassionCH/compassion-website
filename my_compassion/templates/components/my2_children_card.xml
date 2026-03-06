@@ -20,7 +20,8 @@
         <t t-set="sponsorship_type" t-value="sponsorship_type or 'standard'" />
         <t t-set="show_status" t-value="not show_status == False" />
         <div class="children-card text-center mb-3 mt-3">
-            <div class="p-4 d-flex flex-column align-items-center bg-high-eggshell">
+            <div class="p-4 d-flex flex-column align-items-center bg-low-eggshell position-relative rounded-pill">
+                <a t-attf-href="/my2/children/{{child.id}}" class="stretched-link" aria-label="Child profile" />
                 <!-- Child Image -->
                 <img
                     class="rounded-circle img-fluid mb-2"
@@ -31,7 +32,7 @@
                 <div class="h2 mb-0">
                     <t t-esc="child.preferred_name" />
                 </div>
-                <div class="small" t-if="sponsorship and sponsorship.state in ('draft', 'waiting', 'mandate')">
+                <div class="pending" t-if="sponsorship and sponsorship.state in ('draft', 'waiting', 'mandate')">
                     <span
                         class="badge bg-low-yellow"
                         title="Your sponsorship is being confirmed and will become active soon"
