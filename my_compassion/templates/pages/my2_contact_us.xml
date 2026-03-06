@@ -75,7 +75,7 @@ Page My Compassion 2 Contact us page
                                             <t t-set="select_class" t-value="'bg-white'" />
                                             <t t-set="required" t-value="True" />
                                             <option value="" disabled="disabled" selected="selected" hidden="true">
-                                                Please Select
+                                                Please select
                                             </option>
                                             <t t-foreach="titles" t-as="t">
                                                 <option t-att-value="t.shortcut">
