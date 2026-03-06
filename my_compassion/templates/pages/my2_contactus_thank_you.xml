@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Page My Compassion 2 Contact us  thank you page
+
+    Description:
+    This page is the thank you page which is displayed as soon as
+    users have submitted a message via the contact us page.
+
+    Used in route:
+    -/my2-contactus-thank-you
+-->
+<odoo>
+    <record id="my2_contactus_thanks" model="ir.ui.view">
+        <field name="name">My Custom Contact Thanks</field>
+        <field name="type">qweb</field>
+        <field name="key">my_compassion.contact_us_thank_you</field>
+        <field name="arch" type="xml">
+            <t t-name="my_compassion.contact_us_thank_you">
+                <t t-call="website.layout">
+                    <div id="wrap" class="h-100 d-flex align-content-center">
+                        <div class="d-flex flex-column w-100 justify-content-center align-items-center">
+                            <t t-call="theme_compassion_2025.TitleComponent">
+                                <t t-set="title_content">Thank You!</t>
+                                <t t-set="title_size" t-value="'md'" />
+                                <t t-set="color" t-value="'core-blue'" />
+                                <t t-set="underline_color" t-value="'low-yellow'" />
+                                <t t-set="show_underline" t-value="True" />
+                                <h5 class="text-center">
+                                    <span>Your message has been sent successfully</span>
+                                </h5>
+                                <p class="text-center mb-5">We will get back to you shortly.</p>
+                            </t>
+                            <div id="spacer-div-contact-us-thank-you" class="m-3" />
+                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                <t t-set="variation" t-value="'filled'" />
+                                <t t-set="color" t-value="'low-blue'" />
+                                <t t-set="text_color" t-value="'white'" />
+                                <t t-set="variant" t-value="'default'" />
+                                <t t-set="label">Back to home</t>
+                                <t t-set="href" t-value="'/'" />
+                            </t>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </field>
+    </record>
+    <record id="my_custom_thanks_page" model="website.page">
+        <field name="name">My2 Contact Us Thank You</field>
+        <field name="url">/my2-contactus-thank-you</field>
+        <field name="view_id" ref="my2_contactus_thanks" />
+        <field name="is_published">True</field>
+        <field name="website_indexed" eval="False" />
+    </record>
+</odoo>
