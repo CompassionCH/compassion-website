@@ -22,6 +22,8 @@ Page: My Compassion 2 Dashboard Page
     </template>
     <!-- DASHBOARD -->
     <template id="my2_dashboard_page" name="My Compassion 2 Dashboard Page">
+        <!-- Set the page title -->
+        <t t-set="additional_title">Home</t>
         <link rel="stylesheet" href="/my_compassion/static/src/css/my2_dashboard.css" />
         <t t-call="website.layout">
             <div class="container">

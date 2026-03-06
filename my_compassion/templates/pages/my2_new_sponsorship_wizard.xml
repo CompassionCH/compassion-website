@@ -534,6 +534,8 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     </template>
     <!-- NEW SPONSORSHIP WIZARD PAGE -->
     <template id="my2_new_sponsorship_wizard_page" name="New Sponsorship Wizard Page">
+        <!-- Set the page title -->
+        <t t-set="additional_title">Payment Options</t>
         <script type="text/javascript" src="/my_compassion/static/src/js/my2_new_sponsorship_wizard.js" />
         <link rel="stylesheet" href="/my_compassion/static/src/css/my2_new_sponsorship_wizard.css" />
         <t t-call="website.layout">
@@ -550,6 +552,8 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     </template>
     <!-- NEW SPONSORSHIP THANK YOU PAGE -->
     <template id="my2_new_sponsorship_thank_you_page" name="New Sponsorship Thank You Page">
+        <!-- Set the page title -->
+        <t t-set="additional_title">Thank you</t>
         <link rel="stylesheet" href="/my_compassion/static/src/css/my2_new_sponsorship_wizard.css" />
         <t t-call="website.layout">
             <div class="container">

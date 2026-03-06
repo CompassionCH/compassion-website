@@ -52,7 +52,6 @@
         "templates/login_template.xml",
         "templates/signup.xml",
         "templates/my2_change_password.xml",
-        "templates/website_title_override.xml",
         "views/correspondence_template_view.xml",
         "views/my2_event_banner_views.xml",
         "views/partner_compassion_view.xml",

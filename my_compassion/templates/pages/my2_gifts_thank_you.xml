@@ -13,6 +13,8 @@ Page: My Compassion 2 Thank you Page
 -->
 <odoo>
     <template id="my2_gifts_thank_you_page" name="My Compassion 2 Thank you Page">
+        <!-- Set the page title -->
+        <t t-set="additional_title">Thank you</t>
         <!-- Include stylesheet -->
         <link rel="stylesheet" href="/my_compassion/static/src/css/my2_gifts_thank_you.css" />
         <t t-call="website.layout">

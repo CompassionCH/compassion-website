@@ -120,6 +120,8 @@
     </template>
     <!-- GIFT PACKAGE PAGE -->
     <template id="my2_gift_package_page" name="Gift Package Page">
+        <!-- Set the page title -->
+        <t t-set="additional_title">Gift Basket</t>
         <!-- Include js and stylesheet -->
         <script type="text/javascript" src="/my_compassion/static/src/js/my2_gift_package.js" />
         <link rel="stylesheet" href="/my_compassion/static/src/css/my2_gift_package.css" />

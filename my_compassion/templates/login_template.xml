@@ -19,6 +19,8 @@
     </template>
     <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
     <template id="login_layout" inherit_id="website.login_layout">
+        <!-- Set the page title -->
+        <t t-set="additional_title">Login</t>
         <xpath expr="t" position="replace">
             <t t-call="website.layout">
                 <div class="container mt-5 mx-auto">

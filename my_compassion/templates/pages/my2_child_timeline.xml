@@ -23,6 +23,8 @@
 -->
 <odoo>
     <template id="my2_child_timeline_page" name="My Compassion 2 Child Timeline Page">
+        <!-- Set the page title -->
+        <t t-set="additional_title" t-value="compassion_child.preferred_name" />
         <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile.css" />
         <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile_timeline.css" />
         <t
