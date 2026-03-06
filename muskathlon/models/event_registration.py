@@ -33,6 +33,7 @@ class MuskathlonRegistration(models.Model):
         help="Used in thank you letters for donations linked to an event "
         "and to this partner.",
     )
+    comments = fields.Text("Registration Comments")
 
     _sql_constraints = [
         (
@@ -139,7 +140,6 @@ class MuskathlonRegistration(models.Model):
         )
         self.message_subscribe(partners.ids)
 
-        body = _("The participant registered through the Muskathlon website.")
         subtype_id = self.env.ref("website_event_compassion.mt_registration_create").id
 
         for registration in self:
@@ -147,16 +147,10 @@ class MuskathlonRegistration(models.Model):
                 "muskathlon.muskathlon_registration_notification_view",
                 subject=_("%s - New Muskathlon registration") % registration.name,
                 values={"object": registration},
-                message_type="email",
+                message_type="comment",
                 subtype_id=subtype_id,
             )
 
-        # self.message_post(
-        #     body=body,
-        #     subject=_("%s - New Muskathlon registration") % self.name,
-        #     message_type="email",
-        #     subtype_xmlid="website_event_compassion.mt_registration_create",
-        # )
         return True
 
     def muskathlon_medical_survey_done(self):

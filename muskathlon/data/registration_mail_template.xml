@@ -9,19 +9,25 @@
                     <p>A new participant has registered for the Muskathlon!</p>
                     <p>Here are the registration details:</p>
                     <ul>
-                        <li><strong>Name:</strong> <t t-esc="object.partner_id.name"/></li>
-                        <li><strong>Email:</strong> <t t-esc="object.partner_id.email"/></li>
-                        <li><strong>Phone:</strong> <t t-esc="object.partner_id.phone"/></li>
-                        <li><strong>Mobile:</strong> <t t-esc="object.partner_id.mobile"/></li>
-                        <li><strong>Date of Birth:</strong> <t t-esc="object.partner_id.birthdate_date"/></li>
+                        <li><strong>Title:</strong> <t t-esc="object.partner_title.name"/></li>
+                        <li><strong>Name:</strong> <t t-esc="object.name"/></li>
+                        <li><strong>Email:</strong> <t t-esc="object.partner_email"/></li>
+                        <li><strong>Phone:</strong> <t t-esc="object.partner_phone"/></li>
+                        <li><strong>Birth Name:</strong> <t t-esc="object.birth_name"/></li>
+                        <li><strong>Date of Birth:</strong> <t t-esc="object.partner_birthdate_date"/></li>
+                        <li><strong>Passport Number:</strong> <t t-esc="object.passport_number"/></li>
+                        <li><strong>Passport Expiration Date:</strong> <t t-esc="object.passport_expiration_date"/></li>
+                        <li><strong>Emergency Contact (<t t-esc="object.emergency_relation_type"/>):</strong> <t t-esc="object.emergency_name" /></li>
+                        <li><strong>Emergency Contact Phone:</strong> <t t-esc="object.emergency_phone"/></li>
                         <li><strong>Address:</strong>
-                            <t t-esc="object.partner_id.street"/>,
-                            <t t-esc="object.partner_id.zip"/> <t t-esc="object.partner_id.city"/>
+                            <t t-esc="object.partner_street"/>,
+                            <t t-esc="object.partner_zip"/> <t t-esc="object.partner_city"/>
                         </li>
                         <li><strong>T-Shirt Size:</strong> <t t-esc="dict(object.fields_get(['t_shirt_size'])['t_shirt_size']['selection']).get(object.t_shirt_size, '')"/></li>
                         <li><strong>Sport Discipline:</strong> <t t-esc="object.sport_discipline_id.name"/></li>
                         <li><strong>Sport Level:</strong> <t t-esc="dict(object.fields_get(['sport_level'])['sport_level']['selection']).get(object.sport_level, '')"/></li>
                         <li t-if="object.sport_level_description"><strong>Sport Description:</strong> <t t-esc="object.sport_level_description"/></li>
+                        <li><strong>Comments:</strong> <t t-esc="object.comments"/></li>
                     </ul>
                 </div>
             </field>
