@@ -153,16 +153,6 @@ Page: My Compassion 2 Dashboard Page
                 <t t-set="bg_color" t-value="'high-green'" />
                 <t t-set="href" t-value="'/my2/volunteering'" />
             </t>
-            <t t-if="partner.is_volunteer">
-                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                    <t t-set="variant" t-value="'default'" />
-                    <t t-set="variation" t-value="'filled'" />
-                    <t t-set="label">Translate a letter</t>
-                    <t t-set="color" t-value="'mid-green'" />
-                    <t t-set="text_color" t-value="'pure-white'" />
-                    <t t-set="href" t-value="'https://translate.compassion.ch'" />
-                </t>
-            </t>
         </t>
     </template>
 </odoo>
