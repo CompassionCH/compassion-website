@@ -10,6 +10,7 @@
 # -*- coding: utf-8 -*-
 from odoo import http
 from odoo.http import request
+from odoo.tools.translate import _
 
 from odoo.addons.website.controllers.main import Website
 
@@ -27,4 +28,10 @@ class WebsiteLoginRedirect(Website):
             return request.redirect("/my2/dashboard/")
 
         # If the user is not logged in, execute the original Odoo logic for login
-        return super().web_login(*args, **kw)
+        response = super().web_login(*args, **kw)
+
+        # Inject page title
+        if hasattr(response, "qcontext"):
+            response.qcontext["additional_title"] = _("Login")
+
+        return response

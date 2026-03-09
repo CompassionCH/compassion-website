@@ -177,6 +177,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 },
                 "nr_filters_applied": nr_filters_applied,
                 "months": months,
+                "additional_title": _("Letters"),
             },
         )
 
@@ -261,6 +262,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 "sponsorship_ids": sponsorships,
                 "templates": templates,
                 "draft": draft,
+                "additional_title": _("New Letter"),
             },
         )
 

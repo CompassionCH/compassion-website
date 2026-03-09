@@ -846,7 +846,9 @@ msgid "Add &amp; check out"
 msgstr "Aggiungi e procedi al checkout"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_donations.py:0
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_add_a_gift_page
+#, python-format
 msgid "Add a Gift"
 msgstr "Aggiungi un regalo"
 
@@ -1993,7 +1995,9 @@ msgid "Gift"
 msgstr "Regalo"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_donations.py:0
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_page
+#, python-format
 msgid "Gift Basket"
 msgstr "Carrello per i regali"
 
@@ -2028,6 +2032,8 @@ msgstr "Bambina"
 #: model_terms:ir.ui.view,arch_db:my_compassion.dashboard_donations_vignette
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
+#: code:addons/my_compassion/controllers/my2_gifts.py:0
+#, python-format
 msgid "Give"
 msgstr "Dona"
 
@@ -2074,7 +2080,11 @@ msgid "Hobbies"
 msgstr "Hobby"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_user.py:0
+#: model_terms:ir.ui.view,arch_db:my_compassion.http_error_custom
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_dashboard_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
+#, python-format
 msgid "Home"
 msgstr "Home"
 
@@ -2504,7 +2514,10 @@ msgid "Letter saved!"
 msgstr "Lettera salvata!"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_letters.py:0
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_letters_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
+#, python-format
 msgid "Letters"
 msgstr "Lettere"
 
@@ -2765,7 +2778,10 @@ msgid "My Country"
 msgstr "Il mio Paese"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_donations.py:0
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_my_donations_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_account_menu
+#, python-format
 msgid "My Donations"
 msgstr "Le mie donazioni"
 
@@ -2785,7 +2801,9 @@ msgid "My Sponsorship"
 msgstr "Il mio sostegno"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_children.py:0
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_children_page
+#, python-format
 msgid "My Sponsorships"
 msgstr "I miei sostegni"
 
@@ -3087,7 +3105,9 @@ msgid "Payment mode"
 msgstr "Modalità di pagamento"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_sponsorships.py:0
 #: model:new.sponsorship.wizard.step,title:my_compassion.new_sponsorship_wizard_step_payment_methods
+#, python-format
 msgid "Payment options"
 msgstr "Opzioni di pagamento"
 
@@ -3586,7 +3606,9 @@ msgid "Sponsor"
 msgstr "Sostieni un bambino"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_sponsorships.py:0
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_sponsorships_page
+#, python-format
 msgid "Sponsor a child"
 msgstr "Sostieni un bambino"
 
@@ -3812,7 +3834,10 @@ msgid "Text Color"
 msgstr "Colore del testo"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_donations.py:0
+#: code:addons/my_compassion/controllers/my2_sponsorships.py:0
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
+#, python-format
 msgid "Thank you"
 msgstr "Grazie"
 
@@ -4617,3 +4642,34 @@ msgid ""
 msgstr ""
 "anni\n"
 "                        <i class=\"icon-user01 bg-low-yellow mx-1\"/>"
+
+#. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_login.py:0
+#, python-format
+msgid "Login"
+msgstr "Login"
+
+#. module: my_compassion
+#: code:addons/my_compassion/controllers/my_reset_password.py:0
+#, python-format
+msgid "Reset Password"
+msgstr "Reimposta la tua password"
+
+#. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_donations.py:0
+#, python-format
+msgid "Gifts"
+msgstr "Regali"
+
+#. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_letters.py:0
+#, python-format
+msgid "New Letter"
+msgstr "Nuova lettera"
+
+#. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_user_settings.py:0
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
+#, python-format
+msgid "Settings"
+msgstr "Impostazioni"

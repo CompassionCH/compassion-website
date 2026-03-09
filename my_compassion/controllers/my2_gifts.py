@@ -9,6 +9,7 @@
 
 from odoo import http
 from odoo.http import request
+from odoo.tools.translate import _
 
 
 class MyCompassionGiftController(http.Controller):
@@ -32,5 +33,6 @@ class MyCompassionGiftController(http.Controller):
             {
                 "my_compassion_gifts": my_compassion_gifts,
                 "type": type,
+                "additional_title": _("Give"),
             },
         )

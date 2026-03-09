@@ -334,6 +334,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 ),
                 "latest_correspondences_by_child_id": latest_corr_by_child,
                 "breadcrumbs": breadcrumbs,
+                "additional_title": _("My Sponsorships"),
             },
         )
 
@@ -383,6 +384,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 "google_custom_map_id": google_custom_map_id,
                 "timezone": child.sudo().project_id.timezone,
                 "birthday_formatted": birthday_formatted,
+                "additional_title": child.sudo().preferred_name,
             },
         )
 

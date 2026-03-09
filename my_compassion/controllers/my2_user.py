@@ -8,6 +8,7 @@
 ##############################################################################
 from odoo import http
 from odoo.http import request
+from odoo.tools.translate import _
 
 
 class MyCompassionUserController(http.Controller):
@@ -29,6 +30,7 @@ class MyCompassionUserController(http.Controller):
                 "has_unread_correspondence": has_unread_correspondence,
                 "sorted_vignettes": vignettes_data,
                 "partner": partner,
+                "additional_title": _("Home"),
             },
         )
 

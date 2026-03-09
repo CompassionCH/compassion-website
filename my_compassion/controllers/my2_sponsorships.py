@@ -14,6 +14,7 @@ from werkzeug.exceptions import BadRequest, Gone, NotFound
 
 from odoo import fields, http
 from odoo.http import request
+from odoo.tools.translate import _
 
 from odoo.addons.website_sponsorship.controllers.main import WebsiteChild
 from odoo.addons.website_sponsorship.models.compassion_child import ChildNotFound
@@ -44,6 +45,7 @@ class MyCompassionSponsorshipsController(WebsiteChild):
             {
                 "countries": countries,
                 "sponsorship_type": "standard",
+                "additional_title": _("Sponsor a child"),
             },
         )
 
@@ -235,6 +237,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
             "my_compassion.my2_new_sponsorship_wizard_page",
             {
                 "form_content_html": self._render_form_content(wizard),
+                "additional_title": _("Payment options"),
             },
         )
 
@@ -316,6 +319,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
             {
                 "n_steps": 3,
                 "sponsorship": sponsorship,
+                "additional_title": _("Thank you"),
             },
         )
 
