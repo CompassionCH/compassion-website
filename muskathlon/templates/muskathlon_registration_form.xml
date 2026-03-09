@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
+    <data>
+        <function model="ir.model.fields" name="formbuilder_whitelist">
+            <value>event.registration</value>
+            <value eval="['comments']" />
+        </function>
+    </data>
     <template id="muskathlon_registration_form" inherit_id="website_event_compassion.event_registration_form">
         <xpath expr="//h3[@id='tripHeader']" position="before">
             <h3 id="muskathlonHeader" t-if="main_object.is_muskathlon">Muskathlon</h3>
