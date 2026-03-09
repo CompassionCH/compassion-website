@@ -32,6 +32,7 @@
     - rel (string, optional): The rel attribute for the link (e.g., 'noopener noreferrer'
       for security).
     - data_toggle (char, optional): data-toggle attribute to be added to the button or link element, e.g., `data-toggle="dropdown"`
+    - add_class (string, optional): An optional class which will be added to the button
     - type (string, optional): The type attribute for the button element (e.g., 'submit', 'button', 'reset').
     - value (string, optional): The value attribute for the button element.
 -->
@@ -88,7 +89,7 @@
             <a
                 t-att-href="href"
                 t-att-id="id"
-                t-attf-class="btn #{btn_class} btn--radius-#{radius} #{style_class} text-#{text_color} m-1"
+                t-attf-class="btn #{btn_class} btn--radius-#{radius} #{style_class} text-#{text_color} #{add_class or ''} m-1"
                 t-att-data-custom="data_custom"
                 t-att-target="target"
                 t-att-rel="computed_rel or None"
@@ -101,7 +102,7 @@
             <button
                 t-att-type="type or ''"
                 t-att-id="id"
-                t-attf-class="btn #{btn_class} btn--radius-#{radius} #{style_class} text-#{text_color} m-1"
+                t-attf-class="btn #{btn_class} btn--radius-#{radius} #{style_class} text-#{text_color} #{add_class or ''} m-1"
                 t-att-data-custom="data_custom"
                 t-att-data-mode="mode"
                 t-att-data-toggle="data_toggle"

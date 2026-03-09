@@ -260,28 +260,23 @@ msgstr ""
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.view_my2_compassion_event_banner_form
 msgid ""
-"<i class=\"fa fa-info-circle\"/>\n"
-"                            If pages are selected, the banner is only "
-"visible on those pages. If empty, it is visible on\n"
-"                            all pages."
+"Select pages to display the banner on. If no page is selected, the banner will be\n"
+"                                    displayed on all pages. Click \"Refresh\" to update the list of available pages."
+
 msgstr ""
-"<i class=\"fa fa-info-circle\"/>\n"
-"                            Wenn Seiten ausgewählt sind, ist das Banner nur "
-"auf diesen Seiten sichtbar. Wenn leer, ist es auf\n"
-"                            allen Seiten sichtbar."
+"Wähle die Seiten aus, auf denen das Banner angezeigt werden soll. Wenn keine Seite"
+"ausgewählt ist, wird das Banner auf allen Seiten angezeigt. Klicke auf \"Aktualisieren\", um die "
+"Liste der verfügbaren Seiten zu aktualisieren."
+
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.view_my2_compassion_event_banner_form
 msgid ""
-"<i class=\"fa fa-info-circle\"/>\n"
-"                            If tags are selected, the banner is only visible "
-"to users having at least one of these tags.\n"
-"                            If empty, it is visible to everyone."
+"If tags are selected, the banner is only visible to users having at least one of these tags.\n"
+"                                If empty, it is visible to everyone."
 msgstr ""
-"<i class=\"fa fa-info-circle\"/>\n"
-"                            Wenn Tags ausgewählt sind, ist das Banner nur "
-"für Benutzer sichtbar, die mindestens einen dieser Tags besitzen.\n"
-"                            Wenn leer, ist es für alle sichtbar."
+"Wenn Tags ausgewählt sind, ist das Banner nur für Benutzer sichtbar, die mindestens einen "
+"dieser Tags besitzen.\n Wenn leer, ist es für alle sichtbar."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_letter_page
@@ -351,6 +346,17 @@ msgstr "<option value=\"\">Monat</option>"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
 msgid "<option value=\"\">Please select</option>"
 msgstr "<option value=\"\">Bitte auswählen</option>"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
+msgid ""
+"<option value=\"\" disabled=\"disabled\" selected=\"selected\" hidden=\"true\">\n"
+"                                                Please select\n"
+"                                            </option>"
+msgstr ""
+"<option value=\"\" disabled=\"disabled\" selected=\"selected\" hidden=\"true\">\n"
+"                                                Bitte auswählen\n"
+"                                            </option>"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.DonationFormComponent
@@ -1694,11 +1700,6 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_my_donations_page
 msgid "Download your tax receipt"
 msgstr "Steuerbescheinigung herunterladen"
-
-#. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
-msgid "E-mail"
-msgstr "E-Mail"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_content
@@ -4590,6 +4591,95 @@ msgstr "Schwestern"
 #: model_terms:ir.ui.view,arch_db:my_compassion.sponsor_a_child
 msgid "this link"
 msgstr "dieser Link"
+
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
+msgid "Get in touch"
+msgstr "Kontaktiere uns"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
+msgid ""
+"Have a question or want to learn more about our\n"
+"                                    work? Fill out the form below, and we'll get back to\n"
+"                                    you as soon as possible."
+msgstr ""
+"Haben Sie eine Frage oder möchten Sie mehr über\n"
+"                                unsere Arbeit erfahren? Füllen Sie das\n"
+"                                untenstehende Formular aus und wir melden uns\n"
+"                                so schnell wie möglich bei Ihnen."
+
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
+msgid "Mrs."
+msgstr "Frau"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
+msgid "Mr."
+msgstr "Herr"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
+msgid "First Name"
+msgstr "Vorname"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
+msgid "Last Name"
+msgstr "Nachname"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
+msgid "E-mail"
+msgstr "E-Mail"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
+msgid "Subject"
+msgstr "Betreff"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
+msgid "Request subject"
+msgstr "Anfragebetreff"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
+msgid "Message"
+msgstr "Nachricht"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
+msgid "Send the message"
+msgstr "Nachricht senden"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_thanks
+#: model_terms:website.page,arch_db:my_compassion.my_custom_thanks_page
+msgid "<span>Your message has been sent successfully</span>"
+msgstr "<span>Deine Nachricht wurde erfolgreich gesendet</span>"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_thanks
+#: model_terms:website.page,arch_db:my_compassion.my_custom_thanks_page
+msgid "Back to home"
+msgstr "Zurück zur Startseite"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_thanks
+#: model_terms:website.page,arch_db:my_compassion.my_custom_thanks_page
+msgid "Thank You!"
+msgstr "Vielen Dank!"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_thanks
+#: model_terms:website.page,arch_db:my_compassion.my_custom_thanks_page
+msgid "We will get back to you shortly."
+msgstr "Wir werden uns in Kürze bei dir melden."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
