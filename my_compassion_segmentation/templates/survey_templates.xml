@@ -112,7 +112,7 @@
             />
             <t
                 t-set="extracted_label"
-                t-value="survey.description_done.split('&lt;/a')[0].split('&gt;')[-1] if '&lt;/a' in survey.description_done else 'Continue'"
+                t-value="survey.description_done.split('&lt;/a')[0].split('&gt;')[-1] if survey.description_done and '&lt;/a' in survey.description_done else 'Continue'"
             />
             <t t-call="theme_compassion_2025.TitleComponent">
                 <t t-set="title_content" t-value="'Thank you!'" />

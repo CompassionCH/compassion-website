@@ -12,9 +12,7 @@ from odoo.addons.portal.controllers.portal import CustomerPortal
 
 
 class MyAccountControllerSurvey(CustomerPortal):
-    @route(
-        ["/my", "/my2", "/my/home", "/my2/home"], type="http", auth="user", website=True
-    )
+    @route(["/my", "/my2", "/my/home"], type="http", auth="user", website=True)
     def home(self, redirect=None, **post):
         partner = request.env.user.partner_id
         if not partner.has_segment:

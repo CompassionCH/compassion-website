@@ -1,13 +1,8 @@
 <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
 <odoo>
-    <record id="compassion_footer_hook" model="ir.ui.view">
-        <field name="name">Compassion Generic Footer Hook</field>
-        <field name="type">qweb</field>
-        <field name="key">theme_compassion_2025.compassion_footer_hook</field>
-        <field name="arch" type="xml">
-            <div id="compassion_dynamic_footer_links" class="w-100" />
-        </field>
-    </record>
+    <template id="compassion_footer_hook" name="Compassion Generic Footer Hook">
+        <div id="compassion_dynamic_footer_links" class="w-100" />
+    </template>
     <template id="footer_2025" inherit_id="website.layout">
         <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
         <xpath expr="//div[@id='footer']" position="replace">

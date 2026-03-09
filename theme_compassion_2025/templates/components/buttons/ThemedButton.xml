@@ -100,7 +100,7 @@
         </t>
         <t t-else="">
             <button
-                t-att-type="type or ''"
+                t-att-type="type or None"
                 t-att-id="id"
                 t-attf-class="btn #{btn_class} btn--radius-#{radius} #{style_class} text-#{text_color} #{add_class or ''} m-1"
                 t-att-data-custom="data_custom"
