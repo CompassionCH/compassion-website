@@ -8,6 +8,7 @@
 ##############################################################################
 import base64
 import secrets
+from datetime import datetime
 from os import path, remove
 from urllib.parse import urlencode
 from zipfile import ZipFile
@@ -312,7 +313,20 @@ class MyAccountController(CustomerPortal):
         From MyCompassion 2.0, we ensured a proper redirection
         for user using old links.
         """
-        return request.redirect("/my2/user_settings")
+        if request.website.sudo().theme_id.name == 'theme_compassion_2025':
+            return request.redirect("/my2/user_settings")
+
+        partner = request.env.user.partner_id
+        values = self._prepare_portal_layout_values()
+        values.update(
+            {
+                "partner": partner,
+            }
+        )
+
+        if privacy_policy == "accepted" and not partner.legal_agreement_date:
+            partner.legal_agreement_date = datetime.now()
+        return request.render("my_compassion.my_information_page_template", values)
 
     @route("/my/download/<source>", type="http", auth="user", website=True)
     def download_file(self, source, **kw):
