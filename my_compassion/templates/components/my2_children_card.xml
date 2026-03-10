@@ -42,29 +42,17 @@
                 </div>
                 <div
                     class="small"
-                    t-if="sponsorship and sponsorship.state == 'terminated' and sponsorship.sds_state != 'sub_waiting'"
+                    t-if="sponsorship and sponsorship.state == 'terminated'"
                 >
                     <span class="badge bg-low-yellow" title="Your sponsorship has ended" aria-label="Sponsorship ended">
                         Sponsorship ended
-                    </span>
-                </div>
-                <div
-                    class="small"
-                    t-if="sponsorship and sponsorship.state == 'terminated' and sponsorship.sds_state == 'sub_waiting'"
-                >
-                    <span
-                        class="badge bg-low-yellow"
-                        title="The sponsorship has ended, awaiting substitute sponsorship"
-                        aria-label="Sponsorship ended waiting for sub"
-                    >
-                        <t>Awaiting substitute sponsorship</t>
                     </span>
                 </div>
                 <!-- Correspondence Status and info section -->
                 <div class="body-small mt-3">
                     <div t-if="show_status" class="mb-3 pl-3 pr-3">
                         <span class="border-bottom border-2 border-high-orange">
-                            <t t-if="sponsorship_end_date">
+                            <t t-if="sponsorship_end_date and not sponsorship.can_write_letter">
                                 Sponsorship terminated on
                                 <t
                                     t-esc="sponsorship_end_date"

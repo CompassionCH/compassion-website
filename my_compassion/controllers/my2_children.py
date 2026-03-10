@@ -324,11 +324,14 @@ class MyCompassionChildrenController(WebsiteChild):
             "my_compassion.my2_children_page",
             {
                 "active_sponsorships": sponsorships.filtered(
-                    lambda s: s.state != "terminated" or s.sds_state == "sub_waiting"
+                    # all not terminated or terminated within grace period
+                    lambda s: s.state != "terminated" or
+                              (s.state == "terminated" and s.can_write_letter)
                 ),
                 "ended_sponsorships": sponsorships.filtered(
+                    # terminated and not within grace period, excluding specific end reasons
                     lambda s: s.state == "terminated"
-                    and s.sds_state != "sub_waiting"
+                    and not s.can_write_letter
                     and s.end_reason_id.name
                     not in ["Subreject", "Mistake from our staff"]
                 ),
