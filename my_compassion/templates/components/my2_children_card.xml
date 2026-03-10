@@ -41,10 +41,7 @@
                         Pending activation
                     </span>
                 </div>
-                <div
-                    class="small"
-                    t-if="sponsorship and sponsorship.state == 'terminated'"
-                >
+                <div class="small" t-if="sponsorship and sponsorship.state == 'terminated'">
                     <span class="badge bg-low-yellow" title="Your sponsorship has ended" aria-label="Sponsorship ended">
                         Sponsorship ended
                     </span>

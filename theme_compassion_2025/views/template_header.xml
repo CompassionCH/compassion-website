@@ -52,11 +52,9 @@
         <xpath expr="//div[hasclass('dropdown-menu')]" position="attributes">
             <attribute name="class" add="shadow-sm animation-drop language-selector__dropdown-menu" separator=" " />
         </xpath>
-
         <xpath expr="//button[hasclass('dropdown-toggle')]" position="attributes">
             <attribute name="class" separator=" " add="d-none" />
         </xpath>
-
         <xpath expr="//button[hasclass('dropdown-toggle')]" position="after">
             <t t-call="theme_compassion_2025.LanguageSelector">
                 <t t-set="variant" t-value="'compact'" />
