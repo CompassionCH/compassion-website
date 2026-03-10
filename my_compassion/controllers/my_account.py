@@ -261,7 +261,7 @@ class MyAccountController(CustomerPortal):
         if request.website == request.env.ref(
             "my_compassion.my2_website", raise_if_not_found=False
         ):
-            return request.redirect("/my2/dashboard")
+            return request.redirect(redirect or "/my2/dashboard")
 
         return super().home(redirect=redirect, **post)
 
