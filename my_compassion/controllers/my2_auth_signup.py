@@ -23,9 +23,9 @@ class SignupOverride(AuthSignupHome):
         """
 
         if request.session.uid and request.website == request.env.ref(
-                "my_compassion.my2_website", raise_if_not_found=False
+            "my_compassion.my2_website", raise_if_not_found=False
         ):
-            return request.redirect(kw.get('redirect') or "/my2/dashboard/")
+            return request.redirect(kw.get("redirect") or "/my2/dashboard/")
 
         # If the user is not logged in, execute the original Odoo logic for signup
         return super().web_auth_signup(*args, **kw)
