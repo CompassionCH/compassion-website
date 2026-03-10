@@ -258,7 +258,12 @@ class MyAccountController(CustomerPortal):
         From MyCompassion 2.0, we ensured a proper redirection
         for user using old links.
         """
-        return request.redirect("/my2/dashboard")
+        if request.website == request.env.ref(
+            "my_compassion.my2_website", raise_if_not_found=False
+        ):
+            return request.redirect("/my2/dashboard")
+
+        return super().home(redirect=redirect, **post)
 
     @route("/my/letter", type="http", auth="user", website=True)
     def redirect_old_my_letter(self, child_id=None, template_id=None, **kwargs):
@@ -313,7 +318,9 @@ class MyAccountController(CustomerPortal):
         From MyCompassion 2.0, we ensured a proper redirection
         for user using old links.
         """
-        if request.website.sudo().theme_id.name == 'theme_compassion_2025':
+        if request.website == request.env.ref(
+            "my_compassion.my2_website", raise_if_not_found=False
+        ):
             return request.redirect("/my2/user_settings")
 
         partner = request.env.user.partner_id

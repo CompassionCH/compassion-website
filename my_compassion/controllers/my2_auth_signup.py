@@ -21,9 +21,11 @@ class SignupOverride(AuthSignupHome):
         Overrides the original signup page controller.
         Redirects logged-in users.
         """
-        # Check if a user ID exists in the current session
-        if request.session.uid:
-            return request.redirect("/my2/dashboard/")
+
+        if request.session.uid and request.website == request.env.ref(
+                "my_compassion.my2_website", raise_if_not_found=False
+        ):
+            return request.redirect(kw.get('redirect') or "/my2/dashboard/")
 
         # If the user is not logged in, execute the original Odoo logic for signup
         return super().web_auth_signup(*args, **kw)

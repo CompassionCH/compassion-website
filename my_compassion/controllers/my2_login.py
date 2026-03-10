@@ -22,9 +22,14 @@ class WebsiteLoginRedirect(Website):
         If the user is already logged in, they are redirected immediately.
         """
         # Check if a user ID exists in the current session
-        if request.session.uid:
+        if (
+            request.session.uid
+            and request.website == request.env.ref(
+                "my_compassion.my2_website", raise_if_not_found=False
+            )
+        ):
             # If so, redirect the user to their account page or dashboard
-            return request.redirect("/my2/dashboard/")
+            return request.redirect(kw.get('redirect') or "/my2/dashboard/")
 
         # If the user is not logged in, execute the original Odoo logic for login
         return super().web_login(*args, **kw)
