@@ -31,9 +31,22 @@
             </div>
         </section>
     </template>
+    <!-- Barometer component, used to display the amount raised vs the objective
+
+    Props:
+    - barometer: the event record, containing the fundraising information
+    - amount_inside: boolean to decide if the amount is displayed inside the barometer or outside
+    - barometer_title_class (optional): additional classes for the title, if any
+    - barometer_bg_class (optional): additional classes for the barometer background, if any
+    - barometer_amount_class (optional): additional classes for the amount, if any
+    - barometer_progress_text_dark (optional): text color as long as the progress doesn't reach it. Default 'text-dark' - only for amount_inside
+    - barometer_progress_text_light (optional): text color when the progress reaches it. Default 'text-white' - only for amount_inside
+    -->
     <template id="event_barometer" name="Event barometer">
+        <t t-set="currency" t-value="barometer.sudo().company_id.currency_id" />
+
         <p t-att-class="barometer_title_class" t-if="barometer_title_class">Funds raised</p>
-        <div t-attf-class="progress #{barometer_bg_class}">
+        <div t-attf-class="progress position-relative #{barometer_bg_class}">
             <div
                 class="progress-bar"
                 role="progressbar"
@@ -45,22 +58,33 @@
 
             </div>
             <t t-if="amount_inside">
-                <div t-attf-class="progress-amount #{ barometer_amount_class }">
-                    <t t-esc="barometer.amount_raised or 0" t-options="{'widget': 'integer'}" />
-                    /
-                    <t t-esc="barometer.amount_objective or 0" t-options="{'widget': 'integer'}" />
-                    <span t-field="barometer.sudo().company_id.currency_id.symbol" />
+                <div t-attf-class="progress-amount position-absolute w-100 h-100 d-flex align-items-center justify-content-center font-weight-bold #{ barometer_progress_text_dark or  'text-dark' } #{ barometer_amount_class }"
+                     style="pointer-events: none;">
+                    <t t-call="website_event_compassion.event_barometer_amount" />
+                </div>
+
+                <div t-attf-class="progress-amount position-absolute w-100 h-100 d-flex align-items-center justify-content-center font-weight-bold #{ barometer_progress_text_light or  'text-white' } #{ barometer_amount_class }"
+                     t-attf-style="pointer-events: none; clip-path: polygon(0 0, #{barometer.amount_raised_percents}% 0, #{barometer.amount_raised_percents}% 100%, 0 100%);">
+                    <t t-call="website_event_compassion.event_barometer_amount" />
                 </div>
             </t>
         </div>
         <t t-if="not amount_inside">
-            <div t-attf-class="#{ barometer_amount_class }">
-                <t t-esc="barometer.amount_raised or 0" t-options="{'widget': 'integer'}" />
-                /
-                <t t-esc="barometer.amount_objective or 0" t-options="{'widget': 'integer'}" />
-                <span t-field="barometer.sudo().company_id.currency_id.symbol" />
+            <div t-attf-class="#{ barometer_amount_class } mt-1">
+                <t t-call="website_event_compassion.event_barometer_amount" />
             </div>
         </t>
+    </template>
+    <template id="event_barometer_amount" name="Event Barometer Amount Formatting">
+        <span t-if="currency.position == 'before'" t-esc="currency.symbol" class="mr-1" />
+        <t t-esc="barometer.sudo().amount_raised or 0" t-options="{'widget': 'float', 'precision': 0}" />
+        <span t-if="currency.position == 'after'" t-esc="currency.symbol" class="ml-1" />
+
+        <span class="mx-1">/</span>
+
+        <span t-if="currency.position == 'before'" t-esc="currency.symbol" class="mr-1" />
+        <t t-esc="barometer.amount_objective or 0" t-options="{'widget': 'float', 'precision': 0}" />
+        <span t-if="currency.position == 'after'" t-esc="currency.symbol" class="ml-1" />
     </template>
     <template id="event_page" name="Event page">
         <t t-call="website.layout">
