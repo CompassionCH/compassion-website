@@ -28,16 +28,28 @@ class AccountInvoice(models.Model):
             return self.communication_id
 
         comm_obj = self.env["partner.communication.job"]
-        config = self.env.ref(
+        # communication to the donor
+        donor_config = self.env.ref(
             "crowdfunding_compassion.config_donation_successful_email_template"
         )
+        # communication to the participant
+        participant_config = self.env.ref("crowdfunding_compassion.donation_received_email_template")
+
         # update the all time impact
         for product_tmpl in self.mapped("invoice_line_ids.product_id.product_tmpl_id"):
             product_tmpl.recompute_amount()
 
+        participants = self.invoice_line_ids.mapped("crowdfunding_participant_id")
+        for participant in participants:
+            comm_obj.create({
+                "config_id": participant_config.id,
+                "partner_id": participant.partner_id.id,
+                "object_ids": self.ids,
+            })
+
         return comm_obj.create(
             {
-                "config_id": config.id,
+                "config_id": donor_config.id,
                 "partner_id": self.partner_id.id,
                 "object_ids": self.ids,
             }
