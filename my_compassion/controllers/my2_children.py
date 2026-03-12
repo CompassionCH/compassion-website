@@ -325,8 +325,7 @@ class MyCompassionChildrenController(WebsiteChild):
             {
                 "active_sponsorships": sponsorships.filtered(
                     # all not terminated or terminated within grace period
-                    lambda s: s.state != "terminated"
-                    or (s.state == "terminated" and s.can_write_letter)
+                    lambda s: s.state != "terminated" or s.can_write_letter
                 ),
                 "ended_sponsorships": sponsorships.filtered(
                     # terminated and not within grace period, excluding specific end reasons

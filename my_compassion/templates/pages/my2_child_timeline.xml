@@ -60,17 +60,6 @@
                                 </span>
                             </div>
                             <div
-                                t-if="access_scope == 'sponsor' and compassion_child.my_sponsorship_id.sds_state == 'sub_waiting'"
-                            >
-                                <span
-                                    class="badge bg-low-yellow"
-                                    title="The sponsorship has ended, awaiting substitute sponsorship"
-                                    aria-label="Sponsorship ended waiting for sub"
-                                >
-                                    <t>Awaiting substitute sponsorship</t>
-                                </span>
-                            </div>
-                            <div
                                 t-if="access_scope == 'sponsor' and compassion_child.my_sponsorship_id.state in ('draft', 'waiting', 'mandate')"
                             >
                                 <span
