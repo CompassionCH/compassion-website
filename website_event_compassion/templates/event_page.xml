@@ -83,7 +83,7 @@
         <span t-if="currency.position == 'after'" t-esc="currency.symbol" class="ml-1" />
         <span class="mx-1">/</span>
         <span t-if="currency.position == 'before'" t-esc="currency.symbol" class="mr-1" />
-        <t t-esc="barometer.amount_objective or 0" t-options="{'widget': 'float', 'precision': 0}" />
+        <t t-esc="barometer.sudo().amount_objective or 0" t-options="{'widget': 'float', 'precision': 0}" />
         <span t-if="currency.position == 'after'" t-esc="currency.symbol" class="ml-1" />
     </template>
     <template id="event_page" name="Event page">
