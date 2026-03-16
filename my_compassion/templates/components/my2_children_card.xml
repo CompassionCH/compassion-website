@@ -50,7 +50,7 @@
                 <div class="body-small mt-3">
                     <div t-if="show_status" class="mb-3 pl-3 pr-3">
                         <span class="border-bottom border-2 border-high-orange">
-                            <t t-if="sponsorship_end_date">
+                            <t t-if="sponsorship_end_date and not sponsorship.can_write_letter">
                                 Sponsorship terminated on
                                 <t
                                     t-esc="sponsorship_end_date"
