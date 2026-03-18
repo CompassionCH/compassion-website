@@ -272,7 +272,7 @@
                                 <t t-foreach="letters" t-as="letter" t-foreach-index="i">
                                     <div
                                         class="col-12 col-md-6 col-lg-4 my-3 letter-card"
-                                        t-att-data-create_date="letter.create_date"
+                                        t-att-data-create_date="letter.status_date if letter.direction == 'Beneficiary To Supporter' else letter.create_date"
                                         t-att-data-type="letter.direction"
                                         t-att-data-index="i"
                                     >
