@@ -44,7 +44,9 @@
                                     <!-- Loop through children_sponsored_by_partner -->
                                     <t t-foreach="sponsorship_ids" t-as="sponsorship">
                                         <!-- Shows only active sponsorships as selections -->
-                                        <t t-if="sponsorship.state == 'active'">
+                                        <t
+                                            t-if="sponsorship.state == 'active' or (sponsorship.state == 'terminated' and sponsorship.child_id.can_i_write_letter)"
+                                        >
                                             <option
                                                 t-att-value="sponsorship.child_id.id"
                                                 t-att-selected="'selected' if sponsorship.child_id.id == selected_child.id else None"

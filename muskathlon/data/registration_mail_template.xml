@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="muskathlon_registration_notification_view" model="ir.ui.view">
+            <field name="name">muskathlon.registration.notification.view</field>
+            <field name="type">qweb</field>
+            <field name="arch" type="xml">
+                <div>
+                    <p>A new participant has registered for the Muskathlon!</p>
+                    <p>Here are the registration details:</p>
+                    <ul>
+                        <li><strong>Title:</strong> <t t-esc="object.partner_title.name"/></li>
+                        <li><strong>Name:</strong> <t t-esc="object.name"/></li>
+                        <li><strong>Email:</strong> <t t-esc="object.partner_email"/></li>
+                        <li><strong>Phone:</strong> <t t-esc="object.partner_phone"/></li>
+                        <li><strong>Birth Name:</strong> <t t-esc="object.birth_name"/></li>
+                        <li><strong>Date of Birth:</strong> <t t-esc="object.partner_birthdate_date"/></li>
+                        <li><strong>Passport Number:</strong> <t t-esc="object.passport_number"/></li>
+                        <li><strong>Passport Expiration Date:</strong> <t t-esc="object.passport_expiration_date"/></li>
+                        <li><strong>Emergency Contact (<t t-esc="object.emergency_relation_type"/>):</strong> <t t-esc="object.emergency_name" /></li>
+                        <li><strong>Emergency Contact Phone:</strong> <t t-esc="object.emergency_phone"/></li>
+                        <li><strong>Address:</strong> <t t-esc="object.partner_id.contact_address"/>,</li>
+                        <li><strong>T-Shirt Size:</strong> <t t-esc="object.translate('t_shirt_size')"/></li>
+                        <li><strong>Sport Discipline:</strong> <t t-esc="object.sport_discipline_id.name"/></li>
+                        <li><strong>Sport Level:</strong> <t t-esc="object.translate('sport_level')"/></li>
+                        <li t-if="object.sport_level_description"><strong>Sport Description:</strong> <t t-esc="object.sport_level_description"/></li>
+                        <li><strong>Comments:</strong> <t t-esc="object.comments"/></li>
+                    </ul>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

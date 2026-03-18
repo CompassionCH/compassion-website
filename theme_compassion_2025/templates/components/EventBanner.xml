@@ -49,10 +49,10 @@
                 <div
                     class="col-12 col-md-7 col-lg-8 col-xl-9 d-flex flex-column align-items-center text-center align-items-md-start text-md-left"
                 >
-                    <p class="h3 font-weight-bold mb-1 text-low-black">
+                    <p t-attf-class="h3 font-weight-bold mb-1 #{banner.text_color.class_name} text-break">
                         <t t-esc="banner.title" />
                     </p>
-                    <p class="mb-0 text-low-black text-break">
+                    <p t-attf-class="mb-0 #{banner.text_color.class_name} text-break">
                         <t t-esc="banner.description" />
                     </p>
                 </div>
@@ -73,6 +73,7 @@
                             <t t-set="text_color" t-value="banner.button_text_color.class_name" />
                             <t t-set="radius" t-value="'pill'" />
                             <t t-set="href" t-value="banner.button_action_url" />
+                            <t t-set="target" t-value="'_blank' if banner.target_blank else '_self'" />
                         </t>
                     </t>
                     <i
