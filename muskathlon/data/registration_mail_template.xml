@@ -19,10 +19,7 @@
                         <li><strong>Passport Expiration Date:</strong> <t t-esc="object.passport_expiration_date"/></li>
                         <li><strong>Emergency Contact (<t t-esc="object.emergency_relation_type"/>):</strong> <t t-esc="object.emergency_name" /></li>
                         <li><strong>Emergency Contact Phone:</strong> <t t-esc="object.emergency_phone"/></li>
-                        <li><strong>Address:</strong>
-                            <t t-esc="object.partner_street"/>,
-                            <t t-esc="object.partner_zip"/> <t t-esc="object.partner_city"/>
-                        </li>
+                        <li><strong>Address:</strong> <t t-esc="object.partner_id.contact_address"/>,</li>
                         <li><strong>T-Shirt Size:</strong> <t t-esc="object.translate('t_shirt_size')"/></li>
                         <li><strong>Sport Discipline:</strong> <t t-esc="object.sport_discipline_id.name"/></li>
                         <li><strong>Sport Level:</strong> <t t-esc="object.translate('sport_level')"/></li>
