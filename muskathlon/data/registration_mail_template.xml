@@ -23,9 +23,9 @@
                             <t t-esc="object.partner_street"/>,
                             <t t-esc="object.partner_zip"/> <t t-esc="object.partner_city"/>
                         </li>
-                        <li><strong>T-Shirt Size:</strong> <t t-esc="dict(object._fields['t_shirt_size'].selection).get(object.t_shirt_size, '')"/></li>
+                        <li><strong>T-Shirt Size:</strong> <t t-esc="object.translate('t_shirt_size')"/></li>
                         <li><strong>Sport Discipline:</strong> <t t-esc="object.sport_discipline_id.name"/></li>
-                        <li><strong>Sport Level:</strong> <t t-esc="dict(object._fields['sport_level'].selection).get(object.sport_level, '')"/></li>
+                        <li><strong>Sport Level:</strong> <t t-esc="object.translate('sport_level')"/></li>
                         <li t-if="object.sport_level_description"><strong>Sport Description:</strong> <t t-esc="object.sport_level_description"/></li>
                         <li><strong>Comments:</strong> <t t-esc="object.comments"/></li>
                     </ul>
