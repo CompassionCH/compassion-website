@@ -84,34 +84,13 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             ),
         ]
 
-        # 2. Rules for B2S letters
-        b2s_base_rules = [
-            ("direction", "=", "Beneficiary To Supporter"),  # B2S
-            ("state", "=", "Published to Global Partner"),  # published
-            (
-                "communication_state",
-                "not in",
-                ["cancel", "failure"],
-            ),  # Exclude failed and canceled emails
+        # 2. Beneficiary to Supporter (B2S) Rules
+        b2s_domain = [
+            ("direction", "=", "Beneficiary To Supporter"),
+            ("state", "=", "Published to Global Partner"),
+            # Rejects 'pending', 'cancel', 'failure', processing and False
+            ("communication_state", "=", "done"),
         ]
-
-        b2s_final_letter_rule = [
-            ("communication_state", "=", "done"),  # Final letters must be manually sent
-        ]
-
-        final_type_id = request.env.ref("sbc_compassion.correspondence_type_final").id
-        b2s_normal_letter_rule = [
-            ("communication_type_ids", "!=", final_type_id),  # not final letter
-            ("sponsorship_state", "=", "active"),  # sponsorship is active
-        ]
-
-        # combine B2S conditions
-        b2s_domain = expression.AND(
-            [
-                b2s_base_rules,
-                expression.OR([b2s_final_letter_rule, b2s_normal_letter_rule]),
-            ]
-        )
 
         # 3. Rules for S2B letters
         s2b_domain = [
