@@ -1,64 +1,61 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <!-- Add text for donation receipts -->
-    <record id="view_muskathlon_event_website" model="ir.ui.view">
-        <field name="name">crm.event.compassion.website.config.form</field>
-        <field name="model">crm.event.compassion</field>
-        <field name="inherit_id" ref="crm_compassion.view_events_form" />
-        <field name="arch" type="xml">
-            <header>
-                <field name="odoo_event_id" invisible="1" />
-                <button
-                    name="open_registrations"
-                    string="Open registrations"
-                    class="oe_highlight"
-                    type="object"
-                    attrs="{'invisible': ['|', ('event_type_id', '=', False), ('odoo_event_id', '!=', False)]}"
-                />
-            </header>
-            <xpath expr="//sheet/div[1]" position="after">
-                <field name="picture_1" widget="image" class="w-25" />
-            </xpath>
-            <div name="buttons" position="inside">
-                <button
-                    name="open_participants"
-                    type="object"
-                    class="oe_stat_button oe_event_attendee_button"
-                    icon="fa-users"
-                    attrs="{'invisible': [('odoo_event_id', '=', False)]}"
-                >
-                    <field name="seats_expected" widget="statinfo" string="Participants" />
-                </button>
-                <button
-                    name="manage_event_registration"
-                    type="object"
-                    class="oe_stat_button"
-                    icon="fa-edit"
-                    attrs="{'invisible': [('odoo_event_id', '=', False)]}"
-                    string="Registration process"
-                />
-                <field name="website_published" widget="website_redirect_button" />
-            </div>
-            <field name="type" position="before">
-                <field name="website_id" groups="website.group_website_publisher" />
-                <field name="event_type_id" />
-            </field>
-        </field>
-    </record>
-    <!-- Move events into the Events App and rename the menu for better clarity between Compassion Events and Odoo Events -->
-    <menuitem
-        id="crm_compassion.menu_events_compassion"
-        parent="event.event_main_menu"
-        sequence="0"
-        action="crm_compassion.action_events_compassion"
-    />
-    <menuitem
-        id="event.menu_event_event"
-        name="Registrations"
-        action="event.action_event_view"
-        parent="event.event_main_menu"
-    />
-    <record model="ir.actions.act_window" id="event.action_event_view">
-        <field name="name">Registrations</field>
-    </record>
+  <!-- Add text for donation receipts -->
+  <record id="view_muskathlon_event_website" model="ir.ui.view">
+    <field name="name">crm.event.compassion.website.config.form</field>
+    <field name="model">crm.event.compassion</field>
+    <field name="inherit_id" ref="crm_compassion.view_events_form" />
+    <field name="arch" type="xml">
+      <header>
+        <button
+          name="open_registrations"
+          string="Open registrations"
+          class="oe_highlight"
+          type="object"
+          invisible="(not event_type_id or odoo_event_id)"
+        />
+      </header>
+      <xpath expr="//sheet/div[1]" position="after">
+        <field name="picture_1" widget="image" class="w-25" />
+      </xpath>
+      <div name="buttons" position="inside">
+        <button
+          name="open_participants"
+          type="object"
+          class="oe_stat_button oe_event_attendee_button"
+          icon="fa-users"
+          invisible="not odoo_event_id"
+        />
+        <button
+          name="manage_event_registration"
+          type="object"
+          class="oe_stat_button"
+          icon="fa-edit"
+          string="Registration process"
+          invisible="not odoo_event_id"
+        />
+        <field name="website_published" widget="website_redirect_button" />
+      </div>
+      <field name="type" position="before">
+        <field name="website_id" groups="website.group_website_designer" />
+        <field name="event_type_id" />
+      </field>
+    </field>
+  </record>
+  <!-- Move events into the Events App and rename the menu for better clarity between Compassion Events and Odoo Events -->
+  <menuitem
+    id="crm_compassion.menu_events_compassion"
+    parent="event.event_main_menu"
+    sequence="0"
+    action="crm_compassion.action_events_compassion"
+  />
+  <menuitem
+    id="event.menu_event_event"
+    name="Registrations"
+    action="event.action_event_view"
+    parent="event.event_main_menu"
+  />
+  <record model="ir.actions.act_window" id="event.action_event_view">
+    <field name="name">Registrations</field>
+  </record>
 </odoo>

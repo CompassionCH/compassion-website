@@ -19,11 +19,10 @@
         'partner_birthdate_date',
         'partner_phone',
         'partner_mobile',
-        'phone',
-        'mobile',
         'partner_function',
         'partner_lang',
         'partner_spoken_lang_ids',
+        'partner_id',
         'match_update',
         'event_id',
         'amount_objective',
@@ -40,10 +39,6 @@
         'single_room',
         ]"
     />
-    </function>
-    <function model="ir.model.fields" name="formbuilder_whitelist">
-        <value>cms.form.sponsorship</value>
-        <value eval="['registration_id']" />
     </function>
     <record id="model_event_registration_form" model="ir.model">
       <field name="website_form_key">event_registration_edit</field>

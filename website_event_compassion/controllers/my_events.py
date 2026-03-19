@@ -1,6 +1,5 @@
-from odoo.http import redirect_with_hash, request, route
+from odoo.http import request, route
 
-from odoo.addons.http_routing.models.ir_http import slug
 from odoo.addons.portal.controllers.portal import CustomerPortal
 
 
@@ -106,6 +105,7 @@ class MyEventsController(CustomerPortal):
         if task.task_id.task_complete_on_click:
             task.done = True
         if task.task_url:
-            return redirect_with_hash(task.task_url)
+            return request.redirect(task.task_url)
         else:
-            return redirect_with_hash(f"/my/events/{slug(task.registration_id)}/")
+            slug = request.env["ir.http"]._slug
+            return request.redirect(f"/my/events/{slug(task.registration_id)}/")

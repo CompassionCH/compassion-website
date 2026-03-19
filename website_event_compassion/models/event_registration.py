@@ -12,8 +12,6 @@ from odoo import SUPERUSER_ID, _, api, fields, models
 from odoo.http import request
 from odoo.tools import index_exists
 
-from odoo.addons.website.models.website import slugify as slug
-
 _logger = logging.getLogger(__name__)
 
 
@@ -159,9 +157,10 @@ class EventRegistration(models.Model):
     #                             FIELDS METHODS                             #
     ##########################################################################
     def _compute_website_url(self):
+        slug = self.env["ir.http"]._slug
         for registration in self:
-            registration.website_url = "/event/{}/{}".format(
-                slug(registration.compassion_event_id), slug(registration)
+            registration.website_url = (
+                f"/event/{slug(registration.compassion_event_id)}/{slug(registration)}"
             )
 
     def _compute_amount_raised_percent(self):
@@ -191,7 +190,7 @@ class EventRegistration(models.Model):
                         ("payment_state", "=", "paid"),
                         ("event_id", "=", compassion_event.id),
                         ("contract_id", "=", False),
-                        ("account_id.user_type_id.name", "=", "Income"),
+                        ("account_id.account_type", "like", "income"),
                     ]
                 )
             )
@@ -531,7 +530,7 @@ class EventRegistration(models.Model):
             "type": "ir.actions.act_window",
             "res_model": "survey.user_input",
             "name": _("Surveys"),
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [
                 ("survey_id", "in", surveys.ids),
                 ("partner_id", "=", self.partner_id.id),
@@ -543,7 +542,7 @@ class EventRegistration(models.Model):
         return {
             "name": _("Donations"),
             "type": "ir.actions.act_window",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "res_model": "account.move",
             "context": self.env.context,
             "domain": [

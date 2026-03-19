@@ -12,8 +12,8 @@ from odoo import models
 class ResLang(models.Model):
     _inherit = "res.lang"
 
-    def format(self, percent, value, grouping=False, monetary=False):
-        res = super().format(percent, value, grouping, monetary)
+    def format(self, percent, value, grouping=False):
+        res = super().format(percent, value, grouping)
         if self.code == "fr_CH":
             res = res.replace("'", "&nbsp;")
         return res
