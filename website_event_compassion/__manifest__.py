@@ -59,7 +59,6 @@
         "views/registration_task_view.xml",
         "views/event_type_view.xml",
         "views/event_registration_communication_wizard.xml",
-        # "templates/assets.xml",
         "templates/event_page.xml",
         "templates/events_list.xml",
         "templates/event_registration.xml",
@@ -69,6 +68,15 @@
         "templates/my_events.xml",
         "data/website_page.xml",
     ],
+    "assets": {
+        "web.assets_frontend": [
+            "website_event_compassion/static/src/js/registration_form_page.esm.js",
+            "website_event_compassion/static/src/js/donation_form.esm.js",
+        ],
+        "website.assets_wysiwyg": [
+            "website_event_compassion/static/src/js/registration_form_snippet.esm.js",
+        ],
+    },
     "installable": True,
     "auto_install": False,
 }
