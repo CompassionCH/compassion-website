@@ -66,6 +66,7 @@
         "templates/participant_page.xml",
         "templates/event_donation.xml",
         "templates/my_events.xml",
+        "templates/website_cart.xml",
         "data/website_page.xml",
     ],
     "assets": {

@@ -95,7 +95,7 @@ If you would like to go a step further and show that you share our commitment to
                 <div class="col-6">
                     <t t-if="partner.date_agreed_child_protection_charter">
                         <span>Signing date:</span>
-                        <t t-esc="partner.get_date('date_agreed_child_protection_charter', 'date_short')" />
+                        <t t-esc="partner.get_date('date_agreed_child_protection_charter', 'short')" />
                         <a href="/child-protection-charter">(view agreement)</a>
                     </t>
                     <t t-else="">
@@ -116,7 +116,7 @@ If you would like to go a step further and show that you share our commitment to
                 <div class="col-6">
                     <t t-if="partner.legal_agreement_date">
                         <span>Signing date:</span>
-                        <t t-esc="partner.get_date('legal_agreement_date', 'date_short')" />
+                        <t t-esc="partner.get_date('legal_agreement_date', 'short')" />
                         <a href="/legal" target="_blank">(view agreement)</a>
                     </t>
                     <form t-else="" enctype="application/x-www-form-urlencoded">

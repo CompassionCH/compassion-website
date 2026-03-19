@@ -16,7 +16,7 @@
     <t t-call="portal.frontend_layout">
       <t t-set="additional_title">My events</t>
       <div class="container my-5">
-        <h2 t-raw="additional_title" class="text-uppercase" />
+        <h2 t-out="additional_title" class="text-uppercase" />
         <section class="mt-5 pb-5" id="events_compassion_list">
           <div class="container">
             <div class="card-deck">
@@ -116,7 +116,7 @@
               t-call="website_event_compassion.my_profile_edit"
               t-if="edit_mode=='profile'"
             />
-            <t t-raw="main_content" t-if="main_content" />
+            <t t-out="main_content" t-if="main_content" />
           </div>
           <div
             t-attf-class="col-12 col-sm-#{'6' if main_section else '12'}"
@@ -274,7 +274,7 @@
       <div class="container">
         <form
           id="event_registration_form"
-          action="/website_form/"
+          action="/website/form/"
           method="post"
           enctype="multipart/form-data"
           class="o_mark_required"

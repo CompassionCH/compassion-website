@@ -138,33 +138,6 @@
       </field>
     </field>
   </record>
-  <record model="ir.ui.view" id="view_event_registration_kanban">
-    <field name="name">event.registration.kanban</field>
-    <field name="model">event.registration</field>
-    <field name="inherit_id" ref="event.event_registration_view_kanban" />
-    <field name="arch" type="xml">
-      <kanban position="attributes">
-        <attribute name="default_group_by">stage_id</attribute>
-        <attribute name="quick_create">false</attribute>
-      </kanban>
-      <field name="name" position="after">
-        <field name="profile_picture" />
-        <field name="id" />
-      </field>
-      <xpath expr="//div[contains(@class, 'row')]/div[1]" position="before">
-        <div
-          class="col-3"
-          t-attf-style="background-image: url('#{kanban_image('event.registration', 'profile_picture', record.id.raw_value,  placeholder)}'); background-size: cover;"
-        />
-      </xpath>
-      <xpath expr="//div[contains(@class, 'row')]/div[2]" position="attributes">
-        <attribute name="class">col-6 pr-0</attribute>
-      </xpath>
-      <xpath expr="//div[contains(@class, 'row')]/div[3]" position="attributes">
-        <attribute name="class">col-3 pl-0</attribute>
-      </xpath>
-    </field>
-  </record>
   <record model="ir.actions.server" id="event_registration_all_attended_action">
     <field name="name">Action All Attended</field>
     <field name="model_id" ref="model_event_registration" />

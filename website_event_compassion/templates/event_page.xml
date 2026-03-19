@@ -81,15 +81,11 @@
   </template>
   <template id="event_barometer_amount" name="Event Barometer Amount Formatting">
     <span t-if="currency.position == 'before'" t-esc="currency.symbol" class="mr-1" />
-    <t
-      t-out="int(barometer.sudo().amount_raised) or 0"
-    />
+    <t t-out="int(barometer.sudo().amount_raised) or 0" />
     <span t-if="currency.position == 'after'" t-esc="currency.symbol" class="ml-1" />
     <span class="mx-1">/</span>
     <span t-if="currency.position == 'before'" t-esc="currency.symbol" class="mr-1" />
-    <t
-      t-out="int(barometer.sudo().amount_objective) or 0"
-    />
+    <t t-out="int(barometer.sudo().amount_objective) or 0" />
     <span t-if="currency.position == 'after'" t-esc="currency.symbol" class="ml-1" />
   </template>
   <template id="event_page" name="Event page">

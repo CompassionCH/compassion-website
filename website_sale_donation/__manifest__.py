@@ -24,5 +24,6 @@
     "data": [
         # "data/base_automation.xml",
         "templates/website_cart.xml",
+        "templates/website_sale_confirmation.xml",
     ],
 }

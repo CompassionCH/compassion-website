@@ -67,7 +67,7 @@ class EventRegistration(models.Model):
         index=True,
         copy=False,
         domain="['|', ('event_type_ids', '=', False),"
-        "      ('event_type_ids', '=', event_type_id)]",
+        "      ('event_type_ids', '=', event_id.event_type_id)]",
         group_expand="_read_group_stage_ids",
         readonly=False,
     )
@@ -190,7 +190,7 @@ class EventRegistration(models.Model):
                         ("payment_state", "=", "paid"),
                         ("event_id", "=", compassion_event.id),
                         ("contract_id", "=", False),
-                        ("account_id.account_type", "like", "income"),
+                        # ("account_id.account_type", "like", "income"),
                     ]
                 )
             )

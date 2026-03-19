@@ -54,14 +54,14 @@
         </page>
       </xpath>
       <xpath
-        expr="//field[@name='event_mail_ids']//field[@name='template_id']"
+        expr="//field[@name='event_mail_ids']//field[@name='template_ref']"
         position="attributes"
       >
         <attribute name="required">notification_type == 'mail'</attribute>
         <attribute name="invisible">notification_type != 'mail'</attribute>
       </xpath>
       <xpath
-        expr="//field[@name='event_mail_ids']//field[@name='template_id']"
+        expr="//field[@name='event_mail_ids']//field[@name='template_ref']"
         position="before"
       >
         <field

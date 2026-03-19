@@ -12,6 +12,8 @@ publicWidget.registry.EventDonationForm = publicWidget.Widget.extend({
   _onAmountButtonClick(ev) {
     const inputAmount = this.el.querySelector("#input_amount");
     if (inputAmount) {
+      $(".amount_button").removeClass("active");
+      $(ev.currentTarget).addClass("active");
       inputAmount.value = ev.currentTarget.dataset.donationValue;
     }
   },
