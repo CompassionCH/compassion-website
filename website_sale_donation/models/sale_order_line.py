@@ -55,7 +55,7 @@ class SaleOrderLine(models.Model):
             if line.order_id.is_donation:
                 line.name_short = line.get_donation_description(line.product_id)
             else:
-                line.name_short = super(SaleOrderLine, line)._compute_name_short()
+                super(SaleOrderLine, line)._compute_name_short()
 
     def _prepare_invoice_line(self, **optional_values):
         # Propagate anonymous to move_line

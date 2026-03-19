@@ -58,7 +58,7 @@ class SaleOrder(models.Model):
     def _create_invoices(self, grouped=False, final=False, date=None):
         # Opt out partners if desired
         for line in self.order_line.filtered("opt_out"):
-            self.env["mailing.contact.subscription"].sudo().search(
+            self.env["mailing.subscription"].sudo().search(
                 [("contact_id.email", "=", line.order_partner_id.email)]
             ).write({"opt_out": True})
         return super()._create_invoices(grouped, final, date)
