@@ -60,7 +60,7 @@
                             <t t-elif="latest_correspondence">
                                 Last contact
                                 <t
-                                    t-esc="latest_correspondence.write_date"
+                                    t-esc="latest_correspondence.create_date"
                                     t-options="{'widget': 'date', 'format': 'dd MMMM yyyy'}"
                                 />
                             </t>
