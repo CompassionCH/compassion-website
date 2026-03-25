@@ -140,7 +140,7 @@
                             <t t-set="value" t-value="child_id.age" />
                             <t t-call="my_compassion.fill_key_value">Age</t>
                             <!-- Birthdate -->
-                            <t t-set="value" t-value="child_id.get_date('birthdate', 'date_full')" />
+                            <t t-set="value" t-value="child_id.get_date('birthdate', 'full')" />
                             <t t-call="my_compassion.fill_key_value">Birthdate</t>
                             <!-- Gender -->
                             <t t-set="value" t-value="child_id.translate('gender')" />
@@ -372,7 +372,7 @@
                             </div>
                             <div class="col-4">
                                 <label>
-                                    <t t-esc="line.get_date('last_payment', 'date_full')" />
+                                    <t t-esc="line.get_date('last_payment', 'full')" />
                                 </label>
                             </div>
                             <div class="col-4">
@@ -454,7 +454,7 @@
                     <t t-foreach="letters_to_display" t-as="letter">
                         <div class="col-6">
                             <label>
-                                <t t-esc="letter.get_date('scanned_date', 'date_full')" />
+                                <t t-esc="letter.get_date('scanned_date', 'full')" />
                             </label>
                         </div>
                         <div class="col-3">

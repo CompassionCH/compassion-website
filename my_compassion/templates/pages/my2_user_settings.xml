@@ -568,7 +568,7 @@ Injected data:
                                     <t t-if="partner.date_agreed_child_protection_charter">
                                         <span>Signing date:</span>
                                         <t
-                                            t-esc="partner.get_date('date_agreed_child_protection_charter', 'date_short')"
+                                            t-esc="partner.get_date('date_agreed_child_protection_charter', 'short')"
                                         />
                                         <a href="/child-protection-charter">
                                             (view
@@ -598,7 +598,7 @@ Injected data:
                                         <div class="d-flex justify-content-center">
                                             <div class="mr-2">Signing date:</div>
                                             <div class="mr-2">
-                                                <t t-esc="partner.get_date('legal_agreement_date', 'date_short')" />
+                                                <t t-esc="partner.get_date('legal_agreement_date', 'short')" />
                                             </div>
                                             <a href="/legal" target="_blank">(view agreement)</a>
                                         </div>

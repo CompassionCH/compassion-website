@@ -28,18 +28,19 @@ class SaleOrderLine(models.Model):
     def get_donation_description(self, product):
         """Get the description for a donation."""
         if self.registration_id:
-            return _("Donation for %s") % self.registration_id.partner_id.preferred_name
+            partner = self.registration_id.partner_id
+            name = partner.preferred_name or partner.firstname or partner.name
+            return _("Donation for %s") % name
         return super().get_donation_description(product)
 
     def _prepare_invoice_line(self, **optional_values):
         res = super()._prepare_invoice_line(**optional_values)
         registration = getattr(self, "registration_id", False)
-        analytic_id = registration.compassion_event_id.analytic_id.id
         if registration:
             res.update(
                 {
                     "user_id": registration.partner_id.id,
-                    "analytic_account_id": analytic_id,
+                    "event_id": registration.compassion_event_id.id,
                 }
             )
         return res

@@ -1,171 +1,148 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <record id="view_event_registration_form" model="ir.ui.view">
-        <field name="name">event.registration.form.compassion</field>
-        <field name="model">event.registration</field>
-        <field name="inherit_id" ref="event.view_event_registration_form" />
-        <field name="arch" type="xml">
-            <button name="action_send_badge_email" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </button>
-            <button name="action_send_badge_email" position="after">
-                <button
-                    name="button_send_reminder"
-                    string="Send a reminder"
-                    type="object"
-                    states="open,done"
-                    class="oe_highlight"
-                />
-            </button>
-            <button name="action_cancel" position="after">
-                <button
-                    name="create_down_payment"
-                    string="Create Down Payment"
-                    type="object"
-                    attrs="{ 'invisible': [('down_payment_id', '!=', False)] }"
-                />
-                <button
-                    name="create_trip_invoice"
-                    string="Create Trip Invoice"
-                    type="object"
-                    attrs="{ 'invisible': [('trip_invoice_id', '!=', False)] }"
-                />
-            </button>
-            <!-- Replace state widget by registration stage -->
-            <field name="state" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </field>
-            <field name="state" position="after">
-                <field
-                    name="stage_id"
-                    widget="statusbar"
-                    clickable="True"
-                    domain="['|', ('event_type_ids', '=', context.get('default_event_type_id', False)), ('event_type_ids', '=', False)]"
-                    options="{'clickable': True}"
-                />
-            </field>
-            <div name="button_box">
-                <button name="get_event_registration_survey" type="object" class="oe_stat_button" icon="fa-list-alt">
-                    <field name="survey_count" widget="statinfo" string="Surveys" />
-                </button>
-                <button name="show_invoice" type="object" class="oe_stat_button" icon="fa-gift">
-                    <field name="invoice_count" widget="statinfo" string="Donations" />
-                </button>
-                <field name="is_published" widget="website_redirect_button" />
-            </div>
-            <div name="button_box" position="after">
-                <field name="profile_picture" widget="image" class="oe_avatar" />
-            </div>
-            <field name="event_id" position="attributes">
-                <attribute name="string">Registrations</attribute>
-            </field>
-            <field name="event_id" position="after">
-                <field name="compassion_event_id" />
-            </field>
-            <field name="partner_id" position="attributes">
-                <!-- Allow to change partner of registration -->
-                <attribute name="attrs" />
-            </field>
-            <field name="name" position="after">
-                <field name="profile_name" />
-                <field name="state" readonly="0" />
-                <field name="stage_date" />
-            </field>
-            <field name="sale_order_line_id" position="after">
-                <field name="down_payment_id" groups="base.group_no_one" />
-                <field name="down_payment_link" groups="base.group_no_one" />
-                <field name="trip_invoice_id" groups="base.group_no_one" />
-                <field name="payment_link" groups="base.group_no_one" />
-            </field>
-            <field name="event_ticket_id" position="after">
-                <field name="single_room" />
-            </field>
-            <xpath expr="//sheet/group">
-                <field name="fundraising" invisible="1" />
-                <group name="fundraising" string="Fundraising" attrs="{'invisible': [('fundraising', '=', False)]}">
-                    <field name="currency_id" invisible="1" />
-                    <field name="amount_objective" />
-                    <field name="amount_raised" />
-                    <field name="amount_raised_percents" widget="percentage" />
-                    <field name="ambassador_quote" />
-                </group>
-                <group name="trip_2" string="Personal information">
-                    <field name="birth_name" />
-                    <field name="passport" />
-                    <field name="passport_number" />
-                    <field name="passport_expiration_date" />
-                    <field name="criminal_record" groups="child_protection.group_criminal_record" />
-                    <field name="emergency_name" />
-                    <field name="emergency_phone" />
-                    <field name="emergency_relation_type" />
-                </group>
-                <group name="tasks" string="Tasks">
-                    <field name="task_ids" nolabel="1">
-                        <tree decoration-muted="done == True" editable="top">
-                            <field name="sequence" widget="handle" />
-                            <field name="task_id" />
-                            <field name="done" />
-                        </tree>
-                    </field>
-                </group>
-                <group name="flight" string="Flights">
-                    <field name="flight_ids" nolabel="1">
-                        <tree>
-                            <field name="flight_type" />
-                            <field name="departure" />
-                            <field name="arrival" />
-                            <field name="flying_company" />
-                            <field name="flight_number" />
-                        </tree>
-                    </field>
-                </group>
-            </xpath>
-        </field>
-    </record>
-    <record id="view_event_registration_tree_compassion" model="ir.ui.view">
-        <field name="name">event.registration.website.compassion.tree</field>
-        <field name="model">event.registration</field>
-        <field name="inherit_id" ref="event.view_event_registration_tree" />
-        <field name="arch" type="xml">
-            <field name="state" position="before">
-                <field name="stage_id" />
-            </field>
-        </field>
-    </record>
-    <record model="ir.ui.view" id="view_event_registration_kanban">
-        <field name="name">event.registration.kanban</field>
-        <field name="model">event.registration</field>
-        <field name="inherit_id" ref="event.event_registration_view_kanban" />
-        <field name="arch" type="xml">
-            <kanban position="attributes">
-                <attribute name="default_group_by">stage_id</attribute>
-                <attribute name="quick_create">false</attribute>
-            </kanban>
-            <field name="name" position="after">
-                <field name="profile_picture" />
-                <field name="id" />
-            </field>
-            <xpath expr="//div[contains(@class, 'row')]/div[1]" position="before">
-                <div
-                    class="col-3"
-                    t-attf-style="background-image: url('#{kanban_image('event.registration', 'profile_picture', record.id.raw_value,  placeholder)}'); background-size: cover;"
-                >
-
-                </div>
-            </xpath>
-            <xpath expr="//div[contains(@class, 'row')]/div[2]" position="attributes">
-                <attribute name="class">col-6 pr-0</attribute>
-            </xpath>
-            <xpath expr="//div[contains(@class, 'row')]/div[3]" position="attributes">
-                <attribute name="class">col-3 pl-0</attribute>
-            </xpath>
-        </field>
-    </record>
-    <record model="ir.actions.server" id="event_registration_all_attended_action">
-        <field name="name">Action All Attended</field>
-        <field name="model_id" ref="model_event_registration" />
-        <field name="code">records.action_set_done()</field>
-        <field name="state">code</field>
-        <field name="binding_model_id" ref="model_event_registration" />
-    </record>
+  <record id="view_event_registration_form" model="ir.ui.view">
+    <field name="name">event.registration.form.compassion</field>
+    <field name="model">event.registration</field>
+    <field name="inherit_id" ref="event.view_event_registration_form" />
+    <field name="arch" type="xml">
+      <button name="action_send_badge_email" position="attributes">
+        <attribute name="invisible">1</attribute>
+      </button>
+      <button name="action_send_badge_email" position="after">
+        <button
+          name="button_send_reminder"
+          string="Send a reminder"
+          type="object"
+          invisible="state not in ('open','done')"
+          class="oe_highlight"
+        />
+      </button>
+      <button name="action_cancel" position="after">
+        <button
+          name="create_down_payment"
+          string="Create Down Payment"
+          type="object"
+          invisible="down_payment_id"
+        />
+        <button
+          name="create_trip_invoice"
+          string="Create Trip Invoice"
+          type="object"
+          invisible="trip_invoice_id"
+        />
+      </button>
+      <!-- Replace state widget by registration stage -->
+      <field name="state" position="attributes">
+        <attribute name="invisible">1</attribute>
+      </field>
+      <field name="state" position="after">
+        <field
+          name="stage_id"
+          widget="statusbar"
+          clickable="True"
+          domain="['|', ('event_type_ids', '=', context.get('default_event_type_id', False)), ('event_type_ids', '=', False)]"
+          options="{'clickable': True}"
+        />
+      </field>
+      <div name="button_box">
+        <button
+          name="get_event_registration_survey"
+          type="object"
+          class="oe_stat_button"
+          icon="fa-list-alt"
+        >
+          <field name="survey_count" widget="statinfo" string="Surveys" />
+        </button>
+        <button name="show_invoice" type="object" class="oe_stat_button" icon="fa-gift">
+          <field name="invoice_count" widget="statinfo" string="Donations" />
+        </button>
+        <field name="is_published" widget="website_redirect_button" />
+      </div>
+      <div name="button_box" position="after">
+        <field name="profile_picture" widget="image" class="oe_avatar" />
+      </div>
+      <field name="event_id" position="attributes">
+        <attribute name="string">Registrations</attribute>
+      </field>
+      <field name="event_id" position="after">
+        <field name="compassion_event_id" />
+      </field>
+      <field name="partner_id" position="attributes">
+        <!-- Allow to change partner of registration -->
+        <attribute name="readonly">0</attribute>
+      </field>
+      <field name="name" position="after">
+        <field name="profile_name" />
+        <field name="state" readonly="0" />
+        <field name="stage_date" />
+      </field>
+      <field name="sale_order_line_id" position="after">
+        <field name="down_payment_id" groups="base.group_no_one" />
+        <field name="down_payment_link" groups="base.group_no_one" />
+        <field name="trip_invoice_id" groups="base.group_no_one" />
+        <field name="payment_link" groups="base.group_no_one" />
+      </field>
+      <field name="event_ticket_id" position="after">
+        <field name="single_room" />
+      </field>
+      <xpath expr="//sheet/group">
+        <group name="fundraising" string="Fundraising" invisible="not fundraising">
+          <field name="amount_objective" />
+          <field name="amount_raised" />
+          <field name="amount_raised_percents" widget="percentage" />
+          <field name="ambassador_quote" />
+        </group>
+        <group name="trip_2" string="Personal information">
+          <field name="birth_name" />
+          <field name="passport" />
+          <field name="passport_number" />
+          <field name="passport_expiration_date" />
+          <field
+            name="criminal_record"
+            groups="child_protection.group_criminal_record"
+          />
+          <field name="emergency_name" />
+          <field name="emergency_phone" />
+          <field name="emergency_relation_type" />
+        </group>
+        <group name="tasks" string="Tasks">
+          <field name="task_ids" nolabel="1">
+            <list decoration-muted="done == True" editable="top">
+              <field name="sequence" widget="handle" />
+              <field name="task_id" />
+              <field name="done" />
+            </list>
+          </field>
+        </group>
+        <group name="flight" string="Flights">
+          <field name="flight_ids" nolabel="1">
+            <list>
+              <field name="flight_type" />
+              <field name="departure" />
+              <field name="arrival" />
+              <field name="flying_company" />
+              <field name="flight_number" />
+            </list>
+          </field>
+        </group>
+      </xpath>
+    </field>
+  </record>
+  <record id="view_event_registration_tree_compassion" model="ir.ui.view">
+    <field name="name">event.registration.website.compassion.list</field>
+    <field name="model">event.registration</field>
+    <field name="inherit_id" ref="event.view_event_registration_tree" />
+    <field name="arch" type="xml">
+      <field name="state" position="before">
+        <field name="stage_id" />
+      </field>
+    </field>
+  </record>
+  <record model="ir.actions.server" id="event_registration_all_attended_action">
+    <field name="name">Action All Attended</field>
+    <field name="model_id" ref="model_event_registration" />
+    <field name="code">records.action_set_done()</field>
+    <field name="state">code</field>
+    <field name="binding_model_id" ref="model_event_registration" />
+  </record>
 </odoo>

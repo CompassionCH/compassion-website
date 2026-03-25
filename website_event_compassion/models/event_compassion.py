@@ -11,8 +11,6 @@ import json
 from odoo import api, fields, models
 from odoo.http import request
 
-from odoo.addons.website.models.website import slugify as slug
-
 
 class EventCompassion(models.Model):
     _name = "crm.event.compassion"
@@ -40,7 +38,6 @@ class EventCompassion(models.Model):
         readonly=False,
     )
     odoo_event_id = fields.Many2one("event.event", readonly=False, ondelete="cascade")
-    seats_expected = fields.Integer(related="odoo_event_id.seats_expected")
     registrations_ended = fields.Boolean(compute="_compute_registrations_ended")
     registration_ids = fields.One2many(
         "event.registration",
@@ -57,6 +54,7 @@ class EventCompassion(models.Model):
             event.registrations_ended = fields.Datetime.now() > event.end_date
 
     def _compute_website_url(self):
+        slug = self.env["ir.http"]._slug
         for event in self:
             event.website_url = f"/event/{slug(event)}"
 
@@ -116,7 +114,7 @@ class EventCompassion(models.Model):
         return {
             "name": "Manage participants",
             "type": "ir.actions.act_window",
-            "view_mode": "kanban,tree,form,calendar,graph",
+            "view_mode": "kanban,list,form,calendar,graph",
             "res_model": "event.registration",
             "domain": [("event_id", "=", self.odoo_event_id.id)],
             "context": self.with_context(

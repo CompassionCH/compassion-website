@@ -1,0 +1,41 @@
+<odoo>
+  <template
+    id="cart_lines"
+    name="Cart Lines for events"
+    inherit_id="website_sale.cart_lines"
+  >
+    <xpath expr="//img[@t-att-alt='line.name_short']" position="attributes">
+      <attribute
+        name="t-att-src"
+      >image_data_uri(line.registration_id.partner_id.image_128) if line.registration_id else image_data_uri(line.product_id.image_128)</attribute>
+    </xpath>
+  </template>
+
+  <template
+    id="checkout"
+    name="Checkout for events"
+    inherit_id="website_sale.checkout_layout"
+  >
+    <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
+    <xpath expr="//span[@t-field='line.product_id.image_128']" position="replace">
+      <t t-else="">
+        <img
+          t-att-src="image_data_uri(line.registration_id.partner_id.image_128)"
+          class="o_image_64_max img rounded"
+          t-att-alt="line.name_short"
+          t-if="line.registration_id"
+        />
+        <span
+          t-else=""
+          t-field="line.product_id.image_128"
+          t-options="{'widget': 'image', 'qweb_img_responsive': False, 'class': 'o_image_64_max rounded'}"
+        />
+      </t>
+    </xpath>
+    <xpath expr="//img[@t-att-alt='line.name_short']" position="attributes">
+      <attribute
+        name="t-att-src"
+      >image_data_uri(line.registration_id.partner_id.image_128) if line.registration_id else image_data_uri(line.product_id.image_128)</attribute>
+    </xpath>
+  </template>
+</odoo>

@@ -12,7 +12,6 @@ from datetime import datetime
 from odoo import _, fields, http
 from odoo.http import Controller, request
 
-from odoo.addons.http_routing.models.ir_http import slug
 from odoo.addons.website.models.ir_http import sitemap_qs2dom
 
 EVENTS_URL = "/events"
@@ -25,8 +24,9 @@ class EventsController(Controller):
         dom = sitemap_qs2dom(qs, EVENTS_URL, events._rec_name)
         dom += request.website.website_domain()
         dom += [("website_published", "=", True), ("end_date", ">=", today)]
+        slug = env["ir.http"]._slug
         for reg in events.search(dom):
-            loc = "/event/%s" % slug(reg)
+            loc = f"/event/{slug(reg)}"
             if not qs or qs.lower() in loc:
                 yield {"loc": loc}
 
@@ -36,6 +36,7 @@ class EventsController(Controller):
         dom = sitemap_qs2dom(qs, "/event", registrations._rec_name)
         dom += request.website.website_domain()
         dom += [("website_published", "=", True), ("event_id.date_end", ">=", today)]
+        slug = env["ir.http"]._slug
         for reg in registrations.search(dom):
             loc = f"/event/{slug(reg.compassion_event_id)}/{slug(reg)}"
             if not qs or qs.lower() in loc:
@@ -74,7 +75,8 @@ class EventsController(Controller):
         if not event.can_access_from_current_website():
             website = event.website_id
             website._force()
-            return request.redirect("/event/%s" % slug(event))
+            slug = request.env["ir.http"]._slug
+            return request.redirect(f"/event/{slug(event)}")
 
         values = self.get_event_page_values(event)
         return request.render("website_event_compassion.event_page", values)
@@ -94,8 +96,8 @@ class EventsController(Controller):
         )
         return {
             "event": event,
-            "start_date": event.get_date("start_date", "date_full"),
-            "end_date": event.get_date("end_date", "date_full"),
+            "start_date": event.get_date("start_date", "full"),
+            "end_date": event.get_date("end_date", "full"),
             "additional_title": _("- Registration"),
             "titles": titles,
             "relation_types": relation_types,
@@ -125,7 +127,8 @@ class EventsController(Controller):
         if not registration.can_access_from_current_website():
             website = registration.website_id
             website._force()
-            return request.redirect("/event/%s/%s" % (slug(event), slug(registration)))
+            slug = request.env["ir.http"]._slug
+            return request.redirect(f"/event/{slug(event)}/{slug(registration)}")
         values = self.get_participant_page_values(event, registration)
         return request.render(values["website_template"], values)
 

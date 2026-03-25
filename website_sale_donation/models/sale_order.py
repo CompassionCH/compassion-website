@@ -62,3 +62,7 @@ class SaleOrder(models.Model):
                 [("contact_id.email", "=", line.order_partner_id.email)]
             ).write({"opt_out": True})
         return super()._create_invoices(grouped, final, date)
+
+    def _get_update_prices_lines(self):
+        lines = super()._get_update_prices_lines()
+        return lines.filtered(lambda line: not line.order_id.is_donation)

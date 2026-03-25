@@ -21,7 +21,6 @@ class OpenEventToParticipant(models.TransientModel):
     product_id = fields.Many2one(
         "product.product",
         "Registration product",
-        domain=[("event_ok", "=", True)],
         readonly=False,
     )
     seats_min = fields.Integer("Minimum participants required")

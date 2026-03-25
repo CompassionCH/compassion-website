@@ -29,7 +29,7 @@
 {
     "name": "Compassion Events Website",
     "summary": "Public website pages for Compassion Events with registration",
-    "version": "14.0.1.3.0",
+    "version": "18.0.1.0.0",
     "development_status": "Production/Stable",
     "category": "Marketing/Events",
     "website": "https://github.com/CompassionCH/compassion-website",
@@ -37,7 +37,6 @@
     "maintainers": ["ecino"],
     "license": "AGPL-3",
     "depends": [
-        "my_compassion",
         "crm_compassion",  # compassion-modules
         "event_sale",
         "website_sale_donation",
@@ -60,7 +59,6 @@
         "views/registration_task_view.xml",
         "views/event_type_view.xml",
         "views/event_registration_communication_wizard.xml",
-        "templates/assets.xml",
         "templates/event_page.xml",
         "templates/events_list.xml",
         "templates/event_registration.xml",
@@ -68,8 +66,18 @@
         "templates/participant_page.xml",
         "templates/event_donation.xml",
         "templates/my_events.xml",
+        "templates/website_cart.xml",
         "data/website_page.xml",
     ],
-    "installable": False,
+    "assets": {
+        "web.assets_frontend": [
+            "website_event_compassion/static/src/js/registration_form_page.esm.js",
+            "website_event_compassion/static/src/js/donation_form.esm.js",
+        ],
+        "website.assets_wysiwyg": [
+            "website_event_compassion/static/src/js/registration_form_snippet.esm.js",
+        ],
+    },
+    "installable": True,
     "auto_install": False,
 }
