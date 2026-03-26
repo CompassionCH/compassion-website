@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 "click .btn-sponsor": "_onSponsorClick",
                 "change .wap-contribute": "_onWAPContributeChange",
                 "change .suggested-amount": "_onAmountChange",
-                "change #birthdate, input #birthdate": "_onBirthDateChange",
+                "change #birthdate": "_onBirthDateChange",
             },
 
             /**
@@ -192,13 +192,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 const sponsorship_type = this.$(".btn-next:not(#wap-age-modal .btn-next)").data("sponsorship-type");
 
                 if (sponsorship_type === "write_and_pray") {
-                    const dateThreshold = new Date();
-                    dateThreshold.setFullYear(dateThreshold.getFullYear() - 25);
-                    const birthdate = new Date(this.$("#birthdate").val());
-
-                    if (birthdate < dateThreshold) {
-                        this.$("#wap-age-modal").modal("show");
-                    }
+                    this._checkWAPAge();
                 }
             },
 
@@ -223,5 +217,5 @@ document.addEventListener("DOMContentLoaded", function (event) {
         });
 
         return publicWidget.registry.NewSponsorshipWizard;
-    });
-});
+    })
+})
