@@ -94,7 +94,7 @@
                     </a>
                 </div>
                 <!-- Sponsor me Button-->
-                <div t-if="show_sponsor_me" class="mt-1 mb-2">
+                <div t-if="show_sponsor_me" class="mt-1 mb-2 position-relative" style="z-index: 2;">
                     <a t-attf-href="/my2/new-sponsorship/{{child.id}}?sponsorship_type=#{sponsorship_type}">
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variation" t-value="'filled'" />
