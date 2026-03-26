@@ -217,5 +217,5 @@ document.addEventListener("DOMContentLoaded", function (event) {
         });
 
         return publicWidget.registry.NewSponsorshipWizard;
-    })
-})
+    });
+});
