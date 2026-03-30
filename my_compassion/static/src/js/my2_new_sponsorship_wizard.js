@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
              * @returns {boolean} - true if valid, false if too old.
              */
             _checkWAPAge: function () {
-                const birthdateVal = this.$("#birthdate").val();
+                const birthdateVal = this.$('input[name="birthdate"]').val();
                 if (!birthdateVal) return true; // Skip if no date is entered yet
 
                 const dateThreshold = new Date();
