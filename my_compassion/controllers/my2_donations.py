@@ -72,24 +72,58 @@ class MyCompassionDonationsController(CustomerPortal):
         # Make sure the product is available
         if not product_template.activate_for_my_compassion:
             raise NotFound()
-
+        # Extract order line for the current product
+        current_order_line_fields = self._extract_donation_order_line_fields(
+            product_template, post
+        )
         # Get current cart content
         order = request.website.sale_get_order(force_create=True)
+        # See if an existing row for the same product and the same sponsorship exists
+        # If it's the case, just increment the amount of the donation
+        domain = [
+            ("order_id", "=", order.id),
+            ("product_id.product_tmpl_id", "=", product_template.id),
+            ("frequency", "=", current_order_line_fields.get("frequency")),
+        ]
+        if current_order_line_fields.get("is_gift") and current_order_line_fields.get(
+            "gift_recipient_id"
+        ):
+            domain.append(
+                (
+                    "gift_recipient_id",
+                    "=",
+                    int(current_order_line_fields.get("gift_recipient_id")),
+                )
+            )
+        # Order lines for the same product (same sponsorship, same product)
+        matching_lines = request.env["sale.order.line"].sudo().search(domain)
 
-        # Add product to the cart
-        order.write(
-            {
-                "order_line": [
-                    (
-                        0,
-                        0,
-                        self._extract_donation_order_line_fields(
-                            product_template, post
-                        ),
-                    )
-                ]
-            }
-        )
+        # Aggregate the matching lines if necessary
+        if matching_lines:
+            aggregated_line = matching_lines[0]
+            aggregated_price = sum(line.price_unit for line in matching_lines)
+
+            # Unlink all but the first one in a single call
+            if len(matching_lines) > 1:
+                matching_lines[1:].unlink()
+
+            # Add to the aggregated price the one of the current donation
+            aggregated_price += current_order_line_fields["price_unit"]
+            aggregated_line.price_unit = aggregated_price
+
+        else:
+            # Add the new product to the cart
+            order.write(
+                {
+                    "order_line": [
+                        (
+                            0,
+                            0,
+                            current_order_line_fields,
+                        )
+                    ]
+                }
+            )
 
     @http.route(
         "/my2/gifts/edit",
@@ -272,20 +306,17 @@ class MyCompassionDonationsController(CustomerPortal):
     )
     def my2_render_add_a_gift_page(self, **kwargs):
         """
-        Renders the add a gift page to quickly add a gift to the gift package.
+        Renders the add a gift page to add a gift to the gift package.
         return: An HTTP response containing a rendered template with the add a
         gift page.
         """
-        # Exclude fund donation that are already in the user's gift package
         order = request.website.sale_get_order(force_create=True)
-        product_template_ids_in_cart = order.order_line.product_id.product_tmpl_id.ids
         products = request.env["product.template"].search(
             [
-                "&",
                 ("activate_for_my_compassion", "=", True),
                 "|",
                 ("my_compassion_donation_type", "=", "gift"),
-                ("id", "not in", product_template_ids_in_cart),
+                ("my_compassion_donation_type", "=", "fund"),
             ]
         )
 
