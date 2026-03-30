@@ -104,6 +104,7 @@
                                 <t t-if="draft and draft.template_id">
                                     <img
                                         id="selected-template"
+                                        t-att-alt="draft.template_id.name"
                                         t-att-data-template-name="draft.template_id.name"
                                         t-att-data-template-id="draft.template_id.id"
                                         class="img-fluid border shadow-sm"
@@ -198,6 +199,7 @@
                                 <img
                                     t-attf-src="data:#{att.mimetype or 'image/png'};base64,#{att.datas}"
                                     class="img-fluid"
+                                    t-att-alt="att.title or att.name or 'User attachment'"
                                 />
                                 <p>
                                     <t t-esc="att.name" />
