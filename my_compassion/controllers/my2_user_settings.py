@@ -38,7 +38,6 @@ class MyCompassionUserController(http.Controller):
                 "titles": titles,
                 "countries": countries,
                 "current_tab": current_tab,
-                "additional_title": _("Settings"),
             },
         )
 

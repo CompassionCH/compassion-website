@@ -29,6 +29,9 @@
             t-set="is_sponsorship_terminated"
             t-value="compassion_child.my_sponsorship_id and compassion_child.my_sponsorship_id.state=='terminated'"
         />
+        <t t-set="additional_title">
+            <t t-esc="compassion_child.preferred_name" />
+        </t>
         <t t-call="website.layout">
             <div class="container">
                 <div class="single-column">

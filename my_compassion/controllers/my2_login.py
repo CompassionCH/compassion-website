@@ -10,7 +10,6 @@
 # -*- coding: utf-8 -*-
 from odoo import http
 from odoo.http import request
-from odoo.tools.translate import _
 
 from odoo.addons.website.controllers.main import Website
 
@@ -29,9 +28,5 @@ class WebsiteLoginRedirect(Website):
 
         # If the user is not logged in, execute the original Odoo logic for login
         response = super().web_login(*args, **kw)
-
-        # Inject page title
-        if hasattr(response, "qcontext"):
-            response.qcontext["additional_title"] = _("Login")
 
         return response

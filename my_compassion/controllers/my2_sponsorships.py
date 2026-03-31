@@ -45,7 +45,6 @@ class MyCompassionSponsorshipsController(WebsiteChild):
             {
                 "countries": countries,
                 "sponsorship_type": "standard",
-                "additional_title": _("Sponsor a child"),
             },
         )
 
