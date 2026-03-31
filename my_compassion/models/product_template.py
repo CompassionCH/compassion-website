@@ -150,7 +150,11 @@ class ProductTemplate(models.Model):
                     ("partner_id", "=", partner.id),
                     ("gift_type", "=", gift_types["gift_type"]),
                     ("attribution", "=", gift_types["attribution"]),
-                    ("sponsorship_gift_type", "=", gift_types["sponsorship_gift_type"]),
+                    (
+                        "sponsorship_gift_type",
+                        "=",
+                        gift_types.get("sponsorship_gift_type", False),
+                    ),
                 ]
 
                 if sponsorship_id:
