@@ -193,6 +193,9 @@ class NewSponsorshipWizard(models.TransientModel):
             )
             if not partner:
                 partner = self.env["res.partner"].create(partner_vals)
+        else:
+            if not partner.birthdate_date and self.birthdate:
+                partner.sudo().write({"birthdate_date": self.birthdate})
 
         # Create new sponsorship
         sponsorship_values = {
