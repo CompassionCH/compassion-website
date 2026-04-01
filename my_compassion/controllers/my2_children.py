@@ -355,10 +355,15 @@ class MyCompassionChildrenController(WebsiteChild):
 
         access_scope = "public" if child.is_published else "sponsor"
 
-        offset = int(kwargs.get("offset", 0))
-        limit = int(kwargs.get("limit", 9))
+        records = []
+        has_more_records = False
 
-        records, total = self._get_timeline_records(child.id, offset, limit)
+        if access_scope == "sponsor":
+            offset = int(kwargs.get("offset", 0))
+            limit = int(kwargs.get("limit", 9))
+
+            records, total = self._get_timeline_records(child.id, offset, limit)
+            has_more_records = total > offset + limit
 
         birthday_formatted = self._get_formatted_birthday(child)
 
@@ -379,7 +384,7 @@ class MyCompassionChildrenController(WebsiteChild):
             {
                 "compassion_child": child.sudo(),
                 "records": records,
-                "has_more_records": total > offset + limit,
+                "has_more_records": has_more_records,
                 "access_scope": access_scope,
                 "google_api_key": google_api_key,
                 "google_custom_map_id": google_custom_map_id,
