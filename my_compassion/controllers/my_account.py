@@ -339,21 +339,29 @@ class MyAccountController(CustomerPortal):
         return request.render("my_compassion.my_information_page_template", values)
 
     @route(
-        "/child/<model('compassion.child'):child>/sponsor",
+        "/child/<string:child_identifier>/sponsor",
         type="http",
         auth="public",
         website=True,
         sitemap=False,
     )
-    def redirect_old_child_sponsor(self, child, **kw):
+    def redirect_old_child_sponsor(self, child_identifier, **kw):
         """
         This is a deprecated route of MyCompassion 1.0.
         From MyCompassion 2.0, we ensured a proper redirection
-        for user using old links.
+        for users using old links.
         """
-        # Extract model ID
-        child_slug = slug(child)
-        new_url = f"/my2/new-sponsorship/{child_slug}"
+
+        # If the URL provided is a basic integer (e.g., "241011"),
+        # fetch the record with sudo() and convert it to a proper slug
+        if child_identifier.isdigit():
+            child_record = (
+                request.env["compassion.child"].sudo().browse(int(child_identifier))
+            )
+            if child_record.exists():
+                child_identifier = slug(child_record)
+
+        new_url = f"/my2/new-sponsorship/{child_identifier}"
 
         # Extract and append any query parameters (like UTMs)
         query_string = request.httprequest.query_string.decode("utf-8")
