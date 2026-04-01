@@ -20,6 +20,7 @@ from odoo import _
 from odoo.exceptions import UserError
 from odoo.http import local_redirect, request, route
 
+from odoo.addons.http_routing.models.ir_http import slug
 from odoo.addons.portal.controllers.portal import CustomerPortal
 from odoo.addons.web.controllers.main import content_disposition
 
@@ -251,6 +252,8 @@ class MyAccountController(CustomerPortal):
         _, login, _ = res_users.signup(values=values, token=partner.signup_token)
         return login
 
+    ############################# REDIRECTS ################################
+
     @route(["/my", "/my/home"], type="http", auth="user", website=True)
     def home(self, redirect=None, **post):
         """
@@ -334,6 +337,30 @@ class MyAccountController(CustomerPortal):
         if privacy_policy == "accepted" and not partner.legal_agreement_date:
             partner.legal_agreement_date = datetime.now()
         return request.render("my_compassion.my_information_page_template", values)
+
+    @route(
+        "/child/<model('compassion.child'):child>/sponsor",
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def redirect_old_child_sponsor(self, child, **kw):
+        """
+        This is a deprecated route of MyCompassion 1.0.
+        From MyCompassion 2.0, we ensured a proper redirection
+        for user using old links.
+        """
+        # Extract model ID
+        child_slug = slug(child)
+        new_url = f"/my2/new-sponsorship/{child_slug}"
+
+        # Extract and append any query parameters (like UTMs)
+        query_string = request.httprequest.query_string.decode("utf-8")
+        if query_string:
+            new_url = f"{new_url}?{query_string}"
+
+        return request.redirect(new_url, code=301)
 
     @route("/my/download/<source>", type="http", auth="user", website=True)
     def download_file(self, source, **kw):
