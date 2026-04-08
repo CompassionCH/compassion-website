@@ -1,0 +1,29 @@
+<odoo>
+  <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
+  <template id="wizard_checkout" inherit_id="website_sale.address" active="false">
+    <xpath
+      expr="//a[@role='button'][@class='btn btn-secondary mb32']"
+      position="attributes"
+    >
+      <attribute name="class">d-none</attribute>
+    </xpath>
+  </template>
+  <template id="cart" inherit_id="website_sale.cart" active="false">
+    <xpath
+      expr="//a[@role='button'][@class='btn btn-secondary mb32 d-none d-xl-inline-block']"
+      position="attributes"
+    >
+      <attribute name="class">d-none</attribute>
+    </xpath>
+  </template>
+  <template id="checkout" inherit_id="website_sale.checkout" active="false">
+    <xpath expr="//a[@role='button'][@href='/shop/cart']" position="attributes">
+      <attribute name="class">d-none</attribute>
+    </xpath>
+  </template>
+  <template id="payment" inherit_id="website_sale.payment" active="false">
+    <xpath expr="//t[@t-set='back_button_txt']" position="replace">
+      <t t-set="back_button_txt">Back to summary</t>
+    </xpath>
+  </template>
+</odoo>
