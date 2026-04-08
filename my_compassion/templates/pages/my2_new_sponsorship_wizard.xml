@@ -601,14 +601,13 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                     </div>
                     <t t-if="request.env.user._is_public()">
                         <div class="mb-4 text-center body-small">
-                            <t>Create a MyCompassion account to stay connected with</t>
-                            <t t-esc="sponsorship.child_id.preferred_name" />
-                            .
-                            <br />
-                            <t>
+                            <t t-set="thank_you_msg">
+                                Create a MyCompassion account to stay connected with %s.
+                                <br />
                                 Through your personalized portal, you can easily write letters, view recent pictures,
                                 and manage your sponsorship details.
                             </t>
+                            <t t-raw="thank_you_msg % sponsorship.child_id.preferred_name" />
                         </div>
                         <div class="mb-3">
                             <a href="/web/signup?redirect=/my/home">
@@ -626,7 +625,9 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                             <a href="/web/login?redirect=/my/home">
                                 <span class="body-small
                                     bold text-core-blue">
-                                    <u><t>Log in</t></u>
+                                    <u>
+                                        <t>Log in</t>
+                                    </u>
                                 </span>
                             </a>
                         </div>
