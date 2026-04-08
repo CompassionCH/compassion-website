@@ -3,7 +3,7 @@
     "category": "Theme/Compassion",
     "summary": "Compassion Muskathlon Theme",
     "sequence": 260,
-    "version": "14.0.1.0.0",
+    "version": "18.0.1.0.0",
     "author": "Compassion Switzerland",
     "website": "https://github.com/CompassionCH/compassion-website",
     "depends": ["website"],
