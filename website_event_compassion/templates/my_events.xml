@@ -1,16 +1,35 @@
 <odoo>
-  <template id="my_events_menu" inherit_id="my_compassion.my_account_menu">
-    <xpath expr="//a[@href='/my/letter']" position="before">
-      <a
-        href="/my/events"
-        role="menuitem"
-        class="dropdown-item"
-        t-if="user_id.partner_id.registration_ids"
-      >
-                My
-                Events
-            </a>
+  <template
+    id="portal_events"
+    inherit_id="portal.portal_my_home"
+    name="My Events"
+    customize_show="True"
+  >
+    <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+      <t t-set="portal_client_category_enable" t-value="True" />
+      <t t-set="portal_alert_category_enable" t-value="True" />
     </xpath>
+    <div id="portal_alert_category" position="inside">
+      <t t-call="portal.portal_docs_entry">
+        <t t-set="bg_color" t-value="'alert alert-primary align-items-center'" />
+        <t t-set="placeholder_count" t-value="'event_tasks_count'" />
+        <t t-set="title">Registration tasks to complete</t>
+        <t t-set="url" t-value="my_events_url" />
+        <t t-set="show_count" t-value="True" />
+      </t>
+    </div>
+    <div id="portal_client_category" position="inside">
+      <t t-call="portal.portal_docs_entry">
+        <t
+          t-set="icon"
+          t-value="'/website_event_compassion/static/src/img/paperplane.png'"
+        />
+        <t t-set="title">My Events</t>
+        <t t-set="url" t-value="my_events_url" />
+        <t t-set="text">Follow your registration process or fundraising</t>
+        <t t-set="placeholder_count" t-value="'events_count'" />
+      </t>
+    </div>
   </template>
   <template id="my_events_list">
     <t t-call="portal.frontend_layout">

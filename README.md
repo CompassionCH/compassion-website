@@ -18,6 +18,9 @@ Available addons
 ----------------
 addon | version | maintainers | summary
 --- | --- | --- | ---
+[muskathlon](muskathlon/) | 18.0.1.0.0 | <a href='https://github.com/ecino'><img src='https://github.com/ecino.png' width='32' height='32' style='border-radius:50%;' alt='ecino'/></a> | Muskathlon
+[theme_muskathlon](theme_muskathlon/) | 18.0.1.0.0 |  | Compassion Muskathlon Theme
+[website_event_compassion](website_event_compassion/) | 18.0.1.0.0 | <a href='https://github.com/ecino'><img src='https://github.com/ecino.png' width='32' height='32' style='border-radius:50%;' alt='ecino'/></a> | Public website pages for Compassion Events with registration
 [website_remove_shop](website_remove_shop/) | 18.0.1.0.0 |  | Website - Hide Shop
 [website_sale_donation](website_sale_donation/) | 18.0.1.0.0 | <a href='https://github.com/ecino'><img src='https://github.com/ecino.png' width='32' height='32' style='border-radius:50%;' alt='ecino'/></a> | Allows to have a product considered as a donation
 
@@ -27,16 +30,12 @@ Unported addons
 addon | version | maintainers | summary
 --- | --- | --- | ---
 [crowdfunding_compassion](crowdfunding_compassion/) | 14.0.1.0.2 (unported) |  | Crowdfunding Compassion
-[muskathlon](muskathlon/) | 14.0.1.2.1 (unported) | <a href='https://github.com/ecino'><img src='https://github.com/ecino.png' width='32' height='32' style='border-radius:50%;' alt='ecino'/></a> | Muskathlon
 [my_compassion](my_compassion/) | 14.0.1.0.2 (unported) |  | MyCompassion - Sponsor portal website
 [my_compassion_segmentation](my_compassion_segmentation/) | 14.0.1.0.0 (unported) |  | MyCompassion - Segmentation
-[theme_compassion](theme_compassion/) | 14.0.1.0.0 (unported) |  | Compassion Blue Theme
 [theme_compassion_2025](theme_compassion_2025/) | 14.0.2.0.0 (unported) |  | Compassion Theme 2025
 [theme_crowdfunding](theme_crowdfunding/) | 14.0.1.0.0 (unported) |  | Crowdfunding Compassion Theme
-[theme_muskathlon](theme_muskathlon/) | 14.0.1.0.0 (unported) |  | Compassion Muskathlon Theme
 [website_child_protection](website_child_protection/) | 14.0.1.0.0 (unported) | <a href='https://github.com/ecino'><img src='https://github.com/ecino.png' width='32' height='32' style='border-radius:50%;' alt='ecino'/></a> | Adds a form for letting partners agree with the child protection
 [website_crm_request](website_crm_request/) | 14.0.1.0.0 (unported) |  | Website CRM Request
-[website_event_compassion](website_event_compassion/) | 14.0.1.3.0 (unported) | <a href='https://github.com/ecino'><img src='https://github.com/ecino.png' width='32' height='32' style='border-radius:50%;' alt='ecino'/></a> | Public website pages for Compassion Events with registration
 [website_sponsorship](website_sponsorship/) | 14.0.1.0.0 (unported) |  | Website - Sponsor a child form
 
 [//]: # (end addons)

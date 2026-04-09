@@ -18,7 +18,7 @@ class EventType(models.Model):
     _name = "event.type"
 
     compassion_event_type = fields.Selection(
-        EventCompassion.get_event_types, required=True
+        EventCompassion.get_event_types, required=True, default="meeting"
     )
     stage_ids = fields.Many2many(
         "event.registration.stage", "event_registration_stage_to_type_rel"
