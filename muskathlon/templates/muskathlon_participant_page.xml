@@ -1,37 +1,62 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <template id="muskathlon_participant_page" inherit_id="website_event_compassion.participant_page">
-        <xpath expr="//div[@class='container']//figure/../.." position="after">
-            <t t-set="discipline" t-value="registration.sport_discipline_id.with_context(lang='en_US')" />
-            <t t-set="discipline_loc" t-value="registration.sport_discipline_id" />
-            <div t-if="discipline.sport == 'Bike'" class="mb-4" t-att-title="discipline_loc.name" align="center">
-                <img class="sport_icon_sm" src="/muskathlon/static/src/data/biking.png" />
-                <span class="distance_km">
+  <template
+    id="muskathlon_participant_page"
+    inherit_id="website_event_compassion.participant_page"
+  >
+    <xpath expr="//div[hasclass('container')]//figure/../.." position="after">
+      <t
+        t-set="discipline"
+        t-value="registration.sport_discipline_id.with_context(lang='en_US')"
+      />
+      <t t-set="discipline_loc" t-value="registration.sport_discipline_id" />
+      <div
+        t-if="discipline.sport == 'Bike'"
+        class="mb-4"
+        t-att-title="discipline_loc.name"
+        align="center"
+      >
+        <img class="sport_icon_sm" src="/muskathlon/static/src/data/biking.png" />
+        <span class="distance_km">
                     <t t-esc="discipline.distance_km" />
                     km
                 </span>
-            </div>
-            <div t-if="discipline.sport == 'Running'" class="mb-4" t-att-title="discipline_loc.name" align="center">
-                <img class="sport_icon_sm" src="/muskathlon/static/src/data/running.png" />
-                <span class="distance_km">
+      </div>
+      <div
+        t-if="discipline.sport == 'Running'"
+        class="mb-4"
+        t-att-title="discipline_loc.name"
+        align="center"
+      >
+        <img class="sport_icon_sm" src="/muskathlon/static/src/data/running.png" />
+        <span class="distance_km">
                     <t t-esc="discipline.distance_km" />
                     km
                 </span>
-            </div>
-            <div t-if="discipline.sport == 'Walking'" class="mb-4" t-att-title="discipline_loc.name" align="center">
-                <img class="sport_icon_sm" src="/muskathlon/static/src/data/walking.png" />
-                <span class="distance_km">
+      </div>
+      <div
+        t-if="discipline.sport == 'Walking'"
+        class="mb-4"
+        t-att-title="discipline_loc.name"
+        align="center"
+      >
+        <img class="sport_icon_sm" src="/muskathlon/static/src/data/walking.png" />
+        <span class="distance_km">
                     <t t-esc="discipline.distance_km" />
                     km
                 </span>
-            </div>
-            <div t-if="discipline.sport == 'Climbing'" class="mb-4" t-att-title="discipline_loc.name" align="center">
-                <img class="sport_icon_sm" src="/muskathlon/static/src/data/climbing.png" />
-                <span class="distance_km">
+      </div>
+      <div
+        t-if="discipline.sport == 'Climbing'"
+        class="mb-4"
+        t-att-title="discipline_loc.name"
+        align="center"
+      >
+        <img class="sport_icon_sm" src="/muskathlon/static/src/data/climbing.png" />
+        <span class="distance_km">
                     <t t-esc="discipline.distance_km" />
                     km
                 </span>
-            </div>
-        </xpath>
-    </template>
+      </div>
+    </xpath>
+  </template>
 </odoo>

@@ -17,18 +17,18 @@ Muskathlon
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-CompassionCH%2Fcompassion--website-lightgray.png?logo=github
-    :target: https://github.com/CompassionCH/compassion-website/tree/14.0/muskathlon
+    :target: https://github.com/CompassionCH/compassion-website/tree/18.0/muskathlon
     :alt: CompassionCH/compassion-website
 
 |badge1| |badge2| |badge3|
 
 Adds a website portal for Muskathlon Events :
 
--  list of events
--  event page with participants
--  donation
--  registration
--  runner portal
+- list of events
+- event page with participants
+- donation
+- registration
+- runner portal
 
 Reports for sending information to 4M: - list with useful data about the
 muskathlon event - bar graph amount by ambassador - fields format for a
@@ -45,7 +45,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/CompassionCH/compassion-website/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/CompassionCH/compassion-website/issues/new?body=module:%20muskathlon%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/CompassionCH/compassion-website/issues/new?body=module:%20muskathlon%0Aversion:%2018.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -60,10 +60,10 @@ Authors
 Contributors
 ------------
 
--  Sebastien Toth <popod@me.com>
--  Nicolas Badoux
--  Samuel Fringeli
--  Emanuel Cino <ecino@compassion.ch>
+- Sebastien Toth <popod@me.com>
+- Nicolas Badoux
+- Samuel Fringeli
+- Emanuel Cino <ecino@compassion.ch>
 
 Maintainers
 -----------
@@ -76,6 +76,6 @@ Current maintainer:
 
 |maintainer-ecino| 
 
-This module is part of the `CompassionCH/compassion-website <https://github.com/CompassionCH/compassion-website/tree/14.0/muskathlon>`_ project on GitHub.
+This module is part of the `CompassionCH/compassion-website <https://github.com/CompassionCH/compassion-website/tree/18.0/muskathlon>`_ project on GitHub.
 
 You are welcome to contribute.
