@@ -31,14 +31,10 @@ class EventTypeMail(models.Model):
     )
     stage_id = fields.Many2one("event.registration.stage", "Stage", readonly=False)
 
-    @api.model
-    def _get_event_mail_fields_whitelist(self):
-        return super()._get_event_mail_fields_whitelist() + ["communication_id"]
-
     @api.onchange("notification_type", "communication_id")
     def onchange_communication_rule(self):
         if self.notification_type == "communication" and self.communication_id:
-            self.template_id = self.communication_id.email_template_id
+            self.template_ref = self.communication_id.email_template_id
 
 
 class EventMail(models.Model):
@@ -84,7 +80,7 @@ class EventMail(models.Model):
     @api.onchange("notification_type", "communication_id")
     def onchange_communication_rule(self):
         if self.notification_type == "communication" and self.communication_id:
-            self.template_id = self.communication_id.email_template_id
+            self.template_ref = self.communication_id.email_template_id
 
     def execute(self):
         """
@@ -111,7 +107,7 @@ class EventMail(models.Model):
                 # Do not send emails if the mailing was scheduled before the event
                 # but the event is over
                 if (
-                    not mail.mail_sent
+                    not mail.mail_done
                     and mail.scheduled_date <= now
                     and mail.notification_type == "communication"
                     and (
@@ -120,7 +116,7 @@ class EventMail(models.Model):
                     )
                 ):
                     mail.event_id.send_communication(mail.communication_id.id)
-                    mail.write({"mail_sent": True})
+                    mail.write({"mail_done": True})
         return super().execute()
 
 

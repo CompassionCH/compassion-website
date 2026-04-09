@@ -43,15 +43,6 @@ class EventRegistration(models.Model):
     )
     payment_link = fields.Char(compute="_compute_payment_link")
     single_room = fields.Boolean(help="The participant wants a single room")
-    # Change readonly attribute so that form creation is possible
-    event_id = fields.Many2one(
-        readonly=False,
-        states={
-            "open": [("readonly", True)],
-            "cancel": [("readonly", True)],
-            "done": [("readonly", True)],
-        },
-    )
     company_id = fields.Many2one(related="event_id.company_id")
     user_id = fields.Many2one(
         "res.users",

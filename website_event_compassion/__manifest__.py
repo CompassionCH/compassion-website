@@ -38,6 +38,7 @@
     "license": "AGPL-3",
     "depends": [
         "crm_compassion",  # compassion-modules
+        "child_protection",
         "event_sale",
         "website_sale_donation",
         "survey",

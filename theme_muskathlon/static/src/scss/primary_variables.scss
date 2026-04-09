@@ -1,45 +1,32 @@
-@font-face {
-  font-family: "Neighbour Bold";
-  src: url("/theme_muskathlon/static/src/fonts/NeighbourSans-Bold.woff2")
-    format("woff2");
-}
-@font-face {
-  font-family: "Neighbour ExtraBold";
-  src: url("/theme_muskathlon/static/src/fonts/NeighbourSans-ExtraBold.woff2")
-    format("woff2");
-}
-@font-face {
-  font-family: "Neighbour Medium";
-  src: url("/theme_muskathlon/static/src/fonts/NeighbourSans-Medium.woff2")
-    format("woff2");
-}
-@font-face {
-  font-family: "Neighbour Regular";
-  src: url("/theme_muskathlon/static/src/fonts/NeighbourSans-Regular.woff2")
-    format("woff2");
-}
-
 //------------------------------------------------------------------------------
 // Colors
 //------------------------------------------------------------------------------
 
 // Colors
-$o-color-palettes: (
+/* prettier-ignore */
+$o-color-palettes: map-merge(
+  $o-color-palettes,
   (
-    "o-color-1": #cd171e,
-    "o-color-2": #8b8b8b,
-    "o-color-3": #f5f5f5,
-    "o-color-4": #ffffff,
-    "o-color-5": #f5f5f5,
-    "footer": 2,
-    "copyright": 2,
-    "menu": 4,
-    "o-cc1-bg": "o-color-5",
-    "o-cc1-h2": "o-color-1",
-    "o-cc1-h3": "o-color-1",
-    "o-cc4-btn-primary": "transparent",
-    "o-cc4-btn-primary-border": "o-color-4",
-  ),
+    "muskathlon": (
+      "o-color-1": #cd171e,
+      "o-color-2": #8b8b8b,
+      "o-color-3": #f5f5f5,
+      "o-color-4": #ffffff,
+      "o-color-5": #f5f5f5,
+      "footer": 2,
+      "copyright": 2,
+      "menu": 4,
+      "o-cc1-bg": "o-color-5",
+      "o-cc1-h2": "o-color-1",
+      "o-cc1-h3": "o-color-1",
+      "o-cc4-btn-primary": "transparent",
+      "o-cc4-btn-primary-border": "o-color-4",
+    ),
+  )
+);
+$o-selected-color-palettes-names: append(
+  $o-selected-color-palettes-names,
+  "muskathlon"
 );
 
 //------------------------------------------------------------------------------
@@ -82,14 +69,14 @@ $o-theme-font-configs: (
 
 $o-website-values-palettes: (
   (
-    //"header-font-size": 1.5rem,
     "font": "Play",
     "headings-font": "Play",
     "navbar-font": "Play",
     "buttons-font": "Play",
-    "header-template": "hamburger",
+    "header-template": "default",
     "hamburger-type": "off-canvas",
     "hamburger-position": "left",
-    "footer-template": "links"
-  ),
+    "footer-template": "links",
+    "color-palettes-name": "muskathlon",
+  )
 );

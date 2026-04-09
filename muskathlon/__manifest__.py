@@ -29,7 +29,7 @@
 # pylint: disable=C8101
 {
     "name": "Muskathlon",
-    "version": "14.0.1.2.1",
+    "version": "18.0.1.0.0",
     "category": "Reports",
     "author": "Compassion CH",
     "license": "AGPL-3",
@@ -52,9 +52,7 @@
         "data/order_material_mail_template.xml",
         "data/website.xml",
         "data/registration_mail_template.xml",
-        "reports/muskathlon_view.xml",
         "views/event_compassion_view.xml",
-        "views/recurring_contracts_view.xml",
         "views/muskathlon_registrations.xml",
         "views/notification_settings_view.xml",
         "templates/muskathlon_page.xml",
@@ -64,15 +62,18 @@
         "templates/muskathlon_participant_page.xml",
         "templates/my_tasks_forms.xml",
         "templates/donation_result.xml",
-        "templates/assets.xml",
-        "templates/muskathlon_address_form.xml",
         "data/website_redirect.xml",
     ],
+    "assets": {
+        "web.assets_frontend": [
+            "muskathlon/static/src/css/custom.css",
+        ]
+    },
     "depends": [
         "website_event_compassion",
     ],
     "external_dependencies": {},
     "demo": [],
-    "installable": False,
+    "installable": True,
     "auto_install": False,
 }

@@ -5,6 +5,32 @@ from odoo.addons.portal.controllers.portal import CustomerPortal
 
 
 class MyEventsController(CustomerPortal):
+    def _prepare_home_portal_values(self, counters):
+        values = super()._prepare_home_portal_values(counters)
+        events = request.env["event.registration"].search(
+            [
+                ("partner_id", "=", request.env.user.partner_id.id),
+                ("state", "!=", "cancel"),
+            ]
+        )
+        values["my_events_url"] = "/my/events" + (
+            f"/{events.id}" if len(events) == 1 else ""
+        )
+
+        if "event_tasks_count" in counters:
+            values["event_tasks_count"] = request.env[
+                "event.registration.task.rel"
+            ].search_count(
+                [
+                    ("registration_id.partner_id", "=", request.env.user.partner_id.id),
+                    ("done", "=", False),
+                    ("task_id.website_published", "=", True),
+                ]
+            )
+        if "events_count" in counters:
+            values["events_count"] = len(events)
+        return values
+
     @route("/my/events/", auth="user", website=True)
     def my_events(self, **kwargs):
         values = self._prepare_portal_layout_values()

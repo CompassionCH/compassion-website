@@ -65,18 +65,19 @@ class MuskathlonRegistration(models.Model):
             }
             registration.thank_you_quote = template_html.format(**html_vals)
 
-    @api.model
-    def create(self, values):
+    @api.model_create_multi
+    def create(self, vals_list):
         """Override to add specific behavior for Muskathlon registration.
         - Set stage to unconfirmed for Muskathlon events
         - Notify user for registration
         - Check if the partner has signed the child protection charter
         - Check if the partner has activated his account
         """
-        event = self.env["event.event"].browse(values.get("event_id"))
-        if event.compassion_event_id.is_muskathlon:
-            values["stage_id"] = self.env.ref("muskathlon.stage_unconfirmed").id
-        registrations = super().create(values)
+        for vals in vals_list:
+            event = self.env["event.event"].browse(vals.get("event_id"))
+            if event.compassion_event_id.is_muskathlon:
+                vals["stage_id"] = self.env.ref("muskathlon.stage_unconfirmed").id
+        registrations = super().create(vals_list)
         for registration in registrations.filtered("is_muskathlon"):
             partner = registration.partner_id
             if partner.date_agreed_child_protection_charter:
@@ -143,10 +144,10 @@ class MuskathlonRegistration(models.Model):
         subtype_id = self.env.ref("website_event_compassion.mt_registration_create").id
 
         for registration in self:
-            registration.message_post_with_view(
+            registration.message_post_with_source(
                 "muskathlon.muskathlon_registration_notification_view",
                 subject=_("%s - New Muskathlon registration") % registration.name,
-                values={"object": registration},
+                render_values={"object": registration},
                 message_type="comment",
                 subtype_id=subtype_id,
             )
