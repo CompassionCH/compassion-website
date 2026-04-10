@@ -45,7 +45,7 @@ class RecurringContract(models.Model):
                 domain = [
                     ("config_id", "in", config_ids),
                     ("state", "in", ["pending", "processing", "failure"]),
-                    ("object_ids", "ilike", str(contract.id)),
+                    ("object_ids", "=", str(contract.id)),
                 ]
                 pending_jobs = self.env["partner.communication.job"].search_count(
                     domain
