@@ -324,14 +324,17 @@ class MyCompassionChildrenController(WebsiteChild):
             "my_compassion.my2_children_page",
             {
                 "active_sponsorships": sponsorships.filtered(
-                    # all not terminated or terminated within grace period
-                    lambda s: s.state != "terminated" or s.can_write_letter
+                    # all not terminated or terminated within grace period or exit com not sent yet
+                    lambda s: s.state != "terminated"
+                    or s.can_write_letter
+                    or s.is_exit_communication_pending
                 ),
                 "ended_sponsorships": sponsorships.filtered(
-                    # terminated and not within grace period, excluding specific end reasons
+                    # terminated and not within grace period, excluding specific end reasons and exit com sent
                     lambda s: s.state == "terminated"
                     and not s.can_write_letter
                     and s.end_reason_id.name
+                    and not s.is_exit_communication_pending
                     not in ["Subreject", "Mistake from our staff"]
                 ),
                 "latest_correspondences_by_child_id": latest_corr_by_child,
