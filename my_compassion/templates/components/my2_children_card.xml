@@ -41,7 +41,10 @@
                         Pending activation
                     </span>
                 </div>
-                <div class="small" t-if="sponsorship and sponsorship.state == 'terminated' and not sponsorship.is_exit_communication_pending">
+                <div
+                    class="small"
+                    t-if="sponsorship and sponsorship.state == 'terminated' and not sponsorship.is_exit_communication_pending"
+                >
                     <span class="badge bg-low-yellow" title="Your sponsorship has ended" aria-label="Sponsorship ended">
                         Sponsorship ended
                     </span>
@@ -50,7 +53,9 @@
                 <div class="body-small mt-3">
                     <div t-if="show_status" class="mb-3 pl-3 pr-3">
                         <span class="border-bottom border-2 border-high-orange">
-                            <t t-if="sponsorship_end_date and not sponsorship.can_write_letter and not sponsorship.is_exit_communication_pending">
+                            <t
+                                t-if="sponsorship_end_date and not sponsorship.can_write_letter and not sponsorship.is_exit_communication_pending"
+                            >
                                 Sponsorship terminated on
                                 <t
                                     t-esc="sponsorship_end_date"

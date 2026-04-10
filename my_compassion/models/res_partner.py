@@ -66,19 +66,22 @@ class Partner(models.Model):
 
     def _compute_is_sponsor(self):
         for partner in self:
-            partner.is_sponsor = self.env["recurring.contract"].search_count(
-            [
-                "|",
-                ("partner_id", "=", partner.id),
-                ("correspondent_id", "=", partner.id),
-                "|",
-                ("state", "in", ["waiting", "active"]),
-                "&",
-                ("state", "=", "terminated"),
-                ("is_exit_communication_pending", "=", True),
-                ("child_id", "!=", False),
-            ]
-        ) > 0
+            partner.is_sponsor = (
+                self.env["recurring.contract"].search_count(
+                    [
+                        "|",
+                        ("partner_id", "=", partner.id),
+                        ("correspondent_id", "=", partner.id),
+                        "|",
+                        ("state", "in", ["waiting", "active"]),
+                        "&",
+                        ("state", "=", "terminated"),
+                        ("is_exit_communication_pending", "=", True),
+                        ("child_id", "!=", False),
+                    ]
+                )
+                > 0
+            )
 
     def _compute_is_ex_sponsor(self):
         """
