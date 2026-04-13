@@ -102,13 +102,30 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             ),  # No problems
         ]
 
-        # Combine all domains
+        # 4. Combine all domains
         filter_domain = expression.AND(
             [
                 base_domain,
                 expression.OR([b2s_domain, s2b_domain]),
             ]
         )
+
+        # 5. Exclude final letters if exit communication is pending
+        final_type = request.env.ref(
+            "sbc_compassion.correspondence_type_final", raise_if_not_found=False
+        )
+        pending_sponsorships = partner.sponsorship_ids.filtered(
+            "is_exit_communication_pending"
+        )
+
+        if final_type and pending_sponsorships:
+            exclusion_domain = [
+                "!",
+                "&",
+                ("sponsorship_id", "in", pending_sponsorships.ids),
+                ("communication_type_ids", "in", final_type.ids),
+            ]
+            filter_domain = expression.AND([filter_domain, exclusion_domain])
 
         if child:
             try:
