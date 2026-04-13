@@ -113,7 +113,7 @@ class MyCompassionChildrenController(WebsiteChild):
         child = request.env["compassion.child"].sudo().browse(child_id)
         # Find sponsorships for this child where exit communication is still pending
         pending_sponsorships = child.sponsorship_ids.filtered(
-            lambda s: s.is_exit_communication_pending
+            "is_exit_communication_pending"
         )
 
         # 1. Get hidden contract IDs
@@ -409,7 +409,6 @@ class MyCompassionChildrenController(WebsiteChild):
                     # terminated and not within grace period, excluding specific end reasons and exit comm sent
                     lambda s: s.state == "terminated"
                     and not s.can_write_letter
-                    and s.end_reason_id.name
                     and not s.is_exit_communication_pending
                     and s.end_reason_id.name
                     not in ["Subreject", "Mistake from our staff"]
