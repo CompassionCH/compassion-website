@@ -344,6 +344,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             };
 
+            const getRpcErrorMessage = (err, fallbackMessage) => {
+                const messageArguments =
+                    err?.message?.data?.arguments ?? err?.data?.arguments ?? err?.message?.arguments;
+
+                if (Array.isArray(messageArguments)) {
+                    const messages = messageArguments.filter((item) => typeof item === "string" && item.trim());
+                    if (messages.length) {
+                        return messages.join("\n");
+                    }
+                }
+
+                if (typeof messageArguments === "string" && messageArguments.trim()) {
+                    return messageArguments;
+                }
+
+                if (typeof err?.message === "string" && err.message.trim()) {
+                    return err.message;
+                }
+
+                return fallbackMessage;
+            };
+
             function toggleEdit(isEditing) {
                 clearErrors();
                 form.classList.toggle("is-editing", isEditing);
@@ -402,8 +424,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     })
                     .catch((err) => {
+                        const fallbackMessage = "An unexpected error occurred. Please try again later.";
+                        const errorMessage = getRpcErrorMessage(err, fallbackMessage);
                         console.error("RPC Error:", err);
-                        Dialog.alert(null, "An unexpected error occurred. Please try again later.");
+                        Dialog.alert(null, errorMessage);
                         toggleLoader(false);
                     });
             });
