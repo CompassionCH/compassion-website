@@ -56,7 +56,7 @@
         "views/my2_event_banner_views.xml",
         "views/partner_compassion_view.xml",
         "views/product_view.xml",
-        "views/correspondence_generator_view.xml",
+        "views/correspondence_view.xml",
         "views/correspondence_prewritten_letter.xml",
         "views/my2_header_menu.xml",
         "data/signup_email_confirmation.xml",

@@ -16,7 +16,6 @@ import babel
 from odoo import _, fields, http
 from odoo.exceptions import AccessError
 from odoo.http import request
-from odoo.osv import expression
 
 from .my2_children import MyCompassionChildrenController
 
@@ -65,16 +64,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         from_date = date(year_from, month_from, 1)
         to_date = date(year_to, month_to, last_day)
 
-        ### Build the domain of the filtering of the letters ###
-
-        # Matches letters sent to the partner or their authorized sponsored children
-        #   Authorized means either the partner is the direct correspondent or the
-        #   sponsor has read-write rights on the letters of the child (eg: if the
-        #   partner is the parent of young Write-only sponsors, in this case the
-        #   parent res_partner has portal_sponsorships = all_info
-
-        # 1. Letters between partner and their children
-        base_domain = [
+        filter_domain = [
             "|",
             ("partner_id", "=", partner.id),
             (
@@ -82,51 +72,8 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 "in",
                 children_sponsored_by_partner.filtered("can_i_write_letter").ids,
             ),
+            ("is_published", "=", True),
         ]
-
-        # 2. Beneficiary to Supporter (B2S) Rules
-        b2s_domain = [
-            ("direction", "=", "Beneficiary To Supporter"),
-            ("state", "=", "Published to Global Partner"),
-            # Rejects 'pending', 'cancel', 'failure', processing and False
-            ("communication_state", "=", "done"),
-        ]
-
-        # 3. Rules for S2B letters
-        s2b_domain = [
-            ("direction", "=", "Supporter To Beneficiary"),  # S2B
-            (
-                "state",
-                "not in",
-                ["Exception", "Quality check unsuccessful"],
-            ),  # No problems
-        ]
-
-        # 4. Combine all domains
-        filter_domain = expression.AND(
-            [
-                base_domain,
-                expression.OR([b2s_domain, s2b_domain]),
-            ]
-        )
-
-        # 5. Exclude final letters if exit communication is pending
-        final_type = request.env.ref(
-            "sbc_compassion.correspondence_type_final", raise_if_not_found=False
-        )
-        pending_sponsorships = partner.sponsorship_ids.filtered(
-            "is_exit_communication_pending"
-        )
-
-        if final_type and pending_sponsorships:
-            exclusion_domain = [
-                "!",
-                "&",
-                ("sponsorship_id", "in", pending_sponsorships.ids),
-                ("communication_type_ids", "in", final_type.ids),
-            ]
-            filter_domain = expression.AND([filter_domain, exclusion_domain])
-
         if child:
             try:
                 self._check_sponsored_child_access(child)

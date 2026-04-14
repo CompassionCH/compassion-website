@@ -84,7 +84,7 @@ class Partner(models.Model):
             partner_contracts = contracts_by_partner.get(partner.id, [])
             partner.is_sponsor = any(
                 c.state in ["waiting", "active"]
-                or (c.state == "terminated" and c.is_exit_communication_pending)
+                or (c.state == "terminated" and not c.exit_communication_sent)
                 for c in partner_contracts
             )
 
