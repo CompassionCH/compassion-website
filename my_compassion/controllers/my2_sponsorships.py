@@ -200,6 +200,73 @@ class MyCompassionSponsorshipsController(WebsiteChild):
 
 
 class MyCompassionNewSponsorshipController(http.Controller):
+
+    @staticmethod
+    def _extract_utm_information() -> dict:
+        """
+        Extracts utm medium, source and campaign information
+        from the session and returns it.
+        Return:
+            a dictionary containing utm information or empty dict
+        """
+        utm_medium_str = request.session.get("wizard_utm_medium")
+        utm_source_str = request.session.get("wizard_utm_source")
+        utm_campaign_str = request.session.get("wizard_utm_campaign")
+
+        if utm_medium_str or utm_source_str or utm_campaign_str:
+            utm_vals = {}
+
+            if utm_medium_str:
+                medium = (
+                    request.env["utm.medium"]
+                    .sudo()
+                    .search([("name", "=ilike", utm_medium_str)], limit=1)
+                )
+                if not medium:
+                    medium = (
+                        request.env["utm.medium"]
+                        .sudo()
+                        .create({"name": utm_medium_str})
+                    )
+                utm_vals["medium_id"] = medium.id
+
+            if utm_source_str:
+                source = (
+                    request.env["utm.source"]
+                    .sudo()
+                    .search([("name", "=ilike", utm_source_str)], limit=1)
+                )
+                if not source:
+                    source = (
+                        request.env["utm.source"]
+                        .sudo()
+                        .create({"name": utm_source_str})
+                    )
+                utm_vals["source_id"] = source.id
+
+            if utm_campaign_str:
+                campaign = (
+                    request.env["utm.campaign"]
+                    .sudo()
+                    .search([("name", "=ilike", utm_campaign_str)], limit=1)
+                )
+                if not campaign:
+                    campaign = (
+                        request.env["utm.campaign"]
+                        .sudo()
+                        .create({"name": utm_campaign_str})
+                    )
+                utm_vals["campaign_id"] = campaign.id
+
+            # Clean up the session variables so they don't bleed into future organic sessions
+            request.session.pop("wizard_utm_medium", None)
+            request.session.pop("wizard_utm_source", None)
+            request.session.pop("wizard_utm_campaign", None)
+
+            return utm_vals
+        return {}
+
+
     @http.route(
         '/my2/new-sponsorship/<model("compassion.child"):child>',
         type="http",
@@ -212,6 +279,17 @@ class MyCompassionNewSponsorshipController(http.Controller):
         return: An HTTP response containing a rendered template
         with the initial wizard page.
         """
+        # capture and store utm information
+        utm_medium = kwargs.get("utm_medium")
+        utm_source = kwargs.get("utm_source")
+        utm_campaign = kwargs.get("utm_campaign")
+
+        if utm_medium:
+            request.session["wizard_utm_medium"] = utm_medium
+        if utm_source:
+            request.session["wizard_utm_source"] = utm_source
+        if utm_campaign:
+            request.session["wizard_utm_campaign"] = utm_campaign
         # Make sure child is available and reserve it for 5 minutes
         if child.state not in child._available_states():
             raise NotFound()
@@ -293,6 +371,10 @@ class MyCompassionNewSponsorshipController(http.Controller):
         if wizard.child_id.state not in wizard.child_id._available_states():
             raise Gone()
         sponsorship = wizard.finish_sponsorship()
+
+        utm_values = self._extract_utm_information()
+        if utm_values:
+            sponsorship.sudo().write(utm_values)
 
         # Redirect to thank-you page
         return request.redirect(
