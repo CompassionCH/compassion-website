@@ -45,8 +45,6 @@ class Correspondence(models.Model):
                     correspondence.is_published = (
                         has_valid_state
                         and sponsorship.state == "terminated"
-                        and sponsorship.sds_state
-                        in ("sub", "no_sub", "sub_accept", "sub_reject")
                         and (
                             correspondence.communication_state == "done"
                             or is_exit_sent_after_letter
