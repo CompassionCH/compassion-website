@@ -103,34 +103,16 @@ document.addEventListener("DOMContentLoaded", function (event) {
              * @returns {boolean} - True if valid, false otherwise.
              */
             _validateForm: function () {
-                let isValid = true;
-                // Remove previous error messages and styles
-                this.$(".input-invalid-hint").remove();
-                this.$("input.is-invalid").removeClass("is-invalid");
+                var isValid = true;
 
-                // Find all required inputs within the current step that are visible
-                this.$("input[required]:visible, select[required]:visible").each(function () {
-                    const $input = $(this);
-                    if (!$input.val()) {
+                this.$(".form-field-component:visible").each(function () {
+                    var fieldWidget = $(this).data("widget");
+
+                    if (fieldWidget && !fieldWidget.validate()) {
                         isValid = false;
-                        // Add the 'is-invalid' class
-                        $input.addClass("is-invalid");
-
-                        // Add a small text hint above the input field
-                        const $errorHint = $(
-                            '<div class="input-invalid-hint text-mid-orange tiny-text mb-1">This field is required.</div>'
-                        );
-                        const $select_container = $input.parent(".SelectComponent");
-
-                        if ($select_container.length > 0) {
-                            // If the input is a select component, place the hint before the container
-                            $select_container.before($errorHint);
-                        } else {
-                            // Otherwise, it's a standard input, so place the hint before the input itself
-                            $input.before($errorHint);
-                        }
                     }
                 });
+
                 return isValid;
             },
 

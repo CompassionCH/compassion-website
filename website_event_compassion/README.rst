@@ -42,7 +42,7 @@ To use this module, you need to:
 Known issues / Roadmap
 ======================
 
--  Nothing yet
+- Nothing yet
 
 Changelog
 =========
@@ -50,12 +50,12 @@ Changelog
 10.0.1.0.0 (2018-07-12)
 -----------------------
 
--  [ADD] Add the module.
+- [ADD] Add the module.
 
 11.0.1.0.0 (2020-01-02)
 -----------------------
 
--  Migrated to Odoo v11.
+- Migrated to Odoo v11.
 
 Bug Tracker
 ===========
@@ -78,7 +78,7 @@ Authors
 Contributors
 ------------
 
--  Emanuel Cino <ecino@compassion.ch>
+- Emanuel Cino <ecino@compassion.ch>
 
 Maintainers
 -----------
