@@ -20,7 +20,8 @@
         <t t-set="sponsorship_type" t-value="sponsorship_type or 'standard'" />
         <t t-set="show_status" t-value="not show_status == False" />
         <div class="children-card text-center mb-3 mt-3">
-            <div class="p-4 d-flex flex-column align-items-center bg-high-eggshell">
+            <div class="p-4 d-flex flex-column align-items-center bg-low-eggshell position-relative rounded-pill">
+                <a t-attf-href="/my2/children/{{child.id}}" class="stretched-link" aria-label="Child profile" />
                 <!-- Child Image -->
                 <img
                     class="rounded-circle img-fluid mb-2"
@@ -31,7 +32,7 @@
                 <div class="h2 mb-0">
                     <t t-esc="child.preferred_name" />
                 </div>
-                <div class="small" t-if="sponsorship and sponsorship.state in ('draft', 'waiting', 'mandate')">
+                <div class="pending" t-if="sponsorship and sponsorship.state in ('draft', 'waiting', 'mandate')">
                     <span
                         class="badge bg-low-yellow"
                         title="Your sponsorship is being confirmed and will become active soon"
@@ -40,7 +41,10 @@
                         Pending activation
                     </span>
                 </div>
-                <div class="small" t-if="sponsorship and sponsorship.state == 'terminated'">
+                <div
+                    class="small"
+                    t-if="sponsorship and sponsorship.state == 'terminated' and not sponsorship.is_exit_communication_pending"
+                >
                     <span class="badge bg-low-yellow" title="Your sponsorship has ended" aria-label="Sponsorship ended">
                         Sponsorship ended
                     </span>
@@ -49,7 +53,9 @@
                 <div class="body-small mt-3">
                     <div t-if="show_status" class="mb-3 pl-3 pr-3">
                         <span class="border-bottom border-2 border-high-orange">
-                            <t t-if="sponsorship_end_date">
+                            <t
+                                t-if="sponsorship_end_date and not sponsorship.can_write_letter and not sponsorship.is_exit_communication_pending"
+                            >
                                 Sponsorship terminated on
                                 <t
                                     t-esc="sponsorship_end_date"
@@ -59,7 +65,7 @@
                             <t t-elif="latest_correspondence">
                                 Last contact
                                 <t
-                                    t-esc="latest_correspondence.write_date"
+                                    t-esc="latest_correspondence.create_date"
                                     t-options="{'widget': 'date', 'format': 'dd MMMM yyyy'}"
                                 />
                             </t>
@@ -93,7 +99,7 @@
                     </a>
                 </div>
                 <!-- Sponsor me Button-->
-                <div t-if="show_sponsor_me" class="mt-1 mb-2">
+                <div t-if="show_sponsor_me" class="mt-1 mb-2 position-relative" style="z-index: 2;">
                     <a t-attf-href="/my2/new-sponsorship/{{child.id}}?sponsorship_type=#{sponsorship_type}">
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variation" t-value="'filled'" />

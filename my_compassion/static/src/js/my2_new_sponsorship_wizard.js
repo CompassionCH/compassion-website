@@ -10,8 +10,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
     odoo.define("my_compassion.new_sponsorship_wizard", function (require) {
         "use strict";
 
-        var publicWidget = require("web.public.widget");
-        var rpc = require("web.rpc");
+        const publicWidget = require("web.public.widget");
+        const rpc = require("web.rpc");
 
         publicWidget.registry.NewSponsorshipWizard = publicWidget.Widget.extend({
             selector: ".new-sponsorship-wizard-form",
@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 "click .btn-sponsor": "_onSponsorClick",
                 "change .wap-contribute": "_onWAPContributeChange",
                 "change .suggested-amount": "_onAmountChange",
+                "change #birthdate": "_onBirthDateChange",
             },
 
             /**
@@ -47,13 +48,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 }
 
                 // Check age for Write&Pray
-                if (action !== "previous" && sponsorship_type == "write_and_pray") {
-                    const dateThreshold = new Date();
-                    dateThreshold.setFullYear(dateThreshold.getFullYear() - 25);
-                    const birthdate = new Date(this.$("#birthdate").val());
-                    if (birthdate < dateThreshold) {
-                        this.$("#wap-age-modal").modal("show");
-                        return;
+                if (action !== "previous" && sponsorship_type === "write_and_pray") {
+                    if (!this._checkWAPAge()) {
+                        return; // Stop execution if age check fails
                     }
                 }
 
@@ -61,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 this.$(".btn").prop("disabled", true);
 
                 // Serialize form and add action
-                var formData = this.$el.serializeArray();
+                const formData = this.$el.serializeArray();
                 formData.push({ name: "action", value: action });
                 formData.push({ name: "sponsorship_type", value: sponsorship_type });
 
@@ -125,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
              * @returns {Object}
              */
             _serializeForm: function (formData) {
-                var obj = {};
+                const obj = {};
                 for (const field of formData) {
                     obj[field.name] = field.value;
                 }
@@ -167,6 +164,37 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 } else {
                     this.$(".custom-amount-field").slideUp(speed);
                 }
+            },
+
+            /**
+             * Checks the age immediately when the user inputs their birthdate.
+             * @param {Event} ev
+             */
+            _onBirthDateChange: function (ev) {
+                const sponsorship_type = this.$(".btn-next:not(#wap-age-modal .btn-next)").data("sponsorship-type");
+
+                if (sponsorship_type === "write_and_pray") {
+                    this._checkWAPAge();
+                }
+            },
+
+            /**
+             * Evaluates if the birthdate qualifies for Write & Pray.
+             * @returns {boolean} - true if valid, false if too old.
+             */
+            _checkWAPAge: function () {
+                const birthdateVal = this.$('input[name="birthdate"]').val();
+                if (!birthdateVal) return true; // Skip if no date is entered yet
+
+                const dateThreshold = new Date();
+                dateThreshold.setFullYear(dateThreshold.getFullYear() - 25);
+                const birthdate = new Date(birthdateVal);
+
+                if (birthdate < dateThreshold) {
+                    this.$("#wap-age-modal").modal("show");
+                    return false;
+                }
+                return true;
             },
         });
 
