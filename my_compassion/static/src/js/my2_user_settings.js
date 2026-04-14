@@ -17,11 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
          * Main setup function to initialize all event listeners.
          */
         function initializeUserSettings() {
-            // Hides the error messages of the select components
-            document.querySelectorAll(".invalid-hint").forEach((hint) => {
-                hint.style.display = "none";
-            });
-
             initTabNavigation();
             initCommunicationSettings();
             initAgreementsForm();
@@ -150,28 +145,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         /**
-         * Attaches a standardized event listener to an agreement checkbox.
-         * When checked, it calls a specific RPC route.
-         */
-
-        function attachAgreementListener(checkbox, route) {
-            checkbox.addEventListener("change", function () {
-                // Only proceed if the checkbox is being checked
-                if (!this.checked) return;
-
-                rpc.query({ route, params: {} })
-                    .then(() => {
-                        window.location.reload();
-                    })
-                    .catch((err) => {
-                        console.error("RPC Error:", err);
-                        this.checked = false; // Revert the checkbox state on error
-                        Dialog.alert(null, "Could not save your confirmation. Please try again.");
-                    });
-            });
-        }
-
-        /**
          * Initializes the privacy checkbox.
          */
         function initAgreementsForm() {
@@ -289,36 +262,62 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let originalValues = {};
 
+            const getFieldWidget = (fieldName) => {
+                const input = form.querySelector(`[name="${fieldName}"]`);
+                if (!input) return null;
+
+                return $(input).closest(".form-field-component").data("widget");
+            };
+
+            function toggleLoader(isLoading) {
+                const loader = document.getElementById("user-settings-loader");
+
+                if (isLoading) {
+                    loader?.classList.remove("d-none");
+                } else {
+                    loader?.classList.add("d-none");
+                }
+            }
+
+            const showBackendErrors = (errors) => {
+                for (const fieldName in errors) {
+                    const widget = getFieldWidget(fieldName);
+                    if (widget) {
+                        widget.showError(errors[fieldName]);
+                    } else {
+                        console.warn(`No widget found for field ${fieldName} to display error: ${errors[fieldName]}`);
+                    }
+                }
+            };
+
             const clearErrors = () => {
-                form.querySelectorAll(".is-invalid").forEach((input) => {
-                    input.classList.remove("is-invalid");
-                });
-                form.querySelectorAll(".invalid-hint").forEach((hint) => {
-                    hint.style.display = "none";
+                fields.forEach((field) => {
+                    const widget = getFieldWidget(field);
+                    if (widget) {
+                        widget.clearError();
+                    }
                 });
             };
 
-            const showErrors = (errors) => {
-                for (const fieldName in errors) {
-                    const input = form.querySelector(`[name="${fieldName}"]`);
-                    if (input) {
-                        input.classList.add("is-invalid");
-                        const container = input.closest(".form-field-container");
-                        if (container) {
-                            const hintEl = container.querySelector(".invalid-hint");
-                            if (hintEl) {
-                                hintEl.textContent = errors[fieldName];
-                                hintEl.style.display = "block";
-                            }
+            const validateForm = () => {
+                let isValid = true;
+
+                fields.forEach((field) => {
+                    const widget = getFieldWidget(field);
+                    if (widget) {
+                        if (!widget.validate()) {
+                            isValid = false;
                         }
                     }
-                }
+                });
+
+                return isValid;
             };
 
             const storeOriginalValues = () => {
                 fields.forEach((field) => {
                     const input = form.querySelector(`[name="${field}"]`);
-                    if (input) originalValues[field] = input.value;
+                    if (input) originalValues[field] = input.type === "checkbox" ? input.checked : input.value;
                 });
             };
 
@@ -326,30 +325,83 @@ document.addEventListener("DOMContentLoaded", () => {
                 fields.forEach((field) => {
                     const input = form.querySelector(`[name="${field}"]`);
                     if (input && originalValues[field] !== undefined) {
-                        input.value = originalValues[field];
+                        if (input.type === "checkbox") {
+                            input.checked = originalValues[field];
+                        } else {
+                            input.value = originalValues[field];
+                        }
                     }
                 });
             };
 
-            editButton.addEventListener("click", () => {
-                storeOriginalValues();
-                clearErrors();
-                form.classList.add("is-editing");
-            });
-
-            cancelButton.addEventListener("click", () => {
-                restoreOriginalValues();
-                clearErrors();
-                form.classList.remove("is-editing");
-            });
-
-            saveButton.addEventListener("click", () => {
-                clearErrors();
-                const payload = {};
-                fields.forEach((field) => {
+            const anyValueUpdated = () => {
+                return fields.some((field) => {
                     const input = form.querySelector(`[name="${field}"]`);
-                    if (input) payload[field] = input.value;
+                    if (input) {
+                        const valueToCheck = input.type === "checkbox" ? input.checked : input.value;
+                        return valueToCheck !== originalValues[field];
+                    }
                 });
+            };
+
+            const getRpcErrorMessage = (err, fallbackMessage) => {
+                const messageArguments =
+                    err?.message?.data?.arguments ?? err?.data?.arguments ?? err?.message?.arguments;
+
+                if (Array.isArray(messageArguments)) {
+                    const messages = messageArguments.filter((item) => typeof item === "string" && item.trim());
+                    if (messages.length) {
+                        return messages.join("\n");
+                    }
+                }
+
+                if (typeof messageArguments === "string" && messageArguments.trim()) {
+                    return messageArguments;
+                }
+
+                if (typeof err?.message === "string" && err.message.trim()) {
+                    return err.message;
+                }
+
+                return fallbackMessage;
+            };
+
+            function toggleEdit(isEditing) {
+                clearErrors();
+                form.classList.toggle("is-editing", isEditing);
+            }
+
+            editButton.addEventListener("click", (e) => {
+                e.preventDefault();
+                storeOriginalValues();
+                toggleEdit(true);
+            });
+
+            cancelButton.addEventListener("click", (e) => {
+                e.preventDefault();
+                restoreOriginalValues();
+                toggleEdit(false);
+            });
+
+            saveButton.addEventListener("click", (e) => {
+                e.preventDefault();
+                clearErrors();
+
+                if (!validateForm()) return;
+                toggleLoader(true);
+
+                if (!anyValueUpdated()) {
+                    toggleLoader(false);
+                    toggleEdit(false);
+                    return;
+                }
+
+                const payload = {};
+                for (const field of fields) {
+                    const input = form.querySelector(`[name="${field}"]`);
+                    if (!input || input.offsetParent === null) continue; // Skip hidden/missing inputs
+                    payload[field] = input.type === "checkbox" ? input.checked : input.value;
+                }
 
                 rpc.query({ route: endpoint, params: payload })
                     .then((response) => {
@@ -362,16 +414,21 @@ document.addEventListener("DOMContentLoaded", () => {
                                 displayEl.textContent =
                                     input.tagName === "SELECT" ? input.options[input.selectedIndex].text : input.value;
                             });
-                            form.classList.remove("is-editing");
+                            toggleEdit(false);
+                            toggleLoader(false);
                         } else {
                             if (response.errors) {
-                                showErrors(response.errors);
+                                showBackendErrors(response.errors);
                             }
+                            toggleLoader(false);
                         }
                     })
                     .catch((err) => {
+                        const fallbackMessage = "An unexpected error occurred. Please try again later.";
+                        const errorMessage = getRpcErrorMessage(err, fallbackMessage);
                         console.error("RPC Error:", err);
-                        Dialog.alert(null, "An unexpected error occurred. Please try again later.");
+                        Dialog.alert(null, errorMessage);
+                        toggleLoader(false);
                     });
             });
         }

@@ -116,11 +116,6 @@ class EventBanner(models.Model):
         "at least one of these tags. If empty, it is visible to everyone.",
     )
 
-    target_blank = fields.Boolean(
-        string="Open link in new tab",
-        default=True,
-    )
-
     def name_get(self):
         """
         Generates the display name for the banners.
@@ -134,8 +129,7 @@ class EventBanner(models.Model):
     @api.model
     def _get_default_color_by_name(self, color_name):
         """ """
-        # Change 'name', in case the field in 'theme.compassion.colors'
-        # is name differently.
+        # Passe 'name' an, falls das Feld in 'theme.compassion.colors' anders heißt.
         color_record = self.env["theme.compassion.colors"].search(
             [("name", "=", color_name)], limit=1
         )

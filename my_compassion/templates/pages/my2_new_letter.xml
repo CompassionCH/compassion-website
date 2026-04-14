@@ -44,9 +44,7 @@
                                     <!-- Loop through children_sponsored_by_partner -->
                                     <t t-foreach="sponsorship_ids" t-as="sponsorship">
                                         <!-- Shows only active sponsorships as selections -->
-                                        <t
-                                            t-if="sponsorship.state == 'active' or (sponsorship.state == 'terminated' and sponsorship.child_id.can_i_write_letter)"
-                                        >
+                                        <t t-if="sponsorship.state == 'active'">
                                             <option
                                                 t-att-value="sponsorship.child_id.id"
                                                 t-att-selected="'selected' if sponsorship.child_id.id == selected_child.id else None"
@@ -104,7 +102,6 @@
                                 <t t-if="draft and draft.template_id">
                                     <img
                                         id="selected-template"
-                                        t-att-alt="draft.template_id.name"
                                         t-att-data-template-name="draft.template_id.name"
                                         t-att-data-template-id="draft.template_id.id"
                                         class="img-fluid border shadow-sm"
@@ -138,7 +135,6 @@
                                                     t-att-data-template-id="template.id"
                                                     t-att-data-template-name="template.name"
                                                     class="img-fluid border shadow-sm template-image"
-                                                    t-att-alt="template.name"
                                                 />
                                             </div>
                                         </t>
@@ -199,7 +195,6 @@
                                 <img
                                     t-attf-src="data:#{att.mimetype or 'image/png'};base64,#{att.datas}"
                                     class="img-fluid"
-                                    t-att-alt="att.name or 'User attachment'"
                                 />
                                 <p>
                                     <t t-esc="att.name" />

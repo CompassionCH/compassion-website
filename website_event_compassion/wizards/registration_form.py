@@ -19,24 +19,18 @@ class RegistrationForm(models.TransientModel):
         readonly=False,
         default=False,
     )
-    passport = fields.Binary(string="Passport")
-    criminal_record = fields.Binary(string="Criminal Record")
+    passport = fields.Binary(related="registration_id.passport", readonly=False)
+    criminal_record = fields.Binary(
+        related="registration_id.criminal_record", readonly=False
+    )
     comments = fields.Text()
 
     @api.model_create_multi
     def create(self, vals_list):
         forms = super().create(vals_list)
         for form in forms:
-            docs_to_save = {}
-            if form.passport:
-                docs_to_save["passport"] = form.passport
-            if form.criminal_record:
-                docs_to_save["criminal_record"] = form.criminal_record
-            if docs_to_save:
-                form.registration_id.sudo().write(docs_to_save)
-
             if form.comments:
-                form.registration_id.sudo().message_post(
+                form.registration_id.message_post(
                     body=form.comments,
                     author_id=form.registration_id.partner_id.id,
                     subtype_xmlid="mail.mt_comment",

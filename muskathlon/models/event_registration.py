@@ -33,7 +33,6 @@ class MuskathlonRegistration(models.Model):
         help="Used in thank you letters for donations linked to an event "
         "and to this partner.",
     )
-    comments = fields.Text("Registration Comments")
 
     _sql_constraints = [
         (
@@ -93,7 +92,7 @@ class MuskathlonRegistration(models.Model):
         return registrations
 
     def _compute_is_in_two_months(self):
-        """this function defines if the boolean hides or shows the survey"""
+        """this function define is the bollean hide or not the survey"""
         for registration in self:
             today = datetime.datetime.today()
             start_day = registration.event_begin_date
@@ -140,17 +139,14 @@ class MuskathlonRegistration(models.Model):
         )
         self.message_subscribe(partners.ids)
 
-        subtype_id = self.env.ref("website_event_compassion.mt_registration_create").id
+        body = _("The participant registered through the Muskathlon website.")
 
-        for registration in self:
-            registration.message_post_with_view(
-                "muskathlon.muskathlon_registration_notification_view",
-                subject=_("%s - New Muskathlon registration") % registration.name,
-                values={"object": registration},
-                message_type="comment",
-                subtype_id=subtype_id,
-            )
-
+        self.message_post(
+            body=body,
+            subject=_("%s - New Muskathlon registration") % self.name,
+            message_type="email",
+            subtype_xmlid="website_event_compassion.mt_registration_create",
+        )
         return True
 
     def muskathlon_medical_survey_done(self):

@@ -267,12 +267,12 @@
                 <!-- Letters -->
                 <t t-if="letters">
                     <div class="container-content d-flex flex-column align-items-center mt-4">
-                        <div class="w-100 d-flex flex-column p-4">
+                        <div class="w-100 d-flex flex-column">
                             <div class="row justify-content-center">
                                 <t t-foreach="letters" t-as="letter" t-foreach-index="i">
                                     <div
                                         class="col-12 col-md-6 col-lg-4 my-3 letter-card"
-                                        t-att-data-create_date="letter.status_date if letter.direction == 'Beneficiary To Supporter' else letter.create_date"
+                                        t-att-data-create_date="letter.create_date"
                                         t-att-data-type="letter.direction"
                                         t-att-data-index="i"
                                     >
@@ -331,7 +331,9 @@
                             <t t-set="variant" t-value="'default'" />
                             <t t-set="variation" t-value="'filled'" />
                             <t t-set="label">Write a letter to a child</t>
+                            <t t-set="icon" t-value="'pictogram-letter-writing'" />
                             <t t-set="color" t-value="'core-blue'" />
+                            <t t-set="icon_color" t-value="'low-yellow'" />
                             <t t-set="text_color" t-value="'pure-white'" />
                             <t t-set="href" t-value="'/my2/children/letters/new'" />
                         </t>

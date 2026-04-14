@@ -55,7 +55,6 @@
                         <group>
                             <field name="button_action_url" />
                             <field name="is_active" />
-                            <field name="target_blank" />
                         </group>
                         <group>
                             <field name="start_date" />
@@ -63,24 +62,11 @@
                         </group>
                     </group>
                     <group string="Target">
-                        <label for="target_route_ids" string="Target Pages" />
-                        <div class="o_row">
-                            <field name="target_route_ids" widget="many2many_tags" options="{'no_create_edit': True}" />
-                            <button
-                                name="%(my_compassion.action_server_refresh_website_routes)d"
-                                type="action"
-                                string="Refresh Website Routes"
-                                class="btn-secondary oe_edit_only"
-                                icon="fa-refresh"
-                                help="Update the list of available website routes"
-                            />
-                        </div>
+                        <field name="target_route_ids" widget="many2many_tags" options="{'no_create_edit': True}" />
                         <p class="text-info" colspan="2">
-                            <i class="fa fa-info-circle mr-2" />
-                            <t>
-                                Select pages to display the banner on. If no page is selected, the banner will be
-                                    displayed on all pages. Click "Refresh" to update the list of available pages.
-                            </t>
+                            <i class="fa fa-info-circle" />
+                            If pages are selected, the banner is only visible on those pages. If empty, it is visible on
+                            all pages.
                         </p>
                         <field
                             name="target_partner_tag_ids"
@@ -88,12 +74,9 @@
                             options="{'color_field': 'color', 'no_create_edit': True}"
                         />
                         <p class="text-info" colspan="2">
-                            <i class="fa fa-info-circle mr-2" />
-                            <t>
-                                If tags are selected, the banner is only visible to users having at least one of these
-                                tags.
-                                If empty, it is visible to everyone.
-                            </t>
+                            <i class="fa fa-info-circle" />
+                            If tags are selected, the banner is only visible to users having at least one of these tags.
+                            If empty, it is visible to everyone.
                         </p>
                     </group>
                 </sheet>

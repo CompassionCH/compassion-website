@@ -30,7 +30,7 @@
 # pylint: disable=C8101
 {
     "name": "MyCompassion - Sponsor portal website",
-    "version": "14.0.1.0.2",
+    "version": "14.0.1.0.1",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
@@ -79,8 +79,6 @@
         "templates/pages/my2_gifts_thank_you.xml",
         "templates/pages/my2_add_a_gift.xml",
         "templates/http_error_custom.xml",
-        "templates/pages/my2_contact_us.xml",
-        "templates/pages/my2_contactus_thank_you.xml",
         # My Compassion 2 components
         "templates/components/my2_children_card.xml",
         "templates/components/my2_letter_card.xml",

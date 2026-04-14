@@ -6,11 +6,13 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+import base64
 import logging
 
 from odoo import SUPERUSER_ID, _, api, fields, models
 from odoo.http import request
 from odoo.tools import index_exists
+from odoo.tools.mimetypes import guess_mimetype
 
 from odoo.addons.website.models.website import slugify as slug
 
@@ -136,8 +138,9 @@ class EventRegistration(models.Model):
         string="Emergency contact relation type",
     )
     birth_name = fields.Char()
-    passport = fields.Binary(related="partner_id.passport", readonly=False)
+    passport = fields.Binary(compute="_compute_passport", inverse="_inverse_passport")
     passport_number = fields.Char()
+    passport_filename = fields.Char(compute="_compute_passport")
     passport_expiration_date = fields.Date()
     survey_count = fields.Integer(compute="_compute_survey_count")
     invoice_count = fields.Integer(compute="_compute_invoice_count")
@@ -184,7 +187,6 @@ class EventRegistration(models.Model):
             invoice_lines = (
                 self.env["account.move.line"]
                 .sudo()
-                .with_context(lang="en_US")
                 .search(
                     [
                         ("user_id", "=", partner.id),
@@ -386,6 +388,46 @@ class EventRegistration(models.Model):
                     ("invoice_category", "!=", "sponsorship"),
                 ]
             )
+
+    def _compute_passport(self):
+        for registration in self:
+            attachment = self.env["ir.attachment"].search(
+                [
+                    ("name", "like", "Passport"),
+                    ("res_id", "=", registration.id),
+                    ("res_model", "=", self._name),
+                ],
+                limit=1,
+            )
+            registration.passport = attachment.datas
+            registration.passport_filename = attachment.name
+
+    def _inverse_passport(self):
+        attachment_obj = self.env["ir.attachment"].sudo()
+        for registration in self:
+            passport = registration.passport
+            if passport:
+                f_type = guess_mimetype(base64.decodebytes(passport), "/pdf").split(
+                    "/"
+                )[1]
+                name = f"Passport {registration.name}.{f_type}"
+                attachment_obj.create(
+                    {
+                        "res_model": self._name,
+                        "res_id": registration.id,
+                        "datas": passport,
+                        "name": name,
+                        "public": False,
+                    }
+                )
+            else:
+                attachment_obj.search(
+                    [
+                        ("name", "like", "Passport"),
+                        ("res_id", "=", registration.id),
+                        ("res_model", "=", self._name),
+                    ]
+                ).unlink()
 
     def _compute_surveys(self):
         user_input_obj = self.env["survey.user_input"]
