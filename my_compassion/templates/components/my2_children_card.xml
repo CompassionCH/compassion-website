@@ -43,7 +43,7 @@
                 </div>
                 <div
                     class="small"
-                    t-if="sponsorship and sponsorship.state == 'terminated' and not sponsorship.is_exit_communication_pending"
+                    t-if="sponsorship and sponsorship.state == 'terminated' and sponsorship.exit_communication_sent"
                 >
                     <span class="badge bg-low-yellow" title="Your sponsorship has ended" aria-label="Sponsorship ended">
                         Sponsorship ended
@@ -54,7 +54,7 @@
                     <div t-if="show_status" class="mb-3 pl-3 pr-3">
                         <span class="border-bottom border-2 border-high-orange">
                             <t
-                                t-if="sponsorship_end_date and not sponsorship.can_write_letter and not sponsorship.is_exit_communication_pending"
+                                t-if="sponsorship_end_date and not sponsorship.can_write_letter and sponsorship.exit_communication_sent"
                             >
                                 Sponsorship terminated on
                                 <t

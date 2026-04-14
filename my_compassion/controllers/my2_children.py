@@ -108,51 +108,12 @@ class MyCompassionChildrenController(WebsiteChild):
 
         return partner.ids
 
-    def _get_hidden_timeline_ids(self, child_id):
-        """Finds final letters and contract events that should be hidden because exit comm is pending."""
-        child = request.env["compassion.child"].sudo().browse(child_id)
-        # Find sponsorships for this child where exit communication is still pending
-        pending_sponsorships = child.sponsorship_ids.filtered(
-            "is_exit_communication_pending"
-        )
-
-        # 1. Get hidden contract IDs
-        hidden_contract_ids = tuple(pending_sponsorships.ids) or (0,)
-
-        if not pending_sponsorships:
-            return hidden_contract_ids, (0,)
-
-        # 2. Get hidden letter IDs
-        final_type = request.env.ref(
-            "sbc_compassion.correspondence_type_final", raise_if_not_found=False
-        )
-        if not final_type:
-            return hidden_contract_ids, (0,)
-
-        hidden_letters = (
-            request.env["correspondence"]
-            .sudo()
-            .search(
-                [
-                    ("child_id", "=", child_id),
-                    ("sponsorship_id", "in", pending_sponsorships.ids),
-                    ("communication_type_ids", "in", final_type.ids),
-                ]
-            )
-        )
-
-        hidden_letter_ids = tuple(hidden_letters.ids) or (0,)
-
-        return hidden_contract_ids, hidden_letter_ids
-
-    def _get_timeline_count(
-        self, child_id, partner_ids, hidden_letter_ids=(0,), hidden_contract_ids=(0,)
-    ):
+    def _get_timeline_count(self, child_id, partner_ids):
         """Get total count of timeline records (correspondence + gifts + child_pictures + start + end)."""
         sql = """
             SELECT
                 (SELECT COUNT(*) FROM correspondence
-                 WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s) AND id NOT IN %(hidden_letter_ids)s)
+                 WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s) AND is_published = true)
                 +
                 (SELECT COUNT(*) FROM sponsorship_gift
                  WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
@@ -168,7 +129,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 (SELECT SUM(
                         CASE WHEN rc.start_date IS NOT NULL THEN 1 ELSE 0 END
                             +
-                        CASE WHEN rc.state = 'terminated' AND rc.end_date IS NOT NULL AND rc.id NOT IN %(hidden_contract_ids)s THEN 1 ELSE 0 END
+                        CASE WHEN rc.state = 'terminated' AND rc.end_date IS NOT NULL AND rc.exit_communication_sent IS NOT NULL THEN 1 ELSE 0 END
                         ) as count
                 FROM recurring_contract rc
                 WHERE rc.child_id = %(child_id)s
@@ -180,8 +141,6 @@ class MyCompassionChildrenController(WebsiteChild):
             {
                 "child_id": child_id,
                 "partner_ids": partner_ids,
-                "hidden_letter_ids": hidden_letter_ids,
-                "hidden_contract_ids": hidden_contract_ids,
             },
         )
         return request.env.cr.fetchone()[0] or 0
@@ -192,8 +151,6 @@ class MyCompassionChildrenController(WebsiteChild):
         partner_ids,
         offset,
         limit,
-        hidden_letter_ids=(0,),
-        hidden_contract_ids=(0,),
     ):
         """Fetch paginated timeline records (correspondence + gifts) ordered by date."""
         # ruff: noqa: E501 (query is more readable this way)
@@ -219,13 +176,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 FROM correspondence c
                 WHERE c.child_id = %(child_id)s
                   AND c.partner_id = ANY(%(partner_ids)s)
-                  AND c.id NOT IN %(hidden_letter_ids)s
-                  -- Updated Filtering Logic
-                  AND (
-                      (c.state = 'Published to Global Partner' AND c.direction = 'Beneficiary To Supporter')
-                      OR
-                      (c.state NOT IN ('Exception', 'Quality check unsuccessful') AND c.direction = 'Supporter To Beneficiary')
-                  )
+                  AND c.is_published = true
 
                 UNION ALL
 
@@ -289,7 +240,7 @@ class MyCompassionChildrenController(WebsiteChild):
                   WHERE rc.child_id = %(child_id)s
                   AND rc.partner_id = ANY(%(partner_ids)s)
                   AND v.event_date IS NOT NULL
-                  AND (v.event_type = 'start_sponsorship' OR (rc.state = 'terminated' AND rc.id NOT IN %(hidden_contract_ids)s))
+                  AND (v.event_type = 'start_sponsorship' OR (rc.state = 'terminated' AND rc.exit_communication_sent IS NOT NULL))
             ) AS timeline
             ORDER BY event_date DESC
             LIMIT %(limit)s OFFSET %(offset)s
@@ -297,8 +248,6 @@ class MyCompassionChildrenController(WebsiteChild):
         params = {
             "child_id": child_id,
             "partner_ids": partner_ids,
-            "hidden_letter_ids": hidden_letter_ids,
-            "hidden_contract_ids": hidden_contract_ids,
             "default_currency": request.env.user.currency_id.name,
             "title_corr_wrote": _("Wrote you a letter"),
             "title_corr_received": _("Received your letter"),
@@ -330,14 +279,9 @@ class MyCompassionChildrenController(WebsiteChild):
         """
         child = request.env["compassion.child"].browse(child_id)
         partner_ids = self._get_authorized_partner_ids(child)
-        hidden_contract_ids, hidden_letter_ids = self._get_hidden_timeline_ids(child_id)
 
-        total = self._get_timeline_count(
-            child_id, partner_ids, hidden_letter_ids, hidden_contract_ids
-        )
-        records = self._get_timeline_data(
-            child_id, partner_ids, offset, limit, hidden_letter_ids, hidden_contract_ids
-        )
+        total = self._get_timeline_count(child_id, partner_ids)
+        records = self._get_timeline_data(child_id, partner_ids, offset, limit)
 
         return records, total
 
@@ -362,24 +306,8 @@ class MyCompassionChildrenController(WebsiteChild):
                 children_sponsored_by_partner.filtered("can_i_write_letter").ids,
             ),
             ("direction", "=", "Beneficiary To Supporter"),
+            ("is_published", "=", True),
         ]
-
-        # Dynamically exclude final letters of pending exit communications
-        final_type = request.env.ref(
-            "sbc_compassion.correspondence_type_final", raise_if_not_found=False
-        )
-        pending_sponsorships = partner.sponsorship_ids.filtered(
-            "is_exit_communication_pending"
-        )
-        if final_type and pending_sponsorships:
-            domain.extend(
-                [
-                    "!",
-                    "&",  # NOT (A AND B)
-                    ("sponsorship_id", "in", pending_sponsorships.ids),
-                    ("communication_type_ids", "in", final_type.ids),
-                ]
-            )
 
         received_correspondences = correspondences_table.search(
             domain,
@@ -403,13 +331,13 @@ class MyCompassionChildrenController(WebsiteChild):
                     # all not terminated or terminated within grace period or exit comm not sent yet
                     lambda s: s.state != "terminated"
                     or s.can_write_letter
-                    or s.is_exit_communication_pending
+                    or not s.exit_communication_sent
                 ),
                 "ended_sponsorships": sponsorships.filtered(
                     # terminated and not within grace period, excluding specific end reasons and exit comm sent
                     lambda s: s.state == "terminated"
                     and not s.can_write_letter
-                    and not s.is_exit_communication_pending
+                    and s.exit_communication_sent
                     and s.end_reason_id.name
                     not in ["Subreject", "Mistake from our staff"]
                 ),
