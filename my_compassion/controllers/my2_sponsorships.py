@@ -200,7 +200,6 @@ class MyCompassionSponsorshipsController(WebsiteChild):
 
 
 class MyCompassionNewSponsorshipController(http.Controller):
-
     @staticmethod
     def _extract_utm_information() -> dict:
         """
@@ -258,7 +257,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
                     )
                 utm_vals["campaign_id"] = campaign.id
 
-            # Clean up the session variables so they don't bleed into future organic sessions
+            # Clean up the session variables
+            # so they don't bleed into future organic sessions
             request.session.pop("wizard_utm_medium", None)
             request.session.pop("wizard_utm_source", None)
             request.session.pop("wizard_utm_campaign", None)
@@ -266,19 +266,27 @@ class MyCompassionNewSponsorshipController(http.Controller):
             return utm_vals
         return {}
 
-
     @http.route(
-        '/my2/new-sponsorship/<model("compassion.child"):child>',
+        "/my2/new-sponsorship/<string:child_id>",
         type="http",
         auth="public",
         website=True,
     )
-    def wizard_start(self, child, sponsorship_type="standard", **kwargs):
+    def wizard_start(self, child_id, sponsorship_type="standard", **kwargs):
         """
         Renders the new sponsorship wizard initial page.
         return: An HTTP response containing a rendered template
         with the initial wizard page.
         """
+        child = (
+            request.env["compassion.child"]
+            .sudo()
+            .search([("id", "=", child_id)], limit=1)
+        )
+
+        if not child:
+            raise NotFound("Child not found in database")
+
         # capture and store utm information
         utm_medium = kwargs.get("utm_medium")
         utm_source = kwargs.get("utm_source")
