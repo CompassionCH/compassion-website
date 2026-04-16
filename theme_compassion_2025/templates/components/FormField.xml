@@ -7,27 +7,19 @@
 
     Props:
     - label (string): The text seen on top of the component.
-    - invalid_hint (string): Hint to show when the input is given the 'is-invalid' class.
     - input_id (string): ID of the linked input
     - top_class (string): class for the outer div element wrapping everything
 -->
 <odoo>
     <template id="FormFieldComponent" name="Form Field Component">
-        <t t-set="invalid_hint">
-            <t t-if="invalid_hint">
-                <t t-esc="invalid_hint" />
-            </t>
-            <t t-else="">Invalid value.</t>
-        </t>
-        <div t-attf-class="form-field-container #{top_class}">
-            <t t-if="label">
-                <label t-att-for="input_id" t-attf-class="text-#{label_color or 'core-blue'} body-small bold mb-1">
-                    <t t-esc="label" />
-                </label>
-            </t>
-            <div class="invalid-hint text-mid-orange tiny-text mb-1">
-                <t t-esc="invalid_hint" />
-            </div>
+        <div t-attf-class="form-field-component #{top_class or ''}">
+            <label
+                t-if="label"
+                t-att-for="input_id"
+                t-attf-class="text-#{label_color or 'core-blue'} body-small bold mb-1"
+            >
+                <t t-esc="label" />
+            </label>
             <t t-raw="0" />
         </div>
     </template>

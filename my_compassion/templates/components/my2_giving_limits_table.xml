@@ -45,7 +45,14 @@
                     <t t-set="_txt_Gift">&#160;Gift</t>
                     <t
                         t-set="cells"
-                        t-value="[(limit.sponsorship_gift_type + _txt_Gift if limit.sponsorship_gift_type else limit.gift_type) + ('*' if limit.yearly_threshold and limit.gift_frequency == 2 else '**' if not limit.yearly_threshold and limit.gift_frequency == 1 else '') for limit in limits]"
+                        t-value="[
+                                        (
+                                            (limit.get_sponsorship_gift_labels() + _txt_Gift)
+                                            if limit.sponsorship_gift_type
+                                            else limit.get_gift_type_label()
+                                        ) + limit.get_gift_frequency_indicator()
+                                        for limit in limits
+                                    ]"
                     />
                 </t>
                 <!-- MIN -->
@@ -54,7 +61,7 @@
                     <t
                         t-set="cells"
                         t-value="[
-                        '{} {:.2f}'.format(company.currency_id.name , int(limit.currency_id._convert(limit.min_amount, company.currency_id, company, date) * 10) / 10.0)
+                        limit.get_ceiling_converted_amount(limit.min_amount, company, date)
                         for limit in limits
                     ]"
                     />
@@ -65,7 +72,7 @@
                     <t
                         t-set="cells"
                         t-value="[
-                        '{} {:.2f}'.format(company.currency_id.name , int(limit.currency_id._convert(limit.max_amount, company.currency_id, company, date) * 10) / 10.0)
+                        limit.get_ceiling_converted_amount(limit.max_amount, company, date)
                         for limit in limits
                     ]"
                     />

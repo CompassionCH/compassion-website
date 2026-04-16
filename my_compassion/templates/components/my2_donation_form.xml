@@ -51,7 +51,7 @@
             <t t-if="submit_label">
                 <t t-esc="submit_label" />
             </t>
-            <t t-else="">Add &amp;amp; check out</t>
+            <t t-else="">Add &amp; check out</t>
         </t>
         <t t-set="submission_event" t-value="submission_event or 'donation-form:submit'" />
         <t t-set="default_frequency" t-value="default_frequency or 'one_time'" />
@@ -73,14 +73,21 @@
                 <t t-set="underline_color" t-value="'low-yellow'" />
             </t>
             <!-- DONATION FREQUENCY -->
-            <t t-call="theme_compassion_2025.ToggleButtonComponent">
-                <t t-set="name" t-valuef="'#{base_name}_frequency'" />
-                <t t-set="_txt_One_Time">One Time</t>
-                <t t-set="_txt_Monthly">Monthly</t>
-                <t t-set="options" t-value="[('one_time', _txt_One_Time), ('monthly', _txt_Monthly)]" />
-                <t t-set="default" t-value="default_frequency" />
-                <t t-set="top_class" t-value="'mt-3 align-self-center donation-frequency'" />
-            </t>
+            <!--
+              TODO enable back this component when monthly fund payment is implemented.
+              This code was intentionally disabled by task [T2917]
+            -->
+            <!--            <t-->
+            <!--                t-if="product.my_compassion_donation_type != 'gift'"-->
+            <!--                t-call="theme_compassion_2025.ToggleButtonComponent"-->
+            <!--            >-->
+            <!--                <t t-set="name" t-valuef="'#{base_name}_frequency'" />-->
+            <!--                <t t-set="_txt_One_Time">One Time</t>-->
+            <!--                <t t-set="_txt_Monthly">Monthly</t>-->
+            <!--                <t t-set="options" t-value="[('one_time', _txt_One_Time), ('monthly', _txt_Monthly)]" />-->
+            <!--                <t t-set="default" t-value="default_frequency" />-->
+            <!--                <t t-set="top_class" t-value="'mt-3 align-self-center donation-frequency'" />-->
+            <!--            </t>-->
             <!-- TO -->
             <t t-if="product.my_compassion_donation_type == 'gift'" t-call="theme_compassion_2025.FormFieldComponent">
                 <t t-set="top_class" t-value="'mt-3 w-100'" />
@@ -124,10 +131,7 @@
                                 class="suggested-amount"
                             />
                             <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-low">
-                                <t
-                                    t-set="price"
-                                    t-value="product.my_compassion_donation_quantity_low * product.list_price"
-                                />
+                                <t t-set="price" t-value="product.my_compassion_donation_amount_low" />
                                 <t t-esc="product.currency_id.name" />
                                 <t t-if="price % 1 == 0" t-esc="int(price)" />
                                 <t t-else="" t-esc="'{0:.2f}'.format(price)" />
@@ -143,10 +147,7 @@
                                 class="suggested-amount"
                             />
                             <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-medium">
-                                <t
-                                    t-set="price"
-                                    t-value="product.my_compassion_donation_quantity_medium * product.list_price"
-                                />
+                                <t t-set="price" t-value="product.my_compassion_donation_amount_medium" />
                                 <t t-esc="product.currency_id.name" />
                                 <t t-if="price % 1 == 0" t-esc="int(price)" />
                                 <t t-else="" t-esc="'{0:.2f}'.format(price)" />
@@ -162,10 +163,7 @@
                                 class="suggested-amount"
                             />
                             <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-high">
-                                <t
-                                    t-set="price"
-                                    t-value="product.my_compassion_donation_quantity_high * product.list_price"
-                                />
+                                <t t-set="price" t-value="product.my_compassion_donation_amount_high" />
                                 <t t-esc="product.currency_id.name" />
                                 <t t-if="price % 1 == 0" t-esc="int(price)" />
                                 <t t-else="" t-esc="'{0:.2f}'.format(price)" />
@@ -184,19 +182,18 @@
                             t-attf-name="#{base_name}_suggested_amount"
                             value="custom"
                             t-att-checked="default_suggested_amount == 'custom'"
-                            class="suggested-amount"
+                            class="suggested-amount d-none"
                         />
-                        <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-custom">Custom amount</label>
+                        <t t-set="placeholder_text">Enter amount in</t>
+                        <input
+                            id="custom-amount"
+                            type="text"
+                            name="custom_amount"
+                            t-att-placeholder="placeholder_text + ' ' + product.currency_id.name"
+                            class="form-control mt-2"
+                            t-att-value="'{:g}'.format(default_custom_amount) if default_custom_amount else ''"
+                        />
                     </div>
-                    <input
-                        id="custom-amount"
-                        type="text"
-                        name="custom_amount"
-                        t-att-placeholder="'Enter amount in %s' % product.currency_id.name"
-                        class="form-control mt-2"
-                        hidden=""
-                        t-att-value="'{:g}'.format(default_custom_amount) if default_custom_amount else ''"
-                    />
                 </t>
                 <div class="limit-error-message" hidden="">
                     <div class="mt-3 tiny-text text-center text-mid-orange">

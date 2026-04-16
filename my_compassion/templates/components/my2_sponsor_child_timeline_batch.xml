@@ -16,7 +16,7 @@
         - model (string): the model of the item (e.g., 'sponsorship_gift', 'correspondence').
         - title (string): title of the item.
         - content (string): content or description of the item.
-        - create_date (string): date when the item was created.
+        - event_date (string): date when the item was last updated.
         - pageable (object): pagination object if applicable, used for loading more items.
         - additional fields as needed based on the model
 -->
@@ -51,8 +51,8 @@
                             </p>
                         </t>
                         <div class="flex justify-between items-center">
-                            <span class="cd-timeline__date">
-                                <t t-esc="item['create_date']" t-options='{"widget": "date"}' />
+                            <span class="cd-timeline__date text-dark-blue">
+                                <t t-esc="item['event_date']" t-options='{"widget": "date"}' />
                             </span>
                         </div>
                     </div>
@@ -86,8 +86,33 @@
                             </p>
                         </t>
                         <div class="flex justify-between items-center">
-                            <span class="cd-timeline__date">
-                                <t t-esc="item['create_date']" t-options='{"widget": "date"}' />
+                            <span class="cd-timeline__date text-dark-blue">
+                                <t t-esc="item['event_date']" t-options='{"widget": "date"}' />
+                            </span>
+                        </div>
+                    </a>
+                </div>
+            </t>
+            <t t-elif="item['model'] == 'child_picture'">
+                <div class="cd-timeline__block">
+                    <div class="cd-timeline__img bg-high-eggshell">
+                        <a
+                            t-att-href="'/web/image/compassion.child.pictures/' + item['record_id'] +'/fullshot/'"
+                            class="flex items-center justify-center w-full h-full rounded-full"
+                        >
+                            <i class="pictogram pictogram-Unsponsored-Children bg-low-black" />
+                        </a>
+                    </div>
+                    <a
+                        class="cd-timeline__content text-component text-decoration-none"
+                        t-att-href="'/web/image/compassion.child.pictures/' + item['record_id'] +'/fullshot/'"
+                    >
+                        <p class="modal-title text-core-blue">
+                            <t t-esc="item['title']" />
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <span class="cd-timeline__date text-dark-blue">
+                                <t t-esc="item['event_date']" t-options='{"widget": "date"}' />
                             </span>
                         </div>
                     </a>
@@ -103,8 +128,25 @@
                             <t t-esc="item['title']" />
                         </p>
                         <div class="flex justify-between items-center">
-                            <span class="cd-timeline__date">
-                                <t t-esc="item['create_date']" t-options='{"widget": "date"}' />
+                            <span class="cd-timeline__date text-dark-blue">
+                                <t t-esc="item['event_date']" t-options='{"widget": "date"}' />
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </t>
+            <t t-elif="item['model'] == 'end_sponsorship'">
+                <div class="cd-timeline__block">
+                    <div class="cd-timeline__img bg-high-eggshell">
+                        <i class="pictogram pictogram-Child-Focused bg-low-black" />
+                    </div>
+                    <div class="cd-timeline__content text-component">
+                        <p class="modal-title text-core-blue">
+                            <t t-esc="item['title']" />
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <span class="cd-timeline__date text-dark-blue">
+                                <t t-esc="item['event_date']" t-options='{"widget": "date"}' />
                             </span>
                         </div>
                     </div>

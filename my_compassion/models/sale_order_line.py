@@ -20,3 +20,10 @@ class SalesOrderLine(models.Model):
     gift_recipient_id = fields.Many2one(
         "recurring.contract", "Gift Recipient", ondelete="set null"
     )
+
+    def _prepare_invoice_line(self, **optional_values):
+        """Propagate gift recipient contract to the invoice line."""
+        res = super()._prepare_invoice_line(**optional_values)
+        if self.is_gift and self.gift_recipient_id:
+            res["contract_id"] = self.gift_recipient_id.id
+        return res

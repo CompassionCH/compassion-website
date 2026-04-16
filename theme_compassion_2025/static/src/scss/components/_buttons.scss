@@ -16,9 +16,9 @@ $btn-border-color: #000;
 // Mixins
 // =====================
 
-@mixin button-base($height, $padding-x, $font-size, $font-family, $font-weight) {
+@mixin button-base($height, $padding-y, $padding-x, $font-size, $font-family, $font-weight) {
     height: $height;
-    padding: 0 $padding-x;
+    padding: $padding-y $padding-x;
     font-size: $font-size;
     font-family: $font-family, sans-serif;
     font-weight: $font-weight;
@@ -32,8 +32,8 @@ $btn-border-color: #000;
     line-height: 1;
 }
 
-@mixin compassion-button-variant($height, $padding-x, $font-size, $font-family, $font-weight, $icon-only: false, $filled: true) {
-    @include button-base($height, $padding-x, $font-size, $font-family, $font-weight);
+@mixin compassion-button-variant($height, $padding-x, $font-size, $font-family, $font-weight, $icon-only: false, $filled: true, $padding-y: 0) {
+    @include button-base($height, $padding-y, $padding-x, $font-size, $font-family, $font-weight);
 
     @if $filled {
         background-color: $btn-bg;
@@ -72,9 +72,13 @@ $btn-border-color: #000;
     &--compact-hollow            { @include compassion-button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, false, false); }
     &--compact-hollow-icon-only  { @include compassion-button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, true,  false); }
 
+    // Slim
+    &--slim-hollow              { @include compassion-button-variant(48px, 12px, 17px, "NeighbourSans Medium", 500, false, false, 0); }
+
     // Radius modifiers
     &--radius-pill  { border-radius: 25px; }
     &--radius-small { border-radius: 12px; }
+    &--radius-circular { border-radius: 50%; }
 }
 
 // =====================
@@ -89,4 +93,5 @@ $btn-border-color: #000;
     &--compact { margin-right: 6px;  margin-left: -6px; }
     &--default { margin-right: 8px;  margin-left: -8px; }
     &--impact  { margin-right: 10px; margin-left: -10px; }
+    &--slim   { margin-right: 0;  margin-left: 0; }
 }

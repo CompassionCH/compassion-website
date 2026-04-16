@@ -6,13 +6,11 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-import base64
 import logging
 
 from odoo import SUPERUSER_ID, _, api, fields, models
 from odoo.http import request
 from odoo.tools import index_exists
-from odoo.tools.mimetypes import guess_mimetype
 
 from odoo.addons.website.models.website import slugify as slug
 
@@ -97,7 +95,9 @@ class EventRegistration(models.Model):
         readonly=True, compute="_compute_amount_raised_percent"
     )
     currency_id = fields.Many2one("res.currency", related="company_id.currency_id")
-    is_published = fields.Boolean(compute="_compute_is_published", store=True)
+    is_published = fields.Boolean(
+        compute="_compute_is_published", inverse="_inverse_is_published", store=True
+    )
     host_url = fields.Char(compute="_compute_host_url")
     sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
     event_name = fields.Char(related="event_id.name", tracking=True)
@@ -136,9 +136,8 @@ class EventRegistration(models.Model):
         string="Emergency contact relation type",
     )
     birth_name = fields.Char()
-    passport = fields.Binary(compute="_compute_passport", inverse="_inverse_passport")
+    passport = fields.Binary(related="partner_id.passport", readonly=False)
     passport_number = fields.Char()
-    passport_filename = fields.Char(compute="_compute_passport")
     passport_expiration_date = fields.Date()
     survey_count = fields.Integer(compute="_compute_survey_count")
     invoice_count = fields.Integer(compute="_compute_invoice_count")
@@ -185,6 +184,7 @@ class EventRegistration(models.Model):
             invoice_lines = (
                 self.env["account.move.line"]
                 .sudo()
+                .with_context(lang="en_US")
                 .search(
                     [
                         ("user_id", "=", partner.id),
@@ -224,6 +224,10 @@ class EventRegistration(models.Model):
     def _compute_is_published(self):
         for registration in self:
             registration.is_published = registration.state in ("open", "done")
+
+    def _inverse_is_published(self):
+        # Allow setting is_published manually
+        pass
 
     def _create_payment_link(self, move, description):
         payment_link = (
@@ -382,46 +386,6 @@ class EventRegistration(models.Model):
                     ("invoice_category", "!=", "sponsorship"),
                 ]
             )
-
-    def _compute_passport(self):
-        for registration in self:
-            attachment = self.env["ir.attachment"].search(
-                [
-                    ("name", "like", "Passport"),
-                    ("res_id", "=", registration.id),
-                    ("res_model", "=", self._name),
-                ],
-                limit=1,
-            )
-            registration.passport = attachment.datas
-            registration.passport_filename = attachment.name
-
-    def _inverse_passport(self):
-        attachment_obj = self.env["ir.attachment"].sudo()
-        for registration in self:
-            passport = registration.passport
-            if passport:
-                f_type = guess_mimetype(base64.decodebytes(passport), "/pdf").split(
-                    "/"
-                )[1]
-                name = f"Passport {registration.name}.{f_type}"
-                attachment_obj.create(
-                    {
-                        "res_model": self._name,
-                        "res_id": registration.id,
-                        "datas": passport,
-                        "name": name,
-                        "public": False,
-                    }
-                )
-            else:
-                attachment_obj.search(
-                    [
-                        ("name", "like", "Passport"),
-                        ("res_id", "=", registration.id),
-                        ("res_model", "=", self._name),
-                    ]
-                ).unlink()
 
     def _compute_surveys(self):
         user_input_obj = self.env["survey.user_input"]

@@ -109,20 +109,31 @@ class MyCompassionChildrenController(WebsiteChild):
         return partner.ids
 
     def _get_timeline_count(self, child_id, partner_ids):
-        """Get total count of timeline records (correspondence + gifts + start)."""
+        """Get total count of timeline records (correspondence + gifts + child_pictures + start + end)."""
         sql = """
             SELECT
                 (SELECT COUNT(*) FROM correspondence
-                 WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
+                 WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s) AND is_published = true)
                 +
                 (SELECT COUNT(*) FROM sponsorship_gift
                  WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
                 +
-                (SELECT COUNT(*) FROM recurring_contract rc
-                 WHERE rc.child_id = %(child_id)s
-                   AND rc.partner_id = ANY(%(partner_ids)s)
-                   AND rc.state IN ('active', 'terminated')
-                   AND rc.start_date IS NOT NULL)
+                (SELECT COUNT(*)
+                 FROM compassion_child_pictures p
+                 JOIN recurring_contract rc ON rc.child_id = p.child_id
+                 WHERE p.child_id = %(child_id)s
+                 AND rc.partner_id = ANY(%(partner_ids)s)
+                 AND rc.start_date <= p.create_date
+                )
+                +
+                (SELECT SUM(
+                        CASE WHEN rc.start_date IS NOT NULL THEN 1 ELSE 0 END
+                            +
+                        CASE WHEN rc.state = 'terminated' AND rc.end_date IS NOT NULL AND rc.exit_communication_sent IS NOT NULL THEN 1 ELSE 0 END
+                        ) as count
+                FROM recurring_contract rc
+                WHERE rc.child_id = %(child_id)s
+                AND rc.partner_id = ANY(%(partner_ids)s))
                 AS total
         """
         request.env.cr.execute(
@@ -134,7 +145,13 @@ class MyCompassionChildrenController(WebsiteChild):
         )
         return request.env.cr.fetchone()[0] or 0
 
-    def _get_timeline_data(self, child_id, partner_ids, offset, limit):
+    def _get_timeline_data(
+        self,
+        child_id,
+        partner_ids,
+        offset,
+        limit,
+    ):
         """Fetch paginated timeline records (correspondence + gifts) ordered by date."""
         # ruff: noqa: E501 (query is more readable this way)
         sql = """
@@ -145,15 +162,21 @@ class MyCompassionChildrenController(WebsiteChild):
                     '' AS amount,
                     '' AS currency_name,
                     c.direction AS metadata,
-                    c.create_date,
+                    c.status_date AS event_date,
                     CASE
-                        WHEN c.direction = 'Beneficiary To Supporter'
-                        THEN %(title_corr_wrote)s
-                        ELSE %(title_corr_received)s
-                    END AS title
+                        WHEN c.state = 'Published to Global Partner'
+                            THEN %(title_corr_wrote)s
+                        WHEN c.state = 'Printed and sent to ICP'
+                            THEN %(title_corr_received)s
+                        WHEN c.state IN ('Field Office translation queue', 'Global Partner translation queue')
+                            THEN %(title_corr_translating)s
+                        ELSE %(title_corr_processing)s
+                    END AS title,
+                    c.child_id AS child_id
                 FROM correspondence c
                 WHERE c.child_id = %(child_id)s
                   AND c.partner_id = ANY(%(partner_ids)s)
+                  AND c.is_published = true
 
                 UNION ALL
 
@@ -163,53 +186,81 @@ class MyCompassionChildrenController(WebsiteChild):
                     s.amount::text AS amount,
                     COALESCE(rc.name, %(default_currency)s) AS currency_name,
                     s.gift_type || '|' || COALESCE(s.sponsorship_gift_type, '') AS metadata,
-                    s.create_date,
+                    s.create_date AS event_date,
                     CASE
                         WHEN s.sponsorship_gift_type = 'Birthday' THEN %(title_gift_bday)s
                         WHEN s.sponsorship_gift_type = 'General' THEN %(title_gift_general)s
                         WHEN s.sponsorship_gift_type = 'Graduation/Final' THEN %(title_gift_grad)s
                         WHEN s.gift_type = 'Family Gift' THEN %(title_gift_family)s
                         ELSE %(title_gift_default)s
-                    END AS title
+                    END AS title,
+                    s.child_id AS child_id
                 FROM sponsorship_gift s
                 LEFT JOIN account_move_line aml ON aml.gift_id = s.id
                 LEFT JOIN res_currency rc ON rc.id = aml.currency_id
                 WHERE s.child_id = %(child_id)s
                   AND s.partner_id = ANY(%(partner_ids)s)
 
-                  UNION ALL
+                UNION ALL
+
+                SELECT 'child_picture' AS model,
+                    p.id::text AS record_id,
+                    '' AS amount,
+                    '' AS currency_name,
+                    COALESCE(p.gender, '') AS metadata,
+                    p.create_date AS event_date,
+                    %(title_child_picture)s AS title,
+                    p.child_id AS child_id
+                FROM compassion_child_pictures p
+                JOIN recurring_contract rc ON rc.child_id = p.child_id
+                WHERE p.child_id = %(child_id)s
+                AND rc.partner_id = ANY(%(partner_ids)s)
+                AND rc.start_date <= p.create_date
+
+                UNION ALL
 
                 SELECT
-                    'start_sponsorship' AS model,
+                    v.event_type  AS model,
                     rc.id::text AS record_id,
                     '' AS amount,
                     '' AS currency_name,
                     '' AS metadata,
-                    rc.start_date::timestamp AS create_date,
-                    %(title_start_sponsorship)s AS title
-                FROM recurring_contract rc
-                WHERE rc.child_id = %(child_id)s
+                    v.event_date::timestamp AS event_date,
+                    CASE v.event_type
+                        WHEN 'start_sponsorship' THEN %(title_start_sponsorship)s
+                        ELSE %(title_end_sponsorship)s
+                    END AS title,
+                    rc.child_id AS child_id
+                  FROM recurring_contract rc
+                  CROSS JOIN LATERAL (
+                      VALUES
+                          ('start_sponsorship', rc.start_date),
+                          ('end_sponsorship', rc.end_date)
+                      ) AS v(event_type, event_date)
+                  WHERE rc.child_id = %(child_id)s
                   AND rc.partner_id = ANY(%(partner_ids)s)
-                  AND rc.state IN ('active', 'terminated')
-                  AND rc.start_date IS NOT NULL
-
+                  AND v.event_date IS NOT NULL
+                  AND (v.event_type = 'start_sponsorship' OR (rc.state = 'terminated' AND rc.exit_communication_sent IS NOT NULL))
             ) AS timeline
-            ORDER BY create_date DESC
+            ORDER BY event_date DESC
             LIMIT %(limit)s OFFSET %(offset)s
         """
-
         params = {
             "child_id": child_id,
             "partner_ids": partner_ids,
             "default_currency": request.env.user.currency_id.name,
             "title_corr_wrote": _("Wrote you a letter"),
             "title_corr_received": _("Received your letter"),
+            "title_corr_translating": _("Translating letter"),
+            "title_corr_processing": _("Processing letter"),
             "title_gift_bday": _("Birthday gift"),
             "title_gift_general": _("General gift"),
             "title_gift_grad": _("Graduation/Final gift"),
             "title_gift_family": _("Family gift"),
             "title_gift_default": _("Received a gift"),
+            "title_child_picture": _("New picture"),
             "title_start_sponsorship": _("Started sponsorship"),
+            "title_end_sponsorship": _("Ended sponsorship"),
             "limit": limit,
             "offset": offset,
         }
@@ -245,12 +296,21 @@ class MyCompassionChildrenController(WebsiteChild):
         # To keep a list of the latest correspondence with each sponsored child:
         latest_corr_by_child = {}
         correspondences_table = request.env["correspondence"].sudo()
+        children_sponsored_by_partner = partner.sponsorship_ids.child_id
+        domain = [
+            "|",
+            ("partner_id", "=", partner.id),
+            (
+                "child_id",
+                "in",
+                children_sponsored_by_partner.filtered("can_i_write_letter").ids,
+            ),
+            ("direction", "=", "Beneficiary To Supporter"),
+            ("is_published", "=", True),
+        ]
 
         received_correspondences = correspondences_table.search(
-            [
-                ("partner_id", "=", partner.id),
-                ("direction", "=", "Beneficiary To Supporter"),
-            ],
+            domain,
             order="create_date desc",
         )
 
@@ -268,10 +328,18 @@ class MyCompassionChildrenController(WebsiteChild):
             "my_compassion.my2_children_page",
             {
                 "active_sponsorships": sponsorships.filtered(
-                    lambda s: s.state != "terminated" or s.sds_state == "sub_waiting"
+                    # all not terminated or terminated within grace period or exit comm not sent yet
+                    lambda s: s.state != "terminated"
+                    or s.can_write_letter
+                    or not s.exit_communication_sent
                 ),
                 "ended_sponsorships": sponsorships.filtered(
-                    lambda s: s.state == "terminated" and s.sds_state != "sub_waiting"
+                    # terminated and not within grace period, excluding specific end reasons and exit comm sent
+                    lambda s: s.state == "terminated"
+                    and not s.can_write_letter
+                    and s.exit_communication_sent
+                    and s.end_reason_id.name
+                    not in ["Subreject", "Mistake from our staff"]
                 ),
                 "latest_correspondences_by_child_id": latest_corr_by_child,
                 "breadcrumbs": breadcrumbs,
@@ -294,10 +362,15 @@ class MyCompassionChildrenController(WebsiteChild):
 
         access_scope = "public" if child.is_published else "sponsor"
 
-        offset = int(kwargs.get("offset", 0))
-        limit = int(kwargs.get("limit", 9))
+        records = []
+        has_more_records = False
 
-        records, total = self._get_timeline_records(child.id, offset, limit)
+        if access_scope == "sponsor":
+            offset = int(kwargs.get("offset", 0))
+            limit = int(kwargs.get("limit", 9))
+
+            records, total = self._get_timeline_records(child.id, offset, limit)
+            has_more_records = total > offset + limit
 
         birthday_formatted = self._get_formatted_birthday(child)
 
@@ -308,12 +381,17 @@ class MyCompassionChildrenController(WebsiteChild):
             request.env["ir.config_parameter"].sudo().get_param("google_custom_map_id")
         )
 
+        # Generate the obfuscated if necessary
+        obfuscated = child.project_id.gps_latitude_obfuscated
+        if not obfuscated or int(obfuscated) == obfuscated:
+            child.sudo().project_id._compute_gps_obfuscated()
+
         return request.render(
             "my_compassion.my2_child_timeline_page",
             {
                 "compassion_child": child.sudo(),
                 "records": records,
-                "has_more_records": total > offset + limit,
+                "has_more_records": has_more_records,
                 "access_scope": access_scope,
                 "google_api_key": google_api_key,
                 "google_custom_map_id": google_custom_map_id,

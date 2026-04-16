@@ -18,7 +18,7 @@ Page: My Compassion 2 Sponsorships Page
     <!-- FILTER ITEM -->
     <template id="SponsorshipsFilter" name="Sponsorships filter">
         <div class="sponsorship-filter mx-lg-3 flex-shrink-1 d-flex align-items-center flex-column">
-            <div class="body-large bold text-dark-blue mx-lg-4 ">
+            <div class="body-large bold text-dark-blue mx-lg-4 text-center">
                 <t t-raw="title" />
             </div>
             <t t-raw="0" />
@@ -65,7 +65,10 @@ Page: My Compassion 2 Sponsorships Page
                             of
                             support and encouragement.
                         </t>
-                        <t t-else="">Stand with the Church and See a Child Released from Poverty</t>
+                        <t t-else="">
+                            Stand with the Church and See a Child Released from
+                            Poverty
+                        </t>
                     </div>
                 </div>
             </div>
@@ -105,7 +108,7 @@ Page: My Compassion 2 Sponsorships Page
                                     <option value="">Select country</option>
                                     <t t-foreach="countries" t-as="country">
                                         <option t-att-value="country.field_office_id">
-                                            <t t-esc="country.name" />
+                                            <t t-esc="country.country_id.name" />
                                         </option>
                                     </t>
                                 </t>
@@ -118,15 +121,20 @@ Page: My Compassion 2 Sponsorships Page
                     <!-- TOTAL RESULTS -->
                     <div class="body-large bold text-mid-grey mt-4 mb-2 align-self-center">
                         <i class="results-icon icon-users03 text-mid-grey mr-2" />
-                        <span id="total-results">0</span>
-                        children found
+                        <span id="total-children-found-message">
+                            <span id="total-results">0</span>
+                            children found
+                        </span>
+                        <span id="randomly-chosen-child-message" style="display: none;">
+                            A child has been chosen for you
+                        </span>
                     </div>
                     <!-- CHILDREN PROFILES -->
                     <div class="sponsorships-results-content row justify-content-center g-4" />
                 </div>
                 <!-- BUTTONS -->
-                <div class="sponsorships-column d-flex mt-4 mb-5">
-                    <div id="btn-choose" class="mr-3">
+                <div class="sponsorships-column d-flex flex-column flex-sm-row mt-4 mb-5 align-items-center">
+                    <div id="btn-choose" class="m-3">
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variant" t-value="'compact'" />
                             <t t-set="variation" t-value="'hollow'" />
@@ -135,7 +143,25 @@ Page: My Compassion 2 Sponsorships Page
                             <t t-set="text_color" t-value="'dark-blue'" />
                         </t>
                     </div>
-                    <div id="btn-more" class="ml-3">
+                    <div id="btn-choose-again" class="m-3" style="display: none;">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variant" t-value="'compact'" />
+                            <t t-set="variation" t-value="'hollow'" />
+                            <t t-set="label">Choose another child</t>
+                            <t t-set="color" t-value="'dark-blue'" />
+                            <t t-set="text_color" t-value="'dark-blue'" />
+                        </t>
+                    </div>
+                    <div id="btn-see-all-children" class="m-3" style="display: none;">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                            <t t-set="variant" t-value="'compact'" />
+                            <t t-set="variation" t-value="'hollow'" />
+                            <t t-set="label">See all</t>
+                            <t t-set="color" t-value="'dark-blue'" />
+                            <t t-set="text_color" t-value="'dark-blue'" />
+                        </t>
+                    </div>
+                    <div id="btn-more" class="m-3">
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variant" t-value="'compact'" />
                             <t t-set="variation" t-value="'hollow'" />

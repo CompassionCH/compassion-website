@@ -10,6 +10,10 @@ class RecurringContract(models.Model):
     )
 
     def _compute_can_show_on_my_compassion(self):
+        """
+        Return if a contract is active or terminated,
+        or if the contract is new (not cancelled and without parent)
+        """
         for contract in self:
             contract.can_show_on_my_compassion = contract.state in [
                 "active",
