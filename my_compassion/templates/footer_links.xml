@@ -1,0 +1,40 @@
+<odoo>
+    <template
+        id="my2_compassion_footer_links"
+        inherit_id="theme_compassion_2025.compassion_footer_hook"
+        name="My Compassion Footer Links"
+    >
+        <xpath expr="//div[@id='compassion_dynamic_footer_links']" position="inside">
+            <t t-set="partner" t-value="request.env.user.partner_id" />
+            <t t-if="partner and partner.primary_segment_id.link_ids">
+                <section class="footer-my-compassion-links pt48">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 d-flex flex-column justify-content-center align-items-center">
+                                <div
+                                    id="personal-links-container"
+                                    class="w-100 d-flex flex-row flex-wrap justify-content-center"
+                                >
+                                    <t t-foreach="partner.primary_segment_id.link_ids" t-as="segment_link">
+                                        <t
+                                            t-if="not segment_link.language_id or segment_link.language_id.code == request.env.lang or segment_link.language_id.code == 'en_US'"
+                                        >
+                                            <a t-att-href="segment_link.url" class="text-pure-white mx-3 mb-2 mb-md-0">
+                                                <t t-esc="segment_link.label" />
+                                            </a>
+                                        </t>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        id="links-separator"
+                        class="mt48 mb24 ml-auto mr-auto border-bottom border-white"
+                        style="width: 100px;"
+                    />
+                </section>
+            </t>
+        </xpath>
+    </template>
+</odoo>

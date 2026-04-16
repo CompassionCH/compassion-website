@@ -1,10 +1,148 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <template id="custom_survey_layout" inherit_id="survey.survey_fill_form_start">
-        <xpath expr="//div[@class='wrap o_survey_start']/div">
-            <t t-if="survey == survey.env.ref('partner_segmentation.partner_segmentation_survey')">
-                <a role="button" class="btn btn-light btn-lg" href="/my/children">Ask me again later</a>
+    <!-- Hide odoo branding -->
+    <template id="custom_survey_layout" inherit_id="survey.layout">
+        <xpath expr="//div[@t-call='web.brand_promotion_message']" position="attributes">
+            <attribute name="class" add="d-none" separator=" " />
+        </xpath>
+        <xpath expr="//div[hasclass('o_survey_brand_message')]" position="attributes">
+            <attribute name="class" add="d-none" separator=" " />
+        </xpath>
+    </template>
+    <!-- Add padding to the survey start page -->
+    <template id="custom_survey_page_fill" inherit_id="survey.survey_page_fill">
+        <xpath expr="//div[@class='wrap o_survey_wrap d-flex']" position="attributes">
+            <attribute name="class" add="p-4 p-md-5" separator=" " />
+        </xpath>
+    </template>
+    <!-- Apply 2025 theme to the title -->
+    <template id="custom_survey_fill_header" inherit_id="survey.survey_fill_header">
+        <xpath expr="//h1[hasclass('o_survey_main_title')]" position="attributes">
+            <attribute name="class" add="d-none" separator=" " />
+        </xpath>
+        <xpath expr="//div[hasclass('col-lg-10')]" position="attributes">
+            <attribute name="class">col-12</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('o_survey_timer')]" position="attributes">
+            <attribute name="class" add="d-none" separator=" " />
+        </xpath>
+        <xpath expr="//h1[hasclass('o_survey_main_title')]" position="after">
+            <t t-call="theme_compassion_2025.TitleComponent">
+                <t t-set="title_size" t-value="'lg'" />
+                <t t-set="title_content" t-value="survey.title" />
+                <t t-set="color" t-value="'core-blue'" />
             </t>
+        </xpath>
+    </template>
+    <template id="custom_survey_fill_form_start" inherit_id="survey.survey_fill_form_start">
+        <!-- Replace buttons with 2025 theme buttons -->
+        <xpath expr="//button[hasclass('btn')]" position="attributes">
+            <attribute name="class" add="d-none" separator=" " />
+        </xpath>
+        <xpath expr="//button[hasclass('btn')]" position="after">
+            <div class="d-flex flex-column flex-sm-row mt-4 justify-content-around align-items-center">
+                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                    <t t-set="label">Start Survey</t>
+                    <t t-set="variant" t-value="'impact'" />
+                    <t t-set="variation" t-value="'filled'" />
+                    <t t-set="color" t-value="'core-blue'" />
+                    <t t-set="text_color" t-value="'pure-white'" />
+                    <t t-set="type" t-value="'submit'" />
+                </t>
+                <!-- Add an 'Ask me again later' button to the survey start page -->
+                <t t-if="survey == survey.env.ref('partner_segmentation.partner_segmentation_survey')">
+                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                        <t t-set="label">Ask me again later</t>
+                        <t t-set="variant" t-value="'impact'" />
+                        <t t-set="variation" t-value="'filled'" />
+                        <t t-set="color" t-value="'light-grey'" />
+                        <t t-set="text_color" t-value="'off-black'" />
+                        <t t-set="href" t-value="'/my2/dashboard'" />
+                    </t>
+                </t>
+            </div>
+        </xpath>
+        <!-- Hide 'or press Enter' -->
+        <xpath expr="//span[hasclass('o_survey_enter')]" position="attributes">
+            <attribute name="class" add="d-none" separator=" " />
+        </xpath>
+    </template>
+    <!-- Replace 'continue' button with themed version -->
+    <template id="custom_survey_fill_form_in_progress" inherit_id="survey.survey_fill_form_in_progress">
+        <xpath expr="(//button[@type='submit'])[3]" position="attributes">
+            <attribute name="class" add="d-none" separator=" " />
+        </xpath>
+        <!-- Hide 'or press Enter' -->
+        <xpath
+            expr="(//button[@type='submit'])[3]/following-sibling::span[hasclass('text-muted')]"
+            position="attributes"
+        >
+            <attribute name="class">d-none</attribute>
+        </xpath>
+        <xpath expr="(//button[@type='submit'])[3]" position="after">
+            <div class="d-flex justify-content-end">
+                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                    <t
+                        t-set="label"
+                        t-value="'Submit' if survey.questions_layout == 'one_page' or survey_last else 'Continue'"
+                    />
+                    <t t-set="variant" t-value="'impact'" />
+                    <t t-set="variation" t-value="'filled'" />
+                    <t t-set="color" t-value="'core-blue'" />
+                    <t t-set="text_color" t-value="'pure-white'" />
+                    <t t-set="type" t-value="'submit'" />
+                    <t
+                        t-set="value"
+                        t-value="'finish' if survey.questions_layout == 'one_page' or survey_last else 'next'"
+                    />
+                </t>
+            </div>
+        </xpath>
+    </template>
+    <!-- Thank you page -->
+    <template id="custom_survey_fill_form_done" inherit_id="survey.survey_fill_form_done">
+        <xpath expr="//div[hasclass('o_survey_finished')]" position="attributes">
+            <attribute name="class" add="d-none" separator=" " />
+        </xpath>
+        <xpath expr="//div[hasclass('o_survey_finished')]" position="after">
+            <!-- Extract href and label from survey.description_done if the exist -->
+            <t
+                t-set="extracted_href"
+                t-value="survey.description_done.split('href=\&quot;')[1].split('\&quot;')[0] if 'href=\&quot;' in survey.description_done else '/my/home'"
+            />
+            <t
+                t-set="extracted_label"
+                t-value="survey.description_done.split('&lt;/a')[0].split('&gt;')[-1] if survey.description_done and '&lt;/a' in survey.description_done else 'Continue'"
+            />
+            <t t-call="theme_compassion_2025.TitleComponent">
+                <t t-set="title_content" t-value="'Thank you!'" />
+                <t t-set="color" t-value="'core-blue'" />
+                <t t-set="show_underline" t-value="True" />
+                <t t-set="underline_color" t-value="'low-yellow'" />
+                <t t-set="description" t-value="False" />
+                <div class="title-description text-low-black done-description">
+                    <t t-raw="survey.description_done" />
+                </div>
+                <div class="text-center mt-5">
+                    <!-- Add styled continue button -->
+                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                        <t t-set="label" t-value="extracted_label" />
+                        <t t-set="href" t-value="extracted_href" />
+                        <t t-set="variant" t-value="'impact'" />
+                        <t t-set="variation" t-value="'filled'" />
+                    </t>
+                </div>
+            </t>
+        </xpath>
+    </template>
+    <!-- Overwrite odoo progres bar -->
+    <template id="custom_survey_progression" inherit_id="survey.survey_progression">
+        <xpath expr="//div[hasclass('o_survey_progress')]" position="attributes">
+            <attribute name="class" add="progress-bar-container native-width" separator=" " />
+        </xpath>
+        <xpath expr="//div[hasclass('progress-bar')]" position="attributes">
+            <attribute name="class" remove="bg-primary" add="is-flowing density-low" separator=" " />
+            <attribute name="t-att-style">'width: ' + str(percentage) + '%; --flow-speed: 10s;'</attribute>
         </xpath>
     </template>
 </odoo>

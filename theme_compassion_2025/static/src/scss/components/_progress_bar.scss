@@ -61,6 +61,22 @@ $num-colors: length($color-pattern);
         background-position: -200% 0%;
     }
     100% {
-        background-position: 0% 0%;
+        background-position: 0 0;
+    }
+}
+
+/* For native-width odoo progress bars */
+.o_survey_progress_wrapper {
+    min-width: calc(100vw - 3rem)!important;
+}
+.progress-bar-container.native-width {
+    height: 5px;
+
+    .progress-bar.is-flowing {
+        /* Use 100vw to anchor the gradient to the screen so it doesn't compress */
+        background-size: 100vw 100%;
+        transition: width 0.5s ease-out;
+
+        &.density-low { background-image: create-gradient(0); }
     }
 }

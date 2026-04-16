@@ -1,5 +1,8 @@
 <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
 <odoo>
+    <template id="compassion_footer_hook" name="Compassion Generic Footer Hook">
+        <div id="compassion_dynamic_footer_links" class="w-100" />
+    </template>
     <template id="footer_2025" inherit_id="website.layout">
         <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
         <xpath expr="//div[@id='footer']" position="replace">
@@ -12,6 +15,7 @@
                         <div class="h-100 w-25 bg-low-green" />
                     </div>
                 </section>
+                <t t-call="theme_compassion_2025.compassion_footer_hook" />
                 <section class="pt24">
                     <div class="container">
                         <div class="row justify-content-center">
