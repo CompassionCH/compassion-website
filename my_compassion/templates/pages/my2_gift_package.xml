@@ -38,18 +38,10 @@
                     t-set="image"
                     t-valuef="/web/image/#{line.product_template_id._name}/#{line.product_template_id.id}/my_compassion_image"
                 />
+                <t t-set="_txt_Edit_Details_1">Edit Details</t>
                 <t
                     t-set="primary_button"
-                    t-value="{
-                    'icon': 'edit05',
-                    'label': 'Edit Details',
-                    'color': 'low-green',
-                    'action': 'event',
-                    'custom_event': 'donation-item:edit',
-                    'detail': {
-                        'order_line_id': line.id,
-                    },
-                }"
+                    t-value="{'icon': 'edit05', 'label': _txt_Edit_Details_1, 'color': 'low-green', 'action': 'event', 'custom_event': 'donation-item:edit', 'detail': {'order_line_id': line.id}}"
                 />
                 <t
                     t-set="secondary_buttons"
@@ -87,18 +79,10 @@
                     t-set="image"
                     t-valuef="/web/image/#{line.product_template_id._name}/#{line.product_template_id.id}/my_compassion_image"
                 />
+                <t t-set="_txt_Edit_Details">Edit Details</t>
                 <t
                     t-set="primary_button"
-                    t-value="{
-                    'icon': 'edit05',
-                    'label': 'Edit Details',
-                    'color': 'dark-blue',
-                    'action': 'event',
-                    'custom_event': 'donation-item:edit',
-                    'detail': {
-                        'order_line_id': line.id,
-                    },
-                }"
+                    t-value="{'icon': 'edit05', 'label': _txt_Edit_Details, 'color': 'dark-blue', 'action': 'event', 'custom_event': 'donation-item:edit', 'detail': {'order_line_id': line.id}}"
                 />
                 <t
                     t-set="secondary_buttons"
@@ -118,7 +102,7 @@
         </t>
         <!-- EMPTY CART -->
         <div t-if="len(order.order_line) == 0" class="mt-5 w-100 text-mid-grey text-center body-large bold">
-            Your Gift Package is empty.
+            Your Gift Basket is empty.
         </div>
         <!-- TOTAL AMOUNT -->
         <div
@@ -176,7 +160,7 @@
                     <div class="px-3 mt-4 d-flex flex-column align-items-center">
                         <!-- TITLE -->
                         <t t-call="theme_compassion_2025.TitleComponent">
-                            <t t-set="title_content">Gift Package</t>
+                            <t t-set="title_content">Gift Basket</t>
                             <t t-set="color" t-value="'core-blue'" />
                             <t t-set="show_underline" t-value="True" />
                             <t t-set="underline_color" t-value="'low-yellow'" />
@@ -216,10 +200,26 @@
                                         <t t-set="variant" t-value="'compact'" />
                                     </t>
                                     <div class="mt-3 px-5 d-flex align-items-center">
-                                        <img class="px-1 col-3" src="/my_compassion/static/src/img/mastercard.png" />
-                                        <img class="px-1 col-3" src="/my_compassion/static/src/img/visa.png" />
-                                        <img class="px-1 col-3" src="/my_compassion/static/src/img/twint.png" />
-                                        <img class="px-1 col-3" src="/my_compassion/static/src/img/post_finance.png" />
+                                        <img
+                                            alt="Mastercard"
+                                            class="px-1 col-3"
+                                            src="/my_compassion/static/src/img/mastercard.png"
+                                        />
+                                        <img
+                                            alt="Visa"
+                                            class="px-1 col-3"
+                                            src="/my_compassion/static/src/img/visa.png"
+                                        />
+                                        <img
+                                            alt="Twint"
+                                            class="px-1 col-3"
+                                            src="/my_compassion/static/src/img/twint.png"
+                                        />
+                                        <img
+                                            alt="PostFinance"
+                                            class="px-1 col-3"
+                                            src="/my_compassion/static/src/img/post_finance.png"
+                                        />
                                     </div>
                                     <div class="mt-3 body-small bold text-mid-green text-center">
                                         <i class="mt-n1 icon-lock03" />

@@ -12,6 +12,12 @@ class Partner(models.Model):
 
     # True if the partner has ever made a donation
     is_donor = fields.Boolean(compute="_compute_is_donor", compute_sudo=True)
+    # True if the partner can write a letter to a sponsored child
+    is_writer = fields.Boolean(
+        string="Is letter writer",
+        compute="_compute_is_writer",
+        compute_sudo=True,
+    )
 
     user_login = fields.Char(
         string="MyCompassion login",
@@ -36,26 +42,50 @@ class Partner(models.Model):
                 user.login = partner.user_login
 
     def has_unread_correspondence(self):
-        """Check if partner has at least one correspondence with email_read set."""
-        correspondence = self.env["correspondence"].search(
-            [
-                ("partner_id", "=", self.id),
-                ("email_read", "=", False),
-            ],
-            limit=1,
+        """
+        Check if the partner has at least one unread correspondence.
+        """
+
+        writable_child_ids = self.sponsorship_ids.child_id.filtered(
+            "can_i_write_letter"
+        ).ids
+        correspondence = (
+            self.env["correspondence"]
+            .with_user(self.user_id)
+            .search(
+                [
+                    ("partner_id", "=", self.id),
+                    ("email_read", "=", False),
+                    ("child_id", "in", writable_child_ids),
+                    ("direction", "=", "Beneficiary To Supporter"),
+                ],
+                limit=1,
+            )
         )
         return bool(correspondence)
 
     def _compute_is_sponsor(self):
+        all_contracts = self.env["recurring.contract"].search(
+            [
+                "|",
+                ("partner_id", "in", self.ids),
+                ("correspondent_id", "in", self.ids),
+                ("child_id", "!=", False),
+            ]
+        )
+        contracts_by_partner = {}
+        for c in all_contracts:
+            if c.partner_id:
+                contracts_by_partner.setdefault(c.partner_id.id, []).append(c)
+            if c.correspondent_id and c.correspondent_id != c.partner_id:
+                contracts_by_partner.setdefault(c.correspondent_id.id, []).append(c)
+
         for partner in self:
-            partner.is_sponsor = self.env["recurring.contract"].search_count(
-                [
-                    "|",
-                    ("partner_id", "=", partner.id),
-                    ("correspondent_id", "=", partner.id),
-                    ("state", "in", ["waiting", "active"]),
-                    ("child_id", "!=", False),
-                ],
+            partner_contracts = contracts_by_partner.get(partner.id, [])
+            partner.is_sponsor = any(
+                c.state in ["waiting", "active"]
+                or (c.state == "terminated" and not c.exit_communication_sent)
+                for c in partner_contracts
             )
 
     def _compute_is_ex_sponsor(self):
@@ -93,3 +123,19 @@ class Partner(models.Model):
         donor_ids = {data["partner_id"][0] for data in donors_data}
         for partner in self:
             partner.is_donor = partner.id in donor_ids
+
+    def _compute_is_writer(self):
+        """
+        Compute whether the partner can write letters to sponsored children.
+        """
+        for partner in self:
+            partner.is_writer = bool(
+                partner.sponsorship_ids.filtered_domain(
+                    [
+                        ("can_write_letter", "=", True),
+                        "|",
+                        ("partner_id.portal_sponsorships", "=", "all_info"),
+                        ("correspondent_id", "=", partner.id),
+                    ]
+                )
+            )

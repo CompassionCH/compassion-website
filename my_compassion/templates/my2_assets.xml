@@ -32,4 +32,9 @@
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         </xpath>
     </template>
+    <template id="my2_assets_tests" inherit_id="web.assets_tests" name="My Compassion 2.0 test assets">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/my_compassion/static/src/js/tours/donation_tour.js" />
+        </xpath>
+    </template>
 </odoo>

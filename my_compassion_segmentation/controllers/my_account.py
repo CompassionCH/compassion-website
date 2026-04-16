@@ -8,10 +8,10 @@
 ##############################################################################
 from odoo.http import request, route
 
-from odoo.addons.my_compassion.controllers.my_account import MyAccountController
+from odoo.addons.portal.controllers.portal import CustomerPortal
 
 
-class MyAccountControllerSurvey(MyAccountController):
+class MyAccountControllerSurvey(CustomerPortal):
     @route(["/my", "/my/home"], type="http", auth="user", website=True)
     def home(self, redirect=None, **post):
         partner = request.env.user.partner_id
@@ -22,4 +22,4 @@ class MyAccountControllerSurvey(MyAccountController):
             ).sudo()
             return request.redirect(survey.get_start_url())
         else:
-            return super().home(redirect, **post)
+            return request.redirect("/my2/dashboard")

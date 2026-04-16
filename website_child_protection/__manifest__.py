@@ -15,6 +15,7 @@
     "depends": [
         "website_form",
         "child_protection",
+        "theme_compassion_2025",
     ],
     "data": [
         "security/ir.model.access.csv",

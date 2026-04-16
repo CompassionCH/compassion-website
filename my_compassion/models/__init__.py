@@ -10,6 +10,7 @@ from . import (
     compassion_child_pictures,
     compassion_project,
     contract_group,
+    correspondence,
     correspondence_template,
     correspondence_s2b_generator,
     move,
@@ -25,4 +26,5 @@ from . import (
     my2_website_route,
     compassion_child,
     contracts,
+    ir_http,
 )

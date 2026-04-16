@@ -30,7 +30,12 @@
     <!-- CHECKOUT COMPONENT -->
     <template id="CheckoutComponent" name="Checkout Component">
         <!-- Default property values -->
-        <t t-set="label" t-value="label or 'Proceed to checkout'" />
+        <t t-set="label">
+            <t t-if="label">
+                <t t-esc="label" />
+            </t>
+            <t t-else="">Proceed to checkout</t>
+        </t>
         <t t-set="variant" t-value="variant or 'default'" />
         <t t-set="variation" t-value="variation or 'filled'" />
         <t t-set="color" t-value="color or 'dark-blue'" />

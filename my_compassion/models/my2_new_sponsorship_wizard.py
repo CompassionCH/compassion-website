@@ -193,6 +193,9 @@ class NewSponsorshipWizard(models.TransientModel):
             )
             if not partner:
                 partner = self.env["res.partner"].create(partner_vals)
+        else:
+            if not partner.birthdate_date and self.birthdate:
+                partner.sudo().write({"birthdate_date": self.birthdate})
 
         # Create new sponsorship
         sponsorship_values = {
@@ -242,7 +245,7 @@ class NewSponsorshipWizardStep(models.Model):
     _name = "new.sponsorship.wizard.step"
     _description = "New Sponsorship Wizard Step"
 
-    title = fields.Char()
+    title = fields.Char(translate=True)
 
     template = fields.Many2one(
         "ir.ui.view",

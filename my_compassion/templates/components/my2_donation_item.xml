@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <!--
     Component: Donation Item
 
@@ -23,6 +22,7 @@
     - primary_button (dict): Primary button with custom action (see Button).                 [none]
     - recipient (string): Item recipient.                                                    [none]
     - subtext (string): Text under name and recipient.                                       [none]
+    - image_fallback_pictogram : Pictogram to display instead of the image when it's None    [none]
     - title_color (string): Color of the title.                                              [dark-blue]
     - accent_color (string): Color of the left border accent.                                [dark-blue]
     - price_color (string): Color of the price.                                              [dark-blue]
@@ -45,10 +45,7 @@
         />
         <div t-attf-class="action-button #{button_top_class}" t-att-onclick="onclick">
             <i t-if="button.get('icon')" t-attf-class="tiny-text icon-#{button.get('icon')} text-#{color}" />
-            <i
-                t-if="button.get('pictogram')"
-                t-attf-class="tiny-text pictogram-#{button.get('pictogram')} text-#{color}"
-            />
+            <i t-if="button.get('pictogram')" t-attf-class="tiny-text #{button.get('pictogram')} text-#{color}" />
             <span t-if="button.get('label')" t-attf-class="tiny-text bold text-#{color}">
                 <t t-esc="button.get('label')" />
             </span>
@@ -68,21 +65,25 @@
         <t t-set="secondary_buttons" t-value="secondary_buttons or []" />
         <!-- Estimate component minimum width -->
         <t t-set="min_width" t-valuef="#{300 + 24 * len(secondary_buttons)}px" />
-        <!-- Component definition -->
+        <!--Small image on the card  -->
+        <t t-set="small_thumbnail_content">
+            <div
+                t-attf-class="thumbnail responsive-sm mr-3 flex-shrink-0 rounded-lg #{not image and image_fallback_pictogram or ''}"
+                t-attf-style="--image_url: url('#{image}');"
+            />
+        </t>
         <div
             t-attf-class="donation-item-container p-2 d-flex rounded-lg bg-#{bg_color} border-#{accent_color} #{top_class}"
             t-attf-style="min-width: #{min_width}"
         >
             <div
-                class="thumbnail responsive-lg mr-3 flex-shrink-0 rounded-lg"
+                t-attf-class="thumbnail responsive-lg mr-3 flex-shrink-0 rounded-lg #{not image and image_fallback_pictogram or ''}"
                 t-attf-style="--image_url: url('#{image}');"
             />
+            <t t-if="not primary_button" t-raw="small_thumbnail_content" />
             <div class="w-100 d-flex flex-column justify-content-between">
                 <div class="d-flex align-items-start">
-                    <div
-                        class="thumbnail responsive-sm mr-3 flex-shrink-0 rounded-lg"
-                        t-attf-style="--image_url: url('#{image}');"
-                    />
+                    <t t-if="primary_button" t-raw="small_thumbnail_content" />
                     <div class="flex-grow-1 d-flex flex-column">
                         <div t-attf-class="text-#{title_color} body-large bold">
                             <t t-esc="name" />
@@ -109,15 +110,96 @@
                         <t t-esc="currency_name" />
                         <t t-if="price % 1 == 0" t-set="price" t-value="'{0}.-'.format(int(price))" />
                         <t t-else="" t-set="price" t-value="'{0:.2f}'.format(price)" />
-                        <t t-if="monthly" t-set="monthly" t-value="'/mo.'" />
+                        <t t-if="monthly" t-set="monthly">/mo.</t>
                         <t t-elif="monthly_noabbr">
-                            <t t-set="monthly" t-value="' /month'" />
+                            <t t-set="monthly">&#160;/month</t>
                         </t>
-                        <t t-else="" t-set="monthly" t-value="''" />
+                        <t t-else="" t-set="monthly" />
                         <t t-esc="price + monthly" />
                     </div>
                 </div>
             </div>
         </div>
+    </template>
+    <template id="SponsorshipDonationItem" name="Sponsorship Donation Item">
+        <t t-set="label_see_profile">See profile</t>
+        <t t-set="label_see_more">See more</t>
+        <t t-if="sponsorship.type == 'CSP'">
+            <t t-set="product_template" t-value="sponsorship.contract_line_ids[:1].product_id.product_tmpl_id" />
+            <t t-if="product_template">
+                <t t-set="csp_my_compassion_name" t-value="product_template.my_compassion_name" />
+                <t t-set="csp_thanks_name" t-value="product_template.thanks_name" />
+                <t t-set="csp_default_name">Compassion survival program</t>
+                <t t-set="displayed_title" t-value="csp_my_compassion_name or csp_thanks_name or csp_default_name" />
+                <t
+                    t-set="image_fallback_pictogram"
+                    t-value="product_template.my_compassion_pictogram.class_name or 'pictogram-gift-donation-general'"
+                />
+                <t t-if="product_template.is_published">
+                    <t t-set="displayed_image" t-value="website.image_url(product_template, 'my_compassion_image')" />
+                    <t
+                        t-set="primary_button_data"
+                        t-value="{
+                'label': label_see_more,
+                'pictogram': product_template.my_compassion_pictogram.class_name or 'pictogram-gift-donation-general',
+                'action': 'link',
+                'href': '/my2/gifts/' + str(product_template.id),
+                'color': 'low-blue'
+            }"
+                    />
+                </t>
+                <t
+                    t-set="secondary_buttons_data"
+                    t-value="[
+                {
+                    'icon': 'download01',
+                    'color': 'low-blue',
+                    'action': 'link',
+                    'href': '/my/download/csp_bvr?csp_id=' + str(sponsorship.id),
+                }
+            ]"
+                />
+            </t>
+        </t>
+        <t t-else="">
+            <t t-set="image_fallback_pictogram" t-value="'pictogram-child-sponsorship'" />
+            <t t-set="displayed_title" t-value="sponsorship.child_id.preferred_name" />
+            <t t-set="displayed_image" t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait" />
+            <t
+                t-set="primary_button_data"
+                t-value="{
+            'label': label_see_profile,
+            'pictogram': 'pictogram-child-sponsorship',
+            'action': 'link',
+            'href': '/my2/children/' + str(sponsorship.child_id.id),
+            'color': 'low-blue'
+        }"
+            />
+            <t
+                t-set="secondary_buttons_data"
+                t-value="[
+            {
+                'icon': 'download01',
+                'color': 'low-blue',
+                'action': 'link',
+                'href': '/my/download/gift_bvr?child_id=' + str(sponsorship.child_id.id),
+            }
+        ]"
+            />
+        </t>
+        <t t-call="my_compassion.DonationItemComponent">
+            <t t-set="image_fallback_pictogram" t-value="image_fallback_pictogram" />
+            <t t-set="name" t-value="displayed_title" />
+            <t t-set="image" t-value="displayed_image" />
+            <t t-set="subtext" t-value="sponsorship.payment_mode_id.display_name" />
+            <t t-set="price" t-value="sponsorship.total_amount" />
+            <t t-set="primary_button" t-value="primary_button_data" />
+            <t t-set="secondary_buttons" t-value="secondary_buttons_data" />
+            <t t-set="monthly_noabbr" t-value="True" />
+            <t t-set="bg_color" t-value="'light-blue'" />
+            <t t-set="accent_color" t-value="'low-blue'" />
+            <t t-set="title_color" t-value="'low-blue'" />
+            <t t-set="price_color" t-value="'low-blue'" />
+        </t>
     </template>
 </odoo>

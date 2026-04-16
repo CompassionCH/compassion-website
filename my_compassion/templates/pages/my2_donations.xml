@@ -54,7 +54,7 @@ Page: My Compassion 2 Donations Page
                                     <form id="tax_receipt_form" action="/my/download/tax_receipt" class="mb-3">
                                         <div class="d-flex flex-row align-items-end">
                                             <t t-call="theme_compassion_2025.FormFieldComponent">
-                                                <t t-set="label">Tax receipt</t>
+                                                <t t-set="label">Download your tax receipt</t>
                                                 <t t-set="top_class" t-value="'mr-2'" />
                                                 <t t-call="theme_compassion_2025.SelectComponent">
                                                     <t t-set="name" t-value="'year'" />
@@ -110,42 +110,8 @@ Page: My Compassion 2 Donations Page
                             <t t-foreach="active_sponsorships" t-as="sponsorship">
                                 <t t-if="sponsorship">
                                     <div class="mb-4">
-                                        <t
-                                            t-set="primary_button_data"
-                                            t-value="{
-                        'label': 'See profile',
-                        'pictogram': 'child-sponsorship',
-                        'action': 'link',
-                        'href': '/my2/children/' + str(sponsorship.child_id.id),
-                        'color': 'low-blue'
-                    }"
-                                        />
-                                        <t
-                                            t-set="secondary_buttons_data"
-                                            t-value="[
-                        {
-                            'icon': 'download01',
-                            'color': 'mid-yellow',
-                            'action': 'link',
-                            'href': '/my/download/gift_bvr?child_id=' + str(sponsorship.child_id.id),
-                        }
-                    ]"
-                                        />
-                                        <t t-call="my_compassion.DonationItemComponent">
-                                            <t t-set="name" t-value="sponsorship.child_id.preferred_name" />
-                                            <t
-                                                t-set="image"
-                                                t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait"
-                                            />
-                                            <t t-set="subtext" t-value="sponsorship.payment_mode_id.display_name" />
-                                            <t t-set="price" t-value="sponsorship.total_amount" />
-                                            <t t-set="primary_button" t-value="primary_button_data" />
-                                            <t t-set="monthly_noabbr" t-value="True" />
-                                            <t t-set="secondary_buttons" t-value="secondary_buttons_data" />
-                                            <t t-set="bg_color" t-value="'light-blue'" />
-                                            <t t-set="accent_color" t-value="'low-blue'" />
-                                            <t t-set="title_color" t-value="'low-blue'" />
-                                            <t t-set="price_color" t-value="'low-blue'" />
+                                        <t t-call="my_compassion.SponsorshipDonationItem">
+                                            <t t-set="sponsorship" t-value="sponsorship" />
                                         </t>
                                     </div>
                                 </t>

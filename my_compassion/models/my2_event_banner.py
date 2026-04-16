@@ -105,7 +105,20 @@ class EventBanner(models.Model):
     target_route_ids = fields.Many2many(
         "my2.website.route",
         string="Target Pages",
-        help="Select the pages where this banner should be visible.",
+        help="If pages are selected, the banner is only visible on those pages. "
+        "If empty, it is visible on all pages.",
+    )
+
+    target_partner_tag_ids = fields.Many2many(
+        comodel_name="res.partner.category",
+        string="Target Contact Tags",
+        help="If tags are selected, the banner is only visible to users having "
+        "at least one of these tags. If empty, it is visible to everyone.",
+    )
+
+    target_blank = fields.Boolean(
+        string="Open link in new tab",
+        default=True,
     )
 
     def name_get(self):
@@ -121,7 +134,8 @@ class EventBanner(models.Model):
     @api.model
     def _get_default_color_by_name(self, color_name):
         """ """
-        # Passe 'name' an, falls das Feld in 'theme.compassion.colors' anders heißt.
+        # Change 'name', in case the field in 'theme.compassion.colors'
+        # is name differently.
         color_record = self.env["theme.compassion.colors"].search(
             [("name", "=", color_name)], limit=1
         )
