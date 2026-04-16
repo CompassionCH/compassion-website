@@ -30,3 +30,55 @@
     }
   }
 }
+
+/* Off-canvas mobile menu (Left to Right) */
+@include media-breakpoint-down(md) {
+    #top_menu_collapse {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 85vw;
+        max-width: 350px;
+        background-color: $white;
+        z-index: $zindex-fixed + 10;
+        overflow-y: auto;
+        padding: 1rem;
+        box-shadow: 0.5rem 0 1rem rgba(0, 0, 0, 0.15);
+
+        /* Override Bootstrap's default collapse vertical behavior */
+        display: block !important;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+        height: 100vh !important;
+        max-height: 100vh !important;
+
+        /* Slide in when active */
+        &.show {
+            transform: translateX(0);
+            max-height: 100vh !important;
+        }
+
+        /* Override the vertical collapsing animation */
+        &.collapsing {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            overflow: hidden;
+        }
+        .nav-item {
+            /* Increase font size and add padding for mobile UX */
+            .nav-link {
+                font-size: 1.25rem !important;
+                padding: 0.75rem;
+            }
+        }
+    }
+
+  #menu_close {
+    position:absolute;
+    top: 0;
+    right: 1.5rem;
+    z-index: $zindex-fixed + 11;
+    font-size: 4rem;
+  }
+}

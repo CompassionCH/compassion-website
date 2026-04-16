@@ -30,6 +30,19 @@
         <xpath expr="//div[@id='top_menu_collapse']" position="before">
             <div class="flex-grow-1" />
         </xpath>
+        <!-- Add a close button inside the menu -->
+        <xpath expr="//div[@id='top_menu_collapse']" position="inside">
+            <button
+                id="menu_close"
+                type="button"
+                class="close d-lg-none position-absolute"
+                aria-label="Close"
+                data-toggle="collapse"
+                data-target="#top_menu_collapse"
+            >
+                <span aria-hidden="true">&amp;times;</span>
+            </button>
+        </xpath>
         <!-- Move the login button out of the main menu and adapt its style -->
         <xpath expr="//t[@t-call='portal.placeholder_user_sign_in']" position="replace" />
         <xpath expr="//t[@t-call='portal.user_dropdown']" position="replace" />
