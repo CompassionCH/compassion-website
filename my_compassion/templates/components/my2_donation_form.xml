@@ -91,7 +91,7 @@
             <!-- TO -->
             <t t-if="product.my_compassion_donation_type == 'gift'" t-call="theme_compassion_2025.FormFieldComponent">
                 <t t-set="top_class" t-value="'mt-3 w-100'" />
-                <t t-set="label">To</t>
+                <t t-set="label">For</t>
                 <t t-set="input_id" t-value="'recipient'" />
                 <t t-set="invalid_hint">Please select a recipient.</t>
                 <t t-call="theme_compassion_2025.SelectComponent">
