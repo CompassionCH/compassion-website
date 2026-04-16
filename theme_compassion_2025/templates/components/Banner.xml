@@ -20,6 +20,7 @@
     - target (string, optional): Target attribute for the button link (e.g., '_blank').
     - rel (string, optional): Rel attribute for the button link. Automatically set to
       'noopener noreferrer' if target='_blank' and no rel is provided.
+    - align_text (string, optional): Text alignment for the banner content, default is 'left'.
 -->
 <odoo>
     <template id="BannerComponent" name="Banner Component">
@@ -35,7 +36,7 @@
                     <t t-set="color" t-value="text_color or 'pure-white'" />
                     <t t-set="align_sm" t-value="'left'" />
                 </t>
-                <p class="text-pure-white">
+                <p t-attf-class="text-pure-white #{align_text or 'text-left'}">
                     <t t-esc="text" />
                 </p>
                 <div class="align-self-center">

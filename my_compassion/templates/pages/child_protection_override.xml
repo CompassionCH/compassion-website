@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="child_protection_charter_page_override" model="ir.ui.view">
+        <field name="name">Child Protection Charter Page Override</field>
+        <field name="inherit_id" ref="website_child_protection.child_protection_charter_page" />
+        <field name="website_id" ref="my_compassion.my2_website" />
+        <field name="key">my_compassion.child_protection_charter_page_override</field>
+        <field name="type">qweb</field>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='submit_button_container']" position="attributes">
+                <attribute name="class" separator=" ">d-none</attribute>
+            </xpath>
+            <xpath expr="//div[@id='submit_button_container']" position="after">
+                <div
+                    id="submit_button_container"
+                    class="form-group col-12 s_website_form_submit d-flex justify-content-center"
+                    data-name="Submit Button"
+                >
+                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                        <t t-set="variant" t-value="'default'" />
+                        <t t-set="variation" t-value="'filled'" />
+                        <t t-set="href" t-value="'#'" />
+                        <t t-set="label">Submit</t>
+                        <t t-set="color" t-value="'core-blue'" />
+                        <t t-set="text_color" t-value="'pure-white s_website_form_send'" />
+                    </t>
+                </div>
+            </xpath>
+        </field>
+    </record>
+    <record id="child_protection_charter_confirmation_page_override" model="ir.ui.view">
+        <field name="name">Child Protection Charter Confirmation Page Override</field>
+        <field name="inherit_id" ref="website_child_protection.child_protection_charter_confirmation_page" />
+        <field name="website_id" ref="my_compassion.my2_website" />
+        <field name="key">my_compassion.child_protection_charter_confirmation_page_override</field>
+        <field name="type">qweb</field>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='thank_you_page_title']" position="attributes">
+                <attribute name="t-if">False</attribute>
+            </xpath>
+            <xpath expr="//div[@id='thank_you_page_title']" position="after">
+                <div id="thank_you_page_title" class="position-absolute fixed-top mt-5 w-100 text-center">
+                    <t t-call="theme_compassion_2025.TitleComponent">
+                        <t t-set="title_content">Child Protection Charter</t>
+                        <t t-set="title_size" t-value="'md'" />
+                        <t t-set="color" t-value="'core-blue'" />
+                        <t t-set="show_underline" t-value="False" />
+                    </t>
+                </div>
+            </xpath>
+            <xpath expr="//div[@id='thank_you_page_card']" position="attributes">
+                <attribute name="t-if">False</attribute>
+            </xpath>
+            <xpath expr="//div[@id='thank_you_page_card']" position="after">
+                <div id="thank_you_page_card" class="container">
+                    <div class="row s_nb_column_fixed">
+                        <div class="col-lg-6 jumbotron rounded o_cc o_cc1 pt32 pb32 o_colored_level" data-name="Box">
+                            <t t-call="theme_compassion_2025.TitleComponent">
+                                <t t-set="title_content">Thank you!</t>
+                                <t t-set="title_size" t-value="'md'" />
+                                <t t-set="color" t-value="'core-blue'" />
+                                <t t-set="show_underline" t-value="True" />
+                                <t t-set="underline_color" t-value="'low-yellow'" />
+                                <p>
+                                    We successfully received your agreement to
+                                            the Child Protection Charter.
+                                </p>
+                            </t>
+                            <div class="d-flex justify-content-center">
+                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                    <t t-set="variant" t-value="'compact'" />
+                                    <t t-set="variation" t-value="'filled'" />
+                                    <t t-set="label">Continue</t>
+                                    <t t-set="color" t-value="'core-blue'" />
+                                    <t t-set="text_color" t-value="'pure-white'" />
+                                    <t t-set="href" t-value="redirect" />
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

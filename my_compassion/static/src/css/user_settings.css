@@ -113,3 +113,29 @@
     border-top-right-radius: 25px;
     border-bottom-right-radius: 25px;
 }
+
+/* Spinner styling */
+#user-settings-loader {
+    background: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    width: 100%;
+    top: 0;
+    height: fit-content;
+    display: flex;
+}
+
+.spinner-rotate {
+    animation: custom-spin 1.5s infinite linear !important;
+    margin: auto;
+}
+
+@keyframes custom-spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}

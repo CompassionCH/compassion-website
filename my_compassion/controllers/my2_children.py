@@ -113,7 +113,7 @@ class MyCompassionChildrenController(WebsiteChild):
         sql = """
             SELECT
                 (SELECT COUNT(*) FROM correspondence
-                 WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
+                 WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s) AND is_published = true)
                 +
                 (SELECT COUNT(*) FROM sponsorship_gift
                  WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
@@ -129,7 +129,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 (SELECT SUM(
                         CASE WHEN rc.start_date IS NOT NULL THEN 1 ELSE 0 END
                             +
-                        CASE WHEN rc.state = 'terminated' AND rc.end_date IS NOT NULL THEN 1 ELSE 0 END
+                        CASE WHEN rc.state = 'terminated' AND rc.end_date IS NOT NULL AND rc.exit_communication_sent IS NOT NULL THEN 1 ELSE 0 END
                         ) as count
                 FROM recurring_contract rc
                 WHERE rc.child_id = %(child_id)s
@@ -145,7 +145,13 @@ class MyCompassionChildrenController(WebsiteChild):
         )
         return request.env.cr.fetchone()[0] or 0
 
-    def _get_timeline_data(self, child_id, partner_ids, offset, limit):
+    def _get_timeline_data(
+        self,
+        child_id,
+        partner_ids,
+        offset,
+        limit,
+    ):
         """Fetch paginated timeline records (correspondence + gifts) ordered by date."""
         # ruff: noqa: E501 (query is more readable this way)
         sql = """
@@ -170,12 +176,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 FROM correspondence c
                 WHERE c.child_id = %(child_id)s
                   AND c.partner_id = ANY(%(partner_ids)s)
-                  -- Updated Filtering Logic
-                  AND (
-                      (c.state = 'Published to Global Partner' AND c.direction = 'Beneficiary To Supporter')
-                      OR
-                      (c.state NOT IN ('Exception', 'Quality check unsuccessful') AND c.direction = 'Supporter To Beneficiary')
-                  )
+                  AND c.is_published = true
 
                 UNION ALL
 
@@ -239,7 +240,7 @@ class MyCompassionChildrenController(WebsiteChild):
                   WHERE rc.child_id = %(child_id)s
                   AND rc.partner_id = ANY(%(partner_ids)s)
                   AND v.event_date IS NOT NULL
-                  AND (v.event_type = 'start_sponsorship' OR rc.state = 'terminated')
+                  AND (v.event_type = 'start_sponsorship' OR (rc.state = 'terminated' AND rc.exit_communication_sent IS NOT NULL))
             ) AS timeline
             ORDER BY event_date DESC
             LIMIT %(limit)s OFFSET %(offset)s
@@ -296,17 +297,20 @@ class MyCompassionChildrenController(WebsiteChild):
         latest_corr_by_child = {}
         correspondences_table = request.env["correspondence"].sudo()
         children_sponsored_by_partner = partner.sponsorship_ids.child_id
+        domain = [
+            "|",
+            ("partner_id", "=", partner.id),
+            (
+                "child_id",
+                "in",
+                children_sponsored_by_partner.filtered("can_i_write_letter").ids,
+            ),
+            ("direction", "=", "Beneficiary To Supporter"),
+            ("is_published", "=", True),
+        ]
+
         received_correspondences = correspondences_table.search(
-            [
-                "|",
-                ("partner_id", "=", partner.id),
-                (
-                    "child_id",
-                    "in",
-                    children_sponsored_by_partner.filtered("can_i_write_letter").ids,
-                ),
-                ("direction", "=", "Beneficiary To Supporter"),
-            ],
+            domain,
             order="create_date desc",
         )
 
@@ -324,13 +328,16 @@ class MyCompassionChildrenController(WebsiteChild):
             "my_compassion.my2_children_page",
             {
                 "active_sponsorships": sponsorships.filtered(
-                    # all not terminated or terminated within grace period
-                    lambda s: s.state != "terminated" or s.can_write_letter
+                    # all not terminated or terminated within grace period or exit comm not sent yet
+                    lambda s: s.state != "terminated"
+                    or s.can_write_letter
+                    or not s.exit_communication_sent
                 ),
                 "ended_sponsorships": sponsorships.filtered(
-                    # terminated and not within grace period, excluding specific end reasons
+                    # terminated and not within grace period, excluding specific end reasons and exit comm sent
                     lambda s: s.state == "terminated"
                     and not s.can_write_letter
+                    and s.exit_communication_sent
                     and s.end_reason_id.name
                     not in ["Subreject", "Mistake from our staff"]
                 ),

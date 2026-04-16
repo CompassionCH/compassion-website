@@ -52,6 +52,7 @@
         <xpath expr="//div[hasclass('dropdown-menu')]" position="attributes">
             <attribute name="class" add="shadow-sm animation-drop language-selector__dropdown-menu" separator=" " />
         </xpath>
+        <!-- Modify the dropdown button to use a custom pill style button-->
         <xpath expr="//button[hasclass('dropdown-toggle')]" position="attributes">
             <attribute name="class" separator=" " add="d-none" />
         </xpath>

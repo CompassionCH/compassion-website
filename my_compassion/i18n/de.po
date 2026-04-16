@@ -845,6 +845,7 @@ msgstr "Hinzufügen &amp; zur Kasse gehen"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_add_a_gift_page
+#, python-format
 msgid "Add a Gift"
 msgstr "Ein Geschenk hinzufügen"
 
@@ -1976,6 +1977,7 @@ msgstr "Geschenk"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_page
+#, python-format
 msgid "Gift Basket"
 msgstr "Geschenkkorb"
 
@@ -2010,6 +2012,7 @@ msgstr "Mädchen"
 #: model_terms:ir.ui.view,arch_db:my_compassion.dashboard_donations_vignette
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
+#, python-format
 msgid "Give"
 msgstr "Geben"
 
@@ -2056,6 +2059,8 @@ msgid "Hobbies"
 msgstr "Hobbys"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.http_error_custom
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_dashboard_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
 msgid "Home"
 msgstr "Startseite"
@@ -2485,7 +2490,9 @@ msgid "Letter saved!"
 msgstr "Brief gespeichert!"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_letters_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
+#, python-format
 msgid "Letters"
 msgstr "Briefe"
 
@@ -2748,7 +2755,10 @@ msgid "My Country"
 msgstr "Mein Land"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_donations.py:0
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_my_donations_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_account_menu
+#, python-format
 msgid "My Donations"
 msgstr "Meine Spenden"
 
@@ -2768,7 +2778,9 @@ msgid "My Sponsorship"
 msgstr "Meine Patenschaft"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_children.py:0
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_children_page
+#, python-format
 msgid "My Sponsorships"
 msgstr "Meine Patenschaften"
 
@@ -3070,7 +3082,9 @@ msgid "Payment mode"
 msgstr "Zahlungsart"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_sponsorships.py:0
 #: model:new.sponsorship.wizard.step,title:my_compassion.new_sponsorship_wizard_step_payment_methods
+#, python-format
 msgid "Payment options"
 msgstr "Zahlungsoptionen"
 
@@ -3785,6 +3799,7 @@ msgstr "Textfarbe"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
+#, python-format
 msgid "Thank you"
 msgstr "Vielen Dank"
 
@@ -4697,6 +4712,28 @@ msgstr ""
 "                        <i class=\"icon-user01 bg-low-yellow mx-1\"/>"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my_reset_password.py:0
+#, python-format
+msgid "Reset Password"
+msgstr "Passwort zurücksetzen"
+
+#. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_donations.py:0
+#, python-format
+msgid "Gifts"
+msgstr "Geschenke"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_letter_page
+msgid "New Letter"
+msgstr "Neuer Brief"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
+msgid "Settings"
+msgstr "Einstellungen"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_children_card_component
 msgid "Awaiting substitute sponsorship"
@@ -4715,6 +4752,11 @@ msgid ""
 msgstr ""
 "Write&Pray-Patenschaften sind für Personen unter 25 Jahren vorgesehen. "
 "Bitte gib dein Geburtsdatum an."
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.child_protection_charter_page_override
+msgid "Submit"
+msgstr "Senden"
+
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
