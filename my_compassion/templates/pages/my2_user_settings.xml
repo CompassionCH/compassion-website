@@ -72,7 +72,11 @@ Injected data:
                     <div class="single-column tab-content pt-4" id="UserSettingsTabContent">
                         <!-- Personal info tab -->
                         <div class="tab-pane fade" id="personal-information" role="tabpanel">
-                            <div id="personal-information-form" class="bg-pure-white col-md-12 col-sm-12">
+                            <form
+                                id="personal-information-form"
+                                class="bg-pure-white col-md-12 col-sm-12 position-relative"
+                                novalidate="novalidate"
+                            >
                                 <div class="row col-12 mb-3">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
                                         <t t-set="label">My reference</t>
@@ -86,13 +90,14 @@ Injected data:
                                         <t t-set="label">Title</t>
                                         <t t-set="input_id" t-value="'title'" />
                                         <div class="field-display" data-display-for="title">
-                                            <t t-esc="partner.title.name or ''" />
+                                            <t t-esc="partner.title.shortcut or ''" />
                                         </div>
                                         <div class="field-edit">
                                             <div class="pl-0 pr-5 m-0">
                                                 <t t-call="theme_compassion_2025.SelectComponent">
                                                     <t t-set="id" t-value="'title'" />
                                                     <t t-set="name" t-value="'title'" />
+                                                    <t t-set="required" t-value="True" />
                                                     <t
                                                         t-set="attrs"
                                                         t-value="{'data-original-value': partner.title.id}"
@@ -102,7 +107,7 @@ Injected data:
                                                             t-att-value="t.id"
                                                             t-att-selected="partner.title.id == t.id"
                                                         >
-                                                            <t t-esc="t.name" />
+                                                            <t t-esc="t.shortcut" />
                                                         </option>
                                                     </t>
                                                 </t>
@@ -126,6 +131,8 @@ Injected data:
                                                     class="form-control"
                                                     t-att-value="partner.lastname"
                                                     t-att-data-original-value="partner.lastname"
+                                                    data-validate-type="name"
+                                                    required=""
                                                 />
                                             </div>
                                         </t>
@@ -145,6 +152,8 @@ Injected data:
                                                     class="form-control"
                                                     t-att-value="partner.firstname"
                                                     t-att-data-original-value="partner.firstname"
+                                                    data-validate-type="name"
+                                                    required=""
                                                 />
                                             </div>
                                         </t>
@@ -166,6 +175,7 @@ Injected data:
                                                 class="form-control"
                                                 t-att-value="partner.street"
                                                 t-att-data-original-value="partner.street"
+                                                required=""
                                             />
                                         </div>
                                     </t>
@@ -187,6 +197,8 @@ Injected data:
                                                         class="form-control"
                                                         t-att-value="partner.zip"
                                                         t-att-data-original-value="partner.zip"
+                                                        data-validate-type="zip"
+                                                        required=""
                                                     />
                                                 </div>
                                             </t>
@@ -207,6 +219,7 @@ Injected data:
                                                     class="form-control"
                                                     t-att-value="partner.city"
                                                     t-att-data-original-value="partner.city"
+                                                    required=""
                                                 />
                                             </div>
                                         </t>
@@ -256,6 +269,8 @@ Injected data:
                                                 class="form-control"
                                                 t-att-value="partner.email"
                                                 t-att-data-original-value="partner.email"
+                                                data-validate-type="email"
+                                                required=""
                                             />
                                         </div>
                                     </t>
@@ -276,6 +291,7 @@ Injected data:
                                                     class="form-control"
                                                     t-att-value="partner.phone"
                                                     t-att-data-original-value="partner.phone"
+                                                    data-validate-type="phone"
                                                 />
                                             </div>
                                         </t>
@@ -295,12 +311,16 @@ Injected data:
                                                     class="form-control"
                                                     t-att-value="partner.mobile"
                                                     t-att-data-original-value="partner.mobile"
+                                                    data-validate-type="phone"
                                                 />
                                             </div>
                                         </t>
                                     </div>
                                 </div>
-                                <div class="form-actions d-flex justify-content-center mt-4">
+                                <div
+                                    id="user-settings-buttons"
+                                    class="form-actions d-flex position-relative justify-content-center mt-4"
+                                >
                                     <div class="w-md-50 view-mode">
                                         <a id="EditInfoButton">
                                             <div class="d-flex flex-column align-items-stretch">
@@ -315,27 +335,34 @@ Injected data:
                                         </a>
                                     </div>
                                     <div class="edit-mode">
-                                        <a id="ApplyModificationsInfoButton" class="d-inline-block me-2">
-                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                <t t-set="variant" t-value="'default'" />
-                                                <t t-set="variation" t-value="'filled'" />
-                                                <t t-set="label">Save settings</t>
-                                                <t t-set="color" t-value="'mid-green'" />
-                                                <t t-set="text_color" t-value="'pure-white'" />
-                                            </t>
-                                        </a>
-                                        <a id="CancelModificationsInfoButton" class="d-inline-block">
-                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                <t t-set="variant" t-value="'default'" />
-                                                <t t-set="variation" t-value="'filled'" />
-                                                <t t-set="label">Cancel</t>
-                                                <t t-set="color" t-value="'low-orange'" />
-                                                <t t-set="text_color" t-value="'pure-white'" />
-                                            </t>
-                                        </a>
+                                        <div class="d-flex w-100 justify-content-around flex-wrap">
+                                            <a id="ApplyModificationsInfoButton" class="d-inline-block m-2 ">
+                                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                                    <t t-set="variant" t-value="'default'" />
+                                                    <t t-set="variation" t-value="'filled'" />
+                                                    <t t-set="label">Save settings</t>
+                                                    <t t-set="color" t-value="'mid-green'" />
+                                                    <t t-set="text_color" t-value="'pure-white'" />
+                                                </t>
+                                            </a>
+                                            <a id="CancelModificationsInfoButton" class="d-inline-block m-2">
+                                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                                    <t t-set="variant" t-value="'default'" />
+                                                    <t t-set="variation" t-value="'filled'" />
+                                                    <t t-set="label">Cancel</t>
+                                                    <t t-set="color" t-value="'low-orange'" />
+                                                    <t t-set="text_color" t-value="'pure-white'" />
+                                                </t>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                                <div id="user-settings-loader" class="d-none h-100">
+                                    <span class="spinner-rotate">
+                                        <i class="fa fa-spinner fa-5x text-core-blue" />
+                                    </span>
+                                </div>
+                            </form>
                         </div>
                         <!-- Account settings tab -->
                         <div class="tab-pane fade" id="account-settings" role="tabpanel">

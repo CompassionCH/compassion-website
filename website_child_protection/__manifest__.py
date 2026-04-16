@@ -12,11 +12,7 @@
     "license": "AGPL-3",
     "application": False,
     "installable": True,
-    "depends": [
-        "website_form",
-        "child_protection",
-        "theme_compassion_2025",
-    ],
+    "depends": ["website_form", "child_protection"],
     "data": [
         "security/ir.model.access.csv",
         "templates/assets.xml",

@@ -360,8 +360,8 @@ class MyCompassionDonationsController(CustomerPortal):
     def _extract_donation_order_line_fields(product_template, post):
         # Compute quantity
         price = 0
-        amount = post.get("suggested_amount")
-        if amount == "custom":
+        amount_type = post.get("suggested_amount")
+        if amount_type == "custom":
             try:
                 price = float(post.get("custom_amount"))
             except (ValueError, TypeError) as e:
@@ -370,15 +370,15 @@ class MyCompassionDonationsController(CustomerPortal):
             if price <= 0:
                 raise BadRequest()
         else:
-            quantities = {
-                "low": product_template.my_compassion_donation_quantity_low,
-                "medium": product_template.my_compassion_donation_quantity_medium,
-                "high": product_template.my_compassion_donation_quantity_high,
+            amounts = {
+                "low": product_template.my_compassion_donation_amount_low,
+                "medium": product_template.my_compassion_donation_amount_medium,
+                "high": product_template.my_compassion_donation_amount_high,
             }
-            quantity = quantities.get(amount)
-            if not quantity:
+            price = amounts.get(amount_type)
+
+            if price is None or price <= 0:
                 raise BadRequest()
-            price = quantity * product_template.list_price
 
         # Get frequency and force one_time for gifts
         if product_template.my_compassion_donation_type == "gift":
@@ -394,6 +394,7 @@ class MyCompassionDonationsController(CustomerPortal):
         order_line_fields = {
             "product_id": product.id,
             "price_unit": price,
+            "product_uom_qty": 1.0,
             "frequency": frequency,
         }
         if product_template.my_compassion_donation_type == "gift":
