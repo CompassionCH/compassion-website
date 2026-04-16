@@ -64,13 +64,6 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         from_date = date(year_from, month_from, 1)
         to_date = date(year_to, month_to, last_day)
 
-        # Build the domain of the filtering of the letters
-
-        # Matches letters sent to the partner or their authorized sponsored children
-        # Authorized means either the partner is the direct correspondent or the sponsor
-        # has read-write rights on the letters of the child (eg: if the partner is the
-        # parent of young Write-only sponsors, in this case the parent res_partner has
-        # portal_sponsorships = all_info)
         filter_domain = [
             "|",
             ("partner_id", "=", partner.id),
@@ -79,15 +72,8 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 "in",
                 children_sponsored_by_partner.filtered("can_i_write_letter").ids,
             ),
-            "|",
-            "&",
-            # Only show B->S letters that are published.
-            ("direction", "=", "Beneficiary To Supporter"),
-            ("state", "=", "Published to Global Partner"),
-            # Whatever the state of the letters S -> B is, just show them.
-            ("direction", "=", "Supporter To Beneficiary"),
+            ("is_published", "=", True),
         ]
-
         if child:
             try:
                 self._check_sponsored_child_access(child)
@@ -114,15 +100,13 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             filter_domain.append(("direction", "=", letter_type))
             nr_filters_applied += 1
 
-        order = "status_date DESC" if sort_order == "newest" else "status_date ASC"
-
         if sort_order == "oldest":
             nr_filters_applied += 1
 
         # Pagination setup
         letters_per_page = 12
         offset = (page - 1) * letters_per_page
-        total_letters = request.env["correspondence"].search_count(filter_domain)
+        total_letters = request.env["correspondence"].sudo().search_count(filter_domain)
         total_pages = max(1, -(-total_letters // letters_per_page))
 
         # Without the context here the letters are marked as read by just
@@ -131,9 +115,25 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             tracking_disable=True
         )
 
-        letters = correspondence_model.search(
-            filter_domain, order=order, offset=offset, limit=letters_per_page
+        # Fetch all records without order/limit/offset first
+        letters = correspondence_model.sudo().search(filter_domain)
+
+        # Sort in Python using the conditional logic
+        # B->S uses status_date, S->B uses create_date (converted to date)
+        # If direction is S->B the create_date is the proper one to use
+        # from the user's perspective as the sponsor only knows when they've created it.
+        letters = letters.sorted(
+            key=lambda letter: (
+                letter.status_date.date()
+                if letter.direction == "Beneficiary To Supporter"
+                else letter.create_date.date()
+            )
+            or date.min,
+            reverse=(sort_order == "newest"),
         )
+
+        # Pagination slice
+        letters = letters[offset : offset + letters_per_page]
 
         # Month names in the current language
         lang = request.env.context.get("lang", partner.lang)
@@ -403,15 +403,16 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
     )
     def my2_launch_letter_generation(self, **post):
         """
-        Handles the launch of the letter generation process for a specific child.
+        Triggers async letter generation and returns immediately.
+        The frontend polls /my2/children/letters/status for progress and result.
+
         Args:
             post (dict): A dictionary containing the following keys:
-                - "child_id" (int): The ID of the child to whom the letter is generated.
                 - "generator_id" (int): The ID of the letter generator instance.
+                - "mode" (str): Either "preview" or "send".
 
         Returns:
             dict: A dictionary containing:
-                - "preview_url" (str): The URL to preview the generated letter PDF.
                 - "generator_id" (int): The ID of the letter generator instance.
 
         Raises:
@@ -439,23 +440,12 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
 
         if post.get("mode") == "preview":
             generator.preview()
-
         elif post.get("mode") == "send":
-            # Run a preview to check if the letter's length is acceptable
-            generator.preview()
-            if generator.generation_status != "failed":
-                generator.isolated_write({"generation_status": "finalizing"})
-                generator.generate_letters_job()
-        if generator.generation_status == "failed":
-            return {"error": generator.generation_error_message}
+            generator.generate_letters()
 
-        generator.isolated_write({"generation_status": "done"})
-
-        return {
-            "preview_url": f"{request.httprequest.host_url}web/image"
-            f"/{generator._name}/{generator.id}/preview_pdf",
-            "generator_id": generator.id,
-        }
+        # Return immediately. The client must poll /my2/children/letters/status
+        # to track progress and obtain the preview_url once generation is done.
+        return {"generator_id": generator.id, "status": "processing"}
 
     @http.route(
         "/my2/children/letters/status",

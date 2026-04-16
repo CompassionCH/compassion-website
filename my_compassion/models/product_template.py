@@ -101,16 +101,25 @@ class ProductTemplate(models.Model):
     )
 
     # Donation suggestions
-    my_compassion_donation_quantity_low = fields.Integer(
-        default=1, help="Lowest quantity suggestion when making a donation"
+    my_compassion_donation_amount_low = fields.Monetary(
+        string="Lowest Amount",
+        currency_field="currency_id",
+        default=15.0,
+        help="Lowest price suggestion when making a donation",
     )
 
-    my_compassion_donation_quantity_medium = fields.Integer(
-        default=3, help="Medium quantity suggestion when making a donation"
+    my_compassion_donation_amount_medium = fields.Monetary(
+        string="Medium Amount",
+        currency_field="currency_id",
+        default=50.0,
+        help="Medium price suggestion when making a donation",
     )
 
-    my_compassion_donation_quantity_high = fields.Integer(
-        default=5, help="Highest quantity suggestion when making a donation"
+    my_compassion_donation_amount_high = fields.Monetary(
+        string="Highest Amount",
+        currency_field="currency_id",
+        default=100.0,
+        help="Highest price suggestion when making a donation",
     )
 
     def get_donation_limits(self, company, partner, sponsorship_id=None):
@@ -150,7 +159,11 @@ class ProductTemplate(models.Model):
                     ("partner_id", "=", partner.id),
                     ("gift_type", "=", gift_types["gift_type"]),
                     ("attribution", "=", gift_types["attribution"]),
-                    ("sponsorship_gift_type", "=", gift_types["sponsorship_gift_type"]),
+                    (
+                        "sponsorship_gift_type",
+                        "=",
+                        gift_types.get("sponsorship_gift_type", False),
+                    ),
                 ]
 
                 if sponsorship_id:

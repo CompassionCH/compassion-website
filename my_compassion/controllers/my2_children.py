@@ -113,18 +113,23 @@ class MyCompassionChildrenController(WebsiteChild):
         sql = """
             SELECT
                 (SELECT COUNT(*) FROM correspondence
-                 WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
+                 WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s) AND is_published = true)
                 +
                 (SELECT COUNT(*) FROM sponsorship_gift
                  WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
                 +
-                (SELECT COUNT(*) FROM compassion_child_pictures
-                 WHERE child_id = %(child_id)s)
+                (SELECT COUNT(*)
+                 FROM compassion_child_pictures p
+                 JOIN recurring_contract rc ON rc.child_id = p.child_id
+                 WHERE p.child_id = %(child_id)s
+                 AND rc.partner_id = ANY(%(partner_ids)s)
+                 AND rc.start_date <= p.create_date
+                )
                 +
                 (SELECT SUM(
                         CASE WHEN rc.start_date IS NOT NULL THEN 1 ELSE 0 END
                             +
-                        CASE WHEN rc.state = 'terminated' AND rc.end_date IS NOT NULL THEN 1 ELSE 0 END
+                        CASE WHEN rc.state = 'terminated' AND rc.end_date IS NOT NULL AND rc.exit_communication_sent IS NOT NULL THEN 1 ELSE 0 END
                         ) as count
                 FROM recurring_contract rc
                 WHERE rc.child_id = %(child_id)s
@@ -140,7 +145,13 @@ class MyCompassionChildrenController(WebsiteChild):
         )
         return request.env.cr.fetchone()[0] or 0
 
-    def _get_timeline_data(self, child_id, partner_ids, offset, limit):
+    def _get_timeline_data(
+        self,
+        child_id,
+        partner_ids,
+        offset,
+        limit,
+    ):
         """Fetch paginated timeline records (correspondence + gifts) ordered by date."""
         # ruff: noqa: E501 (query is more readable this way)
         sql = """
@@ -165,12 +176,7 @@ class MyCompassionChildrenController(WebsiteChild):
                 FROM correspondence c
                 WHERE c.child_id = %(child_id)s
                   AND c.partner_id = ANY(%(partner_ids)s)
-                  -- Updated Filtering Logic
-                  AND (
-                      (c.state = 'Published to Global Partner' AND c.direction = 'Beneficiary To Supporter')
-                      OR
-                      (c.state NOT IN ('Exception', 'Quality check unsuccessful') AND c.direction = 'Supporter To Beneficiary')
-                  )
+                  AND c.is_published = true
 
                 UNION ALL
 
@@ -206,7 +212,10 @@ class MyCompassionChildrenController(WebsiteChild):
                     %(title_child_picture)s AS title,
                     p.child_id AS child_id
                 FROM compassion_child_pictures p
+                JOIN recurring_contract rc ON rc.child_id = p.child_id
                 WHERE p.child_id = %(child_id)s
+                AND rc.partner_id = ANY(%(partner_ids)s)
+                AND rc.start_date <= p.create_date
 
                 UNION ALL
 
@@ -231,7 +240,7 @@ class MyCompassionChildrenController(WebsiteChild):
                   WHERE rc.child_id = %(child_id)s
                   AND rc.partner_id = ANY(%(partner_ids)s)
                   AND v.event_date IS NOT NULL
-                  AND (v.event_type = 'start_sponsorship' OR rc.state = 'terminated')
+                  AND (v.event_type = 'start_sponsorship' OR (rc.state = 'terminated' AND rc.exit_communication_sent IS NOT NULL))
             ) AS timeline
             ORDER BY event_date DESC
             LIMIT %(limit)s OFFSET %(offset)s
@@ -288,17 +297,20 @@ class MyCompassionChildrenController(WebsiteChild):
         latest_corr_by_child = {}
         correspondences_table = request.env["correspondence"].sudo()
         children_sponsored_by_partner = partner.sponsorship_ids.child_id
+        domain = [
+            "|",
+            ("partner_id", "=", partner.id),
+            (
+                "child_id",
+                "in",
+                children_sponsored_by_partner.filtered("can_i_write_letter").ids,
+            ),
+            ("direction", "=", "Beneficiary To Supporter"),
+            ("is_published", "=", True),
+        ]
+
         received_correspondences = correspondences_table.search(
-            [
-                "|",
-                ("partner_id", "=", partner.id),
-                (
-                    "child_id",
-                    "in",
-                    children_sponsored_by_partner.filtered("can_i_write_letter").ids,
-                ),
-                ("direction", "=", "Beneficiary To Supporter"),
-            ],
+            domain,
             order="create_date desc",
         )
 
@@ -316,11 +328,16 @@ class MyCompassionChildrenController(WebsiteChild):
             "my_compassion.my2_children_page",
             {
                 "active_sponsorships": sponsorships.filtered(
-                    lambda s: s.state != "terminated" or s.sds_state == "sub_waiting"
+                    # all not terminated or terminated within grace period or exit comm not sent yet
+                    lambda s: s.state != "terminated"
+                    or s.can_write_letter
+                    or not s.exit_communication_sent
                 ),
                 "ended_sponsorships": sponsorships.filtered(
+                    # terminated and not within grace period, excluding specific end reasons and exit comm sent
                     lambda s: s.state == "terminated"
-                    and s.sds_state != "sub_waiting"
+                    and not s.can_write_letter
+                    and s.exit_communication_sent
                     and s.end_reason_id.name
                     not in ["Subreject", "Mistake from our staff"]
                 ),
@@ -345,10 +362,15 @@ class MyCompassionChildrenController(WebsiteChild):
 
         access_scope = "public" if child.is_published else "sponsor"
 
-        offset = int(kwargs.get("offset", 0))
-        limit = int(kwargs.get("limit", 9))
+        records = []
+        has_more_records = False
 
-        records, total = self._get_timeline_records(child.id, offset, limit)
+        if access_scope == "sponsor":
+            offset = int(kwargs.get("offset", 0))
+            limit = int(kwargs.get("limit", 9))
+
+            records, total = self._get_timeline_records(child.id, offset, limit)
+            has_more_records = total > offset + limit
 
         birthday_formatted = self._get_formatted_birthday(child)
 
@@ -369,7 +391,7 @@ class MyCompassionChildrenController(WebsiteChild):
             {
                 "compassion_child": child.sudo(),
                 "records": records,
-                "has_more_records": total > offset + limit,
+                "has_more_records": has_more_records,
                 "access_scope": access_scope,
                 "google_api_key": google_api_key,
                 "google_custom_map_id": google_custom_map_id,
