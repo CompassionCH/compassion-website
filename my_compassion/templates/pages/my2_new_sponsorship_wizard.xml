@@ -650,35 +650,70 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                             <t t-set="show_sponsor_me" t-value="False" />
                         </t>
                     </div>
-                    <!-- REVIEW PREFERENCES -->
-                    <div class="mb-4 text-center body-small">
-                        Compassion manages your communication with
-                        <t t-esc="sponsorship.child_id.preferred_name" />
-                        .
-                        You can adjust your preferences at any time in your user settings for a tailored experience.
-                        <span class="body-small bold">Would you like to review them now?</span>
-                    </div>
-                    <div class="mb-3">
-                        <a href="/my2/user_settings?current_tab=communication-settings">
-                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                <t t-set="variant" t-value="'compact'" />
-                                <t t-set="variation" t-value="'filled'" />
-                                <t t-set="label">Review my preferences now</t>
-                                <t t-set="color" t-value="'core-blue'" />
-                                <t t-set="text_color" t-value="'pure-white'" />
+                    <t t-if="request.env.user._is_public()">
+                        <div class="mb-4 text-center body-small">
+                            <t t-set="thank_you_msg">
+                                Create a MyCompassion account to stay connected with %s.
+                                <br />
+                                Through your personalized portal, you can easily write letters, view recent pictures,
+                                and manage your sponsorship details.
                             </t>
-                        </a>
-                    </div>
-                    <div class="mb-4">
-                        <t t-if="sponsorship.type == 'SWP'" t-set="route" t-valuef="/my2/write-and-pray" />
-                        <t t-else="" t-set="route" t-valuef="/my2/sponsorships" />
-                        <button
-                            class="back-button text-low-black body-small bold"
-                            t-attf-onclick="location.href='#{route}'"
-                        >
-                            I'll do this later
-                        </button>
-                    </div>
+                            <t t-raw="thank_you_msg % sponsorship.child_id.preferred_name" />
+                        </div>
+                        <div class="mb-3">
+                            <a href="/web/signup?redirect=/my/home">
+                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                    <t t-set="variant" t-value="'compact'" />
+                                    <t t-set="variation" t-value="'filled'" />
+                                    <t t-set="label">Sign up</t>
+                                    <t t-set="color" t-value="'core-blue'" />
+                                    <t t-set="text_color" t-value="'pure-white'" />
+                                </t>
+                            </a>
+                        </div>
+                        <div class="mb-4 text-center body-small">
+                            Already have an account?
+                            <a href="/web/login?redirect=/my/home">
+                                <span class="body-small
+                                    bold text-core-blue">
+                                    <u>
+                                        <t>Log in</t>
+                                    </u>
+                                </span>
+                            </a>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <!-- REVIEW PREFERENCES -->
+                        <div class="mb-4 text-center body-small">
+                            Compassion manages your communication with
+                            <t t-esc="sponsorship.child_id.preferred_name" />
+                            .
+                            You can adjust your preferences at any time in your user settings for a tailored experience.
+                            <span class="body-small bold">Would you like to review them now?</span>
+                        </div>
+                        <div class="mb-3">
+                            <a href="/my2/user_settings?current_tab=communication-settings">
+                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                    <t t-set="variant" t-value="'compact'" />
+                                    <t t-set="variation" t-value="'filled'" />
+                                    <t t-set="label">Review my preferences now</t>
+                                    <t t-set="color" t-value="'core-blue'" />
+                                    <t t-set="text_color" t-value="'pure-white'" />
+                                </t>
+                            </a>
+                        </div>
+                        <div class="mb-4">
+                            <t t-if="sponsorship.type == 'SWP'" t-set="route" t-valuef="/my2/write-and-pray" />
+                            <t t-else="" t-set="route" t-valuef="/my2/sponsorships" />
+                            <button
+                                class="back-button text-low-black body-small bold"
+                                t-attf-onclick="location.href='#{route}'"
+                            >
+                                I'll do this later
+                            </button>
+                        </div>
+                    </t>
                 </div>
             </div>
         </t>
