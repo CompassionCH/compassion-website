@@ -207,67 +207,37 @@ class MyCompassionNewSponsorshipController(http.Controller):
         from the session and returns it.
         Return:
             a dictionary containing utm information or empty dict
+        IMPORTANT:
+            the utms need to be created first, otherwise they
+            will be ignored!
         """
-        utm_medium_str = request.session.get("wizard_utm_medium")
-        utm_source_str = request.session.get("wizard_utm_source")
-        utm_campaign_str = request.session.get("wizard_utm_campaign")
-
-        if utm_medium_str or utm_source_str or utm_campaign_str:
+        utm_mapping = {
+            "wizard_utm_medium": ("utm.medium", "medium_id"),
+            "wizard_utm_source": ("utm.source", "source_id"),
+            "wizard_utm_campaign": ("utm.campaign", "campaign_id"),
+        }
+        session_vals = {k: request.session.get(k) for k in utm_mapping}
+        if any(session_vals.values()):
             utm_vals = {}
-
-            if utm_medium_str:
-                medium = (
-                    request.env["utm.medium"]
-                    .sudo()
-                    .search([("name", "=ilike", utm_medium_str)], limit=1)
-                )
-                if not medium:
-                    medium = (
-                        request.env["utm.medium"]
+            for k, val in session_vals.items():
+                if val:
+                    model, f_id = utm_mapping[k]
+                    rec = (
+                        request.env[model]
                         .sudo()
-                        .create({"name": utm_medium_str})
+                        .search([("name", "=ilike", val)], limit=1)
                     )
-                utm_vals["medium_id"] = medium.id
-
-            if utm_source_str:
-                source = (
-                    request.env["utm.source"]
-                    .sudo()
-                    .search([("name", "=ilike", utm_source_str)], limit=1)
-                )
-                if not source:
-                    source = (
-                        request.env["utm.source"]
-                        .sudo()
-                        .create({"name": utm_source_str})
-                    )
-                utm_vals["source_id"] = source.id
-
-            if utm_campaign_str:
-                campaign = (
-                    request.env["utm.campaign"]
-                    .sudo()
-                    .search([("name", "=ilike", utm_campaign_str)], limit=1)
-                )
-                if not campaign:
-                    campaign = (
-                        request.env["utm.campaign"]
-                        .sudo()
-                        .create({"name": utm_campaign_str})
-                    )
-                utm_vals["campaign_id"] = campaign.id
-
-            # Clean up the session variables
-            # so they don't bleed into future organic sessions
-            request.session.pop("wizard_utm_medium", None)
-            request.session.pop("wizard_utm_source", None)
-            request.session.pop("wizard_utm_campaign", None)
-
+                    # only assign if campaign already exists
+                    if rec:
+                        utm_vals[f_id] = rec.id
+            # clean up the session variables
+            for k in utm_mapping:
+                request.session.pop(k, None)
             return utm_vals
         return {}
 
     @http.route(
-        "/my2/new-sponsorship/<string:child_id>",
+        "/my2/new-sponsorship/<int:child_id>",
         type="http",
         auth="public",
         website=True,
@@ -278,13 +248,9 @@ class MyCompassionNewSponsorshipController(http.Controller):
         return: An HTTP response containing a rendered template
         with the initial wizard page.
         """
-        child = (
-            request.env["compassion.child"]
-            .sudo()
-            .search([("id", "=", child_id)], limit=1)
-        )
+        child = request.env["compassion.child"].sudo().browse(child_id)
 
-        if not child:
+        if not child.exists():
             raise NotFound("Child not found in database")
 
         # capture and store utm information
