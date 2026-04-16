@@ -29,6 +29,7 @@ Page: My Compassion 2 Donations Page
 <odoo>
     <data>
         <template id="my2_my_donations_page" name="My Account Donations Details">
+            <t t-set="additional_title">My Donations</t>
             <t t-call="website.layout">
                 <div class="container">
                     <div class="single-column">

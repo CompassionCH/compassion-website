@@ -64,15 +64,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         from_date = date(year_from, month_from, 1)
         to_date = date(year_to, month_to, last_day)
 
-        # Build the domain of the filtering of the letters
-
-        # Matches letters sent to the partner or their authorized sponsored children
-        # Authorized means either the partner is the direct correspondent or the sponsor
-        # has read-write rights on the letters of the child (eg: if the partner is the
-        # parent of young Write-only sponsors, in this case the parent res_partner has
-        # portal_sponsorships = all_info)
         filter_domain = [
-            "&",
             "|",
             ("partner_id", "=", partner.id),
             (
@@ -80,17 +72,8 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 "in",
                 children_sponsored_by_partner.filtered("can_i_write_letter").ids,
             ),
-            "|",
-            "&",
-            # Only show B->S letters that are published.
-            ("direction", "=", "Beneficiary To Supporter"),
-            ("state", "=", "Published to Global Partner"),
-            # Whatever the state of the letters S -> B is, just show them.
-            "&",
-            ("direction", "=", "Supporter To Beneficiary"),
-            ("state", "not in", ["Exception", "Quality check unsuccessful"]),
+            ("is_published", "=", True),
         ]
-
         if child:
             try:
                 self._check_sponsored_child_access(child)
@@ -123,7 +106,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         # Pagination setup
         letters_per_page = 12
         offset = (page - 1) * letters_per_page
-        total_letters = request.env["correspondence"].search_count(filter_domain)
+        total_letters = request.env["correspondence"].sudo().search_count(filter_domain)
         total_pages = max(1, -(-total_letters // letters_per_page))
 
         # Without the context here the letters are marked as read by just
@@ -133,7 +116,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         )
 
         # Fetch all records without order/limit/offset first
-        letters = correspondence_model.search(filter_domain)
+        letters = correspondence_model.sudo().search(filter_domain)
 
         # Sort in Python using the conditional logic
         # B->S uses status_date, S->B uses create_date (converted to date)

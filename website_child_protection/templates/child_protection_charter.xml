@@ -243,7 +243,7 @@
                                                 value="Yes"
                                                 class="s_website_form_input"
                                                 name="read_check"
-                                                required="true"
+                                                required="required"
                                                 id="read_and_understood"
                                             />
                                         </div>
@@ -260,7 +260,7 @@
                                                 value="Yes"
                                                 class="s_website_form_input"
                                                 name="validation_check"
-                                                required="true"
+                                                required="required"
                                                 id="aware_of_violation"
                                             />
                                         </div>
@@ -282,7 +282,7 @@
                                                 value="Yes"
                                                 class="s_website_form_input"
                                                 name="legal_check"
-                                                required="true"
+                                                required="required"
                                                 id="violation_legal_action"
                                             />
                                         </div>
@@ -296,8 +296,8 @@
                                             type="checkbox"
                                             value="Yes"
                                             class="s_website_form_input"
-                                            name="agreed"
-                                            required="true"
+                                            name="understand_check"
+                                            required="required"
                                             id="understand_update"
                                         />
                                         <div class="ml-2">
@@ -325,16 +325,17 @@
                                 />
                                 <div id="s_website_form_result" class="col-12 text-center" />
                                 <div
+                                    id="submit_button_container"
                                     class="form-group col-12 s_website_form_submit d-flex justify-content-center justify-content-md-start"
                                     data-name="Submit Button"
                                 >
-                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                        <t t-set="variant" t-value="'compact'" />
-                                        <t t-set="variation" t-value="'filled'" />
-                                        <t t-set="label">Submit</t>
-                                        <t t-set="color" t-value="'core-blue'" />
-                                        <t t-set="text_color" t-value="'pure-white s_website_form_send'" />
-                                    </t>
+                                    <a
+                                        href="#"
+                                        role="button"
+                                        class="btn btn-primary btn-lg s_website_form_send o_default_snippet_text m-auto"
+                                    >
+                                        Submit
+                                    </a>
                                 </div>
                             </div>
                         </form>
@@ -355,45 +356,34 @@
                     data-scroll-background-ratio="1"
                     data-snippet="s_banner"
                     data-name="Banner"
+                    style="z-index: -1;"
                 >
                     <span
                         class="s_parallax_bg oe_img_bg d-none d-sm-block"
                         style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"
                     />
-                    <div class="position-absolute fixed-top mt-5 w-100 text-center">
-                        <t t-call="theme_compassion_2025.TitleComponent">
-                            <t t-set="title_content">Child Protection Charter</t>
-                            <t t-set="title_size" t-value="'md'" />
-                            <t t-set="color" t-value="'core-blue'" />
-                            <t t-set="show_underline" t-value="False" />
-                        </t>
+                    <div id="thank_you_page_title" class="position-absolute fixed-top mt-5 w-100">
+                        <h2 class="mb-4 text-center text-core-blue">Child Protection Charter</h2>
                     </div>
-                    <div class="container">
+                    <div id="thank_you_page_card" class="container">
                         <div class="row s_nb_column_fixed">
                             <div
                                 class="col-lg-6 jumbotron rounded o_cc o_cc1 pt32 pb32 o_colored_level"
                                 data-name="Box"
                             >
-                                <t t-call="theme_compassion_2025.TitleComponent">
-                                    <t t-set="title_content">Thank you!</t>
-                                    <t t-set="title_size" t-value="'md'" />
-                                    <t t-set="color" t-value="'core-blue'" />
-                                    <t t-set="show_underline" t-value="True" />
-                                    <t t-set="underline_color" t-value="'low-yellow'" />
-                                    <p>
-                                        We successfully received your agreement to
-                                        the Child Protection Charter.
-                                    </p>
-                                </t>
+                                <h2 class="mb-4 text-center text-core-blue">Thank You!</h2>
+                                <p class="text-center">
+                                    We successfully received your agreement to the
+                                    Child Protection Charter.
+                                </p>
                                 <div class="d-flex justify-content-center">
-                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                        <t t-set="variant" t-value="'compact'" />
-                                        <t t-set="variation" t-value="'filled'" />
-                                        <t t-set="label">Continue</t>
-                                        <t t-set="color" t-value="'core-blue'" />
-                                        <t t-set="text_color" t-value="'pure-white'" />
-                                        <t t-set="href" t-value="redirect" />
-                                    </t>
+                                    <a
+                                        t-att-href="redirect"
+                                        role="button"
+                                        class="btn btn-primary btn-lg s_website_form_send o_default_snippet_text m-auto"
+                                    >
+                                        Continue
+                                    </a>
                                 </div>
                             </div>
                         </div>
