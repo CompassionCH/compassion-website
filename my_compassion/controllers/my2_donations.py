@@ -16,6 +16,7 @@ from werkzeug.exceptions import BadRequest, NotFound
 
 from odoo import fields, http
 from odoo.http import request
+from odoo.tools.translate import _
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
 
@@ -41,6 +42,9 @@ class MyCompassionDonationsController(CustomerPortal):
             "product": product,
             "sponsorships": sponsorships,
             "donation_limits": donation_limits,
+            "additional_title": "{} - {}".format(
+                _("Gifts"), product.my_compassion_name
+            ),
         }
 
         return request.render(
@@ -346,7 +350,9 @@ class MyCompassionDonationsController(CustomerPortal):
             sale_order = request.env["sale.order"].sudo().browse(sale_order_id)
             return request.render(
                 "my_compassion.my2_gifts_thank_you_page",
-                {"sale_order": sale_order},
+                {
+                    "sale_order": sale_order,
+                },
             )
         return request.redirect("/my2/dashboard")
 
@@ -481,6 +487,7 @@ class MyCompassionDonationsController(CustomerPortal):
                 "paid_invoices_subset": paid_invoices_data["paid_invoices_subset"],
                 "current_page": paid_invoices_data["current_page"],
                 "total_pages": paid_invoices_data["total_pages"],
+                "additional_title": _("My Donations"),
             }
         )
         return request.render("my_compassion.my2_my_donations_page", values)
