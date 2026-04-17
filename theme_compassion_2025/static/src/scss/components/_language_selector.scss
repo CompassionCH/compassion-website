@@ -112,21 +112,38 @@
     .js_language_selector {
         flex-direction: column;
         align-items: stretch;
-        height: 50px;
+        height: auto;
+
+        /* change color to match menu items */
+        .btn,
+        .btn .icon-chevron-down,
+        .dropdown-menu .dropdown-item {
+            color: rgba(0, 0, 0, 0.5) !important;
+        }
+
+        /* Increase language selector size */
+        .btn {
+            font-size: 1.5rem;
+            min-height: 48px;
+        }
     }
 
-    .js_language_selector .btn {
-        font-size: 1.5rem;
-    }
-
+    /* Makes sure dropdown expands towards the bottom
+       and doesn't push parent up.
+     */
     .language-selector__dropdown-menu {
-        position: static !important;
+        position: absolute !important;
+        top: 100% !important;
+        bottom: auto !important;
+        right: 0 !important;
+        left: auto !important;
+        font-size: 1.25rem !important;
+
         transform: none !important;
+        margin-top: 0.5rem;
+        width: max-content;
     }
 
-    .language-selector__icon_left {
-          display: none !important;
-      }
 
     /* Mobile-Specific Animation
        Desktop 'scaleY' animation can look weird in flow layout.
@@ -139,6 +156,7 @@
 
     .animation-drop.show {
         animation: mobileAccordionDrop 0.3s ease-out forwards;
+        display: block !important;
     }
 }
 

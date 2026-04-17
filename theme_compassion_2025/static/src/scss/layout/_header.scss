@@ -48,6 +48,7 @@
 
         /* Override Bootstrap's default collapse vertical behavior */
         display: block !important;
+        visibility: hidden;
         transform: translateX(-100%);
         transition: transform 0.3s ease-in-out;
         height: 100vh !important;
@@ -55,12 +56,14 @@
 
         /* Slide in when active */
         &.show {
+            visibility: visible;
             transform: translateX(0);
             max-height: 100vh !important;
         }
 
         /* Override the vertical collapsing animation */
         &.collapsing {
+            visibility: visible;
             transform: translateX(-100%);
             transition: transform 0.3s ease-in-out;
             overflow: hidden;

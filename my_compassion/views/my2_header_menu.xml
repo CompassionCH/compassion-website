@@ -35,7 +35,7 @@
                     </t>
                     <!-- Add cart and language selector to mobile menu -->
                     <li
-                        class="nav-item d-flex d-md-none align-items-center justify-content-between w-100 mt-3 pt-3 border-top"
+                        class="nav-item d-flex d-lg-none align-items-center justify-content-between w-100 mt-3 pt-3 border-top"
                     >
                         <ul class="navbar-nav flex-row mb-0">
                             <t t-call="website_sale.header_cart_link">
@@ -44,7 +44,7 @@
                                 <t t-set="_link_class" t-value="'nav-link'" />
                             </t>
                         </ul>
-                        <div>
+                        <div class="d-block d-md-none">
                             <t t-call="portal.language_selector" />
                         </div>
                     </li>
@@ -54,6 +54,13 @@
                         <t t-set="_item_class" t-value="'nav-item d-none d-lg-block'" />
                         <t t-set="_link_class" t-value="'nav-link'" />
                     </t>
+                </ul>
+            </t>
+            <t t-else="">
+                <ul class="navbar-nav w-100 d-flex d-md-none mt-5">
+                    <li class="nav-item d-flex justify-content-end w-100 pt-3 pr-2">
+                        <t t-call="portal.language_selector" />
+                    </li>
                 </ul>
             </t>
         </xpath>

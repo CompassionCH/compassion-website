@@ -1,11 +1,14 @@
 <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
 <odoo>
     <template id="template_header_default" inherit_id="website.template_header_default">
-        <!-- Move the hamburger menu to the left -->
+        <!-- Move the hamburger menu to the left & hide on md screens -->
         <xpath expr="//t[@t-call='website.navbar_toggler']" position="replace" />
         <xpath expr="//t[@t-call='website.placeholder_header_brand']" position="before">
             <t t-call="website.navbar_toggler">
-                <t t-set="_toggler_class" t-value="'mr-4 text-primary'" />
+                <t
+                    t-set="_toggler_class"
+                    t-value="'mr-4 text-primary d-md-none' if not request.session.uid else 'mr-4 text-primary'"
+                />
             </t>
         </xpath>
         <!-- Improve the layout of the navbar and add the svg -->
@@ -51,7 +54,8 @@
                 <t t-set="_item_class" t-value="'nav-item dropdown ml-lg-4'" />
                 <t t-set="_link_class" t-value="'nav-link font-weight-bold'" />
             </t>
-            <div class="d-none d-md-block ml-lg-3">
+            <!-- Add a language selector to the left of the user dropdown on desktop -->
+            <div class="d-none d-md-block ml-md-3">
                 <t t-call="portal.language_selector" />
             </div>
         </xpath>
