@@ -487,6 +487,10 @@
                         encouragement you’ve woven together.
                         </t>
                     </t>
+                    <t t-set="timeline_letters" t-value="[r for r in records if r.get('model') == 'correspondence']" />
+                    <div class="text-center" t-if="timeline_letters and timeline_letters[0].get('metadata') == 'Supporter To Beneficiary'">
+                        <p class="small font-italic">Given the time it takes for mail to arrive, it could take between one and three months for you to receive a reply.</p>
+                    </div>
                 </div>
             </div>
             <!-- ### Partner and child timeline component ### -->
