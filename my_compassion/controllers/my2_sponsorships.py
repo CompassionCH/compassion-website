@@ -8,6 +8,7 @@
 ##############################################################################
 import random
 import uuid
+from urllib.parse import urlencode
 
 from dateutil.relativedelta import relativedelta
 from werkzeug.exceptions import BadRequest, Gone, NotFound
@@ -354,6 +355,12 @@ class MyCompassionNewSponsorshipController(http.Controller):
         )
         currency_name = request.env.user.company_id.currency_id.name
 
+        # Send the user back to the exact URL they came from after login,
+        # preserving every query param (UTM, sponsorship_type, anything else).
+        login_url_redirect = (
+            f"/web/login?{urlencode({'redirect': request.httprequest.full_path})}"
+        )
+
         # Render step template first
         inner_step_html = request.env["ir.qweb"]._render(
             wizard.current_step.template,
@@ -365,6 +372,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 "spoken_languages": spoken_languages,
                 "lead_sources": lead_sources,
                 "currency_name": currency_name,
+                "login_url_redirect": login_url_redirect,
             },
         )
 

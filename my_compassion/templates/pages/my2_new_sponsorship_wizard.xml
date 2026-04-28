@@ -68,12 +68,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     <template id="my2_new_sponsorship_wizard_user_details" name="New Sponsorship Wizard User Details Step">
         <div class="mb-3 p-3 rounded-lg bg-light-blue tiny-text">
             Already have an account?
-            <a
-                t-attf-href="/web/login?redirect=/my2/new-sponsorship/#{wizard.child_id.id}?sponsorship_type=#{wizard.sponsorship_type}"
-                class="tiny-text bold text-core-blue"
-            >
-                Log in
-            </a>
+            <a t-att-href="login_url_redirect" class="tiny-text bold text-core-blue">Log in</a>
         </div>
         <!-- Salutation -->
         <t t-call="theme_compassion_2025.FormFieldComponent">
