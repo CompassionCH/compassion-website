@@ -224,7 +224,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
         # Reserve child for 5 minutes
         reservation_uuid = self._get_reservation_uuid()
         if not child.reserve_for_web_sponsorship(reservation_uuid):
-            raise Gone()
+            return request.render("my_compassion.child_unavailable_page")
 
         # Create new wizard
         wizard = request.env["new.sponsorship.wizard"].create(
@@ -299,7 +299,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
 
         # Make sure child is still available and finalize sponsorship creation
         if wizard.child_id.state not in wizard.child_id._available_states():
-            raise Gone()
+            return request.render("my_compassion.child_unavailable_page")
         sponsorship = wizard.finish_sponsorship()
 
         # Redirect to thank-you page

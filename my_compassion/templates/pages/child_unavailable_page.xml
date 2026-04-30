@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="child_unavailable_page" name="Child Unavailable">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <div class="container my-5">
+                    <div class="row justify-content-center text-center">
+                        <div class="col-md-8 col-lg-6">
+                            <i t-attf-class="pictogram-love vignette-icon h1" />
+
+                        <t t-call="theme_compassion_2025.TitleComponent">
+                            <t t-set="title_content">Child No Longer Available</t>
+                            <t t-set="description">
+                                We are sorry, but the child you selected is no longer available.
+                                They may have just been sponsored by someone else!
+                                However, there are still many children waiting for a sponsor.
+                            </t>
+                            <t t-set="color" t-value="'core-blue'" />
+                            <t t-set="show_underline" t-value="true" />
+                            <t t-set="underline_color" t-value="'low-yellow'" />
+                        </t>
+                            <p class="lead text-muted mb-4" t-if="error_msg">
+                                <t t-esc="error_msg"/>
+                            </p>
+
+                            <div class="mt-5">
+                                <a t-attf-href="/my2/sponsorships">
+                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                        <t t-set="variation" t-value="'filled'" />
+                                        <t t-set="color" t-value="'low-blue'" />
+                                        <t t-set="text_color" t-value="'white'" />
+                                        <t t-set="variant" t-value="'default'" />
+                                        <t t-set="label">Sponsor another child</t>
+                                    </t>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
