@@ -51,7 +51,8 @@
         .nav-tab {
             position: relative;
             z-index: 1;
-            width: 16.666%; /* 6 icons */
+            /* Width adapts to --tab-count set on the nav (4 for non-sponsors, 6 for sponsors) */
+            width: calc(100% / var(--tab-count, 6));
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -113,7 +114,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 16.666%;
+            width: calc(100% / var(--tab-count, 6));
             height: 100%;
             z-index: 0;
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -126,7 +127,7 @@
                 top: -22px;
                 left: 50%;
                 transform: translateX(-50%);
-                background: var(--compassion-blue);
+                background: var(--core-blue);
                 border-radius: 50%;
                 border: 6px solid var(--pure-white);
             }
@@ -159,12 +160,30 @@
         }
     }
 
+    /* Floating round "write a letter" shortcut button on the per-child letters page */
+    #write_button {
+        position: fixed;
+        right: 1rem;
+        bottom: calc(5rem + env(safe-area-inset-bottom) + 0.75rem);
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--core-blue);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+        z-index: $zindex-fixed + 101;
+
+        .vignette-icon {
+            font-size: 1.6rem;
+            color: var(--pure-white);
+        }
+    }
+
     /* Prevent content from hiding behind the bar */
     body {
         margin-bottom: calc(5rem + env(safe-area-inset-bottom)) !important;
     }
-}
 
-#bottom_nav_spacer {
-    height:75px;
+    #bottom_nav_spacer {
+        height: 75px;
+    }
 }
