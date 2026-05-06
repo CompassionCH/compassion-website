@@ -178,12 +178,8 @@
         }
     }
 
-    /* Prevent content from hiding behind the bar */
-    body {
-        margin-bottom: calc(5rem + env(safe-area-inset-bottom)) !important;
-    }
-
+    /* Prevents content from hiding behind the bar */
     #bottom_nav_spacer {
-        height: 75px;
+        height: calc(5rem + env(safe-area-inset-bottom));
     }
 }

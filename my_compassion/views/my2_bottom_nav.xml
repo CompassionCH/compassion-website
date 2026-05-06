@@ -15,11 +15,9 @@
                 separator=" "
             />
         </xpath>
-        <xpath expr="//footer" position="after">
-            <div id="bottom_nav_spacer" class="d-block d-md-none w-100" />
-        </xpath>
         <xpath expr="//div[@id='wrapwrap']" position="inside">
             <t t-if="request.session.uid and '/my2/' in request.httprequest.path">
+                <div id="bottom_nav_spacer" class="d-block d-md-none w-100" />
                 <t t-set="partner" t-value="request.env.user.partner_id" />
                 <t t-set="tab_count" t-value="6 if partner.is_sponsor else 4" />
                 <nav
