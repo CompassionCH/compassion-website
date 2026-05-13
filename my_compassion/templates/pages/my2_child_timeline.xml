@@ -269,26 +269,30 @@
                                                 and
                                             </t>
                                             <t t-if="compassion_child.household_id.nb_sisters > 0">
-                                                <t t-if="compassion_child.household_id.nb_sisters == 1">a sister</t>
+                                                <t t-if="compassion_child.household_id.nb_sisters == 1">
+                                                    <t t-set="sister_text">a sister</t>
+                                                    <t t-esc="'%s.' % sister_text" />
+                                                </t>
                                                 <t t-else="">
-                                                    <t t-esc="compassion_child.household_id.nb_sisters" />
-                                                    sisters
+                                                    <t t-set="sisters_text">sisters</t>
+                                                    <t
+                                                        t-esc="'%s %s.' % (compassion_child.household_id.nb_sisters, sisters_text)"
+                                                    />
                                                 </t>
                                             </t>
-                                            .
+                                            <t t-elif="compassion_child.household_id.nb_brothers > 0">.</t>
                                         </t>
                                     </p>
                                     <p>
                                         <t
                                             t-if="compassion_child.household_id.father_living_with_child and compassion_child.household_id.male_guardian_job_type != 'Not Employed'"
                                         >
-                                            My father works on
+                                            My father works as a
                                             <t
                                                 t-set="value"
                                                 t-value="request.env['ir.advanced.translation'].get(compassion_child.household_id.translate('male_guardian_job'))"
                                             />
-                                            <t t-esc="value" />
-                                            .
+                                            <t t-esc="'%s.' % value" />
                                         </t>
                                         <t
                                             t-if="compassion_child.household_id.mother_living_with_child and compassion_child.household_id.female_guardian_job_type != 'Not Employed'"
@@ -298,8 +302,7 @@
                                                 t-set="value"
                                                 t-value="request.env['ir.advanced.translation'].get(compassion_child.household_id.translate('female_guardian_job'), female=True)"
                                             />
-                                            <t t-esc="value" />
-                                            .
+                                            <t t-esc="'%s.' % value" />
                                         </t>
                                     </p>
                                 </div>
