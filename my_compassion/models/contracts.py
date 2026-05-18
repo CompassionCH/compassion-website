@@ -2,7 +2,15 @@ from odoo import fields, models
 
 
 class RecurringContract(models.Model):
-    _inherit = "recurring.contract"
+    """
+    Extends the recurring.contract model for MyCompassion features.
+
+    Inheriting "utm.mixin" makes sure that the model integrates Odoo's utm features.
+    This allows Odoo to automatically intercept UTM cookies.
+    """
+
+    _name = "recurring.contract"
+    _inherit = ["recurring.contract", "utm.mixin"]
 
     can_show_on_my_compassion = fields.Boolean(
         string="Can be shown on My Compassion",
