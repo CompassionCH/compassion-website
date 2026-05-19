@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
                 // Create RangeInput element
                 const rangeInputElement = this.$(".range-input-component");
-                if (rangeInputElement) {
+                if (rangeInputElement.length) {
                     const rangeInput = new publicWidget.registry.RangeInput(this, 0, 18);
                     rangeInput.replace(rangeInputElement);
                 }
@@ -46,8 +46,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 this.genderFilter = $genderInput.length
                     ? $genderInput.val()
                     : this.$el.data("gender-filter") || "either";
-                this.ageFilter = { low: 0, high: 18 };
-
                 this.ageFilter = { low: 0, high: 18 };
 
                 const $countryInput = this.$(".SelectComponent").find("option:selected");
