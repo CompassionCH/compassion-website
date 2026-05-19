@@ -10,29 +10,29 @@
                         <div class="col-md-8 col-lg-6 mx-auto">
                             <i t-attf-class="pictogram-love vignette-icon h1" />
                             <t t-call="theme_compassion_2025.TitleComponent">
-                                <t t-set="title_content">Good News</t>
+                                <t t-set="title_content">Good news!</t>
                                 <t t-set="color" t-value="'core-blue'" />
                                 <t t-set="show_underline" t-value="true" />
                                 <t t-set="underline_color" t-value="'low-yellow'" />
                             </t>
                             <div class="mt-4">
                                 <t t-if="child.gender == 'M'">
-                                    <t t-esc="child.preferred_name" />
-                                    has found a sponsor!
-                                    <br />
-                                    Someone else chose to sponsor him just a few moments ago.
-                                    This is wonderful news for him! But please don’t go just yet:
-                                    other children are still waiting for the support that will
-                                    change their lives.
+                                    <t t-set="male_msg">
+                                        Someone else has decided to sponsor {child_name} just a moment ago. He and his
+                                        family will be happy! But don't leave just yet, other
+                                        children are waiting for life-changing support. Would you like to sponsor one of
+                                        these children?
+                                    </t>
+                                    <t t-esc="male_msg.format(child_name=child.preferred_name)" />
                                 </t>
                                 <t t-else="">
-                                    <t t-esc="child.preferred_name" />
-                                    has found a sponsor!
-                                    <br />
-                                    Someone else chose to sponsor her just a few moments ago.
-                                    This is wonderful news for her! But please don’t go just yet:
-                                    other children are still waiting for the support that will
-                                    change their lives.
+                                    <t t-set="female_msg">
+                                        Someone else has decided to sponsor {child_name} just a moment ago. She and her
+                                        family will be happy! But don't leave just yet, other
+                                        children are waiting for life-changing support. Would you like to sponsor one of
+                                        these children?
+                                    </t>
+                                    <t t-esc="female_msg.format(child_name=child.preferred_name)" />
                                 </t>
                             </div>
                             <p class="lead text-muted mb-4" t-if="error_msg">
@@ -59,7 +59,7 @@
                                     <t t-set="color" t-value="'low-blue'" />
                                     <t t-set="text_color" t-value="'white'" />
                                     <t t-set="variant" t-value="'default'" />
-                                    <t t-set="label">More children</t>
+                                    <t t-set="label">See more children</t>
                                 </t>
                             </a>
                         </div>
