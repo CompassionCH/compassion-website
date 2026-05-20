@@ -7,8 +7,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
     odoo.define("my_compassion.sponsorships", function (require) {
         "use strict";
 
-        var publicWidget = require("web.public.widget");
-        var rpc = require("web.rpc");
+        const publicWidget = require("web.public.widget");
+        const rpc = require("web.rpc");
 
         const ToastService = require("my_compassion.toast_service");
         const _t = require("web.core")._t;
@@ -33,18 +33,25 @@ document.addEventListener("DOMContentLoaded", function (event) {
              * @override
              */
             start: function () {
-                var def = this._super.apply(this, arguments);
+                const def = this._super.apply(this, arguments);
 
                 // Create RangeInput element
-                var rangeInputElement = this.$(".range-input-component");
-                var rangeInput = new publicWidget.registry.RangeInput(this, 0, 18);
-                rangeInput.replace(rangeInputElement);
+                const rangeInputElement = this.$(".range-input-component");
+                if (rangeInputElement.length) {
+                    const rangeInput = new publicWidget.registry.RangeInput(this, 0, 18);
+                    rangeInput.replace(rangeInputElement);
+                }
 
-                this.genderFilter = this.$("input[name=gender]:checked").val();
+                const $genderInput = this.$("input[name=gender]:checked");
+                this.genderFilter = $genderInput.length
+                    ? $genderInput.val()
+                    : this.$el.data("gender-filter") || "either";
                 this.ageFilter = { low: 0, high: 18 };
-                this.countryFilter = this.$(".SelectComponent").find("option:selected").val();
 
-                this.resultsPerBatch = 20;
+                const $countryInput = this.$(".SelectComponent").find("option:selected");
+                this.countryFilter = $countryInput.length ? $countryInput.val() : this.$el.data("country-filter") || "";
+
+                this.resultsPerBatch = this.$el.data("limit") || 20;
                 this.resultsLoaded = 0;
                 this.totalResults = 0;
                 // Id of the randomly sampled child, mostly used to see if sampling happened and condition the UI (Button visibility)
@@ -90,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
                 // 3. Loop over each new item to apply the staggered delay
                 $newItems.each(function (index) {
-                    var self = this;
+                    const self = this;
                     // Apply 100ms base delay + 50ms per item
                     setTimeout(function () {
                         $(self).addClass("show");

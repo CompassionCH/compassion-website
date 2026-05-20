@@ -11,7 +11,7 @@ import uuid
 from urllib.parse import urlencode
 
 from dateutil.relativedelta import relativedelta
-from werkzeug.exceptions import BadRequest, Gone, NotFound
+from werkzeug.exceptions import BadRequest, NotFound
 
 from odoo import fields, http
 from odoo.http import request
@@ -224,7 +224,13 @@ class MyCompassionNewSponsorshipController(http.Controller):
         # Reserve child for 5 minutes
         reservation_uuid = self._get_reservation_uuid()
         if not child.reserve_for_web_sponsorship(reservation_uuid):
-            raise Gone()
+            return request.render(
+                "my_compassion.child_unavailable_page",
+                {
+                    "child": child,
+                    "sponsorship_type": sponsorship_type,
+                },
+            )
 
         # Create new wizard
         wizard = request.env["new.sponsorship.wizard"].create(
@@ -299,7 +305,13 @@ class MyCompassionNewSponsorshipController(http.Controller):
 
         # Make sure child is still available and finalize sponsorship creation
         if wizard.child_id.state not in wizard.child_id._available_states():
-            raise Gone()
+            return request.render(
+                "my_compassion.child_unavailable_page",
+                {
+                    "child": wizard.child_id,
+                    "sponsorship_type": wizard.sponsorship_type,
+                },
+            )
         sponsorship = wizard.finish_sponsorship()
 
         # Redirect to thank-you page
