@@ -93,12 +93,13 @@ class CrowdfundingParticipant(models.Model):
             ):
                 raise NoGoalException
 
-    @api.model
-    def create(self, vals):
-        partner = self.env["res.partner"].browse(vals.get("partner_id"))
-        project = self.env["crowdfunding.project"].browse(vals.get("project_id"))
-        vals["name"] = f"{project.name} - {partner.preferred_name}"
-        return super().create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            partner = self.env["res.partner"].browse(vals.get("partner_id"))
+            project = self.env["crowdfunding.project"].browse(vals.get("project_id"))
+            vals["name"] = f"{project.name} - {partner.preferred_name}"
+        return super().create(vals_list)
 
     @api.model
     def get_sponsorship_url(self, participant_id):

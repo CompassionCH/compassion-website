@@ -29,13 +29,22 @@
 # pylint: disable=C8101
 {
     "name": "Crowdfunding Compassion Theme",
-    "version": "14.0.1.0.0",
+    "version": "18.0.1.0.0",
     "category": "Theme/Compassion",
     "author": "Compassion Switzerland",
     "license": "AGPL-3",
     "website": "https://github.com/CompassionCH/compassion-website",
     "depends": ["website"],
-    "data": ["views/assets.xml"],
     "application": False,
-    "installable": False,
+    "installable": True,
+    "assets": {
+        "web.assets_frontend": [
+            "theme_crowdfunding/static/src/scss/custom.scss",
+            "theme_crowdfunding/static/src/scss/stepper.scss",
+            "theme_crowdfunding/static/src/scss/faq.scss",
+        ],
+        "web._assets_primary_variables": [
+            "theme_crowdfunding/static/src/scss/primary_variables.scss"
+        ],
+    },
 }

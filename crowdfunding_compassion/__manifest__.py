@@ -29,7 +29,7 @@
 # pylint: disable=C8101
 {
     "name": "Crowdfunding Compassion",
-    "version": "14.0.1.0.2",
+    "version": "18.0.1.0.0",
     "author": "Compassion CH",
     "license": "AGPL-3",
     "website": "https://github.com/CompassionCH/compassion-website",
@@ -40,7 +40,6 @@
         "crm_compassion",  # compassion-modules
         "event",  # odoo base modules
         "wordpress_configuration",  # compassion-modules
-        "my_compassion",
         "website_sale_donation",
     ],
     "data": [
@@ -59,7 +58,6 @@
         "views/crowdfunding_project_view.xml",
         "views/product_view.xml",
         "views/res_partner_view.xml",
-        "views/assets.xml",
         "views/settings_view.xml",
         "templates/crowdfunding_components.xml",
         "templates/homepage.xml",
@@ -74,6 +72,15 @@
         "templates/about_page.xml",
     ],
     "demo": ["demo/demo.xml"],
-    "installable": False,
+    "assets": {
+        "web.assets_frontend": [
+            "crowdfunding_compassion/static/src/js/search.js",
+            "crowdfunding_compassion/static/src/js/website_widgets.js",
+        ],
+        "website.assets_editor": [
+            "crowdfunding_compassion/static/src/js/form_snippet.js"
+        ],
+    },
+    "installable": True,
     "auto_install": False,
 }

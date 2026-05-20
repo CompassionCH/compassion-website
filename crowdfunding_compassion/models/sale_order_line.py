@@ -34,7 +34,7 @@ class SaleOrderLine(models.Model):
         return super().get_donation_description(product)
 
     def _prepare_invoice_line(self, **optional_values):
-        res = super(SaleOrderLine, self)._prepare_invoice_line(**optional_values)
+        res = super()._prepare_invoice_line(**optional_values)
         participant = getattr(self, "participant_id", False)
         analytic_id = participant.project_id.event_id.analytic_id.id
         if participant:
