@@ -30,7 +30,7 @@
                 </div>
               </div>
               <h3
-                class="text-primary text-uppercase text-center font-weight-bold"
+                class="text-primary text-uppercase text-center fw-bold"
                 t-out="project.name"
               />
               <h4 class="text-center text-secondary">Make your donation</h4>
@@ -126,7 +126,7 @@
               <div class="container mt-3">
                 <input
                   id="searchInputParticipant"
-                  class="form-control mr-sm-2 mb-3"
+                  class="form-control me-sm-2 mb-3"
                   type="search"
                   placeholder="Quick search"
                   aria-label="Quick search"
@@ -355,14 +355,14 @@
                       <div class="col-12 mb-3">
                         <div class=" bg-white p-4">
                           <h4 class="text-uppercase">Options</h4>
-                          <div class="custom-control custom-switch">
+                          <div class="form-control form-switch">
                             <input
                               type="checkbox"
-                              class="custom-control-input"
+                              class="form-check-input"
                               name="is_anonymous"
                               id="is_anonymous"
                             />
-                            <label class="custom-control-label" for="is_anonymous">
+                            <label class="form-check-label" for="is_anonymous">
                                                             Anonymous donation
                                                         </label>
                           </div>
@@ -370,14 +370,14 @@
                                                         I want to make an anonymous donation. My name will not be
                                                         displayed on the project page.
                                                     </p>
-                          <div class="custom-control custom-switch">
+                          <div class="form-control form-switch">
                             <input
                               type="checkbox"
-                              class="custom-control-input"
+                              class="form-check-input"
                               name="opt_out"
                               id="opt_out"
                             />
-                            <label class="custom-control-label" for="opt_out">
+                            <label class="form-check-label" for="opt_out">
                                                             Unsubscribe from e-mails
                                                         </label>
                           </div>
@@ -390,7 +390,7 @@
                       <div class="col-12">
                         <button
                           type="submit"
-                          class="btn btn-white font-weight-bold btn-lg mb-2 w-100"
+                          class="btn btn-white fw-bold btn-lg mb-2 w-100"
                         >
                                                     Donate Now
                                                 </button>
@@ -412,7 +412,7 @@
               id="a_step_01"
               t-attf-href="#{project.website_url}/donation"
               t-if="int(page) == 2"
-              class="btn btn-primary btn-lg mb-5 float-left text-uppercase"
+              class="btn btn-primary btn-lg mb-5 float-start text-uppercase"
             >
                             Previous step
                         </a>
@@ -420,14 +420,14 @@
               id="a_step_02"
               t-attf-href="#{project.website_url}/donation?page=2"
               t-att-project="project.id"
-              class="btn btn-primary btn-lg mb-5 float-left text-uppercase"
+              class="btn btn-primary btn-lg mb-5 float-start text-uppercase"
               t-if="int(page) == 3"
             >
                             Previous step
                         </a>
             <a
               id="submit"
-              class="btn btn-primary btn-lg mb-5 float-right text-uppercase"
+              class="btn btn-primary btn-lg mb-5 float-end text-uppercase"
               href="#"
             >
                             Next step
