@@ -6,9 +6,7 @@
       <t t-call="crowdfunding_compassion.layout">
         <t t-set="title">TOGETHER - Compassion Switzerland Fundraising</t>
         <header class="masthead">
-          <h1
-            class="display-1 text-white text-uppercase font-weight-bold pt-4"
-          >Together</h1>
+          <h1 class="display-1 text-white text-uppercase fw-bold pt-4">Together</h1>
         </header>
         <!-- Impact so far -->
         <section class="# py-5" id="#">
@@ -68,7 +66,7 @@
             <div class="row">
               <div class="col-lg-12 text-center py-5">
                 <h2 class="subheading text-uppercase">How does it work</h2>
-                <p class="text-white font-weight-normal h4">
+                <p class="text-white fw-normal h4">
                                     You're just 3 steps from the launch of your project
                                 </p>
               </div>
@@ -80,7 +78,7 @@
                   class="w-75 rounded-circle pb-4"
                   alt="Responsive image"
                 />
-                <p class="font-weight-bold text-white h4">1. Launch your project</p>
+                <p class="fw-bold text-white h4">1. Launch your project</p>
                 <p>
                                     Decide on the nature of your project (race, birthday, etc.), present it as well as
                                     your motivations. With this new project, not only do you have a new goal in front of
@@ -95,9 +93,7 @@
                   class="w-75 rounded-circle pb-4"
                   alt="Responsive image"
                 />
-                <p
-                  class="font-weight-bold text-white h4"
-                >2. Choose a fund for your impact</p>
+                <p class="fw-bold text-white h4">2. Choose a fund for your impact</p>
                 <p>
                                     Concretely choose the cause you want to support with your project. Building safe
                                     toilets, ensuring the survival of mothers and their babies? Or find sponsors for
@@ -110,9 +106,7 @@
                   class="w-75 rounded-circle pb-4"
                   alt="Responsive image"
                 />
-                <p
-                  class="font-weight-bold text-white h4"
-                >3. Publish and start sending love</p>
+                <p class="fw-bold text-white h4">3. Publish and start sending love</p>
                 <p>
                                     Make your project known around you! Share the link of your project on social
                                     networks, via WhatsApp or e-mail and motivate others to support you!
@@ -191,7 +185,6 @@
         </section>
       </t>
     </template>
-    <!-- TODO Odoo creates automatically a "/" homepage but we cannot find the way to use it instead of creating another one -->
     <record id="homepage" model="website.page">
       <field name="name">Crowdfunding Homepage</field>
       <field name="website_published">True</field>

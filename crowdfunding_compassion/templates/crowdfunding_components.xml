@@ -430,8 +430,6 @@
           <p>
             <t t-out="fund_description" />
           </p>
-          <!--                    <button type="button" class="btn btn-primary btn-md my-3">More infos</button>-->
-          <!--                    TODO truncate description and load full text in modal popup -> CO-3212-->
         </div>
       </div>
     </template>
@@ -497,8 +495,8 @@
         <button
           class="navbar-toggler navbar-toggler-right"
           type="button"
-          data-toggle="collapse"
-          data-target="#navbarResponsive"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarResponsive"
           aria-controls="navbarResponsive"
           aria-expanded="false"
           aria-label="Toggle navigation"
@@ -506,7 +504,7 @@
           <i class="fa fa-bars fa-xs " />
         </button>
         <div class="collapse navbar-collapse dropdown" id="navbarResponsive">
-          <ul class="navbar-nav text-text-uppercase ml-auto">
+          <ul class="navbar-nav text-text-uppercase ms-auto">
             <li class="nav-item">
               <a class="nav-link" href="/projects/create">Submit your project</a>
             </li>
@@ -522,8 +520,8 @@
             </t>
             <t t-call="portal.user_dropdown">
               <t t-set="_icon" t-value="true" />
-              <t t-set="_item_class" t-value="'nav-item dropdown ml-lg-auto'" />
-              <t t-set="_link_class" t-value="'nav-link font-weight-bold'" />
+              <t t-set="_item_class" t-value="'nav-item dropdown ms-lg-auto'" />
+              <t t-set="_link_class" t-value="'nav-link fw-bold'" />
             </t>
             <li class="nav-item">
               <!--  lang selector        -->
@@ -717,7 +715,7 @@
               <div class="col-md-4 ">
                 <small>© 2024 Compassion Switzerland / all rights reserved</small>
               </div>
-              <div class="col-sm-12 col-md-4 text-right d-none d-md-block">
+              <div class="col-sm-12 col-md-4 text-end d-none d-md-block">
                 <span class="lang-selector">
                   <a
                     t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='fr_CH')"

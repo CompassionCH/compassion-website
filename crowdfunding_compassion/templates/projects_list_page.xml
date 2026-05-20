@@ -30,7 +30,7 @@
               style="border: #005EB8 1px solid"
             >
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
+                <ul class="navbar-nav me-auto">
                   <li
                     t-att-class="'nav-item' if type is not None and status is not None else 'nav-item active'"
                   >
@@ -89,10 +89,10 @@
                                         </a>
                   </li>
                 </ul>
-                <form class="form-inline">
+                <form class="">
                   <input
                     id="myInput"
-                    class="form-control mr-sm-2"
+                    class="form-control me-sm-2"
                     type="search"
                     placeholder="Quick search"
                     aria-label="Quick search"
@@ -109,7 +109,6 @@
           <div class="projects_pager mt-2 mb-5">
             <t t-call="website.pager" />
           </div>
-          <!--                TODO CO-3212 -->
         </section>
       </t>
     </template>

@@ -1,16 +1,5 @@
 <odoo>
   <data>
-    <template
-      id="my_account_crowdfunding"
-      name="My account Crowdfunding"
-      inherit_id="my_compassion.my_account_menu"
-    >
-      <xpath expr="//a[@href='/my/letter']" position="after">
-        <t t-if="request.env.user.partner_id.crowdfunding_project_count">
-          <a href="/my/together" role="menuitem" class="dropdown-item">Together</a>
-        </t>
-      </xpath>
-    </template>
     <template id="my_account_crowdfunding_view_template" name="My Account Together">
       <t t-set="selected" t-value="'together'" />
       <t t-call="portal.frontend_layout">
@@ -89,7 +78,7 @@
             >
               <div class="s_website_form_rows row s_col_no_bgcolor">
                 <div
-                  class="form-group s_website_form_field col-12  s_website_form_model_required  "
+                  class="mb-3 s_website_form_field col-12 s_website_form_model_required"
                   data-type="char"
                   data-name="Field"
                 >
@@ -117,7 +106,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group s_website_form_field col-12  s_website_form_model_required  "
+                  class="mb-3 s_website_form_field col-12 s_website_form_model_required"
                   data-type="text"
                   data-name="Field"
                 >
@@ -145,7 +134,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group s_website_form_field col-12  s_website_form_model_required  "
+                  class="mb-3 s_website_form_field col-12 s_website_form_model_required"
                   data-type="date"
                   data-name="Field"
                 >
@@ -169,16 +158,16 @@
                         <input
                           type="text"
                           class="form-control datetimepicker-input s_website_form_input"
-                          data-target="#datepicker6344257825274314"
+                          data-bs-target="#datepicker6344257825274314"
                           name="deadline"
                           required="true"
                           placeholder="Indicate when your project should end."
                           id="o3bpfpod07qf"
                         />
                         <div
-                          class="input-group-append"
-                          data-target="#datepicker6344257825274314"
-                          data-toggle="datetimepicker"
+                          class="input-group-text"
+                          data-bs-target="#datepicker6344257825274314"
+                          data-bs-toggle="datetimepicker"
                         >
                           <div class="input-group-text">
                             <i class="fa fa-calendar" />
@@ -189,7 +178,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group s_website_form_field col-12    "
+                  class="mb-3 s_website_form_field col-12"
                   data-type="binary"
                   data-name="Field"
                 >
@@ -204,7 +193,7 @@
                     <div class="col-sm">
                       <input
                         type="file"
-                        class="form-control-file s_website_form_input"
+                        class="form-control s_website_form_input"
                         name="cover_photo"
                         id="odlajyqegv3"
                       />
@@ -212,7 +201,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group s_website_form_field col-12    "
+                  class="mb-3 s_website_form_field col-12"
                   data-type="url"
                   data-name="Field"
                 >
@@ -238,7 +227,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group s_website_form_field col-12  s_website_form_model_required  "
+                  class="mb-3 s_website_form_field col-12 s_website_form_model_required"
                   data-type="selection"
                   data-name="Field"
                 >
@@ -255,7 +244,7 @@
                       <div
                         class="row s_col_no_resize s_col_no_bgcolor s_website_form_multiple"
                         data-name="type"
-                        data-display="horizontal"
+                        data-bs-display="horizontal"
                       >
                         <div class="radio col-12 col-lg-4 col-md-6">
                           <div class="form-check">
@@ -324,7 +313,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group s_website_form_field col-12    "
+                  class="mb-3 s_website_form_field col-12"
                   data-type="url"
                   data-name="Field"
                 >
@@ -347,7 +336,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group s_website_form_field col-12    "
+                  class="mb-3 s_website_form_field col-12"
                   data-type="url"
                   data-name="Field"
                 >
@@ -370,7 +359,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group s_website_form_field col-12    "
+                  class="mb-3 s_website_form_field col-12"
                   data-type="url"
                   data-name="Field"
                 >
@@ -393,7 +382,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group s_website_form_field col-12    "
+                  class="mb-3 s_website_form_field col-12"
                   data-type="url"
                   data-name="Field"
                 >
@@ -418,7 +407,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group s_website_form_field col-12  s_website_form_required s_website_form_field_hidden "
+                  class="mb-3 s_website_form_field col-12 s_website_form_required s_website_form_field_hidden"
                   data-type="many2one"
                   data-name="Field"
                 >
@@ -450,7 +439,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group col-12 s_website_form_submit"
+                  class="mb-3 col-12 s_website_form_submit"
                   data-name="Submit Button"
                 >
                   <div style="width: 200px;" class="s_website_form_label" />
@@ -532,7 +521,7 @@
             >
               <div class="s_website_form_rows row s_col_no_bgcolor">
                 <div
-                  class="form-group s_website_form_field col-12    "
+                  class="mb-3 s_website_form_field col-12"
                   data-type="char"
                   data-name="Field"
                 >
@@ -557,7 +546,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group s_website_form_field col-12    "
+                  class="mb-3 s_website_form_field col-12"
                   data-type="binary"
                   data-name="Field"
                 >
@@ -572,7 +561,7 @@
                     <div class="col-sm">
                       <input
                         type="file"
-                        class="form-control-file s_website_form_input"
+                        class="form-control s_website_form_input"
                         name="profile_picture"
                         id="onbmcou9sxde"
                       />
@@ -580,7 +569,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group s_website_form_field col-12  s_website_form_model_required  "
+                  class="mb-3 s_website_form_field col-12 s_website_form_model_required"
                   data-type="text"
                   data-name="Field"
                 >
@@ -607,7 +596,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group s_website_form_field col-12    "
+                  class="mb-3 s_website_form_field col-12"
                   data-type="url"
                   data-name="Field"
                 >
@@ -630,7 +619,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group s_website_form_field col-12    "
+                  class="mb-3 s_website_form_field col-12"
                   data-type="url"
                   data-name="Field"
                 >
@@ -653,7 +642,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group s_website_form_field col-12    "
+                  class="mb-3 s_website_form_field col-12"
                   data-type="url"
                   data-name="Field"
                 >
@@ -676,7 +665,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group s_website_form_field col-12    "
+                  class="mb-3 s_website_form_field col-12"
                   data-type="url"
                   data-name="Field"
                 >
@@ -701,7 +690,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group s_website_form_field col-12 s_website_form_required s_website_form_field_hidden"
+                  class="mb-3 s_website_form_field col-12 s_website_form_required s_website_form_field_hidden"
                   data-type="many2one"
                   data-name="Field"
                 >
@@ -730,7 +719,7 @@
                   </div>
                 </div>
                 <div
-                  class="form-group col-12 s_website_form_submit"
+                  class="mb-3 col-12 s_website_form_submit"
                   data-name="Submit Button"
                 >
                   <div style="width: 200px;" class="s_website_form_label" />
@@ -753,7 +742,7 @@
                 <div class="container">
                   <h2 class="text-center"><span
                     class="fa fa-check-circle"
-                    data-original-title=""
+                    data-bs-original-title=""
                     title=""
                     aria-describedby="tooltip344077"
                   />&amp;nbsp;Profile updated.<br /></h2>
@@ -761,7 +750,7 @@
                     <a
                       href="/my/together"
                       class="btn btn-primary btn-lg"
-                      data-original-title=""
+                      data-bs-original-title=""
                       title=""
                       aria-describedby="tooltip335587"
                     >
