@@ -89,7 +89,7 @@
                             <t t-esc="name" />
                         </div>
                         <div t-if="recipient" t-attf-class="text-#{recipient_color} body-small bold">
-                            To
+                            For
                             <t t-esc="recipient" />
                         </div>
                         <div t-if="subtext" t-attf-class="text-#{subtext_color} body-small bold">

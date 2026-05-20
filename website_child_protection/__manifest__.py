@@ -14,8 +14,7 @@
     "installable": False,
     "depends": [
         "website_form",
-        "child_protection",
-        "theme_compassion_2025",
+        "child_protection"
     ],
     "data": [
         "security/ir.model.access.csv",

@@ -23,6 +23,7 @@ Page: My Compassion 2 Dashboard Page
     <!-- DASHBOARD -->
     <template id="my2_dashboard_page" name="My Compassion 2 Dashboard Page">
         <link rel="stylesheet" href="/my_compassion/static/src/css/my2_dashboard.css" />
+        <t t-set="additional_title">Home</t>
         <t t-call="website.layout">
             <div class="container">
                 <!-- BANNER -->
@@ -35,7 +36,11 @@ Page: My Compassion 2 Dashboard Page
                             Compassion
                         </h1>
                     </div>
-                    <img src="/theme_compassion_2025/static/src/img/snippets/dashboard_banner.png" class="img-fluid" />
+                    <img
+                        src="/theme_compassion_2025/static/src/img/snippets/dashboard_banner.png"
+                        alt=""
+                        class="img-fluid"
+                    />
                 </div>
                 <!-- TITLE -->
                 <div class="container-content mt-4">

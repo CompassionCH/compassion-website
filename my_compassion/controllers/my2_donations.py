@@ -16,6 +16,7 @@ from werkzeug.exceptions import BadRequest, NotFound
 
 from odoo import fields, http
 from odoo.http import request
+from odoo.tools.translate import _
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
 
@@ -41,6 +42,9 @@ class MyCompassionDonationsController(CustomerPortal):
             "product": product,
             "sponsorships": sponsorships,
             "donation_limits": donation_limits,
+            "additional_title": "{} - {}".format(
+                _("Gifts"), product.my_compassion_name
+            ),
         }
 
         return request.render(
@@ -72,24 +76,58 @@ class MyCompassionDonationsController(CustomerPortal):
         # Make sure the product is available
         if not product_template.activate_for_my_compassion:
             raise NotFound()
-
+        # Extract order line for the current product
+        current_order_line_fields = self._extract_donation_order_line_fields(
+            product_template, post
+        )
         # Get current cart content
         order = request.website.sale_get_order(force_create=True)
+        # See if an existing row for the same product and the same sponsorship exists
+        # If it's the case, just increment the amount of the donation
+        domain = [
+            ("order_id", "=", order.id),
+            ("product_id.product_tmpl_id", "=", product_template.id),
+            ("frequency", "=", current_order_line_fields.get("frequency")),
+        ]
+        if current_order_line_fields.get("is_gift") and current_order_line_fields.get(
+            "gift_recipient_id"
+        ):
+            domain.append(
+                (
+                    "gift_recipient_id",
+                    "=",
+                    int(current_order_line_fields.get("gift_recipient_id")),
+                )
+            )
+        # Order lines for the same product (same sponsorship, same product)
+        matching_lines = request.env["sale.order.line"].sudo().search(domain)
 
-        # Add product to the cart
-        order.write(
-            {
-                "order_line": [
-                    (
-                        0,
-                        0,
-                        self._extract_donation_order_line_fields(
-                            product_template, post
-                        ),
-                    )
-                ]
-            }
-        )
+        # Aggregate the matching lines if necessary
+        if matching_lines:
+            aggregated_line = matching_lines[0]
+            aggregated_price = sum(line.price_unit for line in matching_lines)
+
+            # Unlink all but the first one in a single call
+            if len(matching_lines) > 1:
+                matching_lines[1:].unlink()
+
+            # Add to the aggregated price the one of the current donation
+            aggregated_price += current_order_line_fields["price_unit"]
+            aggregated_line.price_unit = aggregated_price
+
+        else:
+            # Add the new product to the cart
+            order.write(
+                {
+                    "order_line": [
+                        (
+                            0,
+                            0,
+                            current_order_line_fields,
+                        )
+                    ]
+                }
+            )
 
     @http.route(
         "/my2/gifts/edit",
@@ -272,20 +310,17 @@ class MyCompassionDonationsController(CustomerPortal):
     )
     def my2_render_add_a_gift_page(self, **kwargs):
         """
-        Renders the add a gift page to quickly add a gift to the gift package.
+        Renders the add a gift page to add a gift to the gift package.
         return: An HTTP response containing a rendered template with the add a
         gift page.
         """
-        # Exclude fund donation that are already in the user's gift package
         order = request.website.sale_get_order(force_create=True)
-        product_template_ids_in_cart = order.order_line.product_id.product_tmpl_id.ids
         products = request.env["product.template"].search(
             [
-                "&",
                 ("activate_for_my_compassion", "=", True),
                 "|",
                 ("my_compassion_donation_type", "=", "gift"),
-                ("id", "not in", product_template_ids_in_cart),
+                ("my_compassion_donation_type", "=", "fund"),
             ]
         )
 
@@ -315,7 +350,9 @@ class MyCompassionDonationsController(CustomerPortal):
             sale_order = request.env["sale.order"].sudo().browse(sale_order_id)
             return request.render(
                 "my_compassion.my2_gifts_thank_you_page",
-                {"sale_order": sale_order},
+                {
+                    "sale_order": sale_order,
+                },
             )
         return request.redirect("/my2/dashboard")
 
@@ -323,8 +360,8 @@ class MyCompassionDonationsController(CustomerPortal):
     def _extract_donation_order_line_fields(product_template, post):
         # Compute quantity
         price = 0
-        amount = post.get("suggested_amount")
-        if amount == "custom":
+        amount_type = post.get("suggested_amount")
+        if amount_type == "custom":
             try:
                 price = float(post.get("custom_amount"))
             except (ValueError, TypeError) as e:
@@ -333,15 +370,15 @@ class MyCompassionDonationsController(CustomerPortal):
             if price <= 0:
                 raise BadRequest()
         else:
-            quantities = {
-                "low": product_template.my_compassion_donation_quantity_low,
-                "medium": product_template.my_compassion_donation_quantity_medium,
-                "high": product_template.my_compassion_donation_quantity_high,
+            amounts = {
+                "low": product_template.my_compassion_donation_amount_low,
+                "medium": product_template.my_compassion_donation_amount_medium,
+                "high": product_template.my_compassion_donation_amount_high,
             }
-            quantity = quantities.get(amount)
-            if not quantity:
+            price = amounts.get(amount_type)
+
+            if price is None or price <= 0:
                 raise BadRequest()
-            price = quantity * product_template.list_price
 
         # Get frequency and force one_time for gifts
         if product_template.my_compassion_donation_type == "gift":
@@ -357,6 +394,7 @@ class MyCompassionDonationsController(CustomerPortal):
         order_line_fields = {
             "product_id": product.id,
             "price_unit": price,
+            "product_uom_qty": 1.0,
             "frequency": frequency,
         }
         if product_template.my_compassion_donation_type == "gift":
@@ -449,6 +487,7 @@ class MyCompassionDonationsController(CustomerPortal):
                 "paid_invoices_subset": paid_invoices_data["paid_invoices_subset"],
                 "current_page": paid_invoices_data["current_page"],
                 "total_pages": paid_invoices_data["total_pages"],
+                "additional_title": _("My Donations"),
             }
         )
         return request.render("my_compassion.my2_my_donations_page", values)

@@ -852,6 +852,7 @@ msgstr "Aggiungi e procedi al checkout"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_add_a_gift_page
+#, python-format
 msgid "Add a Gift"
 msgstr "Aggiungi un regalo"
 
@@ -1995,6 +1996,7 @@ msgstr "Regalo"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_page
+#, python-format
 msgid "Gift Basket"
 msgstr "Carrello per i regali"
 
@@ -2029,6 +2031,7 @@ msgstr "Bambina"
 #: model_terms:ir.ui.view,arch_db:my_compassion.dashboard_donations_vignette
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
+#, python-format
 msgid "Give"
 msgstr "Dona"
 
@@ -2075,6 +2078,8 @@ msgid "Hobbies"
 msgstr "Hobby"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.http_error_custom
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_dashboard_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
 msgid "Home"
 msgstr "Home"
@@ -2505,7 +2510,9 @@ msgid "Letter saved!"
 msgstr "Lettera salvata!"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_letters_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
+#, python-format
 msgid "Letters"
 msgstr "Lettere"
 
@@ -2587,6 +2594,7 @@ msgstr "Luogo"
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.login_layout
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_login_form
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_signup_form
 msgid "Log in"
@@ -2766,7 +2774,10 @@ msgid "My Country"
 msgstr "Il mio Paese"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_donations.py:0
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_my_donations_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_account_menu
+#, python-format
 msgid "My Donations"
 msgstr "Le mie donazioni"
 
@@ -2786,7 +2797,9 @@ msgid "My Sponsorship"
 msgstr "Il mio sostegno"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_children.py:0
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_children_page
+#, python-format
 msgid "My Sponsorships"
 msgstr "I miei sostegni"
 
@@ -3088,7 +3101,9 @@ msgid "Payment mode"
 msgstr "Modalità di pagamento"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_sponsorships.py:0
 #: model:new.sponsorship.wizard.step,title:my_compassion.new_sponsorship_wizard_step_payment_methods
+#, python-format
 msgid "Payment options"
 msgstr "Opzioni di pagamento"
 
@@ -3814,6 +3829,7 @@ msgstr "Colore del testo"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
+#, python-format
 msgid "Thank you"
 msgstr "Grazie"
 
@@ -4035,8 +4051,12 @@ msgstr ""
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.DonationFormComponent
 #: model_terms:ir.ui.view,arch_db:my_compassion.DonationItemComponent
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_letters_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_letter_page
+msgid "For"
+msgstr "Per"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_letters_page
 msgid "To"
 msgstr "A"
 
@@ -4480,14 +4500,14 @@ msgstr "Il tuo contatto sui social (Facebook o altre piattaforme)"
 msgid ""
 "You’ll receive an email with everything you need to start the Write&amp;Pray "
 "soon."
-msgstr ""
+msgstr "Riceverai presto un'e-mail con tutte le informazioni necessarie per iniziare il tuo sostegno Write&Pray."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
 msgid ""
 "You’ll receive an email with everything you need to start the sponsorship "
 "soon."
-msgstr ""
+msgstr "Riceverai presto un'e-mail con tutte le informazioni necessarie per iniziare il tuo sostegno."
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__zip
@@ -4707,6 +4727,28 @@ msgstr ""
 "                        <i class=\"icon-user01 bg-low-yellow mx-1\"/>"
 
 #. module: my_compassion
+#: code:addons/my_compassion/controllers/my_reset_password.py:0
+#, python-format
+msgid "Reset Password"
+msgstr "Reimposta la tua password"
+
+#. module: my_compassion
+#: code:addons/my_compassion/controllers/my2_donations.py:0
+#, python-format
+msgid "Gifts"
+msgstr "Regali"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_letter_page
+msgid "New Letter"
+msgstr "Nuova lettera"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
+msgid "Settings"
+msgstr "Impostazioni"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_children_card_component
 msgid "Awaiting substitute sponsorship"
@@ -4716,3 +4758,32 @@ msgstr "In attesa di una ripresa del sostegno"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
 msgid "Write a last letter"
 msgstr "Scrivere un'ultima lettera"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_options
+msgid ""
+"Write&amp;Pray sponsorships are available for people under the "
+"age of 25. Please provide your date of birth."
+msgstr ""
+"I sostegni Write&Pray sono riservati a persone di età inferiore ai 25 anni. "
+"Inserisci la tua data di nascita."
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.child_protection_charter_page_override
+msgid "Submit"
+msgstr "Invia"
+
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid ""
+"Create a MyCompassion account to stay connected with %s.\n"
+"                                <br/>\n"
+"                                Through your personalized portal, you can easily write letters, view recent pictures,\n"
+"                                and manage your sponsorship details."
+msgstr "Crea un account MyCompassion per rimanere in contatto con %s.<br/>\n"
+"Grazie al tuo portale personalizzato, potrai scrivergli/scriverle facilmente delle lettere, guardare le foto più recenti e gestire il tuo sostegno a distanza."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "Sign up"
+msgstr "Iscriviti"

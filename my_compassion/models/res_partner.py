@@ -65,15 +65,27 @@ class Partner(models.Model):
         return bool(correspondence)
 
     def _compute_is_sponsor(self):
+        all_contracts = self.env["recurring.contract"].search(
+            [
+                "|",
+                ("partner_id", "in", self.ids),
+                ("correspondent_id", "in", self.ids),
+                ("child_id", "!=", False),
+            ]
+        )
+        contracts_by_partner = {}
+        for c in all_contracts:
+            if c.partner_id:
+                contracts_by_partner.setdefault(c.partner_id.id, []).append(c)
+            if c.correspondent_id and c.correspondent_id != c.partner_id:
+                contracts_by_partner.setdefault(c.correspondent_id.id, []).append(c)
+
         for partner in self:
-            partner.is_sponsor = self.env["recurring.contract"].search_count(
-                [
-                    "|",
-                    ("partner_id", "=", partner.id),
-                    ("correspondent_id", "=", partner.id),
-                    ("state", "in", ["waiting", "active"]),
-                    ("child_id", "!=", False),
-                ],
+            partner_contracts = contracts_by_partner.get(partner.id, [])
+            partner.is_sponsor = any(
+                c.state in ["waiting", "active"]
+                or (c.state == "terminated" and not c.exit_communication_sent)
+                for c in partner_contracts
             )
 
     def _compute_is_ex_sponsor(self):

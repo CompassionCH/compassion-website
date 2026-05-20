@@ -55,6 +55,7 @@
         "views/event_compassion_view.xml",
         "views/muskathlon_registrations.xml",
         "views/notification_settings_view.xml",
+        "templates/header.xml",
         "templates/muskathlon_page.xml",
         "templates/muskathlon_registration_form.xml",
         "templates/muskathlon_order_material.xml",

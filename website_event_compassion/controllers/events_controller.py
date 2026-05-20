@@ -172,6 +172,10 @@ class EventsController(Controller):
         if sale_order.state != "draft":
             request.session["sale_order_id"] = None
             sale_order = request.website.sale_get_order(force_create=True).sudo()
+        else:
+            # clear existing lines t prevent retaining abandoned donations
+            sale_order.order_line.unlink()
+
         product_id = event.odoo_event_id.donation_product_id.id
         sale_order.add_donation(product_id, amount, registration_id=registration.id)
         return request.redirect("/shop/checkout?express=1")

@@ -29,4 +29,6 @@ class WebsiteLoginRedirect(Website):
             return request.redirect(kw.get("redirect") or "/my2/dashboard/")
 
         # If the user is not logged in, execute the original Odoo logic for login
-        return super().web_login(*args, **kw)
+        response = super().web_login(*args, **kw)
+
+        return response

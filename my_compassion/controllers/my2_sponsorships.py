@@ -14,6 +14,7 @@ from werkzeug.exceptions import BadRequest, Gone, NotFound
 
 from odoo import fields, http
 from odoo.http import request
+from odoo.tools.translate import _
 
 from odoo.addons.website_sponsorship.controllers.main import WebsiteChild
 from odoo.addons.website_sponsorship.models.compassion_child import ChildNotFound
@@ -200,18 +201,70 @@ class MyCompassionSponsorshipsController(WebsiteChild):
 
 
 class MyCompassionNewSponsorshipController(http.Controller):
+    @staticmethod
+    def _extract_utm_information() -> dict:
+        """
+        Extracts utm medium, source and campaign information
+        from the session and returns it.
+        Return:
+            a dictionary containing utm information or empty dict
+        IMPORTANT:
+            the utms need to be created first, otherwise they
+            will be ignored!
+        """
+        utm_mapping = {
+            "wizard_utm_medium": ("utm.medium", "medium_id"),
+            "wizard_utm_source": ("utm.source", "source_id"),
+            "wizard_utm_campaign": ("utm.campaign", "campaign_id"),
+        }
+        session_vals = {k: request.session.get(k) for k in utm_mapping}
+        if any(session_vals.values()):
+            utm_vals = {}
+            for k, val in session_vals.items():
+                if val:
+                    model, f_id = utm_mapping[k]
+                    rec = (
+                        request.env[model]
+                        .sudo()
+                        .search([("name", "=ilike", val)], limit=1)
+                    )
+                    # only assign if campaign already exists
+                    if rec:
+                        utm_vals[f_id] = rec.id
+            # clean up the session variables
+            for k in utm_mapping:
+                request.session.pop(k, None)
+            return utm_vals
+        return {}
+
     @http.route(
-        '/my2/new-sponsorship/<model("compassion.child"):child>',
+        "/my2/new-sponsorship/<int:child_id>",
         type="http",
         auth="public",
         website=True,
     )
-    def wizard_start(self, child, sponsorship_type="standard", **kwargs):
+    def wizard_start(self, child_id, sponsorship_type="standard", **kwargs):
         """
         Renders the new sponsorship wizard initial page.
         return: An HTTP response containing a rendered template
         with the initial wizard page.
         """
+        child = request.env["compassion.child"].sudo().browse(child_id)
+
+        if not child.exists():
+            raise NotFound("Child not found in database")
+
+        # capture and store utm information
+        utm_medium = kwargs.get("utm_medium")
+        utm_source = kwargs.get("utm_source")
+        utm_campaign = kwargs.get("utm_campaign")
+
+        if utm_medium:
+            request.session["wizard_utm_medium"] = utm_medium
+        if utm_source:
+            request.session["wizard_utm_source"] = utm_source
+        if utm_campaign:
+            request.session["wizard_utm_campaign"] = utm_campaign
         # Make sure child is available and reserve it for 5 minutes
         if child.state not in child._available_states():
             raise NotFound()
@@ -235,6 +288,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
             "my_compassion.my2_new_sponsorship_wizard_page",
             {
                 "form_content_html": self._render_form_content(wizard),
+                "additional_title": _("Payment options"),
             },
         )
 
@@ -294,6 +348,10 @@ class MyCompassionNewSponsorshipController(http.Controller):
             raise Gone()
         sponsorship = wizard.finish_sponsorship()
 
+        utm_values = self._extract_utm_information()
+        if utm_values:
+            sponsorship.sudo().write(utm_values)
+
         # Redirect to thank-you page
         return request.redirect(
             f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
@@ -316,6 +374,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
             {
                 "n_steps": 3,
                 "sponsorship": sponsorship,
+                "additional_title": _("Thank you"),
             },
         )
 
