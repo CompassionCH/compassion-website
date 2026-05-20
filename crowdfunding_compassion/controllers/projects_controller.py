@@ -118,7 +118,7 @@ class ProjectsController(Controller):
         ],
         auth="public",
         type="http",
-        method="POST",
+        methods=["GET", "POST"],
         website=True,
         sitemap=False,
     )

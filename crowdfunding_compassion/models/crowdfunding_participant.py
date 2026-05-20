@@ -178,7 +178,7 @@ class CrowdfundingParticipant(models.Model):
             participant.number_csp_reached = len(participant.csp_sponsorship_ids)
 
     def _compute_profile_photo_url(self):
-        domain = self.env["website"].get_current_website()._get_http_domain()
+        domain = self.env["website"].get_current_website().domain
         for participant in self:
             title = participant.sudo().partner_id.title.with_context(lang="en_US")
             if participant.profile_photo:

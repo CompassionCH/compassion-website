@@ -493,7 +493,7 @@ class CrowdfundingProject(models.Model):
             ).id
 
     def _compute_cover_photo_url(self):
-        domain = self.env["website"].get_current_website()._get_http_domain()
+        domain = self.get_base_url()
         for project in self:
             project.cover_photo_url = (
                 f"{domain}/web/content/crowdfunding.project/{project.id}/cover_photo"
@@ -615,19 +615,16 @@ class CrowdfundingProject(models.Model):
 
     @ormcache()
     def get_sponsor_card_header_image(self):
-        return (
-            ImageProcess(
-                base64.b64encode(
-                    file_open(
-                        "crowdfunding_compassion/static/src/img/"
-                        "sponsor_children_banner.jpg",
-                        "rb",
-                    ).read()
-                ),
+        with file_open(
+            "crowdfunding_compassion/static/src/img/sponsor_children_banner.jpg",
+            "rb",
+        ) as image_file:
+            processed = (
+                ImageProcess(image_file.read())
+                .resize(max_width=400)
+                .image_quality(75, "JPEG")
             )
-            .resize(max_width=400)
-            .image_base64(75)
-        )
+        return base64.b64encode(processed or b"")
 
     @ormcache("value")
     def fund_impact_val_formatting(self, value):
@@ -661,3 +658,6 @@ For 42 francs a month, you're opening the way out of poverty for a child. Sponso
                 "crowdfunding_compassion/static/src/img/icn_children.png", "rb"
             ).read()
         )
+
+    def get_base_url(self):
+        return self.env.ref("crowdfunding_compassion.crowdfunding_website").domain
