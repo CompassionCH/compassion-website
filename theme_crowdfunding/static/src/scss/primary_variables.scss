@@ -3,16 +3,24 @@
 //------------------------------------------------------------------------------
 
 // Colors
-$o-color-palettes: (
+/* prettier-ignore */
+$o-color-palettes: map-merge(
+  $o-color-palettes,
   (
-    "o-color-1": #2a5eec,
-    "o-color-2": #707070,
-    "o-color-3": #f9f9f9,
-    "o-color-4": #ffffff,
-    "o-color-5": #111111,
-    "footer": 4,
-    "copyright": 4,
+    "crowdfunding": (
+      "o-color-1": #2a5eec,
+      "o-color-2": #707070,
+      "o-color-3": #f9f9f9,
+      "o-color-4": #ffffff,
+      "o-color-5": #111111,
+      "footer": 4,
+      "copyright": 4,
+    ),
   )
+);
+$o-selected-color-palettes-names: append(
+  $o-selected-color-palettes-names,
+  "crowdfunding"
 );
 
 //------------------------------------------------------------------------------
@@ -39,7 +47,7 @@ $o-theme-font-configs: (
 //------------------------------------------------------------------------------
 // Website customizations
 //------------------------------------------------------------------------------
-
+/* prettier-ignore */
 $o-website-values-palettes: (
   (
     "font": "Montserrat",
@@ -50,8 +58,9 @@ $o-website-values-palettes: (
     "hamburger-type": "off-canvas",
     "hamburger-position": "left",
     "footer-template": "links",
+    "color-palettes-name": "crowdfunding",
     "btn-border-radius": 0,
     "btn-border-radius-sm": 0,
     "btn-border-radius-lg": 0,
-  )
+  ),
 );

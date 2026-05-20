@@ -71,7 +71,7 @@
             <field name="cover_photo" widget="image" class="oe_avatar" />
             <div class="oe_title">
               <h4>
-                <field name="website_id" groups="website.group_website_publisher" />
+                <field name="website_id" groups="website.group_website_designer" />
               </h4>
               <h3>
                 <field name="type" />
@@ -119,18 +119,9 @@
                       name="owner_product_number_goal"
                       invisible="owner_participant_id"
                     />
-                    <label
-                      for="event_id"
-                      readonly="False # could not parse True"
-                      invisible="event_id == ''"
-                    />
+                    <label for="event_id" invisible="event_id == ''" />
                     <h3>
-                      <field
-                        name="event_id"
-                        widget="many2one"
-                        readonly="False # could not parse True"
-                        invisible="event_id == ''"
-                      />
+                      <field name="event_id" widget="many2one" />
                     </h3>
                     <label for="product_id" />
                     <h3>
@@ -292,7 +283,7 @@
         decoration-muted="active==False or state=='done'"
         default_order="deadline desc"
       >
-        <field name="cover_photo" widget="image" />
+        <field name="cover_photo" widget="image" optional="hide" />
         <field name="name" />
         <field name="website_id" />
         <field name="project_owner_id" />
@@ -306,172 +297,16 @@
       </list>
     </field>
   </record>
-  <!-- Graph view -->
-  <record id="crowdfunding_project_graph_view" model="ir.ui.view">
-    <field name="name">crowdfunding.project.graph</field>
-    <field name="model">crowdfunding.project</field>
-    <field name="arch" type="xml">
-      <graph type="bar" stacked="True">
-        <field name="create_date" interval="month" />
-        <field name="type" />
-        <field name="amount_reached" type="measure" />
-      </graph>
-    </field>
-  </record>
-  <!-- Kanban view -->
-  <record id="crowdfunding_project_kanban_view" model="ir.ui.view">
-    <field name="name">crowdfunding.project.kanban</field>
-    <field name="model">crowdfunding.project</field>
-    <field name="arch" type="xml">
-      <kanban default_order="name">
-        <field name="id" />
-        <field name="name" />
-        <field name="description_short" />
-        <field name="type" />
-        <field name="deadline" widget="date" />
-        <field name="cover_photo" widget="binary" required="1" />
-        <field name="project_owner_id" />
-        <field name="product_number_goal" />
-        <field name="product_number_reached" />
-        <field name="number_sponsorships_goal" />
-        <field name="number_sponsorships_reached" />
-        <field name="number_csp_goal" />
-        <field name="number_csp_reached" />
-        <field name="color_sponsorship" />
-        <field name="color_product" />
-        <field name="state" />
-        <field name="color" />
-        <templates>
-          <t t-name="card">
-            <div
-              t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click card o_kanban_record_has_image_fill"
-            >
-              <div class="o_dropdown_kanban dropdown">
-                <a
-                  class="dropdown-toggle o-no-caret btn"
-                  role="button"
-                  data-toggle="dropdown"
-                >
-                  <span class="fa fa-ellipsis-v" />
-                </a>
-                <div class="dropdown-menu" role="menu">
-                  <t t-if="widget.editable">
-                    <a role="menuitem" type="edit" class="dropdown-item">Edit</a>
-                  </t>
-                  <t t-if="widget.deletable">
-                    <a role="menuitem" type="delete" class="dropdown-item">Delete</a>
-                  </t>
-                  <t t-if="record.state.raw_value != 'active'">
-                    <a
-                      role="menuitem"
-                      name="validate"
-                      type="object"
-                      class="dropdown-item"
-                    >
-                                            Validate
-                                        </a>
-                  </t>
-                  <ul class="oe_kanban_colorpicker" data-field="color" />
-                </div>
-              </div>
-              <div
-                class="o_kanban_image_fill_left d-none d-md-block"
-                t-attf-style="background-image:url('#{kanban_image('crowdfunding.project', 'cover_photo', record.id.raw_value)}')"
-              >
-                <img
-                  class="o_kanban_image_inner_pic"
-                  t-if="record.project_owner_id.raw_value"
-                  t-att-alt="record.project_owner_id.value"
-                  t-att-src="kanban_image('res.partner', 'image_128', record.project_owner_id.raw_value)"
-                />
-              </div>
-              <div class="card-body oe_kanban_details">
-                <h4 class="card-title" style="text-transform: text-uppercase;">
-                  <a type="open">
-                    <field name="name" />
-                  </a>
-                </h4>
-                <h5>
-                  <span class="badge badge-dark">
-                    <field name="type" />
-                  </span>
-                  <span class="badge badge-dark">
-                                        <field name="deadline" />
-                                        (
-                                        <field name="time_left" />
-                                        )
-                                    </span>
-                  <span
-                    class="badge badge-primary"
-                    t-if="record.state.raw_value == 'active'"
-                  >
-                                        <field name="amount_reached" />
-                                        .-CHF
-                                    </span>
-                </h5>
-                <h5>
-                  <span
-                    t-attf-class="#{record.color_sponsorship.raw_value}"
-                    t-if="record.number_sponsorships_goal.raw_value"
-                  >
-                                        <field name="number_sponsorships_reached" />
-                                        /
-                                        <field name="number_sponsorships_goal" />
-                                        sponsorship reached
-                                    </span>
-                  <span
-                    t-attf-class="#{record.color_sponsorship.raw_value}"
-                    t-if="record.number_csp_reached.raw_value"
-                  >
-                                        <field name="number_csp_reached" />
-                                        /
-                                        <field name="number_csp_goal" />
-                                        CSP reached
-                                    </span>
-                  <span
-                    t-attf-class="#{record.color_product.raw_value}"
-                    t-if="record.product_number_goal.raw_value"
-                  >
-                                        <field name="product_number_reached" />
-                                        /
-                                        <field name="product_number_goal" />
-                                        product reached
-                                    </span>
-                </h5>
-                <p
-                  class="card-text"
-                  data-toggle="tooltip"
-                  data-html="true"
-                  t-att-title="record.description_short.raw_value"
-                >
-                  <field name="description_short" />
-                </p>
-              </div>
-              <div class="card-footer w-100 text-muted text-center">
-                <a
-                  name="open_participants"
-                  type="object"
-                  class="btn btn-outline-info"
-                  role="button"
-                >
-                                    <field name="number_participants" />
-                                    Participants
-                                </a>
-              </div>
-            </div>
-          </t>
-        </templates>
-      </kanban>
-    </field>
-  </record>
+
   <!-- Action opening the list view -->
   <record id="open_view_crowdfunding_project_tree" model="ir.actions.act_window">
     <field name="name">Project</field>
     <field name="res_model">crowdfunding.project</field>
-    <field name="view_mode">list,kanban,form,graph</field>
+    <field name="view_mode">list,form</field>
     <field
       name="context"
     >{'search_default_state_draft':1,'search_default_state_active':1}</field>
+    <field name="path">crowdfunding</field>
   </record>
   <!-- Menu -->
   <menuitem

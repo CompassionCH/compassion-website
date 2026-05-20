@@ -77,9 +77,6 @@
             "crowdfunding_compassion/static/src/js/search.js",
             "crowdfunding_compassion/static/src/js/website_widgets.js",
         ],
-        "website.assets_editor": [
-            "crowdfunding_compassion/static/src/js/form_snippet.js"
-        ],
     },
     "installable": True,
     "auto_install": False,

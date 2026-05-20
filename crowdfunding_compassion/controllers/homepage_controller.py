@@ -9,10 +9,6 @@ _logger = logging.getLogger(__name__)
 class HomepageController(Controller):
     @route("/homepage", auth="public", website=True, sitemap=False)
     def homepage(self, **kwargs):
-        website = request.env.ref("crowdfunding_compassion.crowdfunding_website")
-        if request.website != website:
-            website._force()
-            return request.redirect("/homepage")
         return request.render(
             "crowdfunding_compassion.homepage_template",
             self._compute_homepage_context(),
