@@ -24,7 +24,7 @@ class ResPartner(models.Model):
             "name": "Crowdfunding Project",
             "type": "ir.actions.act_window",
             "view_type": "form",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "res_model": "crowdfunding.project",
             "domain": [("id", "in", project_ids.ids)],
             "target": "current",

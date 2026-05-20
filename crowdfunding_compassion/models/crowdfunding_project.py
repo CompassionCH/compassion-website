@@ -8,7 +8,8 @@ from babel.dates import format_timedelta
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
-from odoo.tools import ImageProcess, file_open, ormcache
+from odoo.tools import file_open, ormcache
+from odoo.tools.image import ImageProcess
 
 from ..exceptions import InvalidDeadlineException
 
@@ -279,34 +280,35 @@ class CrowdfundingProject(models.Model):
         for project in self:
             project.product_price = project.product_id.standard_price or 1
 
-    @api.model
-    def create(self, vals):
-        res = super().create(vals)
-        event = self.env["crm.event.compassion"].create(
-            {
-                "name": vals.get("name"),
-                "type": "crowdfunding",
-                "crowdfunding_project_id": res.id,
-                "company_id": self.env.user.company_id.id,
-                "start_date": vals.get("deadline"),
-                "end_date": vals.get("deadline"),
-                "hold_start_date": date.today(),
-                "number_allocate_children": vals.get("product_number_goal"),
-                "planned_sponsorships": vals.get("number_sponsorships_goal"),
-                "ambassador_config_id": self.env.ref(
-                    "crowdfunding_compassion.config_donation_received"
-                ).id,
-            }
-        )
-        res.event_id = event
-        self.env["recurring.contract.origin"].create(
-            {
-                "type": "crowdfunding",
-                "event_id": event.id,
-                "analytic_id": event.analytic_id.id,
-            }
-        )
-        res.add_owner2participants()
+    @api.model_create_multi
+    def create(self, vals_list):
+        res = super().create(vals_list)
+        for project in res:
+            event = self.env["crm.event.compassion"].create(
+                {
+                    "name": project.name,
+                    "type": "crowdfunding",
+                    "crowdfunding_project_id": project.id,
+                    "company_id": self.env.user.company_id.id,
+                    "start_date": project.deadline,
+                    "end_date": project.deadline,
+                    "hold_start_date": date.today(),
+                    "number_allocate_children": project.product_number_goal,
+                    "planned_sponsorships": project.number_sponsorships_goal,
+                    "ambassador_config_id": self.env.ref(
+                        "crowdfunding_compassion.config_donation_received"
+                    ).id,
+                }
+            )
+            project.event_id = event
+            self.env["recurring.contract.origin"].create(
+                {
+                    "type": "crowdfunding",
+                    "event_id": event.id,
+                    "analytic_id": event.analytic_id.id,
+                }
+            )
+            project.add_owner2participants()
         return res
 
     def add_owner2participants(self):
@@ -556,7 +558,7 @@ class CrowdfundingProject(models.Model):
             "type": "ir.actions.act_window",
             "name": _("Participants"),
             "view_type": "form",
-            "view_mode": "kanban,tree,form"
+            "view_mode": "kanban,list,form"
             if self.type == "collective"
             else "form,tree",
             "res_model": "crowdfunding.participant",
@@ -571,7 +573,7 @@ class CrowdfundingProject(models.Model):
             "type": "ir.actions.act_window",
             "name": _("Donations"),
             "view_type": "form",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "res_model": "account.move.line",
             "domain": [("crowdfunding_participant_id", "in", self.participant_ids.ids)],
             "target": "current",
@@ -588,7 +590,7 @@ class CrowdfundingProject(models.Model):
             "type": "ir.actions.act_window",
             "name": _("Participants"),
             "view_type": "form",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "res_model": "recurring.contract",
             "domain": [
                 ("campaign_id", "=", self.campaign_id.id),
@@ -659,8 +661,3 @@ For 42 francs a month, you're opening the way out of poverty for a child. Sponso
                 "crowdfunding_compassion/static/src/img/icn_children.png", "rb"
             ).read()
         )
-
-    def open_website_url(self):
-        res = super().open_website_url()
-        res["url"] = urlparse.urljoin(self.website_id._get_http_domain(), res["url"])
-        return res

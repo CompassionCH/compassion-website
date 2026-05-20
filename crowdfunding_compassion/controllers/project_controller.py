@@ -6,7 +6,6 @@ from babel.dates import format_timedelta
 from odoo import _
 from odoo.http import request, route
 
-from odoo.addons.http_routing.models.ir_http import slug
 from odoo.addons.website.models.ir_http import sitemap_qs2dom
 
 from .homepage_controller import HomepageController
@@ -18,8 +17,9 @@ class ProjectController(HomepageController):
         dom = sitemap_qs2dom(qs, "/projects", projects._rec_name)
         dom += request.website.website_domain()
         dom += [("website_published", "=", True)]
+        slug = env["ir.http"]._slug
         for f in projects.search(dom):
-            loc = "/project/%s" % slug(f)
+            loc = f"/project/{slug(f)}"
             if not qs or qs.lower() in loc:
                 yield {"loc": loc}
 
@@ -29,8 +29,9 @@ class ProjectController(HomepageController):
         dom = sitemap_qs2dom(qs, "/participant", projects._rec_name)
         dom += request.website.website_domain()
         dom += [("website_published", "=", True), ("project_id.deadline", ">", today)]
+        slug = env["ir.http"]._slug
         for f in projects.search(dom):
-            loc = "/participant/%s" % slug(f)
+            loc = f"/participant/{slug(f)}"
             if not qs or qs.lower() in loc:
                 yield {"loc": loc}
 

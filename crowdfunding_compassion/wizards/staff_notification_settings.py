@@ -5,6 +5,7 @@ class StaffNotificationSettings(models.TransientModel):
     """Settings configuration for any Notifications."""
 
     _inherit = "res.config.settings"
+    _name = "res.config.settings"
 
     new_participant_notify_ids = fields.Many2many(
         "res.partner",
@@ -15,11 +16,12 @@ class StaffNotificationSettings(models.TransientModel):
     )
 
     def set_values(self):
-        super().set_values()
+        res = super().set_values()
         self.env["ir.config_parameter"].sudo().set_param(
             "crowdfunding_compassion.new_participant_notify_ids",
             ",".join(list(map(str, self.new_participant_notify_ids.ids))),
         )
+        return res
 
     def get_values(self):
         param_obj = self.env["ir.config_parameter"].sudo()
