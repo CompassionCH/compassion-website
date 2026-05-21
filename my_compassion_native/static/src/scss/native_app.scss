@@ -31,6 +31,25 @@ body.capacitor-native-app {
 }
 
 body.is-native-app {
+    header#top {
+        /* Pushes the header below the Dynamic Island / Notch */
+        padding-top: env(safe-area-inset-top) !important;
+        background-color: $white;
+    }
+
+    header#top .navbar {
+        padding-top: 0 !important;
+    }
+
+    main {
+        padding-top: env(safe-area-inset-top) !important;
+    }
+
+    .modal-content {
+        padding-top: env(safe-area-inset-top) !important;
+        padding-bottom: env(safe-area-inset-bottom, 20px) !important;
+    }
+
     &.modal-open {
         overflow: hidden !important;
         position: fixed !important;
