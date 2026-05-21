@@ -74,8 +74,8 @@
     "demo": ["demo/demo.xml"],
     "assets": {
         "web.assets_frontend": [
-            "crowdfunding_compassion/static/src/js/search.js",
-            "crowdfunding_compassion/static/src/js/website_widgets.js",
+            "crowdfunding_compassion/static/src/js/search.esm.js",
+            "crowdfunding_compassion/static/src/js/website_widgets.esm.js",
         ],
     },
     "installable": True,
