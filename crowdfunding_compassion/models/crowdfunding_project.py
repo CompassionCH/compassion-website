@@ -558,9 +558,7 @@ class CrowdfundingProject(models.Model):
             "type": "ir.actions.act_window",
             "name": _("Participants"),
             "view_type": "form",
-            "view_mode": "kanban,list,form"
-            if self.type == "collective"
-            else "form,tree",
+            "view_mode": "list,form" if self.type == "collective" else "form,list",
             "res_model": "crowdfunding.participant",
             "res_id": self.owner_participant_id.id,
             "domain": [("project_id", "=", self.id)],
