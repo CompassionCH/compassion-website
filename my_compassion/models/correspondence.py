@@ -13,6 +13,13 @@ class Correspondence(models.Model):
         help="Prevents website publication when changed manually",
     )
 
+    web_sort_date = fields.Datetime(
+        string="Web Sort Date",
+        compute="_compute_web_sort_date",
+        store=True,
+        index=True,
+    )
+
     @api.depends(
         "direction",
         "state",
@@ -62,3 +69,12 @@ class Correspondence(models.Model):
     def website_publish_button(self):
         self.website_published_manual = True
         return self.write({"is_published": not self.is_published})
+
+    @api.depends("direction", "status_date", "create_date")
+    def _compute_web_sort_date(self):
+        for letter in self:
+            if letter.direction == "Beneficiary To Supporter":
+                letter.web_sort_date = letter.status_date
+            else:
+                # Fallback to create_date for S->B
+                letter.web_sort_date = letter.create_date

@@ -59,6 +59,7 @@
         "views/correspondence_view.xml",
         "views/correspondence_prewritten_letter.xml",
         "views/my2_header_menu.xml",
+        "views/my2_bottom_nav.xml",
         "data/signup_email_confirmation.xml",
         "data/communication_config.xml",
         "data/dynamic_stylesheets.xml",
@@ -83,6 +84,7 @@
         "templates/pages/my2_contactus_thank_you.xml",
         "templates/pages/child_protection_override.xml",
         "templates/pages/child_unavailable_page.xml",
+        "templates/pages/my2_mobile_profile.xml",
         # My Compassion 2 components
         "templates/components/my2_children_card.xml",
         "templates/components/my2_letter_card.xml",

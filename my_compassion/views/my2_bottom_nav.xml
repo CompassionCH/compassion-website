@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="my2_mobile_app_layout" inherit_id="website.layout" name="My2 Mobile App Layout">
+        <xpath expr="//header" position="attributes">
+            <attribute
+                name="t-attf-class"
+                add="#{ 'd-none d-md-block' if (request.session.uid and '/my2/' in request.httprequest.path) or request.httprequest.path in ['/web/login', '/web/signup'] else '' }"
+                separator=" "
+            />
+        </xpath>
+        <xpath expr="//footer" position="attributes">
+            <attribute
+                name="t-attf-class"
+                add="#{ 'd-none d-md-block' if request.session.uid and '/my2/' in request.httprequest.path else '' }"
+                separator=" "
+            />
+        </xpath>
+        <xpath expr="//div[@id='wrapwrap']" position="inside">
+            <t t-if="request.session.uid and '/my2/' in request.httprequest.path">
+                <div id="bottom_nav_spacer" class="d-block d-md-none w-100" />
+                <t t-set="partner" t-value="request.env.user.partner_id" />
+                <t t-set="tab_count" t-value="6 if partner.is_sponsor else 4" />
+                <nav
+                    class="my2-bottom-nav d-flex d-md-none fixed-bottom bg-white border-top shadow-lg pt-2 pb-1"
+                    t-attf-style="--tab-count: #{tab_count}"
+                >
+                    <a
+                        href="/my2/dashboard"
+                        t-attf-class="nav-tab d-flex flex-column align-items-center text-decoration-none #{'active text-core-blue' if request.httprequest.path == '/my2/dashboard' else 'text-muted'}"
+                    >
+                        <i t-attf-class="pictogram-buildings-house vignette-icon" />
+                        <t t-set="nav_home">Home</t>
+                        <span>
+                            <t t-esc="nav_home" />
+                        </span>
+                    </a>
+                    <t t-if="partner.is_sponsor">
+                        <a
+                            href="/my2/children"
+                            t-attf-class="nav-tab d-flex flex-column align-items-center text-decoration-none #{'active text-core-blue' if '/my2/children' in request.httprequest.path and 'letter' not in request.httprequest.path else 'text-muted'}"
+                        >
+                            <i t-attf-class="pictogram-child-sponsorship vignette-icon" />
+                            <t t-set="nav_sponsorships">My sponsorships</t>
+                            <span>
+                                <t t-esc="nav_sponsorships" />
+                            </span>
+                        </a>
+                        <a
+                            href="/my2/children/letters"
+                            t-attf-class="nav-tab d-flex flex-column align-items-center text-decoration-none #{'active text-core-blue' if '/my2/children/letters' in request.httprequest.path else 'text-muted'}"
+                        >
+                            <i t-attf-class="pictogram-letter-writing vignette-icon" />
+                            <t t-set="nav_letters">Letters</t>
+                            <span>
+                                <t t-esc="nav_letters" />
+                            </span>
+                        </a>
+                    </t>
+                    <a
+                        href="/my2/gifts"
+                        t-attf-class="nav-tab d-flex flex-column align-items-center text-decoration-none #{'active text-core-blue' if request.httprequest.path == '/my2/gifts' else 'text-muted'}"
+                    >
+                        <i t-attf-class="pictogram-gift-donation-general vignette-icon" />
+                        <t t-set="nav_give">Give</t>
+                        <span>
+                            <t t-esc="nav_give" />
+                        </span>
+                    </a>
+                    <a
+                        href="/my2/gift-package"
+                        t-attf-class="nav-tab o_wsale_my_cart d-flex flex-column align-items-center text-decoration-none #{'active text-core-blue' if '/my2/gift-package' in request.httprequest.path else 'text-muted'}"
+                    >
+                        <div class="position-relative">
+                            <i t-attf-class="pictogram-gift-basket vignette-icon" />
+                            <t t-set="website_sale_order" t-value="website.sale_get_order()" />
+                            <sup
+                                t-if="website_sale_order and website_sale_order.cart_quantity"
+                                class="my_cart_quantity badge text-white"
+                                t-esc="website_sale_order.cart_quantity"
+                            />
+                        </div>
+                        <t t-set="nav_gift">Gift basket</t>
+                        <span>
+                            <t t-esc="nav_gift" />
+                        </span>
+                    </a>
+                    <a
+                        href="/my2/user_profile"
+                        t-attf-class="nav-tab d-flex flex-column align-items-center text-decoration-none #{'active text-core-blue' if '/my2/user_profile' in request.httprequest.path or '/my2/donations' in request.httprequest.path else 'text-muted'}"
+                    >
+                        <i t-attf-class="pictogram-profile vignette-icon" />
+                        <t t-set="nav_profile">Profile</t>
+                        <span>
+                            <t t-esc="nav_profile" />
+                        </span>
+                    </a>
+                    <div class="indicator-wrapper">
+                        <div class="indicator" />
+                    </div>
+                </nav>
+            </t>
+        </xpath>
+    </template>
+</odoo>
