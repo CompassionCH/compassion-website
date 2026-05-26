@@ -19,13 +19,14 @@ odoo.define("compassion_website.mobile_cart_sync", function (require) {
                                 badge.textContent = "0";
                                 badge.classList.add("d-none");
                             } else {
-                                badge.textContent = String(parseInt(badge.textContent || "0", 10) - 1);
+                                const currentQty = parseInt(badge.textContent || "0", 10);
+                                badge.textContent = String(Math.max(0, currentQty - 1));
                                 badge.classList.remove("d-none");
                             }
                         });
                     }
                 } catch (e) {
-                    console.log("Could not update mobile cart badge", e);
+                    console.error("Could not update mobile cart badge", e);
                 }
             }
         });

@@ -18,7 +18,7 @@
 /* Base style for the language pills */
 .language-pill {
     padding: 10px 20px;
-    border: 1px solid #0d6efd;
+    border: 1px solid var(--core-blue);
     color: #121a1a;
     transition: all 0.2s ease-in-out;
 }
@@ -35,7 +35,7 @@
 
 /* Active State */
 .language-pill.active {
-    background-color: #0d6efd;
+    background-color: var(--core-blue);
 }
 
 .language-pill.active .lang-text {

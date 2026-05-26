@@ -74,7 +74,7 @@ class Correspondence(models.Model):
     def _compute_web_sort_date(self):
         for letter in self:
             if letter.direction == "Beneficiary To Supporter":
-                letter.web_sort_date = letter.status_date
+                letter.web_sort_date = letter.status_date or letter.create_date
             else:
                 # Fallback to create_date for S->B
                 letter.web_sort_date = letter.create_date
