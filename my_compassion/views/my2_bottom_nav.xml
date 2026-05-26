@@ -86,7 +86,7 @@
                     </a>
                     <a
                         href="/my2/user_profile"
-                        t-attf-class="nav-tab d-flex flex-column align-items-center text-decoration-none #{'active text-core-blue' if '/my2/user_profile' in request.httprequest.path or '/my2/donations' in request.httprequest.path else 'text-muted'}"
+                        t-attf-class="nav-tab d-flex flex-column align-items-center text-decoration-none #{'active text-core-blue' if '/my2/user_profile' in request.httprequest.path or '/my2/user_settings' in request.httprequest.path or '/my2/donations' in request.httprequest.path else 'text-muted'}"
                     >
                         <i t-attf-class="pictogram-profile vignette-icon" />
                         <t t-set="nav_profile">Profile</t>
