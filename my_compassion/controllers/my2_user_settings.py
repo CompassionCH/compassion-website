@@ -245,3 +245,17 @@ class MyCompassionUserController(http.Controller):
                 "error": _("Account could not be deleted, please contact us. ")
                 + str(e),
             }
+
+    @http.route("/my2/user_profile", type="http", auth="user", website=True)
+    def user_profile_page(self):
+        """
+        This is a mobile only view, which renders a simple page
+        letting users select different profile related actions
+        like;
+        - changing language,
+        - opening the settings page,
+        - logging out,
+        - etc.
+        """
+
+        return request.render("my_compassion.my2_mobile_profile_page")
