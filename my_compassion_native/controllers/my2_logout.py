@@ -8,7 +8,7 @@
 ##############################################################################
 
 # -*- coding: utf-8 -*-
-import werkzeug
+from urllib.parse import urlparse
 
 from odoo import http
 from odoo.http import request
@@ -29,10 +29,6 @@ class MyCompassionLogout(Session):
             if existing_tokens:
                 existing_tokens.unlink()
 
-        response = super().logout()
-
-        # 4. Respect the ?redirect= URL parameter if one was provided
-        if "redirect" in kw:
-            return werkzeug.utils.redirect(kw["redirect"])
-
-        return response
+        parsed = urlparse(redirect)
+        safe_redirect = redirect if (not parsed.scheme and not parsed.netloc) else "/web"
+        return super().logout(redirect=safe_redirect)

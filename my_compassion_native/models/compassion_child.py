@@ -21,7 +21,15 @@ class CompassionChild(models.Model):
         today = datetime.date.today()
         current_year = today.year
 
-        children = self.search([("birthdate", "!=", False)])
+        window_months = list(
+            {(today + datetime.timedelta(days=i)).month for i in range(31)}
+        )
+        self.env.cr.execute(
+            "SELECT id FROM compassion_child WHERE birthdate IS NOT NULL "
+            "AND EXTRACT(MONTH FROM birthdate) = ANY(%s)",
+            (window_months,),
+        )
+        children = self.browse([row[0] for row in self.env.cr.fetchall()])
 
         for child in children:
             try:
