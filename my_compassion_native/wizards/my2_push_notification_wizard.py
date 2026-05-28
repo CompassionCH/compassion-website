@@ -39,6 +39,16 @@ class My2PushNotificationWizard(models.TransientModel):
                     "Firebase is configured correctly."
                 )
             )
+        self.env["partner.log.other.interaction"].create(
+            {
+                "partner_id": self.user_id.partner_id.id,
+                "subject": self.title,
+                "body": f"<p>{self.body}</p>",
+                "communication_type": "Other",
+                "other_type": "Push Notification",
+                "direction": "out",
+            }
+        )
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
