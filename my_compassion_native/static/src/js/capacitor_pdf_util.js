@@ -15,24 +15,29 @@ odoo.define("my_compassion_native.capacitor_pdf_util", function () {
 
             reader.readAsDataURL(blob);
             reader.onloadend = async () => {
-                const base64data = reader.result.split(",")[1];
+                try {
+                    const base64data = reader.result.split(",")[1];
 
-                const Filesystem = window.Capacitor.Plugins.Filesystem;
-                const savedFile = await Filesystem.writeFile({
-                    path: filename,
-                    data: base64data,
-                    directory: "CACHE",
-                });
-
-                const FileOpener = window.Capacitor.Plugins.FileOpener;
-                if (FileOpener) {
-                    await FileOpener.open({
-                        filePath: savedFile.uri,
-                        contentType: "application/pdf",
+                    const Filesystem = window.Capacitor.Plugins.Filesystem;
+                    const savedFile = await Filesystem.writeFile({
+                        path: filename,
+                        data: base64data,
+                        directory: "CACHE",
                     });
-                }
 
-                if (window.$ && window.$.unblockUI) window.$.unblockUI();
+                    const FileOpener = window.Capacitor.Plugins.FileOpener;
+                    if (FileOpener) {
+                        await FileOpener.open({
+                            filePath: savedFile.uri,
+                            contentType: "application/pdf",
+                        });
+                    }
+                } catch (error) {
+                    console.error("Capacitor PDF: Error opening document", error);
+                    alert("Could not load the document. Please try again.");
+                } finally {
+                    if (window.$ && window.$.unblockUI) window.$.unblockUI();
+                }
             };
         } catch (error) {
             console.error("Capacitor PDF: Error downloading document", error);

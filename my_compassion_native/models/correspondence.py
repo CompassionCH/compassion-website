@@ -13,14 +13,9 @@ from odoo import _, models
 class Correspondence(models.Model):
     _inherit = "correspondence"
 
-    def write(self, vals):
-        b2s_unpublished = self.filtered(
-            lambda c: c.direction == "Beneficiary To Supporter" and not c.is_published
-        )
-        result = super().write(vals)
-        for letter in b2s_unpublished:
-            if letter.is_published:
-                letter._notify_new_letter()
+    def process_letter(self):
+        result = super().process_letter()
+        self._notify_new_letter()
         return result
 
     def _notify_new_letter(self):

@@ -22,12 +22,12 @@ class UniversalLinks(http.Controller):
         csrf=False,
     )
     def apple_app_site_association(self, **kwargs):
+        get_param = request.env["ir.config_parameter"].sudo().get_param
+        ios_app_id = get_param("my_compassion_native.ios_app_id", "")
         data = {
             "applinks": {
                 "apps": [],
-                "details": [
-                    {"appID": "33XBVM48T4.ch.mycompassion.app", "paths": ["*"]}
-                ],
+                "details": [{"appID": ios_app_id, "paths": ["*"]}],
             }
         }
         # Apple strictly requires the content type to be application/json
@@ -44,17 +44,15 @@ class UniversalLinks(http.Controller):
         csrf=False,
     )
     def android_asset_links(self, **kwargs):
-        fingerprint = (
-            request.env["ir.config_parameter"]
-            .sudo()
-            .get_param("my_compassion_native.android_sha256_fingerprint", "")
-        )
+        get_param = request.env["ir.config_parameter"].sudo().get_param
+        fingerprint = get_param("my_compassion_native.android_sha256_fingerprint", "")
+        package_name = get_param("my_compassion_native.android_package_name", "")
         data = [
             {
                 "relation": ["delegate_permission/common.handle_all_urls"],
                 "target": {
                     "namespace": "android_app",
-                    "package_name": "ch.mycompassion.app",
+                    "package_name": package_name,
                     "sha256_cert_fingerprints": [fingerprint],
                 },
             }
