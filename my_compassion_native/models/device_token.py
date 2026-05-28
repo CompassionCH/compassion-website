@@ -40,7 +40,7 @@ class MyCompassionDeviceToken(models.Model):
         Initializes and returns an ISOLATED Firebase App
         to prevent module conflicts
         """
-        app_name = "compassion_ios"
+        app_name = "my_compassion_native"
         try:
             # Try to get OUR specific named app, ignoring the default one
             return firebase_admin.get_app(name=app_name)
@@ -78,39 +78,41 @@ class MyCompassionDeviceToken(models.Model):
             _logger.error("Push Notification failed: Firebase app not initialized.")
             return False
 
-        success_count = 0
+        sanitized_data = {str(k): str(v) for k, v in (data or {}).items()}
+        records_with_tokens = self.filtered("token")
 
-        for record in self:
-            if not record.token:
-                continue
-
-            sanitized_data = {str(k): str(v) for k, v in (data or {}).items()}
-
-            message = messaging.Message(
-                notification=messaging.Notification(
-                    title=title,
-                    body=body,
-                ),
+        messages = [
+            messaging.Message(
+                notification=messaging.Notification(title=title, body=body),
                 data=sanitized_data,
                 token=record.token,
             )
+            for record in records_with_tokens
+        ]
 
-            try:
-                response = messaging.send(message, app=app)
+        if not messages:
+            return False
+
+        batch_response = messaging.send_each(messages, app=app)
+
+        success_count = 0
+        for record, response in zip(records_with_tokens, batch_response.responses):
+            if response.success:
                 _logger.info(
                     f"[Firebase] Successfully sent message to "
-                    f"{record.user_id.login}: {response}"
+                    f"{record.user_id.login}: {response.message_id}"
                 )
                 success_count += 1
-            except fb_exceptions.NotFoundError:
+            elif isinstance(response.exception, fb_exceptions.NotFoundError):
                 _logger.warning(
                     f"[Firebase] Token no longer valid for"
                     f" {record.user_id.login}, removing."
                 )
                 record.sudo().unlink()
-            except Exception as e:
+            else:
                 _logger.error(
-                    f"[Firebase] Failed to send push to token {record.token}: {str(e)}"
+                    f"[Firebase] Failed to send push to token {record.token}:"
+                    f" {response.exception}"
                 )
 
         return success_count > 0

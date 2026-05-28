@@ -9,6 +9,8 @@
 
 import logging
 
+from psycopg2 import IntegrityError
+
 from odoo import http
 from odoo.http import request
 
@@ -42,8 +44,8 @@ class MyCompassionDeviceController(http.Controller):
                 )
                 TokenModel.flush()
 
-            except Exception as e:
-                _logger.info(f"Device token registration race condition handled. {e}")
+            except IntegrityError:
+                _logger.info("Device token registration race condition handled.")
 
         request.session["mycompassion_device_token"] = token
 

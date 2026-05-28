@@ -69,14 +69,12 @@ class CompassionChild(models.Model):
                             tokens = self.env["mycompassion.device.token"].search(
                                 [("user_id", "=", user.id)]
                             )
-                            if tokens:
-                                for token in tokens:
-                                    token._send_push_notification(
-                                        title="Upcoming Birthday!",
-                                        body=f"{child.preferred_name}'s birthday"
-                                        f" is coming up in {days_until} days!",
-                                        data={"url": f"/my2/children/{child.id}"},
-                                    )
+                            if tokens and tokens._send_push_notification(
+                                title="Upcoming Birthday!",
+                                body=f"{child.preferred_name}'s birthday"
+                                f" is coming up in {days_until} days!",
+                                data={"url": f"/my2/children/{child.id}"},
+                            ):
                                 self.env["partner.log.other.interaction"].create(
                                     {
                                         "partner_id": partner.id,

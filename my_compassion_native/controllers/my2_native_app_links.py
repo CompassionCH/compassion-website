@@ -44,13 +44,18 @@ class UniversalLinks(http.Controller):
         csrf=False,
     )
     def android_asset_links(self, **kwargs):
+        fingerprint = (
+            request.env["ir.config_parameter"]
+            .sudo()
+            .get_param("my_compassion_native.android_sha256_fingerprint", "")
+        )
         data = [
             {
                 "relation": ["delegate_permission/common.handle_all_urls"],
                 "target": {
                     "namespace": "android_app",
                     "package_name": "ch.mycompassion.app",
-                    "sha256_cert_fingerprints": ["YOUR_ANDROID_SHA256_FINGERPRINT"],
+                    "sha256_cert_fingerprints": [fingerprint],
                 },
             }
         ]
