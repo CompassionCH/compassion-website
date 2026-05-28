@@ -15,7 +15,8 @@ class Correspondence(models.Model):
 
     def process_letter(self):
         result = super().process_letter()
-        self._notify_new_letter()
+        for letter in self:
+            letter._notify_new_letter()
         return result
 
     def _notify_new_letter(self):
