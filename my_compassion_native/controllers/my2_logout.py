@@ -30,5 +30,7 @@ class MyCompassionLogout(Session):
                 existing_tokens.unlink()
 
         parsed = urlparse(redirect)
-        safe_redirect = redirect if (not parsed.scheme and not parsed.netloc) else "/web"
+        safe_redirect = (
+            redirect if (not parsed.scheme and not parsed.netloc) else "/web"
+        )
         return super().logout(redirect=safe_redirect)

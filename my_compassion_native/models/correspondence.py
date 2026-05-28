@@ -54,7 +54,7 @@ class Correspondence(models.Model):
                     "partner_id": partner.id,
                     "subject": marker_subject,
                     "body": f"<p>Sent Push Notification for new letter"
-                        f" from {child_name}.</p>",
+                    f" from {child_name}.</p>",
                     "communication_type": "Other",
                     "other_type": "Push Notification",
                     "direction": "out",
