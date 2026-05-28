@@ -66,7 +66,11 @@ class MyCompassionDeviceToken(models.Model):
                     ].replace("\\n", "\n")
 
                 cred = credentials.Certificate(service_account_info)
-                return firebase_admin.initialize_app(cred, name=app_name)
+                try:
+                    return firebase_admin.initialize_app(cred, name=app_name)
+                except ValueError:
+                    # Another worker initialized the app concurrently
+                    return firebase_admin.get_app(name=app_name)
             except Exception as e:
                 _logger.error(f"Failed to initialize Firebase Admin SDK: {str(e)}")
                 return None
