@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_my2_push_notification_wizard_form" model="ir.ui.view">
+        <field name="name">my2.push.notification.wizard.form</field>
+        <field name="model">my2.push.notification.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Send Manual Push Notification">
+                <group>
+                    <field name="user_id" />
+                    <field name="title" />
+                    <field name="body" />
+                    <field name="url" />
+                </group>
+                <footer>
+                    <button name="action_send" type="object" string="Send Notification" class="btn-primary" />
+                    <button string="Cancel" class="btn-secondary" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="view_users_form_mobile_app" model="ir.ui.view">
+        <field name="name">res.users.form.mobile.app</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="mobile_app" string="Mobile App">
+                    <field name="device_token_ids" readonly="1" nolabel="1">
+                        <tree>
+                            <field name="device_type" />
+                            <field name="token" />
+                        </tree>
+                    </field>
+                    <div class="mt-2">
+                        <button
+                            name="action_open_push_notification_wizard"
+                            type="object"
+                            string="Send Manual Notification"
+                            class="btn-primary"
+                            attrs="{'invisible': [('device_token_ids', '=', [])]}"
+                        />
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
