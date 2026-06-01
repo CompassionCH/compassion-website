@@ -8,7 +8,9 @@ class SafeModelConverter(ModelConverter):
     record the public user cannot read does not raise AccessError."""
 
     def to_url(self, value):
-        return super().to_url(value.sudo())
+        if hasattr(value, "sudo"):
+            value = value.sudo()
+        return super().to_url(value)
 
 
 class IrHttp(models.AbstractModel):
