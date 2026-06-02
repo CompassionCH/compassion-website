@@ -1,21 +1,14 @@
 <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
 <odoo>
     <template id="template_header_default" inherit_id="website.template_header_default">
-        <!-- Move the hamburger menu to the left -->
-        <xpath expr="//t[@t-call='website.navbar_toggler']" position="replace" />
-        <xpath expr="//t[@t-call='website.placeholder_header_brand']" position="before">
-            <t t-call="website.navbar_toggler">
-                <t t-set="_toggler_class" t-value="'mr-4 text-primary'" />
-            </t>
-        </xpath>
-        <!-- Improve the layout of the navbar and add the svg -->
+        <!-- Add the Compassion brand SVG / styling on the navbar menu -->
         <xpath expr="//t[@t-set='_nav_class']" position="attributes">
             <attribute name="t-value">
                 'flex-grow-1 align-items-left align-items-lg-center border-thread-right'
             </attribute>
         </xpath>
-        <!-- Add a linebreak with colors after the navbar -->
-        <xpath expr="//nav[@data-name='Navbar']" position="after">
+        <!-- Compassion 4-color thread bar, placed after the navbar (rendered via t-call="website.navbar") -->
+        <xpath expr="//t[@t-call='website.navbar']" position="after">
             <div class="d-flex compassion-thread">
                 <div class="h-100 w-25 bg-core-blue" />
                 <div class="h-100 w-25 bg-high-pink" />
@@ -23,11 +16,11 @@
                 <div class="h-100 w-25 bg-low-green" />
             </div>
         </xpath>
-        <!-- Make the main menu in the center -->
-        <xpath expr="//div[@id='top_menu_collapse']" position="after">
+        <!-- Center the main menu with flex spacers around the menu list (rendered via t-call="website.navbar_nav") -->
+        <xpath expr="//t[@t-call='website.navbar_nav']" position="after">
             <div class="flex-grow-1" />
         </xpath>
-        <xpath expr="//div[@id='top_menu_collapse']" position="before">
+        <xpath expr="//t[@t-call='website.navbar_nav']" position="before">
             <div class="flex-grow-1" />
         </xpath>
         <!-- Move the login button out of the main menu and adapt its style -->
@@ -43,20 +36,17 @@
             </div>
         </xpath>
     </template>
-    <!-- Remove the contact us button from the header -->
-    <template id="header_contactus" inherit_id="website.template_header_default_oe_structure_header_default_1">
-        <xpath expr="//div[@id='oe_structure_header_default_1']" position="replace" />
-    </template>
     <!-- Improve the language selector in the header by applying the Compassion theme-->
     <template id="language_selector" inherit_id="portal.language_selector">
-        <xpath expr="//div[hasclass('dropdown-menu')]" position="attributes">
+        <!-- These nodes carry t-attf-class (no static class), so the xpath matches on @t-attf-class -->
+        <xpath expr="//div[contains(@t-attf-class, 'dropdown-menu')]" position="attributes">
             <attribute name="class" add="shadow-sm animation-drop language-selector__dropdown-menu" separator=" " />
         </xpath>
         <!-- Modify the dropdown button to use a custom pill style button-->
-        <xpath expr="//button[hasclass('dropdown-toggle')]" position="attributes">
+        <xpath expr="//button[contains(@t-attf-class, 'dropdown-toggle')]" position="attributes">
             <attribute name="class" separator=" " add="d-none" />
         </xpath>
-        <xpath expr="//button[hasclass('dropdown-toggle')]" position="after">
+        <xpath expr="//button[contains(@t-attf-class, 'dropdown-toggle')]" position="after">
             <t t-call="theme_compassion_2025.LanguageSelector">
                 <t t-set="variant" t-value="'compact'" />
                 <t t-set="variation" t-value="'p-1 hollow'" />
@@ -100,9 +90,6 @@
         <xpath expr="//div[contains(@t-attf-class, 'dropdown-menu')]" position="attributes">
             <attribute name="t-if">is_connected</attribute>
             <attribute name="t-attf-class" add="dropdown-menu-right c-user-menu-fix" separator=" " />
-        </xpath>
-        <xpath expr="//a[@href='/my/information']" position="replace">
-            <a class="dropdown-item" href="/my2/user_settings" role="menuitem">Settings</a>
         </xpath>
     </template>
 </odoo>

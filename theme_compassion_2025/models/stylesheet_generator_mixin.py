@@ -10,6 +10,8 @@
 import base64
 import logging
 
+from lxml import etree
+
 from odoo import api, models
 from odoo.exceptions import UserError
 
@@ -64,13 +66,19 @@ class StylesheetGeneratorMixin(models.AbstractModel):
 
         records = self.search([])
 
-        # Render the QWeb template
+        # theme_* modules stage <template>s into theme.ir.ui.view until the theme is
+        # activated on a website, and ir.qweb._render(xml_id) only resolves a real
+        # ir.ui.view. While only the staged view exists, render its arch directly.
+        if view_template._name == "ir.ui.view":
+            template = self.css_template_xml_id
+        else:
+            template = etree.fromstring(view_template.arch)
         css_content = self.env["ir.qweb"]._render(
-            self.css_template_xml_id,
+            template,
             {self.render_key: records},
         )
 
-        css_content_b64 = base64.b64encode(css_content)
+        css_content_b64 = base64.b64encode(css_content.encode("utf-8"))
 
         # Find and update css file present in ir.attachment
         attachment = self.env.ref(self.css_attachment_xml_id, raise_if_not_found=False)
@@ -84,7 +92,7 @@ class StylesheetGeneratorMixin(models.AbstractModel):
         _logger.info(f"Successfully updated {attachment.name} file.")
 
         # force bundle invalidation
-        self.env["ir.qweb"].clear_caches()
+        self.env.registry.clear_cache()
         _logger.info(f"Successfully re-loaded assets for {self._name}.")
 
     @api.model_create_multi

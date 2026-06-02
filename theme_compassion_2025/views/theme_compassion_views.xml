@@ -22,10 +22,10 @@
             <field name="name">theme.compassion.colors.tree</field>
             <field name="model">theme.compassion.colors</field>
             <field name="arch" type="xml">
-                <tree string="Colors">
+                <list string="Colors">
                     <field name="name" />
                     <field name="color" widget="color" />
-                </tree>
+                </list>
             </field>
         </record>
         <record id="action_theme_compassion_colors" model="ir.actions.act_window">
@@ -54,10 +54,10 @@
             <field name="name">theme.compassion.icons.tree</field>
             <field name="model">theme.compassion.icons</field>
             <field name="arch" type="xml">
-                <tree string="Icons">
+                <list string="Icons">
                     <field name="name" />
                     <field name="svg_file" widget="image" />
-                </tree>
+                </list>
             </field>
         </record>
         <record id="action_theme_compassion_icons" model="ir.actions.act_window">
@@ -86,10 +86,10 @@
             <field name="name">theme.compassion.pictograms.tree</field>
             <field name="model">theme.compassion.pictograms</field>
             <field name="arch" type="xml">
-                <tree string="Pictograms">
+                <list string="Pictograms">
                     <field name="name" />
                     <field name="svg_file" widget="image" />
-                </tree>
+                </list>
             </field>
         </record>
         <record id="action_theme_compassion_pictograms" model="ir.actions.act_window">

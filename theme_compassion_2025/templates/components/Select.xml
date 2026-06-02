@@ -11,7 +11,7 @@
     need to select an option from a predefined list.
 
     Props:
-    - (t-raw): Placeholder for injecting <option> elements dynamically.
+    - (t-out): Placeholder for injecting <option> elements dynamically.
     - select_class (string, optional): styling classes to the select element
     - CSS Classes:
         - custom-select: Applied to the <select> element for custom styling.
@@ -30,7 +30,7 @@
                 t-att-id="id"
                 t-att-required="required"
             >
-                <t t-raw="0" />
+                <t t-out="0" />
             </select>
             <span class="select-divider" />
             <span t-attf-class="select-icon text-core-blue icon-chevron-down">

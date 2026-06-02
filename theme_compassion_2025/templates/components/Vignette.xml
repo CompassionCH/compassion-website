@@ -34,11 +34,11 @@
                         <div t-attf-class="d-flex flex-column justify-content-center flex-grow-1">
                             <div class="pl-0 pl-sm-3">
                                 <h3 t-attf-class="card-title m-0 text-#{color}">
-                                    <t t-raw="title" />
+                                    <t t-out="title" />
                                 </h3>
                                 <t t-if="subtitle">
                                     <h5 t-attf-class="card-subtitle mt-1 font-weight-bold text-#{color}">
-                                        <t t-raw="subtitle" />
+                                        <t t-out="subtitle" />
                                     </h5>
                                 </t>
                             </div>
