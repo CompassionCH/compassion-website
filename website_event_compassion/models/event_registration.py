@@ -218,7 +218,7 @@ class EventRegistration(models.Model):
             "web.base.url"
         )
         for registration in self:
-            registration.host_url = host
+            registration.host_url = registration.website_id.domain or host
 
     @api.depends("state")
     def _compute_is_published(self):
