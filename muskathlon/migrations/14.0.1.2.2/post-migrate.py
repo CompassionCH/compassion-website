@@ -21,13 +21,7 @@ def _fix_links(text):
 
 @openupgrade.migrate()
 def migrate(env, version):
-    # All mail.template records owned by the muskathlon module
-    template_ids = (
-        env["ir.model.data"]
-        .search([("module", "=", "muskathlon"), ("model", "=", "mail.template")])
-        .mapped("res_id")
-    )
-    templates = env["mail.template"].browse(template_ids).exists()
+    templates = env["mail.template"].search([("name", "ilike", "muskathlon")])
     if not templates:
         return
 
