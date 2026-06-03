@@ -29,7 +29,7 @@
 # pylint: disable=C8101
 {
     "name": "Muskathlon",
-    "version": "14.0.1.2.1",
+    "version": "14.0.1.2.2",
     "category": "Reports",
     "author": "Compassion CH",
     "license": "AGPL-3",
