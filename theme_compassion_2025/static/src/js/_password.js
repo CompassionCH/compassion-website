@@ -9,6 +9,7 @@ odoo.define("theme_compassion_2025.password", function (require) {
 
         events: {
             "click .password-show-toggle": "_onTogglePasswordVisibility",
+            "touchend .password-show-toggle": "_onTogglePasswordVisibility",
         },
 
         /**

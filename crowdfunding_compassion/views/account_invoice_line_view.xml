@@ -5,8 +5,12 @@
     <field name="model">account.move.line</field>
     <field name="inherit_id" ref="account.view_move_line_form" />
     <field name="arch" type="xml">
-      <field name="tax_ids" position="after">
-        <field name="crowdfunding_participant_id" widget="many2one" />
+      <field name="user_id" position="after">
+        <field
+          name="crowdfunding_participant_id"
+          groups="analytic.group_analytic_accounting"
+          readonly="1"
+        />
       </field>
     </field>
   </record>

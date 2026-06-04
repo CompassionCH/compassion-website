@@ -1336,6 +1336,7 @@ msgstr "Kontakt"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_login_form
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_reset_password_form
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_signup_form
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_profile_page
 msgid "Contact us"
 msgstr "Kontaktiere uns"
 
@@ -1730,7 +1731,7 @@ msgstr "Schulstufe"
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_sponsorships_page
 msgid "Either"
-msgstr "Entweder"
+msgstr "egal"
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__email
@@ -1982,6 +1983,11 @@ msgid "Gift Basket"
 msgstr "Geschenkkorb"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_app_layout
+msgid "Gift basket"
+msgstr "Geschenkkorb"
+
+#. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_sale_order_line__gift_recipient_id
 msgid "Gift Recipient"
 msgstr "Geschenkempfänger"
@@ -2012,6 +2018,8 @@ msgstr "Mädchen"
 #: model_terms:ir.ui.view,arch_db:my_compassion.dashboard_donations_vignette
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_profile_page
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_app_layout
 #, python-format
 msgid "Give"
 msgstr "Geben"
@@ -2024,7 +2032,7 @@ msgstr "Ein Geschenk machen"
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_page
 msgid "Give the Gift of compassion"
-msgstr "Schenken Sie Mitgefühl"
+msgstr "Geschenke der Hoffnung"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.GivingLimitsModalComponent
@@ -2062,6 +2070,8 @@ msgstr "Hobbys"
 #: model_terms:ir.ui.view,arch_db:my_compassion.http_error_custom
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_dashboard_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_profile_page
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_app_layout
 msgid "Home"
 msgstr "Startseite"
 
@@ -2492,6 +2502,8 @@ msgstr "Brief gespeichert!"
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_letters_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_profile_page
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_app_layout
 #, python-format
 msgid "Letters"
 msgstr "Briefe"
@@ -2758,6 +2770,7 @@ msgstr "Mein Land"
 #: code:addons/my_compassion/controllers/my2_donations.py:0
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_my_donations_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_account_menu
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_profile_page
 #, python-format
 msgid "My Donations"
 msgstr "Meine Spenden"
@@ -2780,6 +2793,7 @@ msgstr "Meine Patenschaft"
 #. module: my_compassion
 #: code:addons/my_compassion/controllers/my2_children.py:0
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_children_page
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_profile_page
 #, python-format
 msgid "My Sponsorships"
 msgstr "Meine Patenschaften"
@@ -2857,6 +2871,7 @@ msgstr "Meine Referenz"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_my_donations_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_sponsorship_donation
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_app_layout
 msgid "My sponsorships"
 msgstr "Meine Patenschaften"
 
@@ -4302,6 +4317,7 @@ msgstr "Mit deiner Hilfe können wir..."
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_account_menu
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_children_letters
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_letters_page
 msgid "Write a letter"
 msgstr "Einen Brief schreiben"
 
@@ -4354,7 +4370,7 @@ msgstr "Tipps zum Schreiben"
 #: code:addons/my_compassion/controllers/my2_children.py:0
 #, python-format
 msgid "Wrote you a letter"
-msgstr "Du hast einen Brief erhalten"
+msgstr "hat dir einen Brief geschrieben"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_payment_method
@@ -4779,10 +4795,36 @@ msgid "Sign up"
 msgstr "Registrieren"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_app_layout
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_profile_page
+msgid "Profile"
+msgstr "Profil"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_profile_page
+msgid "Customize your MyCompassion experience!"
+msgstr "Gestalte dein MyCompassion-Erlebnis!"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_profile_page
+msgid "Change Language"
+msgstr "Sprache ändern"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_profile_page
+msgid "Edit profile"
+msgstr "Profil bearbeiten"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_profile_page
+msgid "Log Out"
+msgstr "Abmelden"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
 msgid ""
-"Given the time it takes for mail to arrive, it could take between one and "
-"three months for you to receive a reply."
+"Given the time it takes for mail to arrive, it could take between one and three months for\n"
+"                            you to receive a reply."
 msgstr "Aufgrund des langen Weges eines Briefes kann es 1-3 Monate dauern, bis du eine Antwort erhältst."
 
 #. module: my_compassion

@@ -1,0 +1,52 @@
+/*
+    This stylesheet concerns the my2_profile_page component
+    templates/components/my2_mobile_profile.xml
+*/
+
+#profile_content_container {
+    min-height: calc(100vh - 80px);
+}
+
+/* Container for the options */
+.language-options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 20px;
+}
+
+/* Base style for the language pills */
+.language-pill {
+    padding: 10px 20px;
+    border: 1px solid var(--core-blue);
+    color: #121a1a;
+    transition: all 0.2s ease-in-out;
+}
+
+.language-pill .lang-text {
+    font-size: 1.1rem;
+    color: #121a1a;
+}
+
+.language-pill .selection-indicator i {
+    font-size: 1.3rem;
+    color: #9ca3af;
+}
+
+/* Active State */
+.language-pill.active {
+    background-color: var(--core-blue);
+}
+
+.language-pill.active .lang-text {
+    color: #ffffff;
+}
+
+.language-pill.active .selection-indicator i {
+    color: #ffffff;
+}
+
+/* Hover/Touch feedback */
+.language-pill:active {
+    transform: scale(0.98);
+}

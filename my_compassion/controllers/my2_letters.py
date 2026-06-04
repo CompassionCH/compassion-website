@@ -115,25 +115,13 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             tracking_disable=True
         )
 
-        # Fetch all records without order/limit/offset first
-        letters = correspondence_model.sudo().search(filter_domain)
-
-        # Sort in Python using the conditional logic
-        # B->S uses status_date, S->B uses create_date (converted to date)
-        # If direction is S->B the create_date is the proper one to use
-        # from the user's perspective as the sponsor only knows when they've created it.
-        letters = letters.sorted(
-            key=lambda letter: (
-                letter.status_date.date()
-                if letter.direction == "Beneficiary To Supporter"
-                else letter.create_date.date()
-            )
-            or date.min,
-            reverse=(sort_order == "newest"),
+        order_str = (
+            "web_sort_date DESC" if sort_order == "newest" else "web_sort_date ASC"
         )
 
-        # Pagination slice
-        letters = letters[offset : offset + letters_per_page]
+        letters = correspondence_model.sudo().search(
+            filter_domain, limit=letters_per_page, offset=offset, order=order_str
+        )
 
         # Month names in the current language
         lang = request.env.context.get("lang", partner.lang)

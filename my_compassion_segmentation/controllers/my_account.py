@@ -6,20 +6,21 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from odoo.http import request, route
-
 from odoo.addons.portal.controllers.portal import CustomerPortal
 
 
 class MyAccountControllerSurvey(CustomerPortal):
-    @route(["/my", "/my/home"], type="http", auth="user", website=True)
-    def home(self, redirect=None, **post):
-        partner = request.env.user.partner_id
-        if not partner.has_segment:
-            # Redirect to the segmentation survey
-            survey = request.env.ref(
-                "partner_segmentation.partner_segmentation_survey"
-            ).sudo()
-            return request.redirect(survey.get_start_url())
-        else:
-            return request.redirect("/my2/dashboard")
+    pass
+
+    # ######### COMMENTED OUT UNTIL SEGMENTATION IS REFACTORED ###########
+    # @route(["/my", "/my/home"], type="http", auth="user", website=True)
+    # def home(self, redirect=None, **post):
+    #     partner = request.env.user.partner_id
+    #     if not partner.has_segment:
+    #         # Redirect to the segmentation survey
+    #         survey = request.env.ref(
+    #             "partner_segmentation.partner_segmentation_survey"
+    #         ).sudo()
+    #         return request.redirect(survey.get_start_url())
+    #     else:
+    #         return request.redirect("/my2/dashboard")
