@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
+
+    <template id="crm_claim.model_crm_claim" name="CRM request">
+        <form action="/website/form/" method="post" enctype="multipart/form-data" data-model_name="crm.claim">
+
+        </form>
+    </template>
+
+
+
     <record
     id="crm_claim.model_crm_claim"
     model="ir.model"

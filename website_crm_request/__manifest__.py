@@ -29,20 +29,24 @@
 # pylint: disable=C8101
 {
     "name": "Website CRM Request",
-    "version": "14.0.1.0.0",
+    "version": "18.0.1.0.0",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
     "website": "https://github.com/CompassionCH/compassion-website",
     "data": [
-        "templates/assets.xml",
         "data/form_data.xml",
     ],
     "depends": [
         "crm_request",
-        "website_form",
+        "website",
     ],
+    "assets": {
+        'web.assets_frontend': [
+            'website_crm_request/static/src/js/website_crm_request.js'
+        ]
+    },
     "demo": [],
-    'installable': False,
+    'installable': True,
     "auto_install": False,
 }
