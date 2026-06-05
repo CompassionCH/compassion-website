@@ -35,6 +35,7 @@
     "license": "AGPL-3",
     "website": "https://github.com/CompassionCH/compassion-website",
     "data": [
+        "views/snippets_template.xml",
         "data/form_data.xml",
     ],
     "depends": [
