@@ -255,7 +255,7 @@ class MyCompassionDonationsController(CustomerPortal):
 
         if order_line.is_gift:
             render_attrs["sponsorships"] = self._get_gift_eligible_sponsorships(
-                order_line.order_partner_id
+                request.env.user.partner_id
             )
             render_attrs["default_sponsorship_id"] = order_line.gift_recipient_id.id
 
@@ -358,8 +358,7 @@ class MyCompassionDonationsController(CustomerPortal):
             )
         return request.redirect("/my2/dashboard")
 
-    @staticmethod
-    def _get_gift_eligible_sponsorships(partner):
+    def _get_gift_eligible_sponsorships(self, partner):
         """
         Sponsorships that can receive a gift
         """
