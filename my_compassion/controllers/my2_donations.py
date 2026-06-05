@@ -35,7 +35,7 @@ class MyCompassionDonationsController(CustomerPortal):
         return: An HTTP response containing a rendered template with the donation
         details page.
         """
-        sponsorships = request.env.user.partner_id.sponsorship_ids
+        sponsorships = self._get_gift_eligible_sponsorships(request.env.user.partner_id)
         donation_limits = request.env["gift.threshold.settings"].sudo().search([])
 
         context = {
@@ -254,7 +254,9 @@ class MyCompassionDonationsController(CustomerPortal):
         }
 
         if order_line.is_gift:
-            render_attrs["sponsorships"] = order_line.order_partner_id.sponsorship_ids
+            render_attrs["sponsorships"] = self._get_gift_eligible_sponsorships(
+                order_line.order_partner_id
+            )
             render_attrs["default_sponsorship_id"] = order_line.gift_recipient_id.id
 
         # Render and return the form
@@ -324,7 +326,7 @@ class MyCompassionDonationsController(CustomerPortal):
             ]
         )
 
-        sponsorships = request.env.user.partner_id.sponsorship_ids
+        sponsorships = self._get_gift_eligible_sponsorships(request.env.user.partner_id)
         limits = request.env["gift.threshold.settings"].sudo().search([])
 
         return request.render(
@@ -357,7 +359,20 @@ class MyCompassionDonationsController(CustomerPortal):
         return request.redirect("/my2/dashboard")
 
     @staticmethod
-    def _extract_donation_order_line_fields(product_template, post):
+    def _get_gift_eligible_sponsorships(partner):
+        """
+        Sponsorships that can receive a gift
+        """
+        return partner.sponsorship_ids.filtered(
+            lambda s: s.can_show_on_my_compassion
+            and (
+                s.state != "terminated"
+                or s.can_write_letter
+                or not s.exit_communication_sent
+            )
+        )
+
+    def _extract_donation_order_line_fields(self, product_template, post):
         # Compute quantity
         price = 0
         amount_type = post.get("suggested_amount")
@@ -398,8 +413,15 @@ class MyCompassionDonationsController(CustomerPortal):
             "frequency": frequency,
         }
         if product_template.my_compassion_donation_type == "gift":
+            try:
+                recipient_id = int(post.get("recipient"))
+            except (ValueError, TypeError) as e:
+                raise BadRequest() from e
+            eligible = self._get_gift_eligible_sponsorships(request.env.user.partner_id)
+            if recipient_id not in eligible.ids:
+                raise BadRequest()
             order_line_fields["is_gift"] = True
-            order_line_fields["gift_recipient_id"] = post.get("recipient")
+            order_line_fields["gift_recipient_id"] = recipient_id
 
         return order_line_fields
 
