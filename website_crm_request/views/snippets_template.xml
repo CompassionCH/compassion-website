@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-
     <template id="crm_claim_website_form" name="CRM request yeaaaa okay got it ">
         <section class="s_website_form pt16 pb16" data-vcss="001"
-                 data-snippet="s_website_form" data-name="Form">
+                 data-snippet="crm_claim_website_form">
             <div class="container-fluid">
                 <form action="/website/form/" method="post"
                       enctype="multipart/form-data" class="o_mark_required"
@@ -11,10 +10,6 @@
                       data-success-mode="redirect"
                       data-success-page="/blblblbl">
                     <div class="s_website_form_rows row s_col_no_bgcolor">
-
-                        <input type="hidden" name="csrf_token"
-                               t-att-value="request.csrf_token()"/>
-
                         <div data-name="Field"
                              class="s_website_form_field mb-3 col-12 s_website_form_custom s_website_form_required"
                              data-type="char">
@@ -95,15 +90,4 @@
             </div>
         </section>
     </template>
-
-    <!--
-<template id="snippet_options_inherit_crm_request" inherit_id="website.snippet_options" name="Website CRM Request Assets Editor">
-        <xpath expr="//div[@data-js='WebsiteForm']//we-select[@data-attribute_name='action']" position="inside">
-            <we-button data-select-data-attribute="/website/form/"
-                       data-select-label="CRM Request"
-                       data-form_action_model_id="website_crm_request.model_crm_lead"/>
-        </xpath>
-</template>
--->
-
 </odoo>

@@ -35,15 +35,15 @@
     "license": "AGPL-3",
     "website": "https://github.com/CompassionCH/compassion-website",
     "data": [
-        "views/snippets_template.xml",
         "data/form_data.xml",
+        "views/snippets_template.xml"
     ],
     "depends": [
         "crm_request",
-        "website",
+        "website"
     ],
     "assets": {
-        'web.assets_frontend': [
+        'website.assets_editor': [
             'website_crm_request/static/src/js/website_crm_request.js'
         ]
     },
