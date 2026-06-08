@@ -17,7 +17,12 @@
         <field name="arch" type="xml">
             <xpath expr="//group[@name='main']" position="before">
                 <div name="button_box" class="oe_button_box">
-                    <button name="website_publish_button" type="object" class="oe_stat_button" icon="fa-globe">
+                    <button
+                        name="website_publish_button"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-globe"
+                    >
                         <field name="is_published" widget="website_publish_button" />
                     </button>
                 </div>

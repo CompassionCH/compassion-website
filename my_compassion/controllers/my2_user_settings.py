@@ -23,7 +23,7 @@ class MyCompassionUserController(http.Controller):
         titles = (
             request.env["res.partner.title"]
             .sudo()
-            .search([("is_published", "=", True)])
+            .search([("is_shown_on_public_forms", "=", True)])
         )
         countries = request.env["res.country"].sudo().search([])
 

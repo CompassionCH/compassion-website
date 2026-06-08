@@ -675,7 +675,7 @@
                     style=""
                   >
                     <t
-                      t-foreach="request.env['res.partner.title'].sudo().search([('website_published', '=', True)])"
+                      t-foreach="request.env['res.partner.title'].sudo().search([('is_shown_on_public_forms', '=', True)])"
                       t-as="title"
                     >
                       <option t-att-value="title.id">

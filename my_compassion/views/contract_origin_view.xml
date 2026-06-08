@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <record id="view_events_form" model="ir.ui.view">
+    <record id="view_contract_origin_publish" model="ir.ui.view">
         <field name="name">contract.origin.publish</field>
         <field name="model">recurring.contract.origin</field>
         <field name="inherit_id" ref="sponsorship_compassion.view_contract_origin_form" />
         <field name="arch" type="xml">
-            <xpath expr="//div[@class='oe_title']" position="before">
+            <xpath expr="//div[hasclass('oe_title')]" position="before">
                 <field name="website_published" invisible="1" />
                 <div class="oe_button_box" name="button_box">
-                    <button name="website_publish_button" type="object" class="oe_stat_button" icon="fa-globe">
+                    <button
+                        name="website_publish_button"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-globe"
+                    >
                         <field name="is_published" widget="website_publish_button" />
                     </button>
                 </div>
@@ -16,13 +21,13 @@
                     name="web_ribbon"
                     title="Published"
                     bg_color="bg-success"
-                    attrs="{'invisible': [('website_published', '=', False)]}"
+                    invisible="not website_published"
                 />
                 <widget
                     name="web_ribbon"
                     title="Unpublished"
                     bg_color="bg-danger"
-                    attrs="{'invisible': [('website_published', '=', True)]}"
+                    invisible="website_published"
                 />
             </xpath>
         </field>

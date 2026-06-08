@@ -17,14 +17,24 @@ from odoo import fields, http
 from odoo.http import request
 from odoo.tools.translate import _
 
-from odoo.addons.website_sponsorship.controllers.main import WebsiteChild
-from odoo.addons.website_sponsorship.models.compassion_child import ChildNotFound
+from odoo.addons.my_compassion.models.compassion_child import ChildNotFound
 
 # Hold up to 3 children (more is too slow)
 GLOBAL_FETCH_LIMIT = 3
 
 
-class MyCompassionSponsorshipsController(WebsiteChild):
+def _get_reservation_uuid():
+    reservation_uuid = request.session.get("reservation_uuid")
+    if not reservation_uuid:
+        if request.env.user._is_public():
+            reservation_uuid = str(uuid.uuid4())
+        else:
+            reservation_uuid = request.env.user.partner_id.uuid
+        request.session["reservation_uuid"] = reservation_uuid
+    return reservation_uuid
+
+
+class MyCompassionSponsorshipsController(http.Controller):
     @http.route(
         "/my2/sponsorships", type="http", auth="public", website=True, sitemap=False
     )
@@ -222,7 +232,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
             raise NotFound()
 
         # Reserve child for 5 minutes
-        reservation_uuid = self._get_reservation_uuid()
+        reservation_uuid = _get_reservation_uuid()
         if not child.reserve_for_web_sponsorship(reservation_uuid):
             return request.render(
                 "my_compassion.child_unavailable_page",
@@ -344,7 +354,9 @@ class MyCompassionNewSponsorshipController(http.Controller):
     def _render_form_content(wizard):
         # Fetch available salutations, countries, payment methods,
         # languages and lead sources
-        titles = request.env["res.partner.title"].search([])
+        titles = request.env["res.partner.title"].search(
+            [("is_shown_on_public_forms", "=", True)]
+        )
         countries = request.env["res.country"].search([])
         spoken_languages = (
             request.env["res.lang.compassion"]
@@ -399,14 +411,3 @@ class MyCompassionNewSponsorshipController(http.Controller):
         )
 
         return html_content
-
-    @staticmethod
-    def _get_reservation_uuid():
-        reservation_uuid = request.session.get("reservation_uuid")
-        if not reservation_uuid:
-            if request.env.user._is_public():
-                reservation_uuid = str(uuid.uuid4())
-            else:
-                reservation_uuid = request.env.user.partner_id.uuid
-            request.session["reservation_uuid"] = reservation_uuid
-        return reservation_uuid

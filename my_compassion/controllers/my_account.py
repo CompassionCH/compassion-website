@@ -20,7 +20,6 @@ from odoo import _
 from odoo.exceptions import UserError
 from odoo.http import local_redirect, request, route
 
-from odoo.addons.http_routing.models.ir_http import slug
 from odoo.addons.portal.controllers.portal import CustomerPortal
 from odoo.addons.web.controllers.main import content_disposition
 
@@ -359,7 +358,7 @@ class MyAccountController(CustomerPortal):
                 request.env["compassion.child"].sudo().browse(int(child_identifier))
             )
             if child_record.exists():
-                child_identifier = slug(child_record)
+                child_identifier = request.env["ir.http"]._slug(child_record)
 
         new_url = f"/my2/new-sponsorship/{child_identifier}"
 
@@ -368,6 +367,54 @@ class MyAccountController(CustomerPortal):
         if query_string:
             new_url = f"{new_url}?{query_string}"
 
+        return request.redirect(new_url, code=301)
+
+    @route(
+        [
+            "/children",
+            "/children/page/<int:page>",
+            "/children/<string:random>",
+        ],
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def redirect_old_public_children(self, page=1, random=False, **kw):
+        """
+        This is a deprecated route of MyCompassion 1.0.
+        From MyCompassion 2.0, we ensured a proper redirection
+        for users using old links.
+        """
+        new_url = "/my2/sponsorships"
+        query_string = request.httprequest.query_string.decode("utf-8")
+        if query_string:
+            new_url = f"{new_url}?{query_string}"
+        return request.redirect(new_url, code=301)
+
+    @route(
+        "/child/<string:child_ref>",
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def redirect_old_public_child(self, child_ref, **kw):
+        """
+        This is a deprecated route of MyCompassion 1.0.
+        From MyCompassion 2.0, we ensured a proper redirection
+        for users using old links.
+        """
+        if child_ref.isdigit():
+            child_record = (
+                request.env["compassion.child"].sudo().browse(int(child_ref))
+            )
+            if child_record.exists():
+                child_ref = request.env["ir.http"]._slug(child_record)
+        new_url = f"/my2/new-sponsorship/{child_ref}"
+        query_string = request.httprequest.query_string.decode("utf-8")
+        if query_string:
+            new_url = f"{new_url}?{query_string}"
         return request.redirect(new_url, code=301)
 
     @route("/my/download/<source>", type="http", auth="user", website=True)

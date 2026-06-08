@@ -14,10 +14,12 @@ from odoo import _, http
 from odoo.exceptions import AccessError
 from odoo.http import request
 
-from odoo.addons.website_sponsorship.controllers.main import WebsiteChild
+from odoo.addons.my_compassion.controllers.my2_sponsorships import (
+    _get_reservation_uuid,
+)
 
 
-class MyCompassionChildrenController(WebsiteChild):
+class MyCompassionChildrenController(http.Controller):
     def _get_formatted_birthday(self, child):
         """
         Formats the child's birthday based on the current language context.
@@ -75,7 +77,7 @@ class MyCompassionChildrenController(WebsiteChild):
         :raises: odoo.exceptions.AccessError if the user is not an active sponsor.
         """
         if child.state == "N":
-            reservation_uuid = self._get_reservation_uuid()
+            reservation_uuid = _get_reservation_uuid()
             if (
                 not child.website_published
                 or not child.is_available_for_web_sponsorship(reservation_uuid)

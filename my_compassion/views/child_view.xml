@@ -5,8 +5,15 @@
         <field name="model">compassion.child</field>
         <field name="inherit_id" ref="child_compassion.view_compassion_child_form" />
         <field name="arch" type="xml">
-            <xpath expr="//div[@name='buttons']">
-                <field name="is_published" widget="website_redirect_button" />
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button
+                    name="website_publish_button"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-globe"
+                >
+                    <field name="is_published" widget="website_publish_button" />
+                </button>
             </xpath>
         </field>
     </record>
@@ -21,13 +28,13 @@
         </field>
     </record>
     <record model="ir.actions.server" id="child_publish_action">
-        <field name="model_id" ref="model_compassion_child" />
+        <field name="model_id" ref="child_compassion.model_compassion_child" />
         <field name="name">Publish/Unpublish child</field>
         <field name="state">code</field>
         <field name="code">
-            for child in records:
+for child in records:
     child.website_publish_button()
         </field>
-        <field name="binding_model_id" ref="model_compassion_child" />
+        <field name="binding_model_id" ref="child_compassion.model_compassion_child" />
     </record>
 </odoo>
