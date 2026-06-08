@@ -36,7 +36,6 @@
     "website": "https://github.com/CompassionCH/compassion-website",
     "data": [
         "data/form_data.xml",
-        "views/snippets_template.xml"
     ],
     "depends": [
         "crm_request",
