@@ -42,11 +42,11 @@
         "website"
     ],
     "assets": {
-        'website.assets_editor': [
-            'website_crm_request/static/src/js/website_crm_request.esm.js'
+        "website.assets_editor": [
+            "website_crm_request/static/src/js/website_crm_request.esm.js"
         ]
     },
     "demo": [],
-    'installable': True,
+    "installable": True,
     "auto_install": False,
 }
