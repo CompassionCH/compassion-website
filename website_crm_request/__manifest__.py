@@ -44,7 +44,7 @@
     ],
     "assets": {
         'website.assets_editor': [
-            'website_crm_request/static/src/js/website_crm_request.js'
+            'website_crm_request/static/src/js/website_crm_request.esm.js'
         ]
     },
     "demo": [],
