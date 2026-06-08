@@ -1,93 +1,141 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <template id="crm_claim_website_form" name="CRM request">
-        <section class="s_website_form pt16 pb16" data-vcss="001"
-                 data-snippet="crm_claim_website_form">
-            <div class="container-fluid">
-                <form action="/website/form/" method="post"
-                      enctype="multipart/form-data" class="o_mark_required"
-                      data-mark="*" data-pre-fill="true" data-model_name="crm.claim"
-                      data-success-mode="redirect"
-                      data-success-page="/contactus-thank-you">
-                    <div class="s_website_form_rows row s_col_no_bgcolor">
-                        <div data-name="Field"
-                             class="s_website_form_field mb-3 col-12 s_website_form_custom s_website_form_required"
-                             data-type="char">
-                            <div class="row s_col_no_resize s_col_no_bgcolor">
-                                <label class="col-form-label col-sm-auto s_website_form_label"
-                                       style="width: 200px" for="crm_name">
-                                    <span class="s_website_form_label_content">
+  <template id="crm_claim_website_form" name="CRM request">
+    <section
+      class="s_website_form pt16 pb16"
+      data-vcss="001"
+      data-snippet="crm_claim_website_form"
+    >
+      <div class="container-fluid">
+        <form
+          action="/website/form/"
+          method="post"
+          enctype="multipart/form-data"
+          class="o_mark_required"
+          data-mark="*"
+          data-pre-fill="true"
+          data-model_name="crm.claim"
+          data-success-mode="redirect"
+          data-success-page="/contactus-thank-you"
+        >
+          <div class="s_website_form_rows row s_col_no_bgcolor">
+            <div
+              data-name="Field"
+              class="s_website_form_field mb-3 col-12 s_website_form_custom s_website_form_required"
+              data-type="char"
+            >
+              <div class="row s_col_no_resize s_col_no_bgcolor">
+                <label
+                  class="col-form-label col-sm-auto s_website_form_label"
+                  style="width: 200px"
+                  for="crm_name"
+                >
+                  <span class="s_website_form_label_content">
                                         Subject</span>
-                                    <span class="s_website_form_mark"> *</span>
-                                </label>
-                                <div class="col-sm">
-                                    <input class="form-control s_website_form_input"
-                                           type="text" name="name" required="1"
-                                           data-fill-with="name" id="crm_name"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div data-name="Field"
-                             class="s_website_form_field mb-3 col-12 s_website_form_model_required"
-                             data-type="email">
-                            <div class="row s_col_no_resize s_col_no_bgcolor">
-                                <label class="col-form-label col-sm-auto s_website_form_label"
-                                       style="width: 200px" for="crm_email">
-                                    <span class="s_website_form_label_content">
-                                        Email</span>
-                                    <span class="s_website_form_mark"> *</span>
-                                </label>
-                                <div class="col-sm">
-                                    <input class="form-control s_website_form_input"
-                                           type="email" name="email_from" required="1"
-                                           data-fill-with="email" id="crm_email"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div data-name="Field"
-                             class="s_website_form_field mb-3 col-12 s_website_form_custom"
-                             data-type="tel">
-                            <div class="row s_col_no_resize s_col_no_bgcolor">
-                                <label class="col-form-label col-sm-auto s_website_form_label"
-                                       style="width: 200px" for="crm_phone">
-                                    <span class="s_website_form_label_content">Phone
-                                        Number</span>
-                                </label>
-                                <div class="col-sm">
-                                    <input class="form-control s_website_form_input"
-                                           type="tel" name="partner_phone"
-                                           data-fill-with="phone" id="crm_phone"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div data-name="Field"
-                             class="s_website_form_field mb-3 col-12 s_website_form_custom s_website_form_required"
-                             data-type="text">
-                            <div class="row s_col_no_resize s_col_no_bgcolor">
-                                <label class="col-form-label col-sm-auto s_website_form_label"
-                                       style="width: 200px" for="crm_description">
-                                    <span class="s_website_form_label_content">
-                                        Message</span>
-                                    <span class="s_website_form_mark"> *</span>
-                                </label>
-                                <div class="col-sm">
-                                    <textarea class="form-control s_website_form_input"
-                                              name="description" required="1"
-                                              id="crm_description" rows="3"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-0 py-2 col-12 s_website_form_submit text-end s_website_form_no_submit_label"
-                             data-name="Submit Button">
-                            <div style="width: 200px;" class="s_website_form_label"/>
-                            <span id="s_website_form_result"/>
-                            <a href="#" role="button"
-                               class="btn btn-primary s_website_form_send">Send
-                                request</a>
-                        </div>
-                    </div>
-                </form>
+                  <span class="s_website_form_mark"> *</span>
+                </label>
+                <div class="col-sm">
+                  <input
+                    class="form-control s_website_form_input"
+                    type="text"
+                    name="name"
+                    required="1"
+                    data-fill-with="name"
+                    id="crm_name"
+                  />
+                </div>
+              </div>
             </div>
-        </section>
-    </template>
+            <div
+              data-name="Field"
+              class="s_website_form_field mb-3 col-12 s_website_form_model_required"
+              data-type="email"
+            >
+              <div class="row s_col_no_resize s_col_no_bgcolor">
+                <label
+                  class="col-form-label col-sm-auto s_website_form_label"
+                  style="width: 200px"
+                  for="crm_email"
+                >
+                  <span class="s_website_form_label_content">
+                                        Email</span>
+                  <span class="s_website_form_mark"> *</span>
+                </label>
+                <div class="col-sm">
+                  <input
+                    class="form-control s_website_form_input"
+                    type="email"
+                    name="email_from"
+                    required="1"
+                    data-fill-with="email"
+                    id="crm_email"
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              data-name="Field"
+              class="s_website_form_field mb-3 col-12 s_website_form_custom"
+              data-type="tel"
+            >
+              <div class="row s_col_no_resize s_col_no_bgcolor">
+                <label
+                  class="col-form-label col-sm-auto s_website_form_label"
+                  style="width: 200px"
+                  for="crm_phone"
+                >
+                  <span class="s_website_form_label_content">Phone
+                                        Number</span>
+                </label>
+                <div class="col-sm">
+                  <input
+                    class="form-control s_website_form_input"
+                    type="tel"
+                    name="partner_phone"
+                    data-fill-with="phone"
+                    id="crm_phone"
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              data-name="Field"
+              class="s_website_form_field mb-3 col-12 s_website_form_custom s_website_form_required"
+              data-type="text"
+            >
+              <div class="row s_col_no_resize s_col_no_bgcolor">
+                <label
+                  class="col-form-label col-sm-auto s_website_form_label"
+                  style="width: 200px"
+                  for="crm_description"
+                >
+                  <span class="s_website_form_label_content">
+                                        Message</span>
+                  <span class="s_website_form_mark"> *</span>
+                </label>
+                <div class="col-sm">
+                  <textarea
+                    class="form-control s_website_form_input"
+                    name="description"
+                    required="1"
+                    id="crm_description"
+                    rows="3"
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              class="mb-0 py-2 col-12 s_website_form_submit text-end s_website_form_no_submit_label"
+              data-name="Submit Button"
+            >
+              <div style="width: 200px;" class="s_website_form_label" />
+              <span id="s_website_form_result" />
+              <a href="#" role="button" class="btn btn-primary s_website_form_send">Send
+                                request</a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+  </template>
 </odoo>
