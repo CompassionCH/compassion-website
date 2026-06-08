@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <template id="crm_claim_website_form" name="CRM request yeaaaa okay got it ">
+    <template id="crm_claim_website_form" name="CRM request">
         <section class="s_website_form pt16 pb16" data-vcss="001"
                  data-snippet="crm_claim_website_form">
             <div class="container-fluid">
@@ -8,7 +8,7 @@
                       enctype="multipart/form-data" class="o_mark_required"
                       data-mark="*" data-pre-fill="true" data-model_name="crm.claim"
                       data-success-mode="redirect"
-                      data-success-page="/blblblbl">
+                      data-success-page="/contactus-thank-you">
                     <div class="s_website_form_rows row s_col_no_bgcolor">
                         <div data-name="Field"
                              class="s_website_form_field mb-3 col-12 s_website_form_custom s_website_form_required"
@@ -39,7 +39,7 @@
                                 </label>
                                 <div class="col-sm">
                                     <input class="form-control s_website_form_input"
-                                           type="email" name="email_from" required=""
+                                           type="email" name="email_from" required="1"
                                            data-fill-with="email" id="crm_email"/>
                                 </div>
                             </div>
