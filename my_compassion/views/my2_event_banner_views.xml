@@ -5,7 +5,7 @@
         <field name="name">event.banner.tree</field>
         <field name="model">event.banner</field>
         <field name="arch" type="xml">
-            <tree string="Event Banners">
+            <list string="Event Banners">
                 <field name="title" />
                 <field name="is_active" />
                 <field name="start_date" />
@@ -13,7 +13,7 @@
                 <field name="target_partner_tag_ids" widget="many2many_tags" color="color" />
                 <field name="target_route_ids" widget="many2many_tags" options="{'no_create_edit': True}" />
                 <field name="button_action_url" />
-            </tree>
+            </list>
         </field>
     </record>
     <record id="action_server_refresh_website_routes" model="ir.actions.server">
@@ -124,7 +124,7 @@
     <record id="action_my2_compassion_event_banner" model="ir.actions.act_window">
         <field name="name">Event Banners</field>
         <field name="res_model">event.banner</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_my2_compassion_event_banner_search" />
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Create a new event banner.</p>

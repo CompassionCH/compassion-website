@@ -9,12 +9,12 @@
 
 import logging
 
-from odoo import fields, models, tools
+from odoo import fields, models
 
 logger = logging.getLogger(__name__)
 
 try:
-    from pytz import timezone
+    from pytz import timezone, utc
 except (OSError, ImportError):
     logger.warning("Please install pytz")
 
@@ -59,7 +59,7 @@ class CompassionProject(models.Model):
         """
         now_utc = fields.Datetime.now()
         for record in self:
-            tzinfo = timezone(record.timezone) if record.timezone else tools.utc
+            tzinfo = timezone(record.timezone) if record.timezone else utc
             record.center_current_time = now_utc.astimezone(tzinfo).strftime(
                 "%Y-%m-%d %H:%M:%S"
             )

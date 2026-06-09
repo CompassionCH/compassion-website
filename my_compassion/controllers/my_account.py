@@ -18,10 +18,9 @@ from werkzeug.exceptions import NotFound
 
 from odoo import _
 from odoo.exceptions import UserError
-from odoo.http import local_redirect, request, route
+from odoo.http import content_disposition, request, route
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
-from odoo.addons.web.controllers.main import content_disposition
 
 IMG_URL = "/web/image/compassion.child.pictures/{id}/fullshot/"
 
@@ -188,10 +187,13 @@ class MyAccountController(CustomerPortal):
 
         # Check if the requested page is already formatted for MyCompassion 2.0
         if redirect_page.startswith("my2/"):
-            redirect_page_request = local_redirect(f"/{redirect_page}", kwargs)
+            target = f"/{redirect_page}"
         else:
             # Handles dead redirections in case the link is from MyCompassion 1.0
-            redirect_page_request = local_redirect(f"/my/{redirect_page}", kwargs)
+            target = f"/my/{redirect_page}"
+        if kwargs:
+            target = f"{target}?{urlencode(kwargs)}"
+        redirect_page_request = request.redirect(target)
 
         if not partner:
             # partner does not exist
@@ -232,7 +234,9 @@ class MyAccountController(CustomerPortal):
         request.env.cr.commit()
 
         # authenticate
-        request.session.authenticate(request.session.db, login, password)
+        request.session.authenticate(
+            request.session.db, {"login": login, "password": password, "type": "password"}
+        )
         return True
 
     @staticmethod
@@ -446,7 +450,7 @@ class MyAccountController(CustomerPortal):
         the PDF generator.
         :return: An URL pointing to the PDF preview of the generated letter
         """
-        kwargs = request.jsonrequest
+        kwargs = request.get_json_data()
         body = kwargs.get("body")
         if not body:
             raise UserError(_("No text provided for the letter."))

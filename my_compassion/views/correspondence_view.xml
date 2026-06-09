@@ -10,7 +10,7 @@
                 <field name="child_id" domain="[('sponsor_id', '=', partner_id)]" />
             </field>
             <xpath expr="//field[@name='selection_domain']" position="attributes">
-                <attribute name="attrs">{'invisible': [('user_id', '!=', False), ('child_id', '!=', False)]}</attribute>
+                <attribute name="invisible">user_id and child_id</attribute>
             </xpath>
         </field>
     </record>
@@ -30,13 +30,13 @@
                     name="web_ribbon"
                     title="Published"
                     bg_color="bg-success"
-                    attrs="{'invisible': [('website_published', '=', False)]}"
+                    invisible="not website_published"
                 />
                 <widget
                     name="web_ribbon"
                     title="Unpublished"
                     bg_color="bg-danger"
-                    attrs="{'invisible': [('website_published', '=', True)]}"
+                    invisible="website_published"
                 />
             </xpath>
         </field>

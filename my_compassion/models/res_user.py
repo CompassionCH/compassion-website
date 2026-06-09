@@ -87,7 +87,7 @@ class ResUsers(models.Model):
             # No better partner found
             _logger.info("No other partner found for user %s.", user.login)
 
-        self.flush()
+        self.env.flush_all()
 
     @api.model
     def signup(self, values, token=None):
@@ -114,7 +114,7 @@ class ResUsers(models.Model):
                 return dbname, login, password  # Or handle as appropriate
 
             # Ensure changes are flushed and committed before scheduling the job
-            self.flush()
+            self.env.flush_all()
 
             # Queue the task to find or replace the partner
             self.with_delay(priority=5)._find_and_replace_partner_async(user.id, email)

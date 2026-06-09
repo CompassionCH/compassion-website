@@ -10,96 +10,96 @@
                     <group>
                         <field name="activate_for_my_compassion" string="Activate for MyCompassion" />
                     </group>
-                    <group attrs="{'invisible': [('activate_for_my_compassion', '=', False)]}">
+                    <group invisible="not activate_for_my_compassion">
                         <field
                             name="my_compassion_donation_type"
                             string="Donation type"
-                            attrs="{'required': [('activate_for_my_compassion','=',True)]}"
+                            required="activate_for_my_compassion"
                         />
                         <field
                             name="my_compassion_name"
                             string="Name"
-                            attrs="{'required': [('activate_for_my_compassion','=',True)]}"
+                            required="activate_for_my_compassion"
                         />
                         <field
                             name="my_compassion_color"
                             string="Color"
-                            attrs="{'required': [('activate_for_my_compassion','=',True)]}"
+                            required="activate_for_my_compassion"
                         />
                         <field
                             name="my_compassion_pictogram"
                             string="Pictogram"
-                            attrs="{'required': [('activate_for_my_compassion','=',True)]}"
+                            required="activate_for_my_compassion"
                         />
                         <field
                             name="my_compassion_description"
                             string="Description"
-                            attrs="{'required': [('activate_for_my_compassion','=',True)]}"
+                            required="activate_for_my_compassion"
                         />
                         <field
                             name="my_compassion_image"
                             string="Picture"
-                            attrs="{'required': [('activate_for_my_compassion','=',True)]}"
+                            required="activate_for_my_compassion"
                         />
                     </group>
                     <group
                         string="Impact Statement"
-                        attrs="{'invisible': [('activate_for_my_compassion', '=', False)]}"
+                        invisible="not activate_for_my_compassion"
                     >
                         <field name="my_compassion_show_impact_statement" string="Show impact statement" />
                         <field
                             name="my_compassion_impact_before_ids"
                             string="The reality..."
-                            attrs="{'invisible': [('my_compassion_show_impact_statement', '=', False)]}"
+                            invisible="not my_compassion_show_impact_statement"
                         >
-                            <tree string="Order Lines" editable="bottom">
+                            <list string="Order Lines" editable="bottom">
                                 <field name="sequence" widget="handle" />
                                 <field name="description" />
-                            </tree>
+                            </list>
                         </field>
                         <field
                             name="my_compassion_impact_after_ids"
                             string="With your help we can..."
-                            attrs="{'invisible': [('my_compassion_show_impact_statement', '=', False)]}"
+                            invisible="not my_compassion_show_impact_statement"
                         >
-                            <tree string="Order Lines" editable="bottom">
+                            <list string="Order Lines" editable="bottom">
                                 <field name="sequence" widget="handle" />
                                 <field name="description" />
-                            </tree>
+                            </list>
                         </field>
                     </group>
-                    <group string="Information" attrs="{'invisible': [('activate_for_my_compassion', '=', False)]}">
+                    <group string="Information" invisible="not activate_for_my_compassion">
                         <field name="my_compassion_show_info" string="Show information lines" />
                         <field
                             name="my_compassion_info_ids"
                             string="How does it work?"
-                            attrs="{'invisible': [('my_compassion_show_info', '=', False)]}"
+                            invisible="not my_compassion_show_info"
                         >
-                            <tree string="Order Lines" editable="bottom">
+                            <list string="Order Lines" editable="bottom">
                                 <field name="sequence" widget="handle" />
                                 <field name="title" />
                                 <field name="text" />
-                            </tree>
+                            </list>
                         </field>
                     </group>
-                    <group string="Testimony" attrs="{'invisible': [('activate_for_my_compassion', '=', False)]}">
+                    <group string="Testimony" invisible="not activate_for_my_compassion">
                         <field name="my_compassion_show_testimony" string="Show testimony" />
                         <field
                             name="my_compassion_testimony_title"
                             string="Testimony title"
-                            attrs="{'invisible': [('my_compassion_show_testimony', '=', False)],
-                                       'required': [('my_compassion_show_testimony','=',True)]}"
+                            invisible="not my_compassion_show_testimony"
+                            required="my_compassion_show_testimony"
                         />
                         <field
                             name="my_compassion_testimony_text"
                             string="Testimony"
-                            attrs="{'invisible': [('my_compassion_show_testimony', '=', False)],
-                                       'required': [('my_compassion_show_testimony','=',True)]}"
+                            invisible="not my_compassion_show_testimony"
+                            required="my_compassion_show_testimony"
                         />
                     </group>
                     <group
                         string="Suggested Donations"
-                        attrs="{'invisible': [('activate_for_my_compassion', '=', False)]}"
+                        invisible="not activate_for_my_compassion"
                     >
                         <field name="my_compassion_donation_amount_low" string="Lowest suggested amount" />
                         <field name="my_compassion_donation_amount_medium" string="Medium suggested amount" />

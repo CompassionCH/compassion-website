@@ -121,15 +121,11 @@ class EventBanner(models.Model):
         default=True,
     )
 
-    def name_get(self):
-        """
-        Generates the display name for the banners.
-        Format: ‘Banner Title’
-        """
-        result = []
+    @api.depends("title")
+    def _compute_display_name(self):
+        """Display the banner by its title."""
         for banner in self:
-            result.append((banner.id, banner.title))
-        return result
+            banner.display_name = banner.title
 
     @api.model
     def _get_default_color_by_name(self, color_name):

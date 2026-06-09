@@ -30,7 +30,7 @@
 # pylint: disable=C8101
 {
     "name": "MyCompassion - Sponsor portal website",
-    "version": "14.0.1.0.3",
+    "version": "18.0.1.0.0",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
@@ -47,8 +47,6 @@
         "templates/my_account_components.xml",
         "templates/my_account_personal_info.xml",
         "templates/my_account_donations.xml",
-        "templates/my_account_my_children.xml",
-        "templates/my_account_write_a_letter.xml",
         "templates/login_template.xml",
         "templates/signup.xml",
         "templates/my2_change_password.xml",
@@ -108,7 +106,6 @@
         "web",
         "website_sale",
         "website_child_protection",
-        "website_form",
         "partner_auto_match",
         "partner_search_fuzzy",
         "website_legal_page",  # OCA/website
@@ -116,13 +113,23 @@
         "auth_signup",
         "http_routing",
         "website",
-        "website_crm_privacy_policy",  # OCA/website
         "auth_signup_verify_email",  # OCA/server-auth
         "queue_job",
         "theme_compassion_2025",
         "utm",
     ],
+    "assets": {
+        "web.assets_frontend": [
+            "my_compassion/static/src/css/toast_notification.css",
+            "my_compassion/static/src/css/my2_children_card.css",
+            "my_compassion/static/src/css/my2_donation_item.css",
+            "my_compassion/static/src/css/my2_donation_product.css",
+            "my_compassion/static/src/css/my2_donation_form.css",
+            "my_compassion/static/src/css/login.css",
+            "my_compassion/static/src/css/global.css",
+        ],
+    },
     "demo": [],
-    "installable": False,
+    "installable": True,
     "auto_install": False,
 }
