@@ -386,19 +386,12 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                         <label class="mb-0 w-100" t-attf-for="suggested-custom">Custom amount</label>
                     </div>
                 </t>
-                <!-- TODO: validate to be strictly positive number.
-
-                Add the following validation config to form_field_validator once merged:
-                    number: {
-                        regex: /(^[1-9]\d*(\.\d+)?$)|(^0?\.\d*[1-9]\d*$)/,
-                        defaultErrorMessage: "Please enter a valid number."
-                    },
-                -->
                 <t t-call="theme_compassion_2025.FormFieldComponent">
                     <t t-set="top_class" t-value="'custom-amount-field mt-2 w-100'" />
                     <input
                         type="text"
                         name="custom_amount"
+                        data-validate-type="number"
                         t-att-placeholder="currency_name"
                         class="form-control"
                         t-att-value="'{:g}'.format(wizard.wap_contribution_amount) if wizard.wap_contribution_amount else ''"

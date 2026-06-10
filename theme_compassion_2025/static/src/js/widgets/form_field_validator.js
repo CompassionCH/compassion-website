@@ -59,6 +59,11 @@ const validationConfig = {
         defaultErrorMessage:
             "Please enter a valid ZIP/Postal code. (enter 0000 if not applicable)",
     },
+    number: {
+        // Strictly positive numbers, integer or decimal (1, 2.5, .5; not 0 or -3).
+        regex: /(^[1-9]\d*(\.\d+)?$)|(^0?\.\d*[1-9]\d*$)/,
+        defaultErrorMessage: "Please enter a valid number.",
+    },
 };
 
 publicWidget.registry.themeCompassionFormFieldValidator = publicWidget.Widget.extend({

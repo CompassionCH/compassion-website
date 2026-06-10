@@ -30,7 +30,7 @@
 # pylint: disable=C8101
 {
     "name": "MyCompassion - Sponsor portal website",
-    "version": "18.0.1.0.1",
+    "version": "18.0.1.0.2",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
@@ -127,6 +127,11 @@
             "my_compassion/static/src/css/my2_donation_form.css",
             "my_compassion/static/src/css/login.css",
             "my_compassion/static/src/css/global.css",
+            # ES module JS
+            "my_compassion/static/src/js/toast_service.js",
+            "my_compassion/static/src/js/show_password.js",
+            # client templates
+            "my_compassion/static/src/xml/toast_notification.xml",
         ],
     },
     "demo": [],

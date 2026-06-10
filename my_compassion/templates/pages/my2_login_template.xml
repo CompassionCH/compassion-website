@@ -19,8 +19,6 @@
     <!-- Login Form Customization -->
     <template id="my2_login_form" inherit_id="web.login" website_id="my_compassion.my2_website">
         <xpath expr="t" position="replace">
-            <!-- Add javascript to the page -->
-            <script type="text/javascript" src="/my_compassion/static/src/js/my2_login.js" />
             <t t-call="web.login_layout">
                 <form
                     class="my2-login-form"
@@ -61,7 +59,10 @@
                         <t t-call="theme_compassion_2025.FormFieldComponent">
                             <t t-set="top_class" t-value="'mt-2'" />
                             <t t-set="label">Password</t>
-                            <div class="password" />
+                            <owl-component
+                                name="theme_compassion_2025.Password"
+                                props='{"inputName": "password", "required": true}'
+                            />
                         </t>
                         <!-- Reset password -->
                         <a
@@ -116,8 +117,6 @@
     <template id="my2_signup_fields" inherit_id="auth_signup.fields" website_id="my_compassion.my2_website">
         <xpath expr="//div[hasclass('field-login')]" position="replace">
             <div class="my2-signup-fields d-flex flex-column">
-                <!-- Add javascript -->
-                <script type="text/javascript" src="/my_compassion/static/src/js/my2_signup_fields.js" />
                 <!-- Email -->
                 <t t-call="theme_compassion_2025.FormFieldComponent">
                     <t t-set="label">Email Address</t>
@@ -154,13 +153,19 @@
                 <t t-if="only_passwords" t-call="theme_compassion_2025.FormFieldComponent">
                     <t t-set="top_class" t-value="'mt-2'" />
                     <t t-set="label">Password</t>
-                    <div class="password" data-name="password" />
+                    <owl-component
+                        name="theme_compassion_2025.Password"
+                        props='{"inputName": "password", "required": true}'
+                    />
                 </t>
                 <!-- Confirm password -->
                 <t t-if="only_passwords" t-call="theme_compassion_2025.FormFieldComponent">
                     <t t-set="top_class" t-value="'mt-2'" />
                     <t t-set="label">Confirm Password</t>
-                    <div class="password" data-name="confirm_password" />
+                    <owl-component
+                        name="theme_compassion_2025.Password"
+                        props='{"inputName": "confirm_password", "required": true}'
+                    />
                 </t>
                 <!-- Accept terms & conditions -->
                 <div class="mt-3 d-flex">
