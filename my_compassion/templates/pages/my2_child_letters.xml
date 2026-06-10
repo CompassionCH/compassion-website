@@ -30,7 +30,7 @@
                 </div>
                 <div class="text-center mb-3">
                     <!-- Button for opening the filter modal -->
-                    <a id="filterToggleBtn" data-toggle="modal" data-target="#filterModal" class="ml-1">
+                    <a id="filterToggleBtn" data-bs-toggle="modal" data-bs-target="#filterModal" class="ms-1">
                         <t t-call="theme_compassion_2025.ThemedButtonComponent">
                             <t t-set="variation" t-value="'hollow'" />
                             <t t-set="color" t-value="'low-black'" />
@@ -39,7 +39,7 @@
                             <t t-set="icon" t-value="'icon-filter-lines'" />
                             <t t-set="text_color" t-value="'low-black'" />
                             <t t-set="label">
-                                <t t-esc="nr_filters_applied" />
+                                <t t-out="nr_filters_applied" />
                                 filters applied
                             </t>
                         </t>
@@ -62,7 +62,7 @@
                                     letters
                                 </h2>
                                 <!-- Filter form: date range -->
-                                <div class="pl-4 pr-4 pt-3">
+                                <div class="ps-4 pe-4 pt-3">
                                     <h3 class="text-low-blue">Children</h3>
                                     <!-- Children dropdown -->
                                     <div class="pb-2">
@@ -75,7 +75,7 @@
                                                     t-att-value="child.id"
                                                     t-att-selected="'selected' if filter_child and filter_child.id == child.id else None"
                                                 >
-                                                    <t t-esc="child.preferred_name" />
+                                                    <t t-out="child.preferred_name" />
                                                 </option>
                                             </t>
                                         </t>
@@ -93,7 +93,7 @@
                                                         t-att-value="month[0]"
                                                         t-att-selected="'selected' if filters['month_from'] == month[0] else None"
                                                     >
-                                                        <t t-esc="month[1]" />
+                                                        <t t-out="month[1]" />
                                                     </option>
                                                 </t>
                                             </t>
@@ -109,7 +109,7 @@
                                                         t-att-value="year"
                                                         t-att-selected="'selected' if filters['year_from'] == year else None"
                                                     >
-                                                        <t t-esc="year" />
+                                                        <t t-out="year" />
                                                     </option>
                                                 </t>
                                             </t>
@@ -128,7 +128,7 @@
                                                         t-att-value="month[0]"
                                                         t-att-selected="'selected' if filters['month_to'] == month[0] else None"
                                                     >
-                                                        <t t-esc="month[1]" />
+                                                        <t t-out="month[1]" />
                                                     </option>
                                                 </t>
                                             </t>
@@ -144,7 +144,7 @@
                                                         t-att-value="year"
                                                         t-att-selected="'selected' if filters['year_to'] == year else None"
                                                     >
-                                                        <t t-esc="year" />
+                                                        <t t-out="year" />
                                                     </option>
                                                 </t>
                                             </t>
@@ -152,10 +152,10 @@
                                     </div>
                                 </div>
                                 <!-- Filter type and sort options -->
-                                <div class="pl-5 pr-5 pb-5 pt-3">
+                                <div class="ps-5 pe-5 pb-5 pt-3">
                                     <div
                                         class="btn-group btn-group-toggle justify-content-between d-flex w-100 pb-3"
-                                        data-toggle="buttons"
+                                        data-bs-toggle="buttons"
                                         id="unreadToggle"
                                     >
                                         <label
@@ -184,7 +184,7 @@
                                     <!-- Type filter: Received / Sent -->
                                     <div
                                         class="btn-group btn-group-toggle justify-content-between d-flex w-100 pb-3"
-                                        data-toggle="buttons"
+                                        data-bs-toggle="buttons"
                                         id="filterTypeToggle"
                                     >
                                         <label
@@ -213,7 +213,7 @@
                                     <!-- Sort order: Newest / Oldest -->
                                     <div
                                         class="btn-group btn-group-toggle justify-content-between d-flex w-100 pb-3"
-                                        data-toggle="buttons"
+                                        data-bs-toggle="buttons"
                                         id="sortToggle"
                                     >
                                         <label
@@ -250,7 +250,7 @@
                                                 <t t-set="label">Reset</t>
                                             </t>
                                         </a>
-                                        <a id="filterOkBtn" data-dismiss="modal">
+                                        <a id="filterOkBtn" data-bs-dismiss="modal">
                                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                                 <t t-set="variation" t-value="'filled'" />
                                                 <t t-set="color" t-value="'mid-green'" />
@@ -300,9 +300,9 @@
                         <!-- Page indicator -->
                         <span id="pageIndicator" class="p-2">
                             Page
-                            <t t-esc="current_page" />
+                            <t t-out="current_page" />
                             of
-                            <t t-esc="total_pages" />
+                            <t t-out="total_pages" />
                         </span>
                         <!-- Next -->
                         <t t-if="current_page &lt; total_pages">

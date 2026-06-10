@@ -1,36 +1,45 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
+    <!-- The MyCompassion menu entries, shared by the desktop navbar and the
+         mobile offcanvas (both render their items inside a ul.navbar-nav) -->
+    <template id="my2_nav_items" name="MyCompassion Menu Items">
+        <t t-set="partner" t-value="request.env.user.partner_id" />
+        <li class="nav-item">
+            <a class="nav-link" href="/my2/dashboard">Home</a>
+        </li>
+        <t t-if="partner.is_sponsor">
+            <li class="nav-item">
+                <a class="nav-link" href="/my2/children">My sponsorships</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/my2/children/letters">Letters</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/my2/children/letters/new">Write a letter</a>
+            </li>
+        </t>
+        <li class="nav-item">
+            <a class="nav-link" href="/my2/gifts">Give</a>
+        </li>
+        <t t-if="partner.is_donor">
+            <li class="nav-item">
+                <a class="nav-link" href="/my2/donations">My donations</a>
+            </li>
+        </t>
+    </template>
     <template id="my_compassion_dynamic_menu" inherit_id="website.template_header_default">
-        <xpath expr="//div[@id='top_menu_collapse']/*[1]" position="before">
+        <xpath expr="//t[@t-call='website.navbar_nav']" position="before">
             <t t-if="request.session.uid">
                 <ul class="navbar-nav">
-                    <t t-set="partner" t-value="request.env.user.partner_id" />
-                    <li class="nav-item">
-                        <a class="nav-link" href="/my2/dashboard">Home</a>
-                    </li>
-                    <t t-if="partner.is_sponsor">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/my2/children">My sponsorships</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/my2/children/letters">Letters</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/my2/children/letters/new">Write a letter</a>
-                        </li>
-                    </t>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/my2/gifts">Give</a>
-                    </li>
-                    <t t-if="partner.is_donor">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/my2/donations">My donations</a>
-                        </li>
-                    </t>
-                    <li class="nav-item d-flex d-md-none align-items-center">
-                        <t t-call="portal.language_selector" />
-                    </li>
+                    <t t-call="my_compassion.my2_nav_items" />
                 </ul>
+            </t>
+        </xpath>
+    </template>
+    <template id="my_compassion_dynamic_menu_mobile" inherit_id="website.template_header_mobile">
+        <xpath expr="//t[@t-call='website.navbar_nav']" position="before">
+            <t t-if="request.session.uid">
+                <t t-call="my_compassion.my2_nav_items" />
             </t>
         </xpath>
     </template>
@@ -50,8 +59,10 @@
         <xpath expr="//i[hasclass('fa-shopping-cart')]" position="attributes">
             <attribute name="class">icon-gift02 text-low-yellow</attribute>
         </xpath>
-        <xpath expr="//sup[hasclass('badge-primary')]" position="attributes">
-            <attribute name="class">my_cart_quantity badge bg-core-blue text-white</attribute>
+        <!-- The badge node carries t-attf-class (no static class), so the xpath
+             matches on @t-attf-class; keep the hide-when-empty toggle -->
+        <xpath expr="//sup[contains(@t-attf-class, 'my_cart_quantity')]" position="attributes">
+            <attribute name="t-attf-class">my_cart_quantity badge bg-core-blue text-white #{_badge_class} #{'d-none' if (website_sale_cart_quantity == 0) else ''}</attribute>
         </xpath>
     </template>
 </odoo>

@@ -32,7 +32,7 @@
         <!-- Default property values -->
         <t t-set="label">
             <t t-if="label">
-                <t t-esc="label" />
+                <t t-out="label" />
             </t>
             <t t-else="">Proceed to checkout</t>
         </t>

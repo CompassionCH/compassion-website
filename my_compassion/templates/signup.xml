@@ -6,7 +6,7 @@
         name="Signup Privacy Policy"
         website_id="website.default_website"
     >
-        <xpath expr="//div[@class='form-group field-confirm_password']" position="after">
+        <xpath expr="//div[hasclass('field-confirm_password')]" position="after">
             <input
                 type="checkbox"
                 value="accepted"
@@ -16,7 +16,7 @@
                 required="required"
             />
             <label class="form-check-label" for="privacy_policy">
-                <t t-call="website_legal_page.acceptance_full" />
+                <t t-call="my_compassion.acceptance_full" />
             </label>
         </xpath>
         <xpath expr="//input[@name='password']" position="inside">

@@ -66,13 +66,13 @@
                         <div class="row">
                             <div class="col col-6">
                                 <label>
-                                    <t t-esc="sponsorship.child_id.preferred_name" />
+                                    <t t-out="sponsorship.child_id.preferred_name" />
                                 </label>
                             </div>
                             <div class="col col-6">
                                 <label>
-                                    <t t-raw="sponsorship.total_amount" />
-                                    <t t-esc="sponsorship.invoice_line_ids[:1].currency_id.name" />
+                                    <t t-out="sponsorship.total_amount" />
+                                    <t t-out="sponsorship.invoice_line_ids[:1].currency_id.name" />
                                 </label>
                             </div>
                         </div>
@@ -89,9 +89,9 @@
                     <t t-set="tooltip_title">Your latest payments may not already be taken into account.</t>
                     <i
                         style="font-size: 1rem"
-                        class="fa fa-info-circle ml-1 d-inline"
+                        class="fa fa-info-circle ms-1 d-inline"
                         t-att-title="tooltip_title"
-                        data-toggle="tooltip"
+                        data-bs-toggle="tooltip"
                         id="tax_toggle"
                     />
                 </h3>
@@ -117,18 +117,18 @@
                     <div class="row">
                         <div class="col-6">
                             <label>
-                                <t t-esc="invoice.get_date('invoice_date', 'MMMM yyyy').title()" />
+                                <t t-out="invoice.get_date('invoice_date', 'MMMM yyyy').title()" />
                             </label>
                         </div>
                         <div class="col-3">
                             <label>
-                                <t t-esc="children.get_list('preferred_name', 3, children.get_number())" />
+                                <t t-out="children.get_list('preferred_name', 3, children.get_number())" />
                             </label>
                         </div>
                         <div class="col-3">
                             <label>
-                                <t t-esc="int(invoice.amount_total)" />
-                                <t t-esc="invoice.currency_id.name" />
+                                <t t-out="int(invoice.amount_total)" />
+                                <t t-out="invoice.currency_id.name" />
                             </label>
                         </div>
                     </div>
@@ -141,8 +141,8 @@
                     <t t-set="tooltip_title">Your latest payments may not already be taken into account.</t>
                     <i
                         style="font-size: 1rem"
-                        class="fa fa-info-circle ml-1 d-inline"
-                        data-toggle="tooltip"
+                        class="fa fa-info-circle ms-1 d-inline"
+                        data-bs-toggle="tooltip"
                         t-att-title="tooltip_title"
                         id="tax_toggle"
                     />
@@ -168,14 +168,14 @@
                     <div class="row">
                         <div class="col-3">
                             <label>
-                                <t t-esc="invoice_group['last_payment']" />
+                                <t t-out="invoice_group['last_payment']" />
                             </label>
                         </div>
                         <div class="col-6">
-                            <label t-esc="invoice_group['description']" />
+                            <label t-out="invoice_group['description']" />
                         </div>
                         <div class="col-3">
-                            <label t-esc="invoice_group['amount']" />
+                            <label t-out="invoice_group['amount']" />
                         </div>
                     </div>
                 </t>

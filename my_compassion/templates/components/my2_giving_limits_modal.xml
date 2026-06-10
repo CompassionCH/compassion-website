@@ -31,8 +31,8 @@
                             Giving limits
                             <button
                                 type="button"
-                                class="mr-3 icon-x-circle text-pure-white"
-                                data-dismiss="modal"
+                                class="me-3 icon-x-circle text-pure-white"
+                                data-bs-dismiss="modal"
                                 aria-label="Close"
                             />
                         </h5>
@@ -56,14 +56,14 @@
                             impact.
                         </div>
                         <div class="mt-4 tiny-text">
-                            <i class="mr-1 icon-phone body-small" />
+                            <i class="me-1 icon-phone body-small" />
                             <a href="tel:+41244342124" class="text-low-black">+41 (0)24 434 21 24</a>
                             (Mo-Fri: 9.00-14.00)
                         </div>
                         <div class="mt-2 tiny-text">
-                            <i class="mr-1 icon-mail01 body-small" />
+                            <i class="me-1 icon-mail01 body-small" />
                             <a t-attf-href="mailto:#{request.env.company.email}" class="text-low-black">
-                                <t t-esc="request.env.company.email" />
+                                <t t-out="request.env.company.email" />
                             </a>
                         </div>
                     </div>

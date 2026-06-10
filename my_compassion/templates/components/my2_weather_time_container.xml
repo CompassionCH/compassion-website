@@ -27,12 +27,12 @@
             <t t-if="cdc_name">
                 <div class="center-info-card__header">
                     <p class="center-info-card__project-info">
-                        <t t-esc="cdc_name" />
+                        <t t-out="cdc_name" />
                     </p>
                 </div>
             </t>
             <div t-if="city_country" class="center-info-card__location">
-                <t t-esc="city_country" />
+                <t t-out="city_country" />
             </div>
             <div class="center-info-card__details">
                 <span id="current_time" class="center-info-card__time" />

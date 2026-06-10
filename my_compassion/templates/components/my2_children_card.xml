@@ -30,7 +30,7 @@
                 />
                 <!-- Child name -->
                 <div class="h2 mb-0">
-                    <t t-esc="child.preferred_name" />
+                    <t t-out="child.preferred_name" />
                 </div>
                 <div class="pending" t-if="sponsorship and sponsorship.state in ('draft', 'waiting', 'mandate')">
                     <span
@@ -51,21 +51,21 @@
                 </div>
                 <!-- Correspondence Status and info section -->
                 <div class="body-small mt-3">
-                    <div t-if="show_status" class="mb-3 pl-3 pr-3">
+                    <div t-if="show_status" class="mb-3 ps-3 pe-3">
                         <span class="border-bottom border-2 border-high-orange">
                             <t
                                 t-if="sponsorship_end_date and not sponsorship.can_write_letter and sponsorship.exit_communication_sent"
                             >
                                 Sponsorship terminated on
                                 <t
-                                    t-esc="sponsorship_end_date"
+                                    t-out="sponsorship_end_date"
                                     t-options="{'widget': 'date', 'format': 'dd MMMM yyyy'}"
                                 />
                             </t>
                             <t t-elif="latest_correspondence">
                                 Last contact
                                 <t
-                                    t-esc="latest_correspondence.create_date"
+                                    t-out="latest_correspondence.create_date"
                                     t-options="{'widget': 'date', 'format': 'dd MMMM yyyy'}"
                                 />
                             </t>
@@ -74,7 +74,7 @@
                     </div>
                     <div class="mb-2">
                         <i class="icon-gift02 bg-low-yellow mx-1" />
-                        <t t-esc="child.age" />
+                        <t t-out="child.age" />
                         years old
                         <i class="icon-user01 bg-low-yellow mx-1" />
                         <t t-if="child.gender == 'M'">Boy</t>

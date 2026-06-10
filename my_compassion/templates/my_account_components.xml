@@ -34,17 +34,26 @@
         <!--     2. value, the value to fill in on the left, nothing is displayed if empty -->
         <template id="fill_key_value">
             <div class="row" t-if="value">
-                <div class="col-6 border-right">
+                <div class="col-6 border-end">
                     <label>
-                        <t t-raw="0" />
+                        <t t-out="0" />
                     </label>
                 </div>
                 <div class="col-6">
                     <label>
-                        <t t-esc="value" />
+                        <t t-out="value" />
                     </label>
                 </div>
             </div>
+        </template>
+        <!-- Legal-terms acceptance label, shared by the signup, login,
+             personal-info and user-settings privacy-policy checkboxes -->
+        <template id="acceptance_full">
+            <span class="acceptance_full">
+                <a
+                    href="/legal"
+                >I accept the legal terms, the privacy policy &amp; conditions of this website.</a>
+            </span>
         </template>
     </data>
 </odoo>

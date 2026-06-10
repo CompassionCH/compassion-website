@@ -47,7 +47,7 @@
             <i t-if="button.get('icon')" t-attf-class="tiny-text icon-#{button.get('icon')} text-#{color}" />
             <i t-if="button.get('pictogram')" t-attf-class="tiny-text #{button.get('pictogram')} text-#{color}" />
             <span t-if="button.get('label')" t-attf-class="tiny-text bold text-#{color}">
-                <t t-esc="button.get('label')" />
+                <t t-out="button.get('label')" />
             </span>
         </div>
     </template>
@@ -68,7 +68,7 @@
         <!--Small image on the card  -->
         <t t-set="small_thumbnail_content">
             <div
-                t-attf-class="thumbnail responsive-sm mr-3 flex-shrink-0 rounded-lg #{not image and image_fallback_pictogram or ''}"
+                t-attf-class="thumbnail responsive-sm me-3 flex-shrink-0 rounded-lg #{not image and image_fallback_pictogram or ''}"
                 t-attf-style="--image_url: url('#{image}');"
             />
         </t>
@@ -77,28 +77,28 @@
             t-attf-style="min-width: #{min_width}"
         >
             <div
-                t-attf-class="thumbnail responsive-lg mr-3 flex-shrink-0 rounded-lg #{not image and image_fallback_pictogram or ''}"
+                t-attf-class="thumbnail responsive-lg me-3 flex-shrink-0 rounded-lg #{not image and image_fallback_pictogram or ''}"
                 t-attf-style="--image_url: url('#{image}');"
             />
-            <t t-if="not primary_button" t-raw="small_thumbnail_content" />
+            <t t-if="not primary_button" t-out="small_thumbnail_content" />
             <div class="w-100 d-flex flex-column justify-content-between">
                 <div class="d-flex align-items-start">
-                    <t t-if="primary_button" t-raw="small_thumbnail_content" />
+                    <t t-if="primary_button" t-out="small_thumbnail_content" />
                     <div class="flex-grow-1 d-flex flex-column">
                         <div t-attf-class="text-#{title_color} body-large bold">
-                            <t t-esc="name" />
+                            <t t-out="name" />
                         </div>
                         <div t-if="recipient" t-attf-class="text-#{recipient_color} body-small bold">
                             For
-                            <t t-esc="recipient" />
+                            <t t-out="recipient" />
                         </div>
                         <div t-if="subtext" t-attf-class="text-#{subtext_color} body-small bold">
-                            <t t-esc="subtext" />
+                            <t t-out="subtext" />
                         </div>
                     </div>
                     <t t-foreach="secondary_buttons" t-as="button">
                         <t t-call="my_compassion.DonationItemButton">
-                            <t t-set="button_top_class" t-value="'ml-2'" />
+                            <t t-set="button_top_class" t-value="'ms-2'" />
                         </t>
                     </t>
                 </div>
@@ -107,7 +107,7 @@
                         <t t-set="button" t-value="primary_button" />
                     </t>
                     <div t-attf-class="text-#{price_color} ">
-                        <t t-esc="currency_name" />
+                        <t t-out="currency_name" />
                         <t t-if="price % 1 == 0" t-set="price" t-value="'{0}.-'.format(int(price))" />
                         <t t-else="" t-set="price" t-value="'{0:.2f}'.format(price)" />
                         <t t-if="monthly" t-set="monthly">/mo.</t>
@@ -115,7 +115,7 @@
                             <t t-set="monthly">&#160;/month</t>
                         </t>
                         <t t-else="" t-set="monthly" />
-                        <t t-esc="price + monthly" />
+                        <t t-out="price + monthly" />
                     </div>
                 </div>
             </div>

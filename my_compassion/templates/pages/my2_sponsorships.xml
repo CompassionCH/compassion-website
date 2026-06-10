@@ -19,9 +19,9 @@ Page: My Compassion 2 Sponsorships Page
     <template id="SponsorshipsFilter" name="Sponsorships filter">
         <div class="sponsorship-filter mx-lg-3 flex-shrink-1 d-flex align-items-center flex-column">
             <div class="body-large bold text-dark-blue mx-lg-4 text-center">
-                <t t-raw="title" />
+                <t t-out="title" />
             </div>
-            <t t-raw="0" />
+            <t t-out="0" />
         </div>
     </template>
     <!-- RESULTS CONTENT -->
@@ -109,7 +109,7 @@ Page: My Compassion 2 Sponsorships Page
                                     <option value="">Select country</option>
                                     <t t-foreach="countries" t-as="country">
                                         <option t-att-value="country.field_office_id">
-                                            <t t-esc="country.country_id.name" />
+                                            <t t-out="country.country_id.name" />
                                         </option>
                                     </t>
                                 </t>
@@ -121,7 +121,7 @@ Page: My Compassion 2 Sponsorships Page
                 <div class="sponsorships-column w-100 d-flex flex-column">
                     <!-- TOTAL RESULTS -->
                     <div class="body-large bold text-mid-grey mt-4 mb-2 align-self-center">
-                        <i class="results-icon icon-users03 text-mid-grey mr-2" />
+                        <i class="results-icon icon-users03 text-mid-grey me-2" />
                         <span id="total-children-found-message">
                             <span id="total-results">0</span>
                             children found

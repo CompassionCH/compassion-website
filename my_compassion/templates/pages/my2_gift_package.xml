@@ -112,9 +112,9 @@
             <div class="text-mid-green body-large bold">Total amount</div>
             <div class="text-dark-blue body-large bold">
                 <t t-set="amount" t-value="order.amount_total" />
-                <t t-esc="order.currency_id.name" />
-                <t t-if="amount % 1 == 0" t-esc="int(amount)" />
-                <t t-else="" t-esc="'{0:.2f}'.format(amount)" />
+                <t t-out="order.currency_id.name" />
+                <t t-if="amount % 1 == 0" t-out="int(amount)" />
+                <t t-else="" t-out="'{0:.2f}'.format(amount)" />
             </div>
         </div>
     </template>
@@ -145,8 +145,8 @@
                                 <div class="modal-body">
                                     <button
                                         type="button"
-                                        class="btn-close mt-3 mr-3 icon-x-circle body-large text-mid-grey"
-                                        data-dismiss="modal"
+                                        class="btn-close mt-3 me-3 icon-x-circle body-large text-mid-grey"
+                                        data-bs-dismiss="modal"
                                         aria-label="Close"
                                     />
                                     <div
@@ -171,8 +171,8 @@
                         <button
                             type="button"
                             class="body-large icon-help-circle text-mid-grey"
-                            data-toggle="modal"
-                            data-target="#help-modal"
+                            data-bs-toggle="modal"
+                            data-bs-target="#help-modal"
                         />
                         <!-- DESCRIPTION -->
                         <div class="mt-3 px-4 body-small text-center">

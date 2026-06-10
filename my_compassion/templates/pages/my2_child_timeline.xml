@@ -30,7 +30,7 @@
             t-value="compassion_child.my_sponsorship_id and compassion_child.my_sponsorship_id.state=='terminated' and compassion_child.my_sponsorship_id.exit_communication_sent"
         />
         <t t-set="additional_title">
-            <t t-esc="compassion_child.preferred_name" />
+            <t t-out="compassion_child.preferred_name" />
         </t>
         <t t-call="website.layout">
             <div class="container">
@@ -47,7 +47,7 @@
                                 />
                                 <t t-set="alt">
                                     Portrait of
-                                    <t t-esc="compassion_child.preferred_name" />
+                                    <t t-out="compassion_child.preferred_name" />
                                 </t>
                                 <t t-set="size" t-value="'large'" />
                             </t>
@@ -75,7 +75,7 @@
                             </div>
                         </div>
                         <div t-if="not is_sponsorship_terminated" class="d-flex flex-column flex-md-column-reverse">
-                            <div class="child-action-buttons justify-content-md-start ml-md-3 pb-3 p-md-0">
+                            <div class="child-action-buttons justify-content-md-start ms-md-3 pb-3 p-md-0">
                                 <t
                                     t-if="access_scope == 'sponsor' and compassion_child.can_i_write_letter"
                                     t-call="theme_compassion_2025.ThemedButtonComponent"
@@ -113,27 +113,27 @@
                                     <t t-set="href" t-value="'/my2/new-sponsorship/' + str(compassion_child.id)" />
                                 </t>
                             </div>
-                            <div class="child-personal-information d-flex flex-column flex-grow-1 mt-md-3 ml-md-3">
+                            <div class="child-personal-information d-flex flex-column flex-grow-1 mt-md-3 ms-md-3">
                                 <t t-if="birthday_formatted">
                                     <div class="child-info-item d-flex align-items-center">
-                                        <div class="frame bg-core-blue mr-2">
+                                        <div class="frame bg-core-blue me-2">
                                             <i class="icon icon-calendar-heart02 text-pure-white m-2" />
                                         </div>
                                         <p class="child-info-text">
                                             My birthday is
                                             <span class="text-core-blue font-weight-bold">
-                                                <t t-esc="birthday_formatted" />
+                                                <t t-out="birthday_formatted" />
                                             </span>
                                         </p>
                                     </div>
                                 </t>
                                 <div class="child-info-item d-flex align-items-center">
-                                    <div class="frame bg-mid-green mr-2">
+                                    <div class="frame bg-mid-green me-2">
                                         <i class="icon icon-heart text-pure-white m-2" />
                                     </div>
                                     <p class="child-info-text">
                                         <span class="text-mid-green font-weight-bold">I love</span>
-                                        <t t-esc="compassion_child.get_list('hobby_ids.value')" />
+                                        <t t-out="compassion_child.get_list('hobby_ids.value')" />
                                     </p>
                                 </div>
                                 <t
@@ -144,21 +144,21 @@
                                     class="child-info-item d-flex align-items-center"
                                     t-if="child_education_data.get('level')"
                                 >
-                                    <div class="frame bg-mid-pink mr-2">
+                                    <div class="frame bg-mid-pink me-2">
                                         <i class="icon icon-graduation-hat02 text-pure-white m-2" />
                                     </div>
                                     <p class="child-info-text">
                                         <t t-if="child_education_data['is_enrolled']">
                                             I'm in
                                             <span class="text-mid-pink font-weight-bold">
-                                                <t t-esc="child_education_data['level']" />
+                                                <t t-out="child_education_data['level']" />
                                             </span>
                                             <t t-if="child_education_data['has_subjects']">
                                                 <span t-if="child_education_data['has_multiple_subjects']">
                                                     and my favourite subjects are
                                                 </span>
                                                 <span t-else="">and my favourite subject is</span>
-                                                <t t-esc="child_education_data['subjects_str']" />
+                                                <t t-out="child_education_data['subjects_str']" />
                                             </t>
                                         </t>
                                         <t t-else="">I'm not enrolled in school</t>
@@ -185,7 +185,7 @@
                     </section>
                     <section t-if="not is_sponsorship_terminated" class="child-related-information tabs-component">
                         <div class="child-select d-block d-md-none">
-                            <select class="form-control custom-select" id="child-info-tabs-mobile">
+                            <select class="form-control form-select" id="child-info-tabs-mobile">
                                 <option value="#family-tab" selected="1">My Family</option>
                                 <option value="#project-tab">My Project</option>
                                 <option value="#country-tab">My Country</option>
@@ -196,7 +196,7 @@
                                 <a
                                     class="nav-link active"
                                     id="family-tab-link"
-                                    data-toggle="tab"
+                                    data-bs-toggle="tab"
                                     href="#family-tab"
                                     role="tab"
                                     aria-controls="family-tab"
@@ -209,7 +209,7 @@
                                 <a
                                     class="nav-link"
                                     id="project-tab-link"
-                                    data-toggle="tab"
+                                    data-bs-toggle="tab"
                                     href="#project-tab"
                                     role="tab"
                                     aria-controls="project-tab"
@@ -222,7 +222,7 @@
                                 <a
                                     class="nav-link"
                                     id="country-tab-link"
-                                    data-toggle="tab"
+                                    data-bs-toggle="tab"
                                     href="#country-tab"
                                     role="tab"
                                     aria-controls="country-tab"
@@ -243,7 +243,7 @@
                                     <p>
                                         I currently live in
                                         <t
-                                            t-esc="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"
+                                            t-out="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"
                                         />
                                         with
                                         <t
@@ -259,7 +259,7 @@
                                             <t t-if="compassion_child.household_id.nb_brothers > 0">
                                                 <t t-if="compassion_child.household_id.nb_brothers == 1">a brother</t>
                                                 <t t-else="">
-                                                    <t t-esc="compassion_child.household_id.nb_brothers" />
+                                                    <t t-out="compassion_child.household_id.nb_brothers" />
                                                     brothers
                                                 </t>
                                             </t>
@@ -271,12 +271,12 @@
                                             <t t-if="compassion_child.household_id.nb_sisters > 0">
                                                 <t t-if="compassion_child.household_id.nb_sisters == 1">
                                                     <t t-set="sister_text">a sister</t>
-                                                    <t t-esc="'%s.' % sister_text" />
+                                                    <t t-out="'%s.' % sister_text" />
                                                 </t>
                                                 <t t-else="">
                                                     <t t-set="sisters_text">sisters</t>
                                                     <t
-                                                        t-esc="'%s %s.' % (compassion_child.household_id.nb_sisters, sisters_text)"
+                                                        t-out="'%s %s.' % (compassion_child.household_id.nb_sisters, sisters_text)"
                                                     />
                                                 </t>
                                             </t>
@@ -292,7 +292,7 @@
                                                 t-set="value"
                                                 t-value="request.env['ir.advanced.translation'].get(compassion_child.household_id.translate('male_guardian_job'))"
                                             />
-                                            <t t-esc="'%s.' % value" />
+                                            <t t-out="'%s.' % value" />
                                         </t>
                                         <t
                                             t-if="compassion_child.household_id.mother_living_with_child and compassion_child.household_id.female_guardian_job_type != 'Not Employed'"
@@ -302,7 +302,7 @@
                                                 t-set="value"
                                                 t-value="request.env['ir.advanced.translation'].get(compassion_child.household_id.translate('female_guardian_job'), female=True)"
                                             />
-                                            <t t-esc="'%s.' % value" />
+                                            <t t-out="'%s.' % value" />
                                         </t>
                                     </p>
                                 </div>
@@ -317,32 +317,32 @@
                                 <ul class="tab-items">
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Church partner:</strong>
-                                        <t t-esc="compassion_child.project_id.local_church_name" />
+                                        <t t-out="compassion_child.project_id.local_church_name" />
                                     </li>
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Location:</strong>
-                                        <t t-esc="compassion_child.project_id.country_id.name" />
+                                        <t t-out="compassion_child.project_id.country_id.name" />
                                     </li>
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Closest Major City:</strong>
-                                        <t t-esc="compassion_child.project_id.closest_city" />
+                                        <t t-out="compassion_child.project_id.closest_city" />
                                     </li>
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Community:</strong>
-                                        <t t-esc="compassion_child.project_id.community_locale" />
+                                        <t t-out="compassion_child.project_id.community_locale" />
                                     </li>
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Most Commonly Spoken Language:</strong>
-                                        <t t-esc="compassion_child.project_id.primary_language_id.name" />
+                                        <t t-out="compassion_child.project_id.primary_language_id.name" />
                                     </li>
                                     <li class="tab-item">
                                         <strong class="tab-item-title">No. of Residents:</strong>
-                                        <t t-esc="compassion_child.project_id.nb_cdsp_kids" />
+                                        <t t-out="compassion_child.project_id.nb_cdsp_kids" />
                                     </li>
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Most Common Occupation:</strong>
                                         <t
-                                            t-esc="compassion_child.get_list('project_id.primary_adults_occupation_ids.value')"
+                                            t-out="compassion_child.get_list('project_id.primary_adults_occupation_ids.value')"
                                         />
                                     </li>
                                     <li class="tab-item">
@@ -351,7 +351,7 @@
                                     </li>
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Regional Diet:</strong>
-                                        <t t-esc="compassion_child.get_list('project_id.primary_diet_ids.value')" />
+                                        <t t-out="compassion_child.get_list('project_id.primary_diet_ids.value')" />
                                     </li>
                                 </ul>
                             </div>
@@ -365,31 +365,31 @@
                                 <ul class="tab-items">
                                     <li class="tab-item">
                                         <strong class="tab-item-title">Official Country Name:</strong>
-                                        <t t-esc="compassion_child.project_id.country_id.name" />
+                                        <t t-out="compassion_child.project_id.country_id.name" />
                                     </li>
                                     <t t-if="field_office.capital_city">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Capital City:</strong>
-                                            <t t-esc="field_office.capital_city" />
+                                            <t t-out="field_office.capital_city" />
                                         </li>
                                     </t>
                                     <t t-if="field_office.population">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Population:</strong>
-                                            <t t-esc="field_office.population" t-options='{"widget": "integer"}' />
+                                            <t t-out="field_office.population" t-options='{"widget": "integer"}' />
                                         </li>
                                     </t>
                                     <t t-if="field_office.male_life_expectancy">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Male life expectancy:</strong>
-                                            <t t-esc="field_office.male_life_expectancy" />
+                                            <t t-out="field_office.male_life_expectancy" />
                                             <span>Years Old</span>
                                         </li>
                                     </t>
                                     <t t-if="field_office.female_life_expectancy">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Female life expectancy:</strong>
-                                            <t t-esc="field_office.female_life_expectancy" />
+                                            <t t-out="field_office.female_life_expectancy" />
                                             <span>Years Old</span>
                                         </li>
                                     </t>
@@ -398,7 +398,7 @@
                                             <strong class="tab-item-title">
                                                 Urban population with drinking water access:
                                             </strong>
-                                            <t t-esc="'{:.0f}%'.format(field_office.urban_water_access * 100)" />
+                                            <t t-out="'{:.0f}%'.format(field_office.urban_water_access * 100)" />
                                         </li>
                                     </t>
                                     <t t-if="field_office.rural_water_access">
@@ -406,31 +406,31 @@
                                             <strong class="tab-item-title">
                                                 Rural population with drinking water access:
                                             </strong>
-                                            <t t-esc="'{:.0f}%'.format(field_office.rural_water_access * 100)" />
+                                            <t t-out="'{:.0f}%'.format(field_office.rural_water_access * 100)" />
                                         </li>
                                     </t>
                                     <t t-if="field_office.adult_literacy_rate">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Adult literacy rate:</strong>
-                                            <t t-esc="'{:.0f}%'.format(field_office.adult_literacy_rate * 100)" />
+                                            <t t-out="'{:.0f}%'.format(field_office.adult_literacy_rate * 100)" />
                                         </li>
                                     </t>
                                     <t t-if="field_office.infant_mortality_rate">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Infant mortality rate:</strong>
-                                            <t t-esc="'{:.0f}%'.format(field_office.infant_mortality_rate * 100)" />
+                                            <t t-out="'{:.0f}%'.format(field_office.infant_mortality_rate * 100)" />
                                         </li>
                                     </t>
                                     <t t-if="field_office.under_five_mortality_rate">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Under-five mortality rate:</strong>
-                                            <t t-esc="'{:.0f}%'.format(field_office.under_five_mortality_rate * 100)" />
+                                            <t t-out="'{:.0f}%'.format(field_office.under_five_mortality_rate * 100)" />
                                         </li>
                                     </t>
                                     <t t-if="field_office.religions">
                                         <li class="tab-item">
                                             <strong class="tab-item-title">Religion:</strong>
-                                            <t t-esc="field_office.religions" />
+                                            <t t-out="field_office.religions" />
                                         </li>
                                     </t>
                                     <t t-if="field_office.less_than_2_dollars_a_day">
@@ -439,7 +439,7 @@
                                                 Population living on less than $3/day:
                                             </strong>
                                             <t
-                                                t-esc="'{:.0f}%'.format(field_office.less_than_2_dollars_a_day * 100 )"
+                                                t-out="'{:.0f}%'.format(field_office.less_than_2_dollars_a_day * 100 )"
                                             />
                                         </li>
                                     </t>
@@ -495,7 +495,7 @@
                         class="text-center"
                         t-if="timeline_letters and timeline_letters[0].get('metadata') == 'Supporter To Beneficiary'"
                     >
-                        <p class="small font-italic">
+                        <p class="small fst-italic">
                             Given the time it takes for mail to arrive, it could take between one and three months for
                             you to receive a reply.
                         </p>
@@ -517,7 +517,7 @@
                 </div>
                 <div id="timeline-loader" class="text-center py-5" style="display:none;">
                     <div class="spinner-border text-primary" role="status">
-                        <span class="sr-only">Loading...</span>
+                        <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
             </section>

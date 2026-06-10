@@ -14,12 +14,12 @@
     <template id="my2_giving_limits_modal_table_column" name="Gift Package Help Table Column">
         <div t-attf-class="table-column d-flex flex-column #{top_class}">
             <div class="table-cell tiny-text bold bg-light-green border-0 d-flex flex-column justify-content-center">
-                <t t-esc="title" />
+                <t t-out="title" />
             </div>
             <t t-foreach="cells" t-as="cell">
                 <div class="table-cell super-tiny-text d-flex flex-column justify-content-center">
                     <div>
-                        <t t-raw="cell.replace('*', '&lt;span class=\'body-small text-low-pink\'&gt;*&lt;/span&gt;')" />
+                        <t t-out="cell.replace('*', '&lt;span class=\'body-small text-low-pink\'&gt;*&lt;/span&gt;')" />
                     </div>
                 </div>
             </t>
@@ -42,15 +42,11 @@
                 <t t-call="my_compassion.my2_giving_limits_modal_table_column">
                     <t t-set="top_class" t-value="'flex-grow-1'" />
                     <t t-set="title">Type</t>
-                    <t t-set="_txt_Gift">&#160;Gift</t>
                     <t
                         t-set="cells"
                         t-value="[
-                                        (
-                                            (limit.get_sponsorship_gift_labels() + _txt_Gift)
-                                            if limit.sponsorship_gift_type
-                                            else limit.get_gift_type_label()
-                                        ) + limit.get_gift_frequency_indicator()
+                                        limit.gift_type_id.name
+                                        + limit.get_gift_frequency_indicator()
                                         for limit in limits
                                     ]"
                     />

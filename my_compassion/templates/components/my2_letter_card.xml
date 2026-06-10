@@ -21,12 +21,12 @@
             <div>
                 <div
                     id="envelope-{{ letter.uuid }}"
-                    t-attf-class="ml-2 mt-4 my2-envelope {{ 'already-read' if letter.email_read else '' }} {{ 'envelope--green' if is_from_supporter else 'envelope--blue' }}"
+                    t-attf-class="ms-2 mt-4 my2-envelope {{ 'already-read' if letter.email_read else '' }} {{ 'envelope--green' if is_from_supporter else 'envelope--blue' }}"
                     t-attf-href="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf"
                     t-att-data-letter-id="letter.id"
                     t-att-data-letter-read="letter.email_read"
                     t-att-data-letter-uuid="letter.uuid"
-                    data-target="_blank"
+                    data-bs-target="_blank"
                 >
                     <div class="env-body" />
                     <div class="env-letter">
@@ -52,17 +52,17 @@
                 </div>
             </div>
             <!-- Text block at the right -->
-            <div class="flex-grow-1 d-flex flex-column ml-2 mr-2 mb-2 mt-4">
+            <div class="flex-grow-1 d-flex flex-column ms-2 me-2 mb-2 mt-4">
                 <!-- Top row: Title (left) and Dropdown (right) -->
                 <div class="d-flex justify-content-between align-items-start mb-4">
                     <div class="h5 text-off-black">
                         <t t-if="not is_from_supporter">
                             <span>From</span>
-                            <t t-esc="child.preferred_name" />
+                            <t t-out="child.preferred_name" />
                         </t>
                         <t t-else="">
                             <span>To</span>
-                            <t t-esc="child.preferred_name" />
+                            <t t-out="child.preferred_name" />
                         </t>
                     </div>
                     <!-- Dots button & dropdown menu -->
@@ -71,7 +71,7 @@
                             t-attf-class="btn btn-link p-0 border-0 {{'text-low-green' if is_from_supporter else 'text-low-blue'}}"
                             type="button"
                             t-att-id="'dropdownMenuButton' + str(letter.id)"
-                            data-toggle="dropdown"
+                            data-bs-toggle="dropdown"
                             aria-expanded="false"
                         >
                             <span class="icon-dots-vertical" />
@@ -81,34 +81,34 @@
                             t-att-aria-labelledby="'dropdownMenuButton' + str(letter.id)"
                         >
                             <a
-                                class="dropdown-item d-flex align-items-center pt-0 pb-0 pl-3 pr-3"
+                                class="dropdown-item d-flex align-items-center pt-0 pb-0 ps-3 pe-3"
                                 t-attf-href="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf"
                                 t-att-target="'_blank'"
                                 rel="noopener noreferrer"
                             >
                                 Preview
-                                <i class="icon-eye ml-auto" />
+                                <i class="icon-eye ms-auto" />
                             </a>
                             <div class="dropdown-divider border-low-black" />
                             <a
-                                class="dropdown-item d-flex align-items-center pt-0 pb-0 pl-3 pr-3"
+                                class="dropdown-item d-flex align-items-center pt-0 pb-0 ps-3 pe-3"
                                 t-attf-href="/b2s_image?id={{letter.uuid}}"
                                 t-attf-download="{{letter.name}}"
                             >
                                 Download
-                                <i class="icon-download01 ml-auto" />
+                                <i class="icon-download01 ms-auto" />
                             </a>
                             <div class="dropdown-divider border-low-black" />
                             <a
-                                class="dropdown-item d-flex align-items-center pt-0 pb-0 pl-3 pr-3"
+                                class="dropdown-item d-flex align-items-center pt-0 pb-0 ps-3 pe-3"
                                 t-attf-href="/my2/children/letters/new{{ '?child_id=' + str(child.id)}}"
                             >
                                 Reply
-                                <i class="icon-pencil02 ml-auto" />
+                                <i class="icon-pencil02 ms-auto" />
                             </a>
                             <div class="dropdown-divider border-low-black" />
                             <a
-                                class="dropdown-item d-flex align-items-center pt-0 pb-0 pl-3 pr-3 js_share_letter"
+                                class="dropdown-item d-flex align-items-center pt-0 pb-0 ps-3 pe-3 js_share_letter"
                                 href="javascript:void(0);"
                                 t-att-data-share-url="request.httprequest.url_root + 'b2s_image?id=%s&amp;disposition=inline&amp;file_type=pdf' % letter.uuid"
                                 t-attf-data-share-title="Letter from #{child.preferred_name}"
@@ -116,7 +116,7 @@
                                 role="button"
                             >
                                 Share
-                                <i class="icon-share06 ml-auto" />
+                                <i class="icon-share06 ms-auto" />
                             </a>
                         </div>
                     </div>

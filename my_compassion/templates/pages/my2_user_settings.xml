@@ -30,7 +30,7 @@ Injected data:
                     <section class="user_settings_tabs single-column mt-4">
                         <!-- Mobile tabs navigation -->
                         <div class="settings_select d-block d-lg-none mb-3">
-                            <select class="custom-select" id="user-settings-tabs-mobile">
+                            <select class="form-select" id="user-settings-tabs-mobile">
                                 <option value="#personal-information">
                                     Personal
                                     Information
@@ -81,7 +81,7 @@ Injected data:
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
                                         <t t-set="label">My reference</t>
                                         <div>
-                                            <t t-esc="partner.ref if partner.ref else ''" />
+                                            <t t-out="partner.ref if partner.ref else ''" />
                                         </div>
                                     </t>
                                 </div>
@@ -90,10 +90,10 @@ Injected data:
                                         <t t-set="label">Title</t>
                                         <t t-set="input_id" t-value="'title'" />
                                         <div class="field-display" data-display-for="title">
-                                            <t t-esc="partner.title.shortcut or ''" />
+                                            <t t-out="partner.title.shortcut or ''" />
                                         </div>
                                         <div class="field-edit">
-                                            <div class="pl-0 pr-5 m-0">
+                                            <div class="ps-0 pe-5 m-0">
                                                 <t t-call="theme_compassion_2025.SelectComponent">
                                                     <t t-set="id" t-value="'title'" />
                                                     <t t-set="name" t-value="'title'" />
@@ -107,7 +107,7 @@ Injected data:
                                                             t-att-value="t.id"
                                                             t-att-selected="partner.title.id == t.id"
                                                         >
-                                                            <t t-esc="t.shortcut" />
+                                                            <t t-out="t.shortcut" />
                                                         </option>
                                                     </t>
                                                 </t>
@@ -121,7 +121,7 @@ Injected data:
                                             <t t-set="label">Surname</t>
                                             <t t-set="input_id" t-value="'lastname'" />
                                             <div class="field-display" data-display-for="lastname">
-                                                <t t-esc="partner.lastname or ''" />
+                                                <t t-out="partner.lastname or ''" />
                                             </div>
                                             <div class="field-edit">
                                                 <input
@@ -142,7 +142,7 @@ Injected data:
                                             <t t-set="label">Name</t>
                                             <t t-set="input_id" t-value="'firstname'" />
                                             <div class="field-display" data-display-for="firstname">
-                                                <t t-esc="partner.firstname or ''" />
+                                                <t t-out="partner.firstname or ''" />
                                             </div>
                                             <div class="field-edit">
                                                 <input
@@ -165,7 +165,7 @@ Injected data:
                                         <t t-set="input_id" t-value="'street'" />
                                         <t t-set="top_class" t-value="'col-12'" />
                                         <div class="field-display" data-display-for="street">
-                                            <t t-esc="partner.street or ''" />
+                                            <t t-out="partner.street or ''" />
                                         </div>
                                         <div class="field-edit">
                                             <input
@@ -187,7 +187,7 @@ Injected data:
                                                 <t t-set="label">Zip</t>
                                                 <t t-set="input_id" t-value="'zip'" />
                                                 <div class="field-display" data-display-for="zip">
-                                                    <t t-esc="partner.zip or ''" />
+                                                    <t t-out="partner.zip or ''" />
                                                 </div>
                                                 <div class="field-edit">
                                                     <input
@@ -209,7 +209,7 @@ Injected data:
                                             <t t-set="label">City</t>
                                             <t t-set="input_id" t-value="'city'" />
                                             <div class="field-display" data-display-for="city">
-                                                <t t-esc="partner.city or ''" />
+                                                <t t-out="partner.city or ''" />
                                             </div>
                                             <div class="field-edit">
                                                 <input
@@ -231,7 +231,7 @@ Injected data:
                                         <t t-set="input_id" t-value="'country_id'" />
                                         <t t-set="top_class" t-value="'col-12'" />
                                         <div class="field-display" data-display-for="country_id">
-                                            <t t-esc="partner.country_id.name or ''" />
+                                            <t t-out="partner.country_id.name or ''" />
                                         </div>
                                         <div class="field-edit">
                                             <t t-call="theme_compassion_2025.SelectComponent">
@@ -246,7 +246,7 @@ Injected data:
                                                         t-att-value="t.id"
                                                         t-att-selected="partner.country_id.id == t.id"
                                                     >
-                                                        <t t-esc="t.name" />
+                                                        <t t-out="t.name" />
                                                     </option>
                                                 </t>
                                             </t>
@@ -259,7 +259,7 @@ Injected data:
                                         <t t-set="input_id" t-value="'email'" />
                                         <t t-set="top_class" t-value="'col-12'" />
                                         <div class="field-display" data-display-for="email">
-                                            <t t-esc="partner.email or ''" />
+                                            <t t-out="partner.email or ''" />
                                         </div>
                                         <div class="field-edit">
                                             <input
@@ -281,7 +281,7 @@ Injected data:
                                             <t t-set="label">Phone number</t>
                                             <t t-set="input_id" t-value="'phone'" />
                                             <div class="field-display" data-display-for="phone">
-                                                <t t-esc="partner.phone or ''" />
+                                                <t t-out="partner.phone or ''" />
                                             </div>
                                             <div class="field-edit">
                                                 <input
@@ -301,7 +301,7 @@ Injected data:
                                             <t t-set="label">Mobile phone number</t>
                                             <t t-set="input_id" t-value="'mobile'" />
                                             <div class="field-display" data-display-for="mobile">
-                                                <t t-esc="partner.mobile or ''" />
+                                                <t t-out="partner.mobile or ''" />
                                             </div>
                                             <div class="field-edit">
                                                 <input
@@ -374,7 +374,7 @@ Injected data:
                                     <t t-set="label">MyCompassion Login</t>
                                     <t t-set="input_id" t-value="'login'" />
                                     <div class="field-display" data-display-for="login">
-                                        <t t-esc="user.login or ''" />
+                                        <t t-out="user.login or ''" />
                                     </div>
                                     <div class="field-edit">
                                         <input
@@ -417,8 +417,8 @@ Injected data:
                                         <a
                                             id="DeleteAccountButton"
                                             class="d-block"
-                                            data-toggle="modal"
-                                            data-target="#deleteAccountModal"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteAccountModal"
                                         >
                                             <div class="d-flex flex-column align-items-stretch mb-3">
                                                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
@@ -474,13 +474,13 @@ Injected data:
                                                             type="button"
                                                             class="close text-pure-white position-absolute"
                                                             style="top: 50%; right: 1rem; transform: translateY(-50%);"
-                                                            data-dismiss="modal"
+                                                            data-bs-dismiss="modal"
                                                             aria-label="Close"
                                                         >
                                                             <div class="icon-x-circle" />
                                                         </button>
                                                     </div>
-                                                    <t t-if="partner.has_sponsorships">
+                                                    <t t-if="partner.number_sponsorships">
                                                         <div class="m-4 p-3 bg-high-pink rounded-lg">
                                                             You currently have active
                                                         sponsorships, so this action
@@ -596,7 +596,7 @@ Injected data:
                                     <t t-if="partner.date_agreed_child_protection_charter">
                                         <span>Signing date:</span>
                                         <t
-                                            t-esc="partner.get_date('date_agreed_child_protection_charter', 'short')"
+                                            t-out="partner.get_date('date_agreed_child_protection_charter', 'short')"
                                         />
                                         <a href="/child-protection-charter">
                                             (view
@@ -624,9 +624,9 @@ Injected data:
                                     <h5>Data protection and legal agreement</h5>
                                     <t t-if="partner.legal_agreement_date">
                                         <div class="d-flex justify-content-center">
-                                            <div class="mr-2">Signing date:</div>
-                                            <div class="mr-2">
-                                                <t t-esc="partner.get_date('legal_agreement_date', 'short')" />
+                                            <div class="me-2">Signing date:</div>
+                                            <div class="me-2">
+                                                <t t-out="partner.get_date('legal_agreement_date', 'short')" />
                                             </div>
                                             <a href="/legal" target="_blank">(view agreement)</a>
                                         </div>
@@ -635,7 +635,7 @@ Injected data:
                                         <div class="form-check mb-2">
                                             <input class="form-check-input" type="checkbox" id="LegalAgreementCheck" />
                                             <label class="form-check-label" for="LegalAgreementCheck">
-                                                <t t-call="website_legal_page.acceptance_full" />
+                                                <t t-call="my_compassion.acceptance_full" />
                                             </label>
                                         </div>
                                         <div class="w-md-50 d-flex flex-column align-items-stretch m-auto">
@@ -655,41 +655,41 @@ Injected data:
                         <!-- Communication settings tab -->
                         <div class="tab-pane fade" id="communication-settings" role="tabpanel">
                             <div class="p-3 bg-pure-white d-block">
-                                <div class="custom-control custom-switch mb-2">
+                                <div class="form-check form-switch mb-2">
                                     <input
                                         type="checkbox"
-                                        class="custom-control-input"
+                                        class="form-check-input"
                                         id="newsletterCheck"
                                         data-field="opt_out"
                                         t-att-checked="not partner.opt_out"
                                     />
-                                    <label class="custom-control-label" for="newsletterCheck">
+                                    <label class="form-check-label" for="newsletterCheck">
                                         I would like to receive the Compassion Newsletter
                                     </label>
                                 </div>
-                                <div class="custom-control custom-switch  mb-2">
+                                <div class="form-check form-switch  mb-2">
                                     <input
                                         type="checkbox"
-                                        class="custom-control-input"
+                                        class="form-check-input"
                                         id="birthdaysCheck"
                                         data-field="birthday_reminder"
                                         t-att-checked="partner.birthday_reminder"
                                     />
-                                    <label class="custom-control-label" for="birthdaysCheck">
+                                    <label class="form-check-label" for="birthdaysCheck">
                                         I
                                         would like to receive reminders of the children
                                         birthdays
                                     </label>
                                 </div>
-                                <div class="custom-control custom-switch  mb-3">
+                                <div class="form-check form-switch  mb-3">
                                     <input
                                         type="checkbox"
-                                        class="custom-control-input"
+                                        class="form-check-input"
                                         id="anniversaryCheck"
                                         data-field="sponsorship_anniversary_card"
                                         t-att-checked="partner.sponsorship_anniversary_card"
                                     />
-                                    <label class="custom-control-label" for="anniversaryCheck">
+                                    <label class="form-check-label" for="anniversaryCheck">
                                         I would like to receive the sponsorship anniversary
                                         card
                                     </label>

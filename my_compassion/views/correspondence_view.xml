@@ -5,7 +5,7 @@
         <field name="inherit_id" ref="sbc_compassion.s2b_generator_form" />
         <field name="arch" type="xml">
             <field name="selection_domain" position="after">
-                <field name="user_id" domain="[('partner_id.has_sponsorships', '=', True)]" />
+                <field name="user_id" domain="[('partner_id.number_sponsorships', '>', 0)]" />
                 <field name="partner_id" invisible="1" />
                 <field name="child_id" domain="[('sponsor_id', '=', partner_id)]" />
             </field>

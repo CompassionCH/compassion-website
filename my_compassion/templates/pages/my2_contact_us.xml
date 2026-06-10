@@ -48,7 +48,7 @@ Page My Compassion 2 Contact us page
                         />
                         <form
                             id="contactus_form"
-                            action="/website_form/"
+                            action="/website/form/"
                             method="post"
                             enctype="multipart/form-data"
                             class="o_mark_required contactus-form s_website_form"
@@ -58,7 +58,7 @@ Page My Compassion 2 Contact us page
                             data-success-page="/my2-contactus-thank-you"
                             role="form"
                         >
-                            <div class="row text-left">
+                            <div class="row text-start">
                                 <!-- Title Mr. or Mrs -->
                                 <div class="w-100">
                                     <t t-call="theme_compassion_2025.FormFieldComponent">
@@ -79,7 +79,7 @@ Page My Compassion 2 Contact us page
                                             </option>
                                             <t t-foreach="titles" t-as="t">
                                                 <option t-att-value="t.shortcut">
-                                                    <t t-esc="t.name" />
+                                                    <t t-out="t.name" />
                                                 </option>
                                             </t>
                                         </t>

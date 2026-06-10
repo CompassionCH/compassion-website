@@ -10,7 +10,7 @@
             <t t-call="website.layout">
                 <div class="container">
                     <div class="single-column">
-                        <t t-raw="0" />
+                        <t t-out="0" />
                     </div>
                 </div>
             </t>
@@ -73,11 +73,11 @@
                         </a>
                         <!-- Error -->
                         <p class="mt-3 mb-0 alert alert-danger" t-if="error" role="alert">
-                            <t t-esc="error" />
+                            <t t-out="error" />
                         </p>
                         <!-- Info -->
                         <p class="mt-3 mb-0 alert alert-success" t-if="message" role="status">
-                            <t t-esc="message" />
+                            <t t-out="message" />
                         </p>
                         <!-- Log in -->
                         <div class="mt-3 d-flex flex-column align-items-stretch">
@@ -173,7 +173,7 @@
                         required="required"
                     />
                     <label class="mb-0 tiny-text" for="privacy_policy">
-                        <t t-call="website_legal_page.acceptance_full" />
+                        <t t-call="my_compassion.acceptance_full" />
                     </label>
                 </div>
             </div>
@@ -201,7 +201,7 @@
                         </t>
                         <!-- Error -->
                         <p class="mt-3 mb-0 alert alert-danger" t-if="error" role="alert">
-                            <t t-esc="error" />
+                            <t t-out="error" />
                         </p>
                         <!-- Confirm -->
                         <div class="mt-3 d-flex flex-column align-items-stretch">
@@ -247,7 +247,7 @@
                 <!-- Success message -->
                 <div t-if="message" class="h-100 d-flex justify-content-center flex-column">
                     <p class="text-center body-small alert alert-success" role="status">
-                        <t t-esc="message" />
+                        <t t-out="message" />
                     </p>
                     <a href="/web/login" class="mt-3 text-center tiny-text bold text-core-blue" role="button">
                         Back to Login
@@ -286,7 +286,7 @@
                         </t>
                         <!-- Error -->
                         <p class="mt-3 mb-0 alert alert-danger" t-if="error" role="alert">
-                            <t t-esc="error" />
+                            <t t-out="error" />
                         </p>
                         <!-- Confirm -->
                         <div class="mt-3 d-flex flex-column align-items-stretch">

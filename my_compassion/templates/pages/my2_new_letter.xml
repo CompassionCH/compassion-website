@@ -52,7 +52,7 @@
                                                 t-att-value="sponsorship.child_id.id"
                                                 t-att-selected="'selected' if sponsorship.child_id.id == selected_child.id else None"
                                             >
-                                                <t t-esc="sponsorship.child_id.preferred_name" />
+                                                <t t-out="sponsorship.child_id.preferred_name" />
                                             </option>
                                         </t>
                                     </t>
@@ -66,7 +66,7 @@
                                     t-value="'/web/image/compassion.child/' + str(selected_child.id) + '/portrait'"
                                 />
                                 <t t-set="alt">
-                                    <t t-esc="selected_child.id" />
+                                    <t t-out="selected_child.id" />
                                     portrait image
                                 </t>
                                 <t t-set="size" t-value="'small'" />
@@ -87,10 +87,10 @@
                                         <t t-set="label_id" t-value="'template-selection-label'" />
                                         <t t-set="label">
                                             <t t-if="draft and draft.template_id">
-                                                <t t-esc="draft.template_id.name" />
+                                                <t t-out="draft.template_id.name" />
                                             </t>
                                             <t t-else="">
-                                                <t t-esc="label_empty" />
+                                                <t t-out="label_empty" />
                                             </t>
                                         </t>
                                         <t t-set="icon" t-value="'icon-image04'" />
@@ -100,7 +100,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-5 text-right">
+                        <div class="col-5 text-end">
                             <div id="template-reactive-img">
                                 <t t-if="draft and draft.template_id">
                                     <img
@@ -124,9 +124,7 @@
                                         Select a
                                         Template
                                     </h5>
-                                    <button type="button" class="close" data-dismiss="modal" t-translation="off">
-                                        x
-                                    </button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" />
                                 </div>
                                 <div class="modal-body">
                                     <div class="row">
@@ -134,7 +132,7 @@
                                             <div class="col-6 col-md-4 col-lg-3 text-center mb-3">
                                                 <!-- Display the template image -->
                                                 <img
-                                                    data-dismiss="modal"
+                                                    data-bs-dismiss="modal"
                                                     t-att-src="template.template_image_url"
                                                     t-att-data-template-id="template.id"
                                                     t-att-data-template-name="template.name"
@@ -156,7 +154,7 @@
                         <!-- prettier-ignore-start -->
                         <!-- oca-hooks:disable=line-too-long -->
                         <textarea id="letter-input" class="form-control" rows="10"><t
-                                t-esc="draft.body" t-if="draft.body"/></textarea>
+                                t-out="draft.body" t-if="draft.body"/></textarea>
                         <!-- prettier-ignore-end -->
                     </div>
                     <!-- Add attachments box input -->
@@ -203,7 +201,7 @@
                                     t-att-alt="att.name or 'User attachment'"
                                 />
                                 <p>
-                                    <t t-esc="att.name" />
+                                    <t t-out="att.name" />
                                 </p>
                                 <button
                                     class="btn btn-danger remove-attachment-button text-center"
@@ -225,7 +223,7 @@
                                 <t t-set="text_color" t-value="'pure_white'" />
                                 <t t-set="data_custom" t-value="'save_draft'" />
                             </t>
-                            <div id="clear-letter-button-container" class="ml-4" style="display: none;">
+                            <div id="clear-letter-button-container" class="ms-4" style="display: none;">
                                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                     <t t-set="variant" t-value="'default'" />
                                     <t t-set="variation" t-value="'hollow'" />
@@ -250,7 +248,7 @@
                                 <t t-set="data_custom" t-value="'preview'" />
                             </t>
                         </div>
-                        <div class="col-6 text-right ">
+                        <div class="col-6 text-end ">
                             <t t-call="theme_compassion_2025.ThemedButtonComponent">
                                 <t t-set="variant" t-value="'default'" />
                                 <t t-set="variation" t-value="'filled'" />
@@ -279,13 +277,11 @@
                                 </h5>
                                 <button
                                     type="button"
-                                    class="close"
-                                    data-dismiss="modal"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"
                                     aria-label="Close"
                                     style="opacity: 1;"
-                                >
-                                    <h3 aria-hidden="true" class="text-core-blue">x</h3>
-                                </button>
+                                />
                             </div>
                             <div class="modal-body text-center h-100">
                                 <iframe id="previewImage" src="" class="w-100 h-100 border-0" />

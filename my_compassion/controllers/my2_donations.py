@@ -478,6 +478,25 @@ class MyCompassionDonationsController(CustomerPortal):
             partner, invoice_page, invoice_per_page
         )
 
+        # The tax-receipt year selector needs the year span of the partner's
+        # paid invoices, independent of any country layer extending this portal.
+        first_paid_date = (
+            request.env["account.move"]
+            .sudo()
+            .search(
+                [
+                    ("partner_id", "=", partner.id),
+                    ("payment_state", "=", "paid"),
+                    ("move_type", "=", "out_invoice"),
+                    ("amount_total", ">", 0),
+                ],
+                limit=1,
+                order="create_date asc",
+            )
+            .create_date
+        )
+        current_year = datetime.today().year
+
         values = self._prepare_portal_layout_values()
         values.update(
             {
@@ -488,6 +507,8 @@ class MyCompassionDonationsController(CustomerPortal):
                 "current_page": paid_invoices_data["current_page"],
                 "total_pages": paid_invoices_data["total_pages"],
                 "additional_title": _("My Donations"),
+                "current_year": current_year,
+                "first_year": first_paid_date.year if first_paid_date else current_year,
             }
         )
         return request.render("my_compassion.my2_my_donations_page", values)
@@ -539,7 +560,7 @@ class MyCompassionDonationsController(CustomerPortal):
     @staticmethod
     def _get_payment_acquirer():
         return (
-            http.request.env["payment.acquirer"]
+            http.request.env["payment.provider"]
             .sudo()
-            .search([("provider", "=", "postfinance")], limit=1)
+            .search([("code", "=", "postfinance")], limit=1)
         )

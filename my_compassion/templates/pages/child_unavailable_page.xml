@@ -23,7 +23,7 @@
                                         children are waiting for life-changing support. Would you like to sponsor one of
                                         these children?
                                     </t>
-                                    <t t-esc="male_msg.format(child_name=child.preferred_name)" />
+                                    <t t-out="male_msg.format(child_name=child.preferred_name)" />
                                 </t>
                                 <t t-else="">
                                     <t t-set="female_msg">
@@ -32,11 +32,11 @@
                                         children are waiting for life-changing support. Would you like to sponsor one of
                                         these children?
                                     </t>
-                                    <t t-esc="female_msg.format(child_name=child.preferred_name)" />
+                                    <t t-out="female_msg.format(child_name=child.preferred_name)" />
                                 </t>
                             </div>
                             <p class="lead text-muted mb-4" t-if="error_msg">
-                                <t t-esc="error_msg" />
+                                <t t-out="error_msg" />
                             </p>
                         </div>
                         <!-- RESULTS -->

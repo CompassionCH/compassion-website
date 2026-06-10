@@ -17,7 +17,7 @@ Page: My Compassion 2 Dashboard Page
     <!-- DASHBOARD GRID ITEM -->
     <template id="DashboardGridItem" name="Dashboard grid item">
         <div class="col-sm my-3 flex-grow-0 grid-item-container">
-            <t t-raw="0" />
+            <t t-out="0" />
         </div>
     </template>
     <!-- DASHBOARD -->
@@ -28,7 +28,7 @@ Page: My Compassion 2 Dashboard Page
             <div class="container">
                 <!-- BANNER -->
                 <div class="dashboard-banner d-none d-lg-block">
-                    <div class="position-absolute m-5 pl-5 pt-2">
+                    <div class="position-absolute m-5 ps-5 pt-2">
                         <h1 class="text-pure-white">
                             Welcome to
                             <br />
@@ -70,7 +70,7 @@ Page: My Compassion 2 Dashboard Page
                 <t t-if="partner.is_sponsor">
                     <t t-set="title">You are sponsoring</t>
                     <t t-set="subtitle">
-                        <span class="text-low-yellow" t-esc="vignette['number_sponsorships']" />
+                        <span class="text-low-yellow" t-out="vignette['number_sponsorships']" />
                         <t t-if="vignette['number_sponsorships'] == 1">child</t>
                         <t t-else="">children</t>
                     </t>

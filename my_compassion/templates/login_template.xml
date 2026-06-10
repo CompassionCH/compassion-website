@@ -28,12 +28,12 @@
                             style="font-size: calc(100% + 1vw + 1vh);"
                         >
                             Welcome to
-                            <span class="font-weight-bold" t-esc="request.httprequest.host" />
+                            <span class="font-weight-bold" t-out="request.httprequest.host" />
                         </h1>
                         <div class="row justify-content-center">
                             <div class="col-md-4 mx-4 order-md-2 order-lg-2">
                                 <h4 class="font-weight-bold text-uppercase flex-fill mb-4">Log in</h4>
-                                <div class="flex-fill" t-raw="0" />
+                                <div class="flex-fill" t-out="0" />
                             </div>
                             <div class="col-md-4 mx-4 order-md-1 mt-4 mt-md-0">
                                 <t t-call="my_compassion.register_layout" />
