@@ -1,5 +1,3 @@
-/** @odoo-module **/
-
 import FormEditorRegistry from "@website/js/form_editor_registry";
 import {_t} from "@web/core/l10n/translation";
 
@@ -14,6 +12,7 @@ FormEditorRegistry.add("crm_request", {
     {
       type: "email",
       modelRequired: true,
+
       name: "email_from",
       string: _t("Email"),
     },
