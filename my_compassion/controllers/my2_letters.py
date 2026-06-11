@@ -43,7 +43,9 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
     )
     def my2_render_child_letters_page(self, **kwargs):
         partner = request.env.user.partner_id
-        children_sponsored_by_partner = partner.sponsorship_ids.child_id
+        children_sponsored_by_partner = partner.sponsorship_ids.filtered(
+            "can_show_on_my_compassion"
+        ).child_id
         current_year = date.today().year
 
         # Filtering params

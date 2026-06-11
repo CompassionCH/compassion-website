@@ -108,7 +108,9 @@ class Partner(models.Model):
             )
             partner.is_ex_sponsor = any(
                 s.state == "terminated" for s in sponsorships
-            ) and all(s.state in ["terminated", "cancelled"] for s in sponsorships)
+            ) and all(
+                s.state in ["draft", "terminated", "cancelled"] for s in sponsorships
+            )
 
     def _compute_is_donor(self):
         donors_data = self.env["account.move.line"].read_group(
