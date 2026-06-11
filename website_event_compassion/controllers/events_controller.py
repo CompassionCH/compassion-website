@@ -14,6 +14,7 @@ from odoo.http import Controller, request
 
 from odoo.addons.http_routing.models.ir_http import slug
 from odoo.addons.website.models.ir_http import sitemap_qs2dom
+from odoo.addons.website_sale.controllers.main import WebsiteSale
 
 EVENTS_URL = "/events"
 
@@ -176,3 +177,30 @@ class EventsController(Controller):
         product_id = event.odoo_event_id.donation_product_id.id
         sale_order.add_donation(product_id, amount, registration_id=registration.id)
         return request.redirect("/shop/checkout?express=1")
+
+
+class WebsiteSaleEventDonation(WebsiteSale):
+    @http.route(
+        ["/shop/confirmation"],
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def payment_confirmation(self, **post):
+        """Show a Compassion-aligned thank-you page for event donations,
+        instead of the sales-oriented /shop/confirmation page.
+        """
+        sale_order_id = request.session.get("sale_last_order_id")
+        if sale_order_id:
+            order = request.env["sale.order"].sudo().browse(sale_order_id)
+            registration = order.order_line.mapped("registration_id")
+            if registration:
+                return request.render(
+                    "website_event_compassion.event_donation_successful",
+                    {
+                        "order": order,
+                        "registration": registration[:1],
+                    },
+                )
+        return super().payment_confirmation(**post)

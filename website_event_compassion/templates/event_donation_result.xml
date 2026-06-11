@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Displayed after a successful event donation by [WebsiteSaleEventDonation] -->
+    <template id="event_donation_successful" name="Event donation success">
+        <t t-call="website.layout">
+            <t t-set="no_footer" t-value="True" />
+            <div class="container">
+                <div class="jumbotron text-center mt-5">
+                    <i class="fa fa-heart fa-4x text-primary mb-4" aria-hidden="true" />
+                    <h1>Donation Successful</h1>
+                    <p
+                        class="display-4 my-3"
+                        t-field="order.amount_total"
+                        t-options='{"widget": "monetary", "display_currency": order.currency_id}'
+                    />
+                    <p class="lead">Thank you! Your gift helps release children from poverty!</p>
+                    <a t-att-href="registration.website_url" class="btn btn-primary btn-lg mt-3" role="button">
+                        Back to the event
+                    </a>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
