@@ -196,11 +196,15 @@ class WebsiteSaleEventDonation(WebsiteSale):
             order = request.env["sale.order"].sudo().browse(sale_order_id)
             registration = order.order_line.mapped("registration_id")
             if registration:
-                return request.render(
-                    "website_event_compassion.event_donation_successful",
-                    {
-                        "order": order,
-                        "registration": registration[:1],
-                    },
-                )
+                tx = order.get_portal_last_transaction()
+                if order.state in ("sale", "done") or (
+                    tx and tx.state in ("authorized", "done", "pending")
+                ):
+                    return request.render(
+                        "website_event_compassion.event_donation_successful",
+                        {
+                            "order": order,
+                            "registration": registration[:1],
+                        },
+                    )
         return super().payment_confirmation(**post)
