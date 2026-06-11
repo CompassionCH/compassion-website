@@ -198,7 +198,7 @@ class WebsiteSaleEventDonation(WebsiteSale):
             if registration:
                 tx = order.get_portal_last_transaction()
                 if order.state in ("sale", "done") or (
-                    tx and tx.state in ("authorized", "done", "pending")
+                    tx and tx.state in ("authorized", "done")
                 ):
                     return request.render(
                         "website_event_compassion.event_donation_successful",
