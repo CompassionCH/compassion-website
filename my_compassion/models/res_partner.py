@@ -26,6 +26,42 @@ class Partner(models.Model):
         tracking=True,
     )
 
+    def get_displayed_sponsorships(self, display_state=None):
+        """Return the partner's portal sponsorships filtered for display.
+
+        :param display_state: which portal bucket to build:
+            - "active": genuinely active sponsorships, plus terminated
+              departures still in the grace period (exit communication not yet
+              sent to the sponsor);
+            - "terminated": departures whose exit communication has been sent,
+              and other ended sponsorships;
+            - "write": those the sponsor may still write a letter to;
+            - None: all portal sponsorships.
+        :return: a recurring.contract recordset.
+        """
+        self.ensure_one()
+
+        def keep(sponsorship):
+            is_active = sponsorship.state not in ["draft", "cancelled", "terminated"]
+            if display_state == "active":
+                # A departed sponsorship stays visible as active until its exit
+                # communication has been sent to the sponsor.
+                return is_active or sponsorship.exit_communication_pending
+            if display_state == "terminated":
+                return (
+                    sponsorship.state == "terminated"
+                    and not sponsorship.exit_communication_pending
+                )
+            if display_state == "write":
+                return sponsorship.can_write_letter
+            return True
+
+        return (
+            self.get_portal_sponsorships()
+            .with_context(allow_during_suspension=True)
+            .filtered(keep)
+        )
+
     def _compute_user_login(self):
         for partner in self:
             login = partner.mapped("user_ids.login")

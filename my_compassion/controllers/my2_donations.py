@@ -442,8 +442,9 @@ class MyCompassionDonationsController(CustomerPortal):
     def my_donations(self, invoice_page=1, invoice_per_page=12, **kw):
         partner = request.env.user.partner_id
 
-        # Active sponsorships
-        active_sponsorships = partner.get_portal_sponsorships("active")
+        # Active sponsorships (terminated departures stay listed until the
+        # exit communication has been sent)
+        active_sponsorships = partner.get_displayed_sponsorships("active")
 
         # Due invoices
         date_filter_up_bound = datetime.today() + timedelta(days=30)
