@@ -1,18 +1,16 @@
 /** @odoo-module **/
 
 /**
- * Handles the new_letter form submission.
- * Shows a progress bar that updates as the letter is processed by polling the server.
- * The update works by:
- * 1) Request the server to create a letter generation task, server returns a gen.Id.
- * and the maps to build the progress bar steps in the following format:
- * steps = [ [step_index, generation_status, step_description], ...]
- * 2) Tell the server to start processing the task while updating the task state.
- * 3) Poll the server to get the current statusof the task and update the progress bar accordingly.
- * 4) Once the task is complete, redirect or show a preview based on user choice.
+ * Handles the new_letter form submission (save draft / preview / send).
+ *
+ * - Save draft persists the letter generator.
+ * - Preview: the server renders the letter synchronously and returns its HTML,
+ *   shown in the preview modal.
+ * - Send: the server enqueues generation; an indeterminate progress bar runs while
+ *   the generator state is polled, then the page redirects to the letters listing
+ *   (the letter PDF renders lazily when viewed).
  *
  * Is used in /templates/pages/my2_new_letter.xml
- *
  */
 
 import { Component } from "@odoo/owl";
@@ -37,7 +35,6 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
         this.RE_EMOJI = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
         this.progressBar = null;
         this.progressBarApp = null;
-        this.progressSteps = [];
         this.lastDraft = null;
         this.autoSaveTimer = null;
     },
@@ -85,21 +82,20 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
                 return;
             }
 
-            // --- Send Mode Logic ---
-            const steps = (initialResult.steps || []).map((step) => step[2]);
-            const statusMap = (initialResult.steps || []).reduce((map, step) => {
-                map[step[1]] = step[0];
-                return map;
-            }, {});
-            this.progressSteps = steps;
+            if (mode === "preview") {
+                // Show the server-rendered HTML letter in the preview modal.
+                const previewResult = await this._launchProcessingRPC({
+                    generator_id: initialResult.generator_id,
+                    child_id: formData.child_id,
+                    mode: "preview",
+                    csrf_token: odoo.csrf_token,
+                });
+                this._showPreview(previewResult.preview_html);
+                return;
+            }
 
-            // Show the modal, then mount the theme ProgressBar into it. The bar's running
-            // step is set imperatively from the status poll (startProgress/goToStep), so it
-            // is mounted with mountComponent and the live instance is read from
-            // app.root.component; the component seeds its step from props only at setup, so
-            // it cannot be advanced by re-passing props. env: Component.env reuses the
-            // frontend env (without it mountComponent restarts services and throws on the
-            // duplicated main_components key).
+            // Send: show a progress bar while the letter is generated, poll until
+            // it is ready, then open the letters listing.
             const modalEl = document.getElementById("submitModal");
             const modal = Modal.getOrCreateInstance(modalEl, { backdrop: "static", keyboard: false });
             await new Promise((resolve) => {
@@ -108,9 +104,11 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
                     async () => {
                         const progressBarEl = modalEl.querySelector("#progress-bar-div");
                         progressBarEl.replaceChildren();
+                        // Reuse the page's frontend env (Component.env); the
+                        // imperative mount requires it to share the page services.
                         this.progressBarApp = await mountComponent(ProgressBar, progressBarEl, {
                             env: Component.env,
-                            props: { density: "medium", steps: steps },
+                            props: { steps: [_t("Sending your letter...")], flowing: true },
                         });
                         this.progressBar = this.progressBarApp.root.component;
                         this.progressBar.startProgress();
@@ -121,31 +119,18 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
                 modal.show();
             });
 
-            // 5. With UI ready, launch and poll the backend task.
             this._launchProcessingRPC({
                 generator_id: initialResult.generator_id,
                 child_id: formData.child_id,
-                mode: mode,
+                mode: "send",
                 csrf_token: odoo.csrf_token,
             }).catch((err) => console.error("Failed to launch letter generation:", err));
 
-            const updateProgress = (status) => {
-                if (this.progressBar && status in statusMap) {
-                    this.progressBar.goToStep(statusMap[status]);
-                }
-            };
-            const processingPromise = this._pollForStatus(
-                {
-                    generator_id: initialResult.generator_id,
-                    child_id: formData.child_id,
-                    mode: mode,
-                    csrf_token: odoo.csrf_token,
-                },
-                updateProgress
-            );
-            const finalResult = await processingPromise;
-
-            await this._handleResponse(mode, finalResult, formData.child_id);
+            const finalResult = await this._pollForStatus({
+                generator_id: initialResult.generator_id,
+                child_id: formData.child_id,
+            });
+            this._handleResponse("send", finalResult, formData.child_id);
         } catch (error) {
             if (this.progressBarApp) {
                 this.progressBarApp.destroy();
@@ -251,7 +236,7 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
         return rpc("/my2/children/letters/launch_generation", data);
     },
 
-    _pollForStatus: function (data, onProgressUpdate) {
+    _pollForStatus: function (data) {
         const POLLING_INTERVAL = 400;
         const MAX_POLLS = 150; // 400ms * 150 = 1 minute timeout
         let pollCount = 0;
@@ -265,20 +250,11 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
                 }
                 try {
                     const response = await rpc("/my2/children/letters/status", data);
-                    if (onProgressUpdate) {
-                        onProgressUpdate(response.status);
-                    }
-
                     if (response.status === "done") {
-                        if (this.progressBar) {
-                            this.progressBar.goToStep(this.progressSteps.length - 1);
-                        }
                         clearInterval(intervalId);
                         resolve(response.result);
-                    } else if (response.status === "failed") {
-                        clearInterval(intervalId);
-                        reject(new Error(response.error || "Letter generation failed."));
                     }
+                    // Any non-done status keeps polling until MAX_POLLS.
                 } catch (error) {
                     clearInterval(intervalId);
                     reject(error);
@@ -288,24 +264,20 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
     },
 
     /**
+     * Render the synchronous HTML preview in the preview modal.
+     */
+    _showPreview: function (previewHtml) {
+        document.getElementById("previewImage").srcdoc = previewHtml || "";
+        Modal.getOrCreateInstance(document.getElementById("previewModal")).show();
+    },
+
+    /**
      * Handles the final response after a successful task.
      */
     _handleResponse: function (mode, result, childId) {
         if (mode === "send") {
             // No cleanup needed here, the page will redirect and clear everything.
             window.location.href = `/my2/children/letters/${childId}?new_letter_generator_id=${result.generator_id}`;
-        } else if (mode === "preview") {
-            // On success for preview, hide the progress modal and destroy the widget.
-            // This ensures a clean state for the user's next action.
-            Modal.getOrCreateInstance(document.getElementById("submitModal")).hide();
-            if (this.progressBarApp) {
-                this.progressBarApp.destroy();
-                this.progressBarApp = null;
-                this.progressBar = null; // Clean up the reference.
-            }
-
-            $("#previewImage").attr("src", result.preview_url);
-            Modal.getOrCreateInstance(document.getElementById("previewModal")).show();
         } else if (mode === "save_draft") {
             toast.success(result.message || "Draft saved!");
         }
