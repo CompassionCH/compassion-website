@@ -1,15 +1,23 @@
+/** @odoo-module **/
+
 /**
  * Handles the selection of template images by adding an ID to the clicked image
  * and removing it from any previously selected image.
  *
  * Is used in /templates/pages/my2_new_letter.xml
  */
-document.addEventListener("DOMContentLoaded", function () {
+
+import { whenReady } from "@odoo/owl";
+
+whenReady(function () {
     // Open the modal when the select element is clicked
-    document.getElementById("template-selection").addEventListener("click", function (event) {
-        event.preventDefault();
-        $("#templateSelectionModal").modal("show");
-    });
+    const trigger = document.getElementById("template-selection");
+    if (trigger) {
+        trigger.addEventListener("click", function (event) {
+            event.preventDefault();
+            Modal.getOrCreateInstance(document.getElementById("templateSelectionModal")).show();
+        });
+    }
 
     // Get all template images
     const templateImages = document.querySelectorAll(".template-image");

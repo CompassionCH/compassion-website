@@ -16,9 +16,6 @@
 -->
 <odoo>
     <template id="my2_new_letter_page" name="My Compassion 2 New Letter Page">
-        <link rel="stylesheet" href="/my_compassion/static/src/css/template_image.css" />
-        <link rel="stylesheet" href="/my_compassion/static/src/css/add_a_picture_input.css" />
-        <link rel="stylesheet" href="/my_compassion/static/src/css/delete_a_picture_input.css" />
         <t t-set="additional_title">New Letter</t>
         <t t-call="website.layout">
             <div class="container">
@@ -307,14 +304,5 @@
                 </div>
             </div>
         </t>
-        <!-- Include Owl library -->
-        <script type="text/javascript" src="/web/static/lib/owl/owl.js" />
-        <!-- Include Custom Javascript -->
-        <script type="text/javascript" src="/my_compassion/static/src/js/my2_new_letter_child_selector_image.js" />
-        <script type="text/javascript" src="/my_compassion/static/src/js/my2_new_letter_template_image_selection.js" />
-        <script type="text/javascript" src="/my_compassion/static/src/js/my2_new_letter.js" />
-        <script type="text/javascript" src="/my_compassion/static/src/js/my2_new_letter_add_a_picture_input.js" />
-        <script type="text/javascript" src="/my_compassion/static/src/js/my2_letter_template_loader.js" />
-        <script type="text/javascript" src="/my_compassion/static/src/js/my2_new_letter_clear_button.js" />
     </template>
 </odoo>

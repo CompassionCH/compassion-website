@@ -1,13 +1,16 @@
+/** @odoo-module **/
+
 /**
  * Handles the pagination and adds filtering arguments in the url for the my2_child_letters.xml page.
  * Used in /templates/pages/my2_child_letters.xml.
  */
-odoo.define("my_compassion.my2_child_letters", function (require) {
-    "use strict";
 
+import { _t } from "@web/core/l10n/translation";
+import { toast } from "@my_compassion/js/toast_service";
+import { whenReady } from "@odoo/owl";
+
+whenReady(() => {
     const okBtn = document.getElementById("filterOkBtn");
-    const ToastService = require("my_compassion.toast_service");
-    const _t = require("web.core")._t;
 
     // Letter animation
     document.querySelectorAll(".my2-envelope").forEach((envelope) => {
@@ -125,7 +128,7 @@ odoo.define("my_compassion.my2_child_letters", function (require) {
             // Ensure the URL exists before proceeding
             if (!shareData.url) {
                 console.error("Share URL is not available for this item.");
-                ToastService.error(_t("Sorry, this letter cannot be shared."));
+                toast.error(_t("Sorry, this letter cannot be shared."));
                 return;
             }
 
@@ -136,22 +139,22 @@ odoo.define("my_compassion.my2_child_letters", function (require) {
                     console.log("Letter shared successfully");
                 } catch (err) {
                     console.error("Share failed:", err.message);
-                    ToastService.error(_t("Failed to share letter."));
+                    toast.error(_t("Failed to share letter."));
                 }
             } else if (navigator.clipboard) {
                 // Fallback for browsers that do not support the Web Share API
                 navigator.clipboard
                     .writeText(shareData.url)
                     .then(() => {
-                        ToastService.success(_t("Link copied to clipboard!"));
+                        toast.success(_t("Link copied to clipboard!"));
                     })
                     .catch((err) => {
                         console.error("Could not copy text: ", err);
-                        ToastService.error(_t("Failed to copy link."));
+                        toast.error(_t("Failed to copy link."));
                     });
             } else {
                 // Fallback for browsers that do not support the Web Share API or Clipboard API
-                ToastService.error(_t("Sharing is not supported in this browser. Please share your letter manually."));
+                toast.error(_t("Sharing is not supported in this browser. Please share your letter manually."));
             }
         });
     });

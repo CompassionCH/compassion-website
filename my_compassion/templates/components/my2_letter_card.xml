@@ -13,7 +13,6 @@
     <template id="my2_letter_card_component" name="Letter Card Component">
         <t t-set="child" t-value="letter.child_id" />
         <t t-set="is_from_supporter" t-value="letter.direction == 'Supporter To Beneficiary'" />
-        <link rel="stylesheet" href="/my_compassion/static/src/css/letter_card.css" />
         <div
             t-attf-class="position-relative d-flex shadow rounded-4 h-100 {{'bg-high-green' if is_from_supporter else 'bg-high-blue'}}"
         >

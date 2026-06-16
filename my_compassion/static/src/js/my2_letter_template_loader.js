@@ -1,9 +1,14 @@
+/** @odoo-module **/
+
 /**
  * Fetches a letter template from the server and populates the text input field with it.
  *
  * Used in /templates/pages/my2_new_letter.xml
  */
-document.addEventListener("DOMContentLoaded", () => {
+
+import { whenReady } from "@odoo/owl";
+
+whenReady(() => {
     const textInput = document.getElementById("letter-input");
     const childSelector = document.getElementById("child-dropdown");
     const TEMPLATE_URL = `/my2/children/letter/templates`;

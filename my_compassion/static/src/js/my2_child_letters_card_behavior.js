@@ -1,3 +1,5 @@
+/** @odoo-module **/
+
 /**
  * Handles UI interactions for the my2_child_letter_card component:
  * - Highlights a newly created letter if indicated in URL.
@@ -5,15 +7,13 @@
  *
  * Is used in /templates/pages/my2_child_letters.xml
  */
-document.addEventListener("DOMContentLoaded", function () {
-    window.onDownloadButtonClick = function (event) {
-        handleIconOpen(event);
-    };
+window.onDownloadButtonClick = function (event) {
+    handleIconOpen(event);
+};
 
-    window.onLetterViewButtonClick = function (event) {
-        handleIconOpen(event);
-    };
-});
+window.onLetterViewButtonClick = function (event) {
+    handleIconOpen(event);
+};
 
 /**
  * Updates the envelope icon within a clicked card to the "opened" state.
