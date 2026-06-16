@@ -387,7 +387,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
 
         # Render step template first
         inner_step_html = request.env["ir.qweb"]._render(
-            wizard.current_step.template,
+            wizard.current_step.template.id,
             {
                 "wizard": wizard,
                 "titles": titles,

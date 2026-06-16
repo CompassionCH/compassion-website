@@ -586,8 +586,6 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     </template>
     <!-- NEW SPONSORSHIP WIZARD PAGE -->
     <template id="my2_new_sponsorship_wizard_page" name="New Sponsorship Wizard Page">
-        <script type="text/javascript" src="/my_compassion/static/src/js/my2_new_sponsorship_wizard.js" />
-        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_new_sponsorship_wizard.css" />
         <t t-call="website.layout">
             <div class="new-sponsorship-container">
                 <form class="new-sponsorship-wizard-form" action="/my2/new-sponsorship/submit" method="POST">
@@ -602,7 +600,6 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     </template>
     <!-- NEW SPONSORSHIP THANK YOU PAGE -->
     <template id="my2_new_sponsorship_thank_you_page" name="New Sponsorship Thank You Page">
-        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_new_sponsorship_wizard.css" />
         <t t-call="website.layout">
             <div class="container">
                 <div class="single-column d-flex flex-column align-items-center">

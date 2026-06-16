@@ -120,6 +120,7 @@
     ],
     "assets": {
         "web.assets_frontend": [
+            "my_compassion/static/src/css/global.css",
             "my_compassion/static/src/css/toast_notification.css",
             "my_compassion/static/src/css/my2_children_card.css",
             "my_compassion/static/src/css/my2_donation_item.css",
@@ -133,7 +134,8 @@
             "my_compassion/static/src/css/my2_giving_limits_table.css",
             "my_compassion/static/src/css/my2_giving_limits_modal.css",
             "my_compassion/static/src/css/login.css",
-            "my_compassion/static/src/css/global.css",
+            "my_compassion/static/src/css/my2_sponsorships.css",
+            "my_compassion/static/src/css/my2_new_sponsorship_wizard.css",
             # ES module JS
             "my_compassion/static/src/js/toast_service.js",
             "my_compassion/static/src/js/show_password.js",
@@ -142,6 +144,8 @@
             "my_compassion/static/src/js/my2_add_a_gift.js",
             "my_compassion/static/src/js/my2_gift_package.js",
             "my_compassion/static/src/js/my2_donations.js",
+            "my_compassion/static/src/js/my2_sponsorships.js",
+            "my_compassion/static/src/js/my2_new_sponsorship_wizard.js",
             # client templates
             "my_compassion/static/src/xml/toast_notification.xml",
         ],
