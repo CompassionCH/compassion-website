@@ -11,7 +11,8 @@
     Injected data:
     - order ('sales.order' record): The user's current order (cart content).
     - limits ('gift.threshold.settings' records): The giving limits.
-    - acquirer ('payment.acquirer' record): The PostFinance payment acquirer.
+    - the payment form values (providers, payment methods, amount, currency,
+      transaction_route, landing_route...) consumed by the checkout component.
 -->
 <odoo>
     <!-- GIFT PACKAGE CONTENT -->
@@ -120,9 +121,6 @@
     </template>
     <!-- GIFT PACKAGE PAGE -->
     <template id="my2_gift_package_page" name="Gift Package Page">
-        <!-- Include js and stylesheet -->
-        <script type="text/javascript" src="/my_compassion/static/src/js/my2_gift_package.js" />
-        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_gift_package.css" />
         <t t-set="additional_title">Gift Basket</t>
         <t t-call="website.layout">
             <div class="container">
@@ -197,9 +195,7 @@
                                     <t t-set="href" t-value="'/my2/gift-package/add'" />
                                 </t>
                                 <div t-if="len(order.order_line) &gt;= 1" class="empty-order-hidden">
-                                    <t t-call="my_compassion.CheckoutComponent">
-                                        <t t-set="variant" t-value="'compact'" />
-                                    </t>
+                                    <t t-call="my_compassion.CheckoutComponent" />
                                     <div class="mt-3 px-5 d-flex align-items-center">
                                         <img
                                             alt="Mastercard"

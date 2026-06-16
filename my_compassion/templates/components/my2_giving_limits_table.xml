@@ -27,8 +27,6 @@
     </template>
     <!-- GIVING LIMITS TABLE COMPONENT -->
     <template id="GivingLimitsTableComponent" name="Giving Limits Table Component">
-        <!-- Include stylesheet -->
-        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_giving_limits_table.css" />
         <t t-set="company" t-value="request.website.company_id" />
         <t t-set="date" t-value="date or datetime.date.today()" />
         <div class="giving-limits-table d-flex flex-column">

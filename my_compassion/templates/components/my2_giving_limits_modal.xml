@@ -14,8 +14,6 @@
     <template id="GivingLimitsModalComponent" name="Giving Limits Modal Component">
         <!-- Default property values -->
         <t t-set="modal_id" t-value="modal_id or 'giving-limits-modal'" />
-        <!-- Include stylesheet -->
-        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_giving_limits_modal.css" />
         <div
             class="modal fade giving-limits-modal"
             t-att-id="modal_id"

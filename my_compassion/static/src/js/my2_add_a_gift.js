@@ -1,67 +1,66 @@
-document.addEventListener("DOMContentLoaded", function (event) {
-    odoo.define("my_compassion.add_a_gift", function (require) {
-        "use strict";
+/** @odoo-module **/
 
-        var publicWidget = require("web.public.widget");
-        var rpc = require("web.rpc");
+/**
+ * Add-a-gift page widget.
+ *
+ * Toggles the gift/fund product tabs (`.my2-add-a-gift`) and persists the
+ * hosted donation form's submission: on `donation-form:submit` it posts the
+ * payload to `/my2/gifts/new` and redirects to the gift package.
+ */
 
-        publicWidget.registry.AddAGift = publicWidget.Widget.extend({
-            selector: ".my2-add-a-gift",
+import publicWidget from "@web/legacy/js/public/public_widget";
+import { rpc } from "@web/core/network/rpc";
 
-            events: {
-                'change input[name="donation-type"]': "_onDonationTypeChange",
-                "donation-form:submit": "_onDonationSubmit",
-            },
+export const AddAGift = publicWidget.Widget.extend({
+    selector: ".my2-add-a-gift",
 
-            /**
-             * @override
-             */
-            start: function () {
-                this._onDonationTypeChange();
-                return this._super.apply(this, arguments);
-            },
+    events: {
+        'change input[name="donation-type"]': "_onDonationTypeChange",
+        "donation-form:submit": "_onDonationSubmit",
+    },
 
-            /**
-             * Handles the change event for the donation type toggle buttons.
-             * @private
-             * @param {Event} ev
-             */
-            _onDonationTypeChange: function (ev) {
-                const val = this.$('input[name="donation-type"]:checked').val();
-                this.$(".product-tab").addClass("d-none");
-                if (val === "gift") {
-                    this.$("#gift-product-tab").removeClass("d-none");
-                } else if (val === "fund") {
-                    this.$("#fund-product-tab").removeClass("d-none");
-                }
-            },
+    /**
+     * @override
+     */
+    start: function () {
+        this._onDonationTypeChange();
+        return this._super.apply(this, arguments);
+    },
 
-            /**
-             * Handles donation submission event.
-             */
-            _onDonationSubmit: function (ev, data) {
-                // Prevent double clicks
-                this.$(".btn").prop("disabled", true);
+    /**
+     * Handles the change event for the donation type toggle buttons.
+     * @private
+     * @param {Event} ev
+     */
+    _onDonationTypeChange: function (ev) {
+        const val = this.$('input[name="donation-type"]:checked').val();
+        this.$(".product-tab").addClass("d-none");
+        if (val === "gift") {
+            this.$("#gift-product-tab").removeClass("d-none");
+        } else if (val === "fund") {
+            this.$("#fund-product-tab").removeClass("d-none");
+        }
+    },
 
-                rpc.query({
-                    route: "/my2/gifts/new",
-                    params: data,
-                })
-                    .then(
-                        function (data) {
-                            // Redirect user to gift package page
-                            window.location.href = "/my2/gift-package";
-                        }.bind(this)
-                    )
-                    .guardedCatch(
-                        function () {
-                            // Re-enable buttons
-                            this.$(".btn").prop("disabled", false);
-                        }.bind(this)
-                    );
-            },
-        });
+    /**
+     * Handles donation submission event.
+     */
+    _onDonationSubmit: function (ev, data) {
+        // Prevent double clicks
+        this.$(".btn").prop("disabled", true);
 
-        return publicWidget.registry.AddAGift;
-    });
+        rpc("/my2/gifts/new", data)
+            .then(function () {
+                // Redirect user to gift package page
+                window.location.href = "/my2/gift-package";
+            })
+            .catch(
+                function () {
+                    // Re-enable buttons
+                    this.$(".btn").prop("disabled", false);
+                }.bind(this)
+            );
+    },
 });
+
+publicWidget.registry.AddAGift = AddAGift;

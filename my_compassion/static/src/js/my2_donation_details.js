@@ -1,50 +1,42 @@
-document.addEventListener("DOMContentLoaded", function (event) {
-    odoo.define("my_compassion.donation_details", function (require) {
-        "use strict";
+/** @odoo-module **/
 
-        var publicWidget = require("web.public.widget");
-        var rpc = require("web.rpc");
+/**
+ * Donation details page widget.
+ *
+ * Hosts a donation form (`.my2_donation_details`) and persists its
+ * submission: on the `donation-form:submit` event it posts the donation
+ * payload to `/my2/gifts/new` and redirects to the gift package.
+ */
 
-        publicWidget.registry.DonationDetails = publicWidget.Widget.extend({
-            selector: ".my2_donation_details",
+import publicWidget from "@web/legacy/js/public/public_widget";
+import { rpc } from "@web/core/network/rpc";
 
-            events: {
-                "donation-form:submit": "_onSubmit",
-            },
+export const DonationDetails = publicWidget.Widget.extend({
+    selector: ".my2_donation_details",
 
-            /**
-             * @override
-             */
-            start: function () {
-                return this._super.apply(this, arguments);
-            },
+    events: {
+        "donation-form:submit": "_onSubmit",
+    },
 
-            /**
-             * Handles donation submission event.
-             */
-            _onSubmit: function (ev, data) {
-                // Prevent double clicks
-                this.$(".btn").prop("disabled", true);
+    /**
+     * Handles donation submission event.
+     */
+    _onSubmit: function (ev, data) {
+        // Prevent double clicks
+        this.$(".btn").prop("disabled", true);
 
-                rpc.query({
-                    route: "/my2/gifts/new",
-                    params: data,
-                })
-                    .then(
-                        function (data) {
-                            // Redirect user to gift package page
-                            window.location.href = "/my2/gift-package";
-                        }.bind(this)
-                    )
-                    .guardedCatch(
-                        function () {
-                            // Re-enable buttons
-                            this.$(".btn").prop("disabled", false);
-                        }.bind(this)
-                    );
-            },
-        });
-
-        return publicWidget.registry.DonationDetails;
-    });
+        rpc("/my2/gifts/new", data)
+            .then(function () {
+                // Redirect user to gift package page
+                window.location.href = "/my2/gift-package";
+            })
+            .catch(
+                function () {
+                    // Re-enable buttons
+                    this.$(".btn").prop("disabled", false);
+                }.bind(this)
+            );
+    },
 });
+
+publicWidget.registry.DonationDetails = DonationDetails;

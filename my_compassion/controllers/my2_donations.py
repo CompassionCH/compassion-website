@@ -19,6 +19,7 @@ from odoo.http import request
 from odoo.tools.translate import _
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
+from odoo.addons.sale.controllers import portal as sale_portal
 
 
 class MyCompassionDonationsController(CustomerPortal):
@@ -209,15 +210,26 @@ class MyCompassionDonationsController(CustomerPortal):
         # Fetch gift thresholds
         limits = request.env["gift.threshold.settings"].sudo().search([])
 
-        # Fetch acquirer
-        acquirer = self._get_payment_acquirer()
+        # Payment form context for the embedded standard payment form. The
+        # landing route confirms the order and redirects to /shop/confirmation,
+        # which the my2 website rewrites to /my2/gifts/thankyou.
+        payment_form_values = {}
+        if order and order.order_line:
+            payment_form_values = {
+                **sale_portal.CustomerPortal._get_payment_values(
+                    self, order.sudo(), website_id=request.website.id
+                ),
+                "transaction_route": f"/shop/payment/transaction/{order.id}",
+                "landing_route": "/shop/payment/validate",
+                "sale_order_id": order.id,
+            }
 
         return request.render(
             "my_compassion.my2_gift_package_page",
             {
                 "order": order,
                 "limits": limits,
-                "acquirer": acquirer,
+                **payment_form_values,
             },
         )
 
@@ -557,10 +569,3 @@ class MyCompassionDonationsController(CustomerPortal):
             "total_pages": total_pages,
         }
 
-    @staticmethod
-    def _get_payment_acquirer():
-        return (
-            http.request.env["payment.provider"]
-            .sudo()
-            .search([("code", "=", "postfinance")], limit=1)
-        )

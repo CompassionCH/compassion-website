@@ -16,9 +16,6 @@
 <odoo>
     <!-- DONATION DETAILS PAGE -->
     <template id="my2_donation_details_page" name="Donation Details Page">
-        <!-- Include js and stylesheet -->
-        <script type="text/javascript" src="/my_compassion/static/src/js/my2_donation_details.js" />
-        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_donation_details.css" />
         <t t-set="additional_title" t-value="product.my_compassion_name" />
         <t t-call="website.layout">
             <!-- HEADER -->
