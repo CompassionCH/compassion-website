@@ -67,6 +67,7 @@
         "templates/participants_list.xml",
         "templates/participant_page.xml",
         "templates/event_donation.xml",
+        "templates/event_donation_result.xml",
         "templates/my_events.xml",
         "data/website_page.xml",
     ],
