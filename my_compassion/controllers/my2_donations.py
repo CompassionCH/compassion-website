@@ -442,7 +442,8 @@ class MyCompassionDonationsController(CustomerPortal):
     def my_donations(self, invoice_page=1, invoice_per_page=12, **kw):
         partner = request.env.user.partner_id
 
-        # Active sponsorships
+        # Active sponsorships (terminated departures stay listed until the
+        # exit communication has been sent)
         active_sponsorships = partner.get_portal_sponsorships("active")
 
         # Due invoices
