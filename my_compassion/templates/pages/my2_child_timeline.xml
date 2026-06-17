@@ -23,8 +23,6 @@
 -->
 <odoo>
     <template id="my2_child_timeline_page" name="My Compassion 2 Child Timeline Page">
-        <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile.css" />
-        <link rel="stylesheet" href="/my_compassion/static/src/css/child_profile_timeline.css" />
         <t
             t-set="is_sponsorship_terminated"
             t-value="compassion_child.my_sponsorship_id and compassion_child.my_sponsorship_id.state=='terminated' and compassion_child.my_sponsorship_id.exit_communication_sent"
@@ -522,14 +520,5 @@
                 </div>
             </section>
         </t>
-        <t t-if="not is_sponsorship_terminated">
-            <script type="text/javascript" src="/my_compassion/static/src/js/child_profile_tabs.js" />
-            <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_center_weather_time.js" />
-        </t>
-        <script
-            t-if="access_scope == 'sponsor'"
-            type="text/javascript"
-            src="/my_compassion/static/src/js/child_profile_timeline.js"
-        />
     </template>
 </odoo>

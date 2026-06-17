@@ -22,7 +22,6 @@ Injected data:
 -->
 <odoo>
     <template id="my2_user_settings_page" name="My Compassion 2 User Settings Page">
-        <link rel="stylesheet" href="/my_compassion/static/src/css/user_settings.css" />
         <t t-set="additional_title">Settings</t>
         <t t-call="website.layout">
             <div class="container my-4">
@@ -786,6 +785,5 @@ Injected data:
                 </div>
             </div>
         </t>
-        <script type="text/javascript" src="/my_compassion/static/src/js/my2_user_settings.js" />
     </template>
 </odoo>

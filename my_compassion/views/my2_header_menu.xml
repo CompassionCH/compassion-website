@@ -65,4 +65,16 @@
             <attribute name="t-attf-class">my_cart_quantity badge bg-core-blue text-white #{_badge_class} #{'d-none' if (website_sale_cart_quantity == 0) else ''}</attribute>
         </xpath>
     </template>
+    <template
+        id="user_dropdown_settings_link"
+        inherit_id="portal.user_dropdown"
+        name="MyCompassion User Settings Link"
+    >
+        <xpath expr="//div[@id='o_logout_divider']" position="before">
+            <a href="/my2/user_settings" role="menuitem" class="dropdown-item ps-3">
+                <i class="fa fa-fw fa-cog me-1 small text-primary text-primary-emphasis"/>
+                Settings
+            </a>
+        </xpath>
+    </template>
 </odoo>

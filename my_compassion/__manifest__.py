@@ -141,6 +141,10 @@
             "my_compassion/static/src/css/delete_a_picture_input.css",
             "my_compassion/static/src/css/child_letters.css",
             "my_compassion/static/src/css/letter_card.css",
+            "my_compassion/static/src/css/child_profile.css",
+            "my_compassion/static/src/css/child_profile_timeline.css",
+            "my_compassion/static/src/css/my2_weather_time_container.css",
+            "my_compassion/static/src/css/user_settings.css",
             # ES module JS
             "my_compassion/static/src/js/toast_service.js",
             "my_compassion/static/src/js/show_password.js",
@@ -160,6 +164,11 @@
             "my_compassion/static/src/js/my2_letter_template_loader.js",
             "my_compassion/static/src/js/my2_child_letters.js",
             "my_compassion/static/src/js/my2_child_letters_card_behavior.js",
+            "my_compassion/static/src/js/child_profile_tabs.js",
+            "my_compassion/static/src/js/child_profile_timeline.js",
+            "my_compassion/static/src/js/my2_child_center_weather_time.js",
+            "my_compassion/static/src/js/error_page_redirect.js",
+            "my_compassion/static/src/js/my2_user_settings.js",
             # client templates
             "my_compassion/static/src/xml/toast_notification.xml",
         ],

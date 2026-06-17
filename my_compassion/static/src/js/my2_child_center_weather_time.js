@@ -1,15 +1,15 @@
+/** @odoo-module **/
+
 /**
- * Time updater and Weather Fetcher for Child Profile Center
- * --------------------------------
- * This script keeps the current time of the child compassion center updated every minute and fetches the weather infos.
- * Key Features:
- * - Fetches weather data via GET from `/my2/children/<childId>/center-weather`
- * - Use the injected time zone to display the current time in the center's locale
- * - Updates the time every 15 seconds in the client side
- * - Load the weather icon based on the fetched weather data
- * - Displays the container only after successful data fetch
+ * Time updater and Weather Fetcher for the Child Profile Center
+ * ------------------------------------------------------------
+ * Keeps the center's local time updated every 15s and fetches the weather via
+ * GET /my2/children/<childId>/center-weather, then reveals the info card.
+ *
  * Used in /templates/pages/my2_child_timeline.xml
  */
+
+import { whenReady } from "@odoo/owl";
 
 // Mapping of weather icon filenames to their corresponding CSS classes
 const iconClassMap = {
@@ -21,9 +21,13 @@ const iconClassMap = {
     wind03: "weather-icon-mist",
     "cloud-blank02": "weather-icon-cloudy",
 };
-document.addEventListener("DOMContentLoaded", () => {
+
+whenReady(() => {
     const containerEl = document.querySelector(".center-info-card");
     const timelinePageEl = document.querySelector(".cd-weather-map-container");
+    if (!timelinePageEl) {
+        return;
+    }
     const currentTimeEl = document.getElementById("current_time");
     const currentTemperatureEl = document.getElementById("current_temperature");
     const childId = timelinePageEl.dataset.childId;
