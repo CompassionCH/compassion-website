@@ -4867,3 +4867,14 @@ msgstr "Stiamo elaborando i tuoi pagamenti, attendi prego..."
 #, python-format
 msgid "We are processing your payment, please wait ..."
 msgstr "Stiamo elaborando il tuo pagamento, attendi prego ..."
+
+#. module: my_compassion
+#: model:ir.actions.server,name:my_compassion.child_publish_action
+msgid "Publish/Unpublish child"
+msgstr "Pubblica/Non pubblica il bambino"
+
+#. module: my_compassion
+#: code:addons/my_compassion/models/compassion_child.py:0
+#, python-format
+msgid "You cannot publish a child that is not available for sponsorship."
+msgstr "Non puoi pubblicare un bambino che non è disponibile per il sostegno."
