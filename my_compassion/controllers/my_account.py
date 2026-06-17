@@ -33,40 +33,10 @@ HISTORY_LIMIT = 1000
 def _get_user_children(state=None):
     env = request.env
     partner = env.user.partner_id
-    return _get_sponsorships(partner, state).mapped("child_id").sorted("preferred_name")
-
-
-def _get_sponsorships(partner, state=None):
-    """
-    Find all the sponsorships of the given user.
-    There is the possibility to fetch either only active sponsorships or only those
-    that are terminated / cancelled. By default, all sponsorships are returned
-
-    :return: a recordset of recurring.contract of the given user
-    """
-
-    def filter_sponsorships(sponsorship):
-        can_show = True
-        is_active = sponsorship.state not in ["draft", "cancelled", "terminated"]
-        exit_communication_sent = (
-            sponsorship.state == "terminated" and sponsorship.sds_state != "sub_waiting"
-        )
-
-        if state == "active":
-            can_show = is_active or (
-                sponsorship.state == "terminated" and not exit_communication_sent
-            )
-        elif state == "terminated":
-            can_show = exit_communication_sent
-        elif state == "write":
-            can_show = sponsorship.can_write_letter
-
-        return can_show
-
     return (
-        partner.get_portal_sponsorships()
-        .with_context(allow_during_suspension=True)
-        .filtered(filter_sponsorships)
+        partner.get_portal_sponsorships(state)
+        .mapped("child_id")
+        .sorted("preferred_name")
     )
 
 
