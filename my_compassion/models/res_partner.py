@@ -40,17 +40,17 @@ class Partner(models.Model):
         if not isinstance(states, list):
             states = [states]
 
-        def keep(sponsorship):
-            if sponsorship.state in states:
-                # A departure only counts as terminated once its exit
-                # communication has been sent.
-                if sponsorship.state == "terminated":
-                    return not sponsorship.exit_communication_pending
-                return True
-            # A departure pending its exit communication still shows as active.
-            return "active" in states and sponsorship.exit_communication_pending
+        # only sponsorships which have the specified states
+        result = sponsorships.filtered(lambda s: s.state in states)
+        # sponsorships which have an exit communication pending
+        pending_departures = sponsorships.filtered("exit_communication_pending")
 
-        return sponsorships.filtered(keep)
+        # add or remove the pending sponsorships based on the requested states
+        if "active" in states:
+            result |= pending_departures
+        if "terminated" in states:
+            result -= pending_departures
+        return result
 
     def _compute_user_login(self):
         for partner in self:
