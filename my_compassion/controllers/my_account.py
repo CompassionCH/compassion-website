@@ -34,7 +34,7 @@ def _get_user_children(state=None):
     env = request.env
     partner = env.user.partner_id
     return (
-        partner.get_displayed_sponsorships(state)
+        partner.get_portal_sponsorships(state)
         .mapped("child_id")
         .sorted("preferred_name")
     )

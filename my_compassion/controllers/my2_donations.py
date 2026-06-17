@@ -444,7 +444,7 @@ class MyCompassionDonationsController(CustomerPortal):
 
         # Active sponsorships (terminated departures stay listed until the
         # exit communication has been sent)
-        active_sponsorships = partner.get_displayed_sponsorships("active")
+        active_sponsorships = partner.get_portal_sponsorships("active")
 
         # Due invoices
         date_filter_up_bound = datetime.today() + timedelta(days=30)

@@ -26,41 +26,31 @@ class Partner(models.Model):
         tracking=True,
     )
 
-    def get_displayed_sponsorships(self, display_state=None):
-        """Return the partner's portal sponsorships filtered for display.
+    def get_portal_sponsorships(self, states=None):
+        """Portal sponsorships, with grace handling for child departures.
 
-        :param display_state: which portal bucket to build:
-            - "active": genuinely active sponsorships, plus terminated
-              departures still in the grace period (exit communication not yet
-              sent to the sponsor);
-            - "terminated": departures whose exit communication has been sent,
-              and other ended sponsorships;
-            - "write": those the sponsor may still write a letter to;
-            - None: all portal sponsorships.
-        :return: a recurring.contract recordset.
+        A terminated sponsorship whose exit communication has not been sent yet
+        (``exit_communication_pending``) is still treated as active: it is
+        returned when "active" is requested and withheld from "terminated", so
+        the sponsor keeps seeing it until they are informed of the departure.
         """
-        self.ensure_one()
+        sponsorships = super().get_portal_sponsorships()
+        if states is None:
+            return sponsorships
+        if not isinstance(states, list):
+            states = [states]
 
         def keep(sponsorship):
-            is_active = sponsorship.state not in ["draft", "cancelled", "terminated"]
-            if display_state == "active":
-                # A departed sponsorship stays visible as active until its exit
-                # communication has been sent to the sponsor.
-                return is_active or sponsorship.exit_communication_pending
-            if display_state == "terminated":
-                return (
-                    sponsorship.state == "terminated"
-                    and not sponsorship.exit_communication_pending
-                )
-            if display_state == "write":
-                return sponsorship.can_write_letter
-            return True
+            if sponsorship.state in states:
+                # A departure only counts as terminated once its exit
+                # communication has been sent.
+                if sponsorship.state == "terminated":
+                    return not sponsorship.exit_communication_pending
+                return True
+            # A departure pending its exit communication still shows as active.
+            return "active" in states and sponsorship.exit_communication_pending
 
-        return (
-            self.get_portal_sponsorships()
-            .with_context(allow_during_suspension=True)
-            .filtered(keep)
-        )
+        return sponsorships.filtered(keep)
 
     def _compute_user_login(self):
         for partner in self:
