@@ -6,12 +6,25 @@ class Website(models.Model):
     _inherit = "website"
 
     def get_current_website(self, fallback=True):
-        # Check if the HTTP request exists and matches your path
-        if request and request.httprequest.path.startswith("/my2"):
-            # Find your specific website record
-            target_website = self.env.ref("my_compassion.my2_website")
-            if target_website:
-                return target_website
+        if request:
+            path = request.httprequest.path
+            # Check if path starts with /my2 or a localized version like
+            # /de/my2, /fr/my2, etc.
+            # Splitting by '/' and checking the first/second segment is safest
+            path_parts = [p for p in path.split("/") if p]
 
-        # Otherwise, fall back to Odoo's standard domain/session detection
+            is_my2_route = False
+            if path_parts:
+                # Direct check: /my2...
+                if path_parts[0] == "my2":
+                    is_my2_route = True
+                # Localized check: /de/my2... or /fr/my2...
+                elif len(path_parts) > 1 and path_parts[1] == "my2":
+                    is_my2_route = True
+
+            if is_my2_route:
+                target_website = self.env.ref("my_compassion.my2_website")
+                if target_website:
+                    return target_website
+
         return super(Website, self).get_current_website(fallback=fallback)
