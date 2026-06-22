@@ -31,7 +31,7 @@
     "summary": "Compassion Theme 2025",
     "website": "https://github.com/CompassionCH/compassion-website",
     "sequence": 260,
-    "version": "18.0.1.0.1",
+    "version": "18.0.1.0.2",
     "author": "Compassion Switzerland",
     "depends": ["website"],
     "external_dependencies": {"python": ["python-slugify"]},
@@ -63,6 +63,7 @@
         "templates/components/LanguageSelector.xml",
         # Styles (QWeb CSS templates for the dynamic stylesheet pipeline)
         "templates/styles/colors_stylesheet.xml",
+        "templates/styles/palette_stylesheet.xml",
         "templates/styles/icons_stylesheet.xml",
         "templates/styles/pictograms_stylesheet.xml",
     ],

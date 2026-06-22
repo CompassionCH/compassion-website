@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="theme_compassion_palette_stylesheet_template" name="Palette Stylesheet Template">
+        <t t-translation="off">
+$o-color-palettes: map-merge($o-color-palettes, (
+    "compassion": (
+        "o-color-1": <t t-esc="palette['o-color-1']"/>,
+        "o-color-2": <t t-esc="palette['o-color-2']"/>,
+        "o-color-3": <t t-esc="palette['o-color-3']"/>,
+        "o-color-4": <t t-esc="palette['o-color-4']"/>,
+        "o-color-5": <t t-esc="palette['o-color-5']"/>,
+    ),
+));
+        </t>
+    </template>
+</odoo>

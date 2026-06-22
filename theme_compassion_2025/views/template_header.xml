@@ -26,7 +26,7 @@
         <!-- Move the login button out of the main menu and adapt its style -->
         <xpath expr="//t[@t-call='portal.placeholder_user_sign_in']" position="replace" />
         <xpath expr="//t[@t-call='portal.user_dropdown']" position="replace" />
-        <xpath expr="//t[@t-call='website.placeholder_header_language_selector']" position="before">
+        <xpath expr="//t[@t-call='website.placeholder_header_language_selector']" position="replace">
             <t t-call="portal.user_dropdown">
                 <t t-set="_item_class" t-value="'nav-item dropdown ml-lg-4'" />
                 <t t-set="_link_class" t-value="'nav-link font-weight-bold'" />

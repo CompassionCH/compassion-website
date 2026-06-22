@@ -55,45 +55,46 @@ class StylesheetGeneratorMixin(models.AbstractModel):
         corresponding ir.attachment record.
         """
         self._check_required_attributes()
+        self._render_to_attachment(
+            self.css_template_xml_id,
+            self.css_attachment_xml_id,
+            {self.render_key: self.search([])},
+        )
 
-        view_template = self.env.ref(self.css_template_xml_id, raise_if_not_found=False)
+    @api.model
+    def _render_to_attachment(self, template_xml_id, attachment_xml_id, render_context):
+        """Render a QWeb template and store the CSS result in the given attachment."""
+        view_template = self.env.ref(template_xml_id, raise_if_not_found=False)
         if not view_template:
             _logger.warning(
-                f"Stylesheet template '{self.css_template_xml_id}' not found for model "
+                f"Stylesheet template '{template_xml_id}' not found for model "
                 f"'{self._name}'. Skipping CSS generation."
             )
             return
-
-        records = self.search([])
 
         # theme_* modules stage <template>s into theme.ir.ui.view until the theme is
         # activated on a website, and ir.qweb._render(xml_id) only resolves a real
         # ir.ui.view. While only the staged view exists, render its arch directly.
         if view_template._name == "ir.ui.view":
-            template = self.css_template_xml_id
+            template = template_xml_id
         else:
             template = etree.fromstring(view_template.arch)
-        css_content = self.env["ir.qweb"]._render(
-            template,
-            {self.render_key: records},
-        )
+        css_content = self.env["ir.qweb"]._render(template, render_context)
 
-        css_content_b64 = base64.b64encode(css_content.encode("utf-8"))
-
-        # Find and update css file present in ir.attachment
-        attachment = self.env.ref(self.css_attachment_xml_id, raise_if_not_found=False)
+        attachment = self.env.ref(attachment_xml_id, raise_if_not_found=False)
         if not attachment:
             _logger.warning(
-                f"Attachment '{self.css_attachment_xml_id}' not found for model "
+                f"Attachment '{attachment_xml_id}' not found for model "
                 f"'{self._name}'. Skipping CSS update."
             )
             return
-        attachment.write({"datas": css_content_b64, "website_id": False})
+        attachment.write(
+            {"datas": base64.b64encode(css_content.encode("utf-8")), "website_id": False}
+        )
         _logger.info(f"Successfully updated {attachment.name} file.")
 
         # force bundle invalidation
         self.env.registry.clear_cache()
-        _logger.info(f"Successfully re-loaded assets for {self._name}.")
 
     @api.model_create_multi
     def create(self, vals_list):

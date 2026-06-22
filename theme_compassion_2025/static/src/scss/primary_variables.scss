@@ -2,8 +2,20 @@
 // Website customizations
 //------------------------------------------------------------------------------
 
+$o-color-palettes: map-merge($o-color-palettes, (
+    "compassion": (
+        'o-color-1': #2a5eec,
+        'o-color-2': #11265e,
+        'o-color-3': #eae4df,
+        'o-color-4': #ffffff,
+        'o-color-5': #121a1a,
+    ),
+));
+$o-selected-color-palettes-names: append($o-selected-color-palettes-names, "compassion");
+
 $o-website-values-palettes: (
     (
+        "color-palettes-name": "compassion",
         "font": "NeighbourSans Regular",
         "header-template": "default",
         "hamburger-type": "off-canvas",
@@ -22,5 +34,5 @@ $o-website-values-palettes: (
         "btn-padding-y-lg": 0.4rem,
         "btn-padding-x-lg": 2rem,
         "logo-height": 3rem,
-    )
+    ),
 );
