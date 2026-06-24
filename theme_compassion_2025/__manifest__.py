@@ -31,7 +31,7 @@
     "summary": "Compassion Theme 2025",
     "website": "https://github.com/CompassionCH/compassion-website",
     "sequence": 260,
-    "version": "18.0.1.0.2",
+    "version": "18.0.1.0.3",
     "author": "Compassion Switzerland",
     "depends": ["website"],
     "external_dependencies": {"python": ["python-slugify"]},
