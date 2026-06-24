@@ -38,14 +38,17 @@
     </template>
     <!-- Improve the language selector in the header by applying the Compassion theme-->
     <template id="language_selector" inherit_id="portal.language_selector">
-        <!-- These nodes carry t-attf-class (no static class), so the xpath matches on @t-attf-class -->
+        <!-- These nodes set class through t-attf-class, which overrides any static class at
+             render, so classes are added onto t-attf-class. -->
         <xpath expr="//div[contains(@t-attf-class, 'dropdown-menu')]" position="attributes">
-            <attribute name="class" add="shadow-sm animation-drop language-selector__dropdown-menu" separator=" " />
+            <attribute name="t-attf-class" add="shadow-sm animation-drop language-selector__dropdown-menu" separator=" " />
         </xpath>
-        <!-- Modify the dropdown button to use a custom pill style button-->
+        <!-- Hide the stock toggle, but keep the node: website.language_selector_inline locates this
+             dropdown-toggle to build the inline footer variant. -->
         <xpath expr="//button[contains(@t-attf-class, 'dropdown-toggle')]" position="attributes">
-            <attribute name="class" separator=" " add="d-none" />
+            <attribute name="t-attf-class" add="d-none" separator=" " />
         </xpath>
+        <!-- Custom pill-style language toggle, shown instead of the hidden stock button. -->
         <xpath expr="//button[contains(@t-attf-class, 'dropdown-toggle')]" position="after">
             <t t-call="theme_compassion_2025.LanguageSelector">
                 <t t-set="variant" t-value="'compact'" />

@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
-        <!-- Default layout for My Account, adding new menu in top. It receives a single argument: -->
-        <!--     1. selected, the id of the selected navigation element, for highlight purposes -->
-        <template id="my_account_menu" inherit_id="portal.my_account_link">
-            <xpath expr="//a[@href='/my/home']" position="after">
-                <a href="/my/children" role="menuitem" class="dropdown-item">My Children</a>
-                <a href="/my/donations" role="menuitem" class="dropdown-item">My Donations</a>
-                <a href="/my/letter" role="menuitem" class="dropdown-item">Write a letter</a>
-            </xpath>
-            <xpath expr="//a[@href='/my/home']" position="attributes">
-                <attribute name="href">/my/information</attribute>
-            </xpath>
+        <template id="my_account_menu" name="MyCompassion - hide portal My Account link" inherit_id="portal.my_account_link">
+            <xpath expr="//a[@href='/my/home']" position="replace"/>
         </template>
         <!-- Displayed when user sponsors no child on children related views  -->
         <template id="sponsor_a_child" name="My Children">
