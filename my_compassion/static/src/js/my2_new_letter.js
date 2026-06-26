@@ -297,8 +297,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         this.progressBar = null; // Clean up the reference.
                     }
 
-                    $("#previewImage").attr("src", result.preview_url);
-                    $("#previewModal").modal("show");
+                    if (window.Capacitor) {
+                        // Native app: the inline <iframe> PDF preview renders
+                        // badly on mobile (no scrolling, missing attached
+                        // image), so open the generated PDF in the native
+                        // viewer (QuickLook) instead of the modal.
+                        window.open(result.preview_url, "_blank");
+                    } else {
+                        $("#previewImage").attr("src", result.preview_url);
+                        $("#previewModal").modal("show");
+                    }
                 } else if (mode === "save_draft") {
                     ToastService.success(result.message || "Draft saved!");
                 }
