@@ -297,14 +297,20 @@ document.addEventListener("DOMContentLoaded", function () {
                         this.progressBar = null; // Clean up the reference.
                     }
 
+                    const previewUrl = result && result.preview_url;
+                    if (!previewUrl) {
+                        ToastService.error(_t("Could not retrieve the letter preview."));
+                        return;
+                    }
+
                     if (window.Capacitor) {
                         // Native app: the inline <iframe> PDF preview renders
                         // badly on mobile (no scrolling, missing attached
                         // image), so open the generated PDF in the native
                         // viewer (QuickLook) instead of the modal.
-                        window.open(result.preview_url, "_blank");
+                        window.open(previewUrl, "_blank");
                     } else {
-                        $("#previewImage").attr("src", result.preview_url);
+                        $("#previewImage").attr("src", previewUrl);
                         $("#previewModal").modal("show");
                     }
                 } else if (mode === "save_draft") {
