@@ -297,8 +297,22 @@ document.addEventListener("DOMContentLoaded", function () {
                         this.progressBar = null; // Clean up the reference.
                     }
 
-                    $("#previewImage").attr("src", result.preview_url);
-                    $("#previewModal").modal("show");
+                    const previewUrl = result && result.preview_url;
+                    if (!previewUrl) {
+                        ToastService.error(_t("Could not retrieve the letter preview."));
+                        return;
+                    }
+
+                    if (window.Capacitor && window.Capacitor.getPlatform() !== "web") {
+                        // Native app (iOS/Android, not Capacitor web): the inline <iframe> PDF preview renders
+                        // badly on mobile (no scrolling, missing attached
+                        // image), so open the generated PDF in the native
+                        // viewer (QuickLook) instead of the modal.
+                        window.open(previewUrl, "_blank");
+                    } else {
+                        $("#previewImage").attr("src", previewUrl);
+                        $("#previewModal").modal("show");
+                    }
                 } else if (mode === "save_draft") {
                     ToastService.success(result.message || "Draft saved!");
                 }
