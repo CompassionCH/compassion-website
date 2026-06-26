@@ -303,8 +303,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         return;
                     }
 
-                    if (window.Capacitor) {
-                        // Native app: the inline <iframe> PDF preview renders
+                    if (window.Capacitor && window.Capacitor.getPlatform() !== "web") {
+                        // Native app (iOS/Android, not Capacitor web): the inline <iframe> PDF preview renders
                         // badly on mobile (no scrolling, missing attached
                         // image), so open the generated PDF in the native
                         // viewer (QuickLook) instead of the modal.
