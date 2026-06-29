@@ -33,7 +33,6 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
     init: function () {
         this._super.apply(this, arguments);
         this.RE_EMOJI = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
-        this.progressBar = null;
         this.progressBarApp = null;
         this.lastDraft = null;
         this.autoSaveTimer = null;
@@ -110,8 +109,6 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
                             env: Component.env,
                             props: { steps: [_t("Sending your letter...")], flowing: true },
                         });
-                        this.progressBar = this.progressBarApp.root.component;
-                        this.progressBar.startProgress();
                         resolve();
                     },
                     { once: true }
@@ -135,7 +132,6 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
             if (this.progressBarApp) {
                 this.progressBarApp.destroy();
                 this.progressBarApp = null;
-                this.progressBar = null;
             }
             Modal.getOrCreateInstance(document.getElementById("submitModal")).hide();
             toast.error(
