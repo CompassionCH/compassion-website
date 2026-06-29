@@ -106,6 +106,7 @@
         "web",
         "website_sale",
         "website_child_protection",
+        "child_compassion",
         "partner_auto_match",
         "partner_search_fuzzy",
         "website_legal_page",  # OCA/website
