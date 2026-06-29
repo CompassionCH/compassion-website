@@ -4,7 +4,7 @@
         <!-- Add the Compassion brand SVG / styling on the navbar menu -->
         <xpath expr="//t[@t-set='_nav_class']" position="attributes">
             <attribute name="t-value">
-                'flex-grow-1 align-items-left align-items-lg-center border-thread-right'
+                'align-items-left align-items-lg-center border-thread-right'
             </attribute>
         </xpath>
         <!-- Compassion 4-color thread bar, placed after the navbar (rendered via t-call="website.navbar") -->
@@ -16,11 +16,13 @@
                 <div class="h-100 w-25 bg-low-green" />
             </div>
         </xpath>
-        <!-- Center the main menu with flex spacers around the menu list (rendered via t-call="website.navbar_nav") -->
-        <xpath expr="//t[@t-call='website.navbar_nav']" position="after">
+        <!-- Center the menu: equal flex spacers flank the menu group (the website menu plus the
+             logged-in my2 items injected just before website.navbar_nav). The left spacer is
+             anchored on the brand so it always sits outside that injected list. -->
+        <xpath expr="//t[@t-call='website.placeholder_header_brand']" position="after">
             <div class="flex-grow-1" />
         </xpath>
-        <xpath expr="//t[@t-call='website.navbar_nav']" position="before">
+        <xpath expr="//t[@t-call='website.navbar_nav']" position="after">
             <div class="flex-grow-1" />
         </xpath>
         <!-- Move the login button out of the main menu and adapt its style -->
@@ -34,6 +36,15 @@
             <div class="d-none d-md-block ml-lg-3">
                 <t t-call="portal.language_selector" />
             </div>
+        </xpath>
+        <!-- Render the cart link in the desktop navbar so the my_compassion gift-package
+             override (custom_header_cart_link_redirect) has a node to style and redirect. -->
+        <xpath expr="//t[@t-call='website.placeholder_header_search_box']" position="before">
+            <t t-call="website_sale.header_cart_link">
+                <t t-set="_icon" t-value="True" />
+                <t t-set="_link_class" t-value="'o_navlink_background btn position-relative rounded-circle p-1 text-center text-reset'" />
+                <t t-set="_badge_class" t-value="'position-absolute top-0 end-0 mt-n1 me-n1 rounded-pill'" />
+            </t>
         </xpath>
     </template>
     <!-- Improve the language selector in the header by applying the Compassion theme-->

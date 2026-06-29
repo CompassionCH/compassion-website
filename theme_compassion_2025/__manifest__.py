@@ -33,7 +33,7 @@
     "sequence": 260,
     "version": "18.0.1.0.3",
     "author": "Compassion Switzerland",
-    "depends": ["website"],
+    "depends": ["website", "website_sale"],
     "external_dependencies": {"python": ["python-slugify"]},
     "data": [
         "security/ir.model.access.csv",

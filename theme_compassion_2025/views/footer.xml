@@ -21,11 +21,11 @@
                                 <div
                                     class="py-1 px-lg-4 d-flex flex-column flex-lg-row align-items-center align-items-lg-start justify-content-center"
                                 >
-                                    <div class="mb-1 mb-lg-0 mr-lg-2" style="font-size: 1.2rem;">
+                                    <div class="mb-1 mb-lg-0 me-lg-2" style="font-size: 1.2rem;">
                                         <i class="icon-marker-pin01 bg-low-yellow text-primary" />
                                     </div>
                                     <a
-                                        class="text-pure-white text-center text-lg-left"
+                                        class="text-pure-white text-center text-lg-start"
                                         t-if="res_company.partner_id.contact_address"
                                         t-att-href="'https://www.google.com/maps/search/' + res_company.partner_id.contact_address.replace(' ', '+')"
                                         target="_blank"
@@ -39,11 +39,11 @@
                                     class="py-1 px-lg-4 d-flex flex-column flex-lg-row align-items-center justify-content-center"
                                     t-if="res_company.phone"
                                 >
-                                    <div class="mb-1 mb-lg-0 mr-lg-2" style="font-size: 1.2rem;">
+                                    <div class="mb-1 mb-lg-0 me-lg-2" style="font-size: 1.2rem;">
                                         <i class="icon-phone bg-low-yellow text-primary" />
                                     </div>
                                     <a
-                                        class="text-pure-white text-center text-lg-left"
+                                        class="text-pure-white text-center text-lg-start"
                                         t-att-href="'tel:' + res_company.phone.replace('(0)', '').replace(' ', '').replace('(', '').replace(')', '')"
                                     >
                                         <span t-esc="res_company.phone" />
@@ -52,11 +52,11 @@
                                 <div
                                     class="py-1 px-lg-4 d-flex flex-column flex-lg-row align-items-center justify-content-center"
                                 >
-                                    <div class="mb-1 mb-lg-0 mr-lg-2" style="font-size: 1.2rem;">
+                                    <div class="mb-1 mb-lg-0 me-lg-2" style="font-size: 1.2rem;">
                                         <i class="icon-mail01 bg-low-yellow text-primary" />
                                     </div>
                                     <a
-                                        class="text-pure-white text-center text-lg-left"
+                                        class="text-pure-white text-center text-lg-start"
                                         t-att-href="'mailto:' + res_company.email"
                                     >
                                         <span t-esc="res_company.email" />
@@ -81,21 +81,21 @@
                             >
                                 <div class="mb-2 mb-md-0">
                                     <a
-                                        class="text-pure-white mr-3"
+                                        class="text-pure-white me-3"
                                         href="https://compassion.ch/protection-des-donnees/"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
                                         Policies
                                     </a>
-                                    <span class="d-none d-md-inline mr-3">|</span>
+                                    <span class="d-none d-md-inline me-3">|</span>
                                 </div>
-                                <div class="d-flex ml-1 mt-1">
+                                <div class="d-flex ms-1 mt-1">
                                     <a
                                         href="https://www.facebook.com/compassionschweiz"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        class="mr-3"
+                                        class="me-3"
                                     >
                                         <i class="fa fa-facebook-official text-pure-white" />
                                     </a>
@@ -103,7 +103,7 @@
                                         href="https://www.instagram.com/compassionswiss"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        class="mr-3"
+                                        class="me-3"
                                     >
                                         <i class="fa fa-instagram text-pure-white" />
                                     </a>
@@ -111,7 +111,7 @@
                                         href="https://www.youtube.com/channel/UChVNRRvihHG0AYPsdEFfasQ"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        class="mr-3"
+                                        class="me-3"
                                     >
                                         <i class="fa fa-youtube-play text-pure-white" />
                                     </a>
@@ -119,7 +119,7 @@
                                         href="https://vimeo.com/compassionswitzerland"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        class="mr-3"
+                                        class="me-3"
                                     >
                                         <i class="fa fa-vimeo text-pure-white" />
                                     </a>
@@ -132,8 +132,8 @@
                                     </a>
                                 </div>
                                 <div class="mb-2 mb-md-0">
-                                    <span class="d-none d-md-inline ml-3">|</span>
-                                    <a class="text-pure-white ml-3" href="/contactus">Contact</a>
+                                    <span class="d-none d-md-inline ms-3">|</span>
+                                    <a class="text-pure-white ms-3" href="/contactus">Contact</a>
                                 </div>
                             </div>
                         </div>
@@ -146,6 +146,12 @@
                 </section>
                 <section class="pb24" />
             </div>
+        </xpath>
+        <!-- The compassion footer carries its own copyright line, so the stock copyright bar
+             (and the language selector injected into it) is suppressed: o_footer_copyright is
+             rendered only when no_copyright is falsy. -->
+        <xpath expr="//div[hasclass('o_footer_copyright')]" position="before">
+            <t t-set="no_copyright" t-value="True" />
         </xpath>
     </template>
 </odoo>
