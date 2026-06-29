@@ -66,6 +66,20 @@
         </xpath>
     </template>
     <template
+        id="header_menu_cache_per_role"
+        inherit_id="website.layout"
+        name="MyCompassion Header Menu Cache Key"
+    >
+        <!-- The navbar shows role-dependent items (is_sponsor / is_donor), so the
+             header cache must vary by those flags. The stock key only separates
+             public from logged-in users, which lets one logged-in user's menu be
+             served to every other logged-in user. The flags are read only for
+             logged-in users so public traffic keeps paying no extra compute. -->
+        <xpath expr="//header/t[@t-cache]" position="attributes">
+            <attribute name="t-cache">None if website.is_menu_cache_disabled() else (xmlid, website, website.is_public_user(), not website.is_public_user() and (request.env.user.partner_id.is_sponsor, request.env.user.partner_id.is_donor))</attribute>
+        </xpath>
+    </template>
+    <template
         id="user_dropdown_settings_link"
         inherit_id="portal.user_dropdown"
         name="MyCompassion User Settings Link"
