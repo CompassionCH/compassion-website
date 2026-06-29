@@ -15,6 +15,7 @@
 import publicWidget from "@web/legacy/js/public/public_widget";
 import { rpc } from "@web/core/network/rpc";
 import { DonationForm } from "@my_compassion/js/my2_donation_form";
+import websiteSaleUtils from "@website_sale/js/website_sale_utils";
 
 export const GiftPackage = publicWidget.Widget.extend({
     selector: ".my2_gift_package",
@@ -98,6 +99,8 @@ export const GiftPackage = publicWidget.Widget.extend({
                     if (data.is_order_empty) {
                         this.$(".empty-order-hidden").hide();
                     }
+                    // Keep the navbar badge in sync without a full page reload
+                    websiteSaleUtils.updateCartNavBar({ cart_quantity: data.cart_quantity });
                     // Re-enable buttons
                     this.$(".btn").prop("disabled", false);
                 }.bind(this)

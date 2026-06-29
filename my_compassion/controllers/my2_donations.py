@@ -129,6 +129,7 @@ class MyCompassionDonationsController(CustomerPortal):
                     ]
                 }
             )
+        request.session["website_sale_cart_quantity"] = order.cart_quantity
 
     @http.route(
         "/my2/gifts/edit",
@@ -157,6 +158,7 @@ class MyCompassionDonationsController(CustomerPortal):
         order_line.write(
             self._extract_donation_order_line_fields(product_template, post)
         )
+        request.session["website_sale_cart_quantity"] = order.cart_quantity if order else 0
 
     @http.route(
         "/my2/gifts/get-limits",
@@ -300,6 +302,9 @@ class MyCompassionDonationsController(CustomerPortal):
         else:
             raise NotFound()
 
+        cart_quantity = order.cart_quantity
+        request.session["website_sale_cart_quantity"] = cart_quantity
+
         # Render and return the updated content
         html_content = request.env["ir.qweb"]._render(
             "my_compassion.my2_gift_package_content",
@@ -311,6 +316,7 @@ class MyCompassionDonationsController(CustomerPortal):
         return {
             "html": html_content,
             "is_order_empty": len(order.order_line) == 0,
+            "cart_quantity": cart_quantity,
         }
 
     @http.route(

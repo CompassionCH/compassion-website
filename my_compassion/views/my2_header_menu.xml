@@ -62,7 +62,7 @@
         <!-- The badge node carries t-attf-class (no static class), so the xpath
              matches on @t-attf-class; keep the hide-when-empty toggle -->
         <xpath expr="//sup[contains(@t-attf-class, 'my_cart_quantity')]" position="attributes">
-            <attribute name="t-attf-class">my_cart_quantity badge bg-core-blue text-white #{_badge_class} #{'d-none' if (website_sale_cart_quantity == 0) else ''}</attribute>
+            <attribute name="t-attf-class">my_cart_quantity badge bg-primary #{_badge_class} #{'d-none' if (website_sale_cart_quantity == 0) else ''}</attribute>
         </xpath>
     </template>
     <template
