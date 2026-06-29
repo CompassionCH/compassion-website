@@ -34,7 +34,7 @@ class CompassionChild(models.Model):
     )
     can_show_on_my_compassion = fields.Boolean(
         string="Can be shown on My Compassion",
-        related="my_sponsorship_id.can_show_on_my_compassion",
+        compute="_compute_can_show_on_my_compassion",
     )
     can_i_write_letter = fields.Boolean(
         "Sponsor can write a letter",
@@ -74,6 +74,13 @@ class CompassionChild(models.Model):
 
         for child in self:
             child.my_sponsorship_id = latest_sponsorships.get(child.id)
+
+    @api.depends_context("uid")
+    def _compute_can_show_on_my_compassion(self):
+        for child in self:
+            child.can_show_on_my_compassion = (
+                child.my_sponsorship_id.can_show_on_my_compassion
+            )
 
     @api.depends_context("uid")
     def _compute_can_write_letter(self):
