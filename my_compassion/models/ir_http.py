@@ -36,7 +36,11 @@ class IrHttp(models.AbstractModel):
         result = super()._dispatch()
         # Re-set the frontend language cookie with an expiry so it persists
         # across a full app close (core sets it as a session-only cookie).
-        if request.is_frontend and request.lang and hasattr(result, "set_cookie"):
+        if (
+            request.is_frontend
+            and getattr(request, "lang", False)
+            and hasattr(result, "set_cookie")
+        ):
             result.set_cookie(
                 "frontend_lang", request.lang.code, max_age=FRONTEND_LANG_MAX_AGE
             )
