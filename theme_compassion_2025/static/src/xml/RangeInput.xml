@@ -18,39 +18,39 @@
 -->
 <templates xml:space="preserve">
     <t t-name="theme_compassion_2025.RangeInput">
-        <!-- Component definition -->
-        <div
-            class="slider-container"
-            t-attf-style="--progress-ratio-low: #{progressRatioLow}; --progress-ratio-high: #{progressRatioHigh};"
-        >
-            <div t-attf-class="slider-track bg-#{props.trackColor}" />
-            <div t-attf-class="slider-range bg-#{props.rangeColor}" />
-            <input
-                type="range"
-                t-att-min="props.min"
-                t-att-max="props.max"
-                t-att-value="state.low"
-                t-attf-style="z-index: #{state.frontThumb === 'low' ? 1 : 0};"
-                t-attf-class="slider-low slider-thumb-#{props.thumbColor}"
-                t-on-input="_slideLow"
-                t-on-change="_onRangeChange"
-            />
-            <input
-                type="range"
-                t-att-min="props.min"
-                t-att-max="props.max"
-                t-att-value="state.high"
-                t-attf-style="z-index: #{state.frontThumb === 'high' ? 1 : 0};"
-                t-attf-class="slider-high slider-thumb-#{props.thumbColor}"
-                t-on-input="_slideHigh"
-                t-on-change="_onRangeChange"
-            />
-            <div t-attf-class="label-low text-#{props.labelColor}">
-                <t t-esc="state.low" />
-            </div>
-            <div t-attf-class="label-high text-#{props.labelColor}">
-                <t t-esc="state.high" />
-            </div>
-        </div>
-    </t>
+    <!-- Component definition -->
+    <div
+      class="slider-container"
+      t-attf-style="--progress-ratio-low: #{progressRatioLow}; --progress-ratio-high: #{progressRatioHigh};"
+    >
+      <div t-attf-class="slider-track bg-#{props.trackColor}" />
+      <div t-attf-class="slider-range bg-#{props.rangeColor}" />
+      <input
+        type="range"
+        t-att-min="props.min"
+        t-att-max="props.max"
+        t-att-value="state.low"
+        t-attf-style="z-index: #{state.frontThumb === 'low' ? 1 : 0};"
+        t-attf-class="slider-low slider-thumb-#{props.thumbColor}"
+        t-on-input="_slideLow"
+        t-on-change="_onRangeChange"
+      />
+      <input
+        type="range"
+        t-att-min="props.min"
+        t-att-max="props.max"
+        t-att-value="state.high"
+        t-attf-style="z-index: #{state.frontThumb === 'high' ? 1 : 0};"
+        t-attf-class="slider-high slider-thumb-#{props.thumbColor}"
+        t-on-input="_slideHigh"
+        t-on-change="_onRangeChange"
+      />
+      <div t-attf-class="label-low text-#{props.labelColor}">
+        <t t-esc="state.low" />
+      </div>
+      <div t-attf-class="label-high text-#{props.labelColor}">
+        <t t-esc="state.high" />
+      </div>
+    </div>
+  </t>
 </templates>

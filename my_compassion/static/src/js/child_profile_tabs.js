@@ -11,34 +11,34 @@
 import publicWidget from "@web/legacy/js/public/public_widget";
 
 publicWidget.registry.ChildProfileTabs = publicWidget.Widget.extend({
-    selector: ".child-related-information",
-    events: {
-        "change #child-info-tabs-mobile": "_onMobileTabChange",
-    },
+  selector: ".child-related-information",
+  events: {
+    "change #child-info-tabs-mobile": "_onMobileTabChange",
+  },
 
-    /**
-     * @override
-     */
-    start: function () {
-        // When a desktop tab is shown, mirror it into the mobile dropdown so the
-        // two stay consistent across a resize.
-        this.$('#child-info-tabs a[data-bs-toggle="tab"]').on("shown.bs.tab", (e) => {
-            const target = $(e.target).attr("href");
-            this.$("#child-info-tabs-mobile").val(target);
-        });
-        return this._super.apply(this, arguments);
-    },
+  /**
+   * @override
+   */
+  start: function () {
+    // When a desktop tab is shown, mirror it into the mobile dropdown so the
+    // two stay consistent across a resize.
+    this.$('#child-info-tabs a[data-bs-toggle="tab"]').on("shown.bs.tab", (e) => {
+      const target = $(e.target).attr("href");
+      this.$("#child-info-tabs-mobile").val(target);
+    });
+    return this._super.apply(this, arguments);
+  },
 
-    /**
-     * Activate the desktop tab matching the mobile dropdown selection.
-     * @private
-     * @param {Event} ev
-     */
-    _onMobileTabChange: function (ev) {
-        const selectedTab = $(ev.currentTarget).val();
-        const tabLink = this.el.querySelector(`#child-info-tabs a[href="${selectedTab}"]`);
-        if (tabLink) {
-            window.Tab.getOrCreateInstance(tabLink).show();
-        }
-    },
+  /**
+   * Activate the desktop tab matching the mobile dropdown selection.
+   * @private
+   * @param {Event} ev
+   */
+  _onMobileTabChange: function (ev) {
+    const selectedTab = $(ev.currentTarget).val();
+    const tabLink = this.el.querySelector(`#child-info-tabs a[href="${selectedTab}"]`);
+    if (tabLink) {
+      window.Tab.getOrCreateInstance(tabLink).show();
+    }
+  },
 });

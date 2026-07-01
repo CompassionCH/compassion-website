@@ -1,112 +1,124 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <record id="product_template_form_view" model="ir.ui.view">
-        <field name="name">product.product_template.my_compassion</field>
-        <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_form_view" />
-        <field name="arch" type="xml">
-            <xpath expr="//notebook">
-                <page string="MyCompassion" name="my_compassion">
-                    <group>
-                        <field name="activate_for_my_compassion" string="Activate for MyCompassion" />
-                    </group>
-                    <group invisible="not activate_for_my_compassion">
-                        <field
-                            name="my_compassion_donation_type"
-                            string="Donation type"
-                            required="activate_for_my_compassion"
-                        />
-                        <field
-                            name="my_compassion_name"
-                            string="Name"
-                            required="activate_for_my_compassion"
-                        />
-                        <field
-                            name="my_compassion_color"
-                            string="Color"
-                            required="activate_for_my_compassion"
-                        />
-                        <field
-                            name="my_compassion_pictogram"
-                            string="Pictogram"
-                            required="activate_for_my_compassion"
-                        />
-                        <field
-                            name="my_compassion_description"
-                            string="Description"
-                            required="activate_for_my_compassion"
-                        />
-                        <field
-                            name="my_compassion_image"
-                            string="Picture"
-                            required="activate_for_my_compassion"
-                        />
-                    </group>
-                    <group
-                        string="Impact Statement"
-                        invisible="not activate_for_my_compassion"
-                    >
-                        <field name="my_compassion_show_impact_statement" string="Show impact statement" />
-                        <field
-                            name="my_compassion_impact_before_ids"
-                            string="The reality..."
-                            invisible="not my_compassion_show_impact_statement"
-                        >
-                            <list string="Order Lines" editable="bottom">
-                                <field name="sequence" widget="handle" />
-                                <field name="description" />
-                            </list>
-                        </field>
-                        <field
-                            name="my_compassion_impact_after_ids"
-                            string="With your help we can..."
-                            invisible="not my_compassion_show_impact_statement"
-                        >
-                            <list string="Order Lines" editable="bottom">
-                                <field name="sequence" widget="handle" />
-                                <field name="description" />
-                            </list>
-                        </field>
-                    </group>
-                    <group string="Information" invisible="not activate_for_my_compassion">
-                        <field name="my_compassion_show_info" string="Show information lines" />
-                        <field
-                            name="my_compassion_info_ids"
-                            string="How does it work?"
-                            invisible="not my_compassion_show_info"
-                        >
-                            <list string="Order Lines" editable="bottom">
-                                <field name="sequence" widget="handle" />
-                                <field name="title" />
-                                <field name="text" />
-                            </list>
-                        </field>
-                    </group>
-                    <group string="Testimony" invisible="not activate_for_my_compassion">
-                        <field name="my_compassion_show_testimony" string="Show testimony" />
-                        <field
-                            name="my_compassion_testimony_title"
-                            string="Testimony title"
-                            invisible="not my_compassion_show_testimony"
-                            required="my_compassion_show_testimony"
-                        />
-                        <field
-                            name="my_compassion_testimony_text"
-                            string="Testimony"
-                            invisible="not my_compassion_show_testimony"
-                            required="my_compassion_show_testimony"
-                        />
-                    </group>
-                    <group
-                        string="Suggested Donations"
-                        invisible="not activate_for_my_compassion"
-                    >
-                        <field name="my_compassion_donation_amount_low" string="Lowest suggested amount" />
-                        <field name="my_compassion_donation_amount_medium" string="Medium suggested amount" />
-                        <field name="my_compassion_donation_amount_high" string="High suggested amount" />
-                    </group>
-                </page>
-            </xpath>
-        </field>
-    </record>
+  <record id="product_template_form_view" model="ir.ui.view">
+    <field name="name">product.product_template.my_compassion</field>
+    <field name="model">product.template</field>
+    <field name="inherit_id" ref="product.product_template_form_view" />
+    <field name="arch" type="xml">
+      <xpath expr="//notebook">
+        <page string="MyCompassion" name="my_compassion">
+          <group>
+            <field
+              name="activate_for_my_compassion"
+              string="Activate for MyCompassion"
+            />
+          </group>
+          <group invisible="not activate_for_my_compassion">
+            <field
+              name="my_compassion_donation_type"
+              string="Donation type"
+              required="activate_for_my_compassion"
+            />
+            <field
+              name="my_compassion_name"
+              string="Name"
+              required="activate_for_my_compassion"
+            />
+            <field
+              name="my_compassion_color"
+              string="Color"
+              required="activate_for_my_compassion"
+            />
+            <field
+              name="my_compassion_pictogram"
+              string="Pictogram"
+              required="activate_for_my_compassion"
+            />
+            <field
+              name="my_compassion_description"
+              string="Description"
+              required="activate_for_my_compassion"
+            />
+            <field
+              name="my_compassion_image"
+              string="Picture"
+              required="activate_for_my_compassion"
+            />
+          </group>
+          <group string="Impact Statement" invisible="not activate_for_my_compassion">
+            <field
+              name="my_compassion_show_impact_statement"
+              string="Show impact statement"
+            />
+            <field
+              name="my_compassion_impact_before_ids"
+              string="The reality..."
+              invisible="not my_compassion_show_impact_statement"
+            >
+              <list string="Order Lines" editable="bottom">
+                <field name="sequence" widget="handle" />
+                <field name="description" />
+              </list>
+            </field>
+            <field
+              name="my_compassion_impact_after_ids"
+              string="With your help we can..."
+              invisible="not my_compassion_show_impact_statement"
+            >
+              <list string="Order Lines" editable="bottom">
+                <field name="sequence" widget="handle" />
+                <field name="description" />
+              </list>
+            </field>
+          </group>
+          <group string="Information" invisible="not activate_for_my_compassion">
+            <field name="my_compassion_show_info" string="Show information lines" />
+            <field
+              name="my_compassion_info_ids"
+              string="How does it work?"
+              invisible="not my_compassion_show_info"
+            >
+              <list string="Order Lines" editable="bottom">
+                <field name="sequence" widget="handle" />
+                <field name="title" />
+                <field name="text" />
+              </list>
+            </field>
+          </group>
+          <group string="Testimony" invisible="not activate_for_my_compassion">
+            <field name="my_compassion_show_testimony" string="Show testimony" />
+            <field
+              name="my_compassion_testimony_title"
+              string="Testimony title"
+              invisible="not my_compassion_show_testimony"
+              required="my_compassion_show_testimony"
+            />
+            <field
+              name="my_compassion_testimony_text"
+              string="Testimony"
+              invisible="not my_compassion_show_testimony"
+              required="my_compassion_show_testimony"
+            />
+          </group>
+          <group
+            string="Suggested Donations"
+            invisible="not activate_for_my_compassion"
+          >
+            <field
+              name="my_compassion_donation_amount_low"
+              string="Lowest suggested amount"
+            />
+            <field
+              name="my_compassion_donation_amount_medium"
+              string="Medium suggested amount"
+            />
+            <field
+              name="my_compassion_donation_amount_high"
+              string="High suggested amount"
+            />
+          </group>
+        </page>
+      </xpath>
+    </field>
+  </record>
 </odoo>

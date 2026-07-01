@@ -14,90 +14,103 @@
     - donation_limits ('gift.threshold.settings' records): The price limits for different donations types.
 -->
 <odoo>
-    <!-- DONATION DETAILS PAGE -->
-    <template id="my2_donation_details_page" name="Donation Details Page">
-        <t t-set="additional_title" t-value="product.my_compassion_name" />
-        <t t-call="website.layout">
-            <!-- HEADER -->
-            <div class="single-column">
+  <!-- DONATION DETAILS PAGE -->
+  <template id="my2_donation_details_page" name="Donation Details Page">
+    <t t-set="additional_title" t-value="product.my_compassion_name" />
+    <t t-call="website.layout">
+      <!-- HEADER -->
+      <div class="single-column">
+        <div
+          class="donation-details-header p-5 w-100 d-flex flex-column align-items-center"
+          t-attf-style="--image_url: url('/web/image/#{product._name}/#{product.id}/my_compassion_image');"
+        >
+          <h2 class="text-center text-pure-white">
+            <t t-out="product.my_compassion_name" />
+          </h2>
+          <div class="mt-2 bg-pure-white" />
+          <i
+            t-attf-class="#{product.my_compassion_pictogram.class_name} mt-3 text-pure-white"
+          />
+        </div>
+      </div>
+      <div class="container">
+        <div class="single-column">
+          <div class="my2_donation_details px-3 d-flex flex-column align-items-center">
+            <!-- DESCRIPTION -->
+            <div
+              class="mt-4 body-small bold text-center"
+              t-field="product.my_compassion_description"
+            />
+            <!-- IMPACT STATEMENT -->
+            <div
+              t-if="product.my_compassion_show_impact_statement"
+              class="donation-impact-statement mt-3 row"
+            >
+              <!-- BEFORE -->
+              <div class="col-12 col-lg-6">
+                <div class="mt-3 ms-4 body-standard text-mid-brown">The reality...</div>
+                <t t-foreach="product.my_compassion_impact_before_ids" t-as="line">
+                  <div class="mt-2 d-flex">
+                    <i class="me-2 icon-alert-circle text-mid-brown flex-shrink-0" />
+                    <t t-out="line.description" />
+                  </div>
+                </t>
+              </div>
+              <!-- AFTER -->
+              <div class="col-12 col-lg-6">
                 <div
-                    class="donation-details-header p-5 w-100 d-flex flex-column align-items-center"
-                    t-attf-style="--image_url: url('/web/image/#{product._name}/#{product.id}/my_compassion_image');"
-                >
-                    <h2 class="text-center text-pure-white">
-                        <t t-out="product.my_compassion_name" />
-                    </h2>
-                    <div class="mt-2 bg-pure-white" />
-                    <i t-attf-class="#{product.my_compassion_pictogram.class_name} mt-3 text-pure-white" />
-                </div>
+                  class="mt-3 ms-4 body-standard text-mid-green"
+                >With your help we can...</div>
+                <t t-foreach="product.my_compassion_impact_after_ids" t-as="line">
+                  <div class="mt-2 d-flex">
+                    <i class="me-2 icon-check-heart text-mid-green flex-shrink-0" />
+                    <t t-out="line.description" />
+                  </div>
+                </t>
+              </div>
             </div>
-            <div class="container">
-                <div class="single-column">
-                    <div class="my2_donation_details px-3 d-flex flex-column align-items-center">
-                        <!-- DESCRIPTION -->
-                        <div class="mt-4 body-small bold text-center" t-field="product.my_compassion_description" />
-                        <!-- IMPACT STATEMENT -->
-                        <div
-                            t-if="product.my_compassion_show_impact_statement"
-                            class="donation-impact-statement mt-3 row"
-                        >
-                            <!-- BEFORE -->
-                            <div class="col-12 col-lg-6">
-                                <div class="mt-3 ms-4 body-standard text-mid-brown">The reality...</div>
-                                <t t-foreach="product.my_compassion_impact_before_ids" t-as="line">
-                                    <div class="mt-2 d-flex">
-                                        <i class="me-2 icon-alert-circle text-mid-brown flex-shrink-0" />
-                                        <t t-out="line.description" />
-                                    </div>
-                                </t>
-                            </div>
-                            <!-- AFTER -->
-                            <div class="col-12 col-lg-6">
-                                <div class="mt-3 ms-4 body-standard text-mid-green">With your help we can...</div>
-                                <t t-foreach="product.my_compassion_impact_after_ids" t-as="line">
-                                    <div class="mt-2 d-flex">
-                                        <i class="me-2 icon-check-heart text-mid-green flex-shrink-0" />
-                                        <t t-out="line.description" />
-                                    </div>
-                                </t>
-                            </div>
-                        </div>
-                        <!-- INFORMATION -->
-                        <div t-if="product.my_compassion_show_info" class="mt-3 d-flex flex-column">
-                            <t t-call="theme_compassion_2025.TitleComponent">
-                                <t t-set="title_content">How does it work?</t>
-                                <t t-set="color" t-value="'core-blue'" />
-                                <t t-set="show_underline" t-value="True" />
-                                <t t-set="underline_color" t-value="'low-yellow'" />
-                            </t>
-                            <t t-foreach="product.my_compassion_info_ids" t-as="line">
-                                <div class="mt-2 body-large text-mid-brown">
-                                    <t t-out="line.title" />
-                                </div>
-                                <div class="mt-2 mb-2 body-small" t-field="line.text" />
-                            </t>
-                        </div>
-                        <!-- TESTIMONY -->
-                        <div t-if="product.my_compassion_show_testimony" class="mt-3 d-flex flex-column">
-                            <t t-call="theme_compassion_2025.TitleComponent">
-                                <t t-set="title_content">Testimony</t>
-                                <t t-set="color" t-value="'core-blue'" />
-                                <t t-set="show_underline" t-value="True" />
-                                <t t-set="underline_color" t-value="'low-yellow'" />
-                            </t>
-                            <div class="mt-2 body-large text-mid-brown">
-                                <t t-out="product.my_compassion_testimony_title" />
-                            </div>
-                            <div class="mt-2 body-small" t-field="product.my_compassion_testimony_text" />
-                        </div>
-                        <!-- DONATE -->
-                        <t t-call="my_compassion.DonationFormComponent">
-                            <t t-set="top_class" t-value="'mt-3 mb-4'" />
-                            <t t-set="limits" t-value="donation_limits" />
-                        </t>
-                    </div>
+            <!-- INFORMATION -->
+            <div t-if="product.my_compassion_show_info" class="mt-3 d-flex flex-column">
+              <t t-call="theme_compassion_2025.TitleComponent">
+                <t t-set="title_content">How does it work?</t>
+                <t t-set="color" t-value="'core-blue'" />
+                <t t-set="show_underline" t-value="True" />
+                <t t-set="underline_color" t-value="'low-yellow'" />
+              </t>
+              <t t-foreach="product.my_compassion_info_ids" t-as="line">
+                <div class="mt-2 body-large text-mid-brown">
+                  <t t-out="line.title" />
                 </div>
+                <div class="mt-2 mb-2 body-small" t-field="line.text" />
+              </t>
             </div>
-        </t>
-    </template>
+            <!-- TESTIMONY -->
+            <div
+              t-if="product.my_compassion_show_testimony"
+              class="mt-3 d-flex flex-column"
+            >
+              <t t-call="theme_compassion_2025.TitleComponent">
+                <t t-set="title_content">Testimony</t>
+                <t t-set="color" t-value="'core-blue'" />
+                <t t-set="show_underline" t-value="True" />
+                <t t-set="underline_color" t-value="'low-yellow'" />
+              </t>
+              <div class="mt-2 body-large text-mid-brown">
+                <t t-out="product.my_compassion_testimony_title" />
+              </div>
+              <div
+                class="mt-2 body-small"
+                t-field="product.my_compassion_testimony_text"
+              />
+            </div>
+            <!-- DONATE -->
+            <t t-call="my_compassion.DonationFormComponent">
+              <t t-set="top_class" t-value="'mt-3 mb-4'" />
+              <t t-set="limits" t-value="donation_limits" />
+            </t>
+          </div>
+        </div>
+      </div>
+    </t>
+  </template>
 </odoo>

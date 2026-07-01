@@ -12,90 +12,98 @@
     - limits ('gift.threshold.settings' records): The giving limits.
 -->
 <odoo>
-    <!-- ADD A GIFT PAGE -->
-    <template id="my2_add_a_gift_page" name="Add a Gift Page">
-        <t t-set="additional_title">Add a Gift</t>
-        <t t-call="website.layout">
-            <div class="container">
-                <div class="single-column my2-add-a-gift">
-                    <!-- HELP MODAL -->
-                    <t t-call="my_compassion.GivingLimitsModalComponent">
-                        <t t-set="modal_id" t-value="'help-modal'" />
-                    </t>
-                    <div class="px-3 mt-4 d-flex flex-column align-items-center">
-                        <!-- TITLE -->
-                        <t t-call="theme_compassion_2025.TitleComponent">
-                            <t t-set="title_content">Add a Gift</t>
-                            <t t-set="color" t-value="'core-blue'" />
-                            <t t-set="show_underline" t-value="True" />
-                            <t t-set="underline_color" t-value="'low-yellow'" />
-                        </t>
-                        <!-- HELP -->
-                        <button
-                            type="button"
-                            class="body-large icon-help-circle text-mid-grey"
-                            data-bs-toggle="modal"
-                            data-bs-target="#help-modal"
-                        />
-                        <!-- DONATION TYPE -->
-                        <t t-call="theme_compassion_2025.ToggleButtonComponent">
-                            <t t-set="name" t-value="'donation-type'" />
-                            <t t-set="_txt_Gift_for_a_child">Gift for a child</t>
-                            <t t-set="_txt_Gift_of_compassion">Gift of compassion</t>
-                            <t
-                                t-set="options"
-                                t-value="[('gift', _txt_Gift_for_a_child), ('fund', _txt_Gift_of_compassion)]"
-                            />
-                            <t t-set="default" t-value="'gift'" />
-                            <t t-set="top_class" t-value="'my-4'" />
-                        </t>
-                        <!-- GIFT PRODUCTS -->
-                        <div id="gift-product-tab" class="product-tab w-100">
-                            <t
-                                t-set="gift_products"
-                                t-value="products.filtered(lambda product: product.my_compassion_donation_type == 'gift')"
-                            />
-                            <t t-if="len(gift_products) >= 1">
-                                <t t-foreach="gift_products" t-as="product">
-                                    <t t-call="my_compassion.DonationProductComponent">
-                                        <t t-set="top_class" t-valuef="mt-3 w-100" />
-                                    </t>
-                                </t>
-                            </t>
-                            <div t-else="" class="mt-4 w-100 text-mid-grey text-center body-large bold">
+  <!-- ADD A GIFT PAGE -->
+  <template id="my2_add_a_gift_page" name="Add a Gift Page">
+    <t t-set="additional_title">Add a Gift</t>
+    <t t-call="website.layout">
+      <div class="container">
+        <div class="single-column my2-add-a-gift">
+          <!-- HELP MODAL -->
+          <t t-call="my_compassion.GivingLimitsModalComponent">
+            <t t-set="modal_id" t-value="'help-modal'" />
+          </t>
+          <div class="px-3 mt-4 d-flex flex-column align-items-center">
+            <!-- TITLE -->
+            <t t-call="theme_compassion_2025.TitleComponent">
+              <t t-set="title_content">Add a Gift</t>
+              <t t-set="color" t-value="'core-blue'" />
+              <t t-set="show_underline" t-value="True" />
+              <t t-set="underline_color" t-value="'low-yellow'" />
+            </t>
+            <!-- HELP -->
+            <button
+              type="button"
+              class="body-large icon-help-circle text-mid-grey"
+              data-bs-toggle="modal"
+              data-bs-target="#help-modal"
+            />
+            <!-- DONATION TYPE -->
+            <t t-call="theme_compassion_2025.ToggleButtonComponent">
+              <t t-set="name" t-value="'donation-type'" />
+              <t t-set="_txt_Gift_for_a_child">Gift for a child</t>
+              <t t-set="_txt_Gift_of_compassion">Gift of compassion</t>
+              <t
+                t-set="options"
+                t-value="[('gift', _txt_Gift_for_a_child), ('fund', _txt_Gift_of_compassion)]"
+              />
+              <t t-set="default" t-value="'gift'" />
+              <t t-set="top_class" t-value="'my-4'" />
+            </t>
+            <!-- GIFT PRODUCTS -->
+            <div id="gift-product-tab" class="product-tab w-100">
+              <t
+                t-set="gift_products"
+                t-value="products.filtered(lambda product: product.my_compassion_donation_type == 'gift')"
+              />
+              <t t-if="len(gift_products) >= 1">
+                <t t-foreach="gift_products" t-as="product">
+                  <t t-call="my_compassion.DonationProductComponent">
+                    <t t-set="top_class" t-valuef="mt-3 w-100" />
+                  </t>
+                </t>
+              </t>
+              <div
+                t-else=""
+                class="mt-4 w-100 text-mid-grey text-center body-large bold"
+              >
                                 No options available.
                             </div>
-                        </div>
-                        <!-- FUND PRODUCTS -->
-                        <div id="fund-product-tab" class="product-tab w-100 d-none">
-                            <t
-                                t-set="fund_products"
-                                t-value="products.filtered(lambda product: product.my_compassion_donation_type == 'fund')"
-                            />
-                            <t t-if="len(fund_products) >= 1">
-                                <t t-foreach="fund_products" t-as="product">
-                                    <t t-call="my_compassion.DonationProductComponent">
-                                        <t t-set="top_class" t-valuef="mt-3 w-100" />
-                                    </t>
-                                </t>
-                            </t>
-                            <div t-else="" class="mt-4 w-100 text-mid-grey text-center body-large bold">
+            </div>
+            <!-- FUND PRODUCTS -->
+            <div id="fund-product-tab" class="product-tab w-100 d-none">
+              <t
+                t-set="fund_products"
+                t-value="products.filtered(lambda product: product.my_compassion_donation_type == 'fund')"
+              />
+              <t t-if="len(fund_products) >= 1">
+                <t t-foreach="fund_products" t-as="product">
+                  <t t-call="my_compassion.DonationProductComponent">
+                    <t t-set="top_class" t-valuef="mt-3 w-100" />
+                  </t>
+                </t>
+              </t>
+              <div
+                t-else=""
+                class="mt-4 w-100 text-mid-grey text-center body-large bold"
+              >
                                 You are already contributing to all our current gift of compassion options.
                             </div>
-                        </div>
-                        <div class="content-column-small my-5 w-100 d-flex flex-column align-items-stretch">
-                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                <t t-set="variant" t-value="'compact'" />
-                                <t t-set="variation" t-value="'filled'" />
-                                <t t-set="label">Back to Gift Basket</t>
-                                <t t-set="color" t-value="'dark-blue'" />
-                                <t t-set="text_color" t-value="'pure-white'" />
-                                <t t-set="href" t-value="'/my2/gift-package'" />
-                            </t>
-                        </div>
-                    </div>
-                </div>
             </div>
-        </t>
-    </template>
+            <div
+              class="content-column-small my-5 w-100 d-flex flex-column align-items-stretch"
+            >
+              <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                <t t-set="variant" t-value="'compact'" />
+                <t t-set="variation" t-value="'filled'" />
+                <t t-set="label">Back to Gift Basket</t>
+                <t t-set="color" t-value="'dark-blue'" />
+                <t t-set="text_color" t-value="'pure-white'" />
+                <t t-set="href" t-value="'/my2/gift-package'" />
+              </t>
+            </div>
+          </div>
+        </div>
+      </div>
+    </t>
+  </template>
 </odoo>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <!-- Add a meta instruction in all page's header -->
-    <template id="my_compassion_meta" name="Add custom meta" inherit_id="website.layout">
-        <!-- Adds the mobile first optimization in the head of every page -->
-        <xpath expr="//head/meta[last()]" position="after">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        </xpath>
-    </template>
+  <!-- Add a meta instruction in all page's header -->
+  <template id="my_compassion_meta" name="Add custom meta" inherit_id="website.layout">
+    <!-- Adds the mobile first optimization in the head of every page -->
+    <xpath expr="//head/meta[last()]" position="after">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </xpath>
+  </template>
 </odoo>

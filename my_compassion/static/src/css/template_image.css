@@ -4,10 +4,10 @@
 */
 
 #selected-template {
-    outline: 0.2rem solid #fdb518; /* Blue outline */
-    box-shadow: 0 0 10px #fdb518; /* Glow effect */
-    width: 70px; /* Ensures the image never exceeds the container's width */
-    height: auto; /* Keeps the aspect ratio intact */
+  outline: 0.2rem solid #fdb518; /* Blue outline */
+  box-shadow: 0 0 10px #fdb518; /* Glow effect */
+  width: 70px; /* Ensures the image never exceeds the container's width */
+  height: auto; /* Keeps the aspect ratio intact */
 }
 
 /* ANIMATIONS ----------------------------------------------------------------------- */
@@ -18,14 +18,14 @@
 
 /* Hover effect for images */
 .template-image:hover {
-    transform: scale(1.01) !important;
-    outline: 0.2rem solid #007bff !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-    transition: outline 0.1s ease !important; /* Smooth transition */
+  transform: scale(1.01) !important;
+  outline: 0.2rem solid #007bff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  transition: outline 0.1s ease !important; /* Smooth transition */
 }
 
 /* Active (click or tap) effect: Shrinks the image slightly to simulate pressing. */
 .template-image:active {
-    transform: scale(0.98) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+  transform: scale(0.98) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
 }

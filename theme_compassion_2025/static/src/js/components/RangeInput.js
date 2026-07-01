@@ -28,79 +28,81 @@
  * Mounted declaratively via
  * `<owl-component name="theme_compassion_2025.RangeInput" props='{...}'/>`.
  */
-import { Component, useState } from "@odoo/owl";
-import { registry } from "@web/core/registry";
+import {Component, useState} from "@odoo/owl";
+import {registry} from "@web/core/registry";
 
 export class RangeInput extends Component {
-    static template = "theme_compassion_2025.RangeInput";
-    static props = {
-        min: { type: Number, optional: true },
-        max: { type: Number, optional: true },
-        initialMin: { type: Number, optional: true },
-        initialMax: { type: Number, optional: true },
-        minGap: { type: Number, optional: true },
-        thumbColor: { type: String, optional: true },
-        labelColor: { type: String, optional: true },
-        rangeColor: { type: String, optional: true },
-        trackColor: { type: String, optional: true },
-        onRangeChange: { type: Function, optional: true },
-    };
-    static defaultProps = {
-        min: 0,
-        max: 100,
-        minGap: 0,
-        thumbColor: "mid-yellow",
-        labelColor: "low-black",
-        rangeColor: "low-yellow",
-        trackColor: "low-eggshell",
-        onRangeChange: () => {},
-    };
+  static template = "theme_compassion_2025.RangeInput";
+  static props = {
+    min: {type: Number, optional: true},
+    max: {type: Number, optional: true},
+    initialMin: {type: Number, optional: true},
+    initialMax: {type: Number, optional: true},
+    minGap: {type: Number, optional: true},
+    thumbColor: {type: String, optional: true},
+    labelColor: {type: String, optional: true},
+    rangeColor: {type: String, optional: true},
+    trackColor: {type: String, optional: true},
+    onRangeChange: {type: Function, optional: true},
+  };
+  static defaultProps = {
+    min: 0,
+    max: 100,
+    minGap: 0,
+    thumbColor: "mid-yellow",
+    labelColor: "low-black",
+    rangeColor: "low-yellow",
+    trackColor: "low-eggshell",
+    onRangeChange: () => {},
+  };
 
-    setup() {
-        const low =
-            this.props.initialMin !== undefined ? this.props.initialMin : this.props.min;
-        const high =
-            this.props.initialMax !== undefined ? this.props.initialMax : this.props.max;
-        this.state = useState({ low, high, frontThumb: "low" });
-    }
+  setup() {
+    const low =
+      this.props.initialMin !== undefined ? this.props.initialMin : this.props.min;
+    const high =
+      this.props.initialMax !== undefined ? this.props.initialMax : this.props.max;
+    this.state = useState({low, high, frontThumb: "low"});
+  }
 
-    getLow() {
-        return parseInt(this.state.low);
-    }
+  getLow() {
+    return parseInt(this.state.low);
+  }
 
-    getHigh() {
-        return parseInt(this.state.high);
-    }
+  getHigh() {
+    return parseInt(this.state.high);
+  }
 
-    get progressRatioLow() {
-        return (this.getLow() - this.props.min) / (this.props.max - this.props.min);
-    }
+  get progressRatioLow() {
+    return (this.getLow() - this.props.min) / (this.props.max - this.props.min);
+  }
 
-    get progressRatioHigh() {
-        return (this.getHigh() - this.props.min) / (this.props.max - this.props.min);
-    }
+  get progressRatioHigh() {
+    return (this.getHigh() - this.props.min) / (this.props.max - this.props.min);
+  }
 
-    _slideLow(ev) {
-        let low = parseInt(ev.target.value);
-        if (this.getHigh() - low < this.props.minGap) {
-            low = this.getHigh() - this.props.minGap;
-        }
-        this.state.low = low;
-        this.state.frontThumb = "low";
+  _slideLow(ev) {
+    let low = parseInt(ev.target.value);
+    if (this.getHigh() - low < this.props.minGap) {
+      low = this.getHigh() - this.props.minGap;
     }
+    this.state.low = low;
+    this.state.frontThumb = "low";
+  }
 
-    _slideHigh(ev) {
-        let high = parseInt(ev.target.value);
-        if (high - this.getLow() < this.props.minGap) {
-            high = this.getLow() + this.props.minGap;
-        }
-        this.state.high = high;
-        this.state.frontThumb = "high";
+  _slideHigh(ev) {
+    let high = parseInt(ev.target.value);
+    if (high - this.getLow() < this.props.minGap) {
+      high = this.getLow() + this.props.minGap;
     }
+    this.state.high = high;
+    this.state.frontThumb = "high";
+  }
 
-    _onRangeChange() {
-        this.props.onRangeChange({ min: this.getLow(), max: this.getHigh() });
-    }
+  _onRangeChange() {
+    this.props.onRangeChange({min: this.getLow(), max: this.getHigh()});
+  }
 }
 
-registry.category("public_components").add("theme_compassion_2025.RangeInput", RangeInput);
+registry
+  .category("public_components")
+  .add("theme_compassion_2025.RangeInput", RangeInput);

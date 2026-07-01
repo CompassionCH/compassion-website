@@ -21,473 +21,484 @@ Injected data:
 
 -->
 <odoo>
-    <template id="my2_user_settings_page" name="My Compassion 2 User Settings Page">
-        <t t-set="additional_title">Settings</t>
-        <t t-call="website.layout">
-            <div class="container my-4">
-                <div class="container-content">
-                    <section class="user_settings_tabs single-column mt-4">
-                        <!-- Mobile tabs navigation -->
-                        <div class="settings_select d-block d-lg-none mb-3">
-                            <select class="form-select" id="user-settings-tabs-mobile">
-                                <option value="#personal-information">
+  <template id="my2_user_settings_page" name="My Compassion 2 User Settings Page">
+    <t t-set="additional_title">Settings</t>
+    <t t-call="website.layout">
+      <div class="container my-4">
+        <div class="container-content">
+          <section class="user_settings_tabs single-column mt-4">
+            <!-- Mobile tabs navigation -->
+            <div class="settings_select d-block d-lg-none mb-3">
+              <select class="form-select" id="user-settings-tabs-mobile">
+                <option value="#personal-information">
                                     Personal
                                     Information
                                 </option>
-                                <option value="#account-settings">Account Settings</option>
-                                <option value="#privacy-data">Privacy &amp; Data Protection</option>
-                                <option value="#communication-settings">
+                <option value="#account-settings">Account Settings</option>
+                <option value="#privacy-data">Privacy &amp; Data Protection</option>
+                <option value="#communication-settings">
                                     Communication
                                     Settings
                                 </option>
-                            </select>
-                        </div>
-                        <!-- Tabs navigation -->
-                        <ul class="nav nav-tabs d-none d-lg-flex" id="user-settings-tabs" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <a class="nav-link" href="#personal-information" role="tab">
+              </select>
+            </div>
+            <!-- Tabs navigation -->
+            <ul
+              class="nav nav-tabs d-none d-lg-flex"
+              id="user-settings-tabs"
+              role="tablist"
+            >
+              <li class="nav-item" role="presentation">
+                <a class="nav-link" href="#personal-information" role="tab">
                                     Personal
                                     Information
                                 </a>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <a class="nav-link" href="#account-settings" role="tab">
+              </li>
+              <li class="nav-item" role="presentation">
+                <a class="nav-link" href="#account-settings" role="tab">
                                     Account
                                     Settings
                                 </a>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <a class="nav-link" href="#privacy-data" role="tab">
+              </li>
+              <li class="nav-item" role="presentation">
+                <a class="nav-link" href="#privacy-data" role="tab">
                                     Privacy
                                     Data
                                 </a>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <a class="nav-link" href="#communication-settings" role="tab">Communication</a>
-                            </li>
-                        </ul>
-                    </section>
-                    <!-- Tabs content -->
-                    <div class="single-column tab-content pt-4" id="UserSettingsTabContent">
-                        <!-- Personal info tab -->
-                        <div class="tab-pane fade" id="personal-information" role="tabpanel">
-                            <form
-                                id="personal-information-form"
-                                class="bg-pure-white col-md-12 col-sm-12 position-relative"
-                                novalidate="novalidate"
+              </li>
+              <li class="nav-item" role="presentation">
+                <a
+                  class="nav-link"
+                  href="#communication-settings"
+                  role="tab"
+                >Communication</a>
+              </li>
+            </ul>
+          </section>
+          <!-- Tabs content -->
+          <div class="single-column tab-content pt-4" id="UserSettingsTabContent">
+            <!-- Personal info tab -->
+            <div class="tab-pane fade" id="personal-information" role="tabpanel">
+              <form
+                id="personal-information-form"
+                class="bg-pure-white col-md-12 col-sm-12 position-relative"
+                novalidate="novalidate"
+              >
+                <div class="row col-12 mb-3">
+                  <t t-call="theme_compassion_2025.FormFieldComponent">
+                    <t t-set="label">My reference</t>
+                    <div>
+                      <t t-out="partner.ref if partner.ref else ''" />
+                    </div>
+                  </t>
+                </div>
+                <div class="row col-12 mb-3">
+                  <t t-call="theme_compassion_2025.FormFieldComponent">
+                    <t t-set="label">Title</t>
+                    <t t-set="input_id" t-value="'title'" />
+                    <div class="field-display" data-display-for="title">
+                      <t t-out="partner.title.shortcut or ''" />
+                    </div>
+                    <div class="field-edit">
+                      <div class="ps-0 pe-5 m-0">
+                        <t t-call="theme_compassion_2025.SelectComponent">
+                          <t t-set="id" t-value="'title'" />
+                          <t t-set="name" t-value="'title'" />
+                          <t t-set="required" t-value="True" />
+                          <t
+                            t-set="attrs"
+                            t-value="{'data-original-value': partner.title.id}"
+                          />
+                          <t t-foreach="titles" t-as="t">
+                            <option
+                              t-att-value="t.id"
+                              t-att-selected="partner.title.id == t.id"
                             >
-                                <div class="row col-12 mb-3">
-                                    <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label">My reference</t>
-                                        <div>
-                                            <t t-out="partner.ref if partner.ref else ''" />
-                                        </div>
-                                    </t>
-                                </div>
-                                <div class="row col-12 mb-3">
-                                    <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label">Title</t>
-                                        <t t-set="input_id" t-value="'title'" />
-                                        <div class="field-display" data-display-for="title">
-                                            <t t-out="partner.title.shortcut or ''" />
-                                        </div>
-                                        <div class="field-edit">
-                                            <div class="ps-0 pe-5 m-0">
-                                                <t t-call="theme_compassion_2025.SelectComponent">
-                                                    <t t-set="id" t-value="'title'" />
-                                                    <t t-set="name" t-value="'title'" />
-                                                    <t t-set="required" t-value="True" />
-                                                    <t
-                                                        t-set="attrs"
-                                                        t-value="{'data-original-value': partner.title.id}"
-                                                    />
-                                                    <t t-foreach="titles" t-as="t">
-                                                        <option
-                                                            t-att-value="t.id"
-                                                            t-att-selected="partner.title.id == t.id"
-                                                        >
-                                                            <t t-out="t.shortcut" />
-                                                        </option>
-                                                    </t>
-                                                </t>
-                                            </div>
-                                        </div>
-                                    </t>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <t t-call="theme_compassion_2025.FormFieldComponent">
-                                            <t t-set="label">Surname</t>
-                                            <t t-set="input_id" t-value="'lastname'" />
-                                            <div class="field-display" data-display-for="lastname">
-                                                <t t-out="partner.lastname or ''" />
-                                            </div>
-                                            <div class="field-edit">
-                                                <input
-                                                    type="text"
-                                                    id="lastname"
-                                                    name="lastname"
-                                                    class="form-control"
-                                                    t-att-value="partner.lastname"
-                                                    t-att-data-original-value="partner.lastname"
-                                                    data-validate-type="name"
-                                                    required=""
-                                                />
-                                            </div>
-                                        </t>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <t t-call="theme_compassion_2025.FormFieldComponent">
-                                            <t t-set="label">Name</t>
-                                            <t t-set="input_id" t-value="'firstname'" />
-                                            <div class="field-display" data-display-for="firstname">
-                                                <t t-out="partner.firstname or ''" />
-                                            </div>
-                                            <div class="field-edit">
-                                                <input
-                                                    type="text"
-                                                    id="firstname"
-                                                    name="firstname"
-                                                    class="form-control"
-                                                    t-att-value="partner.firstname"
-                                                    t-att-data-original-value="partner.firstname"
-                                                    data-validate-type="name"
-                                                    required=""
-                                                />
-                                            </div>
-                                        </t>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label">Address</t>
-                                        <t t-set="input_id" t-value="'street'" />
-                                        <t t-set="top_class" t-value="'col-12'" />
-                                        <div class="field-display" data-display-for="street">
-                                            <t t-out="partner.street or ''" />
-                                        </div>
-                                        <div class="field-edit">
-                                            <input
-                                                type="text"
-                                                id="street"
-                                                name="street"
-                                                class="form-control"
-                                                t-att-value="partner.street"
-                                                t-att-data-original-value="partner.street"
-                                                required=""
-                                            />
-                                        </div>
-                                    </t>
-                                </div>
-                                <div class="row">
-                                    <t t-if="partner.country_id.zip_required">
-                                        <div class="col-md-6 mb-3">
-                                            <t t-call="theme_compassion_2025.FormFieldComponent">
-                                                <t t-set="label">Zip</t>
-                                                <t t-set="input_id" t-value="'zip'" />
-                                                <div class="field-display" data-display-for="zip">
-                                                    <t t-out="partner.zip or ''" />
-                                                </div>
-                                                <div class="field-edit">
-                                                    <input
-                                                        type="text"
-                                                        id="zip"
-                                                        name="zip"
-                                                        class="form-control"
-                                                        t-att-value="partner.zip"
-                                                        t-att-data-original-value="partner.zip"
-                                                        data-validate-type="zip"
-                                                        required=""
-                                                    />
-                                                </div>
-                                            </t>
-                                        </div>
-                                    </t>
-                                    <div class="col-md-6 mb-3">
-                                        <t t-call="theme_compassion_2025.FormFieldComponent">
-                                            <t t-set="label">City</t>
-                                            <t t-set="input_id" t-value="'city'" />
-                                            <div class="field-display" data-display-for="city">
-                                                <t t-out="partner.city or ''" />
-                                            </div>
-                                            <div class="field-edit">
-                                                <input
-                                                    type="text"
-                                                    id="city"
-                                                    name="city"
-                                                    class="form-control"
-                                                    t-att-value="partner.city"
-                                                    t-att-data-original-value="partner.city"
-                                                    required=""
-                                                />
-                                            </div>
-                                        </t>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label">Country</t>
-                                        <t t-set="input_id" t-value="'country_id'" />
-                                        <t t-set="top_class" t-value="'col-12'" />
-                                        <div class="field-display" data-display-for="country_id">
-                                            <t t-out="partner.country_id.name or ''" />
-                                        </div>
-                                        <div class="field-edit">
-                                            <t t-call="theme_compassion_2025.SelectComponent">
-                                                <t t-set="id" t-value="'country_id'" />
-                                                <t t-set="name" t-value="'country_id'" />
-                                                <t
-                                                    t-set="attrs"
-                                                    t-value="{'data-original-value': partner.country_id.id}"
-                                                />
-                                                <t t-foreach="countries" t-as="t">
-                                                    <option
-                                                        t-att-value="t.id"
-                                                        t-att-selected="partner.country_id.id == t.id"
-                                                    >
-                                                        <t t-out="t.name" />
-                                                    </option>
-                                                </t>
-                                            </t>
-                                        </div>
-                                    </t>
-                                </div>
-                                <div class="row mb-3">
-                                    <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label">Email Address</t>
-                                        <t t-set="input_id" t-value="'email'" />
-                                        <t t-set="top_class" t-value="'col-12'" />
-                                        <div class="field-display" data-display-for="email">
-                                            <t t-out="partner.email or ''" />
-                                        </div>
-                                        <div class="field-edit">
-                                            <input
-                                                type="email"
-                                                id="email"
-                                                name="email"
-                                                class="form-control"
-                                                t-att-value="partner.email"
-                                                t-att-data-original-value="partner.email"
-                                                data-validate-type="email"
-                                                required=""
-                                            />
-                                        </div>
-                                    </t>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <t t-call="theme_compassion_2025.FormFieldComponent">
-                                            <t t-set="label">Phone number</t>
-                                            <t t-set="input_id" t-value="'phone'" />
-                                            <div class="field-display" data-display-for="phone">
-                                                <t t-out="partner.phone or ''" />
-                                            </div>
-                                            <div class="field-edit">
-                                                <input
-                                                    type="tel"
-                                                    id="phone"
-                                                    name="phone"
-                                                    class="form-control"
-                                                    t-att-value="partner.phone"
-                                                    t-att-data-original-value="partner.phone"
-                                                    data-validate-type="phone"
-                                                />
-                                            </div>
-                                        </t>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <t t-call="theme_compassion_2025.FormFieldComponent">
-                                            <t t-set="label">Mobile phone number</t>
-                                            <t t-set="input_id" t-value="'mobile'" />
-                                            <div class="field-display" data-display-for="mobile">
-                                                <t t-out="partner.mobile or ''" />
-                                            </div>
-                                            <div class="field-edit">
-                                                <input
-                                                    type="mobile"
-                                                    id="mobile"
-                                                    name="mobile"
-                                                    class="form-control"
-                                                    t-att-value="partner.mobile"
-                                                    t-att-data-original-value="partner.mobile"
-                                                    data-validate-type="phone"
-                                                />
-                                            </div>
-                                        </t>
-                                    </div>
-                                </div>
-                                <div
-                                    id="user-settings-buttons"
-                                    class="form-actions d-flex position-relative justify-content-center mt-4"
-                                >
-                                    <div class="w-md-50 view-mode">
-                                        <a id="EditInfoButton">
-                                            <div class="d-flex flex-column align-items-stretch">
-                                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                    <t t-set="variant" t-value="'default'" />
-                                                    <t t-set="variation" t-value="'filled'" />
-                                                    <t t-set="label">Edit my profile</t>
-                                                    <t t-set="color" t-value="'core-blue'" />
-                                                    <t t-set="text_color" t-value="'pure-white'" />
-                                                </t>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div class="edit-mode">
-                                        <div class="d-flex w-100 justify-content-around flex-wrap">
-                                            <a id="ApplyModificationsInfoButton" class="d-inline-block m-2 ">
-                                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                    <t t-set="variant" t-value="'default'" />
-                                                    <t t-set="variation" t-value="'filled'" />
-                                                    <t t-set="label">Save settings</t>
-                                                    <t t-set="color" t-value="'mid-green'" />
-                                                    <t t-set="text_color" t-value="'pure-white'" />
-                                                </t>
-                                            </a>
-                                            <a id="CancelModificationsInfoButton" class="d-inline-block m-2">
-                                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                    <t t-set="variant" t-value="'default'" />
-                                                    <t t-set="variation" t-value="'filled'" />
-                                                    <t t-set="label">Cancel</t>
-                                                    <t t-set="color" t-value="'low-orange'" />
-                                                    <t t-set="text_color" t-value="'pure-white'" />
-                                                </t>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="user-settings-loader" class="d-none h-100">
-                                    <span class="spinner-rotate">
-                                        <i class="fa fa-spinner fa-5x text-core-blue" />
-                                    </span>
-                                </div>
-                            </form>
+                              <t t-out="t.shortcut" />
+                            </option>
+                          </t>
+                        </t>
+                      </div>
+                    </div>
+                  </t>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <t t-call="theme_compassion_2025.FormFieldComponent">
+                      <t t-set="label">Surname</t>
+                      <t t-set="input_id" t-value="'lastname'" />
+                      <div class="field-display" data-display-for="lastname">
+                        <t t-out="partner.lastname or ''" />
+                      </div>
+                      <div class="field-edit">
+                        <input
+                          type="text"
+                          id="lastname"
+                          name="lastname"
+                          class="form-control"
+                          t-att-value="partner.lastname"
+                          t-att-data-original-value="partner.lastname"
+                          data-validate-type="name"
+                          required=""
+                        />
+                      </div>
+                    </t>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <t t-call="theme_compassion_2025.FormFieldComponent">
+                      <t t-set="label">Name</t>
+                      <t t-set="input_id" t-value="'firstname'" />
+                      <div class="field-display" data-display-for="firstname">
+                        <t t-out="partner.firstname or ''" />
+                      </div>
+                      <div class="field-edit">
+                        <input
+                          type="text"
+                          id="firstname"
+                          name="firstname"
+                          class="form-control"
+                          t-att-value="partner.firstname"
+                          t-att-data-original-value="partner.firstname"
+                          data-validate-type="name"
+                          required=""
+                        />
+                      </div>
+                    </t>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <t t-call="theme_compassion_2025.FormFieldComponent">
+                    <t t-set="label">Address</t>
+                    <t t-set="input_id" t-value="'street'" />
+                    <t t-set="top_class" t-value="'col-12'" />
+                    <div class="field-display" data-display-for="street">
+                      <t t-out="partner.street or ''" />
+                    </div>
+                    <div class="field-edit">
+                      <input
+                        type="text"
+                        id="street"
+                        name="street"
+                        class="form-control"
+                        t-att-value="partner.street"
+                        t-att-data-original-value="partner.street"
+                        required=""
+                      />
+                    </div>
+                  </t>
+                </div>
+                <div class="row">
+                  <t t-if="partner.country_id.zip_required">
+                    <div class="col-md-6 mb-3">
+                      <t t-call="theme_compassion_2025.FormFieldComponent">
+                        <t t-set="label">Zip</t>
+                        <t t-set="input_id" t-value="'zip'" />
+                        <div class="field-display" data-display-for="zip">
+                          <t t-out="partner.zip or ''" />
                         </div>
-                        <!-- Account settings tab -->
-                        <div class="tab-pane fade" id="account-settings" role="tabpanel">
-                            <div
-                                id="account-settings-form"
-                                class="p-3 bg-pure-white d-block col-md-8 col-sm-12 mx-auto"
+                        <div class="field-edit">
+                          <input
+                            type="text"
+                            id="zip"
+                            name="zip"
+                            class="form-control"
+                            t-att-value="partner.zip"
+                            t-att-data-original-value="partner.zip"
+                            data-validate-type="zip"
+                            required=""
+                          />
+                        </div>
+                      </t>
+                    </div>
+                  </t>
+                  <div class="col-md-6 mb-3">
+                    <t t-call="theme_compassion_2025.FormFieldComponent">
+                      <t t-set="label">City</t>
+                      <t t-set="input_id" t-value="'city'" />
+                      <div class="field-display" data-display-for="city">
+                        <t t-out="partner.city or ''" />
+                      </div>
+                      <div class="field-edit">
+                        <input
+                          type="text"
+                          id="city"
+                          name="city"
+                          class="form-control"
+                          t-att-value="partner.city"
+                          t-att-data-original-value="partner.city"
+                          required=""
+                        />
+                      </div>
+                    </t>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <t t-call="theme_compassion_2025.FormFieldComponent">
+                    <t t-set="label">Country</t>
+                    <t t-set="input_id" t-value="'country_id'" />
+                    <t t-set="top_class" t-value="'col-12'" />
+                    <div class="field-display" data-display-for="country_id">
+                      <t t-out="partner.country_id.name or ''" />
+                    </div>
+                    <div class="field-edit">
+                      <t t-call="theme_compassion_2025.SelectComponent">
+                        <t t-set="id" t-value="'country_id'" />
+                        <t t-set="name" t-value="'country_id'" />
+                        <t
+                          t-set="attrs"
+                          t-value="{'data-original-value': partner.country_id.id}"
+                        />
+                        <t t-foreach="countries" t-as="t">
+                          <option
+                            t-att-value="t.id"
+                            t-att-selected="partner.country_id.id == t.id"
+                          >
+                            <t t-out="t.name" />
+                          </option>
+                        </t>
+                      </t>
+                    </div>
+                  </t>
+                </div>
+                <div class="row mb-3">
+                  <t t-call="theme_compassion_2025.FormFieldComponent">
+                    <t t-set="label">Email Address</t>
+                    <t t-set="input_id" t-value="'email'" />
+                    <t t-set="top_class" t-value="'col-12'" />
+                    <div class="field-display" data-display-for="email">
+                      <t t-out="partner.email or ''" />
+                    </div>
+                    <div class="field-edit">
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        class="form-control"
+                        t-att-value="partner.email"
+                        t-att-data-original-value="partner.email"
+                        data-validate-type="email"
+                        required=""
+                      />
+                    </div>
+                  </t>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <t t-call="theme_compassion_2025.FormFieldComponent">
+                      <t t-set="label">Phone number</t>
+                      <t t-set="input_id" t-value="'phone'" />
+                      <div class="field-display" data-display-for="phone">
+                        <t t-out="partner.phone or ''" />
+                      </div>
+                      <div class="field-edit">
+                        <input
+                          type="tel"
+                          id="phone"
+                          name="phone"
+                          class="form-control"
+                          t-att-value="partner.phone"
+                          t-att-data-original-value="partner.phone"
+                          data-validate-type="phone"
+                        />
+                      </div>
+                    </t>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <t t-call="theme_compassion_2025.FormFieldComponent">
+                      <t t-set="label">Mobile phone number</t>
+                      <t t-set="input_id" t-value="'mobile'" />
+                      <div class="field-display" data-display-for="mobile">
+                        <t t-out="partner.mobile or ''" />
+                      </div>
+                      <div class="field-edit">
+                        <input
+                          type="mobile"
+                          id="mobile"
+                          name="mobile"
+                          class="form-control"
+                          t-att-value="partner.mobile"
+                          t-att-data-original-value="partner.mobile"
+                          data-validate-type="phone"
+                        />
+                      </div>
+                    </t>
+                  </div>
+                </div>
+                <div
+                  id="user-settings-buttons"
+                  class="form-actions d-flex position-relative justify-content-center mt-4"
+                >
+                  <div class="w-md-50 view-mode">
+                    <a id="EditInfoButton">
+                      <div class="d-flex flex-column align-items-stretch">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                          <t t-set="variant" t-value="'default'" />
+                          <t t-set="variation" t-value="'filled'" />
+                          <t t-set="label">Edit my profile</t>
+                          <t t-set="color" t-value="'core-blue'" />
+                          <t t-set="text_color" t-value="'pure-white'" />
+                        </t>
+                      </div>
+                    </a>
+                  </div>
+                  <div class="edit-mode">
+                    <div class="d-flex w-100 justify-content-around flex-wrap">
+                      <a id="ApplyModificationsInfoButton" class="d-inline-block m-2 ">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                          <t t-set="variant" t-value="'default'" />
+                          <t t-set="variation" t-value="'filled'" />
+                          <t t-set="label">Save settings</t>
+                          <t t-set="color" t-value="'mid-green'" />
+                          <t t-set="text_color" t-value="'pure-white'" />
+                        </t>
+                      </a>
+                      <a id="CancelModificationsInfoButton" class="d-inline-block m-2">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                          <t t-set="variant" t-value="'default'" />
+                          <t t-set="variation" t-value="'filled'" />
+                          <t t-set="label">Cancel</t>
+                          <t t-set="color" t-value="'low-orange'" />
+                          <t t-set="text_color" t-value="'pure-white'" />
+                        </t>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div id="user-settings-loader" class="d-none h-100">
+                  <span class="spinner-rotate">
+                    <i class="fa fa-spinner fa-5x text-core-blue" />
+                  </span>
+                </div>
+              </form>
+            </div>
+            <!-- Account settings tab -->
+            <div class="tab-pane fade" id="account-settings" role="tabpanel">
+              <div
+                id="account-settings-form"
+                class="p-3 bg-pure-white d-block col-md-8 col-sm-12 mx-auto"
+              >
+                <t t-call="theme_compassion_2025.FormFieldComponent">
+                  <t t-set="label">MyCompassion Login</t>
+                  <t t-set="input_id" t-value="'login'" />
+                  <div class="field-display" data-display-for="login">
+                    <t t-out="user.login or ''" />
+                  </div>
+                  <div class="field-edit">
+                    <input
+                      type="email"
+                      id="login"
+                      name="login"
+                      class="form-control"
+                      t-att-value="user.login"
+                      t-att-data-original-value="user.login"
+                    />
+                  </div>
+                </t>
+                <div class="form-actions mt-4">
+                  <div class="view-mode">
+                    <a id="EditAccountButton" class="d-block mb-3">
+                      <div class="d-flex flex-column align-items-stretch">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                          <t t-set="variant" t-value="'default'" />
+                          <t t-set="variation" t-value="'filled'" />
+                          <t t-set="label">Edit account settings</t>
+                          <t t-set="color" t-value="'core-blue'" />
+                          <t t-set="text_color" t-value="'pure-white'" />
+                        </t>
+                      </div>
+                    </a>
+                    <a
+                      href="/my/security?redirect=/my/information"
+                      class="d-block text-decoration-none"
+                    >
+                      <div class="d-flex flex-column align-items-stretch mb-3">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                          <t t-set="variant" t-value="'default'" />
+                          <t t-set="variation" t-value="'filled'" />
+                          <t t-set="label">Change password</t>
+                          <t t-set="color" t-value="'core-blue'" />
+                          <t t-set="text_color" t-value="'pure-white'" />
+                        </t>
+                      </div>
+                    </a>
+                    <a
+                      id="DeleteAccountButton"
+                      class="d-block"
+                      data-bs-toggle="modal"
+                      data-bs-target="#deleteAccountModal"
+                    >
+                      <div class="d-flex flex-column align-items-stretch mb-3">
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                          <t t-set="variant" t-value="'default'" />
+                          <t t-set="variation" t-value="'filled'" />
+                          <t t-set="label">Delete my account</t>
+                          <t t-set="color" t-value="'low-orange'" />
+                          <t t-set="text_color" t-value="'pure-white'" />
+                        </t>
+                      </div>
+                    </a>
+                  </div>
+                  <div class="edit-mode">
+                    <a id="ApplyModificationsAccountButton" class="d-inline-block me-2">
+                      <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                        <t t-set="variant" t-value="'default'" />
+                        <t t-set="variation" t-value="'filled'" />
+                        <t t-set="label">Save settings</t>
+                        <t t-set="color" t-value="'mid-green'" />
+                        <t t-set="text_color" t-value="'pure-white'" />
+                      </t>
+                    </a>
+                    <a id="CancelModificationsAccountButton" class="d-inline-block">
+                      <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                        <t t-set="variant" t-value="'default'" />
+                        <t t-set="variation" t-value="'filled'" />
+                        <t t-set="label">Cancel</t>
+                        <t t-set="color" t-value="'low-orange'" />
+                        <t t-set="text_color" t-value="'pure-white'" />
+                      </t>
+                    </a>
+                  </div>
+                  <!-- Account deletion modal -->
+                  <div
+                    class="modal fade"
+                    id="deleteAccountModal"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="deleteAccountModalLabel"
+                    aria-hidden="true"
+                  >
+                    <div class="modal-dialog" style="max-width: 400px;" role="document">
+                      <div class="modal-content border-0">
+                        <div class="modal-body p-0">
+                          <div
+                            class="bg-low-orange p-3 position-relative"
+                            id="modal-title"
+                          >
+                            <h2
+                              class="text-center text-pure-white m-0"
+                              id="deleteAccountModalLabel"
                             >
-                                <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label">MyCompassion Login</t>
-                                    <t t-set="input_id" t-value="'login'" />
-                                    <div class="field-display" data-display-for="login">
-                                        <t t-out="user.login or ''" />
-                                    </div>
-                                    <div class="field-edit">
-                                        <input
-                                            type="email"
-                                            id="login"
-                                            name="login"
-                                            class="form-control"
-                                            t-att-value="user.login"
-                                            t-att-data-original-value="user.login"
-                                        />
-                                    </div>
-                                </t>
-                                <div class="form-actions mt-4">
-                                    <div class="view-mode">
-                                        <a id="EditAccountButton" class="d-block mb-3">
-                                            <div class="d-flex flex-column align-items-stretch">
-                                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                    <t t-set="variant" t-value="'default'" />
-                                                    <t t-set="variation" t-value="'filled'" />
-                                                    <t t-set="label">Edit account settings</t>
-                                                    <t t-set="color" t-value="'core-blue'" />
-                                                    <t t-set="text_color" t-value="'pure-white'" />
-                                                </t>
-                                            </div>
-                                        </a>
-                                        <a
-                                            href="/my/security?redirect=/my/information"
-                                            class="d-block text-decoration-none"
-                                        >
-                                            <div class="d-flex flex-column align-items-stretch mb-3">
-                                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                    <t t-set="variant" t-value="'default'" />
-                                                    <t t-set="variation" t-value="'filled'" />
-                                                    <t t-set="label">Change password</t>
-                                                    <t t-set="color" t-value="'core-blue'" />
-                                                    <t t-set="text_color" t-value="'pure-white'" />
-                                                </t>
-                                            </div>
-                                        </a>
-                                        <a
-                                            id="DeleteAccountButton"
-                                            class="d-block"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#deleteAccountModal"
-                                        >
-                                            <div class="d-flex flex-column align-items-stretch mb-3">
-                                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                    <t t-set="variant" t-value="'default'" />
-                                                    <t t-set="variation" t-value="'filled'" />
-                                                    <t t-set="label">Delete my account</t>
-                                                    <t t-set="color" t-value="'low-orange'" />
-                                                    <t t-set="text_color" t-value="'pure-white'" />
-                                                </t>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div class="edit-mode">
-                                        <a id="ApplyModificationsAccountButton" class="d-inline-block me-2">
-                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                <t t-set="variant" t-value="'default'" />
-                                                <t t-set="variation" t-value="'filled'" />
-                                                <t t-set="label">Save settings</t>
-                                                <t t-set="color" t-value="'mid-green'" />
-                                                <t t-set="text_color" t-value="'pure-white'" />
-                                            </t>
-                                        </a>
-                                        <a id="CancelModificationsAccountButton" class="d-inline-block">
-                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                <t t-set="variant" t-value="'default'" />
-                                                <t t-set="variation" t-value="'filled'" />
-                                                <t t-set="label">Cancel</t>
-                                                <t t-set="color" t-value="'low-orange'" />
-                                                <t t-set="text_color" t-value="'pure-white'" />
-                                            </t>
-                                        </a>
-                                    </div>
-                                    <!-- Account deletion modal -->
-                                    <div
-                                        class="modal fade"
-                                        id="deleteAccountModal"
-                                        tabindex="-1"
-                                        role="dialog"
-                                        aria-labelledby="deleteAccountModalLabel"
-                                        aria-hidden="true"
-                                    >
-                                        <div class="modal-dialog" style="max-width: 400px;" role="document">
-                                            <div class="modal-content border-0">
-                                                <div class="modal-body p-0">
-                                                    <div class="bg-low-orange p-3 position-relative" id="modal-title">
-                                                        <h2
-                                                            class="text-center text-pure-white m-0"
-                                                            id="deleteAccountModalLabel"
-                                                        >
                                                             Account deletion
                                                         </h2>
-                                                        <button
-                                                            type="button"
-                                                            class="close text-pure-white position-absolute"
-                                                            style="top: 50%; right: 1rem; transform: translateY(-50%);"
-                                                            data-bs-dismiss="modal"
-                                                            aria-label="Close"
-                                                        >
-                                                            <div class="icon-x-circle" />
-                                                        </button>
-                                                    </div>
-                                                    <t t-if="partner.number_sponsorships">
-                                                        <div class="m-4 p-3 bg-high-pink rounded-lg">
+                            <button
+                              type="button"
+                              class="close text-pure-white position-absolute"
+                              style="top: 50%; right: 1rem; transform: translateY(-50%);"
+                              data-bs-dismiss="modal"
+                              aria-label="Close"
+                            >
+                              <div class="icon-x-circle" />
+                            </button>
+                          </div>
+                          <t t-if="partner.number_sponsorships">
+                            <div class="m-4 p-3 bg-high-pink rounded-lg">
                                                             You currently have active
                                                         sponsorships, so this action
                                                         cannot be
                                                         performed in the website.
                                                         </div>
-                                                        <div class="px-4">
-                                                            <p>
+                            <div class="px-4">
+                              <p>
                                                                 Please contact Compassion
                                                             for
                                                             assistance
@@ -497,81 +508,80 @@ Injected data:
                                                                 <br />
                                                                 024 434 21 24
                                                             </p>
-                                                        </div>
-                                                    </t>
-                                                    <t t-else="">
-                                                        <div class="m-4 p-3 bg-high-pink rounded-lg">
+                            </div>
+                          </t>
+                          <t t-else="">
+                            <div class="m-4 p-3 bg-high-pink rounded-lg">
                                                             Be aware: due to legal reasons,
                                                         accountability data may still
                                                         persist.
                                                         </div>
-                                                        <div
-                                                            id="deletion-status-message"
-                                                            class="mx-4 my-3 text-muted d-none"
-                                                            style="text-align: center;"
-                                                        />
-                                                        <div class="px-4 pb-4">
-                                                            <p>
+                            <div
+                              id="deletion-status-message"
+                              class="mx-4 my-3 text-muted d-none"
+                              style="text-align: center;"
+                            />
+                            <div class="px-4 pb-4">
+                              <p>
                                                                 By clicking "Delete" your
                                                             account will be
-                                                                <span class="font-weight-bold">permanently</span>
+                                                                <span
+                                class="font-weight-bold"
+                              >permanently</span>
                                                                 deleted.
                                                             </p>
-                                                            <div class="form-check mb-4">
-                                                                <input
-                                                                    class="form-check-input"
-                                                                    type="checkbox"
-                                                                    id="ConfirmDeletionCheck"
-                                                                />
-                                                                <label
-                                                                    class="form-check-label"
-                                                                    for="ConfirmDeletionCheck"
-                                                                >
+                              <div class="form-check mb-4">
+                                <input
+                                  class="form-check-input"
+                                  type="checkbox"
+                                  id="ConfirmDeletionCheck"
+                                />
+                                <label
+                                  class="form-check-label"
+                                  for="ConfirmDeletionCheck"
+                                >
                                                                     I understand that this
                                                                 step
                                                                 cannot be undone.
                                                                 </label>
-                                                            </div>
-                                                            <div class="d-flex flex-column align-items-stretch">
-                                                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                                    <t
-                                                                        t-set="id"
-                                                                        t-value="'DeleteAccountFinalButton'"
-                                                                    />
-                                                                    <t t-set="variant" t-value="'default'" />
-                                                                    <t t-set="variation" t-value="'filled'" />
-                                                                    <t t-set="label">Delete</t>
-                                                                    <t t-set="color" t-value="'low-orange'" />
-                                                                    <t t-set="text_color" t-value="'pure-white'" />
-                                                                </t>
-                                                            </div>
-                                                        </div>
-                                                    </t>
-                                                </div>
-                                                <div id="deletion-status-view" class="d-none text-center p-4">
-                                                    <p id="deletion-progress-message" style="min-height: 50px;" />
-                                                    <div id="deletion-continue-button-container" class="d-none">
-                                                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                            <t t-set="id" t-value="'DeleteAccountContinueButton'" />
-                                                            <t t-set="variant" t-value="'default'" />
-                                                            <t t-set="variation" t-value="'filled'" />
-                                                            <t t-set="label">Continue</t>
-                                                            <t t-set="color" t-value="'core-blue'" />
-                                                            <t t-set="text_color" t-value="'pure-white'" />
-                                                        </t>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                              </div>
+                              <div class="d-flex flex-column align-items-stretch">
+                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                                  <t t-set="id" t-value="'DeleteAccountFinalButton'" />
+                                  <t t-set="variant" t-value="'default'" />
+                                  <t t-set="variation" t-value="'filled'" />
+                                  <t t-set="label">Delete</t>
+                                  <t t-set="color" t-value="'low-orange'" />
+                                  <t t-set="text_color" t-value="'pure-white'" />
+                                </t>
+                              </div>
                             </div>
+                          </t>
                         </div>
-                        <!-- Privacy data tab -->
-                        <div class="tab-pane fade" id="privacy-data" role="tabpanel">
-                            <div class="p-3 bg-pure-white d-block">
-                                <div class="bg-high-blue border rounded-lg mb-5">
-                                    <div class="p-3">
+                        <div id="deletion-status-view" class="d-none text-center p-4">
+                          <p id="deletion-progress-message" style="min-height: 50px;" />
+                          <div id="deletion-continue-button-container" class="d-none">
+                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                              <t t-set="id" t-value="'DeleteAccountContinueButton'" />
+                              <t t-set="variant" t-value="'default'" />
+                              <t t-set="variation" t-value="'filled'" />
+                              <t t-set="label">Continue</t>
+                              <t t-set="color" t-value="'core-blue'" />
+                              <t t-set="text_color" t-value="'pure-white'" />
+                            </t>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Privacy data tab -->
+            <div class="tab-pane fade" id="privacy-data" role="tabpanel">
+              <div class="p-3 bg-pure-white d-block">
+                <div class="bg-high-blue border rounded-lg mb-5">
+                  <div class="p-3">
                                         Compassion knows that children living in extreme
                                         poverty are vulnerable.
                                         We put their protection as our number one priority.
@@ -589,201 +599,207 @@ Injected data:
                                         internally. You can sign or review our data
                                         protection policy from here.
                                     </div>
-                                </div>
-                                <div class="d-flex flex-column justify-content-center mb-5 text-center">
-                                    <h5>Child protection charter</h5>
-                                    <t t-if="partner.date_agreed_child_protection_charter">
-                                        <span>Signing date:</span>
-                                        <t
-                                            t-out="partner.get_date('date_agreed_child_protection_charter', 'short')"
-                                        />
-                                        <a href="/child-protection-charter">
+                </div>
+                <div class="d-flex flex-column justify-content-center mb-5 text-center">
+                  <h5>Child protection charter</h5>
+                  <t t-if="partner.date_agreed_child_protection_charter">
+                    <span>Signing date:</span>
+                    <t
+                      t-out="partner.get_date('date_agreed_child_protection_charter', 'short')"
+                    />
+                    <a href="/child-protection-charter">
                                             (view
                                             agreement)
                                         </a>
-                                    </t>
-                                    <t t-else="">
-                                        <a
-                                            href="/partner/child-protection-charter?redirect=/my2/user_settings?current_tab=privacy-data"
-                                            class="text-decoration-none"
-                                        >
-                                            <div class="w-md-50 d-flex flex-column align-items-stretch m-auto">
-                                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                    <t t-set="variant" t-value="'default'" />
-                                                    <t t-set="variation" t-value="'filled'" />
-                                                    <t t-set="label">Sign Child protection Charter</t>
-                                                    <t t-set="color" t-value="'core-blue'" />
-                                                    <t t-set="text_color" t-value="'pure-white'" />
-                                                </t>
-                                            </div>
-                                        </a>
-                                    </t>
-                                </div>
-                                <div class="d-flex flex-column text-center">
-                                    <h5>Data protection and legal agreement</h5>
-                                    <t t-if="partner.legal_agreement_date">
-                                        <div class="d-flex justify-content-center">
-                                            <div class="me-2">Signing date:</div>
-                                            <div class="me-2">
-                                                <t t-out="partner.get_date('legal_agreement_date', 'short')" />
-                                            </div>
-                                            <a href="/legal" target="_blank">(view agreement)</a>
-                                        </div>
-                                    </t>
-                                    <t t-else="" enctype="application/x-www-form-urlencoded">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id="LegalAgreementCheck" />
-                                            <label class="form-check-label" for="LegalAgreementCheck">
-                                                <t t-call="my_compassion.acceptance_full" />
-                                            </label>
-                                        </div>
-                                        <div class="w-md-50 d-flex flex-column align-items-stretch m-auto">
-                                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                                <t t-set="id" t-value="'SignLegalAgreementButton'" />
-                                                <t t-set="variant" t-value="'default'" />
-                                                <t t-set="variation" t-value="'filled'" />
-                                                <t t-set="label">Sign the agreement</t>
-                                                <t t-set="color" t-value="'core-blue'" />
-                                                <t t-set="text_color" t-value="'pure-white'" />
-                                            </t>
-                                        </div>
-                                    </t>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Communication settings tab -->
-                        <div class="tab-pane fade" id="communication-settings" role="tabpanel">
-                            <div class="p-3 bg-pure-white d-block">
-                                <div class="form-check form-switch mb-2">
-                                    <input
-                                        type="checkbox"
-                                        class="form-check-input"
-                                        id="newsletterCheck"
-                                        data-field="opt_out"
-                                        t-att-checked="not partner.opt_out"
-                                    />
-                                    <label class="form-check-label" for="newsletterCheck">
+                  </t>
+                  <t t-else="">
+                    <a
+                      href="/partner/child-protection-charter?redirect=/my2/user_settings?current_tab=privacy-data"
+                      class="text-decoration-none"
+                    >
+                      <div
+                        class="w-md-50 d-flex flex-column align-items-stretch m-auto"
+                      >
+                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                          <t t-set="variant" t-value="'default'" />
+                          <t t-set="variation" t-value="'filled'" />
+                          <t t-set="label">Sign Child protection Charter</t>
+                          <t t-set="color" t-value="'core-blue'" />
+                          <t t-set="text_color" t-value="'pure-white'" />
+                        </t>
+                      </div>
+                    </a>
+                  </t>
+                </div>
+                <div class="d-flex flex-column text-center">
+                  <h5>Data protection and legal agreement</h5>
+                  <t t-if="partner.legal_agreement_date">
+                    <div class="d-flex justify-content-center">
+                      <div class="me-2">Signing date:</div>
+                      <div class="me-2">
+                        <t t-out="partner.get_date('legal_agreement_date', 'short')" />
+                      </div>
+                      <a href="/legal" target="_blank">(view agreement)</a>
+                    </div>
+                  </t>
+                  <t t-else="" enctype="application/x-www-form-urlencoded">
+                    <div class="form-check mb-2">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="LegalAgreementCheck"
+                      />
+                      <label class="form-check-label" for="LegalAgreementCheck">
+                        <t t-call="my_compassion.acceptance_full" />
+                      </label>
+                    </div>
+                    <div class="w-md-50 d-flex flex-column align-items-stretch m-auto">
+                      <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                        <t t-set="id" t-value="'SignLegalAgreementButton'" />
+                        <t t-set="variant" t-value="'default'" />
+                        <t t-set="variation" t-value="'filled'" />
+                        <t t-set="label">Sign the agreement</t>
+                        <t t-set="color" t-value="'core-blue'" />
+                        <t t-set="text_color" t-value="'pure-white'" />
+                      </t>
+                    </div>
+                  </t>
+                </div>
+              </div>
+            </div>
+            <!-- Communication settings tab -->
+            <div class="tab-pane fade" id="communication-settings" role="tabpanel">
+              <div class="p-3 bg-pure-white d-block">
+                <div class="form-check form-switch mb-2">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    id="newsletterCheck"
+                    data-field="opt_out"
+                    t-att-checked="not partner.opt_out"
+                  />
+                  <label class="form-check-label" for="newsletterCheck">
                                         I would like to receive the Compassion Newsletter
                                     </label>
-                                </div>
-                                <div class="form-check form-switch  mb-2">
-                                    <input
-                                        type="checkbox"
-                                        class="form-check-input"
-                                        id="birthdaysCheck"
-                                        data-field="birthday_reminder"
-                                        t-att-checked="partner.birthday_reminder"
-                                    />
-                                    <label class="form-check-label" for="birthdaysCheck">
+                </div>
+                <div class="form-check form-switch  mb-2">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    id="birthdaysCheck"
+                    data-field="birthday_reminder"
+                    t-att-checked="partner.birthday_reminder"
+                  />
+                  <label class="form-check-label" for="birthdaysCheck">
                                         I
                                         would like to receive reminders of the children
                                         birthdays
                                     </label>
-                                </div>
-                                <div class="form-check form-switch  mb-3">
-                                    <input
-                                        type="checkbox"
-                                        class="form-check-input"
-                                        id="anniversaryCheck"
-                                        data-field="sponsorship_anniversary_card"
-                                        t-att-checked="partner.sponsorship_anniversary_card"
-                                    />
-                                    <label class="form-check-label" for="anniversaryCheck">
+                </div>
+                <div class="form-check form-switch  mb-3">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    id="anniversaryCheck"
+                    data-field="sponsorship_anniversary_card"
+                    t-att-checked="partner.sponsorship_anniversary_card"
+                  />
+                  <label class="form-check-label" for="anniversaryCheck">
                                         I would like to receive the sponsorship anniversary
                                         card
                                     </label>
-                                </div>
-                                <div class="w-md-50 mb-3">
-                                    <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label">Letter Delivery Preference</t>
-                                        <t t-call="theme_compassion_2025.SelectComponent">
-                                            <t t-set="id" t-value="'letter_preference_select'" />
-                                            <option
-                                                value="auto_digital"
-                                                t-att-selected="partner.letter_delivery_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']"
-                                            >
+                </div>
+                <div class="w-md-50 mb-3">
+                  <t t-call="theme_compassion_2025.FormFieldComponent">
+                    <t t-set="label">Letter Delivery Preference</t>
+                    <t t-call="theme_compassion_2025.SelectComponent">
+                      <t t-set="id" t-value="'letter_preference_select'" />
+                      <option
+                        value="auto_digital"
+                        t-att-selected="partner.letter_delivery_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']"
+                      >
                                                 Email
                                             </option>
-                                            <option
-                                                value="physical"
-                                                t-att-selected="partner.letter_delivery_preference == 'physical'"
-                                            >
+                      <option
+                        value="physical"
+                        t-att-selected="partner.letter_delivery_preference == 'physical'"
+                      >
                                                 Letter
                                             </option>
-                                            <option
-                                                value="both"
-                                                t-att-selected="partner.letter_delivery_preference == 'both'"
-                                            >
+                      <option
+                        value="both"
+                        t-att-selected="partner.letter_delivery_preference == 'both'"
+                      >
                                                 Letter and Email
                                             </option>
-                                            <option
-                                                value="none"
-                                                t-att-selected="partner.letter_delivery_preference in ['none', 'SMS']"
-                                            >
+                      <option
+                        value="none"
+                        t-att-selected="partner.letter_delivery_preference in ['none', 'SMS']"
+                      >
                                                 None
                                             </option>
-                                        </t>
-                                    </t>
-                                </div>
-                                <div class="w-md-50 mb-3">
-                                    <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label">Photo Delivery Preference</t>
-                                        <t t-call="theme_compassion_2025.SelectComponent">
-                                            <t t-set="id" t-value="'photo_preference_select'" />
-                                            <option
-                                                value="auto_digital"
-                                                t-att-selected="partner.photo_delivery_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']"
-                                            >
+                    </t>
+                  </t>
+                </div>
+                <div class="w-md-50 mb-3">
+                  <t t-call="theme_compassion_2025.FormFieldComponent">
+                    <t t-set="label">Photo Delivery Preference</t>
+                    <t t-call="theme_compassion_2025.SelectComponent">
+                      <t t-set="id" t-value="'photo_preference_select'" />
+                      <option
+                        value="auto_digital"
+                        t-att-selected="partner.photo_delivery_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']"
+                      >
                                                 Email
                                             </option>
-                                            <option
-                                                value="physical"
-                                                t-att-selected="partner.photo_delivery_preference == 'physical'"
-                                            >
+                      <option
+                        value="physical"
+                        t-att-selected="partner.photo_delivery_preference == 'physical'"
+                      >
                                                 Letter
                                             </option>
-                                            <option
-                                                value="both"
-                                                t-att-selected="partner.photo_delivery_preference == 'both'"
-                                            >
+                      <option
+                        value="both"
+                        t-att-selected="partner.photo_delivery_preference == 'both'"
+                      >
                                                 Letter and Email
                                             </option>
-                                            <option
-                                                value="none"
-                                                t-att-selected="partner.photo_delivery_preference in ['none', 'SMS']"
-                                            >
+                      <option
+                        value="none"
+                        t-att-selected="partner.photo_delivery_preference in ['none', 'SMS']"
+                      >
                                                 None
                                             </option>
-                                        </t>
-                                    </t>
-                                </div>
-                                <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label">Tax Delivery Preference</t>
-                                    <t t-set="top_class" t-value="'w-md-50'" />
-                                    <t t-call="theme_compassion_2025.SelectComponent">
-                                        <t t-set="id" t-value="'tax_preference_select'" />
-                                        <option
-                                            value="only_email"
-                                            t-att-selected="partner.tax_certificate == 'only_email'"
-                                        >
+                    </t>
+                  </t>
+                </div>
+                <t t-call="theme_compassion_2025.FormFieldComponent">
+                  <t t-set="label">Tax Delivery Preference</t>
+                  <t t-set="top_class" t-value="'w-md-50'" />
+                  <t t-call="theme_compassion_2025.SelectComponent">
+                    <t t-set="id" t-value="'tax_preference_select'" />
+                    <option
+                      value="only_email"
+                      t-att-selected="partner.tax_certificate == 'only_email'"
+                    >
                                             Email
                                         </option>
-                                        <option
-                                            value="default"
-                                            t-att-selected="partner.tax_certificate in ['paper', 'default']"
-                                        >
+                    <option
+                      value="default"
+                      t-att-selected="partner.tax_certificate in ['paper', 'default']"
+                    >
                                             Letter
                                         </option>
-                                        <option value="no" t-att-selected="partner.tax_certificate == 'no'">
+                    <option value="no" t-att-selected="partner.tax_certificate == 'no'">
                                             None
                                         </option>
-                                    </t>
-                                </t>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                  </t>
+                </t>
+              </div>
             </div>
-        </t>
-    </template>
+          </div>
+        </div>
+      </div>
+    </t>
+  </template>
 </odoo>

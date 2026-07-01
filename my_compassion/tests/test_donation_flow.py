@@ -33,7 +33,7 @@ class TestDonationFlow(HttpCase):
     }
 
     def setUp(self):
-        super(TestDonationFlow, self).setUp()
+        super().setUp()
 
         # Execute setup steps
         self._setup_website()

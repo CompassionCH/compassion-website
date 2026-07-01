@@ -1,109 +1,135 @@
 <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
 <odoo>
-    <template id="template_header_default" inherit_id="website.template_header_default">
-        <!-- Add the Compassion brand SVG / styling on the navbar menu -->
-        <xpath expr="//t[@t-set='_nav_class']" position="attributes">
-            <attribute name="t-value">
+  <template id="template_header_default" inherit_id="website.template_header_default">
+    <!-- Add the Compassion brand SVG / styling on the navbar menu -->
+    <xpath expr="//t[@t-set='_nav_class']" position="attributes">
+      <attribute name="t-value">
                 'align-items-left align-items-lg-center border-thread-right'
             </attribute>
-        </xpath>
-        <!-- Compassion 4-color thread bar, placed after the navbar (rendered via t-call="website.navbar") -->
-        <xpath expr="//t[@t-call='website.navbar']" position="after">
-            <div class="d-flex compassion-thread">
-                <div class="h-100 w-25 bg-core-blue" />
-                <div class="h-100 w-25 bg-high-pink" />
-                <div class="h-100 w-25 bg-mid-orange" />
-                <div class="h-100 w-25 bg-low-green" />
-            </div>
-        </xpath>
-        <!-- Center the menu: equal flex spacers flank the menu group (the website menu plus the
+    </xpath>
+    <!-- Compassion 4-color thread bar, placed after the navbar (rendered via t-call="website.navbar") -->
+    <xpath expr="//t[@t-call='website.navbar']" position="after">
+      <div class="d-flex compassion-thread">
+        <div class="h-100 w-25 bg-core-blue" />
+        <div class="h-100 w-25 bg-high-pink" />
+        <div class="h-100 w-25 bg-mid-orange" />
+        <div class="h-100 w-25 bg-low-green" />
+      </div>
+    </xpath>
+    <!-- Center the menu: equal flex spacers flank the menu group (the website menu plus the
              logged-in my2 items injected just before website.navbar_nav). The left spacer is
              anchored on the brand so it always sits outside that injected list. -->
-        <xpath expr="//t[@t-call='website.placeholder_header_brand']" position="after">
-            <div class="flex-grow-1" />
-        </xpath>
-        <xpath expr="//t[@t-call='website.navbar_nav']" position="after">
-            <div class="flex-grow-1" />
-        </xpath>
-        <!-- Move the login button out of the main menu and adapt its style -->
-        <xpath expr="//t[@t-call='portal.placeholder_user_sign_in']" position="replace" />
-        <xpath expr="//t[@t-call='portal.user_dropdown']" position="replace" />
-        <xpath expr="//t[@t-call='website.placeholder_header_language_selector']" position="replace">
-            <t t-call="portal.user_dropdown">
-                <t t-set="_item_class" t-value="'nav-item dropdown ml-lg-4'" />
-                <t t-set="_link_class" t-value="'nav-link font-weight-bold'" />
-            </t>
-            <div class="d-none d-md-block ml-lg-3">
-                <t t-call="portal.language_selector" />
-            </div>
-        </xpath>
-        <!-- Render the cart link in the desktop navbar so the my_compassion gift-package
+    <xpath expr="//t[@t-call='website.placeholder_header_brand']" position="after">
+      <div class="flex-grow-1" />
+    </xpath>
+    <xpath expr="//t[@t-call='website.navbar_nav']" position="after">
+      <div class="flex-grow-1" />
+    </xpath>
+    <!-- Move the login button out of the main menu and adapt its style -->
+    <xpath expr="//t[@t-call='portal.placeholder_user_sign_in']" position="replace" />
+    <xpath expr="//t[@t-call='portal.user_dropdown']" position="replace" />
+    <xpath
+      expr="//t[@t-call='website.placeholder_header_language_selector']"
+      position="replace"
+    >
+      <t t-call="portal.user_dropdown">
+        <t t-set="_item_class" t-value="'nav-item dropdown ml-lg-4'" />
+        <t t-set="_link_class" t-value="'nav-link font-weight-bold'" />
+      </t>
+      <div class="d-none d-md-block ml-lg-3">
+        <t t-call="portal.language_selector" />
+      </div>
+    </xpath>
+    <!-- Render the cart link in the desktop navbar so the my_compassion gift-package
              override (custom_header_cart_link_redirect) has a node to style and redirect. -->
-        <xpath expr="//t[@t-call='website.placeholder_header_search_box']" position="before">
-            <t t-call="website_sale.header_cart_link">
-                <t t-set="_icon" t-value="True" />
-                <t t-set="_link_class" t-value="'o_navlink_background btn position-relative rounded-circle p-1 text-center text-reset'" />
-                <t t-set="_badge_class" t-value="'position-absolute top-0 end-0 mt-n1 me-n1 rounded-pill'" />
-            </t>
-        </xpath>
-    </template>
-    <!-- Improve the language selector in the header by applying the Compassion theme-->
-    <template id="language_selector" inherit_id="portal.language_selector">
-        <!-- These nodes set class through t-attf-class, which overrides any static class at
+    <xpath
+      expr="//t[@t-call='website.placeholder_header_search_box']"
+      position="before"
+    >
+      <t t-call="website_sale.header_cart_link">
+        <t t-set="_icon" t-value="True" />
+        <t
+          t-set="_link_class"
+          t-value="'o_navlink_background btn position-relative rounded-circle p-1 text-center text-reset'"
+        />
+        <t
+          t-set="_badge_class"
+          t-value="'position-absolute top-0 end-0 mt-n1 me-n1 rounded-pill'"
+        />
+      </t>
+    </xpath>
+  </template>
+  <!-- Improve the language selector in the header by applying the Compassion theme-->
+  <template id="language_selector" inherit_id="portal.language_selector">
+    <!-- These nodes set class through t-attf-class, which overrides any static class at
              render, so classes are added onto t-attf-class. -->
-        <xpath expr="//div[contains(@t-attf-class, 'dropdown-menu')]" position="attributes">
-            <attribute name="t-attf-class" add="shadow-sm animation-drop language-selector__dropdown-menu" separator=" " />
-        </xpath>
-        <!-- Hide the stock toggle, but keep the node: website.language_selector_inline locates this
+    <xpath expr="//div[contains(@t-attf-class, 'dropdown-menu')]" position="attributes">
+      <attribute
+        name="t-attf-class"
+        add="shadow-sm animation-drop language-selector__dropdown-menu"
+        separator=" "
+      />
+    </xpath>
+    <!-- Hide the stock toggle, but keep the node: website.language_selector_inline locates this
              dropdown-toggle to build the inline footer variant. -->
-        <xpath expr="//button[contains(@t-attf-class, 'dropdown-toggle')]" position="attributes">
-            <attribute name="t-attf-class" add="d-none" separator=" " />
-        </xpath>
-        <!-- Custom pill-style language toggle, shown instead of the hidden stock button. -->
-        <xpath expr="//button[contains(@t-attf-class, 'dropdown-toggle')]" position="after">
-            <t t-call="theme_compassion_2025.LanguageSelector">
-                <t t-set="variant" t-value="'compact'" />
-                <t t-set="variation" t-value="'p-1 hollow'" />
-                <t t-set="label" t-value="active_lang.url_code.split('_')[0].upper()" />
-                <t t-set="icon_left" t-value="'icon-globe01'" />
-                <t t-set="icon_left_color" t-value="'core-blue'" />
-                <t t-set="icon_right" t-value="'icon-chevron-down'" />
-                <t t-set="icon_right_color" t-value="'black'" />
-                <t t-set="color" t-value="'core-blue'" />
-                <t t-set="text_color" t-value="'black'" />
-                <t t-set="radius" t-value="'pill'" />
-            </t>
-        </xpath>
-    </template>
-    <!-- Improve the user dropdown in the header -->
-    <template id="user_dropdown" inherit_id="portal.user_dropdown">
-        <!-- Remove the t-if="is_connected" so the sign-in button is always rendered -->
-        <xpath expr="//li[@t-if='is_connected']" position="attributes">
-            <attribute name="t-if">true</attribute>
-            <attribute name="t-attf-class">#{_item_class} list-unstyled</attribute>
-        </xpath>
-        <!--  Replace the profile image + dropdown icon by a compassion button-->
-        <xpath expr="//a[@href='#']" position="replace">
-            <t t-set="is_connected" t-value="not user_id._is_public()" />
-            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                <t t-set="variant" t-value="'slim' if is_connected else 'compact'" />
-                <t t-set="variation" t-value="'hollow'" />
-                <t t-set="color" t-value="'core-blue'" />
-                <t t-set="icon" t-value="'icon-user01'" />
-                <t t-set="icon_color" t-value="'core-blue'" />
-                <t t-set="radius" t-value="'circular' if is_connected else 'pill'" />
-                <t t-set="id" t-value="'user-dropdown-toggle'" />
-                <t t-set="label">
-                    <t t-if="not is_connected">Sign in</t>
-                </t>
-                <t t-set="href" t-value="'#' if is_connected else '/web/login?redirect=/my2/dashboard'" />
-                <t t-set="data_toggle" t-value="'dropdown' if is_connected else ''" />
-            </t>
-        </xpath>
-        <!-- Align the dropdown to the right and only show it when connected -->
-        <xpath expr="//div[contains(@t-attf-class, 'dropdown-menu')]" position="attributes">
-            <attribute name="t-if">is_connected</attribute>
-            <attribute name="t-attf-class" add="dropdown-menu-right c-user-menu-fix" separator=" " />
-        </xpath>
-    </template>
+    <xpath
+      expr="//button[contains(@t-attf-class, 'dropdown-toggle')]"
+      position="attributes"
+    >
+      <attribute name="t-attf-class" add="d-none" separator=" " />
+    </xpath>
+    <!-- Custom pill-style language toggle, shown instead of the hidden stock button. -->
+    <xpath expr="//button[contains(@t-attf-class, 'dropdown-toggle')]" position="after">
+      <t t-call="theme_compassion_2025.LanguageSelector">
+        <t t-set="variant" t-value="'compact'" />
+        <t t-set="variation" t-value="'p-1 hollow'" />
+        <t t-set="label" t-value="active_lang.url_code.split('_')[0].upper()" />
+        <t t-set="icon_left" t-value="'icon-globe01'" />
+        <t t-set="icon_left_color" t-value="'core-blue'" />
+        <t t-set="icon_right" t-value="'icon-chevron-down'" />
+        <t t-set="icon_right_color" t-value="'black'" />
+        <t t-set="color" t-value="'core-blue'" />
+        <t t-set="text_color" t-value="'black'" />
+        <t t-set="radius" t-value="'pill'" />
+      </t>
+    </xpath>
+  </template>
+  <!-- Improve the user dropdown in the header -->
+  <template id="user_dropdown" inherit_id="portal.user_dropdown">
+    <!-- Remove the t-if="is_connected" so the sign-in button is always rendered -->
+    <xpath expr="//li[@t-if='is_connected']" position="attributes">
+      <attribute name="t-if">true</attribute>
+      <attribute name="t-attf-class">#{_item_class} list-unstyled</attribute>
+    </xpath>
+    <!--  Replace the profile image + dropdown icon by a compassion button-->
+    <xpath expr="//a[@href='#']" position="replace">
+      <t t-set="is_connected" t-value="not user_id._is_public()" />
+      <t t-call="theme_compassion_2025.ThemedButtonComponent">
+        <t t-set="variant" t-value="'slim' if is_connected else 'compact'" />
+        <t t-set="variation" t-value="'hollow'" />
+        <t t-set="color" t-value="'core-blue'" />
+        <t t-set="icon" t-value="'icon-user01'" />
+        <t t-set="icon_color" t-value="'core-blue'" />
+        <t t-set="radius" t-value="'circular' if is_connected else 'pill'" />
+        <t t-set="id" t-value="'user-dropdown-toggle'" />
+        <t t-set="label">
+          <t t-if="not is_connected">Sign in</t>
+        </t>
+        <t
+          t-set="href"
+          t-value="'#' if is_connected else '/web/login?redirect=/my2/dashboard'"
+        />
+        <t t-set="data_toggle" t-value="'dropdown' if is_connected else ''" />
+      </t>
+    </xpath>
+    <!-- Align the dropdown to the right and only show it when connected -->
+    <xpath expr="//div[contains(@t-attf-class, 'dropdown-menu')]" position="attributes">
+      <attribute name="t-if">is_connected</attribute>
+      <attribute
+        name="t-attf-class"
+        add="dropdown-menu-right c-user-menu-fix"
+        separator=" "
+      />
+    </xpath>
+  </template>
 </odoo>

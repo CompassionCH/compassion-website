@@ -1,38 +1,38 @@
 .toggle-button-container input {
-    display: none;
+  display: none;
 }
 
 .toggle-button label {
-    text-align: center;
-    text-wrap: nowrap;
-    color: var(--color);
+  text-align: center;
+  text-wrap: nowrap;
+  color: var(--color);
 
-    align-content: center;
+  align-content: center;
 
-    --height: 2.6rem;
-    height: var(--height);
+  --height: 2.6rem;
+  height: var(--height);
 
-    --border-width: 2px;
-    border: var(--border-width) solid var(--color);
-    margin-left: calc(var(--border-width) * -1);
+  --border-width: 2px;
+  border: var(--border-width) solid var(--color);
+  margin-left: calc(var(--border-width) * -1);
 
-    transition: 0.1s all linear;
-    cursor: pointer;
+  transition: 0.1s all linear;
+  cursor: pointer;
 }
 
 .toggle-button:first-child label {
-    margin-left: 0;
-    border-top-left-radius: calc(var(--height) / 2);
-    border-bottom-left-radius: calc(var(--height) / 2);
+  margin-left: 0;
+  border-top-left-radius: calc(var(--height) / 2);
+  border-bottom-left-radius: calc(var(--height) / 2);
 }
 
 .toggle-button:last-child label {
-    border-top-right-radius: calc(var(--height) / 2);
-    border-bottom-right-radius: calc(var(--height) / 2);
+  border-top-right-radius: calc(var(--height) / 2);
+  border-bottom-right-radius: calc(var(--height) / 2);
 }
 
 .toggle-button:has(input:checked) label {
-    color: var(--pure-white);
-    border: var(--border-width) solid var(--color);
-    background-color: var(--color);
+  color: var(--pure-white);
+  border: var(--border-width) solid var(--color);
+  background-color: var(--color);
 }

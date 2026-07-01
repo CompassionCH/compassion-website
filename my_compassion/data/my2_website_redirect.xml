@@ -1,12 +1,9 @@
 <odoo>
-    <record model="website.rewrite" id="donation_success_rewrite">
-        <field name="name">Donation Success</field>
-        <field name="url_from">/shop/confirmation</field>
-        <field name="url_to">/my2/gifts/thankyou</field>
-        <field
-      name="website_id"
-      ref="my_compassion.my2_website"
-    />
-        <field name="redirect_type">301</field>
-    </record>
+  <record model="website.rewrite" id="donation_success_rewrite">
+    <field name="name">Donation Success</field>
+    <field name="url_from">/shop/confirmation</field>
+    <field name="url_to">/my2/gifts/thankyou</field>
+    <field name="website_id" ref="my_compassion.my2_website" />
+    <field name="redirect_type">301</field>
+  </record>
 </odoo>

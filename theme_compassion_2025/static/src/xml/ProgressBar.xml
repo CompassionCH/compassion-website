@@ -16,12 +16,12 @@
 -->
 <templates xml:space="preserve">
     <t t-name="theme_compassion_2025.ProgressBar">
-        <div class="progress-bar-container">
-            <div
-                t-attf-class="progress mb-3 density-{{ props.density }}{{ state.flowing ? ' is-flowing' : '' }}"
-                t-attf-style="--flow-speed: {{ props.flowSpeed }}; clip-path: {{ clipPath }};"
-            />
-            <p class="progress-text mb-0" t-esc="progressText" />
-        </div>
-    </t>
+    <div class="progress-bar-container">
+      <div
+        t-attf-class="progress mb-3 density-{{ props.density }}{{ state.flowing ? ' is-flowing' : '' }}"
+        t-attf-style="--flow-speed: {{ props.flowSpeed }}; clip-path: {{ clipPath }};"
+      />
+      <p class="progress-text mb-0" t-esc="progressText" />
+    </div>
+  </t>
 </templates>

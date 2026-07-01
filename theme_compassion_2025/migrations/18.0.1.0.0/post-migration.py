@@ -19,7 +19,7 @@ Three jobs on upgrade:
 3. Synchronous regeneration of the 3 stylesheet attachments.
 """
 
-from odoo import api, SUPERUSER_ID
+from odoo import SUPERUSER_ID, api
 
 
 def migrate(cr, version):
@@ -30,8 +30,8 @@ def migrate(cr, version):
 
     # (1) URL rename for ir.attachment records (idempotent)
     rename_map = {
-        "/theme/compassion/colors.scss":     "/theme_compassion_2025/dynamic/colors.scss",
-        "/theme/compassion/icons.scss":      "/theme_compassion_2025/dynamic/icons.scss",
+        "/theme/compassion/colors.scss": "/theme_compassion_2025/dynamic/colors.scss",
+        "/theme/compassion/icons.scss": "/theme_compassion_2025/dynamic/icons.scss",
         "/theme/compassion/pictograms.scss": "/theme_compassion_2025/dynamic/pictograms.scss",
     }
     for old_url, new_url in rename_map.items():

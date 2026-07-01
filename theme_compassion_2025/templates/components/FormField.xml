@@ -11,16 +11,16 @@
     - top_class (string): class for the outer div element wrapping everything
 -->
 <odoo>
-    <template id="FormFieldComponent" name="Form Field Component">
-        <div t-attf-class="form-field-component #{top_class or ''}">
-            <label
-                t-if="label"
-                t-att-for="input_id"
-                t-attf-class="text-#{label_color or 'core-blue'} body-small bold mb-1"
-            >
-                <t t-esc="label" />
-            </label>
-            <t t-out="0" />
-        </div>
-    </template>
+  <template id="FormFieldComponent" name="Form Field Component">
+    <div t-attf-class="form-field-component #{top_class or ''}">
+      <label
+        t-if="label"
+        t-att-for="input_id"
+        t-attf-class="text-#{label_color or 'core-blue'} body-small bold mb-1"
+      >
+        <t t-esc="label" />
+      </label>
+      <t t-out="0" />
+    </div>
+  </template>
 </odoo>

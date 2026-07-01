@@ -17,11 +17,11 @@
     - top_class (string): Classes to add to the top element of the component.       [none]
 -->
 <odoo>
-    <!-- CHECKOUT COMPONENT -->
-    <template id="CheckoutComponent" name="Checkout Component">
-        <div t-attf-class="mt-3 clearfix #{top_class}">
-            <t t-set="top_class" t-value="''" />
-            <t t-call="payment.form" />
-        </div>
-    </template>
+  <!-- CHECKOUT COMPONENT -->
+  <template id="CheckoutComponent" name="Checkout Component">
+    <div t-attf-class="mt-3 clearfix #{top_class}">
+      <t t-set="top_class" t-value="''" />
+      <t t-call="payment.form" />
+    </div>
+  </template>
 </odoo>

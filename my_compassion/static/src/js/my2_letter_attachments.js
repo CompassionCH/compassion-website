@@ -6,4 +6,4 @@
  * single exported container is the shared reference between those modules:
  * `.files` is reassigned in place so every importer sees the current array.
  */
-export const letterAttachments = { files: [] };
+export const letterAttachments = {files: []};

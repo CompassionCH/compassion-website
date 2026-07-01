@@ -28,92 +28,94 @@
  * Mounted declaratively via
  * `<owl-component name="theme_compassion_2025.ProgressBar" props='{...}'/>`.
  */
-import { Component, useState } from "@odoo/owl";
-import { registry } from "@web/core/registry";
+import {Component, useState} from "@odoo/owl";
+import {registry} from "@web/core/registry";
 
 export class ProgressBar extends Component {
-    static template = "theme_compassion_2025.ProgressBar";
-    static props = {
-        steps: { type: Array, element: String, optional: true },
-        density: { type: String, optional: true },
-        flowSpeed: { type: String, optional: true },
-        step: { type: Number, optional: true },
-        totalSteps: { type: Number, optional: true },
-        flowing: { type: Boolean, optional: true },
-    };
-    static defaultProps = {
-        steps: ["Step 1", "Step 2", "Step 3", "Step 4"],
-        density: "medium",
-        flowSpeed: "4s",
-        step: 0,
-        flowing: true,
-    };
+  static template = "theme_compassion_2025.ProgressBar";
+  static props = {
+    steps: {type: Array, element: String, optional: true},
+    density: {type: String, optional: true},
+    flowSpeed: {type: String, optional: true},
+    step: {type: Number, optional: true},
+    totalSteps: {type: Number, optional: true},
+    flowing: {type: Boolean, optional: true},
+  };
+  static defaultProps = {
+    steps: ["Step 1", "Step 2", "Step 3", "Step 4"],
+    density: "medium",
+    flowSpeed: "4s",
+    step: 0,
+    flowing: true,
+  };
 
-    setup() {
-        this.state = useState({ step: this.props.step, flowing: this.props.flowing });
-    }
+  setup() {
+    this.state = useState({step: this.props.step, flowing: this.props.flowing});
+  }
 
-    /**
-     * Number of equal segments the bar is divided into.
-     */
-    get totalSteps() {
-        return this.props.totalSteps ?? this.props.steps.length;
-    }
+  /**
+   * Number of equal segments the bar is divided into.
+   */
+  get totalSteps() {
+    return this.props.totalSteps ?? this.props.steps.length;
+  }
 
-    /**
-     * Active step index clamped to the bounds of the bar.
-     */
-    get currentStep() {
-        const total = this.totalSteps;
-        if (total === 0) {
-            return 0;
-        }
-        return Math.max(0, Math.min(this.state.step, total - 1));
+  /**
+   * Active step index clamped to the bounds of the bar.
+   */
+  get currentStep() {
+    const total = this.totalSteps;
+    if (total === 0) {
+      return 0;
     }
+    return Math.max(0, Math.min(this.state.step, total - 1));
+  }
 
-    /**
-     * Fraction of the bar revealed at the active step, as a percentage:
-     * `(currentStep + 1) / totalSteps`.
-     */
-    get progressPct() {
-        const total = this.totalSteps;
-        if (total === 0) {
-            return 0;
-        }
-        return ((this.currentStep + 1) / total) * 100;
+  /**
+   * Fraction of the bar revealed at the active step, as a percentage:
+   * `(currentStep + 1) / totalSteps`.
+   */
+  get progressPct() {
+    const total = this.totalSteps;
+    if (total === 0) {
+      return 0;
     }
+    return ((this.currentStep + 1) / total) * 100;
+  }
 
-    /**
-     * Label shown under the bar for the active step.
-     */
-    get progressText() {
-        const steps = this.props.steps;
-        return steps.length ? steps[this.currentStep] : "";
-    }
+  /**
+   * Label shown under the bar for the active step.
+   */
+  get progressText() {
+    const steps = this.props.steps;
+    return steps.length ? steps[this.currentStep] : "";
+  }
 
-    /**
-     * `clip-path` inset that reveals the portion of the bar reached at the
-     * active step.
-     */
-    get clipPath() {
-        return `inset(0 ${100 - this.progressPct}% 0 0)`;
-    }
+  /**
+   * `clip-path` inset that reveals the portion of the bar reached at the
+   * active step.
+   */
+  get clipPath() {
+    return `inset(0 ${100 - this.progressPct}% 0 0)`;
+  }
 
-    /**
-     * Start the flow animation and reveal the first step.
-     */
-    startProgress() {
-        this.state.flowing = true;
-        this.goToStep(0);
-    }
+  /**
+   * Start the flow animation and reveal the first step.
+   */
+  startProgress() {
+    this.state.flowing = true;
+    this.goToStep(0);
+  }
 
-    /**
-     * Move the bar to a specific step. The index is clamped via `currentStep`.
-     * @param {Number} stepIndex zero-based index of the step to reveal.
-     */
-    goToStep(stepIndex) {
-        this.state.step = stepIndex;
-    }
+  /**
+   * Move the bar to a specific step. The index is clamped via `currentStep`.
+   * @param {Number} stepIndex zero-based index of the step to reveal.
+   */
+  goToStep(stepIndex) {
+    this.state.step = stepIndex;
+  }
 }
 
-registry.category("public_components").add("theme_compassion_2025.ProgressBar", ProgressBar);
+registry
+  .category("public_components")
+  .add("theme_compassion_2025.ProgressBar", ProgressBar);

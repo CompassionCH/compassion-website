@@ -235,7 +235,8 @@ class MyAccountController(CustomerPortal):
 
         # authenticate
         request.session.authenticate(
-            request.session.db, {"login": login, "password": password, "type": "password"}
+            request.session.db,
+            {"login": login, "password": password, "type": "password"},
         )
         return True
 
@@ -410,9 +411,7 @@ class MyAccountController(CustomerPortal):
         for users using old links.
         """
         if child_ref.isdigit():
-            child_record = (
-                request.env["compassion.child"].sudo().browse(int(child_ref))
-            )
+            child_record = request.env["compassion.child"].sudo().browse(int(child_ref))
             if child_record.exists():
                 child_ref = request.env["ir.http"]._slug(child_record)
         new_url = f"/my2/new-sponsorship/{child_ref}"

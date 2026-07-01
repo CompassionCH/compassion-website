@@ -6,48 +6,48 @@
     */
 
 .title-component {
-    text-align: center;
-    @media (max-width: $breakpoint-sm) {
-        &--align-sm-left {
-            text-align: left;
-        }
-        &--align-sm-center {
-            text-align: center;
-        }
-        &--align-sm-right {
-            text-align: right;
-        }
+  text-align: center;
+  @media (max-width: $breakpoint-sm) {
+    &--align-sm-left {
+      text-align: left;
     }
-
-    // The main <h1> element
-    .title-heading {
-        // Default size if none is specified
-        font-size: 32px;
-
-        // Size modifiers
-        &.title-size-sm {
-            font-size: 20px;
-        }
-        &.title-size-md {
-            font-size: 32px;
-        }
-        &.title-size-lg {
-            font-size: 48px;
-        }
+    &--align-sm-center {
+      text-align: center;
     }
-
-    // The decorative underline
-    .title-underline {
-        width: 60px;
-        border-width: 2px;
-        border-style: solid;
-        // Uses margin-left/right: auto for centering
-        margin: 10px auto 15px;
+    &--align-sm-right {
+      text-align: right;
     }
+  }
+
+  // The main <h1> element
+  .title-heading {
+    // Default size if none is specified
+    font-size: 32px;
+
+    // Size modifiers
+    &.title-size-sm {
+      font-size: 20px;
+    }
+    &.title-size-md {
+      font-size: 32px;
+    }
+    &.title-size-lg {
+      font-size: 48px;
+    }
+  }
+
+  // The decorative underline
+  .title-underline {
+    width: 60px;
+    border-width: 2px;
+    border-style: solid;
+    // Uses margin-left/right: auto for centering
+    margin: 10px auto 15px;
+  }
 }
 
 @media (max-width: $breakpoint-sm) {
-    .title-component-sm-left-alignment {
-        text-align: left !important;
-    }
+  .title-component-sm-left-alignment {
+    text-align: left !important;
+  }
 }

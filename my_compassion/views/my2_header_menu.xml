@@ -1,94 +1,109 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <!-- The MyCompassion menu entries, shared by the desktop navbar and the
+  <!-- The MyCompassion menu entries, shared by the desktop navbar and the
          mobile offcanvas (both render their items inside a ul.navbar-nav) -->
-    <template id="my2_nav_items" name="MyCompassion Menu Items">
-        <t t-set="partner" t-value="request.env.user.partner_id" />
-        <li class="nav-item">
-            <a class="nav-link" href="/my2/dashboard">Home</a>
-        </li>
-        <t t-if="partner.is_sponsor">
-            <li class="nav-item">
-                <a class="nav-link" href="/my2/children">My sponsorships</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/my2/children/letters">Letters</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/my2/children/letters/new">Write a letter</a>
-            </li>
-        </t>
-        <li class="nav-item">
-            <a class="nav-link" href="/my2/gifts">Give</a>
-        </li>
-        <t t-if="partner.is_donor">
-            <li class="nav-item">
-                <a class="nav-link" href="/my2/donations">My donations</a>
-            </li>
-        </t>
-    </template>
-    <template id="my_compassion_dynamic_menu" inherit_id="website.template_header_default">
-        <xpath expr="//t[@t-call='website.navbar_nav']" position="before">
-            <t t-if="request.session.uid">
-                <ul class="navbar-nav">
-                    <t t-call="my_compassion.my2_nav_items" />
-                </ul>
-            </t>
-        </xpath>
-    </template>
-    <template id="my_compassion_dynamic_menu_mobile" inherit_id="website.template_header_mobile">
-        <xpath expr="//t[@t-call='website.navbar_nav']" position="before">
-            <t t-if="request.session.uid">
-                <t t-call="my_compassion.my2_nav_items" />
-            </t>
-        </xpath>
-    </template>
-    <template
-        id="custom_header_cart_link_redirect"
-        inherit_id="website_sale.header_cart_link"
-        name="Custom Header Cart Link Redirect"
-    >
-        <!-- Hide the cart when user is not logged in -->
-        <xpath expr="//t[@t-set='show_cart']" position="attributes">
-            <attribute name="t-value">request.session.uid</attribute>
-        </xpath>
-        <!-- Modify the behavior of the base Odoo cart for custom redirection and design -->
-        <xpath expr="//a[@href='/shop/cart']" position="attributes">
-            <attribute name="href">/my2/gift-package</attribute>
-        </xpath>
-        <xpath expr="//i[hasclass('fa-shopping-cart')]" position="attributes">
-            <attribute name="class">icon-gift02 text-low-yellow</attribute>
-        </xpath>
-        <!-- The badge node carries t-attf-class (no static class), so the xpath
+  <template id="my2_nav_items" name="MyCompassion Menu Items">
+    <t t-set="partner" t-value="request.env.user.partner_id" />
+    <li class="nav-item">
+      <a class="nav-link" href="/my2/dashboard">Home</a>
+    </li>
+    <t t-if="partner.is_sponsor">
+      <li class="nav-item">
+        <a class="nav-link" href="/my2/children">My sponsorships</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/my2/children/letters">Letters</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/my2/children/letters/new">Write a letter</a>
+      </li>
+    </t>
+    <li class="nav-item">
+      <a class="nav-link" href="/my2/gifts">Give</a>
+    </li>
+    <t t-if="partner.is_donor">
+      <li class="nav-item">
+        <a class="nav-link" href="/my2/donations">My donations</a>
+      </li>
+    </t>
+  </template>
+  <template
+    id="my_compassion_dynamic_menu"
+    inherit_id="website.template_header_default"
+  >
+    <xpath expr="//t[@t-call='website.navbar_nav']" position="before">
+      <t t-if="request.session.uid">
+        <ul class="navbar-nav">
+          <t t-call="my_compassion.my2_nav_items" />
+        </ul>
+      </t>
+    </xpath>
+  </template>
+  <template
+    id="my_compassion_dynamic_menu_mobile"
+    inherit_id="website.template_header_mobile"
+  >
+    <xpath expr="//t[@t-call='website.navbar_nav']" position="before">
+      <t t-if="request.session.uid">
+        <t t-call="my_compassion.my2_nav_items" />
+      </t>
+    </xpath>
+  </template>
+  <template
+    id="custom_header_cart_link_redirect"
+    inherit_id="website_sale.header_cart_link"
+    name="Custom Header Cart Link Redirect"
+  >
+    <!-- Hide the cart when user is not logged in -->
+    <xpath expr="//t[@t-set='show_cart']" position="attributes">
+      <attribute name="t-value">request.session.uid</attribute>
+    </xpath>
+    <!-- Modify the behavior of the base Odoo cart for custom redirection and design -->
+    <xpath expr="//a[@href='/shop/cart']" position="attributes">
+      <attribute name="href">/my2/gift-package</attribute>
+    </xpath>
+    <xpath expr="//i[hasclass('fa-shopping-cart')]" position="attributes">
+      <attribute name="class">icon-gift02 text-low-yellow</attribute>
+    </xpath>
+    <!-- The badge node carries t-attf-class (no static class), so the xpath
              matches on @t-attf-class; keep the hide-when-empty toggle -->
-        <xpath expr="//sup[contains(@t-attf-class, 'my_cart_quantity')]" position="attributes">
-            <attribute name="t-attf-class">my_cart_quantity badge bg-primary #{_badge_class} #{'d-none' if (website_sale_cart_quantity == 0) else ''}</attribute>
-        </xpath>
-    </template>
-    <template
-        id="header_menu_cache_per_role"
-        inherit_id="website.layout"
-        name="MyCompassion Header Menu Cache Key"
+    <xpath
+      expr="//sup[contains(@t-attf-class, 'my_cart_quantity')]"
+      position="attributes"
     >
-        <!-- The navbar shows role-dependent items (is_sponsor / is_donor), so the
+      <attribute
+        name="t-attf-class"
+      >my_cart_quantity badge bg-primary #{_badge_class} #{'d-none' if (website_sale_cart_quantity == 0) else ''}</attribute>
+    </xpath>
+  </template>
+  <template
+    id="header_menu_cache_per_role"
+    inherit_id="website.layout"
+    name="MyCompassion Header Menu Cache Key"
+  >
+    <!-- The navbar shows role-dependent items (is_sponsor / is_donor), so the
              header cache must vary by those flags. The stock key only separates
              public from logged-in users, which lets one logged-in user's menu be
              served to every other logged-in user. The flags are read only for
              logged-in users so public traffic keeps paying no extra compute. -->
-        <xpath expr="//header/t[@t-cache]" position="attributes">
-            <attribute name="t-cache">None if website.is_menu_cache_disabled() else (xmlid, website, website.is_public_user(), not website.is_public_user() and (request.env.user.partner_id.is_sponsor, request.env.user.partner_id.is_donor))</attribute>
-        </xpath>
-    </template>
-    <template
-        id="user_dropdown_settings_link"
-        inherit_id="portal.user_dropdown"
-        name="MyCompassion User Settings Link"
-    >
-        <xpath expr="//div[@id='o_logout_divider']" position="before">
-            <a href="/my2/user_settings" role="menuitem" class="dropdown-item ps-3">
-                <i class="fa fa-fw fa-cog me-1 small text-primary text-primary-emphasis"/>
+    <xpath expr="//header/t[@t-cache]" position="attributes">
+      <attribute
+        name="t-cache"
+      >None if website.is_menu_cache_disabled() else (xmlid, website, website.is_public_user(), not website.is_public_user() and (request.env.user.partner_id.is_sponsor, request.env.user.partner_id.is_donor))</attribute>
+    </xpath>
+  </template>
+  <template
+    id="user_dropdown_settings_link"
+    inherit_id="portal.user_dropdown"
+    name="MyCompassion User Settings Link"
+  >
+    <xpath expr="//div[@id='o_logout_divider']" position="before">
+      <a href="/my2/user_settings" role="menuitem" class="dropdown-item ps-3">
+                <i
+        class="fa fa-fw fa-cog me-1 small text-primary text-primary-emphasis"
+      />
                 Settings
             </a>
-        </xpath>
-    </template>
+    </xpath>
+  </template>
 </odoo>

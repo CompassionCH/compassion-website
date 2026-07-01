@@ -1,35 +1,35 @@
 .SelectComponent {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+
+  .custom-select {
     width: 100%;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: none;
+    border: 1px solid $color-border;
+    border-radius: 4px;
+    padding: 8px 3rem 8px 8px;
+    cursor: pointer;
+  }
 
-    .custom-select {
-        width: 100%;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        background: none;
-        border: 1px solid $color-border;
-        border-radius: 4px;
-        padding: 8px 3rem 8px 8px;
-        cursor: pointer;
-    }
+  .select-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
 
-    .select-icon {
-        position: absolute;
-        top: 50%;
-        right: 10px;
-        transform: translateY(-50%);
-        pointer-events: none;
-    }
-
-    .select-divider {
-        position: absolute;
-        top: 50%;
-        right: 38px;
-        transform: translateY(-50%);
-        width: 1px;
-        height: 60%;
-        background-color: var(--core-blue);
-    }
+  .select-divider {
+    position: absolute;
+    top: 50%;
+    right: 38px;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 60%;
+    background-color: var(--core-blue);
+  }
 }

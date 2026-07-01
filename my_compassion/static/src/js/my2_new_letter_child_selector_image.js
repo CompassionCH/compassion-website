@@ -8,17 +8,17 @@
  * Used in /templates/pages/my2_new_letter.xml
  */
 
-import { whenReady } from "@odoo/owl";
+import {whenReady} from "@odoo/owl";
 
 whenReady(() => {
-    const dropdown = document.getElementById("child-dropdown");
-    if (!dropdown) {
-        return;
-    }
+  const dropdown = document.getElementById("child-dropdown");
+  if (!dropdown) {
+    return;
+  }
 
-    // TODO: re-seed the form in place (rpc) on change instead of reloading the
-    // whole new-letter page for each child.
-    dropdown.addEventListener("change", (event) => {
-        window.location.href = `/my2/children/letters/new?child_id=${event.target.value}`;
-    });
+  // TODO: re-seed the form in place (rpc) on change instead of reloading the
+  // whole new-letter page for each child.
+  dropdown.addEventListener("change", (event) => {
+    window.location.href = `/my2/children/letters/new?child_id=${event.target.value}`;
+  });
 });

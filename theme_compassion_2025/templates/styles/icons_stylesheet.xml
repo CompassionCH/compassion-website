@@ -1,7 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <template id="theme_compassion_icons_stylesheet_template" name="Icons Stylesheet Template">
-        <t t-translation="off">
+  <template
+    id="theme_compassion_icons_stylesheet_template"
+    name="Icons Stylesheet Template"
+  >
+    <t t-translation="off">
 <!-- Base styles for any element using an icon class. -->
 <!-- This ensures consistency and leverages the `currentColor` change you made. -->
 [class^="icon-"],
@@ -21,10 +24,10 @@
 }
 
 <t t-foreach="icons" t-as="icon">
-.<t t-esc="icon.class_name"/> {
-    mask-image: url("/web/image/theme.compassion.icons/<t t-esc="icon.id"/>/svg_file");
+.<t t-esc="icon.class_name" /> {
+    mask-image: url("/web/image/theme.compassion.icons/<t t-esc="icon.id" />/svg_file");
 }
 </t>
         </t>
-    </template>
+  </template>
 </odoo>

@@ -1,333 +1,368 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
 <odoo>
-    <!-- Custom Login Page Layout -->
-    <template id="my2_login_template" inherit_id="website.login_layout" website_id="my_compassion.my2_website">
-        <xpath expr="t" position="replace">
-            <t t-set="no_footer" t-value="True" />
-            <!-- Add css to the page -->
-            <link rel="stylesheet" href="/my_compassion/static/src/css/my2_login.css" />
-            <t t-call="website.layout">
-                <div class="container">
-                    <div class="single-column">
-                        <t t-out="0" />
-                    </div>
-                </div>
-            </t>
-        </xpath>
-    </template>
-    <!-- Login Form Customization -->
-    <template id="my2_login_form" inherit_id="web.login" website_id="my_compassion.my2_website">
-        <xpath expr="t" position="replace">
-            <t t-call="web.login_layout">
-                <form
-                    class="my2-login-form"
-                    role="form"
-                    action="/web/login"
-                    method="post"
-                    onsubmit="this.action = '/web/login' + location.hash"
-                >
-                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
-                    <input type="hidden" name="redirect" t-att-value="redirect" />
-                    <div class="h-100 d-flex justify-content-center flex-column">
-                        <!-- Header picture -->
-                        <img
-                            alt=""
-                            src="/theme_compassion_2025/static/src/img/snippets/login_picture.jpg"
-                            class="w-75 img-fluid rounded-circle align-self-center"
-                        />
-                        <!-- Title -->
-                        <div class="mt-4 w-75 text-center text-core-blue body-large bold align-self-center">
+  <!-- Custom Login Page Layout -->
+  <template
+    id="my2_login_template"
+    inherit_id="website.login_layout"
+    website_id="my_compassion.my2_website"
+  >
+    <xpath expr="t" position="replace">
+      <t t-set="no_footer" t-value="True" />
+      <!-- Add css to the page -->
+      <link rel="stylesheet" href="/my_compassion/static/src/css/my2_login.css" />
+      <t t-call="website.layout">
+        <div class="container">
+          <div class="single-column">
+            <t t-out="0" />
+          </div>
+        </div>
+      </t>
+    </xpath>
+  </template>
+  <!-- Login Form Customization -->
+  <template
+    id="my2_login_form"
+    inherit_id="web.login"
+    website_id="my_compassion.my2_website"
+  >
+    <xpath expr="t" position="replace">
+      <t t-call="web.login_layout">
+        <form
+          class="my2-login-form"
+          role="form"
+          action="/web/login"
+          method="post"
+          onsubmit="this.action = '/web/login' + location.hash"
+        >
+          <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+          <input type="hidden" name="redirect" t-att-value="redirect" />
+          <div class="h-100 d-flex justify-content-center flex-column">
+            <!-- Header picture -->
+            <img
+              alt=""
+              src="/theme_compassion_2025/static/src/img/snippets/login_picture.jpg"
+              class="w-75 img-fluid rounded-circle align-self-center"
+            />
+            <!-- Title -->
+            <div
+              class="mt-4 w-75 text-center text-core-blue body-large bold align-self-center"
+            >
                             Welcome to MyCompassion
                         </div>
-                        <!-- Email -->
-                        <t t-call="theme_compassion_2025.FormFieldComponent">
-                            <t t-set="top_class" t-value="'mt-3'" />
-                            <t t-set="label">Email</t>
-                            <input
-                                type="text"
-                                placeholder="Email"
-                                name="login"
-                                class="form-control"
-                                id="login"
-                                required=""
-                                autofocus=""
-                                autocapitalize="off"
-                            />
-                        </t>
-                        <!-- Password -->
-                        <t t-call="theme_compassion_2025.FormFieldComponent">
-                            <t t-set="top_class" t-value="'mt-2'" />
-                            <t t-set="label">Password</t>
-                            <owl-component
-                                name="theme_compassion_2025.Password"
-                                props='{"inputName": "password", "required": true}'
-                            />
-                        </t>
-                        <!-- Reset password -->
-                        <a
-                            t-if="reset_password_enabled"
-                            t-attf-href="/web/reset_password?{{ keep_query() }}"
-                            class="mt-2 tiny-text bold text-core-blue"
-                        >
+            <!-- Email -->
+            <t t-call="theme_compassion_2025.FormFieldComponent">
+              <t t-set="top_class" t-value="'mt-3'" />
+              <t t-set="label">Email</t>
+              <input
+                type="text"
+                placeholder="Email"
+                name="login"
+                class="form-control"
+                id="login"
+                required=""
+                autofocus=""
+                autocapitalize="off"
+              />
+            </t>
+            <!-- Password -->
+            <t t-call="theme_compassion_2025.FormFieldComponent">
+              <t t-set="top_class" t-value="'mt-2'" />
+              <t t-set="label">Password</t>
+              <owl-component
+                name="theme_compassion_2025.Password"
+                props='{"inputName": "password", "required": true}'
+              />
+            </t>
+            <!-- Reset password -->
+            <a
+              t-if="reset_password_enabled"
+              t-attf-href="/web/reset_password?{{ keep_query() }}"
+              class="mt-2 tiny-text bold text-core-blue"
+            >
                             Forgot password?
                         </a>
-                        <!-- Error -->
-                        <p class="mt-3 mb-0 alert alert-danger" t-if="error" role="alert">
-                            <t t-out="error" />
-                        </p>
-                        <!-- Info -->
-                        <p class="mt-3 mb-0 alert alert-success" t-if="message" role="status">
-                            <t t-out="message" />
-                        </p>
-                        <!-- Log in -->
-                        <div class="mt-3 d-flex flex-column align-items-stretch">
-                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                <t t-set="variant" t-value="'compact'" />
-                                <t t-set="variation" t-value="'filled'" />
-                                <t t-set="radius" t-value="'small'" />
-                                <t t-set="label">Log in</t>
-                                <t t-set="color" t-value="'core-blue'" />
-                                <t t-set="icon_color" t-value="'pure-white'" />
-                                <t t-set="text_color" t-value="'pure-white'" />
-                            </t>
-                        </div>
-                        <!-- Create account -->
-                        <div class="mt-3 text-center tiny-text text-mid-grey">
+            <!-- Error -->
+            <p class="mt-3 mb-0 alert alert-danger" t-if="error" role="alert">
+              <t t-out="error" />
+            </p>
+            <!-- Info -->
+            <p class="mt-3 mb-0 alert alert-success" t-if="message" role="status">
+              <t t-out="message" />
+            </p>
+            <!-- Log in -->
+            <div class="mt-3 d-flex flex-column align-items-stretch">
+              <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                <t t-set="variant" t-value="'compact'" />
+                <t t-set="variation" t-value="'filled'" />
+                <t t-set="radius" t-value="'small'" />
+                <t t-set="label">Log in</t>
+                <t t-set="color" t-value="'core-blue'" />
+                <t t-set="icon_color" t-value="'pure-white'" />
+                <t t-set="text_color" t-value="'pure-white'" />
+              </t>
+            </div>
+            <!-- Create account -->
+            <div class="mt-3 text-center tiny-text text-mid-grey">
                             Don't have an account?
                             <a
-                                t-if="signup_enabled"
-                                t-attf-href="/web/signup?{{ keep_query() }}"
-                                class="tiny-text bold text-core-blue"
-                            >
+              t-if="signup_enabled"
+              t-attf-href="/web/signup?{{ keep_query() }}"
+              class="tiny-text bold text-core-blue"
+            >
                                 Create one now
                             </a>
                         </div>
-                        <!-- Help -->
-                        <div class="mt-3 text-center tiny-text text-mid-grey">
+            <!-- Help -->
+            <div class="mt-3 text-center tiny-text text-mid-grey">
                             Need help?
-                            <a href="/contactus" class="tiny-text bold text-core-blue">Contact us</a>
+                            <a
+              href="/contactus"
+              class="tiny-text bold text-core-blue"
+            >Contact us</a>
                         </div>
-                    </div>
-                </form>
-            </t>
-        </xpath>
-    </template>
-    <!-- Signup Fields Customization -->
-    <template id="my2_signup_fields" inherit_id="auth_signup.fields" website_id="my_compassion.my2_website">
-        <xpath expr="//div[hasclass('field-login')]" position="replace">
-            <div class="my2-signup-fields d-flex flex-column">
-                <!-- Email -->
-                <t t-call="theme_compassion_2025.FormFieldComponent">
-                    <t t-set="label">Email Address</t>
-                    <input
-                        type="email"
-                        name="login"
-                        placeholder="Email"
-                        t-att-value="login"
-                        id="login"
-                        class="form-control"
-                        autofocus="autofocus"
-                        autocapitalize="off"
-                        required="required"
-                        t-att-readonly="'readonly' if only_passwords else None"
-                    />
-                </t>
-                <!-- Name -->
-                <t t-call="theme_compassion_2025.FormFieldComponent">
-                    <t t-set="top_class" t-value="'mt-2'" />
-                    <t t-set="label">Name</t>
-                    <input
-                        type="text"
-                        name="name"
-                        t-att-value="name"
-                        id="name"
-                        class="form-control"
-                        placeholder="e.g. John Doe"
-                        required="required"
-                        t-att-readonly="'readonly' if only_passwords else None"
-                        t-att-autofocus="'autofocus' if login and not only_passwords else None"
-                    />
-                </t>
-                <!-- Password -->
-                <t t-if="only_passwords" t-call="theme_compassion_2025.FormFieldComponent">
-                    <t t-set="top_class" t-value="'mt-2'" />
-                    <t t-set="label">Password</t>
-                    <owl-component
-                        name="theme_compassion_2025.Password"
-                        props='{"inputName": "password", "required": true}'
-                    />
-                </t>
-                <!-- Confirm password -->
-                <t t-if="only_passwords" t-call="theme_compassion_2025.FormFieldComponent">
-                    <t t-set="top_class" t-value="'mt-2'" />
-                    <t t-set="label">Confirm Password</t>
-                    <owl-component
-                        name="theme_compassion_2025.Password"
-                        props='{"inputName": "confirm_password", "required": true}'
-                    />
-                </t>
-                <!-- Accept terms & conditions -->
-                <div class="mt-3 d-flex">
-                    <input
-                        type="checkbox"
-                        value="accepted"
-                        id="privacy_policy"
-                        name="privacy_policy"
-                        class="mx-2"
-                        required="required"
-                    />
-                    <label class="mb-0 tiny-text" for="privacy_policy">
-                        <t t-call="my_compassion.acceptance_full" />
-                    </label>
-                </div>
-            </div>
-        </xpath>
-        <xpath expr="//div[hasclass('field-name')]" position="replace" />
-        <xpath expr="//div[hasclass('field-password')]" position="replace" />
-        <xpath expr="//div[hasclass('field-confirm_password')]" position="replace" />
-    </template>
-    <!-- Signup Form Customization -->
-    <template id="my2_signup_form" inherit_id="auth_signup.signup" website_id="my_compassion.my2_website">
-        <xpath expr="t" position="replace">
-            <t t-call="web.login_layout">
-                <form class="my2-signup-form" role="form" method="post" t-if="not message">
-                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
-                    <input type="hidden" name="redirect" t-att-value="redirect" />
-                    <input type="hidden" name="token" t-att-value="token" />
-                    <div class="h-100 d-flex justify-content-center flex-column">
-                        <!-- Title -->
-                        <div class="mb-4 w-75 text-center text-core-blue body-large bold align-self-center">
+          </div>
+        </form>
+      </t>
+    </xpath>
+  </template>
+  <!-- Signup Fields Customization -->
+  <template
+    id="my2_signup_fields"
+    inherit_id="auth_signup.fields"
+    website_id="my_compassion.my2_website"
+  >
+    <xpath expr="//div[hasclass('field-login')]" position="replace">
+      <div class="my2-signup-fields d-flex flex-column">
+        <!-- Email -->
+        <t t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="label">Email Address</t>
+          <input
+            type="email"
+            name="login"
+            placeholder="Email"
+            t-att-value="login"
+            id="login"
+            class="form-control"
+            autofocus="autofocus"
+            autocapitalize="off"
+            required="required"
+            t-att-readonly="'readonly' if only_passwords else None"
+          />
+        </t>
+        <!-- Name -->
+        <t t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="top_class" t-value="'mt-2'" />
+          <t t-set="label">Name</t>
+          <input
+            type="text"
+            name="name"
+            t-att-value="name"
+            id="name"
+            class="form-control"
+            placeholder="e.g. John Doe"
+            required="required"
+            t-att-readonly="'readonly' if only_passwords else None"
+            t-att-autofocus="'autofocus' if login and not only_passwords else None"
+          />
+        </t>
+        <!-- Password -->
+        <t t-if="only_passwords" t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="top_class" t-value="'mt-2'" />
+          <t t-set="label">Password</t>
+          <owl-component
+            name="theme_compassion_2025.Password"
+            props='{"inputName": "password", "required": true}'
+          />
+        </t>
+        <!-- Confirm password -->
+        <t t-if="only_passwords" t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="top_class" t-value="'mt-2'" />
+          <t t-set="label">Confirm Password</t>
+          <owl-component
+            name="theme_compassion_2025.Password"
+            props='{"inputName": "confirm_password", "required": true}'
+          />
+        </t>
+        <!-- Accept terms & conditions -->
+        <div class="mt-3 d-flex">
+          <input
+            type="checkbox"
+            value="accepted"
+            id="privacy_policy"
+            name="privacy_policy"
+            class="mx-2"
+            required="required"
+          />
+          <label class="mb-0 tiny-text" for="privacy_policy">
+            <t t-call="my_compassion.acceptance_full" />
+          </label>
+        </div>
+      </div>
+    </xpath>
+    <xpath expr="//div[hasclass('field-name')]" position="replace" />
+    <xpath expr="//div[hasclass('field-password')]" position="replace" />
+    <xpath expr="//div[hasclass('field-confirm_password')]" position="replace" />
+  </template>
+  <!-- Signup Form Customization -->
+  <template
+    id="my2_signup_form"
+    inherit_id="auth_signup.signup"
+    website_id="my_compassion.my2_website"
+  >
+    <xpath expr="t" position="replace">
+      <t t-call="web.login_layout">
+        <form class="my2-signup-form" role="form" method="post" t-if="not message">
+          <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+          <input type="hidden" name="redirect" t-att-value="redirect" />
+          <input type="hidden" name="token" t-att-value="token" />
+          <div class="h-100 d-flex justify-content-center flex-column">
+            <!-- Title -->
+            <div
+              class="mb-4 w-75 text-center text-core-blue body-large bold align-self-center"
+            >
                             Welcome to MyCompassion
                         </div>
-                        <!-- Signup fields -->
-                        <t t-call="auth_signup.fields">
-                            <t t-set="only_passwords" t-value="bool(token and not invalid_token)" />
-                        </t>
-                        <!-- Error -->
-                        <p class="mt-3 mb-0 alert alert-danger" t-if="error" role="alert">
-                            <t t-out="error" />
-                        </p>
-                        <!-- Confirm -->
-                        <div class="mt-3 d-flex flex-column align-items-stretch">
-                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                <t t-set="variant" t-value="'compact'" />
-                                <t t-set="variation" t-value="'filled'" />
-                                <t t-set="radius" t-value="'small'" />
-                                <t t-set="label">Confirm</t>
-                                <t t-set="color" t-value="'core-blue'" />
-                                <t t-set="icon_color" t-value="'pure-white'" />
-                                <t t-set="text_color" t-value="'pure-white'" />
-                            </t>
-                        </div>
-                        <!-- Log in -->
-                        <div class="mt-3 text-center tiny-text text-mid-grey">
+            <!-- Signup fields -->
+            <t t-call="auth_signup.fields">
+              <t t-set="only_passwords" t-value="bool(token and not invalid_token)" />
+            </t>
+            <!-- Error -->
+            <p class="mt-3 mb-0 alert alert-danger" t-if="error" role="alert">
+              <t t-out="error" />
+            </p>
+            <!-- Confirm -->
+            <div class="mt-3 d-flex flex-column align-items-stretch">
+              <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                <t t-set="variant" t-value="'compact'" />
+                <t t-set="variation" t-value="'filled'" />
+                <t t-set="radius" t-value="'small'" />
+                <t t-set="label">Confirm</t>
+                <t t-set="color" t-value="'core-blue'" />
+                <t t-set="icon_color" t-value="'pure-white'" />
+                <t t-set="text_color" t-value="'pure-white'" />
+              </t>
+            </div>
+            <!-- Log in -->
+            <div class="mt-3 text-center tiny-text text-mid-grey">
                             Already have an account?
                             <a
-                                t-if="signup_enabled"
-                                t-attf-href="/web/login?{{ keep_query() }}"
-                                class="tiny-text bold text-core-blue"
-                            >
+              t-if="signup_enabled"
+              t-attf-href="/web/login?{{ keep_query() }}"
+              class="tiny-text bold text-core-blue"
+            >
                                 Log in
                             </a>
                         </div>
-                        <!-- Help -->
-                        <div class="mt-3 text-center tiny-text text-mid-grey">
+            <!-- Help -->
+            <div class="mt-3 text-center tiny-text text-mid-grey">
                             Need help?
-                            <a href="/contactus" class="tiny-text bold text-core-blue">Contact us</a>
+                            <a
+              href="/contactus"
+              class="tiny-text bold text-core-blue"
+            >Contact us</a>
                         </div>
-                    </div>
-                </form>
-            </t>
-        </xpath>
-    </template>
-    <!-- Reset Password Form Customization -->
-    <template
-        id="my2_reset_password_form"
-        inherit_id="auth_signup.reset_password"
-        website_id="my_compassion.my2_website"
-    >
-        <xpath expr="t" position="replace">
-            <t t-call="web.login_layout">
-                <!-- Success message -->
-                <div t-if="message" class="h-100 d-flex justify-content-center flex-column">
-                    <p class="text-center body-small alert alert-success" role="status">
-                        <t t-out="message" />
-                    </p>
-                    <a href="/web/login" class="mt-3 text-center tiny-text bold text-core-blue" role="button">
+          </div>
+        </form>
+      </t>
+    </xpath>
+  </template>
+  <!-- Reset Password Form Customization -->
+  <template
+    id="my2_reset_password_form"
+    inherit_id="auth_signup.reset_password"
+    website_id="my_compassion.my2_website"
+  >
+    <xpath expr="t" position="replace">
+      <t t-call="web.login_layout">
+        <!-- Success message -->
+        <div t-if="message" class="h-100 d-flex justify-content-center flex-column">
+          <p class="text-center body-small alert alert-success" role="status">
+            <t t-out="message" />
+          </p>
+          <a
+            href="/web/login"
+            class="mt-3 text-center tiny-text bold text-core-blue"
+            role="button"
+          >
                         Back to Login
                     </a>
-                </div>
-                <form role="form" method="post" t-if="not message">
-                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
-                    <input type="hidden" name="redirect" t-att-value="redirect" />
-                    <input type="hidden" name="token" t-att-value="token" />
-                    <div class="h-100 d-flex justify-content-center flex-column">
-                        <!-- Title -->
-                        <div class="mb-4 w-75 text-center text-core-blue body-large bold align-self-center">
+        </div>
+        <form role="form" method="post" t-if="not message">
+          <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+          <input type="hidden" name="redirect" t-att-value="redirect" />
+          <input type="hidden" name="token" t-att-value="token" />
+          <div class="h-100 d-flex justify-content-center flex-column">
+            <!-- Title -->
+            <div
+              class="mb-4 w-75 text-center text-core-blue body-large bold align-self-center"
+            >
                             Reset your password
                         </div>
-                        <!-- Sign up fields -->
-                        <t t-if="token and not invalid_token">
-                            <t t-call="auth_signup.fields">
-                                <t t-set="only_passwords" t-value="1" />
-                            </t>
-                        </t>
-                        <!-- Email -->
-                        <t t-if="not token">
-                            <t t-call="theme_compassion_2025.FormFieldComponent">
-                                <t t-set="label">Email</t>
-                                <input
-                                    type="email"
-                                    placeholder="Email"
-                                    name="login"
-                                    class="form-control"
-                                    id="login"
-                                    required=""
-                                    autofocus=""
-                                    autocapitalize="off"
-                                />
-                            </t>
-                        </t>
-                        <!-- Error -->
-                        <p class="mt-3 mb-0 alert alert-danger" t-if="error" role="alert">
-                            <t t-out="error" />
-                        </p>
-                        <!-- Confirm -->
-                        <div class="mt-3 d-flex flex-column align-items-stretch">
-                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                <t t-set="variant" t-value="'compact'" />
-                                <t t-set="variation" t-value="'filled'" />
-                                <t t-set="radius" t-value="'small'" />
-                                <t t-set="label">Confirm</t>
-                                <t t-set="color" t-value="'core-blue'" />
-                                <t t-set="icon_color" t-value="'pure-white'" />
-                                <t t-set="text_color" t-value="'pure-white'" />
-                            </t>
-                        </div>
-                        <!-- Back to Login -->
-                        <a
-                            t-if="not token"
-                            t-attf-href="/web/login?{{ keep_query() }}"
-                            class="mt-3 text-center tiny-text bold text-core-blue"
-                        >
-                            Back to Login
-                        </a>
-                        <a
-                            t-if="invalid_token"
-                            href="/web/login"
-                            class="mt-3 text-center tiny-text bold text-core-blue"
-                        >
-                            Back to Login
-                        </a>
-                        <!-- Help -->
-                        <div class="mt-3 text-center tiny-text text-mid-grey">
-                            Need help?
-                            <a href="/contactus" class="tiny-text bold text-core-blue">Contact us</a>
-                        </div>
-                    </div>
-                </form>
+            <!-- Sign up fields -->
+            <t t-if="token and not invalid_token">
+              <t t-call="auth_signup.fields">
+                <t t-set="only_passwords" t-value="1" />
+              </t>
             </t>
-        </xpath>
-    </template>
+            <!-- Email -->
+            <t t-if="not token">
+              <t t-call="theme_compassion_2025.FormFieldComponent">
+                <t t-set="label">Email</t>
+                <input
+                  type="email"
+                  placeholder="Email"
+                  name="login"
+                  class="form-control"
+                  id="login"
+                  required=""
+                  autofocus=""
+                  autocapitalize="off"
+                />
+              </t>
+            </t>
+            <!-- Error -->
+            <p class="mt-3 mb-0 alert alert-danger" t-if="error" role="alert">
+              <t t-out="error" />
+            </p>
+            <!-- Confirm -->
+            <div class="mt-3 d-flex flex-column align-items-stretch">
+              <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                <t t-set="variant" t-value="'compact'" />
+                <t t-set="variation" t-value="'filled'" />
+                <t t-set="radius" t-value="'small'" />
+                <t t-set="label">Confirm</t>
+                <t t-set="color" t-value="'core-blue'" />
+                <t t-set="icon_color" t-value="'pure-white'" />
+                <t t-set="text_color" t-value="'pure-white'" />
+              </t>
+            </div>
+            <!-- Back to Login -->
+            <a
+              t-if="not token"
+              t-attf-href="/web/login?{{ keep_query() }}"
+              class="mt-3 text-center tiny-text bold text-core-blue"
+            >
+                            Back to Login
+                        </a>
+            <a
+              t-if="invalid_token"
+              href="/web/login"
+              class="mt-3 text-center tiny-text bold text-core-blue"
+            >
+                            Back to Login
+                        </a>
+            <!-- Help -->
+            <div class="mt-3 text-center tiny-text text-mid-grey">
+                            Need help?
+                            <a
+              href="/contactus"
+              class="tiny-text bold text-core-blue"
+            >Contact us</a>
+                        </div>
+          </div>
+        </form>
+      </t>
+    </xpath>
+  </template>
 </odoo>

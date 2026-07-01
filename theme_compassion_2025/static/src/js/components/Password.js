@@ -15,27 +15,27 @@
  * Mounted declaratively via
  * `<owl-component name="theme_compassion_2025.Password" props='{...}'/>`.
  */
-import { Component, useState } from "@odoo/owl";
-import { registry } from "@web/core/registry";
+import {Component, useState} from "@odoo/owl";
+import {registry} from "@web/core/registry";
 
 export class Password extends Component {
-    static template = "theme_compassion_2025.PasswordComponent";
-    static props = {
-        inputName: { type: String, optional: true },
-        required: { type: Boolean, optional: true },
-    };
-    static defaultProps = {
-        inputName: "password",
-        required: false,
-    };
+  static template = "theme_compassion_2025.PasswordComponent";
+  static props = {
+    inputName: {type: String, optional: true},
+    required: {type: Boolean, optional: true},
+  };
+  static defaultProps = {
+    inputName: "password",
+    required: false,
+  };
 
-    setup() {
-        this.state = useState({ visible: false });
-    }
+  setup() {
+    this.state = useState({visible: false});
+  }
 
-    onTogglePasswordVisibility() {
-        this.state.visible = !this.state.visible;
-    }
+  onTogglePasswordVisibility() {
+    this.state.visible = !this.state.visible;
+  }
 }
 
 registry.category("public_components").add("theme_compassion_2025.Password", Password);

@@ -1,69 +1,71 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <template id="child_unavailable_page" name="Child Unavailable">
-        <t t-call="website.layout">
-            <div id="wrap" class="oe_structure oe_empty">
-                <div class="container my-5">
-                    <div class="column justify-content-center text-center">
-                        <div class="col-md-8 col-lg-6 mx-auto">
-                            <i t-attf-class="pictogram-love vignette-icon h1" />
-                            <t t-call="theme_compassion_2025.TitleComponent">
-                                <t t-set="title_content">Good news!</t>
-                                <t t-set="color" t-value="'core-blue'" />
-                                <t t-set="show_underline" t-value="true" />
-                                <t t-set="underline_color" t-value="'low-yellow'" />
-                            </t>
-                            <div class="mt-4">
-                                <t t-if="child.gender == 'M'">
-                                    <t t-set="male_msg">
+  <template id="child_unavailable_page" name="Child Unavailable">
+    <t t-call="website.layout">
+      <div id="wrap" class="oe_structure oe_empty">
+        <div class="container my-5">
+          <div class="column justify-content-center text-center">
+            <div class="col-md-8 col-lg-6 mx-auto">
+              <i t-attf-class="pictogram-love vignette-icon h1" />
+              <t t-call="theme_compassion_2025.TitleComponent">
+                <t t-set="title_content">Good news!</t>
+                <t t-set="color" t-value="'core-blue'" />
+                <t t-set="show_underline" t-value="true" />
+                <t t-set="underline_color" t-value="'low-yellow'" />
+              </t>
+              <div class="mt-4">
+                <t t-if="child.gender == 'M'">
+                  <t t-set="male_msg">
                                         Someone else has decided to sponsor {child_name} just a moment ago. He and his
                                         family will be happy! But don't leave just yet, other
                                         children are waiting for life-changing support. Would you like to sponsor one of
                                         these children?
                                     </t>
-                                    <t t-out="male_msg.format(child_name=child.preferred_name)" />
-                                </t>
-                                <t t-else="">
-                                    <t t-set="female_msg">
+                  <t t-out="male_msg.format(child_name=child.preferred_name)" />
+                </t>
+                <t t-else="">
+                  <t t-set="female_msg">
                                         Someone else has decided to sponsor {child_name} just a moment ago. She and her
                                         family will be happy! But don't leave just yet, other
                                         children are waiting for life-changing support. Would you like to sponsor one of
                                         these children?
                                     </t>
-                                    <t t-out="female_msg.format(child_name=child.preferred_name)" />
-                                </t>
-                            </div>
-                            <p class="lead text-muted mb-4" t-if="error_msg">
-                                <t t-out="error_msg" />
-                            </p>
-                        </div>
-                        <!-- RESULTS -->
-                        <div
-                            class="sponsorships-body-container mt-3 pt-3"
-                            t-att-data-sponsorship-type="sponsorship_type"
-                            t-att-data-gender-filter="child.gender"
-                            t-att-data-country-filter="child.field_office_id.field_office_id if child.field_office_id else ''"
-                            data-limit="3"
-                        >
-                            <div class="sponsorships-column w-100 d-flex flex-column">
-                                <!-- CHILDREN PROFILES -->
-                                <div class="sponsorships-results-content row justify-content-center g-4" />
-                            </div>
-                        </div>
-                        <div class="mt-5">
-                            <a href="/my2/sponsorships">
-                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                    <t t-set="variation" t-value="'filled'" />
-                                    <t t-set="color" t-value="'low-blue'" />
-                                    <t t-set="text_color" t-value="'white'" />
-                                    <t t-set="variant" t-value="'default'" />
-                                    <t t-set="label">See more children</t>
-                                </t>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                  <t t-out="female_msg.format(child_name=child.preferred_name)" />
+                </t>
+              </div>
+              <p class="lead text-muted mb-4" t-if="error_msg">
+                <t t-out="error_msg" />
+              </p>
             </div>
-        </t>
-    </template>
+            <!-- RESULTS -->
+            <div
+              class="sponsorships-body-container mt-3 pt-3"
+              t-att-data-sponsorship-type="sponsorship_type"
+              t-att-data-gender-filter="child.gender"
+              t-att-data-country-filter="child.field_office_id.field_office_id if child.field_office_id else ''"
+              data-limit="3"
+            >
+              <div class="sponsorships-column w-100 d-flex flex-column">
+                <!-- CHILDREN PROFILES -->
+                <div
+                  class="sponsorships-results-content row justify-content-center g-4"
+                />
+              </div>
+            </div>
+            <div class="mt-5">
+              <a href="/my2/sponsorships">
+                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                  <t t-set="variation" t-value="'filled'" />
+                  <t t-set="color" t-value="'low-blue'" />
+                  <t t-set="text_color" t-value="'white'" />
+                  <t t-set="variant" t-value="'default'" />
+                  <t t-set="label">See more children</t>
+                </t>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </t>
+  </template>
 </odoo>

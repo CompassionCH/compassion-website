@@ -4,17 +4,19 @@
     TO BE DONE
 -->
 <odoo>
-    <template id="my2_breadcrumbs" name="Breadcrumb">
-        <nav aria-label="breadcrumbs">
-            <ol class="breadcrumb">
-                <t t-foreach="breadcrumbs" t-as="crumb">
-                    <li t-att-class="'breadcrumb-item active' if crumb.get('active') else 'breadcrumb-item'">
-                        <a t-att-href="crumb.get('url')">
-                            <t t-out="crumb.get('name')" />
-                        </a>
-                    </li>
-                </t>
-            </ol>
-        </nav>
-    </template>
+  <template id="my2_breadcrumbs" name="Breadcrumb">
+    <nav aria-label="breadcrumbs">
+      <ol class="breadcrumb">
+        <t t-foreach="breadcrumbs" t-as="crumb">
+          <li
+            t-att-class="'breadcrumb-item active' if crumb.get('active') else 'breadcrumb-item'"
+          >
+            <a t-att-href="crumb.get('url')">
+              <t t-out="crumb.get('name')" />
+            </a>
+          </li>
+        </t>
+      </ol>
+    </nav>
+  </template>
 </odoo>

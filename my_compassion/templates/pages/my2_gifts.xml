@@ -16,79 +16,85 @@ Page: My Compassion 2 Gifts Page
     - my_compassion_gifts (array of 'my_compassion_gift' records): all the gifts of this typ (gift/fund) available.
 -->
 <odoo>
-    <!-- GIFTS DASHBOARD -->
-    <template id="my2_gifts_page" name="My Compassion 2 Gifts Page">
-        <t t-set="additional_title">Give</t>
-        <t t-call="website.layout">
-            <div class="container">
-                <!-- HELPER FLAGS -->
-                <t t-set="is_gift" t-value="type == 'gift'" />
-                <t t-set="is_fund" t-value="type == 'fund'" />
-                <!-- BANNER -->
-                <div class="container-content">
-                    <t t-call="theme_compassion_2025.BannerComponent">
-                        <t t-if="is_gift">
-                            <t t-set="title">Give the Gift of compassion</t>
-                            <t t-set="text">
+  <!-- GIFTS DASHBOARD -->
+  <template id="my2_gifts_page" name="My Compassion 2 Gifts Page">
+    <t t-set="additional_title">Give</t>
+    <t t-call="website.layout">
+      <div class="container">
+        <!-- HELPER FLAGS -->
+        <t t-set="is_gift" t-value="type == 'gift'" />
+        <t t-set="is_fund" t-value="type == 'fund'" />
+        <!-- BANNER -->
+        <div class="container-content">
+          <t t-call="theme_compassion_2025.BannerComponent">
+            <t t-if="is_gift">
+              <t t-set="title">Give the Gift of compassion</t>
+              <t t-set="text">
                                 Every child deserves a secure home, safe water, and medicine to keep them healthy.
                                 That's why, when poverty places a child in critical need, we take action.
                             </t>
-                            <t t-set="btn_link" t-value="'/my2/gifts?type=fund'" />
-                            <t t-set="btn_text">Make a donation</t>
-                        </t>
-                        <t t-elif="is_fund">
-                            <t t-set="title">Send a gift to your sponsored child</t>
-                            <t t-set="text">
+              <t t-set="btn_link" t-value="'/my2/gifts?type=fund'" />
+              <t t-set="btn_text">Make a donation</t>
+            </t>
+            <t t-elif="is_fund">
+              <t t-set="title">Send a gift to your sponsored child</t>
+              <t t-set="text">
                                 A member of Compassion from their local church will help them get something they really
                                 need.
                             </t>
-                            <t t-set="btn_link" t-value="'/my2/gifts?type=gift'" />
-                            <t t-set="btn_text">Give</t>
-                        </t>
-                        <t t-set="pictogram" t-value="'gift-donation-general'" />
-                    </t>
-                </div>
-                <!-- TITLE -->
-                <div class="container-content mt-4">
-                    <t t-call="theme_compassion_2025.TitleComponent">
-                        <t t-if="is_gift">
-                            <t t-set="title_content">A gift for your sponsored child</t>
-                            <t t-set="description">
+              <t t-set="btn_link" t-value="'/my2/gifts?type=gift'" />
+              <t t-set="btn_text">Give</t>
+            </t>
+            <t t-set="pictogram" t-value="'gift-donation-general'" />
+          </t>
+        </div>
+        <!-- TITLE -->
+        <div class="container-content mt-4">
+          <t t-call="theme_compassion_2025.TitleComponent">
+            <t t-if="is_gift">
+              <t t-set="title_content">A gift for your sponsored child</t>
+              <t t-set="description">
                                 A member of Compassion from their local church will help them get something they really
                                 need.
                             </t>
-                        </t>
-                        <t t-elif="is_fund">
-                            <t t-set="title_content">Give the Gift of compassion</t>
-                            <t t-set="description">
+            </t>
+            <t t-elif="is_fund">
+              <t t-set="title_content">Give the Gift of compassion</t>
+              <t t-set="description">
                                 Make a difference. Bring hope to children living in extreme poverty.
                             </t>
-                        </t>
-                        <t t-set="color" t-value="'core-blue'" />
-                        <t t-set="show_underline" t-value="true" />
-                        <t t-set="underline_color" t-value="'low-yellow'" />
-                    </t>
-                </div>
-                <!-- VIGNETTES AND ACTIONS -->
-                <div class="row mb-4 justify-content-center">
-                    <t t-foreach="my_compassion_gifts" t-as="my_compassion_gift">
-                        <div class="col-sm my-3 flex-grow-0">
-                            <t t-call="theme_compassion_2025.VignetteComponent">
-                                <t
-                                    t-set="image"
-                                    t-value="website.image_url(my_compassion_gift, 'my_compassion_image')"
-                                />
-                                <t t-set="href" t-value="'/my2/gifts/' + str(my_compassion_gift.id)" />
-                                <t t-set="title" t-value="my_compassion_gift.my_compassion_name" />
-                                <t t-set="icon" t-value="my_compassion_gift.my_compassion_pictogram.class_name" />
-                                <t t-set="color" t-value="'pure-white'" />
-                                <t t-set="bg_color" t-value="my_compassion_gift.my_compassion_color.class_name" />
-                                <t t-set="learn_more_text">Learn more and donate</t>
-                            </t>
-                        </div>
-                    </t>
-                </div>
+            </t>
+            <t t-set="color" t-value="'core-blue'" />
+            <t t-set="show_underline" t-value="true" />
+            <t t-set="underline_color" t-value="'low-yellow'" />
+          </t>
+        </div>
+        <!-- VIGNETTES AND ACTIONS -->
+        <div class="row mb-4 justify-content-center">
+          <t t-foreach="my_compassion_gifts" t-as="my_compassion_gift">
+            <div class="col-sm my-3 flex-grow-0">
+              <t t-call="theme_compassion_2025.VignetteComponent">
+                <t
+                  t-set="image"
+                  t-value="website.image_url(my_compassion_gift, 'my_compassion_image')"
+                />
+                <t t-set="href" t-value="'/my2/gifts/' + str(my_compassion_gift.id)" />
+                <t t-set="title" t-value="my_compassion_gift.my_compassion_name" />
+                <t
+                  t-set="icon"
+                  t-value="my_compassion_gift.my_compassion_pictogram.class_name"
+                />
+                <t t-set="color" t-value="'pure-white'" />
+                <t
+                  t-set="bg_color"
+                  t-value="my_compassion_gift.my_compassion_color.class_name"
+                />
+                <t t-set="learn_more_text">Learn more and donate</t>
+              </t>
             </div>
-        </t>
-    </template>
+          </t>
+        </div>
+      </div>
+    </t>
+  </template>
 </odoo>

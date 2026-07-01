@@ -1,17 +1,17 @@
 .form-field-container {
-    .invalid-hint {
-        display: none;
-    }
+  .invalid-hint {
+    display: none;
+  }
 
-    &:has(.is-invalid) .invalid-hint {
-        display: block;
-    }
+  &:has(.is-invalid) .invalid-hint {
+    display: block;
+  }
 }
 
 .form-field-component .required-asterisk {
-    display: none;
+  display: none;
 }
 
 .is-editing .form-field-component .required-asterisk {
-    display: inline;
+  display: inline;
 }

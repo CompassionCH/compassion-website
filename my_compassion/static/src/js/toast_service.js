@@ -18,8 +18,8 @@
  * visual type.
  */
 
-import { _t } from "@web/core/l10n/translation";
-import { renderToElement } from "@web/core/utils/render";
+import {_t} from "@web/core/l10n/translation";
+import {renderToElement} from "@web/core/utils/render";
 
 // The average reading time for a toast is around 5 seconds + 1 second
 // per 120 characters, so remove the toast after 6 seconds.
@@ -33,13 +33,13 @@ const DISMISS_DELAY_MS = 6000;
  * @param {String} message - the toast body
  */
 function show(type, title, message) {
-    const el = renderToElement("my_compassion.toast_notification_component", {
-        type,
-        title,
-        message,
-    });
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), DISMISS_DELAY_MS);
+  const el = renderToElement("my_compassion.toast_notification_component", {
+    type,
+    title,
+    message,
+  });
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), DISMISS_DELAY_MS);
 }
 
 /**
@@ -47,8 +47,8 @@ function show(type, title, message) {
  * Each method takes the message body and an optional title.
  */
 export const toast = {
-    info: (msg, title = _t("Info")) => show("info", title, msg),
-    success: (msg, title = _t("Success")) => show("success", title, msg),
-    warning: (msg, title = _t("Warning")) => show("warning", title, msg),
-    error: (msg, title = _t("Error")) => show("danger", title, msg),
+  info: (msg, title = _t("Info")) => show("info", title, msg),
+  success: (msg, title = _t("Success")) => show("success", title, msg),
+  warning: (msg, title = _t("Warning")) => show("warning", title, msg),
+  error: (msg, title = _t("Error")) => show("danger", title, msg),
 };

@@ -27,207 +27,209 @@ let googleMapsLoadPromise = null;
 const POLL_INTERVAL = 150;
 const POLL_TIMEOUT = 3000;
 const SELECTORS = {
-    STREET_VIEW_BUTTON: ".gm-svpc",
-    MAP_SELECTOR_TERRAIN: 'button[aria-label="Show street map with terrain"]',
-    MAP_SELECTOR_SATELLITE: 'button[aria-label="Show imagery with street names"]',
-    GRABBED_PEGMAN: 'gmp-internal-use-am[aria-grabbed="true"]',
+  STREET_VIEW_BUTTON: ".gm-svpc",
+  MAP_SELECTOR_TERRAIN: 'button[aria-label="Show street map with terrain"]',
+  MAP_SELECTOR_SATELLITE: 'button[aria-label="Show imagery with street names"]',
+  GRABBED_PEGMAN: 'gmp-internal-use-am[aria-grabbed="true"]',
 };
 
 publicWidget.registry.GoogleMapEl = publicWidget.Widget.extend({
-    selector: ".js-map-widget",
+  selector: ".js-map-widget",
 
-    /**
-     * @override
-     */
-    async start() {
-        await this._super(...arguments);
+  /**
+   * @override
+   */
+  async start() {
+    await this._super(...arguments);
 
-        const { lat, lng, apiKey, customMapId } = this.el.dataset;
-        const mapId = customMapId || "YOUR_MAP_ID";
-        const latNum = parseFloat(lat);
-        const lngNum = parseFloat(lng);
+    const {lat, lng, apiKey, customMapId} = this.el.dataset;
+    const mapId = customMapId || "YOUR_MAP_ID";
+    const latNum = parseFloat(lat);
+    const lngNum = parseFloat(lng);
 
-        if (!apiKey) {
-            console.error("Google Maps API key not found.");
-            this.el.classList.add("map--load-failed");
-            return;
+    if (!apiKey) {
+      console.error("Google Maps API key not found.");
+      this.el.classList.add("map--load-failed");
+      return;
+    }
+
+    try {
+      await this._loadGoogleMaps(apiKey);
+      await this._initializeMap(latNum, lngNum, mapId);
+    } catch (error) {
+      console.error("Failed to load Google Maps:", error);
+      this.el.classList.add("map--load-failed");
+    }
+  },
+
+  /**
+   * Injects a Google Maps script tag into the document head and returns a
+   * promise that resolves when the script loads. Creates a singleton promise
+   * so the script is injected only once per page, even when multiple map
+   * widgets are present.
+   *
+   * @private
+   * @param {String} apiKey
+   * @returns {Promise}
+   */
+  _loadGoogleMaps(apiKey) {
+    if (!googleMapsLoadPromise) {
+      googleMapsLoadPromise = new Promise((resolve, reject) => {
+        if (typeof google !== "undefined" && typeof google.maps !== "undefined") {
+          return resolve();
         }
+        const script = document.createElement("script");
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&libraries=marker`;
+        script.async = true;
+        script.onload = () => resolve();
+        script.onerror = (err) => reject(err);
+        document.head.appendChild(script);
+      });
+    }
+    return googleMapsLoadPromise;
+  },
 
-        try {
-            await this._loadGoogleMaps(apiKey);
-            await this._initializeMap(latNum, lngNum, mapId);
-        } catch (error) {
-            console.error("Failed to load Google Maps:", error);
-            this.el.classList.add("map--load-failed");
-        }
-    },
+  /**
+   * Initialises the map instance, creates the marker, and customises controls.
+   *
+   * @private
+   * @param {Number} lat
+   * @param {Number} lng
+   * @param {String} mapId
+   * @param {Number} [zoom=10]
+   */
+  async _initializeMap(lat, lng, mapId, zoom = 10) {
+    const position = {lat: lat, lng: lng};
 
-    /**
-     * Injects a Google Maps script tag into the document head and returns a
-     * promise that resolves when the script loads. Creates a singleton promise
-     * so the script is injected only once per page, even when multiple map
-     * widgets are present.
-     *
-     * @private
-     * @param {String} apiKey
-     * @returns {Promise}
-     */
-    _loadGoogleMaps(apiKey) {
-        if (!googleMapsLoadPromise) {
-            googleMapsLoadPromise = new Promise((resolve, reject) => {
-                if (typeof google !== "undefined" && typeof google.maps !== "undefined") {
-                    return resolve();
-                }
-                const script = document.createElement("script");
-                script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&libraries=marker`;
-                script.async = true;
-                script.onload = () => resolve();
-                script.onerror = (err) => reject(err);
-                document.head.appendChild(script);
-            });
-        }
-        return googleMapsLoadPromise;
-    },
+    const {Map} = await google.maps.importLibrary("maps");
+    const {AdvancedMarkerElement} = await google.maps.importLibrary("marker");
 
-    /**
-     * Initialises the map instance, creates the marker, and customises controls.
-     *
-     * @private
-     * @param {Number} lat
-     * @param {Number} lng
-     * @param {String} mapId
-     * @param {Number} [zoom=10]
-     */
-    async _initializeMap(lat, lng, mapId, zoom = 10) {
-        const position = { lat: lat, lng: lng };
+    const map = new Map(this.el, {
+      zoom: zoom,
+      center: position,
+      mapId: mapId,
+      streetViewControl: true,
+      mapTypeControl: true,
+      mapTypeId: "terrain",
+      mapTypeControlOptions: {
+        mapTypeIds: ["terrain", "hybrid"],
+        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+      },
+    });
 
-        const { Map } = await google.maps.importLibrary("maps");
-        const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    this._customizeControls(map);
 
-        const map = new Map(this.el, {
-            zoom: zoom,
-            center: position,
-            mapId: mapId,
-            streetViewControl: true,
-            mapTypeControl: true,
-            mapTypeId: "terrain",
-            mapTypeControlOptions: {
-                mapTypeIds: ["terrain", "hybrid"],
-                style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+    const pinElement = this._createCustomPin();
+
+    new AdvancedMarkerElement({
+      map,
+      position,
+      content: pinElement,
+      title: "Compassion Center of Child",
+    });
+  },
+
+  /**
+   * Polls the DOM for a selector to appear, then executes a callback.
+   * Required because elements added dynamically by the Google Maps API are not
+   * present synchronously after map construction.
+   *
+   * @private
+   * @param {String} selector
+   * @param {Function} callback
+   * @param {Element} [root=this.el]
+   * @returns {Number} The interval timer ID.
+   */
+  _pollForElement(selector, callback, root = this.el) {
+    let elapsedTime = 0;
+    const timer = setInterval(() => {
+      const element = root.querySelector(selector);
+      if (element) {
+        clearInterval(timer);
+        callback(element);
+      } else if (elapsedTime >= POLL_TIMEOUT) {
+        clearInterval(timer);
+        console.warn(
+          `Element with selector "${selector}" not found after ${POLL_TIMEOUT}ms.`
+        );
+      }
+      elapsedTime += POLL_INTERVAL;
+    }, POLL_INTERVAL);
+    return timer;
+  },
+
+  /**
+   * Orchestrates all UI customisations for the map controls.
+   * Called once the map is idle.
+   *
+   * @private
+   * @param {google.maps.Map} map
+   */
+  _customizeControls(map) {
+    const svgDataUrl = this._buildCustomStreetViewSvgDataUrl();
+
+    google.maps.event.addListenerOnce(map, "idle", () => {
+      this._pollForElement(SELECTORS.STREET_VIEW_BUTTON, (streetViewButton) => {
+        const pegmanContainer = streetViewButton.firstChild;
+
+        this._updateImagesInContainer(pegmanContainer, svgDataUrl);
+        pegmanContainer.lastChild.className = "custom-steetview-button";
+
+        streetViewButton.addEventListener("mousedown", () => {
+          this._pollForElement(
+            SELECTORS.GRABBED_PEGMAN,
+            (grabbedPegman) => {
+              grabbedPegman.className = "grapped-pogman-container";
+              grabbedPegman.querySelector("img").className = "grapped-pogman";
+
+              this._updateImagesInContainer(grabbedPegman, svgDataUrl);
             },
+            document.body
+          );
         });
+      });
 
-        this._customizeControls(map);
+      this._pollForElement(SELECTORS.MAP_SELECTOR_TERRAIN, (terrainButton) => {
+        terrainButton.textContent = "Map";
+      });
 
-        const pinElement = this._createCustomPin();
+      this._pollForElement(SELECTORS.MAP_SELECTOR_SATELLITE, (hybridButton) => {
+        hybridButton.textContent = "Satellite";
+      });
+    });
+  },
 
-        new AdvancedMarkerElement({
-            map,
-            position,
-            content: pinElement,
-            title: "Compassion Center of Child",
-        });
-    },
+  // --------------------------------------------------------------------------
+  // Helpers
+  // --------------------------------------------------------------------------
 
-    /**
-     * Polls the DOM for a selector to appear, then executes a callback.
-     * Required because elements added dynamically by the Google Maps API are not
-     * present synchronously after map construction.
-     *
-     * @private
-     * @param {String} selector
-     * @param {Function} callback
-     * @param {Element} [root=this.el]
-     * @returns {Number} The interval timer ID.
-     */
-    _pollForElement(selector, callback, root = this.el) {
-        let elapsedTime = 0;
-        const timer = setInterval(() => {
-            const element = root.querySelector(selector);
-            if (element) {
-                clearInterval(timer);
-                callback(element);
-            } else if (elapsedTime >= POLL_TIMEOUT) {
-                clearInterval(timer);
-                console.warn(`Element with selector "${selector}" not found after ${POLL_TIMEOUT}ms.`);
-            }
-            elapsedTime += POLL_INTERVAL;
-        }, POLL_INTERVAL);
-        return timer;
-    },
-
-    /**
-     * Orchestrates all UI customisations for the map controls.
-     * Called once the map is idle.
-     *
-     * @private
-     * @param {google.maps.Map} map
-     */
-    _customizeControls(map) {
-        const svgDataUrl = this._buildCustomStreetViewSvgDataUrl();
-
-        google.maps.event.addListenerOnce(map, "idle", () => {
-            this._pollForElement(SELECTORS.STREET_VIEW_BUTTON, (streetViewButton) => {
-                const pegmanContainer = streetViewButton.firstChild;
-
-                this._updateImagesInContainer(pegmanContainer, svgDataUrl);
-                pegmanContainer.lastChild.className = "custom-steetview-button";
-
-                streetViewButton.addEventListener("mousedown", () => {
-                    this._pollForElement(
-                        SELECTORS.GRABBED_PEGMAN,
-                        (grabbedPegman) => {
-                            grabbedPegman.className = "grapped-pogman-container";
-                            grabbedPegman.querySelector("img").className = "grapped-pogman";
-
-                            this._updateImagesInContainer(grabbedPegman, svgDataUrl);
-                        },
-                        document.body
-                    );
-                });
-            });
-
-            this._pollForElement(SELECTORS.MAP_SELECTOR_TERRAIN, (terrainButton) => {
-                terrainButton.textContent = "Map";
-            });
-
-            this._pollForElement(SELECTORS.MAP_SELECTOR_SATELLITE, (hybridButton) => {
-                hybridButton.textContent = "Satellite";
-            });
-        });
-    },
-
-    // --------------------------------------------------------------------------
-    // Helpers
-    // --------------------------------------------------------------------------
-
-    /**
-     * Creates and returns the DOM element for the custom map pin.
-     *
-     * @private
-     * @returns {Element}
-     */
-    _createCustomPin() {
-        const pinHtmlString = `
+  /**
+   * Creates and returns the DOM element for the custom map pin.
+   *
+   * @private
+   * @returns {Element}
+   */
+  _createCustomPin() {
+    const pinHtmlString = `
             <div class="custom-map-pin">
                 <i class="icon icon-marker-pin01"></i>
             </div>
         `;
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = pinHtmlString.trim();
-        return tempDiv.firstChild;
-    },
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = pinHtmlString.trim();
+    return tempDiv.firstChild;
+  },
 
-    /**
-     * Builds a URL-encoded data URL from the custom Pegman SVG. The SVG is
-     * injected into the Google Maps Street View control to replace the default
-     * figure icon with the Compassion-branded one.
-     *
-     * @private
-     * @returns {String} The generated data URL.
-     */
-    _buildCustomStreetViewSvgDataUrl() {
-        const svgString = `
+  /**
+   * Builds a URL-encoded data URL from the custom Pegman SVG. The SVG is
+   * injected into the Google Maps Street View control to replace the default
+   * figure icon with the Compassion-branded one.
+   *
+   * @private
+   * @returns {String} The generated data URL.
+   */
+  _buildCustomStreetViewSvgDataUrl() {
+    const svgString = `
         <?xml version="1.0" encoding="iso-8859-1"?>
         <svg fill="#000000" height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
              viewBox="0 0 480 480" xml:space="preserve">
@@ -260,22 +262,22 @@ publicWidget.registry.GoogleMapEl = publicWidget.Widget.extend({
         </g>
         </svg>`.trim();
 
-        return "data:image/svg+xml," + encodeURIComponent(svgString);
-    },
+    return "data:image/svg+xml," + encodeURIComponent(svgString);
+  },
 
-    /**
-     * Finds all <img> tags within a given container and replaces their src.
-     *
-     * @private
-     * @param {Element} container - The DOM element containing the images.
-     * @param {String} dataUrl - The new src for the images.
-     */
-    _updateImagesInContainer(container, dataUrl) {
-        const images = container.querySelectorAll("img");
-        images.forEach((img) => {
-            img.src = dataUrl;
-        });
-    },
+  /**
+   * Finds all <img> tags within a given container and replaces their src.
+   *
+   * @private
+   * @param {Element} container - The DOM element containing the images.
+   * @param {String} dataUrl - The new src for the images.
+   */
+  _updateImagesInContainer(container, dataUrl) {
+    const images = container.querySelectorAll("img");
+    images.forEach((img) => {
+      img.src = dataUrl;
+    });
+  },
 });
 
 export default publicWidget.registry.GoogleMapEl;

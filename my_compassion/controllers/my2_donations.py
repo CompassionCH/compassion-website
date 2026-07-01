@@ -158,7 +158,9 @@ class MyCompassionDonationsController(CustomerPortal):
         order_line.write(
             self._extract_donation_order_line_fields(product_template, post)
         )
-        request.session["website_sale_cart_quantity"] = order.cart_quantity if order else 0
+        request.session["website_sale_cart_quantity"] = (
+            order.cart_quantity if order else 0
+        )
 
     @http.route(
         "/my2/gifts/get-limits",
@@ -507,9 +509,9 @@ class MyCompassionDonationsController(CustomerPortal):
 
         for sponsorship in active_sponsorships:
             currency = sponsorship.pricelist_id.currency_id.name
-            tot_cost_per_frequency[sponsorship.group_id.month_interval][
-                currency
-            ] += sponsorship.total_amount
+            tot_cost_per_frequency[sponsorship.group_id.month_interval][currency] += (
+                sponsorship.total_amount
+            )
 
         paid_invoices_data = self._get_paginated_paid_invoices(
             partner, invoice_page, invoice_per_page
@@ -593,4 +595,3 @@ class MyCompassionDonationsController(CustomerPortal):
             "current_page": int(invoice_page),
             "total_pages": total_pages,
         }
-

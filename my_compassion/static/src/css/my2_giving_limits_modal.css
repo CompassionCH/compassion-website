@@ -1,37 +1,37 @@
 .giving-limits-modal .modal-header {
-    position: relative;
-    flex-shrink: 0;
+  position: relative;
+  flex-shrink: 0;
 }
 
 .giving-limits-modal .modal-header button {
-    position: absolute;
-    right: 0;
+  position: absolute;
+  right: 0;
 }
 
 .giving-limits-modal a {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 /* Constrain the modal to the viewport height so its body scrolls
    instead of the underlying page on small phones */
 .giving-limits-modal .modal-content {
-    max-height: calc(100vh - 75px);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+  max-height: calc(100vh - 75px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* Blue intro text: fixed, never scrolls */
 .giving-limits-modal .modal-body.bg-light-blue {
-    flex-shrink: 0;
-    overflow: hidden;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 /* Main content (table + contact): takes remaining space and scrolls */
 .giving-limits-modal .modal-body:not(.bg-light-blue) {
-    flex-shrink: 1;
-    flex-grow: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
+  flex-shrink: 1;
+  flex-grow: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }

@@ -1,154 +1,156 @@
 .weather-time-container-wrapper {
-    position: absolute;
-    bottom: 0;
-    left: 50%; /* Center the container */
-    transform: translateX(-50%);
-    z-index: 10;
-    padding: 0 1rem 1rem;
-    font-size: clamp(0.7rem, 4vw, 1rem);
+  position: absolute;
+  bottom: 0;
+  left: 50%; /* Center the container */
+  transform: translateX(-50%);
+  z-index: 10;
+  padding: 0 1rem 1rem;
+  font-size: clamp(0.7rem, 4vw, 1rem);
 
-    /*
+  /*
     This combination tells the wrapper to be 100% of the parent's width,
     but never more than 70%. This creates a stable container
     that allows text inside to wrap correctly.
   */
-    width: max-content;
-    max-width: 70%;
+  width: max-content;
+  max-width: 70%;
 
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .center-info-card {
-    font-family: var(--font-primary);
-    background-color: #ffffff;
-    border-radius: 0.375rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  font-family: var(--font-primary);
+  background-color: #ffffff;
+  border-radius: 0.375rem;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
 
-    /* Makes the card fill its parent wrapper (which is now capped at 70%) */
-    width: 100%;
-    margin: 0;
+  /* Makes the card fill its parent wrapper (which is now capped at 70%) */
+  width: 100%;
+  margin: 0;
 }
 
 /*
   Styles for the header element
 */
 .center-info-card__header {
-    border-top-right-radius: inherit;
-    border-top-left-radius: inherit;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--high-green);
-    padding: 0.5rem 3rem;
-    width: -webkit-fill-available;
+  border-top-right-radius: inherit;
+  border-top-left-radius: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--high-green);
+  padding: 0.5rem 3rem;
+  width: -webkit-fill-available;
 }
 
 /*
   Styles for the project/church info text
 */
 .center-info-card__project-info {
-    color: var(--low-green);
-    font-size: 0.875rem;
-    margin: 0;
-    text-align: center;
+  color: var(--low-green);
+  font-size: 0.875rem;
+  margin: 0;
+  text-align: center;
 
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Limit to 2 lines */
-    -webkit-box-orient: vertical;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limit to 2 lines */
+  -webkit-box-orient: vertical;
 }
 
 /*
   Styles for the location text
 */
 .center-info-card__location {
-    color: var(--low-green);
-    text-align: center;
-    margin-top: 0.6rem;
+  color: var(--low-green);
+  text-align: center;
+  margin-top: 0.6rem;
 
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Limit to 2 lines */
-    -webkit-box-orient: vertical;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limit to 2 lines */
+  -webkit-box-orient: vertical;
 
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
 /*
   Styles for the time and weather details container
 */
 .center-info-card__details {
-    /* This new responsive font-size now controls
+  /* This new responsive font-size now controls
        the icon size as well */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: var(--color-mid-grey);
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-mid-grey);
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 /*
   Styles for the time, which has its own spacing
 */
 .center-info-card__time {
-    margin-right: 1rem;
-    color: var(--low-grey);
+  margin-right: 1rem;
+  color: var(--low-grey);
 }
 /*
   Styles for the separator line
 */
 .center-info-card__separator {
-    border-left: 1px solid var(--mid-brown);
-    height: 1.25em;
+  border-left: 1px solid var(--mid-brown);
+  height: 1.25em;
 
-    margin-right: 1rem;
+  margin-right: 1rem;
 }
 
 /*
   Styles for the weather container
 */
 .center-info-card__weather {
-    display: flex;
-    align-items: center;
-    color: var(--color-primary-grey);
+  display: flex;
+  align-items: center;
+  color: var(--color-primary-grey);
 }
 
 /*
   Styles for the weather icon
 */
 .center-info-card__weather-icon {
-    width: 1em;
-    height: 1em;
-    margin-right: 0.5rem;
+  width: 1em;
+  height: 1em;
+  margin-right: 0.5rem;
 }
 
 /*
   Styles for the temperature reading
 */
 .center-info-card__temperature {
-    font-weight: 500;
-    color: var(--low-grey);
+  font-weight: 500;
+  color: var(--low-grey);
 }
 
 /* Weather icon color filters */
 /* low-yellow*/
 .weather-icon-sun {
-    background-color: var(--low-yellow);
+  background-color: var(--low-yellow);
 }
 /* dark blue */
 .weather-icon-moon {
-    background-color: var(--dark-blue);
+  background-color: var(--dark-blue);
 }
 /* low-blue */
 .weather-icon-rain {
-    background-color: var(--low-blue);
+  background-color: var(--low-blue);
 }
 /* mid-grey */
 .weather-icon-mist {
-    background-color: var(--mid-grey);
+  background-color: var(--mid-grey);
 }
 /* mid-grey */
 .weather-icon-cloudy {
-    background-color: var(--mid-grey);
+  background-color: var(--mid-grey);
 }

@@ -47,20 +47,24 @@ def migrate(cr, version):
 
     # Re-activate uncustomized, website-specific view copies (inactive copies mask the generic view).
     # Diverged copies stay archived, as their arch is outdated compared to the new parent templates.
-    copies = env["ir.ui.view"].with_context(active_test=False).search(
-        [
-            "|",
-            ("key", "like", "my_compassion.%"),
-            ("key", "like", "website_child_protection.%"),
-            ("website_id", "!=", False),
-            ("active", "=", False),
-        ]
+    copies = (
+        env["ir.ui.view"]
+        .with_context(active_test=False)
+        .search(
+            [
+                "|",
+                ("key", "like", "my_compassion.%"),
+                ("key", "like", "website_child_protection.%"),
+                ("website_id", "!=", False),
+                ("active", "=", False),
+            ]
+        )
     )
     generic_archs = {
         view.key: view.arch_db
-        for view in env["ir.ui.view"].with_context(active_test=False).search(
-            [("key", "in", copies.mapped("key")), ("website_id", "=", False)]
-        )
+        for view in env["ir.ui.view"]
+        .with_context(active_test=False)
+        .search([("key", "in", copies.mapped("key")), ("website_id", "=", False)])
     }
     synced = copies.filtered(lambda c: generic_archs.get(c.key) == c.arch_db)
     synced.write({"active": True})
@@ -80,12 +84,16 @@ def migrate(cr, version):
         generic = env["ir.ui.view"].search(
             [("key", "=", key), ("website_id", "=", False)]
         )
-        masked = env["ir.ui.view"].with_context(active_test=False).search(
-            [
-                ("key", "=", key),
-                ("website_id", "in", theme_websites.ids),
-                ("active", "=", False),
-            ]
+        masked = (
+            env["ir.ui.view"]
+            .with_context(active_test=False)
+            .search(
+                [
+                    ("key", "=", key),
+                    ("website_id", "in", theme_websites.ids),
+                    ("active", "=", False),
+                ]
+            )
         )
         unmask = masked.filtered(lambda c: c.arch_db == generic.arch_db)
         unmask.write({"active": True})
@@ -99,12 +107,18 @@ def migrate(cr, version):
     # It is replaced by the managed child_portal rule.
     child_model = env["ir.model"]._get("compassion.child")
     portal = env.ref("base.group_portal")
-    for rule in env["ir.rule"].with_context(active_test=False).search(
-        [("model_id", "=", child_model.id)]
+    for rule in (
+        env["ir.rule"]
+        .with_context(active_test=False)
+        .search([("model_id", "=", child_model.id)])
     ):
         managed = env["ir.model.data"].search_count(
             [("model", "=", "ir.rule"), ("res_id", "=", rule.id)]
         )
-        if not managed and portal in rule.groups and "sponsor_id" in (rule.domain_force or ""):
+        if (
+            not managed
+            and portal in rule.groups
+            and "sponsor_id" in (rule.domain_force or "")
+        ):
             _logger.info("removing orphan compassion.child rule %r", rule.name)
             rule.unlink()

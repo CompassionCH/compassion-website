@@ -34,6 +34,4 @@ def migrate(cr, version):
         fixed = body.replace(_OLD, _NEW)
         if fixed != body:
             template.with_context(lang=lang).body_html = fixed
-            _logger.info(
-                "fixed the signup-confirmation activation link (%s)", lang
-            )
+            _logger.info("fixed the signup-confirmation activation link (%s)", lang)

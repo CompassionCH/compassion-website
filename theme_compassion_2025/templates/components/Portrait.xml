@@ -17,18 +17,18 @@
     - size (string): The size of the portrait, can be 'small', 'medium', or 'large'.
 -->
 <odoo>
-    <template id="PortraitComponent" name="Portrait Component">
-        <div class="portrait-container">
-            <div t-attf-class="portrait-frame portrait-frame-size-#{size or 'medium'}">
-                <img class="portrait-image" t-att-src="src" t-att-alt="alt" />
-            </div>
-            <t t-if="title">
-                <div>
-                    <p class="portrait-title pb-md-0 mb-md-0">
-                        <t t-esc="title" />
-                    </p>
-                </div>
-            </t>
+  <template id="PortraitComponent" name="Portrait Component">
+    <div class="portrait-container">
+      <div t-attf-class="portrait-frame portrait-frame-size-#{size or 'medium'}">
+        <img class="portrait-image" t-att-src="src" t-att-alt="alt" />
+      </div>
+      <t t-if="title">
+        <div>
+          <p class="portrait-title pb-md-0 mb-md-0">
+            <t t-esc="title" />
+          </p>
         </div>
-    </template>
+      </t>
+    </div>
+  </template>
 </odoo>

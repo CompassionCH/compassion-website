@@ -1,26 +1,26 @@
 // Converts a PascalCase or camelCase string to kebab-case.
 // Example: "BibleGift" -> "bible-gift"
 @function to-kebab-case($string) {
-    // A string of all uppercase letters for comparison, as older Sass
-    // versions don't support direct string comparison (e.g., $char >= "A").
-    $uppercase-letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    $new-string: "";
+  // A string of all uppercase letters for comparison, as older Sass
+  // versions don't support direct string comparison (e.g., $char >= "A").
+  $uppercase-letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  $new-string: "";
 
-    @for $i from 1 through str-length($string) {
-        $char: str-slice($string, $i, $i);
+  @for $i from 1 through str-length($string) {
+    $char: str-slice($string, $i, $i);
 
-        // Check if the character is in our list of uppercase letters.
-        // `str-index` returns the position if found, or null if not.
-        @if str-index($uppercase-letters, $char) {
-            // If it's an uppercase letter and not the first character, add a hyphen.
-            @if $i > 1 {
-                $new-string: $new-string + "-";
-            }
-            $new-string: $new-string + to-lower-case($char);
-        } @else {
-            // Otherwise, just add the character as is.
-            $new-string: $new-string + $char;
-        }
+    // Check if the character is in our list of uppercase letters.
+    // `str-index` returns the position if found, or null if not.
+    @if str-index($uppercase-letters, $char) {
+      // If it's an uppercase letter and not the first character, add a hyphen.
+      @if $i > 1 {
+        $new-string: $new-string + "-";
+      }
+      $new-string: $new-string + to-lower-case($char);
+    } @else {
+      // Otherwise, just add the character as is.
+      $new-string: $new-string + $char;
     }
-    @return $new-string;
+  }
+  @return $new-string;
 }

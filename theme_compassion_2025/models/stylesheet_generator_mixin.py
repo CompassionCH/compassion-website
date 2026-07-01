@@ -89,7 +89,10 @@ class StylesheetGeneratorMixin(models.AbstractModel):
             )
             return
         attachment.write(
-            {"datas": base64.b64encode(css_content.encode("utf-8")), "website_id": False}
+            {
+                "datas": base64.b64encode(css_content.encode("utf-8")),
+                "website_id": False,
+            }
         )
         _logger.info(f"Successfully updated {attachment.name} file.")
 

@@ -16,80 +16,87 @@
     - top_class (string): Classes to add to the top element of the product.                     [none]
 -->
 <odoo>
-    <!-- DONATION PRODUCT COMPONENT -->
-    <template id="DonationProductComponent" name="Donation Product Component">
-        <!-- Default property values -->
-        <t t-set="submission_event" t-value="submission_event or 'donation-form:submit'" />
-        <t t-set="title_color" t-value="title_color or 'dark-blue'" />
-        <t t-set="accent_color" t-value="accent_color or 'dark-blue'" />
-        <t t-set="price_color" t-value="price_color or 'dark-blue'" />
-        <t t-set="bg_color" t-value="bg_color or 'high-eggshell'" />
-        <!-- Add donation modal -->
-        <t t-set="modal_id" t-valuef="add-donation-modal-#{product.id}" />
-        <div
-            class="modal fade donation-product-add-modal"
-            t-att-id="modal_id"
-            tabindex="-1"
-            role="dialog"
-            aria-labelledby="edit-donation-modal-title"
-            aria-hidden="true"
-        >
-            <div class="modal-dialog" role="document">
-                <div class="modal-content border-0">
-                    <div class="modal-body">
-                        <button
-                            type="button"
-                            class="btn-close mt-3 me-3 icon-x-circle body-large text-mid-grey"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"
-                        />
-                        <div class="d-flex justify-content-center">
-                            <t t-call="my_compassion.DonationFormComponent">
-                                <t t-set="base_name" t-valuef="donation-form-radio-#{product.id}" />
-                            </t>
-                        </div>
-                    </div>
-                </div>
+  <!-- DONATION PRODUCT COMPONENT -->
+  <template id="DonationProductComponent" name="Donation Product Component">
+    <!-- Default property values -->
+    <t t-set="submission_event" t-value="submission_event or 'donation-form:submit'" />
+    <t t-set="title_color" t-value="title_color or 'dark-blue'" />
+    <t t-set="accent_color" t-value="accent_color or 'dark-blue'" />
+    <t t-set="price_color" t-value="price_color or 'dark-blue'" />
+    <t t-set="bg_color" t-value="bg_color or 'high-eggshell'" />
+    <!-- Add donation modal -->
+    <t t-set="modal_id" t-valuef="add-donation-modal-#{product.id}" />
+    <div
+      class="modal fade donation-product-add-modal"
+      t-att-id="modal_id"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="edit-donation-modal-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content border-0">
+          <div class="modal-body">
+            <button
+              type="button"
+              class="btn-close mt-3 me-3 icon-x-circle body-large text-mid-grey"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            />
+            <div class="d-flex justify-content-center">
+              <t t-call="my_compassion.DonationFormComponent">
+                <t t-set="base_name" t-valuef="donation-form-radio-#{product.id}" />
+              </t>
             </div>
+          </div>
         </div>
-        <!-- Component definition -->
-        <div
-            t-attf-class="donation-product-container p-2 d-flex rounded-lg bg-#{bg_color} border-#{accent_color} #{top_class}"
-            t-attf-style="min-width: #{min_width}"
-        >
-            <div class="w-100 d-flex flex-column justify-content-between">
-                <div class="d-flex align-items-start">
-                    <div
-                        class="thumbnail me-3 flex-shrink-0 rounded-lg"
-                        t-attf-style="--image_url: url('/web/image/#{product._name}/#{product.id}/my_compassion_image');"
-                    />
-                    <div class="flex-grow-1 h-100 d-flex flex-column justify-content-between">
-                        <div t-attf-class="text-#{title_color} body-large bold">
-                            <t t-out="product.my_compassion_name" />
-                        </div>
-                        <a t-attf-href="/my2/gifts/#{product.id}" class="text-core-blue tiny-text bold">Learn More</a>
-                    </div>
-                </div>
-                <div class="mt-2 d-flex justify-content-between">
-                    <div t-attf-class="body-small text-#{price_color} ">
+      </div>
+    </div>
+    <!-- Component definition -->
+    <div
+      t-attf-class="donation-product-container p-2 d-flex rounded-lg bg-#{bg_color} border-#{accent_color} #{top_class}"
+      t-attf-style="min-width: #{min_width}"
+    >
+      <div class="w-100 d-flex flex-column justify-content-between">
+        <div class="d-flex align-items-start">
+          <div
+            class="thumbnail me-3 flex-shrink-0 rounded-lg"
+            t-attf-style="--image_url: url('/web/image/#{product._name}/#{product.id}/my_compassion_image');"
+          />
+          <div class="flex-grow-1 h-100 d-flex flex-column justify-content-between">
+            <div t-attf-class="text-#{title_color} body-large bold">
+              <t t-out="product.my_compassion_name" />
+            </div>
+            <a
+              t-attf-href="/my2/gifts/#{product.id}"
+              class="text-core-blue tiny-text bold"
+            >Learn More</a>
+          </div>
+        </div>
+        <div class="mt-2 d-flex justify-content-between">
+          <div t-attf-class="body-small text-#{price_color} ">
                         From
                         <span class="body-small bold">
-                            <t t-out="currency_name" />
-                            <t t-set="price" t-value="product.my_compassion_donation_amount_low" />
-                            <t t-if="price % 1 == 0" t-set="price" t-value="'{0}.-'.format(int(price))" />
-                            <t t-else="" t-set="price" t-value="'{0:.2f}'.format(price)" />
-                            <t t-out="price" />
-                        </span>
+            <t t-out="currency_name" />
+            <t t-set="price" t-value="product.my_compassion_donation_amount_low" />
+            <t
+              t-if="price % 1 == 0"
+              t-set="price"
+              t-value="'{0}.-'.format(int(price))"
+            />
+            <t t-else="" t-set="price" t-value="'{0:.2f}'.format(price)" />
+            <t t-out="price" />
+          </span>
                     </div>
-                    <button
-                        class="px-4 border-0 rounded-lg bg-core-blue tiny-text bold text-pure-white"
-                        data-bs-toggle="modal"
-                        t-attf-data-bs-target="##{modal_id}"
-                    >
+          <button
+            class="px-4 border-0 rounded-lg bg-core-blue tiny-text bold text-pure-white"
+            data-bs-toggle="modal"
+            t-attf-data-bs-target="##{modal_id}"
+          >
                         Add
                     </button>
-                </div>
-            </div>
         </div>
-    </template>
+      </div>
+    </div>
+  </template>
 </odoo>
