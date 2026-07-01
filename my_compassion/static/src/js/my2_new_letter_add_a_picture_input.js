@@ -27,7 +27,7 @@ whenReady(() => {
    * Generates a unique key for a file based on its metadata.
    *
    * @param {File} file - The file to generate a key for.
-   * @returns {string} A unique key combining the file's name, size, type, and last modified date.
+   * @returns {String} A unique key combining the file's name, size, type, and last modified date.
    */
   const generateFileKey = (file) =>
     `${file.name}-${file.size}-${file.type}-${file.lastModified}`;
@@ -123,7 +123,7 @@ whenReady(() => {
    * Includes a preview image, file name, and a remove button.
    *
    * @param {File} file - The file to create an element for.
-   * @param {string} dataUrl - The Data URL of the file for the preview.
+   * @param {String} dataUrl - The Data URL of the file for the preview.
    * @returns {HTMLElement} The created file container element.
    */
   const createFileElement = (file, dataUrl) => {

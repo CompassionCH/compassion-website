@@ -157,9 +157,8 @@ export const DonationForm = publicWidget.Widget.extend({
           ) {
             this.$(".limit-error-message").removeAttr("hidden");
             return;
-          } else {
-            this.$(".limit-error-message").attr("hidden", true);
           }
+          this.$(".limit-error-message").attr("hidden", true);
 
           // Trigger submission event
           this.$el.trigger(this.$(".btn-submit").data("submission-event"), [
@@ -191,7 +190,7 @@ export const DonationForm = publicWidget.Widget.extend({
 
   /**
    * Validates the payment form.
-   * @returns {boolean} - True if valid, false otherwise.
+   * @returns {Boolean} - True if valid, false otherwise.
    */
   _validateForm: function () {
     let isValid = true;

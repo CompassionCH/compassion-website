@@ -35,12 +35,12 @@ publicWidget.registry.themeCompassionEventBanner = publicWidget.Widget.extend({
   },
 
   async _loadAndRender() {
-    let items;
+    let items = null;
     try {
       items = await rpc("/my2/active-event-banners", {
         current_page_route: window.location.pathname,
       });
-    } catch (_err) {
+    } catch {
       return;
     }
 

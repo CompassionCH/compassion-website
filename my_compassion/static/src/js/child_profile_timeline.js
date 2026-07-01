@@ -44,8 +44,8 @@ whenReady(() => {
     constructor(element) {
       this.element = element;
       this.offset = 0.8;
-      this.updateBlocks(); // initialize references
-      this.hideBlocks(); // initial hide
+      this.updateBlocks(); // Initialize references
+      this.hideBlocks(); // Initial hide
     }
 
     updateBlocks() {

@@ -60,7 +60,7 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
       return;
     }
 
-    let formData;
+    let formData = null;
     try {
       formData = await this._collectFormData();
     } catch (error) {
@@ -181,7 +181,6 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
   _collectFormData: async function () {
     const childId = this.$("#child-dropdown").val();
     const letterBody = this.$("#letter-input").val();
-    const selectedTemplateImage = document.getElementById("selected-template");
     let templateId = this.$("#selected-template").attr("data-template-id") || null;
     if (!templateId) {
       const draftTemplate = document.getElementById("draft-template-id");
@@ -223,7 +222,7 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
   },
 
   _createGenerator: async function (data) {
-    //clear the uploaded files buffer as they are now sent to the server
+    // Clear the uploaded files buffer as they are now sent to the server
     // This ensures that if multiple _creategenerator happen at once, the attachment list is coherent regardless of the time taken by the rpc query
     letterAttachments.files = [];
     const fileInput = this.$("#letter-attachments")[0];

@@ -1,6 +1,4 @@
 odoo.define("compassion_website.mobile_cart_sync", function (require) {
-  "use strict";
-
   $(document).ready(function () {
     // Listen to all background network requests
     $(document).ajaxSuccess(function (event, xhr, settings) {

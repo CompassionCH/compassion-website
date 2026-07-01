@@ -48,11 +48,11 @@ publicWidget.registry.ClearLetterButtonWidget = publicWidget.Widget.extend({
     // Remove all written text from the textarea
     this.$("#letter-input").val("");
 
-    //Remove the uploaded files from the input
+    // Remove the uploaded files from the input
     const fileInput = this.$("#letter-attachments")[0];
     fileInput.value = "";
     letterAttachments.files = [];
-    //Clear the uploaded images container
+    // Clear the uploaded images container
     this.$("#uploaded-files-container").empty();
 
     // Remove the selected template image
@@ -73,7 +73,7 @@ publicWidget.registry.ClearLetterButtonWidget = publicWidget.Widget.extend({
     }).catch((error) => {
       console.error("Error unlinking draft generator:", error);
     });
-    //Clear the generator_id value got from the previously loaded draft if any.
+    // Clear the generator_id value got from the previously loaded draft if any.
     this.$("input[name='generator_id']").val("");
 
     this._toggleClearButton();

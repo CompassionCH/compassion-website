@@ -94,7 +94,7 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
 
   /**
    * Validates required fields in the current step.
-   * @returns {boolean} - True if valid, false otherwise.
+   * @returns {Boolean} - True if valid, false otherwise.
    */
   _validateForm: function () {
     var isValid = true;
@@ -176,7 +176,7 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
 
   /**
    * Evaluates if the birthdate qualifies for Write & Pray.
-   * @returns {boolean} - true if valid, false if too old.
+   * @returns {Boolean} - true if valid, false if too old.
    */
   _checkWAPAge: function () {
     const birthdateVal = this.$('input[name="birthdate"]').val();

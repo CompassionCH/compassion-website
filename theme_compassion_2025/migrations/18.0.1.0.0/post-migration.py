@@ -32,7 +32,7 @@ def migrate(cr, version):
     rename_map = {
         "/theme/compassion/colors.scss": "/theme_compassion_2025/dynamic/colors.scss",
         "/theme/compassion/icons.scss": "/theme_compassion_2025/dynamic/icons.scss",
-        "/theme/compassion/pictograms.scss": "/theme_compassion_2025/dynamic/pictograms.scss",
+        "/theme/compassion/pictograms.scss": "/theme_compassion_2025/dynamic/pictograms.scss",  # noqa: E501
     }
     for old_url, new_url in rename_map.items():
         cr.execute(

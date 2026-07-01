@@ -45,8 +45,9 @@ def migrate(cr, version):
     parked.write({"active": True})
     _logger.info("re-activated %s parked views owned by %s", len(parked), _MODULES)
 
-    # Re-activate uncustomized, website-specific view copies (inactive copies mask the generic view).
-    # Diverged copies stay archived, as their arch is outdated compared to the new parent templates.
+    # Re-activate uncustomized, website-specific view copies (inactive copies
+    # mask the generic view). Diverged copies stay archived, as their arch is
+    # outdated compared to the new parent templates.
     copies = (
         env["ir.ui.view"]
         .with_context(active_test=False)
@@ -95,7 +96,9 @@ def migrate(cr, version):
                 ]
             )
         )
-        unmask = masked.filtered(lambda c: c.arch_db == generic.arch_db)
+        unmask = masked.filtered(
+            lambda c, generic=generic: c.arch_db == generic.arch_db
+        )
         unmask.write({"active": True})
         _logger.info(
             "unmasked %s on websites %s",

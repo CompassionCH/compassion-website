@@ -81,9 +81,7 @@ function initTabNavigation() {
   const currentTab = urlParams.get("current_tab");
   if (currentTab) {
     activateTab(`#${currentTab.replace(/\s+/g, "-")}`);
-  } else {
-    if (tabLinks.length) activateTab(tabLinks[0].getAttribute("href"));
-  }
+  } else if (tabLinks.length) activateTab(tabLinks[0].getAttribute("href"));
 
   desktopTabsContainer?.addEventListener("click", (e) => {
     if (e.target.matches("a.nav-link")) {
@@ -106,7 +104,7 @@ function initCommunicationSettings() {
     // Skip if the event is not on an input or select
     if (!target.matches("input, select")) return;
     let field = target.dataset.field;
-    let value;
+    let value = null;
 
     if (!field && target.tagName === "SELECT") {
       switch (target.id) {
@@ -274,7 +272,7 @@ function initFormHandler({
     return;
   }
 
-  let originalValues = {};
+  const originalValues = {};
 
   const getFieldWidget = (fieldName) => {
     const input = form.querySelector(`[name="${fieldName}"]`);

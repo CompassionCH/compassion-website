@@ -53,7 +53,9 @@ export class RangeInput extends Component {
     labelColor: "low-black",
     rangeColor: "low-yellow",
     trackColor: "low-eggshell",
-    onRangeChange: () => {},
+    onRangeChange: () => {
+      // Default no-op handler.
+    },
   };
 
   setup() {

@@ -36,7 +36,7 @@ whenReady(() => {
 
   // Handles time computation and formating
   if (currentTimeEl) {
-    //Formatting options for the time to be shown
+    // Formatting options for the time to be shown
     const options = {
       hour: "2-digit",
       minute: "2-digit",
@@ -44,7 +44,7 @@ whenReady(() => {
       timeZone: timezone,
     };
 
-    let clockInterval;
+    let clockInterval = null;
     const updateTime = () => {
       try {
         const now = new Date();
@@ -80,13 +80,13 @@ whenReady(() => {
         const icon_id = data.weather_icon_id;
         // Attach the fetched icon to the frontend
         weather_icon_el.classList.add("icon", `icon-${icon_id}`);
-        //Attach the corresponding css class for the icon to allow color styling
+        // Attach the corresponding css class for the icon to allow color styling
         const iconClass = iconClassMap[icon_id];
         if (iconClass) {
           weather_icon_el.classList.add(iconClass);
         }
 
-        //Upon successful fetch and update, ensure the container is visible
+        // Upon successful fetch and update, ensure the container is visible
         if (containerEl) {
           containerEl.classList.remove("d-none");
         }

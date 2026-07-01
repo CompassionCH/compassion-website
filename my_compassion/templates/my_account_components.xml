@@ -5,6 +5,7 @@
       id="my_account_menu"
       name="MyCompassion - hide portal My Account link"
       inherit_id="portal.my_account_link"
+      priority="99"
     >
       <xpath expr="//a[@href='/my/home']" position="replace" />
     </template>

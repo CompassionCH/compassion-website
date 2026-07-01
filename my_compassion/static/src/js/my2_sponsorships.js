@@ -103,7 +103,7 @@ export const Sponsorships = publicWidget.Widget.extend({
 
   /**
    * Appends HTML to a container and applies a staggered animation.
-   * @param {string} htmlContent - The raw HTML string (e.g., data.html)
+   * @param {String} htmlContent - The raw HTML string (e.g., data.html)
    * @param {jQuery} $container  - The jQuery object to append to (e.g., $resultsContainer)
    */
   _appendAndAnimate: function (htmlContent, $container) {
@@ -192,18 +192,16 @@ export const Sponsorships = publicWidget.Widget.extend({
 
             // Re-enable buttons
             this.$(".btn").prop("disabled", false);
-          } else {
+          } else if (!global_pool) {
             // Refetch using global pool if no results found
-            if (!global_pool) {
-              this._fetchSponsorships(true);
-            } else {
-              // No results found even in global pool, just update UI
-              this.totalResults = 0;
-              this._updateTotalResultsLabel();
-              this._updateChooseForMeButton();
-              this._updateShowMoreButton();
-              this.$(".btn").prop("disabled", false);
-            }
+            this._fetchSponsorships(true);
+          } else {
+            // No results found even in global pool, just update UI
+            this.totalResults = 0;
+            this._updateTotalResultsLabel();
+            this._updateChooseForMeButton();
+            this._updateShowMoreButton();
+            this.$(".btn").prop("disabled", false);
           }
         }.bind(this)
       )

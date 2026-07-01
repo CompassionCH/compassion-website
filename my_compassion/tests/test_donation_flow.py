@@ -1,13 +1,15 @@
 """Browser tests for the my_compassion donation flow.
 
-Running this suite on the migrated database: ``--test-enable`` currently aborts during
-test loading. Several modules in compassion-modules and compassion-switzerland import
-``BaseSponsorshipTest``, a shared test base class removed upstream (its helper chain, down
-to recurring_contract's ``BaseContractTest``, is gone), and a single failing test import
-aborts the whole run, these tests included. To run this suite, temporarily comment out the
-``BaseSponsorshipTest`` imports in those modules' ``tests/__init__.py`` (grep the workspace
-for ``BaseSponsorshipTest`` to find them), run, then restore them. Re-enabling those tests
-properly means restoring the deleted helper chain, which is separate work.
+Running this suite on the migrated database: ``--test-enable`` currently aborts
+during test loading. Several modules in compassion-modules and
+compassion-switzerland import ``BaseSponsorshipTest``, a shared test base class
+removed upstream (its helper chain, down to recurring_contract's
+``BaseContractTest``, is gone), and a single failing test import aborts the whole
+run, these tests included. To run this suite, temporarily comment out the
+``BaseSponsorshipTest`` imports in those modules' ``tests/__init__.py`` (grep the
+workspace for ``BaseSponsorshipTest`` to find them), run, then restore them.
+Re-enabling those tests properly means restoring the deleted helper chain, which
+is separate work.
 """
 
 import logging
