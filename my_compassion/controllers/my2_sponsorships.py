@@ -213,7 +213,7 @@ class MyCompassionSponsorshipsController(http.Controller):
 
 class MyCompassionNewSponsorshipController(http.Controller):
     @http.route(
-        '/my2/new-sponsorship/<model("compassion.child"):child>',
+        '/my2/new-sponsorship/<model_safe("compassion.child"):child>',
         type="http",
         auth="public",
         website=True,

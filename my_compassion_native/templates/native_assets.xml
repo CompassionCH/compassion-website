@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="native_assets" inherit_id="website.assets_frontend">
+        <xpath expr="." position="inside">
+            <script src="/my_compassion_native/static/src/js/capacitor_bridge.js" />
+            <script src="/my_compassion_native/static/src/js/capacitor_pdf_util.js" />
+            <script src="/my_compassion_native/static/src/js/capacitor_push.js" />
+            <script src="/my_compassion_native/static/src/js/capacitor_ui_fix.js" />
+            <script src="/my_compassion_native/static/src/js/native_pdf_intercept.js" />
+            <link rel="stylesheet" type="text/scss" href="/my_compassion_native/static/src/scss/native_app.scss" />
+        </xpath>
+    </template>
+</odoo>
