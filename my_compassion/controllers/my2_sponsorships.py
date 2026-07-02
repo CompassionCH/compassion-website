@@ -17,7 +17,7 @@ from odoo import fields, http
 from odoo.http import request
 from odoo.tools.translate import _
 
-from odoo.addons.my_compassion.models.compassion_child import ChildNotFound
+from ..models.compassion_child import ChildNotFound
 
 # Hold up to 3 children (more is too slow)
 GLOBAL_FETCH_LIMIT = 3

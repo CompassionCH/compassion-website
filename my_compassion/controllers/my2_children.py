@@ -14,9 +14,7 @@ from odoo import _, http
 from odoo.exceptions import AccessError
 from odoo.http import request
 
-from odoo.addons.my_compassion.controllers.my2_sponsorships import (
-    _get_reservation_uuid,
-)
+from .my2_sponsorships import _get_reservation_uuid
 
 
 class MyCompassionChildrenController(http.Controller):

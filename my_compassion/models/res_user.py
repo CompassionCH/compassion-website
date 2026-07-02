@@ -117,7 +117,9 @@ class ResUsers(models.Model):
             self.env.flush_all()
 
             # Queue the task to find or replace the partner
-            self.with_delay(priority=5)._find_and_replace_partner_async(user.id, email)
+            self.with_delay_sh(
+                "_find_and_replace_partner_async", user.id, email, priority=5
+            )
             _logger.info(
                 "Async task to find and replace partner for user %s queued.",
                 user.login,
