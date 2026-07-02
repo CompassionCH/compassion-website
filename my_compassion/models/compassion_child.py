@@ -145,8 +145,10 @@ class CompassionChild(models.Model):
             }
         )
         delay = now + relativedelta(minutes=5)
-        self.with_delay(eta=delay).write(
-            {"website_reservation_date": False, "website_reservation_id": False}
+        self.with_delay_sh(
+            "write",
+            {"website_reservation_date": False, "website_reservation_id": False},
+            eta=delay,
         )
         return True
 

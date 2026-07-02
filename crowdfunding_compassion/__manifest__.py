@@ -50,7 +50,6 @@
         "data/utm_medium.xml",
         "data/products.xml",
         "data/action_rules.xml",
-        "data/queue_job.xml",
         "data/form_data.xml",
         "data/website_redirect.xml",
         "views/account_invoice_line_view.xml",

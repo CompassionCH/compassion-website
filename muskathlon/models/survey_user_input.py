@@ -38,9 +38,10 @@ class SurveyUserInput(models.Model):
                     ]
                 )
             )
-            registrations.with_delay(
+            registrations.with_delay_sh(
+                "muskathlon_medical_survey_done",
                 priority=100,
                 channel="root.partner_communication",
                 identity_key=f"muskathlon.medical_survey.{registrations.ids}",
-            ).muskathlon_medical_survey_done()
+            )
         return res

@@ -671,11 +671,11 @@ class EventRegistration(models.Model):
                 registration.write({"stage_id": next_stage.id})
 
         # Send potential communications after stage transition
-        self.env["event.mail"].with_user(SUPERUSER_ID).with_delay(
-            priority=50,
+        self.env["event.mail"].with_user(SUPERUSER_ID).with_delay_sh(
+            "run",
             channel="root.partner_communication",
             identity_key="event.registration.mail_scheduler",
-        ).run()
+        )
         return True
 
     def _track_subtype(self, init_values):

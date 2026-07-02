@@ -7,16 +7,16 @@ from odoo import SUPERUSER_ID, models
 class AccountInvoice(models.Model):
     _inherit = "account.move"
 
-    def action_invoice_paid(self):
+    def generate_thank_you(self):
         """Generate a Thank you Communication when invoice is a donation"""
-        res = super().action_invoice_paid()
+        super().generate_thank_you()
         for invoice in self.filtered("invoice_line_ids.crowdfunding_participant_id"):
-            if invoice.payment_state == "paid":
-                invoice.with_user(SUPERUSER_ID).with_delay(
-                    eta=10,
-                    identity_key=f"{self._name}.crowdfunding_receipt.{invoice.id}",
-                ).generate_crowdfunding_receipt()
-        return res
+            invoice.with_user(SUPERUSER_ID).with_delay_sh(
+                "generate_crowdfunding_receipt",
+                eta=10,
+                channel="root.partner_communication",
+                identity_key=f"{self._name}.crowdfunding_receipt.{invoice.id}",
+            )
 
     def generate_crowdfunding_receipt(self):
         """Generates the receipt communication for a TOGETHER donation,
