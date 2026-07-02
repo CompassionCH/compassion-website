@@ -5,105 +5,105 @@
 
 /* Envelope icon */
 .my2-envelope {
-    --env-width: 84px;
-    --env-height: 54px;
-    width: var(--env-width);
-    height: var(--env-height);
-    position: relative;
-    display: block;
-    cursor: pointer;
+  --env-width: 84px;
+  --env-height: 54px;
+  width: var(--env-width);
+  height: var(--env-height);
+  position: relative;
+  display: block;
+  cursor: pointer;
 }
 
 /* Color variants */
 .envelope--blue {
-    --color-env: #6a8ef2;
-    --color-flap: #11265e;
+  --color-env: #6a8ef2;
+  --color-flap: #11265e;
 }
 .envelope--green {
-    --color-env: #499e57;
-    --color-flap: #235339;
+  --color-env: #499e57;
+  --color-flap: #235339;
 }
 
 /* Envelope components */
 .my2-envelope .env-body {
-    width: 100%;
-    height: 100%;
-    background-color: var(--color-env);
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-env);
 }
 .my2-envelope .env-flap {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-    border-left: calc(var(--env-width) / 2) solid transparent;
-    border-right: calc(var(--env-width) / 2) solid transparent;
-    border-top: calc(var(--env-height) / 2) solid var(--color-flap);
-    transform-origin: top;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: calc(var(--env-width) / 2) solid transparent;
+  border-right: calc(var(--env-width) / 2) solid transparent;
+  border-top: calc(var(--env-height) / 2) solid var(--color-flap);
+  transform-origin: top;
 }
 .my2-envelope .env-pocket {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-    border-left: calc(var(--env-width) / 2) solid var(--color-env);
-    border-right: calc(var(--env-width) / 2) solid var(--color-env);
-    border-bottom: calc(var(--env-height) / 2) solid var(--color-env);
-    border-top: calc(var(--env-height) / 2) solid transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: calc(var(--env-width) / 2) solid var(--color-env);
+  border-right: calc(var(--env-width) / 2) solid var(--color-env);
+  border-bottom: calc(var(--env-height) / 2) solid var(--color-env);
+  border-top: calc(var(--env-height) / 2) solid transparent;
 }
 .my2-envelope .env-letter {
-    position: absolute;
-    top: calc(var(--env-height) * 0.05);
-    left: calc(var(--env-width) * 0.05);
-    width: 90%;
-    height: 90%;
-    background-color: #fff;
-    border-radius: 4px;
-    overflow: hidden;
+  position: absolute;
+  top: calc(var(--env-height) * 0.05);
+  left: calc(var(--env-width) * 0.05);
+  width: 90%;
+  height: 90%;
+  background-color: #fff;
+  border-radius: 4px;
+  overflow: hidden;
 }
 /* Preview on the letter */
 .my2-envelope .env-letter iframe {
-    border: none;
-    transform: scale(0.1) translateY(-10%) translateX(-5%);
-    transform-origin: top left;
-    width: 1200%;
-    height: 1200%;
+  border: none;
+  transform: scale(0.1) translateY(-10%) translateX(-5%);
+  transform-origin: top left;
+  width: 1200%;
+  height: 1200%;
 }
 /* Envelope animation */
 .open .env-flap {
-    transform: rotateX(180deg);
-    transition: transform 0.8s ease;
-    z-index: 2;
+  transform: rotateX(180deg);
+  transition: transform 0.8s ease;
+  z-index: 2;
 }
 .open .env-letter {
-    transform: translateY(-40%);
-    transition: transform 0.6s ease 0.8s;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    z-index: 1;
+  transform: translateY(-40%);
+  transition: transform 0.6s ease 0.8s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1;
 }
 .open .env-pocket {
-    z-index: 3;
+  z-index: 3;
 }
 
 /* Style of the letters when they are already been read */
 .already-read .env-flap {
-    transform: rotateX(180deg);
-    z-index: 1;
+  transform: rotateX(180deg);
+  z-index: 1;
 }
 
 .already-read .env-letter {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    z-index: 2;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 2;
 }
 
 .already-read .env-pocket {
-    z-index: 3;
+  z-index: 3;
 }
 
 /* Animation on click for the already read letters */
 .reopen .env-letter {
-    transform: translateY(-40%);
-    transition: transform 0.6s ease 0s;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transform: translateY(-40%);
+  transition: transform 0.6s ease 0s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }

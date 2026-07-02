@@ -1,44 +1,49 @@
 <odoo>
-    <record id="view_correspondence_s2b_generator_form_inherited" model="ir.ui.view">
-        <field name="name">correspondence.s2b.generator.form.inherited</field>
-        <field name="model">correspondence.s2b.generator</field>
-        <field name="inherit_id" ref="sbc_compassion.s2b_generator_form" />
-        <field name="arch" type="xml">
-            <field name="selection_domain" position="after">
-                <field name="user_id" domain="[('partner_id.has_sponsorships', '=', True)]" />
-                <field name="partner_id" invisible="1" />
-                <field name="child_id" domain="[('sponsor_id', '=', partner_id)]" />
-            </field>
-            <xpath expr="//field[@name='selection_domain']" position="attributes">
-                <attribute name="attrs">{'invisible': [('user_id', '!=', False), ('child_id', '!=', False)]}</attribute>
-            </xpath>
-        </field>
-    </record>
-    <record id="correspondence_published_view" model="ir.ui.view">
-        <field name="name">correspondence.published.form</field>
-        <field name="model">correspondence</field>
-        <field name="inherit_id" ref="sbc_compassion.view_correspondence_form" />
-        <field name="arch" type="xml">
-            <xpath expr="//sheet/h1" position="before">
-                <field name="website_published" invisible="1" />
-                <div class="oe_button_box" name="button_box">
-                    <button name="website_publish_button" type="object" class="oe_stat_button" icon="fa-globe">
-                        <field name="is_published" widget="website_publish_button" />
-                    </button>
-                </div>
-                <widget
-                    name="web_ribbon"
-                    title="Published"
-                    bg_color="bg-success"
-                    attrs="{'invisible': [('website_published', '=', False)]}"
-                />
-                <widget
-                    name="web_ribbon"
-                    title="Unpublished"
-                    bg_color="bg-danger"
-                    attrs="{'invisible': [('website_published', '=', True)]}"
-                />
-            </xpath>
-        </field>
-    </record>
+  <record id="view_correspondence_s2b_generator_form_inherited" model="ir.ui.view">
+    <field name="name">correspondence.s2b.generator.form.inherited</field>
+    <field name="model">correspondence.s2b.generator</field>
+    <field name="inherit_id" ref="sbc_compassion.s2b_generator_form" />
+    <field name="arch" type="xml">
+      <field name="selection_domain" position="after">
+        <field name="user_id" domain="[('partner_id.number_sponsorships', '>', 0)]" />
+        <field name="partner_id" invisible="1" />
+        <field name="child_id" domain="[('sponsor_id', '=', partner_id)]" />
+      </field>
+      <xpath expr="//field[@name='selection_domain']" position="attributes">
+        <attribute name="invisible">user_id and child_id</attribute>
+      </xpath>
+    </field>
+  </record>
+  <record id="correspondence_published_view" model="ir.ui.view">
+    <field name="name">correspondence.published.form</field>
+    <field name="model">correspondence</field>
+    <field name="inherit_id" ref="sbc_compassion.view_correspondence_form" />
+    <field name="arch" type="xml">
+      <xpath expr="//sheet/h1" position="before">
+        <field name="website_published" invisible="1" />
+        <div class="oe_button_box" name="button_box">
+          <button
+            name="website_publish_button"
+            type="object"
+            class="oe_stat_button"
+            icon="fa-globe"
+          >
+            <field name="is_published" widget="website_publish_button" />
+          </button>
+        </div>
+        <widget
+          name="web_ribbon"
+          title="Published"
+          bg_color="bg-success"
+          invisible="not website_published"
+        />
+        <widget
+          name="web_ribbon"
+          title="Unpublished"
+          bg_color="bg-danger"
+          invisible="website_published"
+        />
+      </xpath>
+    </field>
+  </record>
 </odoo>

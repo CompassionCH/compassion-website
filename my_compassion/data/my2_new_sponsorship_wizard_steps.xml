@@ -1,21 +1,45 @@
 <?xml version="1.0" ?>
 <odoo>
-    <data noupdate="1">
-        <record id="new_sponsorship_wizard_step_user_details" model="new.sponsorship.wizard.step">
-            <field name="title">Your details</field>
-            <field name="template" ref="my_compassion.my2_new_sponsorship_wizard_user_details"/>
-        </record>
-        <record id="new_sponsorship_wizard_step_payment_methods" model="new.sponsorship.wizard.step">
-            <field name="title">Payment options</field>
-            <field name="template" ref="my_compassion.my2_new_sponsorship_wizard_payment_method"/>
-        </record>
-        <record id="new_sponsorship_wizard_step_wap_options" model="new.sponsorship.wizard.step">
-            <field name="title">Write&amp;Pray options</field>
-            <field name="template" ref="my_compassion.my2_new_sponsorship_wizard_wap_options"/>
-        </record>
-        <record id="new_sponsorship_wizard_step_communication_details" model="new.sponsorship.wizard.step">
-            <field name="title">Communication</field>
-            <field name="template" ref="my_compassion.my2_new_sponsorship_wizard_communication_details"/>
-        </record>
-    </data>
+  <data noupdate="1">
+    <record
+      id="new_sponsorship_wizard_step_user_details"
+      model="new.sponsorship.wizard.step"
+    >
+      <field name="title">Your details</field>
+      <field
+        name="template"
+        ref="my_compassion.my2_new_sponsorship_wizard_user_details"
+      />
+    </record>
+    <record
+      id="new_sponsorship_wizard_step_payment_methods"
+      model="new.sponsorship.wizard.step"
+    >
+      <field name="title">Payment options</field>
+      <field
+        name="template"
+        ref="my_compassion.my2_new_sponsorship_wizard_payment_method"
+      />
+    </record>
+    <record
+      id="new_sponsorship_wizard_step_wap_options"
+      model="new.sponsorship.wizard.step"
+    >
+      <field name="title">Write&amp;Pray options</field>
+      <field
+        name="template"
+        ref="my_compassion.my2_new_sponsorship_wizard_wap_options"
+      />
+    </record>
+    <record
+      id="new_sponsorship_wizard_step_communication_details"
+      model="new.sponsorship.wizard.step"
+    >
+      <field name="title">Communication</field>
+      <field
+        name="template"
+        ref="my_compassion.my2_new_sponsorship_wizard_communication_details"
+      />
+    </record>
+  </data>
 </odoo>

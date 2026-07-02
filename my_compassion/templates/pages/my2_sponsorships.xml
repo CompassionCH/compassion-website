@@ -15,46 +15,52 @@ Page: My Compassion 2 Sponsorships Page
     - sponsorship_type (string): Type of sponsorship ('standard' or 'write_and_pray').
 -->
 <odoo>
-    <!-- FILTER ITEM -->
-    <template id="SponsorshipsFilter" name="Sponsorships filter">
-        <div class="sponsorship-filter mx-lg-3 flex-shrink-1 d-flex align-items-center flex-column">
-            <div class="body-large bold text-dark-blue mx-lg-4 text-center">
-                <t t-raw="title" />
-            </div>
-            <t t-raw="0" />
-        </div>
-    </template>
-    <!-- RESULTS CONTENT -->
-    <template id="my2_sponsorships_results_content" name="Sponsorships Results Dynamic Content">
-        <t t-foreach="children" t-as="child">
-            <div class="col-12 col-md-6 col-lg-4 mb-4">
-                <t t-call="my_compassion.my2_children_card_component">
-                    <t t-set="child" t-value="child" />
-                    <t t-set="show_sponsor_me" t-value="True" />
-                    <t t-set="show_status" t-value="False" />
-                </t>
-            </div>
+  <!-- FILTER ITEM -->
+  <template id="SponsorshipsFilter" name="Sponsorships filter">
+    <div
+      class="sponsorship-filter mx-lg-3 flex-shrink-1 d-flex align-items-center flex-column"
+    >
+      <div class="body-large bold text-dark-blue mx-lg-4 text-center">
+        <t t-out="title" />
+      </div>
+      <t t-out="0" />
+    </div>
+  </template>
+  <!-- RESULTS CONTENT -->
+  <template
+    id="my2_sponsorships_results_content"
+    name="Sponsorships Results Dynamic Content"
+  >
+    <t t-foreach="children" t-as="child">
+      <div class="col-12 col-md-6 col-lg-4 mb-4">
+        <t t-call="my_compassion.my2_children_card_component">
+          <t t-set="child" t-value="child" />
+          <t t-set="show_sponsor_me" t-value="True" />
+          <t t-set="show_status" t-value="False" />
         </t>
-    </template>
-    <!-- SPONSORSHIPS PAGE -->
-    <template id="my2_sponsorships_page" name="Sponsorships Page">
-        <script type="text/javascript" src="/my_compassion/static/src/js/my2_sponsorships.js" />
-        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_sponsorships.css" />
-        <t t-set="additional_title">Sponsor a Child</t>
-        <t t-call="website.layout">
-            <!-- HEADER -->
-            <div class="sponsorships-foreground pb-4">
-                <div class="sponsorships-background w-100 h-100 bg-core-blue" />
-                <div class="sponsorships-column d-flex flex-column align-items-center px-3">
-                    <i id="sponsorships-title-icon" class="pictogram-child-sponsorship text-low-yellow mt-4" />
-                    <h2 class="text-pure-white text-center">
-                        <t t-if="sponsorship_type == 'write_and_pray'">
+      </div>
+    </t>
+  </template>
+  <!-- SPONSORSHIPS PAGE -->
+  <template id="my2_sponsorships_page" name="Sponsorships Page">
+    <t t-set="additional_title">Sponsor a Child</t>
+    <t t-call="website.layout">
+      <!-- HEADER -->
+      <div class="sponsorships-foreground pb-4">
+        <div class="sponsorships-background w-100 h-100 bg-core-blue" />
+        <div class="sponsorships-column d-flex flex-column align-items-center px-3">
+          <i
+            id="sponsorships-title-icon"
+            class="pictogram-child-sponsorship text-low-yellow mt-4"
+          />
+          <h2 class="text-pure-white text-center">
+            <t t-if="sponsorship_type == 'write_and_pray'">
                             You write to and pray for a child, while someone else pays for the sponsorship.
                         </t>
-                        <t t-else="">Sponsor a child</t>
-                    </h2>
-                    <div class="body-large bold text-pure-white text-center mt-3 mb-2">
-                        <t t-if="sponsorship_type == 'write_and_pray'">
+            <t t-else="">Sponsor a child</t>
+          </h2>
+          <div class="body-large bold text-pure-white text-center mt-3 mb-2">
+            <t t-if="sponsorship_type == 'write_and_pray'">
                             Lifting a child out of poverty can also be a team effort! A donor pays. A sponsor writes to
                             the
                             child and prays for them. Thanks to the “Write&amp;Pray” sponsorship program set up for young
@@ -66,113 +72,121 @@ Page: My Compassion 2 Sponsorships Page
                             of
                             support and encouragement.
                         </t>
-                        <t t-else="">
+            <t t-else="">
                             Stand with the Church and See a Child Released from
                             Poverty
                         </t>
-                    </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="sponsorships-body-container d-flex flex-column align-items-center"
+        t-att-data-sponsorship-type="sponsorship_type"
+      >
+        <!-- FILTERS -->
+        <div class="sponsorships-foreground w-100">
+          <div class="sponsorships-background w-100 h-50 bg-core-blue" />
+          <div
+            class="sponsorships-column p-4 w-100 bg-high-eggshell d-flex flex-column flex-lg-row align-items-center justify-content-center"
+          >
+            <t t-call="my_compassion.SponsorshipsFilter">
+              <t t-set="title">I'd like to sponsor a</t>
+              <div class="gender-select-container d-flex my-2">
+                <input id="gender-boy" type="radio" name="gender" value="M" />
+                <label class="gender-select-button" for="gender-boy">Boy</label>
+                <input id="gender-girl" type="radio" name="gender" value="F" />
+                <label class="gender-select-button" for="gender-girl">Girl</label>
+                <input
+                  id="gender-either"
+                  type="radio"
+                  name="gender"
+                  value="either"
+                  checked=""
+                />
+                <label class="gender-select-button" for="gender-either">Either</label>
+              </div>
+            </t>
+            <t t-call="my_compassion.SponsorshipsFilter">
+              <t t-set="title">Between the ages of</t>
+              <div class="w-100 mt-2 mb-3">
+                <div class="range-input-component">
+                  <t t-call="theme_compassion_2025.RangeInputLoadingComponent" />
                 </div>
-            </div>
-            <div
-                class="sponsorships-body-container d-flex flex-column align-items-center"
-                t-att-data-sponsorship-type="sponsorship_type"
-            >
-                <!-- FILTERS -->
-                <div class="sponsorships-foreground w-100">
-                    <div class="sponsorships-background w-100 h-50 bg-core-blue" />
-                    <div
-                        class="sponsorships-column p-4 w-100 bg-high-eggshell d-flex flex-column flex-lg-row align-items-center justify-content-center"
-                    >
-                        <t t-call="my_compassion.SponsorshipsFilter">
-                            <t t-set="title">I'd like to sponsor a</t>
-                            <div class="gender-select-container d-flex my-2">
-                                <input id="gender-boy" type="radio" name="gender" value="M" />
-                                <label class="gender-select-button" for="gender-boy">Boy</label>
-                                <input id="gender-girl" type="radio" name="gender" value="F" />
-                                <label class="gender-select-button" for="gender-girl">Girl</label>
-                                <input id="gender-either" type="radio" name="gender" value="either" checked="" />
-                                <label class="gender-select-button" for="gender-either">Either</label>
-                            </div>
-                        </t>
-                        <t t-call="my_compassion.SponsorshipsFilter">
-                            <t t-set="title">Between the ages of</t>
-                            <div class="w-100 mt-2 mb-3">
-                                <div class="range-input-component">
-                                    <t t-call="theme_compassion_2025.RangeInputLoadingComponent" />
-                                </div>
-                            </div>
-                        </t>
-                        <t t-call="my_compassion.SponsorshipsFilter">
-                            <t t-set="title">Who lives in</t>
-                            <div class="my-3 mt-lg-2">
-                                <t t-call="theme_compassion_2025.SelectComponent">
-                                    <option value="">Select country</option>
-                                    <t t-foreach="countries" t-as="country">
-                                        <option t-att-value="country.field_office_id">
-                                            <t t-esc="country.country_id.name" />
-                                        </option>
-                                    </t>
-                                </t>
-                            </div>
-                        </t>
-                    </div>
-                </div>
-                <!-- RESULTS -->
-                <div class="sponsorships-column w-100 d-flex flex-column">
-                    <!-- TOTAL RESULTS -->
-                    <div class="body-large bold text-mid-grey mt-4 mb-2 align-self-center">
-                        <i class="results-icon icon-users03 text-mid-grey mr-2" />
-                        <span id="total-children-found-message">
+              </div>
+            </t>
+            <t t-call="my_compassion.SponsorshipsFilter">
+              <t t-set="title">Who lives in</t>
+              <div class="my-3 mt-lg-2">
+                <t t-call="theme_compassion_2025.SelectComponent">
+                  <option value="">Select country</option>
+                  <t t-foreach="countries" t-as="country">
+                    <option t-att-value="country.field_office_id">
+                      <t t-out="country.country_id.name" />
+                    </option>
+                  </t>
+                </t>
+              </div>
+            </t>
+          </div>
+        </div>
+        <!-- RESULTS -->
+        <div class="sponsorships-column w-100 d-flex flex-column">
+          <!-- TOTAL RESULTS -->
+          <div class="body-large bold text-mid-grey mt-4 mb-2 align-self-center">
+            <i class="results-icon icon-users03 text-mid-grey me-2" />
+            <span id="total-children-found-message">
                             <span id="total-results">0</span>
                             children found
                         </span>
-                        <span id="randomly-chosen-child-message" style="display: none;">
+            <span id="randomly-chosen-child-message" style="display: none;">
                             A child has been chosen for you
                         </span>
-                    </div>
-                    <!-- CHILDREN PROFILES -->
-                    <div class="sponsorships-results-content row justify-content-center g-4" />
-                </div>
-                <!-- BUTTONS -->
-                <div class="sponsorships-column d-flex flex-column flex-sm-row mt-4 mb-5 align-items-center">
-                    <div id="btn-choose" class="m-3">
-                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                            <t t-set="variant" t-value="'compact'" />
-                            <t t-set="variation" t-value="'hollow'" />
-                            <t t-set="label">Choose for me</t>
-                            <t t-set="color" t-value="'dark-blue'" />
-                            <t t-set="text_color" t-value="'dark-blue'" />
-                        </t>
-                    </div>
-                    <div id="btn-choose-again" class="m-3" style="display: none;">
-                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                            <t t-set="variant" t-value="'compact'" />
-                            <t t-set="variation" t-value="'hollow'" />
-                            <t t-set="label">Choose another child</t>
-                            <t t-set="color" t-value="'dark-blue'" />
-                            <t t-set="text_color" t-value="'dark-blue'" />
-                        </t>
-                    </div>
-                    <div id="btn-see-all-children" class="m-3" style="display: none;">
-                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                            <t t-set="variant" t-value="'compact'" />
-                            <t t-set="variation" t-value="'hollow'" />
-                            <t t-set="label">See all</t>
-                            <t t-set="color" t-value="'dark-blue'" />
-                            <t t-set="text_color" t-value="'dark-blue'" />
-                        </t>
-                    </div>
-                    <div id="btn-more" class="m-3">
-                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                            <t t-set="variant" t-value="'compact'" />
-                            <t t-set="variation" t-value="'hollow'" />
-                            <t t-set="label">Show more</t>
-                            <t t-set="color" t-value="'dark-blue'" />
-                            <t t-set="text_color" t-value="'dark-blue'" />
-                        </t>
-                    </div>
-                </div>
-            </div>
-        </t>
-    </template>
+          </div>
+          <!-- CHILDREN PROFILES -->
+          <div class="sponsorships-results-content row justify-content-center g-4" />
+        </div>
+        <!-- BUTTONS -->
+        <div
+          class="sponsorships-column d-flex flex-column flex-sm-row mt-4 mb-5 align-items-center"
+        >
+          <div id="btn-choose" class="m-3">
+            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+              <t t-set="variant" t-value="'compact'" />
+              <t t-set="variation" t-value="'hollow'" />
+              <t t-set="label">Choose for me</t>
+              <t t-set="color" t-value="'dark-blue'" />
+              <t t-set="text_color" t-value="'dark-blue'" />
+            </t>
+          </div>
+          <div id="btn-choose-again" class="m-3" style="display: none;">
+            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+              <t t-set="variant" t-value="'compact'" />
+              <t t-set="variation" t-value="'hollow'" />
+              <t t-set="label">Choose another child</t>
+              <t t-set="color" t-value="'dark-blue'" />
+              <t t-set="text_color" t-value="'dark-blue'" />
+            </t>
+          </div>
+          <div id="btn-see-all-children" class="m-3" style="display: none;">
+            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+              <t t-set="variant" t-value="'compact'" />
+              <t t-set="variation" t-value="'hollow'" />
+              <t t-set="label">See all</t>
+              <t t-set="color" t-value="'dark-blue'" />
+              <t t-set="text_color" t-value="'dark-blue'" />
+            </t>
+          </div>
+          <div id="btn-more" class="m-3">
+            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+              <t t-set="variant" t-value="'compact'" />
+              <t t-set="variation" t-value="'hollow'" />
+              <t t-set="label">Show more</t>
+              <t t-set="color" t-value="'dark-blue'" />
+              <t t-set="text_color" t-value="'dark-blue'" />
+            </t>
+          </div>
+        </div>
+      </div>
+    </t>
+  </template>
 </odoo>

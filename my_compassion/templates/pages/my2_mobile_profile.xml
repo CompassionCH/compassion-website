@@ -17,111 +17,114 @@ Page: My Compassion 2 Mobile profile page
     - none
 -->
 <odoo>
-    <!-- MOBILE PROFILE PAGE -->
-    <template id="my2_mobile_profile_page" name="My Compassion 2 Profile Page">
-        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_mobile_profile.css" />
-        <t t-set="additional_title">Profile</t>
-        <t t-call="website.layout">
-            <div class="container">
-                <div id="profile_content_container" class="d-flex flex-column">
-                    <!-- Title -->
-                    <div class="mb-4">
-                        <t t-call="theme_compassion_2025.TitleComponent">
-                            <t t-set="title_content">Profile</t>
-                            <t t-set="description">Customize your MyCompassion experience!</t>
-                            <t t-set="color" t-value="'core-blue'" />
-                            <t t-set="underline_color" t-value="'low-yellow'" />
-                            <t t-set="show_underline" t-value="True" />
-                            <t t-set="title_size" t-value="'md'" />
-                        </t>
+  <!-- MOBILE PROFILE PAGE -->
+  <template id="my2_mobile_profile_page" name="My Compassion 2 Profile Page">
+    <link
+      rel="stylesheet"
+      href="/my_compassion/static/src/css/my2_mobile_profile.css"
+    />
+    <t t-set="additional_title">Profile</t>
+    <t t-call="website.layout">
+      <div class="container">
+        <div id="profile_content_container" class="d-flex flex-column">
+          <!-- Title -->
+          <div class="mb-4">
+            <t t-call="theme_compassion_2025.TitleComponent">
+              <t t-set="title_content">Profile</t>
+              <t t-set="description">Customize your MyCompassion experience!</t>
+              <t t-set="color" t-value="'core-blue'" />
+              <t t-set="underline_color" t-value="'low-yellow'" />
+              <t t-set="show_underline" t-value="True" />
+              <t t-set="title_size" t-value="'md'" />
+            </t>
+          </div>
+          <div class="flex-grow-1" />
+          <div class="d-flex flex-column align-items-stretch mb-3">
+            <div id="languageListCollapse" class="collapse">
+              <div class="language-options-container mb-3">
+                <t t-set="website_langs" t-value="website.language_ids" />
+                <t t-foreach="website_langs" t-as="lg">
+                  <a
+                    t-att-href="url_for(request.httprequest.path, lang_code=lg.code)"
+                    t-att-data-url_code="lg.code"
+                    t-att-data-lang="lg.code"
+                    t-attf-class="rounded-pill js_change_lang language-pill d-flex justify-content-between align-items-center text-decoration-none #{'active' if request.env.lang == lg.code else ''}"
+                  >
+                    <div class="d-flex align-items-center">
+                      <span class="font-weight-bold lang-text">
+                        <t t-esc="lg.name.split('/')[-1]" />
+                      </span>
                     </div>
-                    <div class="flex-grow-1" />
-                    <div class="d-flex flex-column align-items-stretch mb-3">
-                        <div id="languageListCollapse" class="collapse">
-                            <div class="language-options-container mb-3">
-                                <t t-set="website_langs" t-value="website.language_ids" />
-                                <t t-foreach="website_langs" t-as="lg">
-                                    <a
-                                        t-att-href="url_for(request.httprequest.path, lang_code=lg.code)"
-                                        t-att-data-url_code="lg.code"
-                                        t-att-data-lang="lg.code"
-                                        t-attf-class="rounded-pill js_change_lang language-pill d-flex justify-content-between align-items-center text-decoration-none #{'active' if request.env.lang == lg.code else ''}"
-                                    >
-                                        <div class="d-flex align-items-center">
-                                            <span class="font-weight-bold lang-text">
-                                                <t t-esc="lg.name.split('/')[-1]" />
-                                            </span>
-                                        </div>
-                                        <div class="selection-indicator">
-                                            <i
-                                                t-attf-class="fa #{'fa-check-circle' if request.env.lang == lg.code else 'fa-circle-o'}"
-                                            />
-                                        </div>
-                                    </a>
-                                </t>
-                            </div>
-                        </div>
-                        <div
-                            data-toggle="collapse"
-                            data-target="#languageListCollapse"
-                            aria-expanded="false"
-                            aria-controls="languageListCollapse"
-                            style="cursor: pointer;"
-                            class="d-flex flex-column align-items-stretch"
-                        >
-                            <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                <t t-set="variant" t-value="'default'" />
-                                <t t-set="variation" t-value="'filled'" />
-                                <t t-set="label">Change Language</t>
-                                <t t-set="color" t-value="'core-blue'" />
-                                <t t-set="text_color" t-value="'pure-white'" />
-                                <t t-set="href" t-value="'#'" />
-                            </t>
-                        </div>
+                    <div class="selection-indicator">
+                      <i
+                        t-attf-class="fa #{'fa-check-circle' if request.env.lang == lg.code else 'fa-circle-o'}"
+                      />
                     </div>
-                    <div class="d-flex flex-column align-items-stretch mb-3">
-                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                            <t t-set="variant" t-value="'default'" />
-                            <t t-set="variation" t-value="'filled'" />
-                            <t t-set="label">My Donations</t>
-                            <t t-set="color" t-value="'low-green'" />
-                            <t t-set="text_color" t-value="'pure-white'" />
-                            <t t-set="href" t-value="'/my2/donations'" />
-                        </t>
-                    </div>
-                    <div class="d-flex flex-column align-items-stretch mb-3">
-                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                            <t t-set="variant" t-value="'default'" />
-                            <t t-set="variation" t-value="'filled'" />
-                            <t t-set="label">Edit profile</t>
-                            <t t-set="color" t-value="'low-yellow'" />
-                            <t t-set="text_color" t-value="'off-black'" />
-                            <t t-set="href" t-value="'/my2/user_settings'" />
-                        </t>
-                    </div>
-                    <div class="d-flex flex-column align-items-stretch mb-3">
-                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                            <t t-set="variant" t-value="'default'" />
-                            <t t-set="variation" t-value="'filled'" />
-                            <t t-set="label">Contact us</t>
-                            <t t-set="color" t-value="'low-yellow'" />
-                            <t t-set="text_color" t-value="'off-black'" />
-                            <t t-set="href" t-value="'/contactus'" />
-                        </t>
-                    </div>
-                    <div class="d-flex flex-column align-items-stretch mb-3">
-                        <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                            <t t-set="variant" t-value="'default'" />
-                            <t t-set="variation" t-value="'filled'" />
-                            <t t-set="label">Log Out</t>
-                            <t t-set="color" t-value="'low-orange'" />
-                            <t t-set="text_color" t-value="'pure-white'" />
-                            <t t-set="href" t-value="'/web/session/logout?redirect=/'" />
-                        </t>
-                    </div>
-                    <div class="flex-grow-1" />
-                </div>
+                  </a>
+                </t>
+              </div>
             </div>
-        </t>
-    </template>
+            <div
+              data-toggle="collapse"
+              data-target="#languageListCollapse"
+              aria-expanded="false"
+              aria-controls="languageListCollapse"
+              style="cursor: pointer;"
+              class="d-flex flex-column align-items-stretch"
+            >
+              <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                <t t-set="variant" t-value="'default'" />
+                <t t-set="variation" t-value="'filled'" />
+                <t t-set="label">Change Language</t>
+                <t t-set="color" t-value="'core-blue'" />
+                <t t-set="text_color" t-value="'pure-white'" />
+                <t t-set="href" t-value="'#'" />
+              </t>
+            </div>
+          </div>
+          <div class="d-flex flex-column align-items-stretch mb-3">
+            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+              <t t-set="variant" t-value="'default'" />
+              <t t-set="variation" t-value="'filled'" />
+              <t t-set="label">My Donations</t>
+              <t t-set="color" t-value="'low-green'" />
+              <t t-set="text_color" t-value="'pure-white'" />
+              <t t-set="href" t-value="'/my2/donations'" />
+            </t>
+          </div>
+          <div class="d-flex flex-column align-items-stretch mb-3">
+            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+              <t t-set="variant" t-value="'default'" />
+              <t t-set="variation" t-value="'filled'" />
+              <t t-set="label">Edit profile</t>
+              <t t-set="color" t-value="'low-yellow'" />
+              <t t-set="text_color" t-value="'off-black'" />
+              <t t-set="href" t-value="'/my2/user_settings'" />
+            </t>
+          </div>
+          <div class="d-flex flex-column align-items-stretch mb-3">
+            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+              <t t-set="variant" t-value="'default'" />
+              <t t-set="variation" t-value="'filled'" />
+              <t t-set="label">Contact us</t>
+              <t t-set="color" t-value="'low-yellow'" />
+              <t t-set="text_color" t-value="'off-black'" />
+              <t t-set="href" t-value="'/contactus'" />
+            </t>
+          </div>
+          <div class="d-flex flex-column align-items-stretch mb-3">
+            <t t-call="theme_compassion_2025.ThemedButtonComponent">
+              <t t-set="variant" t-value="'default'" />
+              <t t-set="variation" t-value="'filled'" />
+              <t t-set="label">Log Out</t>
+              <t t-set="color" t-value="'low-orange'" />
+              <t t-set="text_color" t-value="'pure-white'" />
+              <t t-set="href" t-value="'/web/session/logout?redirect=/'" />
+            </t>
+          </div>
+          <div class="flex-grow-1" />
+        </div>
+      </div>
+    </t>
+  </template>
 </odoo>

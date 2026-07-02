@@ -1,5 +1,14 @@
 @media (min-width: 1200px) {
-    .container {
-        max-width: 1920px;
-    }
+  .container {
+    max-width: 1920px;
+  }
+}
+
+// website.scss:378 applies color:!important to all .badge inside header, overriding
+// the badge system's auto-contrast. The compound selector raises specificity above
+// that rule while color-contrast() stays within the theme SCSS system.
+#wrapwrap:not(.o_header_overlay) header .my_cart_quantity.badge,
+header.o_header_is_scrolled .my_cart_quantity.badge,
+header .o_navbar_mobile .my_cart_quantity.badge {
+  color: color-contrast($primary) !important;
 }

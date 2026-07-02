@@ -1,7 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <template id="theme_compassion_pictograms_stylesheet_template" name="Pictograms Stylesheet Template">
-        <t t-translation="off">
+  <template
+    id="theme_compassion_pictograms_stylesheet_template"
+    name="Pictograms Stylesheet Template"
+  >
+    <t t-translation="off">
 <!-- Base styles for any element using a pictogram class. -->
 <!-- This ensures consistency and leverages the `currentColor` change you made. -->
 [class^="pictogram-"],
@@ -21,10 +24,12 @@
 }
 
 <t t-foreach="pictograms" t-as="pictogram">
-.<t t-esc="pictogram.class_name"/> {
-    mask-image: url("/web/image/theme.compassion.pictograms/<t t-esc="pictogram.id"/>/svg_file");
+.<t t-esc="pictogram.class_name" /> {
+    mask-image: url("/web/image/theme.compassion.pictograms/<t
+      t-esc="pictogram.id"
+    />/svg_file");
 }
 </t>
         </t>
-    </template>
+  </template>
 </odoo>

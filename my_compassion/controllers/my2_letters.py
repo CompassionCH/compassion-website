@@ -43,7 +43,9 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
     )
     def my2_render_child_letters_page(self, **kwargs):
         partner = request.env.user.partner_id
-        children_sponsored_by_partner = partner.sponsorship_ids.child_id
+        children_sponsored_by_partner = partner.sponsorship_ids.filtered(
+            lambda s: s.can_show_on_my_compassion and s.state != "draft"
+        ).child_id
         current_year = date.today().year
 
         # Filtering params
@@ -344,9 +346,6 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             "child_id": child.id,
             "user_id": request.env.user.id,
             "state": "draft",
-            # Restore initial generation status
-            "generation_status": "creating_task",
-            "generation_error_message": "",
         }
         generator_id = self._safe_int(post.get("generator_id"), 0)
         if generator_id:
@@ -363,23 +362,9 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             return {"error": _("Something went wrong.")}
         letter_generator.set_sponsorship_from_user_and_child()
 
-        # Define the steps for the progress bar
-        # Format: (step_index, status_key, description)
-        processing_steps = [
-            (0, "create_task", _("Creating Task...")),
-            (1, "apply_template", _("Applying Template...")),
-            (2, "apply_text", _("Adding Your Text...")),
-            (3, "apply_images", _("Adding Attachments...")),
-            (4, "generate_pdf", _("Generating PDF...")),
-            (5, "finalizing", _("Finalizing...")),
-        ]
-
         return {
             "generator_id": letter_generator.id,
-            "image_ids": sorted(
-                letter_generator.image_ids.ids
-            ),  # Return the attachments IDs
-            "steps": processing_steps,  # Return the steps to the client
+            "image_ids": sorted(letter_generator.image_ids.ids),
         }
 
     @http.route(
@@ -426,13 +411,22 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 )
             }
 
-        if post.get("mode") == "preview":
-            generator.preview()
-        elif post.get("mode") == "send":
+        mode = post.get("mode")
+        if mode == "preview":
+            # action_preview generates the draft letter synchronously; the
+            # rendered HTML preview is then available on the generator.
+            generator.action_preview()
+            return {
+                "generator_id": generator.id,
+                "status": "done",
+                "preview_html": generator.preview or "",
+            }
+        if mode == "send":
+            # generate_letters enqueues the OCA queue job; the client polls
+            # /status for the generator state.
             generator.generate_letters()
+            return {"generator_id": generator.id, "status": "processing"}
 
-        # Return immediately. The client must poll /my2/children/letters/status
-        # to track progress and obtain the preview_url once generation is done.
         return {"generator_id": generator.id, "status": "processing"}
 
     @http.route(
@@ -459,25 +453,14 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             if not letter_generator.exists():
                 return {"status": "failed", "error": _("Generator not found.")}
 
-            status = letter_generator.generation_status
-
-            if status == "done":
-                # If done, also return the final data needed by the frontend
+            # The async send job sets state to "done" when finished; the client
+            # redirects to the letters listing on done.
+            if letter_generator.state == "done":
                 return {
                     "status": "done",
-                    "result": {
-                        "preview_url": f"{request.httprequest.host_url}web/image"
-                        f"/{letter_generator._name}/{letter_generator.id}/preview_pdf",
-                        "generator_id": letter_generator.id,
-                    },
+                    "result": {"generator_id": letter_generator.id},
                 }
-            else:
-                if status == "failed":
-                    return {
-                        "status": status,
-                        "error": letter_generator.generation_error_message,
-                    }
-                return {"status": status}
+            return {"status": "processing"}
 
         except (AccessError, ValueError, TypeError) as e:
             _logger.warning("Failed to get letter status for post %s: %s", post, e)

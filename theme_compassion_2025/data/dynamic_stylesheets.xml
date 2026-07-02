@@ -1,26 +1,33 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <data noupdate="1">
-        <record id="theme_compassion_stylesheet_colors" model="ir.attachment">
-            <field name="name">theme_compassion_colors.scss</field>
-            <field name="url">/theme/compassion/colors.scss</field>
-            <field name="mimetype">text/scss</field>
-            <field name="res_model">ir.ui.view</field>
-            <field name="public" eval="True"/>
-        </record>
-        <record id="theme_compassion_stylesheet_pictograms" model="ir.attachment">
-            <field name="name">theme_compassion_pictograms.scss</field>
-            <field name="url">/theme/compassion/pictograms.scss</field>
-            <field name="mimetype">text/scss</field>
-            <field name="res_model">ir.ui.view</field>
-            <field name="public" eval="True"/>
-        </record>
-        <record id="theme_compassion_stylesheet_icons" model="ir.attachment">
-            <field name="name">theme_compassion_icons.scss</field>
-            <field name="url">/theme/compassion/icons.scss</field>
-            <field name="mimetype">text/scss</field>
-            <field name="res_model">ir.ui.view</field>
-            <field name="public" eval="True"/>
-        </record>
-    </data>
+  <data noupdate="1">
+    <record id="theme_compassion_stylesheet_colors" model="ir.attachment">
+      <field name="name">theme_compassion_colors.scss</field>
+      <field name="url">/theme_compassion_2025/dynamic/colors.scss</field>
+      <field name="mimetype">text/scss</field>
+      <field name="res_model">ir.ui.view</field>
+      <field name="public" eval="True" />
+    </record>
+    <record id="theme_compassion_stylesheet_pictograms" model="ir.attachment">
+      <field name="name">theme_compassion_pictograms.scss</field>
+      <field name="url">/theme_compassion_2025/dynamic/pictograms.scss</field>
+      <field name="mimetype">text/scss</field>
+      <field name="res_model">ir.ui.view</field>
+      <field name="public" eval="True" />
+    </record>
+    <record id="theme_compassion_stylesheet_icons" model="ir.attachment">
+      <field name="name">theme_compassion_icons.scss</field>
+      <field name="url">/theme_compassion_2025/dynamic/icons.scss</field>
+      <field name="mimetype">text/scss</field>
+      <field name="res_model">ir.ui.view</field>
+      <field name="public" eval="True" />
+    </record>
+    <record id="theme_compassion_stylesheet_palette" model="ir.attachment">
+      <field name="name">theme_compassion_palette.scss</field>
+      <field name="url">/theme_compassion_2025/dynamic/palette.scss</field>
+      <field name="mimetype">text/scss</field>
+      <field name="res_model">ir.ui.view</field>
+      <field name="public" eval="True" />
+    </record>
+  </data>
 </odoo>

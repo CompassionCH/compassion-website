@@ -1,41 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--
-    These templates inherit from Odoo's "website" templates and adds custom behaviour to it.
--->
 <odoo>
-    <!-- Make all pages load global.css file -->
-    <template id="my_compassion_assets" name="My Compassion 2.0 assets" inherit_id="website.assets_frontend">
-        <xpath expr="." position="inside">
-            <script type="text/javascript" src="/my_compassion/static/src/js/toast_notification.js" />
-            <script type="text/javascript" src="/my_compassion/static/src/js/toast_service.js" />
-            <script type="text/javascript" src="/my_compassion/static/src/js/my2_child_letters.js" />
-            <script type="text/javascript" src="/my_compassion/static/src/js/my2_donation_form.js" />
-            <script
-                type="text/javascript"
-                src="/my_compassion/static/src/js/my2_bootstrap_scrollbar_compensate_override.js"
-            />
-            <script type="text/javascript" src="/my_compassion/static/src/js/my2_mobile_basket_sync.js" />
-            <link rel="stylesheet" href="/my_compassion/static/src/css/toast_notification.css" />
-            <link rel="stylesheet" href="/my_compassion/static/src/css/my2_children_card.css" />
-            <link rel="stylesheet" href="/my_compassion/static/src/css/my2_donation_item.css" />
-            <link rel="stylesheet" href="/my_compassion/static/src/css/my2_donation_product.css" />
-            <link rel="stylesheet" href="/my_compassion/static/src/css/my2_donation_form.css" />
-        </xpath>
-        <!-- Loads files at the end of page -->
-        <xpath expr="//script[last()]" position="after">
-            <link href="/my_compassion/static/src/css/global.css" rel="stylesheet" type="text/css" />
-        </xpath>
-    </template>
-    <!-- Add a meta instruction in all page's header -->
-    <template id="my_compassion_meta" name="Add custom meta" inherit_id="website.layout">
-        <!-- Adds the mobile first optimization in the head of every page -->
-        <xpath expr="//head/meta[last()]" position="after">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        </xpath>
-    </template>
-    <template id="my2_assets_tests" inherit_id="web.assets_tests" name="My Compassion 2.0 test assets">
-        <xpath expr="." position="inside">
-            <script type="text/javascript" src="/my_compassion/static/src/js/tours/donation_tour.js" />
-        </xpath>
-    </template>
+  <!-- Add a meta instruction in all page's header -->
+  <template id="my_compassion_meta" name="Add custom meta" inherit_id="website.layout">
+    <!-- Adds the mobile first optimization in the head of every page -->
+    <xpath expr="//head/meta[last()]" position="after">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </xpath>
+  </template>
 </odoo>

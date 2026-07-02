@@ -16,37 +16,60 @@ $btn-border-color: #000;
 // Mixins
 // =====================
 
-@mixin button-base($height, $padding-y, $padding-x, $font-size, $font-family, $font-weight) {
-    height: $height;
-    padding: $padding-y $padding-x;
-    font-size: $font-size;
-    font-family: $font-family, sans-serif;
-    font-weight: $font-weight;
-    border-radius: 25px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    line-height: 1;
+@mixin button-base(
+  $height,
+  $padding-y,
+  $padding-x,
+  $font-size,
+  $font-family,
+  $font-weight
+) {
+  height: $height;
+  padding: $padding-y $padding-x;
+  font-size: $font-size;
+  font-family: $font-family, sans-serif;
+  font-weight: $font-weight;
+  border-radius: 25px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1;
 }
 
-@mixin compassion-button-variant($height, $padding-x, $font-size, $font-family, $font-weight, $icon-only: false, $filled: true, $padding-y: 0) {
-    @include button-base($height, $padding-y, $padding-x, $font-size, $font-family, $font-weight);
+@mixin compassion-button-variant(
+  $height,
+  $padding-x,
+  $font-size,
+  $font-family,
+  $font-weight,
+  $icon-only: false,
+  $filled: true,
+  $padding-y: 0
+) {
+  @include button-base(
+    $height,
+    $padding-y,
+    $padding-x,
+    $font-size,
+    $font-family,
+    $font-weight
+  );
 
-    @if $filled {
-        background-color: $btn-bg;
-        color: $btn-color;
-    } @else {
-        background-color: transparent;
-        border: 2px solid $btn-border-color;
-        color: $btn-border-color;
-    }
+  @if $filled {
+    background-color: $btn-bg;
+    color: $btn-color;
+  } @else {
+    background-color: transparent;
+    border: 2px solid $btn-border-color;
+    color: $btn-border-color;
+  }
 
-    @if $icon-only {
-        padding: 0 12px; // override for icon-only
-    }
+  @if $icon-only {
+    padding: 0 12px; // override for icon-only
+  }
 }
 
 // =====================
@@ -54,31 +77,168 @@ $btn-border-color: #000;
 // =====================
 
 .btn {
-    // Default
-    &--default-filled            { @include compassion-button-variant(48px, 32px, 17px, "NeighbourSans Medium", 500, false, true); }
-    &--default-filled-icon-only  { @include compassion-button-variant(48px, 32px, 17px, "NeighbourSans Medium", 500, true,  true); }
-    &--default-hollow            { @include compassion-button-variant(48px, 32px, 17px, "NeighbourSans Medium", 500, false, false); }
-    &--default-hollow-icon-only  { @include compassion-button-variant(48px, 32px, 17px, "NeighbourSans Medium", 500, true,  false); }
+  // Default
+  &--default-filled {
+    @include compassion-button-variant(
+      48px,
+      32px,
+      17px,
+      "NeighbourSans Medium",
+      500,
+      false,
+      true
+    );
+  }
+  &--default-filled-icon-only {
+    @include compassion-button-variant(
+      48px,
+      32px,
+      17px,
+      "NeighbourSans Medium",
+      500,
+      true,
+      true
+    );
+  }
+  &--default-hollow {
+    @include compassion-button-variant(
+      48px,
+      32px,
+      17px,
+      "NeighbourSans Medium",
+      500,
+      false,
+      false
+    );
+  }
+  &--default-hollow-icon-only {
+    @include compassion-button-variant(
+      48px,
+      32px,
+      17px,
+      "NeighbourSans Medium",
+      500,
+      true,
+      false
+    );
+  }
 
-    // Impact
-    &--impact-filled             { @include compassion-button-variant(56px, 36px, 19px, "NeighbourSans DemiBold", 600, false, true); }
-    &--impact-filled-icon-only   { @include compassion-button-variant(56px, 36px, 19px, "NeighbourSans DemiBold", 600, true,  true); }
-    &--impact-hollow             { @include compassion-button-variant(56px, 36px, 19px, "NeighbourSans DemiBold", 600, false, false); }
-    &--impact-hollow-icon-only   { @include compassion-button-variant(56px, 36px, 19px, "NeighbourSans DemiBold", 600, true,  false); }
+  // Impact
+  &--impact-filled {
+    @include compassion-button-variant(
+      56px,
+      36px,
+      19px,
+      "NeighbourSans DemiBold",
+      600,
+      false,
+      true
+    );
+  }
+  &--impact-filled-icon-only {
+    @include compassion-button-variant(
+      56px,
+      36px,
+      19px,
+      "NeighbourSans DemiBold",
+      600,
+      true,
+      true
+    );
+  }
+  &--impact-hollow {
+    @include compassion-button-variant(
+      56px,
+      36px,
+      19px,
+      "NeighbourSans DemiBold",
+      600,
+      false,
+      false
+    );
+  }
+  &--impact-hollow-icon-only {
+    @include compassion-button-variant(
+      56px,
+      36px,
+      19px,
+      "NeighbourSans DemiBold",
+      600,
+      true,
+      false
+    );
+  }
 
-    // Compact
-    &--compact-filled            { @include compassion-button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, false, true); }
-    &--compact-filled-icon-only  { @include compassion-button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, true,  true); }
-    &--compact-hollow            { @include compassion-button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, false, false); }
-    &--compact-hollow-icon-only  { @include compassion-button-variant(42px, 24px, 16px, "NeighbourSans Medium", 500, true,  false); }
+  // Compact
+  &--compact-filled {
+    @include compassion-button-variant(
+      42px,
+      24px,
+      16px,
+      "NeighbourSans Medium",
+      500,
+      false,
+      true
+    );
+  }
+  &--compact-filled-icon-only {
+    @include compassion-button-variant(
+      42px,
+      24px,
+      16px,
+      "NeighbourSans Medium",
+      500,
+      true,
+      true
+    );
+  }
+  &--compact-hollow {
+    @include compassion-button-variant(
+      42px,
+      24px,
+      16px,
+      "NeighbourSans Medium",
+      500,
+      false,
+      false
+    );
+  }
+  &--compact-hollow-icon-only {
+    @include compassion-button-variant(
+      42px,
+      24px,
+      16px,
+      "NeighbourSans Medium",
+      500,
+      true,
+      false
+    );
+  }
 
-    // Slim
-    &--slim-hollow              { @include compassion-button-variant(48px, 12px, 17px, "NeighbourSans Medium", 500, false, false, 0); }
+  // Slim
+  &--slim-hollow {
+    @include compassion-button-variant(
+      48px,
+      12px,
+      17px,
+      "NeighbourSans Medium",
+      500,
+      false,
+      false,
+      0
+    );
+  }
 
-    // Radius modifiers
-    &--radius-pill  { border-radius: 25px; }
-    &--radius-small { border-radius: 12px; }
-    &--radius-circular { border-radius: 50%; }
+  // Radius modifiers
+  &--radius-pill {
+    border-radius: 25px;
+  }
+  &--radius-small {
+    border-radius: 12px;
+  }
+  &--radius-circular {
+    border-radius: 50%;
+  }
 }
 
 // =====================
@@ -86,12 +246,24 @@ $btn-border-color: #000;
 // =====================
 
 .btn__icon {
-    width: 24px;
-    height: 24px;
-    display: inline-block;
+  width: 24px;
+  height: 24px;
+  display: inline-block;
 
-    &--compact { margin-right: 6px;  margin-left: -6px; }
-    &--default { margin-right: 8px;  margin-left: -8px; }
-    &--impact  { margin-right: 10px; margin-left: -10px; }
-    &--slim   { margin-right: 0;  margin-left: 0; }
+  &--compact {
+    margin-right: 6px;
+    margin-left: -6px;
+  }
+  &--default {
+    margin-right: 8px;
+    margin-left: -8px;
+  }
+  &--impact {
+    margin-right: 10px;
+    margin-left: -10px;
+  }
+  &--slim {
+    margin-right: 0;
+    margin-left: 0;
+  }
 }

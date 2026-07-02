@@ -9,192 +9,187 @@
 // =====================
 // Base Map & Pin Styles
 // =====================
-.map-unable-load{
-    height: 0 !important;
-    position: unset;
-
+.map-unable-load {
+  height: 0 !important;
+  position: unset;
 }
 
 .map {
-    height: 525px;
-    max-height: 60vh;
-    border-radius: 25px;
-    &--load-failed {
-        height: 0 !important;
-        overflow: hidden;
-        border: none !important;
-        position: unset;
+  height: 525px;
+  max-height: 60vh;
+  border-radius: 25px;
+  &--load-failed {
+    height: 0 !important;
+    overflow: hidden;
+    border: none !important;
+    position: unset;
+  }
+
+  .gm-control-active > img {
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .custom-map-pin {
+    background-color: #ffd257 !important;
+    border-radius: 100%;
+    height: 33px;
+    width: 33px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  // =====================
+  // Street View Panel Customization
+  // =====================
+
+  .gm-iv-container {
+    background: var(--mid-yellow);
+
+    button > div {
+      filter: invert(1) brightness(0);
+    }
+  }
+
+  .gm-iv-address {
+    background-color: var(--mid-yellow);
+    border-radius: 0 15px 15px 0;
+
+    .gm-iv-address-link a {
+      color: black;
     }
 
-    .gm-control-active > img {
-        transform: translate(-50%, -50%) !important;
+    .gm-iv-address-description > div,
+    .gm-iv-address-description > div > a > div {
+      color: black !important;
     }
 
+    .gm-iv-marker > a {
+      filter: invert(1) brightness(0);
+    }
+  }
 
-    .custom-map-pin {
-        background-color: #ffd257 !important;
-        border-radius: 100%;
-        height: 33px;
-        width: 33px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+  // =====================
+  // Specific Control Styling
+  // =====================
+
+  .gm-svpc,
+  .gm-fullscreen-control {
+    border-radius: 100% !important;
+    img {
+      filter: invert(1) brightness(0);
+    }
+  }
+
+  /* Target the "Map" Tab-Button specifically */
+  button[aria-label="Show street map with terrain"] {
+    border-top-left-radius: 25px !important;
+    border-bottom-left-radius: 25px !important;
+    background-color: white !important;
+    background-color: var(--mid-yellow) !important;
+    color: black !important;
+
+    &[aria-checked="true"] {
+      background-color: var(--low-yellow) !important;
+      color: black !important;
+    }
+  }
+
+  /* Target the "Satellite" Tab-Button specifically */
+  button[aria-label="Show imagery with street names"] {
+    border-top-right-radius: 25px !important;
+    border-bottom-right-radius: 25px !important;
+    background-color: var(--mid-yellow) !important;
+    color: black !important;
+    &[aria-checked="true"] {
+      background-color: var(--low-yellow) !important;
+      color: black !important;
+    }
+  }
+
+  button[aria-label="Zoom in"] {
+    border-radius: 15px 15px 0 0;
+    background: var(--mid-yellow) !important;
+    img {
+      filter: invert(1) brightness(0);
+    }
+  }
+
+  button[aria-label="Zoom out"] {
+    border-radius: 0 0 15px 15px;
+    background: var(--mid-yellow) !important;
+    img {
+      filter: invert(1) brightness(0);
+    }
+  }
+
+  button[aria-label="Move up"],
+  button[aria-label="Move down"],
+  button[aria-label="Move right"],
+  button[aria-label="Move left"],
+  button[aria-label="Map camera controls"] {
+    background: var(--mid-yellow) !important;
+
+    img {
+      filter: invert(1) brightness(0);
     }
 
-    // =====================
-    // Street View Panel Customization
-    // =====================
-
-    .gm-iv-container {
-        background: var(--mid-yellow);
-
-        button > div {
-            filter: invert(1) brightness(0);
-        }
+    @media (max-width: $breakpoint-sm) {
+      visibility: hidden;
     }
+  }
 
-    .gm-iv-address {
-        background-color: var(--mid-yellow);
-        border-radius: 0 15px 15px 0;
+  button[aria-label="Drag Pegman onto the map to open Street View"] {
+    background: var(--mid-yellow) !important;
 
-        .gm-iv-address-link a {
-            color: black;
-        }
-
-        .gm-iv-address-description > div,
-        .gm-iv-address-description > div > a > div {
-            color: black !important;
-        }
-
-        .gm-iv-marker > a {
-            filter: invert(1) brightness(0);
-        }
+    img {
+      transform: translate(-50%, -50%) !important;
     }
+  }
 
-    // =====================
-    // Specific Control Styling
-    // =====================
+  .gm-svpc,
+  .gm-fullscreen-control {
+    background-color: var(--mid-yellow) !important;
+  }
 
-    .gm-svpc,
-    .gm-fullscreen-control {
-        border-radius: 100% !important;
-        img {
-            filter: invert(1) brightness(0);
-        }
-    }
+  .gm-svpc img {
+    transform: translate(-50%, -50%) !important;
+  }
 
-    /* Target the "Map" Tab-Button specifically */
-    button[aria-label="Show street map with terrain"] {
-        border-top-left-radius: 25px !important;
-        border-bottom-left-radius: 25px !important;
-        background-color: white !important;
-        background-color: var(--mid-yellow) !important;
-        color: black !important;
-
-        &[aria-checked="true"] {
-            background-color: var(--low-yellow) !important;
-            color: black !important;
-        }
-    }
-
-    /* Target the "Satellite" Tab-Button specifically */
-    button[aria-label="Show imagery with street names"] {
-        border-top-right-radius: 25px !important;
-        border-bottom-right-radius: 25px !important;
-        background-color: var(--mid-yellow) !important;
-        color: black !important;
-        &[aria-checked="true"] {
-            background-color: var(--low-yellow) !important;
-            color: black !important;
-        }
-    }
-
-    button[aria-label="Zoom in"] {
-        border-radius: 15px 15px 0 0;
-        background: var(--mid-yellow) !important;
-        img {
-            filter: invert(1) brightness(0);
-        }
-    }
-
-    button[aria-label="Zoom out"] {
-        border-radius: 0 0 15px 15px;
-        background: var(--mid-yellow) !important;
-        img {
-            filter: invert(1) brightness(0);
-        }
-    }
-
-    button[aria-label="Move up"],
-    button[aria-label="Move down"],
-    button[aria-label="Move right"],
-    button[aria-label="Move left"],
-    button[aria-label="Map camera controls"] {
-        background: var(--mid-yellow) !important;
-
-        img {
-            filter: invert(1) brightness(0);
-        }
-
-        @media (max-width: $breakpoint-sm) {
-visibility: hidden;        }
-    }
-
-     button[aria-label="Drag Pegman onto the map to open Street View"] {
-        background: var(--mid-yellow) !important;
-
-        img {
-            transform: translate(-50%, -50%) !important;
-        }
-    }
-
-    .gm-svpc,
-    .gm-fullscreen-control{
-        background-color: var(--mid-yellow) !important;
-    }
-
-    .gm-svpc img {
-        transform: translate(-50%, -50%) !important;
-    }
-
-
-    div:has(button[aria-label="Zoom in"]):has(button[aria-label="Zoom out"]) {
-        background-color: transparent !important;
-        border-radius: 15px !important;
-    }
-
-
+  div:has(button[aria-label="Zoom in"]):has(button[aria-label="Zoom out"]) {
+    background-color: transparent !important;
+    border-radius: 15px !important;
+  }
 }
-
 
 // =====================
 // Dragged Pegman Styles
 // =====================
 
 .custom-steetview-button {
-        transform: translate(-50%, -50%) scale(1.03) !important;
+  transform: translate(-50%, -50%) scale(1.03) !important;
 }
 
 .grapped-pogman-container {
-    height: 35px !important;
-    width: 35px !important;
-    background: var(--mid-yellow) !important;
-    opacity: 0.95 !important;
-    border-radius: 100% !important;
-    top: -16px !important;
+  height: 35px !important;
+  width: 35px !important;
+  background: var(--mid-yellow) !important;
+  opacity: 0.95 !important;
+  border-radius: 100% !important;
+  top: -16px !important;
 }
 
 .grapped-pogman {
-    position: absolute !important;
-    left: 0px !important;
-    top: 0px !important;
-    user-select: none!important;
-    border: 0px !important;
-    padding: 2px !important;
-    margin: 0px !important;
-    max-width: none !important;
-    height: 35px !important;
-    width: 35px !important;
+  position: absolute !important;
+  left: 0px !important;
+  top: 0px !important;
+  user-select: none !important;
+  border: 0px !important;
+  padding: 2px !important;
+  margin: 0px !important;
+  max-width: none !important;
+  height: 35px !important;
+  width: 35px !important;
 }
 
 // =====================
@@ -202,7 +197,7 @@ visibility: hidden;        }
 // =====================
 
 @media (max-width: $breakpoint-sm) {
-    button[aria-label="Map camera controls"] {
-        visibility: hidden;
-    }
+  button[aria-label="Map camera controls"] {
+    visibility: hidden;
+  }
 }

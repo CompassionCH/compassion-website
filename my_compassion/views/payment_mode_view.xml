@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <record id="payment_mode_tree_website" model="ir.ui.view">
+    <field name="name">payment.mode.tree.website</field>
+    <field name="model">account.payment.mode</field>
+    <field name="inherit_id" ref="account_payment_mode.account_payment_mode_tree" />
+    <field name="arch" type="xml">
+      <field name="payment_type" position="after">
+        <field name="website_published" groups="website.group_website_publisher" />
+      </field>
+    </field>
+  </record>
+  <record id="payment_mode_form_website" model="ir.ui.view">
+    <field name="name">payment.mode.form.website</field>
+    <field name="model">account.payment.mode</field>
+    <field name="inherit_id" ref="account_payment_mode.account_payment_mode_form" />
+    <field name="arch" type="xml">
+      <xpath expr="//group[@name='main']" position="before">
+        <div name="button_box" class="oe_button_box">
+          <button
+            name="website_publish_button"
+            type="object"
+            class="oe_stat_button"
+            icon="fa-globe"
+          >
+            <field name="is_published" widget="website_publish_button" />
+          </button>
+        </div>
+      </xpath>
+    </field>
+  </record>
+</odoo>

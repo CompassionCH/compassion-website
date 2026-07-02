@@ -2,25 +2,44 @@
 // Website customizations
 //------------------------------------------------------------------------------
 
+$o-color-palettes: map-merge(
+  $o-color-palettes,
+  (
+    "compassion": (
+      "o-color-1": #2a5eec,
+      "o-color-2": #11265e,
+      "o-color-3": #eae4df,
+      "o-color-4": #ffffff,
+      "o-color-5": #121a1a,
+    ),
+  )
+);
+$o-selected-color-palettes-names: append(
+  $o-selected-color-palettes-names,
+  "compassion"
+);
+
+// prettier-ignore
 $o-website-values-palettes: (
-    (
-        "font": "NeighbourSans Regular",
-        "header-template": "default",
-        "hamburger-type": "off-canvas",
-        "hamburger-position": "left",
-        "menu-box-shadow": false,
-        "layout": "boxed",
-        "footer-template": "call-to-action",
-        "btn-border-radius": 10rem,
-        "btn-border-radius-sm": 10rem,
-        "btn-border-radius-lg": 10rem,
-        "btn-font-size": 1.2rem,
-        "btn-font-size-sm": 1rem,
-        "btn-padding-y": 0.474rem,
-        "btn-padding-x": 1.25rem,
-        "btn-font-size-lg": 2rem,
-        "btn-padding-y-lg": 0.4rem,
-        "btn-padding-x-lg": 2rem,
-        "logo-height": 3rem,
-    )
+  (
+    "color-palettes-name": "compassion",
+    "font": "NeighbourSans Regular",
+    "header-template": "default",
+    "hamburger-type": "off-canvas",
+    "hamburger-position": "left",
+    "menu-box-shadow": false,
+    "layout": "boxed",
+    "footer-template": "call-to-action",
+    "btn-border-radius": 10rem,
+    "btn-border-radius-sm": 10rem,
+    "btn-border-radius-lg": 10rem,
+    "btn-font-size": 1.2rem,
+    "btn-font-size-sm": 1rem,
+    "btn-padding-y": 0.474rem,
+    "btn-padding-x": 1.25rem,
+    "btn-font-size-lg": 2rem,
+    "btn-padding-y-lg": 0.4rem,
+    "btn-padding-x-lg": 2rem,
+    "logo-height": 3rem,
+  ),
 );

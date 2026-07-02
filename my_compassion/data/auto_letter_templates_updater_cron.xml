@@ -1,18 +1,14 @@
 <odoo>
-    <data>
-
-        <record id="ir_cron_update_letter_templates" model="ir.cron">
-            <field name="name">Correspondence: Update the Letter templates status </field>
-            <field name="model_id" ref="model_correspondence_prewritten_letter"/>
-            <field name="state">code</field>
-            <field name="code">model._cron_update_template_letter_status()</field>
-            <field name="active" eval="True"/>
-            <field name="user_id" ref="base.user_root"/>
-            <field name="interval_number">1</field>
-            <field name="interval_type">days</field>
-            <field name="numbercall">-1</field>
-            <field name="doall" eval="True"/>
-        </record>
-
-    </data>
+  <data>
+    <record id="ir_cron_update_letter_templates" model="ir.cron">
+      <field name="name">Correspondence: Update the Letter templates status </field>
+      <field name="model_id" ref="model_correspondence_prewritten_letter" />
+      <field name="state">code</field>
+      <field name="code">model._cron_update_template_letter_status()</field>
+      <field name="active" eval="True" />
+      <field name="user_id" ref="base.user_root" />
+      <field name="interval_number">1</field>
+      <field name="interval_type">days</field>
+    </record>
+  </data>
 </odoo>

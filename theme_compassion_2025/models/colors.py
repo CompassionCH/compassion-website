@@ -4,6 +4,14 @@ from slugify import slugify
 
 from odoo import api, fields, models
 
+PALETTE_SLOTS = {
+    "o-color-1": "core-blue",
+    "o-color-2": "dark-blue",
+    "o-color-3": "low-eggshell",
+    "o-color-4": "pure-white",
+    "o-color-5": "off-black",
+}
+
 
 class ThemeCompassionColor(models.Model):
     """
@@ -57,3 +65,15 @@ class ThemeCompassionColor(models.Model):
                 )
             else:
                 record.class_name = False
+
+    @api.model
+    def _generate_stylesheet(self):
+        super()._generate_stylesheet()
+        colors = {color.class_name: color.color for color in self.search([])}
+        palette = {slot: colors.get(name) for slot, name in PALETTE_SLOTS.items()}
+        if all(palette.values()):
+            self._render_to_attachment(
+                "theme_compassion_2025.theme_compassion_palette_stylesheet_template",
+                "theme_compassion_2025.theme_compassion_stylesheet_palette",
+                {"palette": palette},
+            )

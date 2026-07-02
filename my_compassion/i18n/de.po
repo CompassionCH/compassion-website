@@ -202,9 +202,9 @@ msgid ""
 "<div style=\"margin:20px auto; text-align: center;\">\n"
 "\n"
 "    <a href=\"${object.partner_id.signup_url}\" style=\"padding: 12px 18px; "
-"font-size: 12px;      line-height: 18px; color: #FFFFFF; border-"
-"color:#0054A6; text-decoration: none; display: inline-block; margin-bottom: "
-"0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: "
+"font-size: 12px;      line-height: 18px; color: #FFFFFF; border-color:"
+"#0054A6; text-decoration: none; display: inline-block; margin-bottom: 0px; "
+"font-weight: 400; text-align: center; vertical-align: middle; cursor: "
 "pointer; white-space: nowrap; background-image: none; background-color: "
 "#0054A6; border: 1px solid #0054A6; border-radius:3px\" title=\"\">\n"
 "        Activate my account\n"
@@ -237,9 +237,9 @@ msgstr ""
 "<div style=\"margin:20px auto; text-align: center;\">\n"
 "\n"
 "    <a href=\"${object.partner_id.signup_url}\" style=\"padding: 12px 18px; "
-"font-size: 12px;      line-height: 18px; color: #FFFFFF; border-"
-"color:#0054A6; text-decoration: none; display: inline-block; margin-bottom: "
-"0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: "
+"font-size: 12px;      line-height: 18px; color: #FFFFFF; border-color:"
+"#0054A6; text-decoration: none; display: inline-block; margin-bottom: 0px; "
+"font-weight: 400; text-align: center; vertical-align: middle; cursor: "
 "pointer; white-space: nowrap; background-image: none; background-color: "
 "#0054A6; border: 1px solid #0054A6; border-radius:3px\" title=\"\">\n"
 "        Mein Konto aktivieren\n"
@@ -260,23 +260,25 @@ msgstr ""
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.view_my2_compassion_event_banner_form
 msgid ""
-"Select pages to display the banner on. If no page is selected, the banner will be\n"
-"                                    displayed on all pages. Click \"Refresh\" to update the list of available pages."
-
+"Select pages to display the banner on. If no page is selected, the banner "
+"will be\n"
+"                                    displayed on all pages. Click "
+"\"Refresh\" to update the list of available pages."
 msgstr ""
-"Wähle die Seiten aus, auf denen das Banner angezeigt werden soll. Wenn keine Seite"
-"ausgewählt ist, wird das Banner auf allen Seiten angezeigt. Klicke auf \"Aktualisieren\", um die "
-"Liste der verfügbaren Seiten zu aktualisieren."
-
+"Wähle die Seiten aus, auf denen das Banner angezeigt werden soll. Wenn keine "
+"Seiteausgewählt ist, wird das Banner auf allen Seiten angezeigt. Klicke auf "
+"\"Aktualisieren\", um die Liste der verfügbaren Seiten zu aktualisieren."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.view_my2_compassion_event_banner_form
 msgid ""
-"If tags are selected, the banner is only visible to users having at least one of these tags.\n"
+"If tags are selected, the banner is only visible to users having at least "
+"one of these tags.\n"
 "                                If empty, it is visible to everyone."
 msgstr ""
-"Wenn Tags ausgewählt sind, ist das Banner nur für Benutzer sichtbar, die mindestens einen "
-"dieser Tags besitzen.\n Wenn leer, ist es für alle sichtbar."
+"Wenn Tags ausgewählt sind, ist das Banner nur für Benutzer sichtbar, die "
+"mindestens einen dieser Tags besitzen.\n"
+" Wenn leer, ist es für alle sichtbar."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_letter_page
@@ -350,11 +352,13 @@ msgstr "<option value=\"\">Bitte auswählen</option>"
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
 msgid ""
-"<option value=\"\" disabled=\"disabled\" selected=\"selected\" hidden=\"true\">\n"
+"<option value=\"\" disabled=\"disabled\" selected=\"selected\" "
+"hidden=\"true\">\n"
 "                                                Please select\n"
 "                                            </option>"
 msgstr ""
-"<option value=\"\" disabled=\"disabled\" selected=\"selected\" hidden=\"true\">\n"
+"<option value=\"\" disabled=\"disabled\" selected=\"selected\" "
+"hidden=\"true\">\n"
 "                                                Bitte auswählen\n"
 "                                            </option>"
 
@@ -1336,7 +1340,6 @@ msgstr "Kontakt"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_login_form
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_reset_password_form
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_signup_form
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_profile_page
 msgid "Contact us"
 msgstr "Kontaktiere uns"
 
@@ -1731,7 +1734,7 @@ msgstr "Schulstufe"
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_sponsorships_page
 msgid "Either"
-msgstr "egal"
+msgstr "Entweder"
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__email
@@ -1781,6 +1784,11 @@ msgstr "Beendete Patenschaften"
 #: model_terms:ir.ui.view,arch_db:my_compassion.DonationFormComponent
 msgid "Enter amount in"
 msgstr "Gib den Betrag ein in"
+
+#. module: my_compassion
+#: code:addons/my_compassion/static/src/js/toast_service.js:0
+msgid "Error"
+msgstr "Fehler"
 
 #. module: my_compassion
 #. openerp-web
@@ -1983,11 +1991,6 @@ msgid "Gift Basket"
 msgstr "Geschenkkorb"
 
 #. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_app_layout
-msgid "Gift basket"
-msgstr "Geschenkkorb"
-
-#. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_sale_order_line__gift_recipient_id
 msgid "Gift Recipient"
 msgstr "Geschenkempfänger"
@@ -2017,9 +2020,7 @@ msgstr "Mädchen"
 #: model_terms:ir.ui.view,arch_db:my_compassion.DonationFormComponent
 #: model_terms:ir.ui.view,arch_db:my_compassion.dashboard_donations_vignette
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_page
-#: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_profile_page
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_app_layout
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_nav_items
 #, python-format
 msgid "Give"
 msgstr "Geben"
@@ -2032,7 +2033,7 @@ msgstr "Ein Geschenk machen"
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_page
 msgid "Give the Gift of compassion"
-msgstr "Geschenke der Hoffnung"
+msgstr "Schenken Sie Mitgefühl"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.GivingLimitsModalComponent
@@ -2069,9 +2070,7 @@ msgstr "Hobbys"
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.http_error_custom
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_dashboard_page
-#: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_profile_page
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_app_layout
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_nav_items
 msgid "Home"
 msgstr "Startseite"
 
@@ -2123,6 +2122,15 @@ msgid ""
 msgstr ""
 "Ich werde regelmässig für mein Patenkind beten und ihm schreiben. Ich "
 "unterstütze es mit einem monatlichen Betrag von:"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.acceptance_full
+msgid ""
+"I accept the legal terms, the privacy policy &amp; conditions of this "
+"website."
+msgstr ""
+"Ich akzeptiere die rechtlichen Bestimmungen, die Datenschutzerklärung &amp; "
+"die Bedingungen dieser Website."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
@@ -2292,6 +2300,11 @@ msgstr "Bild des Fonds/Geschenks, sichtbar auf der MyCompassion-Website"
 #: model_terms:ir.ui.view,arch_db:my_compassion.product_template_form_view
 msgid "Impact Statement"
 msgstr "Wirkungsbericht"
+
+#. module: my_compassion
+#: code:addons/my_compassion/static/src/js/toast_service.js:0
+msgid "Info"
+msgstr "Info"
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_product_product__my_compassion_info_ids
@@ -2501,9 +2514,7 @@ msgstr "Brief gespeichert!"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_letters_page
-#: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_profile_page
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_app_layout
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_nav_items
 #, python-format
 msgid "Letters"
 msgstr "Briefe"
@@ -2770,7 +2781,6 @@ msgstr "Mein Land"
 #: code:addons/my_compassion/controllers/my2_donations.py:0
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_my_donations_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_account_menu
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_profile_page
 #, python-format
 msgid "My Donations"
 msgstr "Meine Spenden"
@@ -2793,7 +2803,6 @@ msgstr "Meine Patenschaft"
 #. module: my_compassion
 #: code:addons/my_compassion/controllers/my2_children.py:0
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_children_page
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_profile_page
 #, python-format
 msgid "My Sponsorships"
 msgstr "Meine Patenschaften"
@@ -2817,7 +2826,7 @@ msgstr "Meine Spendenbescheinigung"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.dashboard_donations_vignette
-#: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_nav_items
 msgid "My donations"
 msgstr "Meine Spenden"
 
@@ -2869,9 +2878,8 @@ msgstr "Meine Referenz"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_my_donations_page
-#: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_nav_items
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_sponsorship_donation
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_app_layout
 msgid "My sponsorships"
 msgstr "Meine Patenschaften"
 
@@ -3163,12 +3171,13 @@ msgid ""
 "                                                            assistance\n"
 "                                                            at:\n"
 "                                                                <br/>\n"
-"                                                                info@compassion.ch\n"
+"                                                                info@compassion."
+"ch\n"
 "                                                                <br/>\n"
 "                                                                024 434 21 24"
 msgstr ""
-"Bitte kontaktiere Compassion für Unterstützung unter:<br/"
-">info@compassion.ch<br/>024 434 21 24"
+"Bitte kontaktiere Compassion für Unterstützung unter:<br/>info@compassion."
+"ch<br/>024 434 21 24"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.DonationFormComponent
@@ -3706,6 +3715,11 @@ msgid "Street Number"
 msgstr "Hausnummer"
 
 #. module: my_compassion
+#: code:addons/my_compassion/static/src/js/toast_service.js:0
+msgid "Success"
+msgstr "Erfolg"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.product_template_form_view
 msgid "Suggested Donations"
 msgstr "Empfohlene Spenden"
@@ -3969,8 +3983,8 @@ msgstr ""
 msgid ""
 "There was an error while rendering the preview. Make sure you entered some "
 "text and that your\n"
-"                attachments are valid. Please contact us at "
-"info@compassion.ch if you experience unexpected behaviours."
+"                attachments are valid. Please contact us at info@compassion."
+"ch if you experience unexpected behaviours."
 msgstr ""
 "Beim Anzeigen der Vorschau ist etwas schiefgelaufen. Bitte schau nach, ob du "
 "Text eingegeben hast und deine Anhänge in Ordnung sind. Wenn das Problem "
@@ -4055,7 +4069,6 @@ msgstr "Für"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_letters_page
 msgid "To"
 msgstr "Bis"
-
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_recurring_contract_group__total_amount
@@ -4206,6 +4219,11 @@ msgid "Wap Contribution Amount"
 msgstr "Wap Beitragsbetrag"
 
 #. module: my_compassion
+#: code:addons/my_compassion/static/src/js/toast_service.js:0
+msgid "Warning"
+msgstr "Warnung"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_information_privacy_data
 msgid ""
 "We ask our volunteers and the sponsors who visit their sponsored children to "
@@ -4316,8 +4334,7 @@ msgstr "Mit deiner Hilfe können wir..."
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_letter_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_account_menu
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_children_letters
-#: model_terms:ir.ui.view,arch_db:my_compassion.my_compassion_dynamic_menu
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_letters_page
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_nav_items
 msgid "Write a letter"
 msgstr "Einen Brief schreiben"
 
@@ -4370,7 +4387,7 @@ msgstr "Tipps zum Schreiben"
 #: code:addons/my_compassion/controllers/my2_children.py:0
 #, python-format
 msgid "Wrote you a letter"
-msgstr "hat dir einen Brief geschrieben"
+msgstr "Du hast einen Brief erhalten"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_payment_method
@@ -4504,14 +4521,18 @@ msgstr "Dein Social-Media-Kontakt (Facebook oder andere Plattformen)"
 msgid ""
 "You’ll receive an email with everything you need to start the Write&amp;Pray "
 "soon."
-msgstr "Du erhältst in Kürze eine E-Mail mit allen Informationen, um deine Write&Pray-Patenschaft zu starten."
+msgstr ""
+"Du erhältst in Kürze eine E-Mail mit allen Informationen, um deine "
+"Write&Pray-Patenschaft zu starten."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
 msgid ""
 "You’ll receive an email with everything you need to start the sponsorship "
 "soon."
-msgstr "Du erhältst in Kürze eine E-Mail mit allen Informationen, die du brauchst, um deine Patenschaft zu starten."
+msgstr ""
+"Du erhältst in Kürze eine E-Mail mit allen Informationen, die du brauchst, "
+"um deine Patenschaft zu starten."
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__zip
@@ -4629,7 +4650,6 @@ msgstr "Schwestern"
 msgid "this link"
 msgstr "dieser Link"
 
-
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
 msgid "Get in touch"
@@ -4639,14 +4659,15 @@ msgstr "Kontaktiere uns"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
 msgid ""
 "Have a question or want to learn more about our\n"
-"                                    work? Fill out the form below, and we'll get back to\n"
+"                                    work? Fill out the form below, and we'll "
+"get back to\n"
 "                                    you as soon as possible."
 msgstr ""
 "Haben Sie eine Frage oder möchten Sie mehr über\n"
 "                                unsere Arbeit erfahren? Füllen Sie das\n"
-"                                untenstehende Formular aus und wir melden uns\n"
+"                                untenstehende Formular aus und wir melden "
+"uns\n"
 "                                so schnell wie möglich bei Ihnen."
-
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
@@ -4755,6 +4776,17 @@ msgid "Settings"
 msgstr "Einstellungen"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.user_dropdown_settings_link
+msgid ""
+"<i class=\"fa fa-fw fa-cog me-1 small text-primary text-primary-emphasis\"/"
+">\n"
+"                Settings"
+msgstr ""
+"<i class=\"fa fa-fw fa-cog me-1 small text-primary text-primary-emphasis\"/"
+">\n"
+"                Einstellungen"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_children_card_component
 msgid "Awaiting substitute sponsorship"
@@ -4768,31 +4800,109 @@ msgstr "Einen letzten Brief schreiben"
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_options
 msgid ""
-"Write&amp;Pray sponsorships are available for people under the "
-"age of 25. Please provide your date of birth."
+"Write&amp;Pray sponsorships are available for people under the age of 25. "
+"Please provide your date of birth."
 msgstr ""
-"Write&Pray-Patenschaften sind für Personen unter 25 Jahren vorgesehen. "
-"Bitte gib dein Geburtsdatum an."
+"Write&Pray-Patenschaften sind für Personen unter 25 Jahren vorgesehen. Bitte "
+"gib dein Geburtsdatum an."
+
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.child_protection_charter_page_override
 msgid "Submit"
 msgstr "Senden"
-
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
 msgid ""
 "Create a MyCompassion account to stay connected with %s.\n"
 "                                <br/>\n"
-"                                Through your personalized portal, you can easily write letters, view recent pictures,\n"
+"                                Through your personalized portal, you can "
+"easily write letters, view recent pictures,\n"
 "                                and manage your sponsorship details."
-msgstr "Erstelle ein MyCompassion-Konto, um mit %s in Verbindung zu bleiben.<br/>\n "
-"Über dein persönliches Konto kannst du ganz einfach Briefe schreiben, aktuelle Fotos ansehen und deine Patenschaft verwalten."
+msgstr ""
+"Erstelle ein MyCompassion-Konto, um mit %s in Verbindung zu bleiben.<br/>\n"
+" Über dein persönliches Konto kannst du ganz einfach Briefe schreiben, "
+"aktuelle Fotos ansehen und deine Patenschaft verwalten."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
 msgid "Sign up"
 msgstr "Registrieren"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
+msgid ""
+"Given the time it takes for mail to arrive, it could take between one and "
+"three months for you to receive a reply."
+msgstr ""
+"Aufgrund des langen Weges eines Briefes kann es 1-3 Monate dauern, bis du "
+"eine Antwort erhältst."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.child_unavailable_page
+msgid "Good news!"
+msgstr "Gute Neuigkeiten!"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.child_unavailable_page
+msgid ""
+"Someone else has decided to sponsor {child_name} just a moment ago. He and "
+"his\n"
+"                                        family will be happy! But don't "
+"leave just yet, other\n"
+"                                        children are waiting for life-"
+"changing support. Would you like to sponsor one of\n"
+"                                        these children?"
+msgstr ""
+"Vor wenigen Augenblicken hat sich eine andere Person entschieden, eine "
+"Patenschaft für {child_name} zu übernehmen. Das sind grossartige Neuigkeiten "
+"für {child_name} und seine Familie! Viele andere Kinder warten weiterhin auf "
+"Unterstützung, die ihr Leben nachhaltig verändern wird. Möchtest du eine "
+"Patenschaft für eines der folgenden Kinder übernehmen?"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.child_unavailable_page
+msgid ""
+"Someone else has decided to sponsor {child_name} just a moment ago. She and "
+"her\n"
+"                                        family will be happy! But don't "
+"leave just yet, other\n"
+"                                        children are waiting for life-"
+"changing support. Would you like to sponsor one of\n"
+"                                        these children?"
+msgstr ""
+"Vor wenigen Augenblicken hat sich eine andere Person entschieden, eine "
+"Patenschaft für {child_name} zu übernehmen. Das sind grossartige Neuigkeiten "
+"für {child_name} und ihre Familie! Viele andere Kinder warten weiterhin auf "
+"Unterstützung, die ihr Leben nachhaltig verändern wird. Möchtest du eine "
+"Patenschaft für eines der folgenden Kinder übernehmen?"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.child_unavailable_page
+msgid "See more children"
+msgstr "Weitere Kinder anzeigen"
+
+#. module: payment
+#: code:addons/payment/static/src/js/payment_processing.js:0
+#, python-format
+msgid "We are processing your payments, please wait ..."
+msgstr "Wir bearbeiten Deine Zahlungen, bitte warte kurz ..."
+
+#. module: payment
+#: code:addons/payment/static/src/js/payment_processing.js:0
+#, python-format
+msgid "We are processing your payment, please wait ..."
+msgstr "Wir bearbeiten Deine Zahlung, bitte warte kurz ..."
+
+#. module: my_compassion
+#: model:ir.actions.server,name:my_compassion.child_publish_action
+msgid "Publish/Unpublish child"
+msgstr "Kind veröffentlichen/unveröffentlichen"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_app_layout
+msgid "Gift basket"
+msgstr "Geschenkkorb"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_mobile_app_layout
@@ -4823,52 +4933,9 @@ msgstr "Abmelden"
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
 msgid ""
-"Given the time it takes for mail to arrive, it could take between one and three months for\n"
+"Given the time it takes for mail to arrive, it could take between one and "
+"three months for\n"
 "                            you to receive a reply."
-msgstr "Aufgrund des langen Weges eines Briefes kann es 1-3 Monate dauern, bis du eine Antwort erhältst."
-
-#. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.child_unavailable_page
-msgid "Good news!"
-msgstr "Gute Neuigkeiten!"
-
-#. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.child_unavailable_page
-msgid ""
-"Someone else has decided to sponsor {child_name} just a moment ago. He and his\n"
-"                                        family will be happy! But don't leave just yet, other\n"
-"                                        children are waiting for life-changing support. Would you like to sponsor one of\n"
-"                                        these children?"
-msgstr "Vor wenigen Augenblicken hat sich eine andere Person entschieden, eine Patenschaft für {child_name} zu übernehmen. Das sind "
-"grossartige Neuigkeiten für {child_name} und seine Familie! Viele andere Kinder warten weiterhin auf Unterstützung, die ihr Leben "
-"nachhaltig verändern wird. Möchtest du eine Patenschaft für eines der folgenden Kinder übernehmen?"
-
-
-#. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.child_unavailable_page
-msgid ""
-"Someone else has decided to sponsor {child_name} just a moment ago. She and her\n"
-"                                        family will be happy! But don't leave just yet, other\n"
-"                                        children are waiting for life-changing support. Would you like to sponsor one of\n"
-"                                        these children?"
-msgstr "Vor wenigen Augenblicken hat sich eine andere Person entschieden, eine Patenschaft für {child_name} zu übernehmen. Das sind "
-"grossartige Neuigkeiten für {child_name} und ihre Familie! Viele andere Kinder warten weiterhin auf Unterstützung, die ihr Leben "
-"nachhaltig verändern wird. Möchtest du eine Patenschaft für eines der folgenden Kinder übernehmen?"
-
-
-#. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.child_unavailable_page
-msgid "See more children"
-msgstr "Weitere Kinder anzeigen"
-
-#. module: payment
-#: code:addons/payment/static/src/js/payment_processing.js:0
-#, python-format
-msgid "We are processing your payments, please wait ..."
-msgstr "Wir bearbeiten Deine Zahlungen, bitte warte kurz ..."
-
-#. module: payment
-#: code:addons/payment/static/src/js/payment_processing.js:0
-#, python-format
-msgid "We are processing your payment, please wait ..."
-msgstr "Wir bearbeiten Deine Zahlung, bitte warte kurz ..."
+msgstr ""
+"Aufgrund des langen Weges eines Briefes kann es 1-3 Monate dauern, bis du "
+"eine Antwort erhältst."

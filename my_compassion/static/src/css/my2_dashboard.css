@@ -1,34 +1,34 @@
 .dashboard-banner {
-    aspect-ratio: 3;
-    position: relative;
+  aspect-ratio: 3;
+  position: relative;
 }
 
 .dashboard-banner::before {
-    content: "";
-    width: 100%;
-    height: 100%;
-    display: block;
-    position: absolute;
-    background: linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(100, 100, 100, 0) 70%);
+  content: "";
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: absolute;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(100, 100, 100, 0) 70%);
 }
 
 .dashboard-banner img {
-    width: 100%;
+  width: 100%;
 }
 
 .dashboard-banner h1 {
-    font-family: "NeighbourSans Medium";
-    font-size: 2rem;
+  font-family: "NeighbourSans Medium";
+  font-size: 2rem;
 }
 
 .dashboard-grid button,
 .dashboard-grid a {
-    margin-top: 1.5rem;
-    width: 100%;
+  margin-top: 1.5rem;
+  width: 100%;
 }
 
 @media screen and (max-width: 639px) {
-    .grid-item-container {
-        min-width: min(100%, 300px);
-    }
+  .grid-item-container {
+    min-width: min(100%, 300px);
+  }
 }

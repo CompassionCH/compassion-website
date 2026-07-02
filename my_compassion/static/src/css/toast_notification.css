@@ -1,69 +1,69 @@
 .toast-notification {
-    position: fixed;
-    top: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10000;
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
 
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 
-    padding: 1rem;
-    border-radius: 10px;
-    max-width: 400px;
-    width: calc(100% - 2rem); /* For small screens */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 10px;
+  max-width: 400px;
+  width: calc(100% - 2rem); /* For small screens */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  margin-bottom: 1rem;
 }
 
 .toast-notification-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 0.5rem;
 }
 
 .toast-notification-title {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .toast-notification-title .icon {
-    display: flex;
-    align-items: center;
-    font-size: 1.25rem;
-    width: 1.5rem;
-    height: 1.5rem;
+  display: flex;
+  align-items: center;
+  font-size: 1.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 /* Success */
 .toast-notification.success {
-    background-color: #bce372;
-    color: #264f35;
+  background-color: #bce372;
+  color: #264f35;
 }
 
 .toast-notification.success .icon {
-    color: #264f35;
+  color: #264f35;
 }
 
 /* Error */
 .toast-notification.danger {
-    background-color: #f78970;
-    color: #dc2725;
+  background-color: #f78970;
+  color: #dc2725;
 }
 
 .toast-notification.danger .icon {
-    color: #dc2725;
+  color: #dc2725;
 }
 
 /* Info */
 .toast-notification.info {
-    background-color: #aec9ec;
-    color: #0f224d;
+  background-color: #aec9ec;
+  color: #0f224d;
 }
 
 .toast-notification.info .icon {
-    color: #0f224d;
+  color: #0f224d;
 }

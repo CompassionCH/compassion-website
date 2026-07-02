@@ -10,209 +10,218 @@ Page My Compassion 2 Contact us page
     -/contactus
 -->
 <odoo>
-    <record id="my2_contactus_page" model="ir.ui.view">
-        <field name="name">My Compassion 2 Contact us page</field>
-        <field name="inherit_id" ref="website.contactus" />
-        <field name="website_id" ref="my_compassion.my2_website" />
-        <field name="key">my_compassion.my2_contactus_page</field>
-        <field name="type">qweb</field>
-        <field name="arch" type="xml">
-            <xpath expr="//div[@id='wrap']" position="attributes">
-                <attribute name="class">d-none</attribute>
-            </xpath>
-            <xpath expr="//div[@id='wrap']" position="after">
-                <div id="wrap_custom" class="oe_structure">
-                    <div class="container">
-                        <div class="single-column pt-3">
-                            <t t-call="theme_compassion_2025.TitleComponent">
-                                <t t-set="title_content">Get in touch</t>
-                                <t t-set="title_size" t-value="'md'" />
-                                <t t-set="color" t-value="'core-blue'" />
-                                <t t-set="show_underline" t-value="True" />
-                                <t t-set="underline_color" t-value="'low-yellow'" />
-                                <p>
+  <record id="my2_contactus_page" model="ir.ui.view">
+    <field name="name">My Compassion 2 Contact us page</field>
+    <field name="inherit_id" ref="website.contactus" />
+    <field name="website_id" ref="my_compassion.my2_website" />
+    <field name="key">my_compassion.my2_contactus_page</field>
+    <field name="type">qweb</field>
+    <field name="arch" type="xml">
+      <xpath expr="//div[@id='wrap']" position="attributes">
+        <attribute name="class">d-none</attribute>
+      </xpath>
+      <xpath expr="//div[@id='wrap']" position="after">
+        <div id="wrap_custom">
+          <div class="container">
+            <div class="single-column pt-3">
+              <t t-call="theme_compassion_2025.TitleComponent">
+                <t t-set="title_content">Get in touch</t>
+                <t t-set="title_size" t-value="'md'" />
+                <t t-set="color" t-value="'core-blue'" />
+                <t t-set="show_underline" t-value="True" />
+                <t t-set="underline_color" t-value="'low-yellow'" />
+                <p>
                                     Have a question or want to learn more about our
                                     work? Fill out the form below, and we'll get back to
                                     you as soon as possible.
                                 </p>
-                            </t>
-                        </div>
-                    </div>
-                </div>
-                <div id="contactus_form_top" class="bg-core-blue text-center py-5">
-                    <div class="single-column mx-3 mx-md-auto">
-                        <span
-                            class="hidden"
-                            data-for="contactus_form"
-                            t-att-data-values="{'email_to': res_company.email}"
-                        />
-                        <form
-                            id="contactus_form"
-                            action="/website_form/"
-                            method="post"
-                            enctype="multipart/form-data"
-                            class="o_mark_required contactus-form s_website_form"
-                            data-mark="*"
-                            data-model_name="crm.claim"
-                            data-success-mode="redirect"
-                            data-success-page="/my2-contactus-thank-you"
-                            role="form"
-                        >
-                            <div class="row text-left">
-                                <!-- Title Mr. or Mrs -->
-                                <div class="w-100">
-                                    <t t-call="theme_compassion_2025.FormFieldComponent">
-                                        <t t-set="label">Title</t>
-                                        <t t-set="label_color" t-value="'pure-white'" />
-                                        <t
-                                            t-set="top_class"
-                                            t-value="' d-flex flex-column col-12 col-md-6 mb-3 s_website_form_field s_website_form_required'"
-                                        />
-                                        <t t-set="input_id" t-value="'contactus_form_firstname'" />
-                                        <t t-call="theme_compassion_2025.SelectComponent">
-                                            <t t-set="id" t-value="'title'" />
-                                            <t t-set="name" t-value="'title'" />
-                                            <t t-set="select_class" t-value="'bg-white'" />
-                                            <t t-set="required" t-value="True" />
-                                            <option value="" disabled="disabled" selected="selected" hidden="true">
+              </t>
+            </div>
+          </div>
+        </div>
+        <div id="contactus_form_top" class="bg-core-blue text-center py-5">
+          <div class="single-column mx-3 mx-md-auto">
+            <span
+              class="hidden"
+              data-for="contactus_form"
+              t-att-data-values="{'email_to': res_company.email}"
+            />
+            <form
+              id="contactus_form"
+              action="/website/form/"
+              method="post"
+              enctype="multipart/form-data"
+              class="o_mark_required contactus-form s_website_form"
+              data-mark="*"
+              data-model_name="crm.claim"
+              data-success-mode="redirect"
+              data-success-page="/my2-contactus-thank-you"
+              role="form"
+            >
+              <div class="row text-start">
+                <!-- Title Mr. or Mrs -->
+                <div class="w-100">
+                  <t t-call="theme_compassion_2025.FormFieldComponent">
+                    <t t-set="label">Title</t>
+                    <t t-set="label_color" t-value="'pure-white'" />
+                    <t
+                      t-set="top_class"
+                      t-value="' d-flex flex-column col-12 col-md-6 mb-3 s_website_form_field s_website_form_required'"
+                    />
+                    <t t-set="input_id" t-value="'contactus_form_firstname'" />
+                    <t t-call="theme_compassion_2025.SelectComponent">
+                      <t t-set="id" t-value="'title'" />
+                      <t t-set="name" t-value="'title'" />
+                      <t t-set="select_class" t-value="'bg-white'" />
+                      <t t-set="required" t-value="True" />
+                      <option
+                        value=""
+                        disabled="disabled"
+                        selected="selected"
+                        hidden="true"
+                      >
                                                 Please select
                                             </option>
-                                            <t t-foreach="titles" t-as="t">
-                                                <option t-att-value="t.shortcut">
-                                                    <t t-esc="t.name" />
-                                                </option>
-                                            </t>
-                                        </t>
-                                    </t>
-                                </div>
-                                <!-- First Name and Last Name -->
-                                <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label">First Name</t>
-                                    <t t-set="label_color" t-value="'pure-white'" />
-                                    <t
-                                        t-set="top_class"
-                                        t-value="' d-flex flex-column col-12 col-md-6 mb-3 s_website_form_field s_website_form_required'"
-                                    />
-                                    <t t-set="input_id" t-value="'contactus_form_firstname'" />
-                                    <input
-                                        id="contactus_form_firstname"
-                                        type="text"
-                                        name="firstname"
-                                        class="form-control s_website_form_input dark-bg mt-auto"
-                                        placeholder="First Name"
-                                        data-validate-type="name"
-                                        required=""
-                                    />
-                                </t>
-                                <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label">Last Name</t>
-                                    <t t-set="label_color" t-value="'pure-white'" />
-                                    <t
-                                        t-set="top_class"
-                                        t-value="'d-flex flex-column col-12 col-md-6 mb-3 s_website_form_field s_website_form_required'"
-                                    />
-                                    <t t-set="input_id" t-value="'contactus_form_lastname'" />
-                                    <input
-                                        id="contactus_form_lastname"
-                                        type="text"
-                                        name="lastname"
-                                        class="form-control s_website_form_input dark-bg mt-auto"
-                                        placeholder="Last Name"
-                                        data-validate-type="name"
-                                        required=""
-                                    />
-                                </t>
-                                <!-- Phone number and E-mail -->
-                                <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label">Phone number</t>
-                                    <t t-set="label_color" t-value="'pure-white'" />
-                                    <t
-                                        t-set="top_class"
-                                        t-value="'d-flex flex-column col-12 col-md-6 mb-3 s_website_form_field'"
-                                    />
-                                    <t t-set="input_id" t-value="'contactus_form_phone_number'" />
-                                    <input
-                                        id="contactus_form_phone_number"
-                                        type="tel"
-                                        name="partner_phone"
-                                        class="form-control s_website_form_input dark-bg mt-auto"
-                                        placeholder="0041244342124"
-                                        data-validate-type="phone"
-                                    />
-                                </t>
-                                <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label">E-mail</t>
-                                    <t t-set="label_color" t-value="'pure-white'" />
-                                    <t
-                                        t-set="top_class"
-                                        t-value="'d-flex flex-column col-12 col-md-6 mb-3 s_website_form_field s_website_form_required'"
-                                    />
-                                    <t t-set="input_id" t-value="'contactus_form_email'" />
-                                    <input
-                                        id="contactus_form_email"
-                                        type="email"
-                                        name="email_from"
-                                        class="form-control s_website_form_input dark-bg mt-auto"
-                                        data-validate-type="email"
-                                        required=""
-                                    />
-                                </t>
-                                <!-- Subject -->
-                                <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label">Subject</t>
-                                    <t t-set="label_color" t-value="'pure-white'" />
-                                    <t
-                                        t-set="top_class"
-                                        t-value="'col-12 s_website_form_field mb-3 s_website_form_required'"
-                                    />
-                                    <t t-set="input_id" t-value="contactus_subject" />
-                                    <input
-                                        id="contactus_subject"
-                                        type="text"
-                                        name="name"
-                                        class="form-control s_website_form_input dark-bg"
-                                        placeholder="Request subject"
-                                        required=""
-                                    />
-                                </t>
-                                <!-- Message -->
-                                <t t-call="theme_compassion_2025.FormFieldComponent">
-                                    <t t-set="label">Message</t>
-                                    <t t-set="label_color" t-value="'pure-white'" />
-                                    <t
-                                        t-set="top_class"
-                                        t-value="'col-12 mb-3 s_website_form_field s_website_form_required'"
-                                    />
-                                    <t t-set="input_id" t-value="'contactus_message'" />
-                                    <textarea
-                                        id="contactus_message"
-                                        name="description"
-                                        class="form-control s_website_form_input dark-bg"
-                                        required=""
-                                        rows="4"
-                                    />
-                                </t>
-                                <!-- csrf token -->
-                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
-                                <div class="col-12 text-center">
-                                    <div id="s_website_form_result" />
-                                </div>
-                                <!-- Contact us button -->
-                                <div class="w-100 mt-3 d-flex justify-content-center">
-                                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                        <t t-set="variant" t-value="'compact'" />
-                                        <t t-set="variation" t-value="'filled'" />
-                                        <t t-set="label">Send the message</t>
-                                        <t t-set="color" t-value="'pure-white'" />
-                                        <t t-set="text_color" t-value="'core-blue'" />
-                                        <t t-set="add_class" t-value="'s_website_form_send'" />
-                                    </t>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                      <t t-foreach="titles" t-as="t">
+                        <option t-att-value="t.shortcut">
+                          <t t-out="t.name" />
+                        </option>
+                      </t>
+                    </t>
+                  </t>
                 </div>
-            </xpath>
-        </field>
-    </record>
+                <!-- First Name and Last Name -->
+                <t t-call="theme_compassion_2025.FormFieldComponent">
+                  <t t-set="label">First Name</t>
+                  <t t-set="label_color" t-value="'pure-white'" />
+                  <t
+                    t-set="top_class"
+                    t-value="' d-flex flex-column col-12 col-md-6 mb-3 s_website_form_field s_website_form_required'"
+                  />
+                  <t t-set="input_id" t-value="'contactus_form_firstname'" />
+                  <input
+                    id="contactus_form_firstname"
+                    type="text"
+                    name="firstname"
+                    class="form-control s_website_form_input dark-bg mt-auto"
+                    placeholder="First Name"
+                    data-validate-type="name"
+                    required=""
+                  />
+                </t>
+                <t t-call="theme_compassion_2025.FormFieldComponent">
+                  <t t-set="label">Last Name</t>
+                  <t t-set="label_color" t-value="'pure-white'" />
+                  <t
+                    t-set="top_class"
+                    t-value="'d-flex flex-column col-12 col-md-6 mb-3 s_website_form_field s_website_form_required'"
+                  />
+                  <t t-set="input_id" t-value="'contactus_form_lastname'" />
+                  <input
+                    id="contactus_form_lastname"
+                    type="text"
+                    name="lastname"
+                    class="form-control s_website_form_input dark-bg mt-auto"
+                    placeholder="Last Name"
+                    data-validate-type="name"
+                    required=""
+                  />
+                </t>
+                <!-- Phone number and E-mail -->
+                <t t-call="theme_compassion_2025.FormFieldComponent">
+                  <t t-set="label">Phone number</t>
+                  <t t-set="label_color" t-value="'pure-white'" />
+                  <t
+                    t-set="top_class"
+                    t-value="'d-flex flex-column col-12 col-md-6 mb-3 s_website_form_field'"
+                  />
+                  <t t-set="input_id" t-value="'contactus_form_phone_number'" />
+                  <input
+                    id="contactus_form_phone_number"
+                    type="tel"
+                    name="partner_phone"
+                    class="form-control s_website_form_input dark-bg mt-auto"
+                    placeholder="0041244342124"
+                    data-validate-type="phone"
+                  />
+                </t>
+                <t t-call="theme_compassion_2025.FormFieldComponent">
+                  <t t-set="label">E-mail</t>
+                  <t t-set="label_color" t-value="'pure-white'" />
+                  <t
+                    t-set="top_class"
+                    t-value="'d-flex flex-column col-12 col-md-6 mb-3 s_website_form_field s_website_form_required'"
+                  />
+                  <t t-set="input_id" t-value="'contactus_form_email'" />
+                  <input
+                    id="contactus_form_email"
+                    type="email"
+                    name="email_from"
+                    class="form-control s_website_form_input dark-bg mt-auto"
+                    data-validate-type="email"
+                    required=""
+                  />
+                </t>
+                <!-- Subject -->
+                <t t-call="theme_compassion_2025.FormFieldComponent">
+                  <t t-set="label">Subject</t>
+                  <t t-set="label_color" t-value="'pure-white'" />
+                  <t
+                    t-set="top_class"
+                    t-value="'col-12 s_website_form_field mb-3 s_website_form_required'"
+                  />
+                  <t t-set="input_id" t-value="contactus_subject" />
+                  <input
+                    id="contactus_subject"
+                    type="text"
+                    name="name"
+                    class="form-control s_website_form_input dark-bg"
+                    placeholder="Request subject"
+                    required=""
+                  />
+                </t>
+                <!-- Message -->
+                <t t-call="theme_compassion_2025.FormFieldComponent">
+                  <t t-set="label">Message</t>
+                  <t t-set="label_color" t-value="'pure-white'" />
+                  <t
+                    t-set="top_class"
+                    t-value="'col-12 mb-3 s_website_form_field s_website_form_required'"
+                  />
+                  <t t-set="input_id" t-value="'contactus_message'" />
+                  <textarea
+                    id="contactus_message"
+                    name="description"
+                    class="form-control s_website_form_input dark-bg"
+                    required=""
+                    rows="4"
+                  />
+                </t>
+                <!-- csrf token -->
+                <input
+                  type="hidden"
+                  name="csrf_token"
+                  t-att-value="request.csrf_token()"
+                />
+                <div class="col-12 text-center">
+                  <div id="s_website_form_result" />
+                </div>
+                <!-- Contact us button -->
+                <div class="w-100 mt-3 d-flex justify-content-center">
+                  <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                    <t t-set="variant" t-value="'compact'" />
+                    <t t-set="variation" t-value="'filled'" />
+                    <t t-set="label">Send the message</t>
+                    <t t-set="color" t-value="'pure-white'" />
+                    <t t-set="text_color" t-value="'core-blue'" />
+                    <t t-set="add_class" t-value="'s_website_form_send'" />
+                  </t>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </xpath>
+    </field>
+  </record>
 </odoo>

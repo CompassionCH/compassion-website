@@ -27,4 +27,8 @@ from . import (
     compassion_child,
     contracts,
     ir_http,
+    account_payment_mode,
+    recurring_contract_origin,
+    res_partner_match,
+    website,
 )

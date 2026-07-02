@@ -1,60 +1,56 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <data noupdate="1">
-        <!-- Email template for partner account confirmation -->
-        <record
-      id="signup_confirmation_set_password_email"
-      model="mail.template"
-    >
-            <field name="name">Compassion account confirmation</field>
-            <field
+  <data noupdate="1">
+    <!-- Email template for partner account confirmation -->
+    <record id="signup_confirmation_set_password_email" model="mail.template">
+      <field name="name">Compassion account confirmation</field>
+      <field
         name="model_id"
         ref="partner_communication.model_partner_communication_job"
       />
-            <field
+      <field
         name="email_from"
-      >"${object.company_id.name | safe}"&lt;${(object.company_id.email or 'noreply@mycompassion.com') | safe}&gt;</field>
-            <field name="email_to">${object.partner_id.email|safe}</field>
-            <field name="use_default_to">True</field>
-            <field name="subject">Compassion account confirmation</field>
+      >"{{object.company_id.name}}"&lt;{{(object.company_id.email or 'noreply@mycompassion.com')}}&gt;</field>
+      <field name="email_to">{{object.partner_id.email}}</field>
+      <field name="use_default_to">True</field>
+      <field name="subject">Compassion account confirmation</field>
 
-            <field name="body_html" type="html">
-<div>
-    % set partner = object.partner_id
-</div>
-<p>
-    ${partner.salutation}
-</p>
-<p>
+      <field name="body_html" type="html">
+        <div>
+          <t t-set="partner" t-value="object.partner_id" />
+        </div>
+        <p>
+          <t t-out="partner.salutation" />
+        </p>
+        <p>
     You have recently created an account on MyCompassion.
 </p>
-<p>
+        <p>
     To activate your account, please click the button below and set a password (minimum eight characters).
 </p>
-<div style="margin:20px auto; text-align: center;">
-
-    <a
-            href="${object.partner_id.signup_url}"
+        <div style="margin:20px auto; text-align: center;">
+          <a
+            t-att-href="object.partner_id._get_signup_url()"
             style="padding: 12px 18px; font-size: 12px;
      line-height: 18px; color: #FFFFFF; border-color:#0054A6; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #0054A6; border: 1px solid #0054A6; border-radius:3px"
             title=""
           >
         Activate my account
     </a>
-</div>
-<p>
+        </div>
+        <p>
     If you did not expect this, you can safely ignore this email.
 </p>
-<p>
+        <p>
     Best regards
 </p>
-<p>
-     ${object.user_id.signature | safe}
-</p>
-            </field>
+        <p>
+          <t t-out="object.user_id.signature" />
+        </p>
+      </field>
 
-            <field name="lang">${object.lang}</field>
-            <field name="auto_delete" eval="True" />
-        </record>
-    </data>
+      <field name="lang">{{object.lang}}</field>
+      <field name="auto_delete" eval="True" />
+    </record>
+  </data>
 </odoo>

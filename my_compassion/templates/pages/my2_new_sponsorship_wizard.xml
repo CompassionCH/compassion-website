@@ -27,258 +27,283 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     If renamed or modified, make sure to update the corresponding logic there as well.
 -->
 <odoo>
-    <!-- NEW SPONSORSHIP STEP PROGRESS BAR -->
-    <template id="NewSponsorshipStepProgressBar" name="New Sponsorship Step Progress Bar">
-        <!-- Default property values -->
-        <t t-set="n_steps" t-value="n_steps or 3" />
-        <t t-set="current_step" t-value="current_step or 0" />
-        <t t-set="marker_color" t-value="marker_color or 'mid-yellow'" />
-        <t t-set="progress_color" t-value="progress_color or 'low-yellow'" />
-        <t t-set="track_color" t-value="track_color or 'low-eggshell'" />
-        <!-- Step progress bar -->
-        <div class="step-progress-container">
-            <!-- Track -->
-            <div t-attf-class="step-progress-track d-flex">
-                <t t-foreach="range(n_steps)" t-as="i">
-                    <div t-if="i &lt; current_step" t-attf-class="flex-grow-1 bg-#{progress_color}" />
-                    <div t-elif="i > current_step" t-attf-class="flex-grow-1 bg-#{track_color}" />
-                </t>
-            </div>
-            <!-- Steps -->
-            <t t-if="n_steps == 1" t-set="justify_content" t-value="'center'" />
-            <t t-else="" t-set="justify_content" t-value="'between'" />
-            <div t-attf-class="d-flex justify-content-#{justify_content}">
-                <t t-foreach="range(n_steps)" t-as="i">
-                    <div class="step-marker-container">
-                        <div
-                            t-if="i &lt; current_step"
-                            t-attf-class="step-marker-active bg-#{marker_color} border-#{marker_color}"
-                        />
-                        <div
-                            t-elif="i == current_step"
-                            t-attf-class="step-marker-active bg-#{progress_color} border-#{marker_color}"
-                        />
-                        <div t-else="" t-attf-class="step-marker bg-#{track_color}" />
-                    </div>
-                </t>
-            </div>
-        </div>
-    </template>
-    <!-- NEW SPONSORSHIP WIZARD USER DETAILS STEP -->
-    <template id="my2_new_sponsorship_wizard_user_details" name="New Sponsorship Wizard User Details Step">
-        <div class="mb-3 p-3 rounded-lg bg-light-blue tiny-text">
+  <!-- NEW SPONSORSHIP STEP PROGRESS BAR -->
+  <template id="NewSponsorshipStepProgressBar" name="New Sponsorship Step Progress Bar">
+    <!-- Default property values -->
+    <t t-set="n_steps" t-value="n_steps or 3" />
+    <t t-set="current_step" t-value="current_step or 0" />
+    <t t-set="marker_color" t-value="marker_color or 'mid-yellow'" />
+    <t t-set="progress_color" t-value="progress_color or 'low-yellow'" />
+    <t t-set="track_color" t-value="track_color or 'low-eggshell'" />
+    <!-- Step progress bar -->
+    <div class="step-progress-container">
+      <!-- Track -->
+      <div t-attf-class="step-progress-track d-flex">
+        <t t-foreach="range(n_steps)" t-as="i">
+          <div
+            t-if="i &lt; current_step"
+            t-attf-class="flex-grow-1 bg-#{progress_color}"
+          />
+          <div t-elif="i > current_step" t-attf-class="flex-grow-1 bg-#{track_color}" />
+        </t>
+      </div>
+      <!-- Steps -->
+      <t t-if="n_steps == 1" t-set="justify_content" t-value="'center'" />
+      <t t-else="" t-set="justify_content" t-value="'between'" />
+      <div t-attf-class="d-flex justify-content-#{justify_content}">
+        <t t-foreach="range(n_steps)" t-as="i">
+          <div class="step-marker-container">
+            <div
+              t-if="i &lt; current_step"
+              t-attf-class="step-marker-active bg-#{marker_color} border-#{marker_color}"
+            />
+            <div
+              t-elif="i == current_step"
+              t-attf-class="step-marker-active bg-#{progress_color} border-#{marker_color}"
+            />
+            <div t-else="" t-attf-class="step-marker bg-#{track_color}" />
+          </div>
+        </t>
+      </div>
+    </div>
+  </template>
+  <!-- NEW SPONSORSHIP WIZARD USER DETAILS STEP -->
+  <template
+    id="my2_new_sponsorship_wizard_user_details"
+    name="New Sponsorship Wizard User Details Step"
+  >
+    <div class="mb-3 p-3 rounded-lg bg-light-blue tiny-text">
             Already have an account?
-            <a t-att-href="login_url_redirect" class="tiny-text bold text-core-blue">Log in</a>
+            <a
+      t-att-href="login_url_redirect"
+      class="tiny-text bold text-core-blue"
+    >Log in</a>
         </div>
-        <!-- Salutation -->
-        <t t-call="theme_compassion_2025.FormFieldComponent">
-            <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label">Salutation</t>
-            <t t-set="input_id" t-value="'title'" />
-            <t t-call="theme_compassion_2025.SelectComponent">
-                <t t-set="name" t-value="'title'" />
-                <t t-set="id" t-value="'title'" />
-                <t t-set="required" t-value="True" />
-                <option value="">Please select</option>
-                <t t-foreach="titles" t-as="title">
-                    <option t-att-selected="title.id == wizard.title.id" t-att-value="title.id">
-                        <t t-esc="title.name" />
-                    </option>
-                </t>
-            </t>
+    <!-- Salutation -->
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <t t-set="label">Salutation</t>
+      <t t-set="input_id" t-value="'title'" />
+      <t t-call="theme_compassion_2025.SelectComponent">
+        <t t-set="name" t-value="'title'" />
+        <t t-set="id" t-value="'title'" />
+        <t t-set="required" t-value="True" />
+        <option value="">Please select</option>
+        <t t-foreach="titles" t-as="title">
+          <option t-att-selected="title.id == wizard.title.id" t-att-value="title.id">
+            <t t-out="title.name" />
+          </option>
         </t>
-        <!-- Surname -->
+      </t>
+    </t>
+    <!-- Surname -->
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <t t-set="label">Surname</t>
+      <t t-set="input_id" t-value="'lastname'" />
+      <input
+        id="lastname"
+        type="text"
+        name="lastname"
+        class="form-control"
+        t-att-value="wizard.lastname"
+        required=""
+      />
+    </t>
+    <!-- Firstname -->
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <t t-set="label">Firstname</t>
+      <t t-set="input_id" t-value="'firstname'" />
+      <input
+        id="firstname"
+        type="text"
+        name="firstname"
+        class="form-control"
+        t-att-value="wizard.firstname"
+        required=""
+      />
+    </t>
+    <!-- Date of birth -->
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <t t-set="label">Date of birth</t>
+      <t t-set="input_id" t-value="'birthdate'" />
+      <input
+        id="birthdate"
+        type="date"
+        name="birthdate"
+        class="form-control"
+        t-att-value="wizard.birthdate"
+        required=""
+      />
+    </t>
+    <!-- Email -->
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <t t-set="label" t-value="'E-mail'" />
+      <t t-set="input_id" t-value="'email'" />
+      <input
+        type="email"
+        name="email"
+        class="form-control"
+        t-att-value="wizard.email"
+        data-validate-type="email"
+        required=""
+      />
+    </t>
+    <!-- Phone -->
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <t t-set="label" t-value="'Phone number'" />
+      <t t-set="input_id" t-value="'phone'" />
+      <input
+        id="phone"
+        type="tel"
+        name="phone"
+        class="form-control"
+        t-att-value="wizard.phone"
+        data-validate-type="phone"
+        required=""
+      />
+    </t>
+    <!-- Street -->
+    <div class="d-flex">
+      <div class="w-100 flex-grow-1">
         <t t-call="theme_compassion_2025.FormFieldComponent">
-            <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label">Surname</t>
-            <t t-set="input_id" t-value="'lastname'" />
-            <input
-                id="lastname"
-                type="text"
-                name="lastname"
-                class="form-control"
-                t-att-value="wizard.lastname"
-                required=""
-            />
+          <t t-set="top_class" t-value="'my-3'" />
+          <t t-set="label">Street</t>
+          <t t-set="input_id" t-value="'street'" />
+          <input
+            id="street"
+            type="text"
+            name="street"
+            class="form-control"
+            t-att-value="wizard.street"
+            required=""
+          />
         </t>
-        <!-- Firstname -->
+      </div>
+      <div class="flex-shrink-1 ms-4">
         <t t-call="theme_compassion_2025.FormFieldComponent">
-            <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label">Firstname</t>
-            <t t-set="input_id" t-value="'firstname'" />
-            <input
-                id="firstname"
-                type="text"
-                name="firstname"
-                class="form-control"
-                t-att-value="wizard.firstname"
-                required=""
-            />
+          <t t-set="top_class" t-value="'my-3'" />
+          <t t-set="label">N°</t>
+          <t t-set="input_id" t-value="'street_number'" />
+          <input
+            id="street_number"
+            type="text"
+            name="street_number"
+            class="form-control"
+            t-att-value="wizard.street_number"
+            required=""
+          />
         </t>
-        <!-- Date of birth -->
+      </div>
+    </div>
+    <!-- Locality -->
+    <div class="d-flex">
+      <div class="flex-shrink-1 me-4">
         <t t-call="theme_compassion_2025.FormFieldComponent">
-            <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label">Date of birth</t>
-            <t t-set="input_id" t-value="'birthdate'" />
-            <input
-                id="birthdate"
-                type="date"
-                name="birthdate"
-                class="form-control"
-                t-att-value="wizard.birthdate"
-                required=""
-            />
+          <t t-set="top_class" t-value="'my-3'" />
+          <t t-set="label">Code</t>
+          <t t-set="input_id" t-value="'zip'" />
+          <input
+            id="zip"
+            type="text"
+            name="zip"
+            class="form-control"
+            t-att-value="wizard.zip"
+            required=""
+          />
         </t>
-        <!-- Email -->
+      </div>
+      <div class="w-100 flex-grow-1">
         <t t-call="theme_compassion_2025.FormFieldComponent">
-            <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label" t-value="'E-mail'" />
-            <t t-set="input_id" t-value="'email'" />
-            <input
-                type="email"
-                name="email"
-                class="form-control"
-                t-att-value="wizard.email"
-                data-validate-type="email"
-                required=""
-            />
+          <t t-set="top_class" t-value="'my-3'" />
+          <t t-set="label">Locality</t>
+          <t t-set="input_id" t-value="'city'" />
+          <input
+            id="city"
+            type="text"
+            name="city"
+            class="form-control"
+            t-att-value="wizard.city"
+            required=""
+          />
         </t>
-        <!-- Phone -->
-        <t t-call="theme_compassion_2025.FormFieldComponent">
-            <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label" t-value="'Phone number'" />
-            <t t-set="input_id" t-value="'phone'" />
-            <input
-                id="phone"
-                type="tel"
-                name="phone"
-                class="form-control"
-                t-att-value="wizard.phone"
-                data-validate-type="phone"
-                required=""
-            />
+      </div>
+    </div>
+    <!-- Country -->
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <t t-set="label">Country</t>
+      <t t-set="input_id" t-value="'country'" />
+      <t t-call="theme_compassion_2025.SelectComponent">
+        <t t-set="name" t-value="'country'" />
+        <t t-set="id" t-value="'country'" />
+        <t t-set="required" t-value="True" />
+        <option value="">Please select</option>
+        <t t-foreach="countries" t-as="country">
+          <option
+            t-att-selected="country.id == wizard.country.id"
+            t-att-value="country.id"
+          >
+            <t t-out="country.name" />
+          </option>
         </t>
-        <!-- Street -->
-        <div class="d-flex">
-            <div class="w-100 flex-grow-1">
-                <t t-call="theme_compassion_2025.FormFieldComponent">
-                    <t t-set="top_class" t-value="'my-3'" />
-                    <t t-set="label">Street</t>
-                    <t t-set="input_id" t-value="'street'" />
-                    <input
-                        id="street"
-                        type="text"
-                        name="street"
-                        class="form-control"
-                        t-att-value="wizard.street"
-                        required=""
-                    />
-                </t>
-            </div>
-            <div class="flex-shrink-1 ml-4">
-                <t t-call="theme_compassion_2025.FormFieldComponent">
-                    <t t-set="top_class" t-value="'my-3'" />
-                    <t t-set="label">N°</t>
-                    <t t-set="input_id" t-value="'street_number'" />
-                    <input
-                        id="street_number"
-                        type="text"
-                        name="street_number"
-                        class="form-control"
-                        t-att-value="wizard.street_number"
-                        required=""
-                    />
-                </t>
-            </div>
-        </div>
-        <!-- Locality -->
-        <div class="d-flex">
-            <div class="flex-shrink-1 mr-4">
-                <t t-call="theme_compassion_2025.FormFieldComponent">
-                    <t t-set="top_class" t-value="'my-3'" />
-                    <t t-set="label">Code</t>
-                    <t t-set="input_id" t-value="'zip'" />
-                    <input id="zip" type="text" name="zip" class="form-control" t-att-value="wizard.zip" required="" />
-                </t>
-            </div>
-            <div class="w-100 flex-grow-1">
-                <t t-call="theme_compassion_2025.FormFieldComponent">
-                    <t t-set="top_class" t-value="'my-3'" />
-                    <t t-set="label">Locality</t>
-                    <t t-set="input_id" t-value="'city'" />
-                    <input
-                        id="city"
-                        type="text"
-                        name="city"
-                        class="form-control"
-                        t-att-value="wizard.city"
-                        required=""
-                    />
-                </t>
-            </div>
-        </div>
-        <!-- Country -->
-        <t t-call="theme_compassion_2025.FormFieldComponent">
-            <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label">Country</t>
-            <t t-set="input_id" t-value="'country'" />
-            <t t-call="theme_compassion_2025.SelectComponent">
-                <t t-set="name" t-value="'country'" />
-                <t t-set="id" t-value="'country'" />
-                <t t-set="required" t-value="True" />
-                <option value="">Please select</option>
-                <t t-foreach="countries" t-as="country">
-                    <option t-att-selected="country.id == wizard.country.id" t-att-value="country.id">
-                        <t t-esc="country.name" />
-                    </option>
-                </t>
-            </t>
+      </t>
+    </t>
+  </template>
+  <!-- NEW SPONSORSHIP WIZARD PAYMENT METHODS STEP -->
+  <template
+    id="my2_new_sponsorship_wizard_payment_method"
+    name="New Sponsorship Wizard Payment Methods Step"
+  >
+    <!-- Payment method -->
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <t t-set="label">Payment method</t>
+      <t t-set="input_id" t-value="'payment_method'" />
+      <t t-call="theme_compassion_2025.SelectComponent">
+        <t t-set="name" t-value="'payment_method'" />
+        <!-- ID used by eBill extension in my_compassion_switzerland -->
+        <t t-set="id" t-value="'payment_method'" />
+        <t t-set="required" t-value="True" />
+        <option value="">Please select</option>
+        <t t-foreach="payment_methods" t-as="payment_method">
+          <option
+            t-att-selected="payment_method.id == wizard.payment_method.id"
+            t-att-value="payment_method.id"
+            t-att-data-payment-code="payment_method.payment_method_id.code"
+          >
+            <t t-out="payment_method.name" />
+          </option>
         </t>
-    </template>
-    <!-- NEW SPONSORSHIP WIZARD PAYMENT METHODS STEP -->
-    <template id="my2_new_sponsorship_wizard_payment_method" name="New Sponsorship Wizard Payment Methods Step">
-        <!-- Payment method -->
-        <t t-call="theme_compassion_2025.FormFieldComponent">
-            <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label">Payment method</t>
-            <t t-set="input_id" t-value="'payment_method'" />
-            <t t-call="theme_compassion_2025.SelectComponent">
-                <t t-set="name" t-value="'payment_method'" />
-                <!-- ID used by eBill extension in my_compassion_switzerland -->
-                <t t-set="id" t-value="'payment_method'" />
-                <t t-set="required" t-value="True" />
-                <option value="">Please select</option>
-                <t t-foreach="payment_methods" t-as="payment_method">
-                    <option
-                        t-att-selected="payment_method.id == wizard.payment_method.id"
-                        t-att-value="payment_method.id"
-                        t-att-data-payment-code="payment_method.payment_method_id.code"
-                    >
-                        <t t-esc="payment_method.name" />
-                    </option>
-                </t>
-            </t>
-        </t>
-        <!-- Sponsorship plus -->
-        <input type="hidden" name="sponsorship_plus" value="" />
-        <t t-call="theme_compassion_2025.FormFieldComponent">
-            <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label">Sponsorship plus</t>
-            <div class="d-flex align-items-center">
-                <input
-                    type="checkbox"
-                    id="sponsorship_plus"
-                    name="sponsorship_plus"
-                    class="flex-shrink-0"
-                    t-att-checked="wizard.sponsorship_plus"
-                />
-                <label class="ml-2 mb-0 body-small bold" t-att-for="'sponsorship_plus'">Yes</label>
-            </div>
-            <div class="mt-3 p-4 bg-high-eggshell rounded-lg body-small">
+      </t>
+    </t>
+    <!-- Sponsorship plus -->
+    <input type="hidden" name="sponsorship_plus" value="" />
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <t t-set="label">Sponsorship plus</t>
+      <div class="d-flex align-items-center">
+        <input
+          type="checkbox"
+          id="sponsorship_plus"
+          name="sponsorship_plus"
+          class="flex-shrink-0"
+          t-att-checked="wizard.sponsorship_plus"
+        />
+        <label
+          class="ms-2 mb-0 body-small bold"
+          t-att-for="'sponsorship_plus'"
+        >Yes</label>
+      </div>
+      <div class="mt-3 p-4 bg-high-eggshell rounded-lg body-small">
                 Sponsorship+ includes the basic sponsorship of
-                <t t-esc="currency_name" />
+                <t t-out="currency_name" />
                 42.-, plus an additional gift of
-                <t t-esc="currency_name" />
+                <t t-out="currency_name" />
                 8.- per month.
                 <br />
                 <br />
@@ -289,186 +314,192 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                 <br />
                 This fund is available for all children supported through Compassion.
             </div>
-        </t>
-    </template>
-    <!-- NEW SPONSORSHIP WIZARD WRITE & PRAY OPTIONS STEP -->
-    <template id="my2_new_sponsorship_wizard_wap_options" name="New Sponsorship Write &amp; Pray Options Step">
-        <t t-if="wizard.birthdate">
-            <input type="hidden" name="birthdate" t-att-value="wizard.birthdate" />
-        </t>
-        <t t-else="">
-            <div class="alert alert-info mb-3 rounded-lg body-small">
+    </t>
+  </template>
+  <!-- NEW SPONSORSHIP WIZARD WRITE & PRAY OPTIONS STEP -->
+  <template
+    id="my2_new_sponsorship_wizard_wap_options"
+    name="New Sponsorship Write &amp; Pray Options Step"
+  >
+    <t t-if="wizard.birthdate">
+      <input type="hidden" name="birthdate" t-att-value="wizard.birthdate" />
+    </t>
+    <t t-else="">
+      <div class="alert alert-info mb-3 rounded-lg body-small">
                 Write&amp;Pray sponsorships are available for people under the age of 25. Please provide your date of birth.
             </div>
-            <t t-call="theme_compassion_2025.FormFieldComponent">
-                <t t-set="top_class" t-value="'my-3'" />
-                <t t-set="label">Date of birth</t>
-                <t t-set="input_id" t-value="'birthdate'" />
-                <input id="birthdate" type="date" name="birthdate" required="required" />
-            </t>
-        </t>
-        <!-- Contribute -->
-        <div class="my-3">
-            <div class="ml-2 mt-2 d-flex">
-                <input
-                    type="radio"
-                    value="false"
-                    class="wap-contribute flex-shrink-0"
-                    name="contribute"
-                    id="contribute-false"
-                    t-att-checked="wizard.wap_contribution_amount == 0"
-                />
-                <label class="mx-3 mb-0 body-small flex-grow-1" for="contribute-false">
+      <t t-call="theme_compassion_2025.FormFieldComponent">
+        <t t-set="top_class" t-value="'my-3'" />
+        <t t-set="label">Date of birth</t>
+        <t t-set="input_id" t-value="'birthdate'" />
+        <input id="birthdate" type="date" name="birthdate" required="required" />
+      </t>
+    </t>
+    <!-- Contribute -->
+    <div class="my-3">
+      <div class="ms-2 mt-2 d-flex">
+        <input
+          type="radio"
+          value="false"
+          class="wap-contribute flex-shrink-0"
+          name="contribute"
+          id="contribute-false"
+          t-att-checked="wizard.wap_contribution_amount == 0"
+        />
+        <label class="mx-3 mb-0 body-small flex-grow-1" for="contribute-false">
                     I agree to pray for and write to my sponsored child regularly. I understand that another person is
                     providing
                     financial support for this sponsorship, but that I am the child's official sponsor.
                 </label>
-            </div>
-            <div class="ml-2 mt-4 d-flex">
-                <input
-                    type="radio"
-                    value="true"
-                    class="wap-contribute flex-shrink-0"
-                    name="contribute"
-                    id="contribute-true"
-                    t-att-checked="wizard.wap_contribution_amount != 0"
-                />
-                <label class="mx-3 mb-0 body-small flex-grow-1" for="contribute-true">
+      </div>
+      <div class="ms-2 mt-4 d-flex">
+        <input
+          type="radio"
+          value="true"
+          class="wap-contribute flex-shrink-0"
+          name="contribute"
+          id="contribute-true"
+          t-att-checked="wizard.wap_contribution_amount != 0"
+        />
+        <label class="mx-3 mb-0 body-small flex-grow-1" for="contribute-true">
                     I commit to praying for and writing to my sponsored child regularly, and I can contribute monthly
                     in the amount of:
                 </label>
-            </div>
-            <!-- Contribution amount -->
-            <div id="wap-contribution-amount">
-                <t
-                    t-set="amounts"
-                    t-value="[
+      </div>
+      <!-- Contribution amount -->
+      <div id="wap-contribution-amount">
+        <t
+          t-set="amounts"
+          t-value="[
                     { 'name': 'low', 'amount': 5 },
                     { 'name': 'medium', 'amount': 10 },
                     { 'name': 'high', 'amount': 20 },
                 ]"
-                />
-                <t t-call="theme_compassion_2025.FormFieldComponent">
-                    <t t-set="top_class" t-value="'mt-4 w-100'" />
-                    <t t-set="label">Suggested amounts</t>
-                    <div class="mt-1 d-flex justify-content-between">
-                        <t t-foreach="amounts" t-as="amount">
-                            <t t-if="amount_index &gt; 0" t-set="margin" t-value="'ml-3'" />
-                            <div t-attf-class="contribution-suggested-amount flex-grow-1 #{margin}">
-                                <input
-                                    t-attf-id="suggested-#{amount['name']}"
-                                    type="radio"
-                                    t-attf-name="suggested_amount"
-                                    t-att-value="amount['amount']"
-                                    t-att-checked="wizard.wap_contribution_amount == amount['amount'] or (amount['name'] == 'low' and wizard.wap_contribution_amount == 0)"
-                                    class="suggested-amount"
-                                />
-                                <label class="mb-0 w-100" t-attf-for="suggested-#{amount['name']}">
-                                    <t t-esc="currency_name" />
-                                    <t t-esc="amount['amount']" />
-                                </label>
-                            </div>
-                        </t>
-                    </div>
-                </t>
-                <t t-call="theme_compassion_2025.FormFieldComponent">
-                    <t t-set="top_class" t-value="'mt-3 w-100'" />
-                    <t t-set="label">Or enter your own amount</t>
-                    <div class="contribution-suggested-amount">
-                        <input
-                            t-attf-id="suggested-custom"
-                            type="radio"
-                            t-attf-name="suggested_amount"
-                            value="custom"
-                            t-att-checked="wizard.wap_contribution_amount not in [amount['amount'] for amount in amounts] + [0]"
-                            class="suggested-amount"
-                        />
-                        <label class="mb-0 w-100" t-attf-for="suggested-custom">Custom amount</label>
-                    </div>
-                </t>
-                <!-- TODO: validate to be strictly positive number.
-
-                Add the following validation config to form_field_validator once merged:
-                    number: {
-                        regex: /(^[1-9]\d*(\.\d+)?$)|(^0?\.\d*[1-9]\d*$)/,
-                        defaultErrorMessage: "Please enter a valid number."
-                    },
-                -->
-                <t t-call="theme_compassion_2025.FormFieldComponent">
-                    <t t-set="top_class" t-value="'custom-amount-field mt-2 w-100'" />
-                    <input
-                        type="text"
-                        name="custom_amount"
-                        t-att-placeholder="currency_name"
-                        class="form-control"
-                        t-att-value="'{:g}'.format(wizard.wap_contribution_amount) if wizard.wap_contribution_amount else ''"
-                        required=""
-                    />
-                </t>
-            </div>
-        </div>
-    </template>
-    <!-- NEW SPONSORSHIP WIZARD COMMUNICATION DETAILS STEP -->
-    <template
-        id="my2_new_sponsorship_wizard_communication_details"
-        name="New Sponsorship Wizard Communication Details Step"
-    >
+        />
         <t t-call="theme_compassion_2025.FormFieldComponent">
-            <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label">Spoken languages</t>
-            <div>For correspondence with my sponsored child, I also understand the following languages:</div>
-            <t t-foreach="spoken_languages" t-as="language">
-                <div class="ml-2 mt-2 d-flex align-items-center">
-                    <input
-                        type="checkbox"
-                        t-att-value="language.id"
-                        class="flex-shrink-0"
-                        t-attf-name="spoken_language_#{language.id}"
-                        t-att-id="'language_' + str(language.id)"
-                        t-att-checked="language in wizard.spoken_languages"
-                    />
-                    <label class="ml-2 mb-0 body-small" t-att-for="'language_' + str(language.id)">
-                        <t t-esc="language.name" />
-                    </label>
-                </div>
-            </t>
-        </t>
-        <!-- Lead source -->
-        <t t-call="theme_compassion_2025.FormFieldComponent">
-            <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label">How did you hear about Compassion?</t>
-            <t t-set="input_id" t-value="'lead_source'" />
-            <t t-call="theme_compassion_2025.SelectComponent">
-                <t t-set="name" t-value="'lead_source'" />
-                <t t-set="id" t-value="'lead_source'" />
-                <t t-set="required" t-value="True" />
-                <option value="">Please select</option>
-                <t t-foreach="lead_sources" t-as="lead_source">
-                    <option t-att-selected="lead_source.id == wizard.lead_source.id" t-att-value="lead_source.id">
-                        <t t-esc="lead_source.name" />
-                    </option>
-                </t>
-            </t>
-        </t>
-        <!-- Volunteering -->
-        <input type="hidden" name="volunteering" value="" />
-        <t t-call="theme_compassion_2025.FormFieldComponent">
-            <t t-set="top_class" t-value="'my-3'" />
-            <t t-set="label">Volunteering</t>
-            <div class="d-flex align-items-center">
+          <t t-set="top_class" t-value="'mt-4 w-100'" />
+          <t t-set="label">Suggested amounts</t>
+          <div class="mt-1 d-flex justify-content-between">
+            <t t-foreach="amounts" t-as="amount">
+              <t t-if="amount_index &gt; 0" t-set="margin" t-value="'ms-3'" />
+              <div t-attf-class="contribution-suggested-amount flex-grow-1 #{margin}">
                 <input
-                    type="checkbox"
-                    id="volunteering"
-                    name="volunteering"
-                    class="flex-shrink-0"
-                    t-att-checked="wizard.volunteering"
+                  t-attf-id="suggested-#{amount['name']}"
+                  type="radio"
+                  t-attf-name="suggested_amount"
+                  t-att-value="amount['amount']"
+                  t-att-checked="wizard.wap_contribution_amount == amount['amount'] or (amount['name'] == 'low' and wizard.wap_contribution_amount == 0)"
+                  class="suggested-amount"
                 />
-                <label class="ml-3 mb-0 body-small bold" t-att-for="'volunteering'">
+                <label class="mb-0 w-100" t-attf-for="suggested-#{amount['name']}">
+                  <t t-out="currency_name" />
+                  <t t-out="amount['amount']" />
+                </label>
+              </div>
+            </t>
+          </div>
+        </t>
+        <t t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="top_class" t-value="'mt-3 w-100'" />
+          <t t-set="label">Or enter your own amount</t>
+          <div class="contribution-suggested-amount">
+            <input
+              t-attf-id="suggested-custom"
+              type="radio"
+              t-attf-name="suggested_amount"
+              value="custom"
+              t-att-checked="wizard.wap_contribution_amount not in [amount['amount'] for amount in amounts] + [0]"
+              class="suggested-amount"
+            />
+            <label
+              class="mb-0 w-100"
+              t-attf-for="suggested-custom"
+            >Custom amount</label>
+          </div>
+        </t>
+        <t t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="top_class" t-value="'custom-amount-field mt-2 w-100'" />
+          <input
+            type="text"
+            name="custom_amount"
+            data-validate-type="number"
+            t-att-placeholder="currency_name"
+            class="form-control"
+            t-att-value="'{:g}'.format(wizard.wap_contribution_amount) if wizard.wap_contribution_amount else ''"
+            required=""
+          />
+        </t>
+      </div>
+    </div>
+  </template>
+  <!-- NEW SPONSORSHIP WIZARD COMMUNICATION DETAILS STEP -->
+  <template
+    id="my2_new_sponsorship_wizard_communication_details"
+    name="New Sponsorship Wizard Communication Details Step"
+  >
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <t t-set="label">Spoken languages</t>
+      <div
+      >For correspondence with my sponsored child, I also understand the following languages:</div>
+      <t t-foreach="spoken_languages" t-as="language">
+        <div class="ms-2 mt-2 d-flex align-items-center">
+          <input
+            type="checkbox"
+            t-att-value="language.id"
+            class="flex-shrink-0"
+            t-attf-name="spoken_language_#{language.id}"
+            t-att-id="'language_' + str(language.id)"
+            t-att-checked="language in wizard.spoken_languages"
+          />
+          <label
+            class="ms-2 mb-0 body-small"
+            t-att-for="'language_' + str(language.id)"
+          >
+            <t t-out="language.name" />
+          </label>
+        </div>
+      </t>
+    </t>
+    <!-- Lead source -->
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <t t-set="label">How did you hear about Compassion?</t>
+      <t t-set="input_id" t-value="'lead_source'" />
+      <t t-call="theme_compassion_2025.SelectComponent">
+        <t t-set="name" t-value="'lead_source'" />
+        <t t-set="id" t-value="'lead_source'" />
+        <t t-set="required" t-value="True" />
+        <option value="">Please select</option>
+        <t t-foreach="lead_sources" t-as="lead_source">
+          <option
+            t-att-selected="lead_source.id == wizard.lead_source.id"
+            t-att-value="lead_source.id"
+          >
+            <t t-out="lead_source.name" />
+          </option>
+        </t>
+      </t>
+    </t>
+    <!-- Volunteering -->
+    <input type="hidden" name="volunteering" value="" />
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <t t-set="label">Volunteering</t>
+      <div class="d-flex align-items-center">
+        <input
+          type="checkbox"
+          id="volunteering"
+          name="volunteering"
+          class="flex-shrink-0"
+          t-att-checked="wizard.volunteering"
+        />
+        <label class="ms-3 mb-0 body-small bold" t-att-for="'volunteering'">
                     I wish to volunteer my time (letter translations, events, prayer, ...).
                     Please contact me.
                 </label>
-            </div>
-            <div class="mt-2 p-4 bg-high-eggshell rounded-lg body-small">
+      </div>
+      <div class="mt-2 p-4 bg-high-eggshell rounded-lg body-small">
                 Do you want to inspire other people to sponsor a child?
                 Does the situation of children in need particularly touch you and you want to take action?
                 <br />
@@ -481,236 +512,261 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                 Translations, stuffing envelopes, presence at events, being a spokesperson in
                 your church or running for the children.
             </div>
-        </t>
-    </template>
-    <!-- NEW SPONSORSHIP WIZARD FORM CONTENT -->
-    <template id="my2_new_sponsorship_wizard_form_content" name="New Sponsorship Wizard Dynamic Content">
-        <input type="hidden" name="wizard_id" t-att-value="wizard.id" />
-        <!-- Write&Pray age modal -->
-        <div
-            t-if="wizard.sponsorship_type == 'write_and_pray'"
-            class="modal fade"
-            id="wap-age-modal"
-            tabindex="-1"
-            role="dialog"
-            aria-labelledby="edit-donation-modal-title"
-            aria-hidden="true"
-        >
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content border-0">
-                    <div class="modal-body">
-                        <button
-                            type="button"
-                            class="btn-close mt-3 mr-3 icon-x-circle body-large text-mid-grey"
-                            data-dismiss="modal"
-                            aria-label="Close"
-                        />
-                        <div class="pt-5 p-4 d-flex flex-column justify-content-center">
-                            <div class="text-center body-large">
+    </t>
+  </template>
+  <!-- NEW SPONSORSHIP WIZARD FORM CONTENT -->
+  <template
+    id="my2_new_sponsorship_wizard_form_content"
+    name="New Sponsorship Wizard Dynamic Content"
+  >
+    <input type="hidden" name="wizard_id" t-att-value="wizard.id" />
+    <!-- Write&Pray age modal -->
+    <div
+      t-if="wizard.sponsorship_type == 'write_and_pray'"
+      class="modal fade"
+      id="wap-age-modal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="edit-donation-modal-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0">
+          <div class="modal-body">
+            <button
+              type="button"
+              class="btn-close mt-3 me-3 icon-x-circle body-large text-mid-grey"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            />
+            <div class="pt-5 p-4 d-flex flex-column justify-content-center">
+              <div class="text-center body-large">
                                 Write&amp;Pray sponsorships are only available for people under the age of 25.
-                                Would you like to become a sponsor for <t t-esc="currency_name" /> 42.-/month?
+                                Would you like to become a sponsor for <t
+                t-out="currency_name"
+              /> 42.-/month?
                             </div>
-                            <div
-                                class="btn-next align-self-stretch mt-5 d-flex justify-content-center"
-                                data-action="next"
-                                t-att-data-sponsorship-type="'standard'"
-                            >
-                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                    <t t-set="variant" t-value="'default'" />
-                                    <t t-set="variation" t-value="'filled'" />
-                                    <t t-set="label">Sponsor&#160;<t t-esc="wizard.child_id.preferred_name" /></t>
-                                    <t t-set="color" t-value="'core-blue'" />
-                                    <t t-set="text_color" t-value="'pure-white'" />
-                                </t>
-                            </div>
-                            <div class="my-2 mt-3 d-flex justify-content-center">
-                                <button
-                                    class="back-button text-low-black body-small bold"
-                                    data-dismiss="modal"
-                                    aria-label="Cancel"
-                                >
+              <div
+                class="btn-next align-self-stretch mt-5 d-flex justify-content-center"
+                data-action="next"
+                t-att-data-sponsorship-type="'standard'"
+              >
+                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                  <t t-set="variant" t-value="'default'" />
+                  <t t-set="variation" t-value="'filled'" />
+                  <t t-set="label">Sponsor&#160;<t
+                    t-out="wizard.child_id.preferred_name"
+                  /></t>
+                  <t t-set="color" t-value="'core-blue'" />
+                  <t t-set="text_color" t-value="'pure-white'" />
+                </t>
+              </div>
+              <div class="my-2 mt-3 d-flex justify-content-center">
+                <button
+                  class="back-button text-low-black body-small bold"
+                  data-bs-dismiss="modal"
+                  aria-label="Cancel"
+                >
                                     Cancel
                                 </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              </div>
             </div>
+          </div>
         </div>
-        <!-- PROGRESS BAR -->
-        <div t-if="wizard.n_steps > 1" class="mt-3 mb-2 px-2 px-lg-0 pt-2 w-100">
-            <t t-call="my_compassion.NewSponsorshipStepProgressBar">
-                <t t-set="n_steps" t-value="wizard.n_steps" />
-                <t t-set="current_step" t-value="wizard.current_step_idx" />
-            </t>
-        </div>
-        <!-- TITLE -->
-        <div class="mx-5 mt-4">
-            <t t-call="theme_compassion_2025.TitleComponent">
-                <t t-set="title_content" t-value="wizard.current_step.title" />
-                <t t-set="color" t-value="'core-blue'" />
-                <t t-set="show_underline" t-value="True" />
-                <t t-set="underline_color" t-value="'low-yellow'" />
-                <t
-                    t-if="wizard.sponsorship_type == 'write_and_pray'"
-                    t-set="description"
-                >Let's set up your Write&amp;Pray and introduce you to&#160;<t
-                        t-esc="wizard.child_id.preferred_name"
-                    />.</t>
-                <t t-else="" t-set="description">Let's set up your sponsorship and introduce you to&#160;<t
-                        t-esc="wizard.child_id.preferred_name"
-                    />.</t>
-            </t>
-        </div>
-        <div class="p-1 d-flex flex-column">
-            <t t-raw="inner_step_html" />
-            <!-- BUTTONS -->
-            <div
-                class="btn-next my-3 d-flex justify-content-center"
-                data-action="next"
-                t-att-data-sponsorship-type="wizard.sponsorship_type"
-            >
-                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                    <t t-set="variant" t-value="'compact'" />
-                    <t t-set="variation" t-value="'filled'" />
-                    <t t-if="wizard.current_step_idx &lt; (wizard.n_steps-1)" t-set="label">Continue</t>
-                    <t t-else="" t-set="label">Finish</t>
-                    <t t-set="color" t-value="'core-blue'" />
-                    <t t-set="text_color" t-value="'pure-white'" />
-                    <!-- ID used by eBill extension in my_compassion_switzerland -->
-                    <t t-set="id" t-value="'finish_button'" />
-                </t>
-            </div>
-            <div
-                t-if="wizard.current_step_idx &gt; 0"
-                class="btn-previous mt-2 mb-3 d-flex justify-content-center"
-                data-action="previous"
-                t-att-data-sponsorship-type="wizard.sponsorship_type"
-            >
-                <button class="back-button text-low-black body-small bold">Back</button>
-            </div>
-        </div>
-    </template>
-    <!-- NEW SPONSORSHIP WIZARD PAGE -->
-    <template id="my2_new_sponsorship_wizard_page" name="New Sponsorship Wizard Page">
-        <script type="text/javascript" src="/my_compassion/static/src/js/my2_new_sponsorship_wizard.js" />
-        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_new_sponsorship_wizard.css" />
-        <t t-call="website.layout">
-            <div class="new-sponsorship-container">
-                <form class="new-sponsorship-wizard-form" action="/my2/new-sponsorship/submit" method="POST">
-                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
-                    <div class="new-sponsorship-wizard-form-content">
-                        <!-- INITIAL FORM CONTENT -->
-                        <t t-raw="form_content_html" />
-                    </div>
-                </form>
-            </div>
+      </div>
+    </div>
+    <!-- PROGRESS BAR -->
+    <div t-if="wizard.n_steps > 1" class="mt-3 mb-2 px-2 px-lg-0 pt-2 w-100">
+      <t t-call="my_compassion.NewSponsorshipStepProgressBar">
+        <t t-set="n_steps" t-value="wizard.n_steps" />
+        <t t-set="current_step" t-value="wizard.current_step_idx" />
+      </t>
+    </div>
+    <!-- TITLE -->
+    <div class="mx-5 mt-4">
+      <t t-call="theme_compassion_2025.TitleComponent">
+        <t t-set="title_content" t-value="wizard.current_step.title" />
+        <t t-set="color" t-value="'core-blue'" />
+        <t t-set="show_underline" t-value="True" />
+        <t t-set="underline_color" t-value="'low-yellow'" />
+        <t
+          t-if="wizard.sponsorship_type == 'write_and_pray'"
+          t-set="description"
+        >Let's set up your Write&amp;Pray and introduce you to&#160;<t
+          t-out="wizard.child_id.preferred_name"
+        />.</t>
+        <t
+          t-else=""
+          t-set="description"
+        >Let's set up your sponsorship and introduce you to&#160;<t
+          t-out="wizard.child_id.preferred_name"
+        />.</t>
+      </t>
+    </div>
+    <div class="p-1 d-flex flex-column">
+      <t t-out="inner_step_html" />
+      <!-- BUTTONS -->
+      <div
+        class="btn-next my-3 d-flex justify-content-center"
+        data-action="next"
+        t-att-data-sponsorship-type="wizard.sponsorship_type"
+      >
+        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+          <t t-set="variant" t-value="'compact'" />
+          <t t-set="variation" t-value="'filled'" />
+          <t
+            t-if="wizard.current_step_idx &lt; (wizard.n_steps-1)"
+            t-set="label"
+          >Continue</t>
+          <t t-else="" t-set="label">Finish</t>
+          <t t-set="color" t-value="'core-blue'" />
+          <t t-set="text_color" t-value="'pure-white'" />
+          <!-- ID used by eBill extension in my_compassion_switzerland -->
+          <t t-set="id" t-value="'finish_button'" />
         </t>
-    </template>
-    <!-- NEW SPONSORSHIP THANK YOU PAGE -->
-    <template id="my2_new_sponsorship_thank_you_page" name="New Sponsorship Thank You Page">
-        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_new_sponsorship_wizard.css" />
-        <t t-call="website.layout">
-            <div class="container">
-                <div class="single-column d-flex flex-column align-items-center">
-                    <!-- PROGRESS BAR -->
-                    <div class="mt-3 mb-2 px-2 px-lg-0 pt-2 w-100">
-                        <t t-call="my_compassion.NewSponsorshipStepProgressBar">
-                            <t t-set="n_steps" t-value="n_steps" />
-                            <t t-set="current_step" t-value="n_steps + 1" />
-                        </t>
-                    </div>
-                    <!-- TITLE -->
-                    <div class="mx-4">
-                        <t t-call="theme_compassion_2025.TitleComponent">
-                            <t t-set="title_content">Thank you for sponsoring&#160;<t
-                                    t-esc="sponsorship.child_id.preferred_name"
-                                /></t>
-                            <t t-set="color" t-value="'core-blue'" />
-                            <t t-set="show_underline" t-value="True" />
-                            <t t-set="underline_color" t-value="'low-yellow'" />
-                            <t
-                                t-if="sponsorship.type == 'SWP'"
-                                t-set="description"
-                            >You’ll receive an email with everything you need to start the Write&amp;Pray soon.</t>
-                            <t t-else="" t-set="description">
+      </div>
+      <div
+        t-if="wizard.current_step_idx &gt; 0"
+        class="btn-previous mt-2 mb-3 d-flex justify-content-center"
+        data-action="previous"
+        t-att-data-sponsorship-type="wizard.sponsorship_type"
+      >
+        <button class="back-button text-low-black body-small bold">Back</button>
+      </div>
+    </div>
+  </template>
+  <!-- NEW SPONSORSHIP WIZARD PAGE -->
+  <template id="my2_new_sponsorship_wizard_page" name="New Sponsorship Wizard Page">
+    <t t-call="website.layout">
+      <div class="new-sponsorship-container">
+        <form
+          class="new-sponsorship-wizard-form"
+          action="/my2/new-sponsorship/submit"
+          method="POST"
+        >
+          <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+          <div class="new-sponsorship-wizard-form-content">
+            <!-- INITIAL FORM CONTENT -->
+            <t t-out="form_content_html" />
+          </div>
+        </form>
+      </div>
+    </t>
+  </template>
+  <!-- NEW SPONSORSHIP THANK YOU PAGE -->
+  <template
+    id="my2_new_sponsorship_thank_you_page"
+    name="New Sponsorship Thank You Page"
+  >
+    <t t-call="website.layout">
+      <div class="container">
+        <div class="single-column d-flex flex-column align-items-center">
+          <!-- PROGRESS BAR -->
+          <div class="mt-3 mb-2 px-2 px-lg-0 pt-2 w-100">
+            <t t-call="my_compassion.NewSponsorshipStepProgressBar">
+              <t t-set="n_steps" t-value="n_steps" />
+              <t t-set="current_step" t-value="n_steps + 1" />
+            </t>
+          </div>
+          <!-- TITLE -->
+          <div class="mx-4">
+            <t t-call="theme_compassion_2025.TitleComponent">
+              <t t-set="title_content">Thank you for sponsoring&#160;<t
+                t-out="sponsorship.child_id.preferred_name"
+              /></t>
+              <t t-set="color" t-value="'core-blue'" />
+              <t t-set="show_underline" t-value="True" />
+              <t t-set="underline_color" t-value="'low-yellow'" />
+              <t
+                t-if="sponsorship.type == 'SWP'"
+                t-set="description"
+              >You’ll receive an email with everything you need to start the Write&amp;Pray soon.</t>
+              <t t-else="" t-set="description">
                                 You’ll receive an email with everything you need to start the sponsorship soon.
                             </t>
-                        </t>
-                    </div>
-                    <!-- CHILD PROFILE -->
-                    <div class="thank-you-child-profile mb-3">
-                        <t t-call="my_compassion.my2_children_card_component">
-                            <t t-set="child" t-value="sponsorship.child_id" />
-                            <t t-set="show_sponsor_me" t-value="False" />
-                        </t>
-                    </div>
-                    <t t-if="request.env.user._is_public()">
-                        <div class="mb-4 text-center body-small">
-                            <t t-set="thank_you_msg">
+            </t>
+          </div>
+          <!-- CHILD PROFILE -->
+          <div class="thank-you-child-profile mb-3">
+            <t t-call="my_compassion.my2_children_card_component">
+              <t t-set="child" t-value="sponsorship.child_id" />
+              <t t-set="show_sponsor_me" t-value="False" />
+            </t>
+          </div>
+          <t t-if="request.env.user._is_public()">
+            <div class="mb-4 text-center body-small">
+              <t t-set="thank_you_msg">
                                 Create a MyCompassion account to stay connected with %s.
                                 <br />
                                 Through your personalized portal, you can easily write letters, view recent pictures,
                                 and manage your sponsorship details.
                             </t>
-                            <t t-raw="thank_you_msg % sponsorship.child_id.preferred_name" />
-                        </div>
-                        <div class="mb-3">
-                            <a href="/web/signup?redirect=/my/home">
-                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                    <t t-set="variant" t-value="'compact'" />
-                                    <t t-set="variation" t-value="'filled'" />
-                                    <t t-set="label">Sign up</t>
-                                    <t t-set="color" t-value="'core-blue'" />
-                                    <t t-set="text_color" t-value="'pure-white'" />
-                                </t>
-                            </a>
-                        </div>
-                        <div class="mb-4 text-center body-small">
+              <t t-out="thank_you_msg % sponsorship.child_id.preferred_name" />
+            </div>
+            <div class="mb-3">
+              <a href="/web/signup?redirect=/my/home">
+                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                  <t t-set="variant" t-value="'compact'" />
+                  <t t-set="variation" t-value="'filled'" />
+                  <t t-set="label">Sign up</t>
+                  <t t-set="color" t-value="'core-blue'" />
+                  <t t-set="text_color" t-value="'pure-white'" />
+                </t>
+              </a>
+            </div>
+            <div class="mb-4 text-center body-small">
                             Already have an account?
                             <a href="/web/login?redirect=/my/home">
-                                <span class="body-small
-                                    bold text-core-blue">
-                                    <u>
-                                        <t>Log in</t>
-                                    </u>
-                                </span>
-                            </a>
+              <span
+                class="body-small
+                                    bold text-core-blue"
+              >
+                <u>
+                  <t>Log in</t>
+                </u>
+              </span>
+            </a>
                         </div>
-                    </t>
-                    <t t-else="">
-                        <!-- REVIEW PREFERENCES -->
-                        <div class="mb-4 text-center body-small">
+          </t>
+          <t t-else="">
+            <!-- REVIEW PREFERENCES -->
+            <div class="mb-4 text-center body-small">
                             Compassion manages your communication with
-                            <t t-esc="sponsorship.child_id.preferred_name" />
+                            <t t-out="sponsorship.child_id.preferred_name" />
                             .
                             You can adjust your preferences at any time in your user settings for a tailored experience.
-                            <span class="body-small bold">Would you like to review them now?</span>
+                            <span
+              class="body-small bold"
+            >Would you like to review them now?</span>
                         </div>
-                        <div class="mb-3">
-                            <a href="/my2/user_settings?current_tab=communication-settings">
-                                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                                    <t t-set="variant" t-value="'compact'" />
-                                    <t t-set="variation" t-value="'filled'" />
-                                    <t t-set="label">Review my preferences now</t>
-                                    <t t-set="color" t-value="'core-blue'" />
-                                    <t t-set="text_color" t-value="'pure-white'" />
-                                </t>
-                            </a>
-                        </div>
-                        <div class="mb-4">
-                            <t t-if="sponsorship.type == 'SWP'" t-set="route" t-valuef="/my2/write-and-pray" />
-                            <t t-else="" t-set="route" t-valuef="/my2/sponsorships" />
-                            <button
-                                class="back-button text-low-black body-small bold"
-                                t-attf-onclick="location.href='#{route}'"
-                            >
+            <div class="mb-3">
+              <a href="/my2/user_settings?current_tab=communication-settings">
+                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                  <t t-set="variant" t-value="'compact'" />
+                  <t t-set="variation" t-value="'filled'" />
+                  <t t-set="label">Review my preferences now</t>
+                  <t t-set="color" t-value="'core-blue'" />
+                  <t t-set="text_color" t-value="'pure-white'" />
+                </t>
+              </a>
+            </div>
+            <div class="mb-4">
+              <t
+                t-if="sponsorship.type == 'SWP'"
+                t-set="route"
+                t-valuef="/my2/write-and-pray"
+              />
+              <t t-else="" t-set="route" t-valuef="/my2/sponsorships" />
+              <button
+                class="back-button text-low-black body-small bold"
+                t-attf-onclick="location.href='#{route}'"
+              >
                                 I'll do this later
                             </button>
-                        </div>
-                    </t>
-                </div>
             </div>
-        </t>
-    </template>
+          </t>
+        </div>
+      </div>
+    </t>
+  </template>
 </odoo>

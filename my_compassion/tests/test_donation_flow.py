@@ -1,4 +1,19 @@
+"""Browser tests for the my_compassion donation flow.
+
+Running this suite on the migrated database: ``--test-enable`` currently aborts
+during test loading. Several modules in compassion-modules and
+compassion-switzerland import ``BaseSponsorshipTest``, a shared test base class
+removed upstream (its helper chain, down to recurring_contract's
+``BaseContractTest``, is gone), and a single failing test import aborts the whole
+run, these tests included. To run this suite, temporarily comment out the
+``BaseSponsorshipTest`` imports in those modules' ``tests/__init__.py`` (grep the
+workspace for ``BaseSponsorshipTest`` to find them), run, then restore them.
+Re-enabling those tests properly means restoring the deleted helper chain, which
+is separate work.
+"""
+
 import logging
+import unittest
 from unittest.mock import patch
 
 from odoo.tests import tagged
@@ -13,13 +28,14 @@ class TestDonationFlow(HttpCase):
     CUSTOM_AMOUNT_TEST = 75
     MOCK_TEST_DATA = {
         "product_name": "Test Product",
+        "product_name_2": "Second Fund",
         "price": 50.0,
         "description": "This is a test product for donation flow testing.",
-        "amounts": {"low": 1, "medium": 2, "high": 3},
+        "amounts": {"low": 50.0, "medium": 75.0, "high": 100.0},
     }
 
     def setUp(self):
-        super(TestDonationFlow, self).setUp()
+        super().setUp()
 
         # Execute setup steps
         self._setup_website()
@@ -55,14 +71,19 @@ class TestDonationFlow(HttpCase):
     def _patch_authentication(self):
         """
         Patches res.users to bypass credential checks during the test.
+        The replacement must return the auth_info dictionary that
+        res.users._check_credentials promises to its callers.
         """
         _logger.info(
             "SETUP (AUTH): Patching res.users to bypass authentication checks."
         )
 
+        def _accept_any_credential(user, credential, env):
+            return {"uid": user.id, "auth_method": "password", "mfa": "default"}
+
         RegistryResUsers = type(self.env["res.users"])
         self.auth_patcher = patch.object(
-            RegistryResUsers, "_check_credentials", side_effect=None
+            RegistryResUsers, "_check_credentials", _accept_any_credential
         )
         self.auth_patcher.start()
         self.addCleanup(self.auth_patcher.stop)
@@ -151,9 +172,9 @@ class TestDonationFlow(HttpCase):
                 "my_compassion_pictogram": pictogram.id,
                 "my_compassion_image": image_b64,
                 "website_published": True,
-                "my_compassion_donation_quantity_low": amounts["low"],
-                "my_compassion_donation_quantity_medium": amounts["medium"],
-                "my_compassion_donation_quantity_high": amounts["high"],
+                "my_compassion_donation_amount_low": amounts["low"],
+                "my_compassion_donation_amount_medium": amounts["medium"],
+                "my_compassion_donation_amount_high": amounts["high"],
             }
         )
 
@@ -167,13 +188,7 @@ class TestDonationFlow(HttpCase):
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
         tour_name = "single_one_time_fund_with_suggested_amount"
 
-        self.browser_js(
-            url_path=start_url,
-            code=f"odoo.__DEBUG__.services['web_tour.tour'].run('{tour_name}')",
-            ready=f"odoo.__DEBUG__.services['web_tour.tour'].tours.{tour_name}.ready",
-            login="admin",
-            timeout=180,
-        )
+        self.start_tour(start_url, tour_name, login="admin", timeout=180)
 
         # ---------------------------------------------------------
         # CHECK RESULTS IN DATABASE
@@ -224,13 +239,7 @@ class TestDonationFlow(HttpCase):
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
         tour_name = "single_one_time_fund_with_custom_amount"
 
-        self.browser_js(
-            url_path=start_url,
-            code=f"odoo.__DEBUG__.services['web_tour.tour'].run('{tour_name}')",
-            ready=f"odoo.__DEBUG__.services['web_tour.tour'].tours.{tour_name}.ready",
-            login="admin",
-            timeout=180,
-        )
+        self.start_tour(start_url, tour_name, login="admin", timeout=180)
 
         # ---------------------------------------------------------
         # CHECK RESULTS IN DATABASE
@@ -275,19 +284,17 @@ class TestDonationFlow(HttpCase):
             "ERROR: The total amount of the order does not match the expected price.",
         )
 
+    @unittest.skip(
+        "Monthly (recurring) donations are disabled on the website; re-enable"
+        " together with the recurring-payment work."
+    )
     def test_single_monthly_fund_with_suggested_amount(self):
         _logger.info("START TEST: single_monthly_fund_with_suggested_amount")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
         tour_name = "single_monthly_fund_with_suggested_amount"
 
-        self.browser_js(
-            url_path=start_url,
-            code=f"odoo.__DEBUG__.services['web_tour.tour'].run('{tour_name}')",
-            ready=f"odoo.__DEBUG__.services['web_tour.tour'].tours.{tour_name}.ready",
-            login="admin",
-            timeout=180,
-        )
+        self.start_tour(start_url, tour_name, login="admin", timeout=180)
 
         # ---------------------------------------------------------
         # CHECK RESULTS IN DATABASE
@@ -332,19 +339,17 @@ class TestDonationFlow(HttpCase):
             "ERROR: The total amount of the order does not match the expected price.",
         )
 
+    @unittest.skip(
+        "Monthly (recurring) donations are disabled on the website; re-enable"
+        " together with the recurring-payment work."
+    )
     def test_single_monthly_fund_with_custom_amount(self):
         _logger.info("START TEST: single_monthly_fund_with_custom_amount")
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
         tour_name = "single_monthly_fund_with_custom_amount"
 
-        self.browser_js(
-            url_path=start_url,
-            code=f"odoo.__DEBUG__.services['web_tour.tour'].run('{tour_name}')",
-            ready=f"odoo.__DEBUG__.services['web_tour.tour'].tours.{tour_name}.ready",
-            login="admin",
-            timeout=180,
-        )
+        self.start_tour(start_url, tour_name, login="admin", timeout=180)
 
         # ---------------------------------------------------------
         # CHECK RESULTS IN DATABASE
@@ -390,25 +395,32 @@ class TestDonationFlow(HttpCase):
         )
 
     def test_add_several_funds(self):
-        _logger.info("START TEST: test_add_several_gifts")
+        _logger.info("START TEST: test_add_several_funds")
+
+        # A donation line is keyed by (product, frequency): two adds that share
+        # both collapse into one aggregated line. Carrying two distinct lines
+        # therefore needs two distinct products, since every donation here is
+        # one_time.
+        second_product = self.donation_product.copy(
+            {
+                "name": self.MOCK_TEST_DATA["product_name_2"],
+                "my_compassion_name": self.MOCK_TEST_DATA["product_name_2"],
+                "website_published": True,
+                "activate_for_my_compassion": True,
+            }
+        )
 
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
-        tour_name = "single_one_time_fund_with_suggested_amount"
 
-        self.browser_js(
-            url_path=start_url,
-            code=f"odoo.__DEBUG__.services['web_tour.tour'].run('{tour_name}')",
-            ready=f"odoo.__DEBUG__.services['web_tour.tour'].tours.{tour_name}.ready",
+        self.start_tour(
+            start_url,
+            "single_one_time_fund_with_suggested_amount",
             login="admin",
             timeout=180,
         )
-
-        tour_name = "single_monthly_fund_with_custom_amount"
-
-        self.browser_js(
-            url_path=start_url,
-            code=f"odoo.__DEBUG__.services['web_tour.tour'].run('{tour_name}')",
-            ready=f"odoo.__DEBUG__.services['web_tour.tour'].tours.{tour_name}.ready",
+        self.start_tour(
+            start_url,
+            "second_one_time_fund_with_custom_amount",
             login="admin",
             timeout=180,
         )
@@ -426,47 +438,47 @@ class TestDonationFlow(HttpCase):
             order="id desc",
             limit=1,
         )
-        # Filter order lines to find the one with our test donation product
-        target_line = current_order.order_line.filtered(
+        first_fund_line = current_order.order_line.filtered(
             lambda line: line.product_id.product_tmpl_id == self.donation_product
         )
+        second_fund_line = current_order.order_line.filtered(
+            lambda line: line.product_id.product_tmpl_id == second_product
+        )
+
         self.assertTrue(
             current_order, "ERROR: No current draft order found for the admin partner."
         )
         self.assertEqual(
             current_order.cart_quantity,
             2,
-            "ERROR: Should be exactly one current draft order.",
+            "ERROR: The cart should hold two distinct fund lines.",
         )
 
-        first_product = target_line[0]
-        second_product = target_line[1]
-
         self.assertEqual(
-            first_product.price_unit,
+            first_fund_line.price_unit,
             self.MOCK_TEST_DATA["price"],
             "ERROR: The price of the order line does not match the expected price.",
         )
         self.assertEqual(
-            first_product.product_uom_qty, 1.0, "ERROR: Amount should be 1."
+            first_fund_line.product_uom_qty, 1.0, "ERROR: Amount should be 1."
         )
         self.assertEqual(
-            first_product.frequency,
+            first_fund_line.frequency,
             "one_time",
             "ERROR: The frequency of the order line is not set to one_time.",
         )
 
         self.assertEqual(
-            second_product.price_unit,
+            second_fund_line.price_unit,
             self.CUSTOM_AMOUNT_TEST,
             "ERROR: The price of the order line does not match the expected price.",
         )
         self.assertEqual(
-            second_product.product_uom_qty, 1.0, "ERROR: Amount should be 1."
+            second_fund_line.product_uom_qty, 1.0, "ERROR: Amount should be 1."
         )
         self.assertEqual(
-            second_product.frequency,
-            "monthly",
+            second_fund_line.frequency,
+            "one_time",
             "ERROR: The frequency of the order line is not set to one_time.",
         )
 
@@ -482,13 +494,7 @@ class TestDonationFlow(HttpCase):
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
         tour_name = "single_one_time_fund_with_suggested_amount"
 
-        self.browser_js(
-            url_path=start_url,
-            code=f"odoo.__DEBUG__.services['web_tour.tour'].run('{tour_name}')",
-            ready=f"odoo.__DEBUG__.services['web_tour.tour'].tours.{tour_name}.ready",
-            login="admin",
-            timeout=180,
-        )
+        self.start_tour(start_url, tour_name, login="admin", timeout=180)
 
         # ---------------------------------------------------------
         # CHECK RESULTS IN DATABASE
@@ -535,13 +541,7 @@ class TestDonationFlow(HttpCase):
 
         tour_name = "remove_item_from_cart"
 
-        self.browser_js(
-            url_path=start_url,
-            code=f"odoo.__DEBUG__.services['web_tour.tour'].run('{tour_name}')",
-            ready=f"odoo.__DEBUG__.services['web_tour.tour'].tours.{tour_name}.ready",
-            login="admin",
-            timeout=180,
-        )
+        self.start_tour(start_url, tour_name, login="admin", timeout=180)
 
         # ---------------------------------------------------------
         # CHECK RESULTS IN DATABASE
@@ -578,13 +578,7 @@ class TestDonationFlow(HttpCase):
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
         tour_name = "single_one_time_fund_with_suggested_amount"
 
-        self.browser_js(
-            url_path=start_url,
-            code=f"odoo.__DEBUG__.services['web_tour.tour'].run('{tour_name}')",
-            ready=f"odoo.__DEBUG__.services['web_tour.tour'].tours.{tour_name}.ready",
-            login="admin",
-            timeout=180,
-        )
+        self.start_tour(start_url, tour_name, login="admin", timeout=180)
 
         # ---------------------------------------------------------
         # CHECK RESULTS IN DATABASE
@@ -631,13 +625,7 @@ class TestDonationFlow(HttpCase):
 
         tour_name = "update_item_in_cart"
 
-        self.browser_js(
-            url_path=start_url,
-            code=f"odoo.__DEBUG__.services['web_tour.tour'].run('{tour_name}')",
-            ready=f"odoo.__DEBUG__.services['web_tour.tour'].tours.{tour_name}.ready",
-            login="admin",
-            timeout=180,
-        )
+        self.start_tour(start_url, tour_name, login="admin", timeout=180)
 
         # ---------------------------------------------------------
         # CHECK RESULTS IN DATABASE
@@ -688,13 +676,7 @@ class TestDonationFlow(HttpCase):
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
         tour_name = "single_one_time_fund_through_modal"
 
-        self.browser_js(
-            url_path=start_url,
-            code=f"odoo.__DEBUG__.services['web_tour.tour'].run('{tour_name}')",
-            ready=f"odoo.__DEBUG__.services['web_tour.tour'].tours.{tour_name}.ready",
-            login="admin",
-            timeout=180,
-        )
+        self.start_tour(start_url, tour_name, login="admin", timeout=180)
 
         # ---------------------------------------------------------
         # CHECK RESULTS IN DATABASE
@@ -745,13 +727,7 @@ class TestDonationFlow(HttpCase):
         start_url = f"{self.TEST_DOMAIN}/my2/dashboard"
         tour_name = "try_to_submit_empty_custom_amount"
 
-        self.browser_js(
-            url_path=start_url,
-            code=f"odoo.__DEBUG__.services['web_tour.tour'].run('{tour_name}')",
-            ready=f"odoo.__DEBUG__.services['web_tour.tour'].tours.{tour_name}.ready",
-            login="admin",
-            timeout=180,
-        )
+        self.start_tour(start_url, tour_name, login="admin", timeout=180)
 
         # ---------------------------------------------------------
         # CHECK RESULTS IN DATABASE

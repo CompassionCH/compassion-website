@@ -21,28 +21,27 @@
 -->
 <!--map info container containing the meteo info, time and location -->
 <odoo>
-    <template id="WeatherTimeContainer" name="Weather and Time Container">
-        <link rel="stylesheet" href="/my_compassion/static/src/css/my2_weather_time_container.css" />
-        <div class="center-info-card d-none">
-            <t t-if="cdc_name">
-                <div class="center-info-card__header">
-                    <p class="center-info-card__project-info">
-                        <t t-esc="cdc_name" />
-                    </p>
-                </div>
-            </t>
-            <div t-if="city_country" class="center-info-card__location">
-                <t t-esc="city_country" />
-            </div>
-            <div class="center-info-card__details">
-                <span id="current_time" class="center-info-card__time" />
-                <span class="center-info-card__separator" />
-                <div class="center-info-card__weather">
-                    <i id="weather_icon" class="m-2" />
-                    <span id="current_temperature" class="center-info-card__temperature" />
-                    <span class="small position-relative text-low-grey mt-n1">°C</span>
-                </div>
-            </div>
+  <template id="WeatherTimeContainer" name="Weather and Time Container">
+    <div class="center-info-card d-none">
+      <t t-if="cdc_name">
+        <div class="center-info-card__header">
+          <p class="center-info-card__project-info">
+            <t t-out="cdc_name" />
+          </p>
         </div>
-    </template>
+      </t>
+      <div t-if="city_country" class="center-info-card__location">
+        <t t-out="city_country" />
+      </div>
+      <div class="center-info-card__details">
+        <span id="current_time" class="center-info-card__time" />
+        <span class="center-info-card__separator" />
+        <div class="center-info-card__weather">
+          <i id="weather_icon" class="m-2" />
+          <span id="current_temperature" class="center-info-card__temperature" />
+          <span class="small position-relative text-low-grey mt-n1">°C</span>
+        </div>
+      </div>
+    </div>
+  </template>
 </odoo>

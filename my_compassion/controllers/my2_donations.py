@@ -19,6 +19,7 @@ from odoo.http import request
 from odoo.tools.translate import _
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
+from odoo.addons.sale.controllers import portal as sale_portal
 
 
 class MyCompassionDonationsController(CustomerPortal):
@@ -35,7 +36,7 @@ class MyCompassionDonationsController(CustomerPortal):
         return: An HTTP response containing a rendered template with the donation
         details page.
         """
-        sponsorships = request.env.user.partner_id.sponsorship_ids
+        sponsorships = self._get_gift_eligible_sponsorships(request.env.user.partner_id)
         donation_limits = request.env["gift.threshold.settings"].sudo().search([])
 
         context = {
@@ -128,6 +129,7 @@ class MyCompassionDonationsController(CustomerPortal):
                     ]
                 }
             )
+        request.session["website_sale_cart_quantity"] = order.cart_quantity
 
     @http.route(
         "/my2/gifts/edit",
@@ -155,6 +157,9 @@ class MyCompassionDonationsController(CustomerPortal):
 
         order_line.write(
             self._extract_donation_order_line_fields(product_template, post)
+        )
+        request.session["website_sale_cart_quantity"] = (
+            order.cart_quantity if order else 0
         )
 
     @http.route(
@@ -209,15 +214,26 @@ class MyCompassionDonationsController(CustomerPortal):
         # Fetch gift thresholds
         limits = request.env["gift.threshold.settings"].sudo().search([])
 
-        # Fetch acquirer
-        acquirer = self._get_payment_acquirer()
+        # Payment form context for the embedded standard payment form. The
+        # landing route confirms the order and redirects to /shop/confirmation,
+        # which the my2 website rewrites to /my2/gifts/thankyou.
+        payment_form_values = {}
+        if order and order.order_line:
+            payment_form_values = {
+                **sale_portal.CustomerPortal._get_payment_values(
+                    self, order.sudo(), website_id=request.website.id
+                ),
+                "transaction_route": f"/shop/payment/transaction/{order.id}",
+                "landing_route": "/shop/payment/validate",
+                "sale_order_id": order.id,
+            }
 
         return request.render(
             "my_compassion.my2_gift_package_page",
             {
                 "order": order,
                 "limits": limits,
-                "acquirer": acquirer,
+                **payment_form_values,
             },
         )
 
@@ -254,7 +270,9 @@ class MyCompassionDonationsController(CustomerPortal):
         }
 
         if order_line.is_gift:
-            render_attrs["sponsorships"] = order_line.order_partner_id.sponsorship_ids
+            render_attrs["sponsorships"] = self._get_gift_eligible_sponsorships(
+                request.env.user.partner_id
+            )
             render_attrs["default_sponsorship_id"] = order_line.gift_recipient_id.id
 
         # Render and return the form
@@ -288,6 +306,9 @@ class MyCompassionDonationsController(CustomerPortal):
         else:
             raise NotFound()
 
+        cart_quantity = order.cart_quantity
+        request.session["website_sale_cart_quantity"] = cart_quantity
+
         # Render and return the updated content
         html_content = request.env["ir.qweb"]._render(
             "my_compassion.my2_gift_package_content",
@@ -299,6 +320,7 @@ class MyCompassionDonationsController(CustomerPortal):
         return {
             "html": html_content,
             "is_order_empty": len(order.order_line) == 0,
+            "cart_quantity": cart_quantity,
         }
 
     @http.route(
@@ -324,7 +346,7 @@ class MyCompassionDonationsController(CustomerPortal):
             ]
         )
 
-        sponsorships = request.env.user.partner_id.sponsorship_ids
+        sponsorships = self._get_gift_eligible_sponsorships(request.env.user.partner_id)
         limits = request.env["gift.threshold.settings"].sudo().search([])
 
         return request.render(
@@ -356,8 +378,18 @@ class MyCompassionDonationsController(CustomerPortal):
             )
         return request.redirect("/my2/dashboard")
 
-    @staticmethod
-    def _extract_donation_order_line_fields(product_template, post):
+    def _get_gift_eligible_sponsorships(self, partner):
+        """Sponsorships that can receive a gift."""
+        return partner.sponsorship_ids.filtered(
+            lambda s: s.can_show_on_my_compassion
+            and (
+                s.state != "terminated"
+                or s.can_write_letter
+                or not s.exit_communication_sent
+            )
+        )
+
+    def _extract_donation_order_line_fields(self, product_template, post):
         # Compute quantity
         price = 0
         amount_type = post.get("suggested_amount")
@@ -398,8 +430,15 @@ class MyCompassionDonationsController(CustomerPortal):
             "frequency": frequency,
         }
         if product_template.my_compassion_donation_type == "gift":
+            try:
+                recipient_id = int(post.get("recipient"))
+            except (ValueError, TypeError) as e:
+                raise BadRequest() from e
+            eligible = self._get_gift_eligible_sponsorships(request.env.user.partner_id)
+            if recipient_id not in eligible.ids:
+                raise BadRequest()
             order_line_fields["is_gift"] = True
-            order_line_fields["gift_recipient_id"] = post.get("recipient")
+            order_line_fields["gift_recipient_id"] = recipient_id
 
         return order_line_fields
 
@@ -470,13 +509,32 @@ class MyCompassionDonationsController(CustomerPortal):
 
         for sponsorship in active_sponsorships:
             currency = sponsorship.pricelist_id.currency_id.name
-            tot_cost_per_frequency[sponsorship.group_id.month_interval][
-                currency
-            ] += sponsorship.total_amount
+            tot_cost_per_frequency[sponsorship.group_id.month_interval][currency] += (
+                sponsorship.total_amount
+            )
 
         paid_invoices_data = self._get_paginated_paid_invoices(
             partner, invoice_page, invoice_per_page
         )
+
+        # The tax-receipt year selector needs the year span of the partner's
+        # paid invoices, independent of any country layer extending this portal.
+        first_paid_date = (
+            request.env["account.move"]
+            .sudo()
+            .search(
+                [
+                    ("partner_id", "=", partner.id),
+                    ("payment_state", "=", "paid"),
+                    ("move_type", "=", "out_invoice"),
+                    ("amount_total", ">", 0),
+                ],
+                limit=1,
+                order="create_date asc",
+            )
+            .create_date
+        )
+        current_year = datetime.today().year
 
         values = self._prepare_portal_layout_values()
         values.update(
@@ -488,6 +546,8 @@ class MyCompassionDonationsController(CustomerPortal):
                 "current_page": paid_invoices_data["current_page"],
                 "total_pages": paid_invoices_data["total_pages"],
                 "additional_title": _("My Donations"),
+                "current_year": current_year,
+                "first_year": first_paid_date.year if first_paid_date else current_year,
             }
         )
         return request.render("my_compassion.my2_my_donations_page", values)
@@ -535,11 +595,3 @@ class MyCompassionDonationsController(CustomerPortal):
             "current_page": int(invoice_page),
             "total_pages": total_pages,
         }
-
-    @staticmethod
-    def _get_payment_acquirer():
-        return (
-            http.request.env["payment.acquirer"]
-            .sudo()
-            .search([("provider", "=", "postfinance")], limit=1)
-        )

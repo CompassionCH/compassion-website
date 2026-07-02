@@ -18,8 +18,10 @@ class My2WebsiteRoute(models.Model):
 
     path = fields.Char(string="Route Path", required=True, index=True)
 
-    def name_get(self):
-        return [(r.id, r.path or "/") for r in self]
+    @api.depends("path")
+    def _compute_display_name(self):
+        for route in self:
+            route.display_name = route.path or "/"
 
     @api.model
     def action_refresh_routes_and_reload_view(self):

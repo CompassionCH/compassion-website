@@ -7,29 +7,42 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-def _post_init_hook(cr, registry):
+
+import logging
+
+_logger = logging.getLogger(__name__)
+
+USER_VALUES_URL = "/website/static/src/scss/options/user_values.scss"
+
+
+def _set_full_page_layout(env):
+    """Apply the website "Page Layout: Full" option to every website running
+    this theme, the same way the editor's Page Layout option does.
     """
-    This hook is called after the module is installed.
-    His purpose is to call the generation of the needed
-    attachment generated stylesheets.
+    theme = env["ir.module.module"].search(
+        [("name", "=", "theme_compassion_2025")], limit=1
+    )
+    if not theme:
+        return
+    assets = env["web_editor.assets"]
+    websites = env["website"].search([("theme_id", "=", theme.id)])
+    for website in websites:
+        assets.with_context(website_id=website.id).make_scss_customization(
+            USER_VALUES_URL, {"layout": "'full'"}
+        )
+    if websites:
+        _logger.info("Applied full page layout to websites %s.", websites.ids)
+
+
+def _post_init_hook(env):
+    """Called after the module is installed to generate the colors, icons and
+    pictograms stylesheet attachments from their records, and to set the
+    full-width page layout on the websites using this theme.
     """
-    import logging
-
-    from odoo import SUPERUSER_ID, api
-
-    _logger = logging.getLogger(__name__)
-
-    env = api.Environment(cr, SUPERUSER_ID, {})
-
-    _logger.info("Post-init hook: Generating theme stylesheets.")
-
-    models_to_process = [
+    for model_name in (
         "theme.compassion.colors",
         "theme.compassion.icons",
         "theme.compassion.pictograms",
-    ]
-
-    for model_name in models_to_process:
-        env[model_name].with_delay()._generate_stylesheet()
-
-    _logger.info("Post-init hook: Stylesheet generation complete.")
+    ):
+        env[model_name].sudo()._generate_stylesheet()
+    _set_full_page_layout(env)

@@ -8,6 +8,6 @@ class ContactUsPageController(http.Controller):
         titles = (
             request.env["res.partner.title"]
             .sudo()
-            .search([("is_published", "=", True)], order="shortcut asc")
+            .search([("is_shown_on_public_forms", "=", True)], order="shortcut asc")
         )
         return request.render("website.contactus", {"titles": titles})

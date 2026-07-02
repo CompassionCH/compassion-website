@@ -1,147 +1,155 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <!-- List View -->
-    <record id="view_my2_compassion_event_banner_tree" model="ir.ui.view">
-        <field name="name">event.banner.tree</field>
-        <field name="model">event.banner</field>
-        <field name="arch" type="xml">
-            <tree string="Event Banners">
-                <field name="title" />
-                <field name="is_active" />
-                <field name="start_date" />
-                <field name="end_date" />
-                <field name="target_partner_tag_ids" widget="many2many_tags" color="color" />
-                <field name="target_route_ids" widget="many2many_tags" options="{'no_create_edit': True}" />
-                <field name="button_action_url" />
-            </tree>
-        </field>
-    </record>
-    <record id="action_server_refresh_website_routes" model="ir.actions.server">
-        <field name="name">Refresh Website Routes</field>
-        <field name="model_id" ref="my_compassion.model_my2_website_route" />
-        <field name="state">code</field>
-        <field name="code">action = model.action_refresh_routes_and_reload_view()</field>
-    </record>
-    <!-- Form -->
-    <record id="view_my2_compassion_event_banner_form" model="ir.ui.view">
-        <field name="name">event.banner.form</field>
-        <field name="model">event.banner</field>
-        <field name="arch" type="xml">
-            <form string="Event Banner">
-                <sheet>
-                    <group string="Content">
-                        <group>
-                            <field name="title" />
-                            <field name="description" />
-                        </group>
-                        <group>
-                            <field name="pictogram" />
-                            <field name="button_text" />
-                        </group>
-                    </group>
-                    <group string="Appearance">
-                        <group>
-                            <field name="background_color" />
-                            <field name="text_color" />
-                            <field name="pictogram_color" />
-                        </group>
-                        <group>
-                            <field name="button_background_color" />
-                            <field name="button_text_color" />
-                            <field name="close_icon_color" />
-                        </group>
-                    </group>
-                    <group string="Configuration">
-                        <group>
-                            <field name="button_action_url" />
-                            <field name="is_active" />
-                            <field name="target_blank" />
-                        </group>
-                        <group>
-                            <field name="start_date" />
-                            <field name="end_date" />
-                        </group>
-                    </group>
-                    <group string="Target">
-                        <label for="target_route_ids" string="Target Pages" />
-                        <div class="o_row">
-                            <field name="target_route_ids" widget="many2many_tags" options="{'no_create_edit': True}" />
-                            <button
-                                name="%(my_compassion.action_server_refresh_website_routes)d"
-                                type="action"
-                                string="Refresh Website Routes"
-                                class="btn-secondary oe_edit_only"
-                                icon="fa-refresh"
-                                help="Update the list of available website routes"
-                            />
-                        </div>
-                        <p class="text-info" colspan="2">
-                            <i class="fa fa-info-circle mr-2" />
-                            <t>
+  <!-- List View -->
+  <record id="view_my2_compassion_event_banner_tree" model="ir.ui.view">
+    <field name="name">event.banner.tree</field>
+    <field name="model">event.banner</field>
+    <field name="arch" type="xml">
+      <list string="Event Banners">
+        <field name="title" />
+        <field name="is_active" />
+        <field name="start_date" />
+        <field name="end_date" />
+        <field name="target_partner_tag_ids" widget="many2many_tags" color="color" />
+        <field
+          name="target_route_ids"
+          widget="many2many_tags"
+          options="{'no_create_edit': True}"
+        />
+        <field name="button_action_url" />
+      </list>
+    </field>
+  </record>
+  <record id="action_server_refresh_website_routes" model="ir.actions.server">
+    <field name="name">Refresh Website Routes</field>
+    <field name="model_id" ref="my_compassion.model_my2_website_route" />
+    <field name="state">code</field>
+    <field name="code">action = model.action_refresh_routes_and_reload_view()</field>
+  </record>
+  <!-- Form -->
+  <record id="view_my2_compassion_event_banner_form" model="ir.ui.view">
+    <field name="name">event.banner.form</field>
+    <field name="model">event.banner</field>
+    <field name="arch" type="xml">
+      <form string="Event Banner">
+        <sheet>
+          <group string="Content">
+            <group>
+              <field name="title" />
+              <field name="description" />
+            </group>
+            <group>
+              <field name="pictogram" />
+              <field name="button_text" />
+            </group>
+          </group>
+          <group string="Appearance">
+            <group>
+              <field name="background_color" />
+              <field name="text_color" />
+              <field name="pictogram_color" />
+            </group>
+            <group>
+              <field name="button_background_color" />
+              <field name="button_text_color" />
+              <field name="close_icon_color" />
+            </group>
+          </group>
+          <group string="Configuration">
+            <group>
+              <field name="button_action_url" />
+              <field name="is_active" />
+              <field name="target_blank" />
+            </group>
+            <group>
+              <field name="start_date" />
+              <field name="end_date" />
+            </group>
+          </group>
+          <group string="Target">
+            <label for="target_route_ids" string="Target Pages" />
+            <div class="o_row">
+              <field
+                name="target_route_ids"
+                widget="many2many_tags"
+                options="{'no_create_edit': True}"
+              />
+              <button
+                name="%(my_compassion.action_server_refresh_website_routes)d"
+                type="action"
+                string="Refresh Website Routes"
+                class="btn-secondary oe_edit_only"
+                icon="fa-refresh"
+                help="Update the list of available website routes"
+              />
+            </div>
+            <p class="text-info" colspan="2">
+              <i class="fa fa-info-circle me-2" />
+              <t>
                                 Select pages to display the banner on. If no page is selected, the banner will be
                                     displayed on all pages. Click "Refresh" to update the list of available pages.
                             </t>
-                        </p>
-                        <field
-                            name="target_partner_tag_ids"
-                            widget="many2many_tags"
-                            options="{'color_field': 'color', 'no_create_edit': True}"
-                        />
-                        <p class="text-info" colspan="2">
-                            <i class="fa fa-info-circle mr-2" />
-                            <t>
+            </p>
+            <field
+              name="target_partner_tag_ids"
+              widget="many2many_tags"
+              options="{'color_field': 'color', 'no_create_edit': True}"
+            />
+            <p class="text-info" colspan="2">
+              <i class="fa fa-info-circle me-2" />
+              <t>
                                 If tags are selected, the banner is only visible to users having at least one of these
                                 tags.
                                 If empty, it is visible to everyone.
                             </t>
-                        </p>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-    <!-- Custom Filter -->
-    <record id="view_my2_compassion_event_banner_search" model="ir.ui.view">
-        <field name="name">event.banner.search</field>
-        <field name="model">event.banner</field>
-        <field name="arch" type="xml">
-            <search string="Search Event Banners">
-                <field name="title" string="Banner Title" />
-                <separator />
-                <filter
-                    string="Currently Active Banners"
-                    name="currently_active"
-                    domain="[('is_active', '=', True),
+            </p>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <!-- Custom Filter -->
+  <record id="view_my2_compassion_event_banner_search" model="ir.ui.view">
+    <field name="name">event.banner.search</field>
+    <field name="model">event.banner</field>
+    <field name="arch" type="xml">
+      <search string="Search Event Banners">
+        <field name="title" string="Banner Title" />
+        <separator />
+        <filter
+          string="Currently Active Banners"
+          name="currently_active"
+          domain="[('is_active', '=', True),
                                  ('start_date', '&lt;=', now),
                                  '|',
                                  ('end_date', '=', False),
                                  ('end_date', '&gt;=', now)]"
-                />
-            </search>
-        </field>
-    </record>
-    <!-- Window action -->
-    <record id="action_my2_compassion_event_banner" model="ir.actions.act_window">
-        <field name="name">Event Banners</field>
-        <field name="res_model">event.banner</field>
-        <field name="view_mode">tree,form</field>
-        <field name="search_view_id" ref="view_my2_compassion_event_banner_search" />
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">Create a new event banner.</p>
-        </field>
-    </record>
-    <!-- Menu Item -->
-    <menuitem
-        id="menu_my2_compassion_event_banner"
-        name="Event Banners"
-        parent="website.menu_website_configuration"
-        action="action_my2_compassion_event_banner"
-        sequence="50"
-    />
-    <menuitem
-        id="menu_refresh_routes"
-        name="Refresh Website Routes"
-        parent="website.menu_website_global_configuration"
-        action="action_server_refresh_website_routes"
-    />
+        />
+      </search>
+    </field>
+  </record>
+  <!-- Window action -->
+  <record id="action_my2_compassion_event_banner" model="ir.actions.act_window">
+    <field name="name">Event Banners</field>
+    <field name="res_model">event.banner</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_my2_compassion_event_banner_search" />
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">Create a new event banner.</p>
+    </field>
+  </record>
+  <!-- Menu Item -->
+  <menuitem
+    id="menu_my2_compassion_event_banner"
+    name="Event Banners"
+    parent="website.menu_website_configuration"
+    action="action_my2_compassion_event_banner"
+    sequence="50"
+  />
+  <menuitem
+    id="menu_refresh_routes"
+    name="Refresh Website Routes"
+    parent="website.menu_website_global_configuration"
+    action="action_server_refresh_website_routes"
+  />
 </odoo>

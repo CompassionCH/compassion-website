@@ -6,42 +6,51 @@
     Displays a double-ended slider to input a range between a maximum and a minimum value.
 
     Props:                                                                      Default:
-    - minValue (int): Minimum range end value.                                  [0]
-    - maxValue (int): Maximum range end value.                                  [100]
-    - initialLow (int): Initial low end of the range.                           [=min-value]
-    - initialHigh (int): Initial high end of the range.                         [=max-value]
+    - min (int): Minimum range end value.                                       [0]
+    - max (int): Maximum range end value.                                       [100]
+    - initialMin (int): Initial low end of the range.                           [=min]
+    - initialMax (int): Initial high end of the range.                          [=max]
     - minGap (int): Smallest interval allowed.                                  [0]
     - thumbColor (string): Slider thumb (range endpoint) color.                 [mid-yellow]
     - labelColor (string): Slider thumb label color.                            [low-black]
     - rangeColor (string): Color of the track in-between the range endpoints.   [low-yellow]
     - trackColor (string): Color of the track outside the range endpoints.      [low-eggshell]
 -->
-<templates>
-    <t t-name="theme_compassion_2025.RangeInputComponent">
-        <!-- Component definition -->
-        <div class="slider-container">
-            <div t-attf-class="slider-track bg-#{widget.trackColor}" />
-            <div t-attf-class="slider-range bg-#{widget.rangeColor}" />
-            <input
-                type="range"
-                t-att-min="widget.minValue"
-                t-att-max="widget.maxValue"
-                t-att-value="widget.minValue"
-                t-attf-class="slider-low slider-thumb-#{widget.thumbColor}"
-            />
-            <input
-                type="range"
-                t-att-min="widget.minValue"
-                t-att-max="widget.maxValue"
-                t-att-value="widget.maxValue"
-                t-attf-class="slider-high slider-thumb-#{widget.thumbColor}"
-            />
-            <div t-attf-class="label-low text-#{widget.labelColor}">
-                <t t-esc="widget.initialLow" />
-            </div>
-            <div t-attf-class="label-high text-#{widget.labelColor}">
-                <t t-esc="widget.initialHigh" />
-            </div>
-        </div>
-    </t>
+<templates xml:space="preserve">
+    <t t-name="theme_compassion_2025.RangeInput">
+    <!-- Component definition -->
+    <div
+      class="slider-container"
+      t-attf-style="--progress-ratio-low: #{progressRatioLow}; --progress-ratio-high: #{progressRatioHigh};"
+    >
+      <div t-attf-class="slider-track bg-#{props.trackColor}" />
+      <div t-attf-class="slider-range bg-#{props.rangeColor}" />
+      <input
+        type="range"
+        t-att-min="props.min"
+        t-att-max="props.max"
+        t-att-value="state.low"
+        t-attf-style="z-index: #{state.frontThumb === 'low' ? 1 : 0};"
+        t-attf-class="slider-low slider-thumb-#{props.thumbColor}"
+        t-on-input="_slideLow"
+        t-on-change="_onRangeChange"
+      />
+      <input
+        type="range"
+        t-att-min="props.min"
+        t-att-max="props.max"
+        t-att-value="state.high"
+        t-attf-style="z-index: #{state.frontThumb === 'high' ? 1 : 0};"
+        t-attf-class="slider-high slider-thumb-#{props.thumbColor}"
+        t-on-input="_slideHigh"
+        t-on-change="_onRangeChange"
+      />
+      <div t-attf-class="label-low text-#{props.labelColor}">
+        <t t-esc="state.low" />
+      </div>
+      <div t-attf-class="label-high text-#{props.labelColor}">
+        <t t-esc="state.high" />
+      </div>
+    </div>
+  </t>
 </templates>

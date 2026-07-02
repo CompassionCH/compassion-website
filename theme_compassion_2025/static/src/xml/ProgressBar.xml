@@ -1,31 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
-    Component:
-        ProgressBarComponent
+    Component: ProgressBar
 
     Description:
-        A lightweight template for rendering the animated progress bar. It defines
-        the visual container, the progress stripe element, and the text label area.
-        This component is used by `ProgressBarWidget` (defined in JS) to apply
-        animation, density levels, flow speed, and step messages dynamically.
+    Renders an animated step progress bar: a striped `.progress` element whose
+    flow animation and clip-path reveal are driven by the stylesheet, plus a
+    `.progress-text` label for the active step.
 
-    Usage:
-        This template is not used directly. It is rendered and controlled by
-        `ProgressBarWidget` (see ProgressBar.js), which:
-        - injects the density class ("density-low", "density-medium", "density-high")
-        - updates the CSS variable "flow-speed"
-        - animates the progress fill using clip-path
-        - updates the progress text step-by-step
-
-    Props:
-        N/A (all configuration is handled in the JavaScript widget via options).
-
+    Props:                                                                Default:
+    - steps (string[]): step labels; the bar is split equally among them. [4 steps]
+    - density (string): stripe density, "low" / "medium" / "high".        [medium]
+    - flowSpeed (string): CSS duration for the stripe flow animation.     [4s]
+    - step (number): zero-based index of the active step.                 [0]
+    - flowing (bool): whether the flow animation runs.                    [true]
 -->
-<template>
-    <t t-name="theme_compassion_2025.ProgressBarComponent">
-        <div class="progress-bar-container">
-            <div class="progress mb-3" />
-            <p class="progress-text mb-0" />
-        </div>
-    </t>
-</template>
+<templates xml:space="preserve">
+    <t t-name="theme_compassion_2025.ProgressBar">
+    <div class="progress-bar-container">
+      <div
+        t-attf-class="progress mb-3 density-{{ props.density }}{{ state.flowing ? ' is-flowing' : '' }}"
+        t-attf-style="--flow-speed: {{ props.flowSpeed }}; clip-path: {{ clipPath }};"
+      />
+      <p class="progress-text mb-0" t-esc="progressText" />
+    </div>
+  </t>
+</templates>

@@ -18,49 +18,51 @@
     - learn_more_icon (string): Icon class to display in the vignette footer (optional).
 -->
 <odoo>
-    <template id="VignetteComponent" name="Vignette Component">
-        <div class="card vignette border-0">
-            <!-- Add watermark and placeholder link if href is missing -->
-            <t t-if="not href">
-                <t t-set="href" t-value="'https://www.example.com'" />
-                <div class="position-absolute bg-warning m-2 p-1 rounded">Missing link</div>
+  <template id="VignetteComponent" name="Vignette Component">
+    <div class="card vignette border-0">
+      <!-- Add watermark and placeholder link if href is missing -->
+      <t t-if="not href">
+        <t t-set="href" t-value="'https://www.example.com'" />
+        <div class="position-absolute bg-warning m-2 p-1 rounded">Missing link</div>
+      </t>
+      <a t-att-href="href" class="text-decoration-none h-100">
+        <div class="d-flex flex-column h-100">
+          <img t-att-src="image" class="card-img-top flex-grow-1" />
+          <div
+            t-attf-class="card-body h-25 py-2 flex-grow-0 d-flex bg-#{bg_color} #{learn_more_text and 'rounded-0' or ''}"
+          >
+            <div t-attf-class="d-flex flex-column justify-content-center flex-grow-1">
+              <div class="pl-0 pl-sm-3">
+                <h3 t-attf-class="card-title m-0 text-#{color}">
+                  <t t-out="title" />
+                </h3>
+                <t t-if="subtitle">
+                  <h5 t-attf-class="card-subtitle mt-1 font-weight-bold text-#{color}">
+                    <t t-out="subtitle" />
+                  </h5>
+                </t>
+              </div>
+            </div>
+            <t t-if="icon">
+              <i t-attf-class="#{icon} vignette-icon h-100 text-right text-#{color}" />
             </t>
-            <a t-att-href="href" class="text-decoration-none h-100">
-                <div class="d-flex flex-column h-100">
-                    <img t-att-src="image" class="card-img-top flex-grow-1" />
-                    <div
-                        t-attf-class="card-body h-25 py-2 flex-grow-0 d-flex bg-#{bg_color} #{learn_more_text and 'rounded-0' or ''}"
-                    >
-                        <div t-attf-class="d-flex flex-column justify-content-center flex-grow-1">
-                            <div class="pl-0 pl-sm-3">
-                                <h3 t-attf-class="card-title m-0 text-#{color}">
-                                    <t t-raw="title" />
-                                </h3>
-                                <t t-if="subtitle">
-                                    <h5 t-attf-class="card-subtitle mt-1 font-weight-bold text-#{color}">
-                                        <t t-raw="subtitle" />
-                                    </h5>
-                                </t>
-                            </div>
-                        </div>
-                        <t t-if="icon">
-                            <i t-attf-class="#{icon} vignette-icon h-100 text-right text-#{color}" />
-                        </t>
-                    </div>
-                </div>
-            </a>
-            <t t-if="learn_more_text">
-                <a t-att-href="href" t-attf-class="text-decoration-none text-#{color}">
-                    <div
-                        t-attf-class="card-footer d-flex justify-content-start align-items-center pt-0 border-top-0 bg-#{bg_color}"
-                    >
-                        <span class="pl-3">
-                            <t t-esc="learn_more_text" />
-                        </span>
-                        <i t-attf-class="#{learn_more_icon or 'icon-chevron-right'} ml-2 text-#{color}" />
-                    </div>
-                </a>
-            </t>
+          </div>
         </div>
-    </template>
+      </a>
+      <t t-if="learn_more_text">
+        <a t-att-href="href" t-attf-class="text-decoration-none text-#{color}">
+          <div
+            t-attf-class="card-footer d-flex justify-content-start align-items-center pt-0 border-top-0 bg-#{bg_color}"
+          >
+            <span class="pl-3">
+              <t t-esc="learn_more_text" />
+            </span>
+            <i
+              t-attf-class="#{learn_more_icon or 'icon-chevron-right'} ml-2 text-#{color}"
+            />
+          </div>
+        </a>
+      </t>
+    </div>
+  </template>
 </odoo>
