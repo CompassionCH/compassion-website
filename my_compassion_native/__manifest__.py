@@ -26,7 +26,6 @@
     ],
     "depends": [
         "my_compassion",
-        "queue_job",
     ],
     "demo": [],
     "installable": False,

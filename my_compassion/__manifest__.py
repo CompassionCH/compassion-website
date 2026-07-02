@@ -115,7 +115,6 @@
         "http_routing",
         "website",
         "auth_signup_verify_email",  # OCA/server-auth
-        "queue_job",
         "theme_compassion_2025",
         "utm",
     ],
