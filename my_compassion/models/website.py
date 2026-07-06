@@ -6,13 +6,14 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from odoo import models
+from odoo import api, models
 from odoo.http import request
 
 
 class Website(models.Model):
     _inherit = "website"
 
+    @api.model
     def get_current_website(self, fallback=True):
         # On the MyCompassion portal routes (/my2 and localized /<lang>/my2),
         # always resolve to the MyCompassion website so its theme applies even
