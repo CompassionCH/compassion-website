@@ -26,6 +26,32 @@ class Partner(models.Model):
         tracking=True,
     )
 
+    def get_portal_sponsorships(self, states=None):
+        """Portal sponsorships, with grace handling for child departures.
+
+        A terminated sponsorship whose exit communication has not been sent yet
+        (``exit_communication_pending``) is still treated as active: it is
+        returned when "active" is requested and withheld from "terminated", so
+        the sponsor keeps seeing it until they are informed of the departure.
+        """
+        sponsorships = super().get_portal_sponsorships()
+        if states is None:
+            return sponsorships
+        if not isinstance(states, list):
+            states = [states]
+
+        # only sponsorships which have the specified states
+        result = sponsorships.filtered(lambda s: s.state in states)
+        # sponsorships which have an exit communication pending
+        pending_departures = sponsorships.filtered("exit_communication_pending")
+
+        # add or remove the pending sponsorships based on the requested states
+        if "active" in states:
+            result |= pending_departures
+        if "terminated" in states:
+            result -= pending_departures
+        return result
+
     def _compute_user_login(self):
         for partner in self:
             login = partner.mapped("user_ids.login")
@@ -108,7 +134,9 @@ class Partner(models.Model):
             )
             partner.is_ex_sponsor = any(
                 s.state == "terminated" for s in sponsorships
-            ) and all(s.state in ["terminated", "cancelled"] for s in sponsorships)
+            ) and all(
+                s.state in ["draft", "terminated", "cancelled"] for s in sponsorships
+            )
 
     def _compute_is_donor(self):
         donors_data = self.env["account.move.line"].read_group(
