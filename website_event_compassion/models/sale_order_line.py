@@ -29,8 +29,8 @@ class SaleOrderLine(models.Model):
         """Get the description for a donation."""
         if self.registration_id:
             partner = self.registration_id.partner_id
-            name = partner.preferred_name or partner.firstname or partner.name
-            return _("Donation for %s") % name
+            partner_name = partner.preferred_name or partner.firstname or partner.name
+            return _("Donation for the project supported by %s") % partner_name
         return super().get_donation_description(product)
 
     def _prepare_invoice_line(self, **optional_values):
