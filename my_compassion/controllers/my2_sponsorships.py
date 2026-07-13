@@ -389,7 +389,12 @@ class MyCompassionNewSponsorshipController(http.Controller):
         payment_methods = (
             request.env["account.payment.mode"]
             .sudo()
-            .search([("website_published", "=", True)])
+            .search(
+                [
+                    ("website_published", "=", True),
+                    ("company_id", "=", request.website.company_id.id),
+                ]
+            )
         )
         lead_sources = (
             request.env["recurring.contract.origin"]
