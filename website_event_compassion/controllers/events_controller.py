@@ -190,7 +190,7 @@ class WebsiteSaleEventDonation(WebsiteSale):
         website=True,
         sitemap=False,
     )
-    def payment_confirmation(self, **post):
+    def shop_payment_confirmation(self, **post):
         """Show a Compassion-aligned thank-you page for event donations,
         instead of the sales-oriented /shop/confirmation page.
         """
@@ -210,4 +210,4 @@ class WebsiteSaleEventDonation(WebsiteSale):
                             "registration": registration[:1],
                         },
                     )
-        return super().payment_confirmation(**post)
+        return super().shop_payment_confirmation(**post)
