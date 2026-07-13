@@ -23,6 +23,18 @@ from ..models.compassion_child import ChildNotFound
 GLOBAL_FETCH_LIMIT = 3
 
 
+def _product_display_price(default_code):
+    """Monthly amount of a contract product, as rendered in the wizard copy.
+    Same product lookup as the contract lines (default_code, per company).
+    """
+    product = (
+        request.env["product.template"]
+        .sudo()
+        .search([("default_code", "=", default_code)], limit=1)
+    )
+    return f"{product.list_price:g}" if product else ""
+
+
 def _get_reservation_uuid():
     reservation_uuid = request.session.get("reservation_uuid")
     if not reservation_uuid:
@@ -354,8 +366,10 @@ class MyCompassionNewSponsorshipController(http.Controller):
     def _render_form_content(wizard):
         # Fetch available salutations, countries, payment methods,
         # languages and lead sources
-        titles = request.env["res.partner.title"].search(
-            [("is_shown_on_public_forms", "=", True)]
+        titles = (
+            request.env["res.partner.title"]
+            .sudo()
+            .search([("is_shown_on_public_forms", "=", True)])
         )
         countries = request.env["res.country"].search([])
         spoken_languages = (
@@ -396,6 +410,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 "spoken_languages": spoken_languages,
                 "lead_sources": lead_sources,
                 "currency_name": currency_name,
+                "sponsorship_amount": _product_display_price("sponsorship"),
+                "sponsorship_plus_extra": _product_display_price("fund_gen"),
                 "login_url_redirect": login_url_redirect,
             },
         )

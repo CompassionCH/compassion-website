@@ -45,7 +45,7 @@ registry.category("web_tour.tours").add("single_one_time_fund_with_suggested_amo
       trigger: `body:has(div:contains("${MOCK_TEST_DATA.product_name}")), body:has(td:contains("${MOCK_TEST_DATA.product_name}"))`,
     },
     {
-      content: "Check total amount before delete (CHF 50)",
+      content: "Check total amount before delete (50)",
       trigger: ".bg-light-green:contains('Total amount'):contains(' 50')",
     },
   ],
@@ -159,7 +159,7 @@ registry.category("web_tour.tours").add("single_monthly_fund_with_suggested_amou
       trigger: `body:has(div:contains("${MOCK_TEST_DATA.product_name}")), body:has(td:contains("${MOCK_TEST_DATA.product_name}"))`,
     },
     {
-      content: "Check total amount before delete (CHF 50)",
+      content: "Check total amount before delete (50)",
       trigger: ".bg-light-green:contains('Total amount'):contains(' 50')",
     },
   ],

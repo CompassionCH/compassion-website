@@ -302,9 +302,9 @@ Page: My Compassion 2 New Sponsorship Wizard Page
       <div class="mt-3 p-4 bg-high-eggshell rounded-lg body-small">
                 Sponsorship+ includes the basic sponsorship of
                 <t t-out="currency_name" />
-                42.-, plus an additional gift of
+                <t t-out="sponsorship_amount" />.-, plus an additional gift of
                 <t t-out="currency_name" />
-                8.- per month.
+                <t t-out="sponsorship_plus_extra" />.- per month.
                 <br />
                 <br />
                 The extra amount helps to fund urgent needs not covered by the
@@ -370,7 +370,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
       <div id="wap-contribution-amount">
         <t
           t-set="amounts"
-          t-value="[
+          t-value="wap_suggested_amounts or [
                     { 'name': 'low', 'amount': 5 },
                     { 'name': 'medium', 'amount': 10 },
                     { 'name': 'high', 'amount': 20 },
@@ -512,7 +512,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                                 Write&amp;Pray sponsorships are only available for people under the age of 25.
                                 Would you like to become a sponsor for <t
                 t-out="currency_name"
-              /> 42.-/month?
+              /> <t t-out="sponsorship_amount" />.-/month?
                             </div>
               <div
                 class="btn-next align-self-stretch mt-5 d-flex justify-content-center"

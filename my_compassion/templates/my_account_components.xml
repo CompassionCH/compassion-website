@@ -18,7 +18,7 @@
                     <br />
                     You do not support any child yet. You can start a sponsorship by following
                     <a
-          href="https://compassion.ch/parrainer-un-enfant"
+          t-att-href="request.env['ir.config_parameter'].sudo().get_param('my_compassion.sponsor_child_url', '/my2/children')"
           target="_blank"
         >this link</a>
                     .

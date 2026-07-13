@@ -497,16 +497,20 @@ Injected data:
                                                         cannot be
                                                         performed in the website.
                                                         </div>
-                            <div class="px-4">
+                            <div class="px-4" name="account_deletion_contact">
                               <p>
                                                                 Please contact Compassion
                                                             for
                                                             assistance
                                                             at:
                                                                 <br />
-                                                                info@compassion.ch
+                                                                <t
+                                t-out="request.env.company.email"
+                              />
                                                                 <br />
-                                                                024 434 21 24
+                                                                <t
+                                t-out="request.env.company.phone"
+                              />
                                                             </p>
                             </div>
                           </t>
