@@ -90,8 +90,11 @@ class MyCompassionUserController(http.Controller):
             if any(k in vals_to_update for k in ["city", "zip", "country_id"]):
                 vals_to_update["zip_id"] = False
 
-            # getting old values for email notification of the changes
-            old_values = {f: getattr(partner, f) for f in vals_to_update.keys()}
+            # getting old values for email notification of the changes;
+            # snapshot the field list too: write() hooks may add keys with
+            # non-hashable command values to the vals dict
+            fields_to_notify = list(vals_to_update)
+            old_values = {f: getattr(partner, f) for f in fields_to_notify}
 
             try:
                 partner.sudo().write(vals_to_update)
@@ -99,11 +102,11 @@ class MyCompassionUserController(http.Controller):
                 if "email" in vals_to_update:
                     return {"success": False, "errors": {"email": e.args[0]}}
 
-            new_values = {f: getattr(partner, f) for f in vals_to_update.keys()}
+            new_values = {f: getattr(partner, f) for f in fields_to_notify}
 
             # Prepare change summary for notification
             changes = []
-            for field in vals_to_update.items():
+            for field in fields_to_notify:
                 # those are compute
                 if field in ("zip_id", "email_bounced", "preferred_name"):
                     continue
