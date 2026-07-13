@@ -137,12 +137,8 @@ class MyCompassionUserController(http.Controller):
 
                 # Send the notification email
                 notification_email = (
-                    request.env["ir.config_parameter"]
-                    .sudo()
-                    .get_param(
-                        "my_compassion.data_change_notification_email",
-                        request.env.company.email,
-                    )
+                    request.website.data_change_notification_email
+                    or request.website.company_id.email
                 )
                 mail_values = {
                     "subject": f"Partner data change - {partner.name} "

@@ -25,13 +25,22 @@ GLOBAL_FETCH_LIMIT = 3
 
 def _product_display_price(default_code):
     """Monthly amount of a contract product, as rendered in the wizard copy.
-    Same product lookup as the contract lines (default_code, per company).
+    Same product lookup as the contract lines (default_code), scoped to the
+    website's company: a company-specific product wins over a shared one.
     """
-    product = (
+    company = request.website.company_id
+    products = (
         request.env["product.template"]
         .sudo()
-        .search([("default_code", "=", default_code)], limit=1)
+        .with_company(company)
+        .search(
+            [
+                ("default_code", "=", default_code),
+                ("company_id", "in", [company.id, False]),
+            ]
+        )
     )
+    product = products.filtered(lambda p: p.company_id == company)[:1] or products[:1]
     return f"{product.list_price:g}" if product else ""
 
 
@@ -391,7 +400,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 ]
             )
         )
-        currency_name = request.env.user.company_id.currency_id.name
+        currency_name = request.website.company_id.currency_id.name
 
         # Send the user back to the exact URL they came from after login,
         # preserving every query param (UTM, sponsorship_type, anything else).
