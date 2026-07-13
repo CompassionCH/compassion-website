@@ -94,7 +94,6 @@ class NewSponsorshipWizard(models.TransientModel):
         # TODO: decide if we use website_published or not
         # domain=[("website_published", "=", True)],
     )
-    volunteering = fields.Boolean()
 
     @api.depends("current_step_idx", "sponsorship_type", "user_id")
     def _compute_current_step(self):
@@ -155,7 +154,6 @@ class NewSponsorshipWizard(models.TransientModel):
         if spoken_languages_ids:
             values["spoken_languages"] = [(6, 0, spoken_languages_ids)]
         update_field("lead_source", "lead_source", int)
-        update_field("volunteering", "volunteering", bool)
 
         initial_step = self.current_step
 
@@ -168,26 +166,32 @@ class NewSponsorshipWizard(models.TransientModel):
         elif action == "previous":
             self.current_step_idx = max(self.current_step_idx - 1, 0)
 
+    def _get_new_partner_vals(self):
+        """Values used to match or create the partner of a public signup.
+        Country extensions add their own keys before the matching runs.
+        """
+        self.ensure_one()
+        return {
+            "title": self.title.id,
+            "lastname": self.lastname,
+            "firstname": self.firstname,
+            "birthdate_date": self.birthdate,
+            "email": self.email,
+            "phone": self.phone,
+            "street": f"{self.street} {self.street_number}",
+            "zip": self.zip,
+            "city": self.city,
+            "country_id": self.country.id,
+            "spoken_lang_ids": [(4, lang.id) for lang in self.spoken_languages],
+        }
+
     def finish_sponsorship(self):
         self.ensure_one()
 
         partner = self.user_id.partner_id
         if self.user_id._is_public():
             # Look for existing partner, create one if not found
-            partner_vals = {
-                "title": self.title.id,
-                "lastname": self.lastname,
-                "firstname": self.firstname,
-                "birthdate_date": self.birthdate,
-                "email": self.email,
-                "phone": self.phone,
-                "street": f"{self.street} {self.street_number}",
-                "zip": self.zip,
-                "city": self.city,
-                "country_id": self.country.id,
-                "spoken_lang_ids": [(4, lang.id) for lang in self.spoken_languages],
-                "interested_for_volunteering": self.volunteering,
-            }
+            partner_vals = self._get_new_partner_vals()
             partner = self.env["res.partner.match"].match_values_to_partner(
                 partner_vals, match_update=False, match_create=False
             )
