@@ -143,13 +143,14 @@ class MyCompassionUserController(http.Controller):
                     request.website.data_change_notification_email
                     or request.website.company_id.email
                 )
-                mail_values = {
-                    "subject": f"Partner data change - {partner.name} "
-                    f"(Ref {partner.ref})",
-                    "body_html": body_html,
-                    "email_to": notification_email,
-                }
-                request.env["mail.mail"].sudo().create(mail_values)
+                if notification_email:
+                    mail_values = {
+                        "subject": f"Partner data change - {partner.name} "
+                        f"(Ref {partner.ref})",
+                        "body_html": body_html,
+                        "email_to": notification_email,
+                    }
+                    request.env["mail.mail"].sudo().create(mail_values)
 
         return {"success": True}
 

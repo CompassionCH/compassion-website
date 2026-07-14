@@ -32,17 +32,23 @@
         <div
           class="mt-3 tiny-text"
           name="donation_contact_phone"
-          t-if="request.env.company.phone"
+          t-if="request.website.company_id.phone"
         >
           <i class="me-1 icon-phone body-small" />
-          <a t-attf-href="tel:#{request.env.company.phone}" class="text-low-black">
-            <t t-out="request.env.company.phone" />
+          <a
+            t-attf-href="tel:#{request.website.company_id.phone}"
+            class="text-low-black"
+          >
+            <t t-out="request.website.company_id.phone" />
           </a>
         </div>
         <div class="mt-2 tiny-text">
           <i class="me-1 icon-mail01 body-small" />
-          <a t-attf-href="mailto:#{request.env.company.email}" class="text-low-black">
-            <t t-out="request.env.company.email" />
+          <a
+            t-attf-href="mailto:#{request.website.company_id.email}"
+            class="text-low-black"
+          >
+            <t t-out="request.website.company_id.email" />
           </a>
         </div>
       </div>

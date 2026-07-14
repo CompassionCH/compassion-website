@@ -178,7 +178,7 @@ class NewSponsorshipWizard(models.TransientModel):
             "birthdate_date": self.birthdate,
             "email": self.email,
             "phone": self.phone,
-            "street": f"{self.street} {self.street_number}",
+            "street": f"{self.street or ''} {self.street_number or ''}".strip(),
             "zip": self.zip,
             "city": self.city,
             "country_id": self.country.id,
