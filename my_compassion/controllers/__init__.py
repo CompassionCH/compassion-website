@@ -27,4 +27,5 @@ from . import (
     my2_home_redirect,
     my2_portal,
     my2_contact_us,
+    website_sale,
 )

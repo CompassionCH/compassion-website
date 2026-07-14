@@ -30,7 +30,7 @@
 # pylint: disable=C8101
 {
     "name": "MyCompassion - Sponsor portal website",
-    "version": "18.0.1.0.8",
+    "version": "18.0.1.0.9",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
@@ -40,7 +40,6 @@
         "security/ir.model.access.csv",
         # My Compassion 2 data
         "data/my2_website.xml",
-        "data/my2_website_redirect.xml",
         "data/auto_letter_templates_updater_cron.xml",
         # My compassion 2 assets, needs to be placed before others
         "templates/my2_assets.xml",

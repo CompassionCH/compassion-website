@@ -215,8 +215,9 @@ class MyCompassionDonationsController(CustomerPortal):
         limits = request.env["gift.threshold.settings"].sudo().search([])
 
         # Payment form context for the embedded standard payment form. The
-        # landing route confirms the order and redirects to /shop/confirmation,
-        # which the my2 website rewrites to /my2/gifts/thankyou.
+        # landing route confirms the order and redirects to /shop/confirmation;
+        # on a MyCompassion website that route is overridden to redirect to the
+        # branded /my2/gifts/thankyou page.
         payment_form_values = {}
         if order and order.order_line:
             payment_form_values = {
