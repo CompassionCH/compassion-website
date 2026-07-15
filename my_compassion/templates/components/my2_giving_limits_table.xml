@@ -26,9 +26,8 @@
           class="table-cell super-tiny-text d-flex flex-column justify-content-center"
         >
           <div>
-            <t
-              t-out="cell.replace('*', '&lt;span class=\'body-small text-low-pink\'&gt;*&lt;/span&gt;')"
-            />
+            <t t-out="cell.replace('*', '')" />
+            <span t-if="'*' in cell" class="body-small text-low-pink">*</span>
           </div>
         </div>
       </t>
@@ -43,7 +42,7 @@
       <div
         class="p-3 table-title col-12 bg-low-green tiny-text text-center text-pure-white"
       >
-                Annual gift limits in Switzerland
+                Annual gift limits
             </div>
       <!-- COLUMNS -->
       <div class="d-flex">

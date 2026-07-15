@@ -22,6 +22,8 @@ from odoo.http import content_disposition, request, route
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
 
+from .website_utils import resolve_host_my2_website
+
 IMG_URL = "/web/image/compassion.child.pictures/{id}/fullshot/"
 
 # Avoids fetching too many donations in the portal
@@ -234,10 +236,9 @@ class MyAccountController(CustomerPortal):
         This is a dead route of MyCompassion 1.0
         From MyCompassion 2.0, we ensured a proper redirection
         for user using old links.
+        Redirects only when the request host resolves to MyCompassion.
         """
-        if request.website == request.env.ref(
-            "my_compassion.my2_website", raise_if_not_found=False
-        ):
+        if resolve_host_my2_website():
             return request.redirect(redirect or "/my2/dashboard")
 
         return super().home(redirect=redirect, **post)
@@ -295,9 +296,7 @@ class MyAccountController(CustomerPortal):
         From MyCompassion 2.0, we ensured a proper redirection
         for user using old links.
         """
-        if request.website == request.env.ref(
-            "my_compassion.my2_website", raise_if_not_found=False
-        ):
+        if resolve_host_my2_website():
             return request.redirect("/my2/user_settings")
 
         partner = request.env.user.partner_id

@@ -374,17 +374,58 @@ ul.auto-toc {
 <p><strong>Table of contents</strong></p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#bug-tracker" id="toc-entry-1">Bug Tracker</a></li>
-<li><a class="reference internal" href="#credits" id="toc-entry-2">Credits</a><ul>
-<li><a class="reference internal" href="#authors" id="toc-entry-3">Authors</a></li>
-<li><a class="reference internal" href="#contributors" id="toc-entry-4">Contributors</a></li>
-<li><a class="reference internal" href="#maintainers" id="toc-entry-5">Maintainers</a></li>
+<li><a class="reference internal" href="#configuration" id="toc-entry-1">Configuration</a></li>
+<li><a class="reference internal" href="#bug-tracker" id="toc-entry-2">Bug Tracker</a></li>
+<li><a class="reference internal" href="#credits" id="toc-entry-3">Credits</a><ul>
+<li><a class="reference internal" href="#authors" id="toc-entry-4">Authors</a></li>
+<li><a class="reference internal" href="#contributors" id="toc-entry-5">Contributors</a></li>
+<li><a class="reference internal" href="#maintainers" id="toc-entry-6">Maintainers</a></li>
 </ul>
 </li>
 </ul>
 </div>
+<div class="section" id="configuration">
+<h1><a class="toc-backref" href="#toc-entry-1">Configuration</a></h1>
+<p>This module is country-agnostic and multi-company aware: a multi-company
+instance runs one MyCompassion website per country, each flagged with
+the <tt class="docutils literal">is_my_compassion</tt> field. Each national office configures its
+website:</p>
+<ul class="simple">
+<li><strong>Website record</strong>: <tt class="docutils literal">my_compassion.my2_website</tt> ships flagged, with
+a placeholder domain; set the real domain and languages after
+install. Additional country websites are created normally, flagged,
+and get the theme applied by the module hook on the next upgrade.</li>
+<li><strong>Company data</strong>: the portal renders the website company’s phone and
+email (donation help blocks, account-deletion help). Set them on each
+company.</li>
+<li><strong>Sponsorship products</strong>: the wizard copy renders the monthly amounts
+of the products with <tt class="docutils literal">default_code</tt> <tt class="docutils literal">sponsorship</tt> and
+<tt class="docutils literal">fund_gen</tt> (the same products the contract lines use); a
+company-specific product wins over a shared one.</li>
+<li><strong>Website fields</strong> (optional, per website):<ul>
+<li><tt class="docutils literal">data_change_notification_email</tt>: recipient of the partner
+data-change notifications (defaults to the website company’s
+email).</li>
+<li><tt class="docutils literal">sponsor_child_url</tt>: target of the “start a sponsorship” link
+shown to users without sponsorships (defaults to
+<tt class="docutils literal">/my2/children</tt>).</li>
+</ul>
+</li>
+<li><strong>Payment providers</strong>: the donation checkout embeds the standard Odoo
+<tt class="docutils literal">payment.form</tt>; enable and publish the country’s
+<tt class="docutils literal">payment.provider</tt> records. The checkout brand row
+(<tt class="docutils literal">checkout_payment_brands</tt> anchor in the gift package page) shows
+Mastercard/Visa; country modules inject their local brands there.</li>
+<li><strong>Dependency note</strong>: <tt class="docutils literal">website_legal_page</tt> is an OCA module
+(OCA/website); make sure an OCA/website checkout is on the addons
+path.</li>
+</ul>
+<p>Country-specific behavior (Swiss volunteering features, eBill, local
+payment brands, donor-service contact details) lives in the country
+extension module (<tt class="docutils literal">my_compassion_switzerland</tt> for Switzerland).</p>
+</div>
 <div class="section" id="bug-tracker">
-<h1><a class="toc-backref" href="#toc-entry-1">Bug Tracker</a></h1>
+<h1><a class="toc-backref" href="#toc-entry-2">Bug Tracker</a></h1>
 <p>Bugs are tracked on <a class="reference external" href="https://github.com/CompassionCH/compassion-website/issues">GitHub Issues</a>.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
@@ -392,15 +433,15 @@ If you spotted it first, help us to smash it by providing a detailed and welcome
 <p>Do not contact contributors directly about support or help with technical issues.</p>
 </div>
 <div class="section" id="credits">
-<h1><a class="toc-backref" href="#toc-entry-2">Credits</a></h1>
+<h1><a class="toc-backref" href="#toc-entry-3">Credits</a></h1>
 <div class="section" id="authors">
-<h2><a class="toc-backref" href="#toc-entry-3">Authors</a></h2>
+<h2><a class="toc-backref" href="#toc-entry-4">Authors</a></h2>
 <ul class="simple">
 <li>Compassion CH</li>
 </ul>
 </div>
 <div class="section" id="contributors">
-<h2><a class="toc-backref" href="#toc-entry-4">Contributors</a></h2>
+<h2><a class="toc-backref" href="#toc-entry-5">Contributors</a></h2>
 <ul class="simple">
 <li>Sebastien Toth &lt;<a class="reference external" href="mailto:popod&#64;me.com">popod&#64;me.com</a>&gt;</li>
 <li>Christopher Meier &lt;<a class="reference external" href="mailto:dev&#64;c-meier.ch">dev&#64;c-meier.ch</a>&gt;</li>
@@ -408,7 +449,7 @@ If you spotted it first, help us to smash it by providing a detailed and welcome
 </ul>
 </div>
 <div class="section" id="maintainers">
-<h2><a class="toc-backref" href="#toc-entry-5">Maintainers</a></h2>
+<h2><a class="toc-backref" href="#toc-entry-6">Maintainers</a></h2>
 <p>This module is part of the <a class="reference external" href="https://github.com/CompassionCH/compassion-website/tree/18.0/my_compassion">CompassionCH/compassion-website</a> project on GitHub.</p>
 <p>You are welcome to contribute.</p>
 </div>

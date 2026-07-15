@@ -13,22 +13,30 @@ from odoo.http import request
 
 from odoo.addons.website.controllers.main import Website
 
+from .website_utils import resolve_host_my2_website
+
 
 class WebsiteLoginRedirect(Website):
+    def _login_redirect(self, uid, redirect=None):
+        """
+        Override login redirection for MyCompassion.
+        """
+        if not redirect and resolve_host_my2_website():
+            return "/my2/dashboard"
+        return super()._login_redirect(uid, redirect=redirect)
+
     @http.route("/web/login", type="http", auth="public", website=True, sitemap=False)
     def web_login(self, *args, **kw):
         """
-        Overrides the login page controller.
-        If the user is already logged in, they are redirected immediately.
+        Overrides the login page controller for MyCompassion.
+        An already authenticated visitor on MyCompassion is sent
+        to the dashboard.
         """
-        # Check if a user ID exists in the current session
-        if request.session.uid and request.website == request.env.ref(
-            "my_compassion.my2_website", raise_if_not_found=False
+        if (
+            request.session.uid
+            and not kw.get("redirect")
+            and resolve_host_my2_website()
         ):
-            # If so, redirect the user to their account page or dashboard
-            return request.redirect(kw.get("redirect") or "/my2/dashboard/")
+            return request.redirect("/my2/dashboard")
 
-        # If the user is not logged in, execute the original Odoo logic for login
-        response = super().web_login(*args, **kw)
-
-        return response
+        return super().web_login(*args, **kw)

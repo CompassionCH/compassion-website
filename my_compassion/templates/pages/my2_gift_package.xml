@@ -221,7 +221,10 @@
                 </t>
                 <div t-if="len(order.order_line) &gt;= 1" class="empty-order-hidden">
                   <t t-call="my_compassion.CheckoutComponent" />
-                  <div class="mt-3 px-5 d-flex align-items-center">
+                  <div
+                    class="mt-3 px-5 d-flex align-items-center"
+                    name="checkout_payment_brands"
+                  >
                     <img
                       alt="Mastercard"
                       class="px-1 col-3"
@@ -231,16 +234,6 @@
                       alt="Visa"
                       class="px-1 col-3"
                       src="/my_compassion/static/src/img/visa.png"
-                    />
-                    <img
-                      alt="Twint"
-                      class="px-1 col-3"
-                      src="/my_compassion/static/src/img/twint.png"
-                    />
-                    <img
-                      alt="PostFinance"
-                      class="px-1 col-3"
-                      src="/my_compassion/static/src/img/post_finance.png"
                     />
                   </div>
                   <div class="mt-3 body-small bold text-mid-green text-center">

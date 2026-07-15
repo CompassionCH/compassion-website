@@ -46,10 +46,5 @@ class MyCompassionUserController(http.Controller):
                 "template": "my_compassion.dashboard_donations_vignette",
                 "priority": 1 - partner.is_donor * 100,
             },
-            {
-                "key": "volunteering",
-                "template": "my_compassion.dashboard_volunteering_vignette",
-                "priority": 2 - getattr(partner, "is_volunteer", False) * 100,
-            },
         ]
         return sorted(vignettes, key=lambda v: v["priority"])

@@ -59,7 +59,9 @@
       <field name="name">Compassion Child: portal sponsor access</field>
       <field name="model_id" ref="child_compassion.model_compassion_child" />
       <field name="domain_force">
-                ['|', ('state', 'in', ['N', 'I']), ('id', 'in', user.partner_id.mapped('sponsorship_ids.child_id').ids)]
+                ['|', ('state', 'in', ['N', 'I']),
+                 '|', ('portal_sponsorship_ids.correspondent_id', '=', user.partner_id.id),
+                      ('portal_sponsorship_ids.partner_id', '=', user.partner_id.id)]
             </field>
       <field name="groups" eval="[(4, ref('base.group_portal'))]" />
       <field name="perm_read" eval="True" />

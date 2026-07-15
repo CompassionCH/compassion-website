@@ -15,6 +15,7 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 from odoo.addons.child_compassion.models.compassion_hold import HoldType
+from odoo.addons.sponsorship_compassion.models.contracts import SPONSORSHIP_TYPE_LIST
 
 _logger = logging.getLogger(__name__)
 
@@ -31,6 +32,11 @@ class CompassionChild(models.Model):
         "recurring.contract",
         compute="_compute_my_sponsorship",
         help="The sponsorship contract of the current user for this child.",
+    )
+    portal_sponsorship_ids = fields.One2many(
+        "recurring.contract",
+        "child_id",
+        domain=[("type", "in", SPONSORSHIP_TYPE_LIST), ("state", "!=", "cancelled")],
     )
     can_show_on_my_compassion = fields.Boolean(
         string="Can be shown on My Compassion",

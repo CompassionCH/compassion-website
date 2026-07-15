@@ -30,7 +30,7 @@
 # pylint: disable=C8101
 {
     "name": "MyCompassion - Sponsor portal website",
-    "version": "18.0.1.0.3",
+    "version": "18.0.1.0.11",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
@@ -40,14 +40,12 @@
         "security/ir.model.access.csv",
         # My Compassion 2 data
         "data/my2_website.xml",
-        "data/my2_website_redirect.xml",
         "data/auto_letter_templates_updater_cron.xml",
         # My compassion 2 assets, needs to be placed before others
         "templates/my2_assets.xml",
         "templates/my_account_components.xml",
         "templates/my_account_personal_info.xml",
         "templates/my_account_donations.xml",
-        "templates/login_template.xml",
         "templates/signup.xml",
         "templates/my2_change_password.xml",
         "views/correspondence_template_view.xml",
@@ -62,7 +60,6 @@
         "views/contract_origin_view.xml",
         "data/signup_email_confirmation.xml",
         "data/communication_config.xml",
-        "data/dynamic_stylesheets.xml",
         # My Compassion 2 pages
         "templates/pages/my2_children.xml",
         "templates/pages/my2_child_timeline.xml",
@@ -101,7 +98,6 @@
     ],
     "depends": [
         "partner_communication_compassion",
-        "wordpress_configuration",
         "sponsorship_sub_management",
         "web",
         "website_sale",
@@ -177,6 +173,7 @@
         ],
     },
     "demo": [],
+    "post_init_hook": "post_init_hook",
     "installable": True,
     "auto_install": False,
 }

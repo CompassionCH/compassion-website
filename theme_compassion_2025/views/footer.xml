@@ -80,10 +80,10 @@
               <div
                 class="col-12 d-flex flex-column flex-md-row justify-content-center align-items-center"
               >
-                <div class="mb-2 mb-md-0">
+                <div class="mb-2 mb-md-0" t-if="website.privacy_policy_url">
                   <a
                     class="text-pure-white me-3"
-                    href="https://compassion.ch/protection-des-donnees/"
+                    t-att-href="website.privacy_policy_url"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -93,7 +93,8 @@
                 </div>
                 <div class="d-flex ms-1 mt-1">
                   <a
-                    href="https://www.facebook.com/compassionschweiz"
+                    t-if="website.social_facebook"
+                    t-att-href="website.social_facebook"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="me-3"
@@ -101,7 +102,8 @@
                     <i class="fa fa-facebook-official text-pure-white" />
                   </a>
                   <a
-                    href="https://www.instagram.com/compassionswiss"
+                    t-if="website.social_instagram"
+                    t-att-href="website.social_instagram"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="me-3"
@@ -109,7 +111,8 @@
                     <i class="fa fa-instagram text-pure-white" />
                   </a>
                   <a
-                    href="https://www.youtube.com/channel/UChVNRRvihHG0AYPsdEFfasQ"
+                    t-if="website.social_youtube"
+                    t-att-href="website.social_youtube"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="me-3"
@@ -117,7 +120,8 @@
                     <i class="fa fa-youtube-play text-pure-white" />
                   </a>
                   <a
-                    href="https://vimeo.com/compassionswitzerland"
+                    t-if="website.social_vimeo"
+                    t-att-href="website.social_vimeo"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="me-3"
@@ -125,7 +129,8 @@
                     <i class="fa fa-vimeo text-pure-white" />
                   </a>
                   <a
-                    href="https://www.linkedin.com/company/compassion-schweiz-suisse-svizzera"
+                    t-if="website.social_linkedin"
+                    t-att-href="website.social_linkedin"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

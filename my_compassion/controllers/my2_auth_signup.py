@@ -13,6 +13,8 @@ from odoo.http import request
 
 from odoo.addons.auth_signup.controllers.main import AuthSignupHome
 
+from .website_utils import resolve_host_my2_website
+
 
 class SignupOverride(AuthSignupHome):
     @http.route("/web/signup", type="http", auth="public", website=True, sitemap=False)
@@ -22,9 +24,7 @@ class SignupOverride(AuthSignupHome):
         Redirects logged-in users.
         """
 
-        if request.session.uid and request.website == request.env.ref(
-            "my_compassion.my2_website", raise_if_not_found=False
-        ):
+        if request.session.uid and resolve_host_my2_website():
             return request.redirect(kw.get("redirect") or "/my2/dashboard/")
 
         # If the user is not logged in, execute the original Odoo logic for signup

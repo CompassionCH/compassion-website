@@ -4,9 +4,8 @@
 
     Description:
     Embeds the standard payment form for the current gift package order. The
-    form lists the compatible enabled payment providers (PostFinance on the
-    Swiss website) and starts the transaction; offsite providers then redirect
-    to their payment gateway.
+    form lists the payment providers enabled for the website and starts the
+    transaction; offsite providers then redirect to their payment gateway.
 
     Context:
     The caller's rendering context must carry the payment form values built by
