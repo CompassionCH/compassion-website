@@ -49,7 +49,7 @@ class Website(models.Model):
                         request.httprequest.host, fallback=False
                     )
                 )
-                if domain_website and domain_website.is_my_compassion:
+                if domain_website and domain_website.sudo().is_my_compassion:
                     return domain_website
                 target_website = self.env.ref(
                     "my_compassion.my2_website", raise_if_not_found=False
