@@ -32,8 +32,8 @@ class IrHttp(models.AbstractModel):
         return mods + ["my_compassion"]
 
     @classmethod
-    def _dispatch(cls):
-        result = super()._dispatch()
+    def _dispatch(cls, endpoint):
+        result = super()._dispatch(endpoint)
         # Re-set the frontend language cookie with an expiry so it persists
         # across a full app close (core sets it as a session-only cookie).
         if (
