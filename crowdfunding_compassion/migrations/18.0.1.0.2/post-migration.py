@@ -18,6 +18,8 @@ _UNSAFE_PIPE_INT = {
 
 
 def _fix_pipe_int(body):
+    if not body:
+        return body
     for unsafe, safe in _UNSAFE_PIPE_INT.items():
         body = body.replace(unsafe, safe)
     return body
@@ -40,6 +42,7 @@ def migrate(env, version):
         "UPDATE mail_template SET body_html = %s WHERE id = %s",
         (json.dumps(fixed), template.id),
     )
+    template.invalidate_recordset(["body_html"])
     _logger.info(
         "donation_received_email_template: fixed invalid '| int' pipe expression "
         "for languages: %s",
