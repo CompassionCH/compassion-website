@@ -108,42 +108,37 @@ class MyCompassionChildrenController(WebsiteChild):
 
         return partner.ids
 
-    def _get_timeline_count(self, child_id, partner_ids):
-        """Get total count of timeline records (correspondence + gifts + child_pictures + start + end)."""
-        sql = """
-            SELECT
-                (SELECT COUNT(*) FROM correspondence
-                 WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s) AND is_published = true)
-                +
-                (SELECT COUNT(*) FROM sponsorship_gift
-                 WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
-                +
-                (SELECT COUNT(*)
-                 FROM compassion_child_pictures p
-                 JOIN recurring_contract rc ON rc.child_id = p.child_id
-                 WHERE p.child_id = %(child_id)s
-                 AND rc.partner_id = ANY(%(partner_ids)s)
-                 AND rc.start_date <= p.create_date
-                )
-                +
-                (SELECT SUM(
-                        CASE WHEN rc.start_date IS NOT NULL THEN 1 ELSE 0 END
-                            +
-                        CASE WHEN rc.state = 'terminated' AND rc.end_date IS NOT NULL AND rc.exit_communication_sent IS NOT NULL THEN 1 ELSE 0 END
-                        ) as count
-                FROM recurring_contract rc
-                WHERE rc.child_id = %(child_id)s
-                AND rc.partner_id = ANY(%(partner_ids)s))
-                AS total
-        """
-        request.env.cr.execute(
-            sql,
-            {
-                "child_id": child_id,
-                "partner_ids": partner_ids,
-            },
+    def _get_sponsorship_start(self, child_id, partner_ids):
+        """Earliest sponsorship start date for this child among the authorized
+        partners' contracts, or None if there is no started contract."""
+        contracts = (
+            request.env["recurring.contract"]
+            .sudo()
+            .search(
+                [
+                    ("child_id", "=", child_id),
+                    ("partner_id", "in", partner_ids),
+                    ("start_date", "!=", False),
+                ]
+            )
         )
-        return request.env.cr.fetchone()[0] or 0
+        return min(contracts.mapped("start_date")) if contracts else None
+
+    def _get_beginning_picture_id(self, child_id, sponsorship_start):
+        """The 'beginning of sponsorship' picture: the most recent child picture
+        taken before the sponsorship start."""
+        if not sponsorship_start:
+            return None
+        picture = (
+            request.env["compassion.child.pictures"]
+            .sudo()
+            .search(
+                [("child_id", "=", child_id), ("date", "<", sponsorship_start)],
+                order="date desc, id desc",
+                limit=1,
+            )
+        )
+        return picture.id if picture else None
 
     def _get_timeline_data(
         self,
@@ -151,11 +146,13 @@ class MyCompassionChildrenController(WebsiteChild):
         partner_ids,
         offset,
         limit,
+        sponsorship_start,
+        beginning_picture_id,
     ):
         """Fetch paginated timeline records (correspondence + gifts) ordered by date."""
         # ruff: noqa: E501 (query is more readable this way)
         sql = """
-            SELECT * FROM (
+            SELECT *, COUNT(*) OVER () AS total_count FROM (
                 SELECT
                     'correspondence' AS model,
                     c.uuid::text AS record_id,
@@ -208,14 +205,14 @@ class MyCompassionChildrenController(WebsiteChild):
                     '' AS amount,
                     '' AS currency_name,
                     COALESCE(p.gender, '') AS metadata,
-                    p.create_date AS event_date,
+                    -- Show photos at their real date, or if older than
+                    -- start of the sponsorship, then after the start (latest only)
+                    GREATEST(p.date::timestamp, %(sponsorship_start)s) AS event_date,
                     %(title_child_picture)s AS title,
                     p.child_id AS child_id
                 FROM compassion_child_pictures p
-                JOIN recurring_contract rc ON rc.child_id = p.child_id
                 WHERE p.child_id = %(child_id)s
-                AND rc.partner_id = ANY(%(partner_ids)s)
-                AND rc.start_date <= p.create_date
+                AND (p.date >= %(sponsorship_start)s OR p.id = %(beginning_picture_id)s)
 
                 UNION ALL
 
@@ -242,12 +239,15 @@ class MyCompassionChildrenController(WebsiteChild):
                   AND v.event_date IS NOT NULL
                   AND (v.event_type = 'start_sponsorship' OR (rc.state = 'terminated' AND rc.exit_communication_sent IS NOT NULL))
             ) AS timeline
-            ORDER BY event_date DESC
+            ORDER BY event_date DESC,
+                CASE WHEN model = 'start_sponsorship' THEN 0 ELSE 1 END DESC
             LIMIT %(limit)s OFFSET %(offset)s
         """
         params = {
             "child_id": child_id,
             "partner_ids": partner_ids,
+            "sponsorship_start": sponsorship_start,
+            "beginning_picture_id": beginning_picture_id,
             "default_currency": request.env.user.currency_id.name,
             "title_corr_wrote": _("Wrote you a letter"),
             "title_corr_received": _("Received your letter"),
@@ -279,9 +279,21 @@ class MyCompassionChildrenController(WebsiteChild):
         """
         child = request.env["compassion.child"].browse(child_id)
         partner_ids = self._get_authorized_partner_ids(child)
+        sponsorship_start = self._get_sponsorship_start(child_id, partner_ids)
+        beginning_picture_id = self._get_beginning_picture_id(
+            child_id, sponsorship_start
+        )
 
-        total = self._get_timeline_count(child_id, partner_ids)
-        records = self._get_timeline_data(child_id, partner_ids, offset, limit)
+        records = self._get_timeline_data(
+            child_id,
+            partner_ids,
+            offset,
+            limit,
+            sponsorship_start,
+            beginning_picture_id,
+        )
+
+        total = records[0]["total_count"] if records else 0
 
         return records, total
 
