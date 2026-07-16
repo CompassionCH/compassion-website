@@ -111,7 +111,7 @@ class MyCompassionChildrenController(WebsiteChild):
     def _get_sponsorship_start(self, child_id, partner_ids):
         """Earliest sponsorship start date for this child among the authorized
         partners' contracts, or None if there is no started contract."""
-        contracts = (
+        contract = (
             request.env["recurring.contract"]
             .sudo()
             .search(
@@ -119,10 +119,12 @@ class MyCompassionChildrenController(WebsiteChild):
                     ("child_id", "=", child_id),
                     ("partner_id", "in", partner_ids),
                     ("start_date", "!=", False),
-                ]
+                ],
+                order="start_date asc",
+                limit=1,
             )
         )
-        return min(contracts.mapped("start_date")) if contracts else None
+        return contract.start_date if contract else None
 
     def _get_beginning_picture_id(self, child_id, sponsorship_start):
         """The 'beginning of sponsorship' picture: the most recent child picture
@@ -207,12 +209,12 @@ class MyCompassionChildrenController(WebsiteChild):
                     COALESCE(p.gender, '') AS metadata,
                     -- Show photos at their real date, or if older than
                     -- start of the sponsorship, then after the start (latest only)
-                    GREATEST(p.date::timestamp, %(sponsorship_start)s) AS event_date,
+                    GREATEST(p.date::timestamp, %(sponsorship_start)s::timestamp) AS event_date,
                     %(title_child_picture)s AS title,
                     p.child_id AS child_id
                 FROM compassion_child_pictures p
                 WHERE p.child_id = %(child_id)s
-                AND (p.date >= %(sponsorship_start)s OR p.id = %(beginning_picture_id)s)
+                AND (p.date >= %(sponsorship_start)s::timestamp OR p.id = %(beginning_picture_id)s::integer)
 
                 UNION ALL
 
