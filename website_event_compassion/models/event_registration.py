@@ -6,13 +6,25 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+import base64
+import binascii
+import io
 import logging
 
+from PIL import Image as PILImage
+
 from odoo import SUPERUSER_ID, _, api, fields, models
+from odoo.exceptions import ValidationError
 from odoo.http import request
 from odoo.tools import index_exists
 
 _logger = logging.getLogger(__name__)
+
+# Minimum resolution required for the profile picture so that it still looks
+# good once printed on fundraising material (flyers, posters, ...).
+# The image is accepted in portrait or landscape orientation.
+MIN_PROFILE_PICTURE_LONG_SIDE = 1200
+MIN_PROFILE_PICTURE_SHORT_SIDE = 800
 
 
 class EventRegistration(models.Model):
@@ -408,7 +420,44 @@ class EventRegistration(models.Model):
     ##########################################################################
     #                              ORM METHODS                               #
     ##########################################################################
+    @staticmethod
+    def _check_profile_picture_min_size(picture_b64):
+        """Reject profile pictures whose resolution is too low to be
+        printed on fundraising material.
+
+        This must run on the raw uploaded value, before the ``profile_picture``
+        field (``max_width``/``max_height`` = 500) downsizes it, otherwise the
+        check would always fail.
+        """
+        if not picture_b64:
+            return
+        try:
+            with PILImage.open(io.BytesIO(base64.b64decode(picture_b64))) as img:
+                width, height = img.size
+        except (binascii.Error, OSError):
+            # Let the Image field's own validation handle corrupted files
+            return
+        short_side, long_side = sorted((width, height))
+        if (
+            short_side < MIN_PROFILE_PICTURE_SHORT_SIDE
+            or long_side < MIN_PROFILE_PICTURE_LONG_SIDE
+        ):
+            raise ValidationError(
+                _(
+                    "The picture you uploaded is too small (%(width)s x %(height)s px)."
+                    " Please upload a picture of at least %(long)s x %(short)s px"
+                    " (portrait or landscape) so it also looks good once printed"
+                    " on fundraising material.",
+                    width=width,
+                    height=height,
+                    long=MIN_PROFILE_PICTURE_LONG_SIDE,
+                    short=MIN_PROFILE_PICTURE_SHORT_SIDE,
+                )
+            )
+
     def write(self, vals):
+        if "profile_picture" in vals:
+            self._check_profile_picture_min_size(vals["profile_picture"])
         if "stage_id" in vals:
             vals["stage_date"] = fields.Date.today()
             if "state" not in vals:
@@ -422,6 +471,9 @@ class EventRegistration(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        for vals in vals_list:
+            if "profile_picture" in vals:
+                self._check_profile_picture_min_size(vals["profile_picture"])
         records = super().create(vals_list)
         for registration in records:
             # Copy image fields
