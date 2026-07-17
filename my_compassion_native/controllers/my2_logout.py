@@ -13,7 +13,7 @@ from urllib.parse import urlparse
 from odoo import http
 from odoo.http import request
 
-from odoo.addons.web.controllers.main import Session
+from odoo.addons.web.controllers.session import Session
 
 
 class MyCompassionLogout(Session):

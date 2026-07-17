@@ -1,25 +1,30 @@
-odoo.define("my_compassion_native.native_pdf_intercept", function (require) {
-    "use strict";
+/** @odoo-module **/
 
-    const CapacitorPdfUtil = require("my_compassion_native.capacitor_pdf_util");
+import {downloadAndOpenPDF} from "@my_compassion_native/js/capacitor_pdf_util";
+import {whenReady} from "@odoo/owl";
 
-    $(function () {
-        if (!window.Capacitor || window.Capacitor.getPlatform() === "web") return;
+whenReady(() => {
+  if (!window.Capacitor || window.Capacitor.getPlatform() === "web") {
+    return;
+  }
 
-        document.addEventListener("click", function (event) {
-            const link = event.target.closest(
-                'a[href*="/download/"], a[href*="/report/pdf/"], a[href$=".pdf"], a[href*="/b2s_image"]'
-            );
-            if (!link) return;
+  document.addEventListener("click", function (event) {
+    const link = event.target.closest(
+      'a[href*="/download/"], a[href*="/report/pdf/"], a[href$=".pdf"], a[href*="/b2s_image"]'
+    );
+    if (!link) {
+      return;
+    }
 
-            const href = link.getAttribute("href");
-            if (!href || href === "#" || href.startsWith("javascript")) return;
+    const href = link.getAttribute("href");
+    if (!href || href === "#" || href.startsWith("javascript")) {
+      return;
+    }
 
-            event.preventDefault();
-            const url = href.startsWith("http") ? href : window.location.origin + href;
-            const raw = href.split("/").pop().split("?")[0];
-            const filename = raw.endsWith(".pdf") ? raw : raw + ".pdf";
-            CapacitorPdfUtil.downloadAndOpenPDF(url, filename);
-        });
-    });
+    event.preventDefault();
+    const url = href.startsWith("http") ? href : window.location.origin + href;
+    const raw = href.split("/").pop().split("?")[0];
+    const filename = raw.endsWith(".pdf") ? raw : raw + ".pdf";
+    downloadAndOpenPDF(url, filename);
+  });
 });

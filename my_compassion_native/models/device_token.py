@@ -100,7 +100,9 @@ class MyCompassionDeviceToken(models.Model):
         batch_response = messaging.send_each(messages, app=app)
 
         success_count = 0
-        for record, response in zip(records_with_tokens, batch_response.responses):
+        for record, response in zip(
+            records_with_tokens, batch_response.responses, strict=False
+        ):
             if response.success:
                 _logger.info(
                     f"[Firebase] Successfully sent message to "
