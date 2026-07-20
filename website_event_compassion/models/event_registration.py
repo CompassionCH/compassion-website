@@ -426,15 +426,14 @@ class EventRegistration(models.Model):
         printed on fundraising material.
 
         This must run on the raw uploaded value, before the ``profile_picture``
-        field (``max_width``/``max_height`` = 500) downsizes it, otherwise the
-        check would always fail.
+        field downsizes it, otherwise the check would always fail.
         """
         if not picture_b64:
             return
         try:
             with PILImage.open(io.BytesIO(base64.b64decode(picture_b64))) as img:
                 width, height = img.size
-        except (binascii.Error, OSError):
+        except (binascii.Error, OSError, TypeError):
             # Let the Image field's own validation handle corrupted files
             return
         short_side, long_side = sorted((width, height))
