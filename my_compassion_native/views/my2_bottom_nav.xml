@@ -5,27 +5,24 @@
     inherit_id="website.layout"
     name="My2 Mobile App Layout"
   >
-    <xpath expr="//header" position="attributes">
+    <!--
+      Turns the /my2/ portal into a native-app shell: a fixed bottom navigation
+      bar, with the website header/footer hidden.
+    -->
+    <xpath expr="//div[@id='wrapwrap']" position="attributes">
       <attribute
         name="t-attf-class"
-        add="#{ 'd-none d-md-block' if (request.session.uid and '/my2/' in request.httprequest.path) or request.httprequest.path in ['/web/login', '/web/signup'] else '' }"
-        separator=" "
-      />
-    </xpath>
-    <xpath expr="//footer" position="attributes">
-      <attribute
-        name="t-attf-class"
-        add="#{ 'd-none d-md-block' if request.session.uid and '/my2/' in request.httprequest.path else '' }"
+        add="#{ 'my2-app-page' if request.session.uid and '/my2/' in request.httprequest.path else '' }#{ ' my2-shell-on-web' if request.session.uid and '/my2/' in request.httprequest.path and website.my2_bottom_nav_on_web else '' }"
         separator=" "
       />
     </xpath>
     <xpath expr="//div[@id='wrapwrap']" position="inside">
       <t t-if="request.session.uid and '/my2/' in request.httprequest.path">
-        <div id="bottom_nav_spacer" class="d-block d-md-none w-100" />
+        <div id="bottom_nav_spacer" class="w-100" />
         <t t-set="partner" t-value="request.env.user.partner_id" />
         <t t-set="tab_count" t-value="6 if partner.is_sponsor else 4" />
         <nav
-          class="my2-bottom-nav d-flex d-md-none fixed-bottom bg-white border-top shadow-lg pt-2 pb-1"
+          class="my2-bottom-nav fixed-bottom bg-white border-top shadow-lg pt-2 pb-1"
           t-attf-style="--tab-count: #{tab_count}"
         >
           <a

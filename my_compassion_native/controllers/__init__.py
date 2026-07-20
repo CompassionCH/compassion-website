@@ -7,4 +7,4 @@
 #
 ##############################################################################
 
-from . import my2_device, my2_logout, my2_native_app_links
+from . import my2_device, my2_logout, my2_native_app_links, my2_profile

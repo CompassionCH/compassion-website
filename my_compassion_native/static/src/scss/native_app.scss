@@ -73,3 +73,44 @@ body.is-native-app {
     top: 3rem !important;
   }
 }
+
+/* --- Mobile app shell (bottom nav) — native app only ------------------------ */
+.my2-bottom-nav,
+#bottom_nav_spacer {
+  display: none !important;
+}
+
+body.is-native-app {
+  .my2-bottom-nav {
+    display: flex !important;
+  }
+
+  #bottom_nav_spacer {
+    display: block !important;
+  }
+
+  .my2-app-page {
+    header#top,
+    footer:not(.modal-footer) {
+      display: none !important;
+    }
+  }
+}
+
+/* Per-website opt-in: also show the shell on mobile browsers (not just native).*/
+@media (max-width: 575.98px) {
+  .my2-app-page.my2-shell-on-web {
+    .my2-bottom-nav {
+      display: flex !important;
+    }
+
+    #bottom_nav_spacer {
+      display: block !important;
+    }
+
+    header#top,
+    footer:not(.modal-footer) {
+      display: none !important;
+    }
+  }
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <record id="res_config_settings_view_form_my2_bottom_nav" model="ir.ui.view">
+    <field name="name">res.config.settings.view.form.my2.bottom.nav</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="website.res_config_settings_view_form" />
+    <field name="arch" type="xml">
+      <block id="website_info_settings" position="inside">
+        <setting
+          string="Mobile app menu on web"
+          help="Show the MyCompassion mobile app bottom navigation on mobile browsers for this website, not only inside the native app."
+          invisible="not is_my_compassion"
+        >
+          <field name="my2_bottom_nav_on_web" />
+        </setting>
+      </block>
+    </field>
+  </record>
+</odoo>

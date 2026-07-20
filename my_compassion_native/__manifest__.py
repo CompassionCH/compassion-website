@@ -22,6 +22,9 @@
         "views/capacitor_content_load_fix.xml",
         "views/capacitor_viewport_fix.xml",
         "views/my2_push_notification_wizard_view.xml",
+        "views/my2_bottom_nav.xml",
+        "views/my2_mobile_profile.xml",
+        "views/res_config_settings_view.xml",
     ],
     "assets": {
         "web.assets_frontend": [
