@@ -39,7 +39,7 @@
     ],
     "depends": ["crm_request", "website"],
     "assets": {
-        "website.assets_editor": [
+        "website.assets_wysiwyg": [
             "website_crm_request/static/src/js/website_crm_request.esm.js"
         ]
     },
