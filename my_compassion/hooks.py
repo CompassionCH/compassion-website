@@ -65,5 +65,15 @@ def _invalidate_website_bundles(env, website):
         bundles.unlink()
 
 
+def _configure_my2_websites(env):
+    """Enforce the portal website state (menus, footer/header views) on
+    MyCompassion website.
+    """
+    env["website"].search(
+        [("is_my_compassion", "=", True)]
+    )._configure_my_compassion_portal()
+
+
 def post_init_hook(env):
     _apply_my2_theme(env)
+    _configure_my2_websites(env)
