@@ -416,10 +416,15 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             # action_preview generates the draft letter synchronously; the
             # rendered HTML preview is then available on the generator.
             generator.action_preview()
+            letter = generator.letter_ids[:1]
+            # Portal users can't reach /report/pdf (ir.attachment ACL); the
+            # public+sudo /b2s_image route serves the letter PDF by uuid.
+            preview_pdf_url = f"/b2s_image?id={letter.uuid}" if letter else ""
             return {
                 "generator_id": generator.id,
                 "status": "done",
                 "preview_html": generator.preview or "",
+                "preview_pdf_url": preview_pdf_url,
             }
         if mode == "send":
             # generate_letters enqueues the OCA queue job; the client polls
