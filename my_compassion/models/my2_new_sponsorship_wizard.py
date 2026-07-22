@@ -141,7 +141,7 @@ class NewSponsorshipWizard(models.TransientModel):
         update_field("street_number", "street_number")
         update_field("zip", "zip")
         update_field("city", "city")
-        update_field("country", "country")
+        update_field("country", "country", int)
 
         update_field("payment_method", "payment_method", int)
         update_field("sponsorship_plus", "sponsorship_plus", bool)

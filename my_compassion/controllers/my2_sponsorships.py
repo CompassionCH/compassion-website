@@ -13,9 +13,13 @@ from urllib.parse import urlencode
 from dateutil.relativedelta import relativedelta
 from werkzeug.exceptions import BadRequest, NotFound
 
-from odoo import fields, http
+from odoo import Command, fields, http
+from odoo.exceptions import ValidationError
 from odoo.http import request
 from odoo.tools.translate import _
+
+from odoo.addons.payment import utils as payment_utils
+from odoo.addons.payment.controllers import portal as payment_portal
 
 from ..models.compassion_child import ChildNotFound
 
@@ -346,6 +350,16 @@ class MyCompassionNewSponsorshipController(http.Controller):
             )
         sponsorship = wizard.finish_sponsorship()
 
+        # Digital modes pay the first month live before the thank-you.
+        if sponsorship.payment_mode_id.payment_provider_id:
+            access_token = payment_utils.generate_access_token(
+                sponsorship.id, sponsorship.partner_id.id
+            )
+            return request.redirect(
+                f"/my2/new-sponsorship/payment?sponsorship_id={sponsorship.id}"
+                f"&access_token={access_token}"
+            )
+
         # Redirect to thank-you page
         return request.redirect(
             f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
@@ -442,3 +456,186 @@ class MyCompassionNewSponsorshipController(http.Controller):
         )
 
         return html_content
+
+
+class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
+    """First-payment checkout for sponsorships collected by an online
+    payment provider. Extends PaymentPortal for the _create_transaction /
+    _validate_transaction_kwargs helpers."""
+
+    @http.route(
+        "/my2/new-sponsorship/payment",
+        type="http",
+        methods=["GET"],
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def sponsorship_payment_page(self, sponsorship_id, access_token, **kwargs):
+        sponsorship = self._fetch_guarded_sponsorship(sponsorship_id, access_token)
+        provider = sponsorship.payment_mode_id.payment_provider_id
+        if not provider or sponsorship.state not in ("draft", "waiting"):
+            if sponsorship.state in ("cancelled", "terminated"):
+                # reverted/closed signup: this checkout no longer exists
+                return request.redirect("/my2/children")
+            # already paid / not a digital contract -> normal thank-you
+            return request.redirect(
+                f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
+            )
+        # Generate the first invoice NOW so the displayed amount is the very
+        # amount the transaction route will charge (a group with another due
+        # contract yields a merged invoice above the monthly amount), and arm
+        # the cleanup for sponsors who leave without clicking pay.
+        invoice = sponsorship._ensure_first_invoice()
+        if not invoice:
+            # nothing chargeable (generation suspended/blocked): leave the
+            # waiting contract to staff instead of showing a broken checkout
+            return request.redirect(
+                f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
+            )
+        sponsorship._schedule_digital_revert()
+        rendering_values = self._get_sponsorship_payment_values(
+            sponsorship, provider, access_token, invoice
+        )
+        return request.render(
+            "my_compassion.my2_new_sponsorship_payment_page", rendering_values
+        )
+
+    @staticmethod
+    def _is_sponsorship_user(sponsorship):
+        """Whether the current session is authenticated as the sponsor."""
+        user = request.env.user
+        return (
+            not user._is_public()
+            and user.partner_id.commercial_partner_id
+            == sponsorship.partner_id.commercial_partner_id
+        )
+
+    @staticmethod
+    def _fetch_guarded_sponsorship(sponsorship_id, access_token):
+        """Return the sudoed sponsorship or raise 404 on a bad id/token."""
+        try:
+            sponsorship_id = int(sponsorship_id)
+        except (TypeError, ValueError) as error:
+            raise NotFound() from error
+        sponsorship = (
+            request.env["recurring.contract"].sudo().browse(sponsorship_id)
+        )
+        if not sponsorship.exists() or not payment_utils.check_access_token(
+            access_token, sponsorship.id, sponsorship.partner_id.id
+        ):
+            raise NotFound()  # don't leak record ids
+        return sponsorship
+
+    @http.route(
+        "/my2/new-sponsorship/transaction/<int:sponsorship_id>",
+        type="json",
+        auth="public",
+        website=True,
+    )
+    def sponsorship_payment_transaction(self, sponsorship_id, access_token, **kwargs):
+        """Create the tokenizing first-payment transaction of a sponsorship,
+        linked to its first invoice, and return its processing values."""
+        sponsorship = self._fetch_guarded_sponsorship(sponsorship_id, access_token)
+        provider = sponsorship.payment_mode_id.payment_provider_id
+        if not provider or sponsorship.state not in ("draft", "waiting"):
+            raise ValidationError(
+                _("This sponsorship can no longer be paid online.")
+            )
+        self._validate_transaction_kwargs(
+            kwargs,
+            additional_allowed_keys=(
+                "reference_prefix",
+                "currency_id",
+                "partner_id",
+            ),
+        )
+        if kwargs.get("flow") == "token" and not self._is_sponsorship_user(
+            sponsorship
+        ):
+            # saved instruments are only offered/chargeable to the logged-in
+            # sponsor: the public wizard matches partners by email, which
+            # must never give access to someone else's stored card
+            raise ValidationError(
+                _("Please log in to pay with a saved payment method.")
+            )
+        invoice = sponsorship._ensure_first_invoice()
+        # schedule the cleanup no matter how the checkout continues
+        sponsorship._schedule_digital_revert()
+        if not invoice:
+            raise ValidationError(
+                _("There is nothing to pay for this sponsorship.")
+            )
+        # Server-side truth: the client never chooses what is charged, by
+        # whom, through which provider, nor where it lands.
+        kwargs.update(
+            partner_id=sponsorship.partner_id.id,
+            currency_id=invoice.currency_id.id,
+            amount=invoice.amount_residual,
+            provider_id=provider.id,
+            is_validation=False,
+            landing_route=(
+                f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
+            ),
+        )
+        tx_sudo = self._create_transaction(
+            custom_create_values={"invoice_ids": [Command.set(invoice.ids)]},
+            my2_sponsorship=True,
+            **kwargs,
+        )
+        return tx_sudo._get_processing_values()
+
+    @classmethod
+    def _get_sponsorship_payment_values(
+        cls, sponsorship, provider, access_token, invoice
+    ):
+        """Rendering context for payment.form, scoped to the sponsorship's
+        provider (same keys the generic /payment/pay page builds). The
+        amount is the first invoice's residual - exactly what the
+        transaction route charges."""
+        partner = sponsorship.partner_id
+        currency = invoice.currency_id
+        providers_sudo = provider.sudo()
+        payment_methods_sudo = (
+            request.env["payment.method"]
+            .sudo()
+            ._get_compatible_payment_methods(
+                providers_sudo.ids,
+                partner.id,
+                currency_id=currency.id,
+                force_tokenization=True,
+                my2_sponsorship=True,
+            )
+        )
+        # saved instruments only for the authenticated sponsor: the public
+        # wizard matches partners by email, which must never expose someone
+        # else's stored cards
+        tokens_sudo = request.env["payment.token"].sudo()
+        if cls._is_sponsorship_user(sponsorship):
+            tokens_sudo = tokens_sudo._get_available_tokens(
+                providers_sudo.ids, partner.id
+            )
+        return {
+            "sponsorship": sponsorship,
+            "reference_prefix": sponsorship.reference,
+            "amount": invoice.amount_residual,
+            "monthly_amount": sponsorship.total_amount,
+            "currency": currency,
+            "partner_id": partner.id,
+            "providers_sudo": providers_sudo,
+            "payment_methods_sudo": payment_methods_sudo,
+            "tokens_sudo": tokens_sudo,
+            "availability_report": {},
+            "transaction_route": (
+                f"/my2/new-sponsorship/transaction/{sponsorship.id}"
+            ),
+            "landing_route": (
+                f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
+            ),
+            "access_token": access_token,
+            "show_tokenize_input_mapping": (
+                payment_portal.PaymentPortal._compute_show_tokenize_input_mapping(
+                    providers_sudo, my2_sponsorship=True
+                )
+            ),
+        }
