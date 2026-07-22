@@ -1,28 +1,15 @@
+from datetime import timedelta
 from unittest.mock import patch
 
-from odoo import Command
-from odoo.exceptions import ValidationError
-from odoo.tests import TransactionCase, tagged
+from odoo import Command, fields
+from odoo.exceptions import UserError, ValidationError
+from odoo.tests import tagged
+
+from .common import DigitalSeamCase
 
 
 @tagged("post_install", "-at_install")
-class TestDigitalSeam(TransactionCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.company = cls.env["res.company"].create({"name": "Digital Seam Test Co"})
-        cls.partner = cls.env["res.partner"].create({"name": "Digital Seam Sponsor"})
-        cls.pay_method = cls.env.ref("my_compassion.payment_method_psp_token")
-        cls.mode = cls.env["account.payment.mode"].create(
-            {
-                "name": "Digital Seam Test Mode",
-                "company_id": cls.company.id,
-                "bank_account_link": "variable",
-                "payment_method_id": cls.pay_method.id,
-                "payment_order_ok": False,
-            }
-        )
-
+class TestDigitalSeam(DigitalSeamCase):
     def test_find_or_create_group_is_idempotent(self):
         Group = self.env["recurring.contract.group"]
         g1 = Group._find_or_create_group(self.partner, self.company, self.mode)
@@ -136,77 +123,6 @@ class TestDigitalSeam(TransactionCase):
         provider = self.env["payment.provider"]
         self.assertFalse(provider._is_tokenization_required())
         self.assertTrue(provider._is_tokenization_required(my2_sponsorship=True))
-
-    def _make_digital_contract(self, child=None):
-        """A contract on a provider-backed mode, in a company with a working
-        sale accounting setup, with a plain product line. Child-less (no
-        GMC) unless a child is passed."""
-        journal = self.env["account.journal"].search([("type", "=", "sale")], limit=1)
-        self.assertTrue(journal, "the database needs one company with sale accounting")
-        company = journal.company_id
-        bank_journal = self.env["account.journal"].search(
-            [("type", "=", "bank"), ("company_id", "=", company.id)], limit=1
-        )
-        # the payment chain needs an account.payment.method matching the
-        # provider code to build the journal's payment method line
-        if not self.env["account.payment.method"].search(
-            [("code", "=", "none"), ("payment_type", "=", "inbound")]
-        ):
-            self.env["account.payment.method"].sudo().create(
-                {"name": "Demo", "code": "none", "payment_type": "inbound"}
-            )
-        provider = self.env["payment.provider"].create(
-            {
-                "name": "Digital Seam Pay Provider",
-                "code": "none",
-                "company_id": company.id,
-                "journal_id": bank_journal.id,
-                "state": "test",
-            }
-        )
-        provider._ensure_payment_method_line()
-        mode = self.env["account.payment.mode"].create(
-            {
-                "name": "Digital Seam Pay Mode",
-                "company_id": company.id,
-                "bank_account_link": "variable",
-                "payment_method_id": self.pay_method.id,
-                "payment_order_ok": False,
-                "payment_provider_id": provider.id,
-            }
-        )
-        partner = self.env["res.partner"].create(
-            {
-                "name": "Digital Seam Payer",
-                "country_id": self.env.ref("base.se").id,
-            }
-        )
-        group = self.env["recurring.contract.group"]._find_or_create_group(
-            partner, company, mode
-        )
-        product = self.env["product.product"].search(
-            [
-                ("default_code", "=", "sponsorship"),
-                ("company_id", "in", [company.id, False]),
-            ],
-            limit=1,
-        )
-        self.assertTrue(product, "the database needs the sponsorship product")
-        vals = {
-            "partner_id": partner.id,
-            "group_id": group.id,
-            "type": "O",
-            "contract_line_ids": [
-                Command.create(
-                    {"product_id": product.id, "amount": 100, "quantity": 1}
-                )
-            ],
-        }
-        if child:
-            vals.update({"type": "S", "child_id": child.id})
-        return (
-            self.env["recurring.contract"].with_context(no_upsert=True).create(vals)
-        )
 
     def test_done_tx_token_lands_on_group(self):
         contract = self._make_digital_contract()
@@ -354,11 +270,260 @@ class TestDigitalSeam(TransactionCase):
         contract._revert_abandoned_digital_signup()
         self.assertEqual(contract.state, "active")
 
+    def test_cron_charges_due_digital_invoice(self):
+        contract, invoice, token = self._make_chargeable_invoice()
+        amount_due = invoice.amount_residual
+        self._run_charge_cron(lambda tx_self: tx_self._set_done())
+        tx = self.env["payment.transaction"].search(
+            [("invoice_ids", "in", invoice.ids)]
+        )
+        self.assertEqual(len(tx), 1)
+        self.assertEqual(tx.operation, "offline")
+        self.assertEqual(tx.token_id, token)
+        self.assertEqual(
+            tx.provider_id, contract.payment_mode_id.payment_provider_id
+        )
+        self.assertEqual(tx.partner_id, contract.partner_id)
+        self.assertEqual(tx.amount, amount_due)
+        # done charges are post-processed on the spot: reconciled invoice,
+        # activated contract - no shopper session exists to poll for it
+        self.assertIn(invoice.payment_state, ("paid", "in_payment"))
+        self.assertEqual(contract.state, "active")
+        # idempotency: a second run never creates a second charge
+        self._run_charge_cron(lambda tx_self: tx_self._set_done())
+        self.assertEqual(
+            self.env["payment.transaction"].search_count(
+                [("invoice_ids", "in", invoice.ids)]
+            ),
+            1,
+        )
+
+    def test_cron_skips_not_due_and_tokenless(self):
+        contract, invoice, _token = self._make_chargeable_invoice()
+        invoice.invoice_date_due = fields.Date.today() + timedelta(days=10)
+        tokenless_contract = self._make_digital_contract()
+        tokenless_invoice = tokenless_contract._ensure_first_invoice()
+        tokenless_invoice.invoice_date_due = fields.Date.today() - timedelta(days=1)
+        self._run_charge_cron(lambda tx_self: tx_self._set_done())
+        self.assertFalse(
+            self.env["payment.transaction"].search(
+                [("invoice_ids", "in", (invoice + tokenless_invoice).ids)]
+            )
+        )
+
+    def test_cron_skips_bank_mode_invoice(self):
+        contract = self._make_digital_contract()
+        contract.group_id.payment_mode_id.payment_provider_id = False
+        invoice = contract._ensure_first_invoice()
+        invoice.invoice_date_due = fields.Date.today() - timedelta(days=1)
+        self._run_charge_cron(lambda tx_self: tx_self._set_done())
+        self.assertFalse(
+            self.env["payment.transaction"].search(
+                [("invoice_ids", "in", invoice.ids)]
+            )
+        )
+
+    def test_cron_skips_invoice_with_open_tx(self):
+        contract, invoice, token = self._make_chargeable_invoice()
+        provider = contract.payment_mode_id.payment_provider_id
+        method = self.env["payment.method"].search([], limit=1)
+        tx = self.env["payment.transaction"].create(
+            {
+                "provider_id": provider.id,
+                "payment_method_id": method.id,
+                "partner_id": contract.partner_id.id,
+                "amount": invoice.amount_residual,
+                "currency_id": invoice.currency_id.id,
+                "reference": "digital-seam-open-tx",
+                "operation": "offline",
+                "token_id": token.id,
+                "invoice_ids": [Command.set(invoice.ids)],
+            }
+        )
+        tx._set_pending()
+        self._run_charge_cron(lambda tx_self: tx_self._set_done())
+        self.assertEqual(
+            self.env["payment.transaction"].search_count(
+                [("invoice_ids", "in", invoice.ids)]
+            ),
+            1,
+        )
+
+    def test_cron_skips_token_provider_drift(self):
+        # the group token no longer belongs to the mode's provider (e.g. the
+        # mode was re-pointed to a new provider account): never charge it
+        contract, invoice, token = self._make_chargeable_invoice()
+        other_provider = self.env["payment.provider"].create(
+            {
+                "name": "Digital Seam Drift Provider",
+                "code": "none",
+                "company_id": contract.company_id.id,
+                "state": "test",
+            }
+        )
+        contract.group_id.payment_mode_id.payment_provider_id = other_provider
+        with self.assertLogs(level="WARNING") as logs:
+            self._run_charge_cron(lambda tx_self: tx_self._set_done())
+        self.assertFalse(
+            self.env["payment.transaction"].search(
+                [("invoice_ids", "in", invoice.ids)]
+            )
+        )
+        self.assertTrue(
+            any(invoice.name in message for message in logs.output)
+        )
+
+    def test_cron_failed_charge_fires_handoff(self):
+        contract, invoice, _token = self._make_chargeable_invoice()
+        handoffs = []
+
+        def record_handoff(contract_self, failed_invoice, reason):
+            handoffs.append((contract_self, failed_invoice, reason))
+
+        with patch.object(
+            self.registry["recurring.contract"],
+            "_on_digital_charge_failed",
+            record_handoff,
+        ):
+            self._run_charge_cron(
+                lambda tx_self: tx_self._set_error("Card expired")
+            )
+        self.assertEqual(len(handoffs), 1)
+        failed_contracts, failed_invoice, reason = handoffs[0]
+        self.assertEqual(failed_contracts, contract)
+        self.assertEqual(failed_invoice, invoice)
+        self.assertEqual(reason, "Card expired")
+        self.assertEqual(contract.state, "waiting")
+
+    def test_cron_one_failure_never_aborts_batch(self):
+        contract_a, invoice_a, _ta = self._make_chargeable_invoice()
+        contract_b, invoice_b, _tb = self._make_chargeable_invoice()
+
+        def send(tx_self):
+            if tx_self.invoice_ids == invoice_a:
+                raise RuntimeError("unexpected crash")
+            tx_self._set_done()
+
+        self._run_charge_cron(send)
+        self.assertIn(invoice_b.payment_state, ("paid", "in_payment"))
+        self.assertEqual(contract_b.state, "active")
+        self.assertEqual(invoice_a.payment_state, "not_paid")
+        # the interrupted attempt survives as a draft: it cannot be proven
+        # not to have reached the provider, so it must keep blocking
+        drafts = self.env["payment.transaction"].search(
+            [("invoice_ids", "in", invoice_a.ids)]
+        )
+        self.assertEqual(drafts.mapped("state"), ["draft"])
+        self._run_charge_cron(lambda tx_self: tx_self._set_done())
+        self.assertEqual(invoice_a.payment_state, "not_paid")
+        self.assertEqual(
+            self.env["payment.transaction"].search_count(
+                [("invoice_ids", "in", invoice_a.ids)]
+            ),
+            1,
+        )
+
+    def test_cron_blocks_on_any_draft_tx(self):
+        # a draft transaction - a crashed attempt or a live checkout
+        # session - blocks the automatic charge regardless of its age
+        _contract, invoice, token = self._make_chargeable_invoice()
+        provider = token.provider_id
+        method = self.env["payment.method"].search([], limit=1)
+        draft = self.env["payment.transaction"].create(
+            {
+                "provider_id": provider.id,
+                "payment_method_id": method.id,
+                "partner_id": invoice.partner_id.id,
+                "amount": invoice.amount_residual,
+                "currency_id": invoice.currency_id.id,
+                "reference": "digital-seam-stale-draft",
+                "operation": "online_direct",
+                "invoice_ids": [Command.set(invoice.ids)],
+            }
+        )
+        self.env.cr.execute(
+            "UPDATE payment_transaction SET create_date = create_date"
+            " - interval '2 hours' WHERE id = %s",
+            [draft.id],
+        )
+        draft.invalidate_recordset()
+        self._run_charge_cron(lambda tx_self: tx_self._set_done())
+        self.assertEqual(
+            self.env["payment.transaction"].search_count(
+                [("invoice_ids", "in", invoice.ids)]
+            ),
+            1,
+        )
+
+    def test_charge_context_is_neutral_by_default(self):
+        # provider-specific recovery opt-ins are extension-module business
+        _contract, invoice, _token = self._make_chargeable_invoice()
+        self.assertEqual(
+            self.env["recurring.contract.group"]._digital_charge_context(invoice),
+            {},
+        )
+
+    def test_staff_button_recharges_after_failure(self):
+        contract, invoice, _token = self._make_chargeable_invoice()
+        self._run_charge_cron(lambda tx_self: tx_self._set_error("Card expired"))
+        self.assertEqual(invoice.payment_state, "not_paid")
+        self.assertTrue(invoice.my2_can_charge_digital)
+        # the failed attempt consumed the invoice's automatic charge: the
+        # cron never re-charges, only the forced staff action does
+        self._run_charge_cron(lambda tx_self: tx_self._set_done())
+        self.assertEqual(invoice.payment_state, "not_paid")
+        with patch.object(
+            self.registry["payment.transaction"],
+            "_send_payment_request",
+            lambda tx_self: tx_self._set_done(),
+        ):
+            invoice.action_charge_digital_invoice()
+        self.assertIn(invoice.payment_state, ("paid", "in_payment"))
+        self.assertEqual(contract.state, "active")
+        self.assertFalse(invoice.my2_can_charge_digital)
+
+    def test_staff_button_never_doubles_open_or_paid_charge(self):
+        _contract, invoice, _token = self._make_chargeable_invoice()
+
+        def send_pending(tx_self):
+            tx_self._set_pending()
+
+        self._run_charge_cron(send_pending)
+        # a charge is in flight on the provider side: even the forced
+        # action must refuse
+        self.assertFalse(invoice.my2_can_charge_digital)
+        with self.assertRaises(UserError):
+            with patch.object(
+                self.registry["payment.transaction"],
+                "_send_payment_request",
+                lambda tx_self: tx_self._set_done(),
+            ):
+                invoice.action_charge_digital_invoice()
+        self.assertEqual(
+            self.env["payment.transaction"].search_count(
+                [("invoice_ids", "in", invoice.ids)]
+            ),
+            1,
+        )
+
     def test_digital_revert_cancels_abandoned(self):
         child = self.env["compassion.child"].search(
             [("state", "=", "N"), ("hold_id", "!=", False)], limit=1
         )
-        self.assertTrue(child, "the database needs an available held child")
+        if not child:
+            # stage one: the shared dev database may have no held child left
+            child = self.env["compassion.child"].search(
+                [("sponsor_id", "=", False), ("state", "in", ("R", "W"))], limit=1
+            )
+            self.assertTrue(child, "the database needs an unsponsored child")
+            hold = self.env["compassion.hold"].create(
+                {
+                    "child_id": child.id,
+                    "type": "E-Commerce Hold",
+                    "expiration_date": fields.Datetime.now() + timedelta(days=1),
+                }
+            )
+            child.write({"state": "N", "hold_id": hold.id})
         child.write(
             {
                 "website_reservation_date": "2026-01-01 00:00:00",

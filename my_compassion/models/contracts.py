@@ -119,3 +119,18 @@ class RecurringContract(models.Model):
                     "website_reservation_id": False,
                 }
             )
+
+    def _on_digital_charge_failed(self, invoice, reason):
+        """Hook: an off-session charge failed definitively (refused with no
+        provider-side rescue, or the rescue window closed without success).
+
+        The dunning pipeline plugs in here; until it exists the failure is
+        only logged for staff.
+        """
+        _logger.warning(
+            "Off-session charge of invoice %s failed definitively for "
+            "contracts %s: %s",
+            invoice.name,
+            self.ids,
+            reason,
+        )

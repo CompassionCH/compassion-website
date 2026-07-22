@@ -6,8 +6,13 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from odoo import _, api, fields, models
+import logging
+
+from odoo import Command, _, api, fields, models
 from odoo.exceptions import ValidationError
+from odoo.tools import config
+
+_logger = logging.getLogger(__name__)
 
 
 class ContractGroup(models.Model):
@@ -74,3 +79,185 @@ class ContractGroup(models.Model):
                     lambda s: s.state not in ["terminated", "cancelled"]
                 ).mapped("total_amount")
             )
+
+    @api.model
+    def _cron_charge_digital_invoices(self):
+        """Charge due invoices of provider-backed payment modes off-session.
+
+        Every posted, due, unpaid invoice whose payment mode is backed by an
+        online payment provider is charged against its group's saved token -
+        at most once per cycle. Refused charges are retried by the provider
+        itself (Adyen Auto Rescue) while the transaction stays pending and
+        keeps the one-charge guard closed; there is deliberately no
+        Odoo-side retry schedule. Definitive failures are handed to
+        the contracts through _on_digital_charge_failed.
+        """
+        invoices = self.env["account.move"].search(
+            [
+                ("move_type", "=", "out_invoice"),
+                ("state", "=", "posted"),
+                ("payment_state", "in", ("not_paid", "partial")),
+                ("invoice_date_due", "<=", fields.Date.today()),
+                ("payment_mode_id.payment_provider_id", "!=", False),
+            ]
+        )
+        for invoice in invoices:
+            try:
+                self._charge_digital_invoice(invoice)
+                self._charge_cursor_commit()
+            except Exception:
+                _logger.exception(
+                    "Off-session charge of invoice %s crashed; continuing"
+                    " with the rest of the batch.",
+                    invoice.name,
+                )
+                self._charge_cursor_rollback()
+
+    @api.model
+    def _charge_cursor_commit(self):
+        """Make charge bookkeeping durable - except inside tests, where
+        committing the shared cursor is forbidden."""
+        if config["test_enable"]:
+            self.env.flush_all()
+        else:
+            self.env.cr.commit()
+
+    @api.model
+    def _charge_cursor_rollback(self):
+        if not config["test_enable"]:
+            self.env.cr.rollback()
+
+    @api.model
+    def _charge_digital_invoice(self, invoice, force=False):
+        """Charge one invoice against its group's saved token.
+
+        Shared by the daily cron and the manual staff action. Returns the
+        transaction, or None when a guard decided the invoice must not be
+        charged right now. force (the staff action) retries an invoice whose
+        automatic attempt failed; open or successful transactions are never
+        overridden.
+
+        Money-safety: the transaction row is committed BEFORE the provider
+        is contacted and its outcome right after, so no later crash can
+        erase the record of a charge that may have moved money - a
+        surviving draft blocks any further automatic attempt (staff cancel
+        it after checking the provider's dashboard).
+        """
+        # serialize concurrent attempts on the same invoice (cron batch vs
+        # staff button): the row update makes the parallel repeatable-read
+        # transaction fail with a serialization error and retry against
+        # the committed outcome
+        self.env.cr.execute(
+            "UPDATE account_move SET write_date = write_date WHERE id = %s",
+            [invoice.id],
+        )
+        if (
+            invoice.move_type != "out_invoice"
+            or invoice.state != "posted"
+            or invoice.payment_state not in ("not_paid", "partial")
+        ):
+            # the cron domain guarantees this; the staff/RPC path must not
+            # trust a stale form view
+            return None
+        group = invoice.line_ids.contract_id.group_id
+        if len(group) != 1:
+            _logger.warning(
+                "Invoice %s maps to %d contract groups; off-session charge"
+                " skipped.",
+                invoice.name,
+                len(group),
+            )
+            return None
+        token = group.payment_token_id
+        if not token:
+            _logger.info(
+                "Invoice %s has no saved token on its group; off-session"
+                " charge skipped.",
+                invoice.name,
+            )
+            return None
+        provider = group.payment_mode_id.payment_provider_id
+        if not token.active or token.provider_id != provider:
+            _logger.warning(
+                "Invoice %s: the group token is archived or belongs to"
+                " another provider than the payment mode; off-session"
+                " charge skipped.",
+                invoice.name,
+            )
+            return None
+        if not (
+            provider.company_id == group.company_id == invoice.company_id
+        ):
+            _logger.warning(
+                "Invoice %s: provider, group and invoice companies differ;"
+                " off-session charge skipped.",
+                invoice.name,
+            )
+            return None
+        # one charge request per invoice, ever: an open transaction is in
+        # flight or may still complete (a draft cannot be proven not to
+        # have reached the provider - a shopper checkout session may also
+        # still finish it), a done one is money, and an errored one already
+        # consumed this invoice's single attempt - only the forced staff
+        # action may charge again. Cancelled transactions never block.
+        blocking = invoice.transaction_ids.filtered(
+            lambda t: t.state in ("draft", "pending", "authorized", "done")
+            or (t.state == "error" and not force)
+        )
+        if blocking:
+            return None
+        tx = self.env["payment.transaction"].create(
+            {
+                "provider_id": provider.id,
+                "payment_method_id": token.payment_method_id.id,
+                "token_id": token.id,
+                "amount": invoice.amount_residual,
+                "currency_id": invoice.currency_id.id,
+                "partner_id": group.partner_id.id,
+                "operation": "offline",
+                "invoice_ids": [Command.set(invoice.ids)],
+            }
+        )
+        # durable before the provider call: whatever happens next, this
+        # row blocks a second automatic charge of the invoice
+        self._charge_cursor_commit()
+        try:
+            tx.with_context(
+                **self._digital_charge_context(invoice)
+            )._send_payment_request()
+        finally:
+            # the outcome - or the draft of an interrupted call - must
+            # survive any exception raised while handling the response
+            self._charge_cursor_commit()
+        if tx.state == "done":
+            # no shopper session exists to poll the status page: reconcile
+            # and notify the contracts on the spot
+            try:
+                with self.env.cr.savepoint():
+                    tx._post_process()
+            except Exception:
+                # money moved and the transaction is safely done: leave
+                # reconciliation to the stock retrying cron
+                _logger.exception(
+                    "Post-processing of transaction %s failed; the payment"
+                    " post-processing cron will retry it.",
+                    tx.reference,
+                )
+                self.env.ref("payment.cron_post_process_payment_tx")._trigger()
+        elif tx.state == "error":
+            invoice.line_ids.contract_id._on_digital_charge_failed(
+                invoice, tx.state_message
+            )
+        # pending means the provider scheduled its own retries: the
+        # terminal webhook settles the case
+        return tx
+
+    @api.model
+    def _digital_charge_context(self, invoice):
+        """Extension hook: context for one off-session charge request.
+
+        Provider-specific modules opt into their server-side recovery
+        features here (e.g. instructing the provider to retry a refused
+        charge on its own schedule). The base engine sends none.
+        """
+        return {}
