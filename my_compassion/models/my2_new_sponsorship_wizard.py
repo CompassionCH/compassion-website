@@ -1,4 +1,5 @@
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class NewSponsorshipWizard(models.TransientModel):
@@ -46,6 +47,11 @@ class NewSponsorshipWizard(models.TransientModel):
     user_id = fields.Many2one(
         "res.users",
         required=True,
+    )
+    company_id = fields.Many2one(
+        "res.company",
+        help="Company of the website the wizard was started on; scopes the "
+        "offered payment modes and the contract group.",
     )
     child_id = fields.Many2one(
         "compassion.child",
@@ -185,6 +191,21 @@ class NewSponsorshipWizard(models.TransientModel):
             "spoken_lang_ids": [(4, lang.id) for lang in self.spoken_languages],
         }
 
+    def _get_validated_payment_mode(self, company):
+        """Return the selected payment mode, validated against the website company.
+
+        The step form posts a raw id, so the choice is re-validated server-side.
+        It must be active, published and belong to the website's company.
+        Empty when no mode was selected (e.g. a flow without a payment step).
+        """
+        self.ensure_one()
+        if not self.payment_method:
+            return self.env["account.payment.mode"]
+        mode = self.payment_method
+        if not mode.active or not mode.is_published or mode.company_id != company:
+            raise ValidationError(_("The selected payment method is not available."))
+        return mode
+
     def finish_sponsorship(self):
         self.ensure_one()
 
@@ -202,16 +223,20 @@ class NewSponsorshipWizard(models.TransientModel):
                 partner.sudo().write({"birthdate_date": self.birthdate})
 
         # Create new sponsorship
+        company = self.company_id or self.env.company
+        payment_mode = self._get_validated_payment_mode(company)
+        group = self.env["recurring.contract.group"]._find_or_create_group(
+            partner, company, payment_mode
+        )
         sponsorship_values = {
             "partner_id": partner.id,
             "child_id": self.child_id.id,
+            "group_id": group.id,
+            "type": "SWP" if self.sponsorship_type == "write_and_pray" else "S",
         }
-        if self.sponsorship_type == "write_and_pray":
-            sponsorship_values["payment_mode_id"] = None
-            sponsorship_values["type"] = "SWP"
-        else:
-            sponsorship_values["payment_mode_id"] = self.payment_method.id
-            sponsorship_values["type"] = "S"
+        # The contract is created in draft; bank-collected sponsorships are
+        # validated manually by staff before they start billing. TODO
+        # this has to change when recurring digital billing works.
         sponsorship = self.env["recurring.contract"].create(sponsorship_values)
 
         # Set contract lines for the sponsorship

@@ -269,6 +269,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 "child_id": child.id,
                 "user_id": request.env.user.id,
                 "sponsorship_type": sponsorship_type,
+                "company_id": request.website.company_id.id,
                 "birthdate": request.env.user.birthdate_date
                 if not request.env.user._is_public()
                 else False,
