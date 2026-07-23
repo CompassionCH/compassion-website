@@ -7,6 +7,8 @@ from odoo.http import request
 from odoo.addons.payment import utils as payment_utils
 from odoo.addons.payment.controllers import portal as payment_portal
 
+from ..models.contract_group import UPDATE_CARD_TOKEN_SCOPE
+
 
 class MyCompassionUpdateCard(payment_portal.PaymentPortal):
     """Card-replacement page for digital-mode contract groups.
@@ -17,9 +19,9 @@ class MyCompassionUpdateCard(payment_portal.PaymentPortal):
     post-processing and every later monthly charge uses the new card.
     """
 
-    # tokens signed for other objects (e.g. a checkout link) must never
-    # open this page: the scope literal separates the signature domains
-    ACCESS_TOKEN_SCOPE = "my2-update-card"
+    # shared with recurring.contract.group._my2_update_card_url, which
+    # signs the links the dunning emails embed
+    ACCESS_TOKEN_SCOPE = UPDATE_CARD_TOKEN_SCOPE
     # by then any 3DS challenge is long expired: an unfinished checkout
     # transaction is cancelled so it stops blocking the group's invoices
     CHECKOUT_CLEANUP_MINUTES = 60

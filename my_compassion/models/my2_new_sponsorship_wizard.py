@@ -233,6 +233,9 @@ class NewSponsorshipWizard(models.TransientModel):
             "child_id": self.child_id.id,
             "group_id": group.id,
             "type": "SWP" if self.sponsorship_type == "write_and_pray" else "S",
+            # Durable marker so only wizard signups ever get the portal
+            # invitation email. Staff-created or imported contracts never do.
+            "my2_signup": True,
         }
         # The contract is created in draft; bank-collected sponsorships are
         # validated manually by staff before they start billing. TODO

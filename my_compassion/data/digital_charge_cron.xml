@@ -9,4 +9,13 @@
     <field name="interval_type">days</field>
     <field name="active" eval="True" />
   </record>
+  <record id="cron_digital_fixit_escalation" model="ir.cron">
+    <field name="name">Escalate digital payment fix-it dunning</field>
+    <field name="model_id" ref="recurring_contract.model_recurring_contract" />
+    <field name="state">code</field>
+    <field name="code">model._cron_digital_fixit_escalation()</field>
+    <field name="interval_number">1</field>
+    <field name="interval_type">days</field>
+    <field name="active" eval="True" />
+  </record>
 </odoo>

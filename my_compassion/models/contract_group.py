@@ -11,8 +11,14 @@ import logging
 from odoo import Command, _, api, fields, models
 from odoo.exceptions import ValidationError
 from odoo.tools import config
+from odoo.tools.misc import hmac as hmac_tool
 
 _logger = logging.getLogger(__name__)
+
+# The scope literal separates the signature domains. A token signed for
+# another object, like a checkout link, must never open the update-card
+# page.
+UPDATE_CARD_TOKEN_SCOPE = "my2-update-card"
 
 
 class ContractGroup(models.Model):
@@ -276,6 +282,27 @@ class ContractGroup(models.Model):
             currency = invoices[0].currency_id
             invoices = invoices.filtered(lambda i: i.currency_id == currency)
         return invoices
+
+    def _my2_update_card_url(self):
+        """Absolute, self-authenticating link to the update-card page.
+
+        Made for emails rendered outside any web session, like the
+        dunning emails. The signed token lets the sponsor open the page
+        without logging in. get_base_url resolves the company's website
+        domain, so each country's email links to its own site.
+        """
+        self.ensure_one()
+        # payment_utils.generate_access_token needs an HTTP request. This
+        # method runs from crons and email rendering, so the same
+        # signature is computed directly.
+        token_str = f"{UPDATE_CARD_TOKEN_SCOPE}|{self.id}|{self.partner_id.id}"
+        access_token = hmac_tool(
+            self.env(su=True), "generate_access_token", token_str
+        )
+        return (
+            f"{self.get_base_url()}/my2/update-card"
+            f"?group_id={self.id}&access_token={access_token}"
+        )
 
     @api.model
     def _digital_charge_context(self, invoice):
