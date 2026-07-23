@@ -38,6 +38,10 @@
     },
     "depends": [
         "my_compassion",
+        # models/ use partner.log.other.interaction (interaction_resume) and
+        # override correspondence.process_letter (sbc_translation)
+        "interaction_resume",
+        "sbc_translation",
     ],
     "demo": [],
     "installable": True,
