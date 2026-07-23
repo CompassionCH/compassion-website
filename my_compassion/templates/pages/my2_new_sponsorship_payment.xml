@@ -43,14 +43,16 @@
           <!-- AMOUNT SUMMARY -->
           <div class="my-3 text-center">
             <span class="body-large bold">
-              <t t-out="currency.symbol" />&#160;<t
-                t-out="'%g' % monthly_amount"
+              <t
+                t-out="monthly_amount"
+                t-options="{'widget': 'monetary', 'display_currency': currency}"
               /> / month
             </span>
             <div class="body-small mt-1">
               First payment today:&#160;<t
-                t-out="currency.symbol"
-              />&#160;<t t-out="'%g' % amount" />
+                t-out="amount"
+                t-options="{'widget': 'monetary', 'display_currency': currency}"
+              />
             </div>
           </div>
           <!-- PAYMENT FORM -->

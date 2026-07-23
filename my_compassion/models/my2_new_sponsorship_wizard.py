@@ -237,9 +237,9 @@ class NewSponsorshipWizard(models.TransientModel):
             # invitation email. Staff-created or imported contracts never do.
             "my2_signup": True,
         }
-        # The contract is created in draft; bank-collected sponsorships are
-        # validated manually by staff before they start billing. TODO
-        # this has to change when recurring digital billing works.
+        # The contract is created in draft. Bank-collected sponsorships stay
+        # draft until staff validate them by hand. Digital sponsorships are
+        # activated by the payment flow once the first online payment succeeds.
         sponsorship = self.env["recurring.contract"].create(sponsorship_values)
 
         # Set contract lines for the sponsorship

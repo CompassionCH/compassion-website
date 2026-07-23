@@ -28,13 +28,31 @@ class DigitalSeamCase(TransactionCase):
             }
         )
 
-    def _make_digital_contract(self, child=None):
+    def _make_digital_contract(self, child=None, company=None):
         """A contract on a provider-backed mode, in a company with a working
         sale accounting setup, with a plain product line. Child-less (no
-        GMC) unless a child is passed."""
-        journal = self.env["account.journal"].search([("type", "=", "sale")], limit=1)
-        self.assertTrue(journal, "the database needs one company with sale accounting")
-        company = journal.company_id
+        GMC) unless a child is passed.
+
+        Without a company the first company that has sale accounting is
+        used. Passing a company builds the whole provider and mode chain in
+        that company instead, which lets a caller stage several companies
+        for multi-company charge tests.
+        """
+        if company is None:
+            journal = self.env["account.journal"].search(
+                [("type", "=", "sale")], limit=1
+            )
+            self.assertTrue(
+                journal, "the database needs one company with sale accounting"
+            )
+            company = journal.company_id
+        else:
+            journal = self.env["account.journal"].search(
+                [("type", "=", "sale"), ("company_id", "=", company.id)], limit=1
+            )
+            self.assertTrue(
+                journal, "the test company needs sale accounting"
+            )
         bank_journal = self.env["account.journal"].search(
             [("type", "=", "bank"), ("company_id", "=", company.id)], limit=1
         )
@@ -99,10 +117,14 @@ class DigitalSeamCase(TransactionCase):
             self.env["recurring.contract"].with_context(no_upsert=True).create(vals)
         )
 
-    def _make_chargeable_invoice(self):
+    def _make_chargeable_invoice(self, company=None):
         """An active-cycle situation for the charge cron: a digital contract
-        with a posted, due, unpaid invoice and a saved token on its group."""
-        contract = self._make_digital_contract()
+        with a posted, due, unpaid invoice and a saved token on its group.
+
+        A company routes the whole chain into that company so several
+        companies can be staged in one batch.
+        """
+        contract = self._make_digital_contract(company=company)
         invoice = contract._ensure_first_invoice()
         invoice.invoice_date_due = fields.Date.today() - timedelta(days=1)
         provider = contract.payment_mode_id.payment_provider_id

@@ -368,14 +368,16 @@ class MyCompassionNewSponsorshipController(http.Controller):
     @http.route(
         "/my2/new-sponsorship/thank-you", type="http", auth="public", website=True
     )
-    def wizard_thank_you(self, sponsorship_id, **kwargs):
+    def wizard_thank_you(self, sponsorship_id=None, **kwargs):
         """
         Renders the new sponsorship thank-you page.
         return: An HTTP response containing a rendered template with the thank-you page.
         """
-        sponsorship = (
-            request.env["recurring.contract"].sudo().browse(int(sponsorship_id))
-        )
+        try:
+            sponsorship_id = int(sponsorship_id)
+        except (TypeError, ValueError) as error:
+            raise NotFound() from error
+        sponsorship = request.env["recurring.contract"].sudo().browse(sponsorship_id)
 
         return request.render(
             "my_compassion.my2_new_sponsorship_thank_you_page",
@@ -471,7 +473,7 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
         website=True,
         sitemap=False,
     )
-    def sponsorship_payment_page(self, sponsorship_id, access_token, **kwargs):
+    def sponsorship_payment_page(self, sponsorship_id=None, access_token=None, **kwargs):
         sponsorship = self._fetch_guarded_sponsorship(sponsorship_id, access_token)
         provider = sponsorship.payment_mode_id.payment_provider_id
         if not provider or sponsorship.state not in ("draft", "waiting"):
@@ -533,7 +535,7 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
         auth="public",
         website=True,
     )
-    def sponsorship_payment_transaction(self, sponsorship_id, access_token, **kwargs):
+    def sponsorship_payment_transaction(self, sponsorship_id, access_token=None, **kwargs):
         """Create the tokenizing first-payment transaction of a sponsorship,
         linked to its first invoice, and return its processing values."""
         sponsorship = self._fetch_guarded_sponsorship(sponsorship_id, access_token)
