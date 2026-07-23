@@ -18,4 +18,12 @@
     <field name="interval_type">days</field>
     <field name="active" eval="True" />
   </record>
+  <record id="param_fixit_escalation_days" model="ir.config_parameter">
+    <field name="key">my_compassion.fixit_escalation_days</field>
+    <field name="value">14</field>
+  </record>
+  <record id="param_fixit_episode_days" model="ir.config_parameter">
+    <field name="key">my_compassion.fixit_episode_days</field>
+    <field name="value">60</field>
+  </record>
 </odoo>

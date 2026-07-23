@@ -127,13 +127,45 @@ class RecurringContract(models.Model):
                 }
             )
 
-    # The sponsor gets FIXIT_ESCALATION_DAYS to fix their card between the
-    # first email and the final one. A fix-it email younger than
-    # FIXIT_EPISODE_DAYS blocks any new first email. This way a card that
+    # The sponsor gets the escalation delay to fix their card between the
+    # first email and the final one. A fix-it email younger than the
+    # episode window blocks any new first email. This way a card that
     # stays broken over several months makes one dunning episode, not one
-    # email per failed invoice.
+    # email per failed invoice. These are only the code fallbacks. Staff
+    # tune the real values in the system parameters
+    # my_compassion.fixit_escalation_days and
+    # my_compassion.fixit_episode_days.
     FIXIT_ESCALATION_DAYS = 14
     FIXIT_EPISODE_DAYS = 60
+
+    def _my2_fixit_windows(self):
+        """Dunning windows in days, as (escalation, episode).
+
+        Read from the system parameters so staff can tune the cadence
+        without a deploy. A broken value falls back to the code default.
+        The episode is kept longer than the escalation delay, otherwise
+        the escalation search window would be empty.
+        """
+        get_param = self.env["ir.config_parameter"].sudo().get_param
+
+        def int_param(key, default):
+            try:
+                return int(get_param(key, default))
+            except (TypeError, ValueError):
+                _logger.warning(
+                    "Invalid system parameter %s, using the default %s.",
+                    key,
+                    default,
+                )
+                return default
+
+        escalation = int_param(
+            "my_compassion.fixit_escalation_days", self.FIXIT_ESCALATION_DAYS
+        )
+        episode = int_param(
+            "my_compassion.fixit_episode_days", self.FIXIT_EPISODE_DAYS
+        )
+        return escalation, max(episode, escalation + 1)
 
     def _my2_fixit_configs(self):
         """Hook: communication configs of the charge-failure pipeline.
@@ -187,6 +219,7 @@ class RecurringContract(models.Model):
             )
 
     def _my2_start_fixit_dunning(self, configs):
+        _escalation, episode = self._my2_fixit_windows()
         to_prompt = self.filtered(
             # The provider can give up weeks after the first refusal. A
             # contract terminated in between, or one with nothing due
@@ -195,7 +228,7 @@ class RecurringContract(models.Model):
             and contract.group_id._due_digital_invoices()
             and not contract._my2_find_fixit_jobs(
                 configs["first"] | configs["final"],
-                fields.Datetime.now() - timedelta(days=self.FIXIT_EPISODE_DAYS),
+                fields.Datetime.now() - timedelta(days=episode),
             )
         )
         # The card belongs to the payer, so never mail the correspondent.
@@ -241,13 +274,14 @@ class RecurringContract(models.Model):
         configs = self._my2_fixit_configs()
         if not configs:
             return
+        escalation, episode = self._my2_fixit_windows()
         now = fields.Datetime.now()
         first_jobs = self.env["partner.communication.job"].search(
             [
                 ("config_id", "=", configs["first"].id),
                 ("state", "=", "done"),
-                ("sent_date", "<=", now - timedelta(days=self.FIXIT_ESCALATION_DAYS)),
-                ("sent_date", ">=", now - timedelta(days=self.FIXIT_EPISODE_DAYS)),
+                ("sent_date", "<=", now - timedelta(days=escalation)),
+                ("sent_date", ">=", now - timedelta(days=episode)),
             ]
         )
         for job in first_jobs:

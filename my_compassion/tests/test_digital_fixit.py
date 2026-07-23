@@ -128,6 +128,31 @@ class TestDigitalFixit(DigitalSeamCase):
             contract._on_digital_charge_failed(invoice, "declined again")
             self.assertEqual(len(self._fixit_jobs(self.first_config)), 2)
 
+    def test_fixit_windows_come_from_system_parameters(self):
+        """Staff tune the dunning cadence through system parameters. A
+        shorter episode lets a new first email out sooner."""
+        contract, invoice, _token = self._make_chargeable_invoice()
+        contract.contract_active()
+        set_param = self.env["ir.config_parameter"].sudo().set_param
+        set_param("my_compassion.fixit_episode_days", "1")
+        self.assertEqual(contract._my2_fixit_windows(), (14, 15))
+        set_param("my_compassion.fixit_escalation_days", "not a number")
+        self.assertEqual(contract._my2_fixit_windows(), (14, 15))
+        with self._patched_fixit_configs():
+            contract._on_digital_charge_failed(invoice, "declined")
+            job = self._fixit_jobs(self.first_config)
+            job.state = "done"
+            self.env.cr.execute(
+                "UPDATE partner_communication_job SET create_date = %s"
+                " WHERE id = %s",
+                [fields.Datetime.now() - timedelta(days=16), job.id],
+            )
+            job.invalidate_recordset(["create_date"])
+            # 16 days is inside the default 60-day episode but outside
+            # the shortened one, so a new first email goes out
+            contract._on_digital_charge_failed(invoice, "declined again")
+            self.assertEqual(len(self._fixit_jobs(self.first_config)), 2)
+
     def _age_first_job(self, job, days):
         job.write(
             {
