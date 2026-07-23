@@ -555,8 +555,8 @@
       customize_show="False"
     >
       <!--  Replace default header -->
-      <xpath expr="//header" position="attributes">
-        <attribute name="style">display: none</attribute>
+      <xpath expr="//header" position="replace">
+        <header />
       </xpath>
       <xpath expr="//header" position="after">
         <t t-call="crowdfunding_compassion.crowdfunding_navbar" />

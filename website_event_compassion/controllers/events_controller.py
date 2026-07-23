@@ -64,7 +64,7 @@ class EventsController(Controller):
     # Methods for the event page and event registration
     ###################################################
     @http.route(
-        '/event/<model("crm.event.compassion"):event>/',
+        '/event/<model("crm.event.compassion"):event>',
         auth="public",
         website=True,
         sitemap=sitemap_events,
@@ -79,7 +79,7 @@ class EventsController(Controller):
             slug = request.env["ir.http"]._slug
             return request.redirect(f"/event/{slug(event)}")
 
-        values = self.get_event_page_values(event)
+        values = self.get_event_page_values(event.sudo())
         return request.render("website_event_compassion.event_page", values)
 
     def get_event_page_values(self, event):
@@ -111,7 +111,7 @@ class EventsController(Controller):
     @http.route(
         [
             "/event/<model('crm.event.compassion'):event>/<model("
-            "'event.registration'):registration>/",
+            "'event.registration'):registration>",
         ],
         auth="public",
         website=True,
@@ -149,7 +149,7 @@ class EventsController(Controller):
 
     @http.route(
         "/event/<model('crm.event.compassion'):event>/<model("
-        "'event.registration'):registration>/donation/",
+        "'event.registration'):registration>/donation",
         type="http",
         auth="public",
         methods=["POST"],

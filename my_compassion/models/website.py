@@ -6,8 +6,22 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+import logging
+
 from odoo import api, fields, models
 from odoo.http import request
+
+_logger = logging.getLogger(__name__)
+
+PORTAL_DISABLED_VIEW_KEYS = [
+    "website.footer_custom",
+    "website.header_search_box",
+    "website.header_text_element",
+    "website.header_call_to_action",
+    "website_sale.template_header_default",
+]
+
+PORTAL_REMOVED_MENU_URLS = ["/", "/shop", "/jobs", "/contactus"]
 
 
 class Website(models.Model):
@@ -57,3 +71,78 @@ class Website(models.Model):
                 if target_website:
                     return target_website
         return super().get_current_website(fallback=fallback)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        websites = super().create(vals_list)
+        websites.filtered("is_my_compassion")._configure_my_compassion_portal()
+        return websites
+
+    def write(self, vals):
+        res = super().write(vals)
+        if vals.get("is_my_compassion"):
+            self.filtered("is_my_compassion")._configure_my_compassion_portal()
+        return res
+
+    def _configure_my_compassion_portal(self):
+        """Idempotently enforce the website state the portal needs, the same state a
+        hand-configured instance ends up with: no stock navbar menus and no
+        stock footer/header option views competing with the theme.
+        """
+        if not self:
+            return
+        view_obj = self.env["ir.ui.view"].sudo().with_context(active_test=False)
+        generic_views = view_obj.search(
+            [
+                ("website_id", "=", False),
+                "|",
+                ("key", "in", PORTAL_DISABLED_VIEW_KEYS),
+                ("key", "=like", "website.template_footer_%"),
+            ]
+        )
+        for website in self:
+            menus = (
+                self.env["website.menu"]
+                .sudo()
+                .search(
+                    [
+                        ("website_id", "=", website.id),
+                        ("url", "in", PORTAL_REMOVED_MENU_URLS),
+                    ]
+                )
+            )
+            if menus:
+                _logger.info(
+                    "Portal website %s: removing stock menus %s",
+                    website.id,
+                    menus.mapped("url"),
+                )
+                menus.unlink()
+            specific_by_key = {
+                view.key: view
+                for view in view_obj.search(
+                    [
+                        ("key", "in", generic_views.mapped("key")),
+                        ("website_id", "=", website.id),
+                    ]
+                )
+            }
+            for view in generic_views:
+                specific = specific_by_key.get(view.key)
+                if specific:
+                    if specific.active:
+                        specific.active = False
+                        _logger.info(
+                            "Portal website %s: archived view %s",
+                            website.id,
+                            view.key,
+                        )
+                elif view.active:
+                    # Copy-on-write: creates an archived per-website copy,
+                    # leaving the generic view (and other websites) untouched.
+                    view.with_context(website_id=website.id).write({"active": False})
+                    _logger.info(
+                        "Portal website %s: disabled view %s (new archived copy)",
+                        website.id,
+                        view.key,
+                    )
