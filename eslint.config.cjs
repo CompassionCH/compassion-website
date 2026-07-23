@@ -223,6 +223,7 @@ const config = [{
     files: [
         "**/*.esm.js",
         "my_compassion/**/*.js",
+        "my_compassion_native/**/*.js",
         "theme_compassion_2025/**/*.js",
         "website_child_protection/**/*.js",
     ],

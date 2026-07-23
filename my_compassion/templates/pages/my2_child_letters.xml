@@ -344,6 +344,15 @@
             </t>
           </div>
         </t>
+        <!-- Floating round button shown only on mobile views -->
+        <a
+          id="write_button"
+          t-attf-href="/my2/children/letters/new#{('?child_id=' + str(filter_child.id)) if filter_child else ''}"
+          class="d-flex d-md-none align-items-center justify-content-center text-decoration-none"
+          aria-label="Write a letter"
+        >
+          <i class="pictogram-writing vignette-icon" />
+        </a>
       </div>
     </t>
   </template>

@@ -42,7 +42,7 @@ class MyCompassionDeviceController(http.Controller):
                 TokenModel.create(
                     {"user_id": user.id, "token": token, "device_type": device_type}
                 )
-                TokenModel.flush()
+                TokenModel.flush_model()
 
             except IntegrityError:
                 _logger.info("Device token registration race condition handled.")

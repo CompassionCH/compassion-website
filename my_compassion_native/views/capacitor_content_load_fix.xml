@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <!-- Fixes FOUC (Flash of Unstyled Content) in Capacitor-based native apps -->
-    <template id="capacitor_fouc_fix" inherit_id="website.layout" name="Capacitor FOUC Fix">
-        <xpath expr="//head" position="inside">
-            <script type="text/javascript">
+  <!-- Fixes FOUC (Flash of Unstyled Content) in Capacitor-based native apps -->
+  <template
+    id="capacitor_fouc_fix"
+    inherit_id="website.layout"
+    name="Capacitor FOUC Fix"
+  >
+    <xpath expr="//head" position="inside">
+      <script type="text/javascript">
                 if (window.Capacitor &amp;&amp; window.Capacitor.getPlatform() !== 'web') {
                     document.documentElement.style.opacity = '0';
                     document.documentElement.style.backgroundColor = '#ffffff';
@@ -21,6 +25,6 @@
                     }, 1000);
                 }
             </script>
-        </xpath>
-    </template>
+    </xpath>
+  </template>
 </odoo>

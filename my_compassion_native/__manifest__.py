@@ -10,7 +10,7 @@
 # pylint: disable=C8101
 {
     "name": "MyCompassion - Native App",
-    "version": "14.0.1.0.0",
+    "version": "18.0.1.0.0",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
@@ -22,12 +22,28 @@
         "views/capacitor_content_load_fix.xml",
         "views/capacitor_viewport_fix.xml",
         "views/my2_push_notification_wizard_view.xml",
-        "templates/native_assets.xml",
+        "views/my2_bottom_nav.xml",
+        "views/my2_mobile_profile.xml",
+        "views/res_config_settings_view.xml",
     ],
+    "assets": {
+        "web.assets_frontend": [
+            "my_compassion_native/static/src/scss/native_app.scss",
+            "my_compassion_native/static/src/js/capacitor_bridge.js",
+            "my_compassion_native/static/src/js/capacitor_pdf_util.js",
+            "my_compassion_native/static/src/js/capacitor_push.js",
+            "my_compassion_native/static/src/js/capacitor_ui_fix.js",
+            "my_compassion_native/static/src/js/native_pdf_intercept.js",
+        ],
+    },
     "depends": [
         "my_compassion",
+        # models/ use partner.log.other.interaction (interaction_resume) and
+        # override correspondence.process_letter (sbc_translation)
+        "interaction_resume",
+        "sbc_translation",
     ],
     "demo": [],
-    "installable": False,
+    "installable": True,
     "auto_install": False,
 }

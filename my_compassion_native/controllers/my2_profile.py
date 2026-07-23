@@ -7,11 +7,11 @@
 #
 ##############################################################################
 
-from . import (
-    compassion_child,
-    correspondence,
-    device_token,
-    res_config_settings,
-    res_user,
-    website,
-)
+from odoo import http
+from odoo.http import request
+
+
+class My2MobileProfile(http.Controller):
+    @http.route("/my2/user_profile", type="http", auth="user", website=True)
+    def my2_user_profile(self, **kwargs):
+        return request.render("my_compassion_native.my2_mobile_profile_page")

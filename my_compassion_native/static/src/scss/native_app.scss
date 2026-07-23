@@ -1,75 +1,116 @@
 /* Utility: shown only inside the Capacitor native app shell */
 .d-native-app-block {
-    display: none !important;
+  display: none !important;
 }
 
 body.capacitor-native-app {
-    .d-native-app-block {
-        display: block !important;
+  .d-native-app-block {
+    display: block !important;
+  }
+
+  #wrapwrap {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: pan-y;
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
+
+    input,
+    textarea {
+      -webkit-user-select: auto;
+      user-select: auto;
     }
 
-    #wrapwrap {
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        user-select: none;
-        touch-action: pan-y;
-        overscroll-behavior-y: none;
-        -webkit-tap-highlight-color: transparent;
-
-        input,
-        textarea {
-            -webkit-user-select: auto;
-            user-select: auto;
-        }
-
-        .btn:focus,
-        .form-control:focus {
-            outline: none;
-            box-shadow: none;
-        }
+    .btn:focus,
+    .form-control:focus {
+      outline: none;
+      box-shadow: none;
     }
+  }
 }
 
 body.is-native-app {
-    header#top {
-        /* Pushes the header below the Dynamic Island / Notch */
-        padding-top: env(safe-area-inset-top) !important;
-        background-color: $white;
+  header#top {
+    /* Pushes the header below the Dynamic Island / Notch */
+    padding-top: env(safe-area-inset-top) !important;
+    background-color: $white;
+  }
+
+  header#top .navbar {
+    padding-top: 0 !important;
+  }
+
+  main {
+    padding-top: env(safe-area-inset-top) !important;
+  }
+
+  .modal-content {
+    padding-top: env(safe-area-inset-top) !important;
+    padding-bottom: env(safe-area-inset-bottom, 20px) !important;
+  }
+
+  &.modal-open {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100%;
+    height: 100%;
+  }
+
+  .modal-body {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain;
+  }
+
+  /* iOS WebViews sometimes infinitely expand iframes */
+  #previewImage {
+    max-height: 100%;
+    min-height: 100%;
+  }
+
+  .toast-notification {
+    top: 3rem !important;
+  }
+}
+
+/* --- Mobile app shell (bottom nav) — native app only ------------------------ */
+.my2-bottom-nav,
+#bottom_nav_spacer {
+  display: none !important;
+}
+
+body.is-native-app {
+  .my2-bottom-nav {
+    display: flex !important;
+  }
+
+  #bottom_nav_spacer {
+    display: block !important;
+  }
+
+  .my2-app-page {
+    header#top,
+    footer:not(.modal-footer) {
+      display: none !important;
+    }
+  }
+}
+
+/* Per-website opt-in: also show the shell on mobile browsers (not just native).*/
+@media (max-width: 575.98px) {
+  .my2-app-page.my2-shell-on-web {
+    .my2-bottom-nav {
+      display: flex !important;
     }
 
-    header#top .navbar {
-        padding-top: 0 !important;
+    #bottom_nav_spacer {
+      display: block !important;
     }
 
-    main {
-        padding-top: env(safe-area-inset-top) !important;
+    header#top,
+    footer:not(.modal-footer) {
+      display: none !important;
     }
-
-    .modal-content {
-        padding-top: env(safe-area-inset-top) !important;
-        padding-bottom: env(safe-area-inset-bottom, 20px) !important;
-    }
-
-    &.modal-open {
-        overflow: hidden !important;
-        position: fixed !important;
-        width: 100%;
-        height: 100%;
-    }
-
-    .modal-body {
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch !important;
-        overscroll-behavior-y: contain;
-    }
-
-    /* iOS WebViews sometimes infinitely expand iframes */
-    #previewImage {
-        max-height: 100%;
-        min-height: 100%;
-    }
-
-    .toast-notification {
-        top: 3rem !important;
-    }
+  }
 }

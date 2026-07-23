@@ -88,14 +88,28 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
       }
 
       if (mode === "preview") {
-        // Show the server-rendered HTML letter in the preview modal.
         const previewResult = await this._launchProcessingRPC({
           generator_id: initialResult.generator_id,
           child_id: formData.child_id,
           mode: "preview",
           csrf_token: odoo.csrf_token,
         });
-        this._showPreview(previewResult.preview_html);
+        if (
+          window.Capacitor &&
+          window.Capacitor.getPlatform() !== "web" &&
+          previewResult.preview_pdf_url
+        ) {
+          // Native app: hand the PDF to the OS viewer
+          const link = Object.assign(document.createElement("a"), {
+            href: previewResult.preview_pdf_url,
+          });
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+        } else {
+          // Web: show the server-rendered HTML letter in the preview modal.
+          this._showPreview(previewResult.preview_html);
+        }
         return;
       }
 
