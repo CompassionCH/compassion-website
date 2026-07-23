@@ -1,13 +1,35 @@
 import logging
 
-from odoo import models
-from odoo.exceptions import UserError
+from odoo import _, fields, models
+from odoo.exceptions import UserError, ValidationError
 
 _logger = logging.getLogger(__name__)
 
 
 class PaymentTransaction(models.Model):
     _inherit = "payment.transaction"
+
+    my2_card_update_group_id = fields.Many2one(
+        "recurring.contract.group",
+        string="Card Update Group",
+        readonly=True,
+        help="Contract group whose saved instrument this validation"
+        " transaction replaces (the update-card page with nothing due).",
+    )
+
+    def _my2_cancel_stale_checkout_tx(self):
+        """Cleanup for shopper checkouts that never finished.
+
+        A draft (pay-click without provider submission) or pending
+        (abandoned 3DS challenge) transaction would otherwise block its
+        invoices forever. Both for the charge engine and for the
+        update-card page, which would misreport the arrears as settled.
+        Scheduled per transaction at pay-click. Finished transactions are
+        left alone.
+        """
+        self = self.sudo()  # scheduled from a public checkout session
+        for tx in self.filtered(lambda t: t.state in ("draft", "pending")):
+            tx._set_canceled(state_message=_("The checkout was abandoned."))
 
     def _post_process(self):
         """Post-processing of digital-mode contract payments.
@@ -40,11 +62,27 @@ class PaymentTransaction(models.Model):
                     digital_invoices.mapped("name"),
                 )
             if tx.token_id:
-                groups = digital_invoices.line_ids.contract_id.group_id.filtered(
+                groups = (
+                    digital_invoices.line_ids.contract_id.group_id
+                    | tx.my2_card_update_group_id
+                ).filtered(
                     lambda g: g.payment_mode_id.payment_provider_id
                     and g.payment_token_id != tx.token_id
                 )
-                groups.payment_token_id = tx.token_id
+                try:
+                    groups.payment_token_id = tx.token_id
+                except ValidationError:
+                    # a token incompatible with the group (company/partner
+                    # constraint) must never wedge the post-processing
+                    # poll/cron into an eternal retry
+                    _logger.error(
+                        "Could not save token %s on groups %s (tx %s);"
+                        " monthly charges keep using the previous card.",
+                        tx.token_id.id,
+                        groups.ids,
+                        tx.reference,
+                        exc_info=True,
+                    )
             for invoice in digital_invoices.filtered(
                 lambda m: m.payment_state in ("paid", "in_payment")
             ):

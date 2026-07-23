@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Page: Update Card
+
+    Description:
+    Card-replacement page for a digital-mode contract group. The link
+    target of the payment-failure and card-expiry emails. Settles the
+    group's due invoices with the new card, or verifies it when nothing
+    is due. The saved instrument then swaps to the new card.
+
+    Context:
+    Rendered by /my2/update-card with the payment form values
+    (providers_sudo, payment_methods_sudo, amount, currency,
+    transaction_route, access_token...), `group` and `current_card`.
+-->
+<odoo>
+  <template id="my2_update_card_page" name="Update Card Page">
+    <t t-call="website.layout">
+      <div class="container">
+        <div class="single-column d-flex flex-column align-items-center">
+          <!-- TITLE -->
+          <div class="mx-4 mt-4">
+            <t t-call="theme_compassion_2025.TitleComponent">
+              <t t-set="title_content">Update your payment card</t>
+              <t t-set="color" t-value="'core-blue'" />
+              <t t-set="show_underline" t-value="True" />
+              <t t-set="underline_color" t-value="'low-yellow'" />
+              <t t-set="description">Enter a new card below. It replaces the
+                one used for your monthly sponsorship payments<t
+                  t-if="current_card"
+                >&#160;(currently&#160;&#8226;&#8226;&#8226;&#8226;&#160;<t
+                    t-out="current_card.payment_details"
+                  />)</t>.</t>
+            </t>
+          </div>
+          <!-- AMOUNT SUMMARY -->
+          <div class="my-3 text-center">
+            <t t-if="amount">
+              <span class="body-large bold">
+                Outstanding payment:&#160;<t
+                  t-out="amount"
+                  t-options="{'widget': 'monetary', 'display_currency': currency}"
+                />
+              </span>
+              <div class="body-small mt-1">
+                Charged to your new card today.
+              </div>
+            </t>
+            <t t-else="">
+              <div class="body-small">
+                Nothing is due today - your new card will only be verified.
+              </div>
+            </t>
+          </div>
+          <!-- PAYMENT FORM -->
+          <div class="w-100 px-2 px-lg-0 mb-3">
+            <t t-call="payment.form" />
+          </div>
+          <div class="mb-4 text-center body-small text-low-black">
+            Your payment details are securely saved with our payment provider
+            and charged each month for your sponsorship.
+          </div>
+        </div>
+      </div>
+    </t>
+  </template>
+
+  <template id="my2_update_card_done_page" name="Update Card Done Page">
+    <t t-call="website.layout">
+      <div class="container">
+        <div class="single-column d-flex flex-column align-items-center">
+          <div class="mx-4 mt-4 mb-4 text-center">
+            <t t-if="success">
+              <t t-call="theme_compassion_2025.TitleComponent">
+                <t t-set="title_content">Thank you!</t>
+                <t t-set="color" t-value="'core-blue'" />
+                <t t-set="show_underline" t-value="True" />
+                <t t-set="underline_color" t-value="'low-yellow'" />
+                <t t-set="description">Your payment card has been updated.
+                  Your monthly sponsorship payments will now use the new
+                  card.</t>
+              </t>
+            </t>
+            <t t-else="">
+              <t t-call="theme_compassion_2025.TitleComponent">
+                <t t-set="title_content">The payment did not go through</t>
+                <t t-set="color" t-value="'core-blue'" />
+                <t t-set="show_underline" t-value="True" />
+                <t t-set="underline_color" t-value="'low-yellow'" />
+                <t t-set="description">Your card was NOT updated. No amount
+                  has been charged.</t>
+              </t>
+            </t>
+          </div>
+          <div t-if="not success" class="mb-5 text-center">
+            <a t-att-href="retry_url" class="btn btn-primary">Try again with
+              another card</a>
+          </div>
+        </div>
+      </div>
+    </t>
+  </template>
+</odoo>

@@ -21,6 +21,7 @@ from . import (
     my2_gifts,
     my2_user_settings,
     my2_sponsorships,
+    my2_update_card,
     my2_login,
     my2_reset_password,
     my2_auth_signup,

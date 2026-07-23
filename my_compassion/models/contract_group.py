@@ -143,14 +143,7 @@ class ContractGroup(models.Model):
         surviving draft blocks any further automatic attempt (staff cancel
         it after checking the provider's dashboard).
         """
-        # serialize concurrent attempts on the same invoice (cron batch vs
-        # staff button): the row update makes the parallel repeatable-read
-        # transaction fail with a serialization error and retry against
-        # the committed outcome
-        self.env.cr.execute(
-            "UPDATE account_move SET write_date = write_date WHERE id = %s",
-            [invoice.id],
-        )
+        invoice._my2_serialize_charge_attempts()
         if (
             invoice.move_type != "out_invoice"
             or invoice.state != "posted"
@@ -251,6 +244,38 @@ class ContractGroup(models.Model):
         # pending means the provider scheduled its own retries: the
         # terminal webhook settles the case
         return tx
+
+    def _due_digital_invoices(self):
+        """Posted, due, unpaid invoices of this group that a sponsor may pay
+        online right now.
+
+        The engine's one-charge rule applies: an open transaction excludes
+        an invoice (a payment may be in flight). Errored attempts do not.
+        Paying them with a fresh card is the whole point of the
+        update-card page.
+        """
+        self.ensure_one()
+        invoices = self.env["account.move"].search(
+            [
+                ("move_type", "=", "out_invoice"),
+                ("state", "=", "posted"),
+                ("payment_state", "in", ("not_paid", "partial")),
+                ("invoice_date_due", "<=", fields.Date.today()),
+                ("line_ids.contract_id.group_id", "=", self.id),
+            ]
+        )
+        invoices = invoices.filtered(
+            lambda invoice: not invoice.transaction_ids.filtered(
+                lambda t: t.state in ("draft", "pending", "authorized", "done")
+            )
+        )
+        # one payment, one currency: a (theoretical) mixed-currency arrears
+        # set reduces to the earliest invoice's currency so the displayed
+        # total always equals the charged amount
+        if invoices:
+            currency = invoices[0].currency_id
+            invoices = invoices.filtered(lambda i: i.currency_id == currency)
+        return invoices
 
     @api.model
     def _digital_charge_context(self, invoice):

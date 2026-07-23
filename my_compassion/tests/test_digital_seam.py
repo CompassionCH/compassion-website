@@ -455,6 +455,91 @@ class TestDigitalSeam(DigitalSeamCase):
             1,
         )
 
+    def test_due_digital_invoices_selection(self):
+        contract, invoice, token = self._make_chargeable_invoice()
+        group = contract.group_id
+        self.assertEqual(group._due_digital_invoices(), invoice)
+        # a consumed (errored) attempt keeps the invoice payable: paying it
+        # with a fresh card is the update-card page's purpose
+        self._run_charge_cron(lambda tx_self: tx_self._set_error("Card expired"))
+        self.assertEqual(group._due_digital_invoices(), invoice)
+        # an open transaction excludes it (a payment may be in flight)
+        method = self.env["payment.method"].search([], limit=1)
+        open_tx = self.env["payment.transaction"].create(
+            {
+                "provider_id": token.provider_id.id,
+                "payment_method_id": method.id,
+                "partner_id": contract.partner_id.id,
+                "amount": invoice.amount_residual,
+                "currency_id": invoice.currency_id.id,
+                "reference": "digital-seam-due-open-tx",
+                "operation": "offline",
+                "invoice_ids": [Command.set(invoice.ids)],
+            }
+        )
+        open_tx._set_pending()
+        self.assertFalse(group._due_digital_invoices())
+        open_tx._set_error("gone")
+        # future-due invoices are never offered
+        invoice.invoice_date_due = fields.Date.today() + timedelta(days=10)
+        self.assertFalse(group._due_digital_invoices())
+
+    def test_validation_tx_swaps_group_token(self):
+        contract, _invoice, token = self._make_chargeable_invoice()
+        group = contract.group_id
+        method = self.env["payment.method"].search([], limit=1)
+        new_token = token.copy({"provider_ref": "digital-seam-new-card"})
+        tx = self.env["payment.transaction"].create(
+            {
+                "provider_id": token.provider_id.id,
+                "payment_method_id": method.id,
+                "partner_id": contract.partner_id.id,
+                "amount": 0,
+                "currency_id": group.company_id.currency_id.id,
+                "reference": "digital-seam-validation-swap",
+                "operation": "validation",
+                "token_id": new_token.id,
+                "my2_card_update_group_id": group.id,
+            }
+        )
+        tx._set_done()
+        tx._post_process()
+        self.assertEqual(group.payment_token_id, new_token)
+
+    def test_stale_checkout_tx_cleanup(self):
+        # an abandoned pay-click (draft) or 3DS challenge (pending) must
+        # stop blocking the group's invoices; finished charges are kept
+        contract, invoice, token = self._make_chargeable_invoice()
+        method = self.env["payment.method"].search([], limit=1)
+
+        def make_tx(reference):
+            return self.env["payment.transaction"].create(
+                {
+                    "provider_id": token.provider_id.id,
+                    "payment_method_id": method.id,
+                    "partner_id": contract.partner_id.id,
+                    "amount": invoice.amount_residual,
+                    "currency_id": invoice.currency_id.id,
+                    "reference": reference,
+                    "operation": "online_direct",
+                    "invoice_ids": [Command.set(invoice.ids)],
+                }
+            )
+
+        abandoned = make_tx("digital-seam-abandoned-3ds")
+        abandoned._set_pending()
+        self.assertFalse(contract.group_id._due_digital_invoices())
+        # the job runs with the public user of the checkout session
+        abandoned.with_user(
+            self.env.ref("base.public_user")
+        )._my2_cancel_stale_checkout_tx()
+        self.assertEqual(abandoned.state, "cancel")
+        self.assertEqual(contract.group_id._due_digital_invoices(), invoice)
+        finished = make_tx("digital-seam-finished-checkout")
+        finished._set_done()
+        finished._my2_cancel_stale_checkout_tx()
+        self.assertEqual(finished.state, "done")
+
     def test_charge_context_is_neutral_by_default(self):
         # provider-specific recovery opt-ins are extension-module business
         _contract, invoice, _token = self._make_chargeable_invoice()

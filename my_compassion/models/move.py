@@ -51,6 +51,24 @@ class AccountMove(models.Model):
                 and not open_tx
             )
 
+    def _my2_serialize_charge_attempts(self):
+        """Serialize concurrent charge attempts on these invoices.
+
+        Odoo runs at repeatable read: two transactions charging the same
+        invoice (nightly cron, staff button, update-card page) would each
+        pass the open-transaction guard against their own snapshot and
+        both send a real charge. The no-op update creates a new row
+        version, so the concurrent loser fails with a serialization error
+        and Odoo retries it against the committed winner, whose
+        transaction then closes the guard.
+        """
+        if self.ids:
+            self.env.cr.execute(
+                "UPDATE account_move SET write_date = write_date"
+                " WHERE id IN %s",
+                [tuple(self.ids)],
+            )
+
     def action_charge_digital_invoice(self):
         """Staff fallback: charge the saved card now.
 
