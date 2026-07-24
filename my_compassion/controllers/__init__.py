@@ -27,6 +27,7 @@ from . import (
     my2_auth_signup,
     my2_event_banner,
     my2_home_redirect,
+    my2_lang,
     my2_portal,
     my2_contact_us,
     website_sale,
