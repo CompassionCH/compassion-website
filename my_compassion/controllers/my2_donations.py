@@ -179,13 +179,17 @@ class MyCompassionDonationsController(CustomerPortal):
             "remaining_donations": int,      # If frequency is limited
         }
         """
+        try:
+            product_id = int(product_id)
+        except (TypeError, ValueError) as e:
+            raise BadRequest() from e
         product = request.env["product.template"].search([("id", "=", product_id)])
         if not product:
-            return BadRequest()
+            raise BadRequest()
         if sponsorship_id is not None:
             try:
                 sponsorship_id = int(sponsorship_id)
-            except TypeError as e:
+            except (TypeError, ValueError) as e:
                 raise BadRequest() from e
 
         limits = product.get_donation_limits(

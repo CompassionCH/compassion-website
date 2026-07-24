@@ -274,12 +274,12 @@
           <div class="container-content d-flex flex-column align-items-center mt-4">
             <div class="w-100 d-flex flex-column p-4">
               <div class="row justify-content-center">
-                <t t-foreach="letters" t-as="letter" t-foreach-index="i">
+                <t t-foreach="letters" t-as="letter">
                   <div
                     class="col-12 col-md-6 col-lg-4 my-3 letter-card"
                     t-att-data-create_date="letter.status_date if letter.direction == 'Beneficiary To Supporter' else letter.create_date"
                     t-att-data-type="letter.direction"
-                    t-att-data-index="i"
+                    t-att-data-index="letter_index"
                   >
                     <t t-call="my_compassion.my2_letter_card_component" />
                   </div>
