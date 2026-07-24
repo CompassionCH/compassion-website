@@ -194,6 +194,11 @@ class MyCompassionUserController(http.Controller):
         request.env.user.partner_id.sudo().write({"legal_agreement_date": date.today()})
         return {"success": True}
 
+    def _communication_allowed_fields(self):
+        """Whitelist of partner fields the communication settings endpoint
+        may write. Country modules extend it with their own fields."""
+        return {"letter_delivery_preference", "photo_delivery_preference"}
+
     @http.route(
         "/my2/user_settings/set_communication_settings",
         type="json",
@@ -202,15 +207,7 @@ class MyCompassionUserController(http.Controller):
     )
     def set_partner_communication_settings(self, **post):
         partner = request.env.user.partner_id
-        # A whitelist of allowed communication preference fields.
-        allowed_fields = {
-            "opt_out",
-            "tax_certificate",
-            "letter_delivery_preference",
-            "photo_delivery_preference",
-            "birthday_reminder",
-            "sponsorship_anniversary_card",
-        }
+        allowed_fields = self._communication_allowed_fields()
 
         update_vals = {}
         for field, value in post.items():
