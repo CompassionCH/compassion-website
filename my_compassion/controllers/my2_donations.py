@@ -21,6 +21,8 @@ from odoo.tools.translate import _
 from odoo.addons.portal.controllers.portal import CustomerPortal
 from odoo.addons.sale.controllers import portal as sale_portal
 
+from .website_utils import safe_int
+
 
 class MyCompassionDonationsController(CustomerPortal):
     @http.route(
@@ -586,7 +588,9 @@ class MyCompassionDonationsController(CustomerPortal):
         Fetches a paginated subset of paid invoices for a partner and calculates
         pagination details.
         """
-        offset = (int(invoice_page) - 1) * invoice_per_page
+        invoice_page = max(1, safe_int(invoice_page, 1))
+        invoice_per_page = max(1, safe_int(invoice_per_page, 12))
+        offset = (invoice_page - 1) * invoice_per_page
 
         subset = self._get_paid_invoices_subset(partner, offset, invoice_per_page)
 
@@ -598,6 +602,6 @@ class MyCompassionDonationsController(CustomerPortal):
 
         return {
             "paid_invoices_subset": subset,
-            "current_page": int(invoice_page),
+            "current_page": invoice_page,
             "total_pages": total_pages,
         }

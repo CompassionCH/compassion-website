@@ -22,6 +22,7 @@ from odoo.addons.payment import utils as payment_utils
 from odoo.addons.payment.controllers import portal as payment_portal
 
 from ..models.compassion_child import ChildNotFound
+from .website_utils import safe_int
 
 # Hold up to 3 children (more is too slow)
 GLOBAL_FETCH_LIMIT = 3
@@ -121,6 +122,8 @@ class MyCompassionSponsorshipsController(http.Controller):
         return: An JSON response containing the rendered template html
         as well as the new children count and total hits.
         """
+        limit = max(1, safe_int(limit, 20))
+        offset = max(0, safe_int(offset, 0))
         child_obj = request.env["compassion.child"].sudo()
         if global_pool:
             try:
@@ -200,8 +203,8 @@ class MyCompassionSponsorshipsController(http.Controller):
     @classmethod
     def _get_filtered_domain(cls, post):
         gender = post.get("gender", "either")
-        age_min = int(post.get("age_min", 0))
-        age_max = int(post.get("age_max", 18))
+        age_min = safe_int(post.get("age_min"), 0)
+        age_max = safe_int(post.get("age_max"), 18)
         country = post.get("country", "")
 
         child_obj = request.env["compassion.child"]
@@ -303,8 +306,10 @@ class MyCompassionNewSponsorshipController(http.Controller):
         return: An JSON response containing the rendered template html.
         """
         # Fetch the wizard record from the database
-        wizard_id = int(post.get("wizard_id"))
-        wizard = request.env["new.sponsorship.wizard"].sudo().browse(wizard_id)
+        wizard_id = safe_int(post.get("wizard_id"))
+        wizard = request.env["new.sponsorship.wizard"].sudo().browse(wizard_id).exists()
+        if not wizard:
+            raise BadRequest()
 
         # Update the record
         wizard.update(post)
@@ -328,8 +333,10 @@ class MyCompassionNewSponsorshipController(http.Controller):
         return: A redirection to the thank-you page.
         """
         # Fetch the wizard record from the database
-        wizard_id = int(post.get("wizard_id"))
-        wizard = request.env["new.sponsorship.wizard"].sudo().browse(wizard_id)
+        wizard_id = safe_int(post.get("wizard_id"))
+        wizard = request.env["new.sponsorship.wizard"].sudo().browse(wizard_id).exists()
+        if not wizard:
+            raise BadRequest()
 
         # Cancel if person is too old for Write&Pray
         if (

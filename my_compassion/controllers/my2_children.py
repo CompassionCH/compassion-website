@@ -15,6 +15,7 @@ from odoo.exceptions import AccessError
 from odoo.http import request
 
 from .my2_sponsorships import _get_reservation_uuid
+from .website_utils import safe_int
 
 
 class MyCompassionChildrenController(http.Controller):
@@ -366,8 +367,8 @@ class MyCompassionChildrenController(http.Controller):
         has_more_records = False
 
         if access_scope == "sponsor":
-            offset = int(kwargs.get("offset", 0))
-            limit = int(kwargs.get("limit", 9))
+            offset = max(0, safe_int(kwargs.get("offset"), 0))
+            limit = max(1, safe_int(kwargs.get("limit"), 9))
 
             records, total = self._get_timeline_records(child.id, offset, limit)
             has_more_records = total > offset + limit
@@ -416,8 +417,8 @@ class MyCompassionChildrenController(http.Controller):
             # than to redirect.
             return request.make_response("", headers={"Content-Type": "text/html"})
 
-        offset = int(kwargs.get("offset", 0))
-        limit = int(kwargs.get("limit", 9))
+        offset = max(0, safe_int(kwargs.get("offset"), 0))
+        limit = max(1, safe_int(kwargs.get("limit"), 9))
 
         records, total = self._get_timeline_records(child.id, offset, limit)
         has_more = total > offset + limit

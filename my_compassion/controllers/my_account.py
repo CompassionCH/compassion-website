@@ -22,7 +22,7 @@ from odoo.http import content_disposition, request, route
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
 
-from .website_utils import resolve_host_my2_website
+from .website_utils import resolve_host_my2_website, safe_int
 
 IMG_URL = "/web/image/compassion.child.pictures/{id}/fullshot/"
 
@@ -50,6 +50,8 @@ def _fetch_images_from_child(child):
     """
     images = []
     for image in child.pictures_ids:
+        if not image.image_url:
+            continue
         ext = image.image_url.split(".")[-1]
         filename = f"{child.preferred_name}_{image.date}_{child.local_id}.{ext}"
         folder = f"{child.preferred_name}_{child.local_id}"
@@ -69,6 +71,8 @@ def _create_archive(images, archive_name):
     """
     with ZipFile(archive_name, "w") as archive:
         for img, full_path in images:
+            if not img.fullshot:
+                continue
             filename = path.basename(full_path)
             with open(filename, "wb") as image_file:
                 image_file.write(base64.b64decode(img.fullshot))
@@ -399,8 +403,8 @@ class MyAccountController(CustomerPortal):
         :return: a response to download the file
         """
         if source == "picture":
-            child_id = int(kw.get("child_id", -1))
-            obj_id = int(kw.get("obj_id", -1))
+            child_id = safe_int(kw.get("child_id"), -1)
+            obj_id = safe_int(kw.get("obj_id"), -1)
             return _download_image(child_id, obj_id)
         else:
             raise NotFound()
@@ -422,9 +426,8 @@ class MyAccountController(CustomerPortal):
         body = kwargs.get("body")
         if not body:
             raise UserError(_("No text provided for the letter."))
-        template_id = kwargs.get(
-            "template_id", request.env.ref("sbc_compassion.default_template").id
-        )
+        default_template_id = request.env.ref("sbc_compassion.default_template").id
+        template_id = safe_int(kwargs.get("template_id"), default_template_id)
         datas = []
         for attached_file in kwargs.get("file_upl", []):
             if isinstance(attached_file, dict) and "data" in attached_file:
@@ -448,7 +451,7 @@ class MyAccountController(CustomerPortal):
                 ]
             ),
             "body": body,
-            "template_id": int(template_id),
+            "template_id": template_id,
             "image_ids": datas,
             "source": kwargs.get("source"),
         }
