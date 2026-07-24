@@ -209,6 +209,7 @@ class NewSponsorshipWizard(models.TransientModel):
     def finish_sponsorship(self):
         self.ensure_one()
 
+        company = self.company_id or self.env.company
         partner = self.user_id.partner_id
         if self.user_id._is_public():
             # Look for existing partner, create one if not found
@@ -222,8 +223,15 @@ class NewSponsorshipWizard(models.TransientModel):
             if not partner.birthdate_date and self.birthdate:
                 partner.sudo().write({"birthdate_date": self.birthdate})
 
+        if not partner.country_id:
+            country = self.country or company.country_id
+            if not country:
+                raise ValidationError(
+                    _("Please add your country before sponsoring a child.")
+                )
+            partner.sudo().write({"country_id": country.id})
+
         # Create new sponsorship
-        company = self.company_id or self.env.company
         payment_mode = self._get_validated_payment_mode(company)
         group = self.env["recurring.contract.group"]._find_or_create_group(
             partner, company, payment_mode

@@ -107,6 +107,84 @@ class TestMultiCompany(DigitalSeamCase):
         self.assertEqual(sponsorship.group_id.payment_mode_id, mode)
         self.assertEqual(sponsorship.payment_mode_id.company_id, website_company)
 
+    def _finish_logged_in_signup(self, partner, website_company):
+        """Run a logged-in standard signup for partner on website_company.
+
+        The throwaway website company has no sale accounting, so the child
+        hold and the standard line builder are stubbed the same way the
+        public-signup test does, leaving only the country handling under
+        test.
+        """
+        user = self.env["res.users"].create(
+            {
+                "name": partner.name,
+                "login": f"signup-{partner.id}@example.com",
+                "partner_id": partner.id,
+                "groups_id": [Command.set([self.env.ref("base.group_portal").id])],
+            }
+        )
+        self.assertFalse(user._is_public())
+        child = self.env["compassion.child"].search([], limit=1)
+        self.assertTrue(child, "the database needs a child")
+        wizard = self.env["new.sponsorship.wizard"].create(
+            {
+                "sponsorship_type": "standard",
+                "user_id": user.id,
+                "child_id": child.id,
+                "company_id": website_company.id,
+            }
+        )
+        product = self.env["product.product"].search(
+            [("default_code", "=", "sponsorship")], limit=1
+        )
+
+        def fake_lines(contract_self, correspondence):
+            return [
+                Command.clear(),
+                Command.create(
+                    {"product_id": product.id, "amount": 100, "quantity": 1}
+                ),
+            ]
+
+        with patch.object(
+            self.registry["compassion.child"],
+            "child_sponsored",
+            lambda child_self, sponsor_id: None,
+        ), patch.object(
+            self.registry["recurring.contract"],
+            "_get_sponsorship_standard_lines",
+            fake_lines,
+        ):
+            return wizard.finish_sponsorship()
+
+    def test_finish_logged_in_partner_without_country_uses_company(self):
+        # A logged-in sponsor with no country on file must not crash the
+        # required country_id of the contract. The wizard backfills the
+        # website company country onto the sponsor so the contract computes.
+        website_company = self.env["res.company"].create(
+            {"name": "Country Fallback Co"}
+        )
+        website_company.partner_id.country_id = self.env.ref("base.se")
+        partner = self.env["res.partner"].create({"name": "Sponsor No Country"})
+        self.assertFalse(partner.country_id)
+        sponsorship = self._finish_logged_in_signup(partner, website_company)
+        self.assertEqual(sponsorship.country_id, self.env.ref("base.se"))
+        self.assertEqual(partner.country_id, self.env.ref("base.se"))
+
+    def test_finish_logged_in_partner_keeps_own_country(self):
+        # A logged-in sponsor who already has a country keeps it. The
+        # website company country never overrides the sponsor's own.
+        website_company = self.env["res.company"].create(
+            {"name": "Own Country Co"}
+        )
+        website_company.partner_id.country_id = self.env.ref("base.se")
+        partner = self.env["res.partner"].create(
+            {"name": "Sponsor Norway", "country_id": self.env.ref("base.no").id}
+        )
+        sponsorship = self._finish_logged_in_signup(partner, website_company)
+        self.assertEqual(sponsorship.country_id, self.env.ref("base.no"))
+        self.assertEqual(partner.country_id, self.env.ref("base.no"))
+
     def test_token_constraint_rejects_cross_sponsor(self):
         # Same company as the group, but the token belongs to a different
         # sponsor. The group constraint must reject it just like it rejects a
