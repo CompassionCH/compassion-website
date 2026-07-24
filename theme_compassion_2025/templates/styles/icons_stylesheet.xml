@@ -28,7 +28,9 @@
 
 <t t-foreach="icons" t-as="icon">
 .<t t-esc="icon.class_name" /> {
-    -webkit-mask-image: url("/web/image/theme.compassion.icons/<t t-esc="icon.id" />/svg_file");
+    -webkit-mask-image: url("/web/image/theme.compassion.icons/<t
+      t-esc="icon.id"
+    />/svg_file");
     mask-image: url("/web/image/theme.compassion.icons/<t t-esc="icon.id" />/svg_file");
 }
 </t>

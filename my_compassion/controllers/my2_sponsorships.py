@@ -480,7 +480,9 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
         website=True,
         sitemap=False,
     )
-    def sponsorship_payment_page(self, sponsorship_id=None, access_token=None, **kwargs):
+    def sponsorship_payment_page(
+        self, sponsorship_id=None, access_token=None, **kwargs
+    ):
         sponsorship = self._fetch_guarded_sponsorship(sponsorship_id, access_token)
         provider = sponsorship.payment_mode_id.payment_provider_id
         if not provider or sponsorship.state not in ("draft", "waiting"):
@@ -527,9 +529,7 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
             sponsorship_id = int(sponsorship_id)
         except (TypeError, ValueError) as error:
             raise NotFound() from error
-        sponsorship = (
-            request.env["recurring.contract"].sudo().browse(sponsorship_id)
-        )
+        sponsorship = request.env["recurring.contract"].sudo().browse(sponsorship_id)
         if not sponsorship.exists() or not payment_utils.check_access_token(
             access_token, sponsorship.id, sponsorship.partner_id.id
         ):
@@ -542,15 +542,15 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
         auth="public",
         website=True,
     )
-    def sponsorship_payment_transaction(self, sponsorship_id, access_token=None, **kwargs):
+    def sponsorship_payment_transaction(
+        self, sponsorship_id, access_token=None, **kwargs
+    ):
         """Create the tokenizing first-payment transaction of a sponsorship,
         linked to its first invoice, and return its processing values."""
         sponsorship = self._fetch_guarded_sponsorship(sponsorship_id, access_token)
         provider = sponsorship.payment_mode_id.payment_provider_id
         if not provider or sponsorship.state not in ("draft", "waiting"):
-            raise ValidationError(
-                _("This sponsorship can no longer be paid online.")
-            )
+            raise ValidationError(_("This sponsorship can no longer be paid online."))
         self._validate_transaction_kwargs(
             kwargs,
             additional_allowed_keys=(
@@ -559,9 +559,7 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
                 "partner_id",
             ),
         )
-        if kwargs.get("flow") == "token" and not self._is_sponsorship_user(
-            sponsorship
-        ):
+        if kwargs.get("flow") == "token" and not self._is_sponsorship_user(sponsorship):
             # saved instruments are only offered/chargeable to the logged-in
             # sponsor: the public wizard matches partners by email, which
             # must never give access to someone else's stored card
@@ -572,9 +570,7 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
         # schedule the cleanup no matter how the checkout continues
         sponsorship._schedule_digital_revert()
         if not invoice:
-            raise ValidationError(
-                _("There is nothing to pay for this sponsorship.")
-            )
+            raise ValidationError(_("There is nothing to pay for this sponsorship."))
         # Server-side truth: the client never chooses what is charged, by
         # whom, through which provider, nor where it lands.
         kwargs.update(
@@ -635,9 +631,7 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
             "payment_methods_sudo": payment_methods_sudo,
             "tokens_sudo": tokens_sudo,
             "availability_report": {},
-            "transaction_route": (
-                f"/my2/new-sponsorship/transaction/{sponsorship.id}"
-            ),
+            "transaction_route": (f"/my2/new-sponsorship/transaction/{sponsorship.id}"),
             "landing_route": (
                 f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
             ),

@@ -28,8 +28,7 @@
         </div>
       </xpath>
       <xpath expr="//group[@name='main']" position="inside">
-        <field name="payment_provider_id"
-               domain="[('company_id', '=', company_id)]" />
+        <field name="payment_provider_id" domain="[('company_id', '=', company_id)]" />
       </xpath>
     </field>
   </record>

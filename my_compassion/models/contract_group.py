@@ -161,8 +161,7 @@ class ContractGroup(models.Model):
         group = invoice.line_ids.contract_id.group_id
         if len(group) != 1:
             _logger.warning(
-                "Invoice %s maps to %d contract groups; off-session charge"
-                " skipped.",
+                "Invoice %s maps to %d contract groups; off-session charge" " skipped.",
                 invoice.name,
                 len(group),
             )
@@ -184,9 +183,7 @@ class ContractGroup(models.Model):
                 invoice.name,
             )
             return None
-        if not (
-            provider.company_id == group.company_id == invoice.company_id
-        ):
+        if not (provider.company_id == group.company_id == invoice.company_id):
             _logger.warning(
                 "Invoice %s: provider, group and invoice companies differ;"
                 " off-session charge skipped.",
@@ -296,9 +293,7 @@ class ContractGroup(models.Model):
         # method runs from crons and email rendering, so the same
         # signature is computed directly.
         token_str = f"{UPDATE_CARD_TOKEN_SCOPE}|{self.id}|{self.partner_id.id}"
-        access_token = hmac_tool(
-            self.env(su=True), "generate_access_token", token_str
-        )
+        access_token = hmac_tool(self.env(su=True), "generate_access_token", token_str)
         return (
             f"{self.get_base_url()}/my2/update-card"
             f"?group_id={self.id}&access_token={access_token}"

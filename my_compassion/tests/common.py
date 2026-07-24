@@ -50,9 +50,7 @@ class DigitalSeamCase(TransactionCase):
             journal = self.env["account.journal"].search(
                 [("type", "=", "sale"), ("company_id", "=", company.id)], limit=1
             )
-            self.assertTrue(
-                journal, "the test company needs sale accounting"
-            )
+            self.assertTrue(journal, "the test company needs sale accounting")
         bank_journal = self.env["account.journal"].search(
             [("type", "=", "bank"), ("company_id", "=", company.id)], limit=1
         )
@@ -106,16 +104,12 @@ class DigitalSeamCase(TransactionCase):
             "group_id": group.id,
             "type": "O",
             "contract_line_ids": [
-                Command.create(
-                    {"product_id": product.id, "amount": 100, "quantity": 1}
-                )
+                Command.create({"product_id": product.id, "amount": 100, "quantity": 1})
             ],
         }
         if child:
             vals.update({"type": "S", "child_id": child.id})
-        return (
-            self.env["recurring.contract"].with_context(no_upsert=True).create(vals)
-        )
+        return self.env["recurring.contract"].with_context(no_upsert=True).create(vals)
 
     def _make_chargeable_invoice(self, company=None):
         """An active-cycle situation for the charge cron: a digital contract

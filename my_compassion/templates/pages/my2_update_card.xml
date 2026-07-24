@@ -27,10 +27,10 @@
               <t t-set="underline_color" t-value="'low-yellow'" />
               <t t-set="description">Enter a new card below. It replaces the
                 one used for your monthly sponsorship payments<t
-                  t-if="current_card"
-                >&#160;(currently&#160;&#8226;&#8226;&#8226;&#8226;&#160;<t
-                    t-out="current_card.payment_details"
-                  />)</t>.</t>
+                t-if="current_card"
+              >&#160;(currently&#160;&#8226;&#8226;&#8226;&#8226;&#160;<t
+                t-out="current_card.payment_details"
+              />)</t>.</t>
             </t>
           </div>
           <!-- AMOUNT SUMMARY -->
@@ -38,9 +38,9 @@
             <t t-if="amount">
               <span class="body-large bold">
                 Outstanding payment:&#160;<t
-                  t-out="amount"
-                  t-options="{'widget': 'monetary', 'display_currency': currency}"
-                />
+                t-out="amount"
+                t-options="{'widget': 'monetary', 'display_currency': currency}"
+              />
               </span>
               <div class="body-small mt-1">
                 Charged to your new card today.

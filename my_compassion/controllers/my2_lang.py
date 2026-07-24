@@ -6,8 +6,9 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from odoo.addons.website.controllers.main import Website
 from odoo.http import request
+
+from odoo.addons.website.controllers.main import Website
 
 # Core sets "frontend_lang" as a session cookie, which the native app's WebView
 # clears on a full close, so the chosen language reverts on reopen. Persist it

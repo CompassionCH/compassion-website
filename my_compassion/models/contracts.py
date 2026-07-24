@@ -56,8 +56,7 @@ class RecurringContract(models.Model):
         if self.state == "draft":
             sync.contract_waiting()
         invoices = self.invoice_line_ids.move_id.filtered(
-            lambda m: m.state == "posted"
-            and m.payment_state in ("not_paid", "partial")
+            lambda m: m.state == "posted" and m.payment_state in ("not_paid", "partial")
         )
         return invoices.sorted("invoice_date")[:1]
 
@@ -162,9 +161,7 @@ class RecurringContract(models.Model):
         escalation = int_param(
             "my_compassion.fixit_escalation_days", self.FIXIT_ESCALATION_DAYS
         )
-        episode = int_param(
-            "my_compassion.fixit_episode_days", self.FIXIT_EPISODE_DAYS
-        )
+        episode = int_param("my_compassion.fixit_episode_days", self.FIXIT_EPISODE_DAYS)
         return escalation, max(episode, escalation + 1)
 
     def _my2_fixit_configs(self):
@@ -260,9 +257,7 @@ class RecurringContract(models.Model):
         # object_ids is a comma-separated string. The "like" match can
         # also hit a contract whose id simply contains ours, so the ids
         # are checked exactly here.
-        return jobs.filtered(
-            lambda j: self.id in j.get_objects().ids
-        )
+        return jobs.filtered(lambda j: self.id in j.get_objects().ids)
 
     @api.model
     def _cron_digital_fixit_escalation(self):
@@ -289,7 +284,7 @@ class RecurringContract(models.Model):
                 job.get_objects()
                 .exists()
                 .filtered(
-                    lambda c: c.state in ("active", "mandate")
+                    lambda c, job=job: c.state in ("active", "mandate")
                     and c.group_id._due_digital_invoices()
                     and not c._my2_find_fixit_jobs(
                         configs["final"],
@@ -330,8 +325,7 @@ class RecurringContract(models.Model):
         # A digital signup is confirmed by its first successful payment.
         # That payment is what activates the contract.
         self.filtered(
-            lambda c: c.my2_signup
-            and c.group_id.payment_mode_id.payment_provider_id
+            lambda c: c.my2_signup and c.group_id.payment_mode_id.payment_provider_id
         )._my2_send_portal_invitation()
         return res
 

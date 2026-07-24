@@ -46,8 +46,7 @@ class PaymentTransaction(models.Model):
         res = super()._post_process()
         for tx in self.filtered(lambda t: t.state == "done"):
             digital_invoices = tx.invoice_ids.filtered(
-                lambda m: m.line_ids.contract_id.group_id.payment_mode_id
-                .payment_provider_id
+                "line_ids.contract_id.group_id.payment_mode_id.payment_provider_id"
             )
             if digital_invoices and not digital_invoices.filtered(
                 lambda m: m.state == "posted"
@@ -66,7 +65,7 @@ class PaymentTransaction(models.Model):
                     digital_invoices.line_ids.contract_id.group_id
                     | tx.my2_card_update_group_id
                 ).filtered(
-                    lambda g: g.payment_mode_id.payment_provider_id
+                    lambda g, tx=tx: g.payment_mode_id.payment_provider_id
                     and g.payment_token_id != tx.token_id
                 )
                 try:

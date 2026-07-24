@@ -24,9 +24,9 @@ class TestMultiCompany(DigitalSeamCase):
         The batch tests bill real companies (Sverige, Norge, ...) but only
         add rolled-back records to them, so no company config is mutated.
         """
-        companies = self.env["account.journal"].search(
-            [("type", "=", "sale")]
-        ).company_id
+        companies = (
+            self.env["account.journal"].search([("type", "=", "sale")]).company_id
+        )
         self.assertGreaterEqual(
             len(companies), 2, "the database needs two companies with sale accounting"
         )
@@ -36,9 +36,7 @@ class TestMultiCompany(DigitalSeamCase):
         # The wizard carries the website's company. The new contract and its
         # collection group must land in that company, not in the operator's
         # default company.
-        website_company = self.env["res.company"].create(
-            {"name": "Multi Co Website"}
-        )
+        website_company = self.env["res.company"].create({"name": "Multi Co Website"})
         self.assertNotEqual(website_company, self.env.company)
         provider = self.env["payment.provider"].create(
             {
@@ -92,14 +90,17 @@ class TestMultiCompany(DigitalSeamCase):
         # child_sponsored drives the GMC hold state and is out of scope here.
         # the standard line builder needs a fully configured company, which
         # this throwaway one is not, so it is stubbed with a plain line.
-        with patch.object(
-            self.registry["compassion.child"],
-            "child_sponsored",
-            lambda child_self, sponsor_id: None,
-        ), patch.object(
-            self.registry["recurring.contract"],
-            "_get_sponsorship_standard_lines",
-            fake_lines,
+        with (
+            patch.object(
+                self.registry["compassion.child"],
+                "child_sponsored",
+                lambda child_self, sponsor_id: None,
+            ),
+            patch.object(
+                self.registry["recurring.contract"],
+                "_get_sponsorship_standard_lines",
+                fake_lines,
+            ),
         ):
             sponsorship = wizard.finish_sponsorship()
         self.assertEqual(sponsorship.company_id, website_company)
@@ -146,14 +147,17 @@ class TestMultiCompany(DigitalSeamCase):
                 ),
             ]
 
-        with patch.object(
-            self.registry["compassion.child"],
-            "child_sponsored",
-            lambda child_self, sponsor_id: None,
-        ), patch.object(
-            self.registry["recurring.contract"],
-            "_get_sponsorship_standard_lines",
-            fake_lines,
+        with (
+            patch.object(
+                self.registry["compassion.child"],
+                "child_sponsored",
+                lambda child_self, sponsor_id: None,
+            ),
+            patch.object(
+                self.registry["recurring.contract"],
+                "_get_sponsorship_standard_lines",
+                fake_lines,
+            ),
         ):
             return wizard.finish_sponsorship()
 
@@ -174,9 +178,7 @@ class TestMultiCompany(DigitalSeamCase):
     def test_finish_logged_in_partner_keeps_own_country(self):
         # A logged-in sponsor who already has a country keeps it. The
         # website company country never overrides the sponsor's own.
-        website_company = self.env["res.company"].create(
-            {"name": "Own Country Co"}
-        )
+        website_company = self.env["res.company"].create({"name": "Own Country Co"})
         website_company.partner_id.country_id = self.env.ref("base.se")
         partner = self.env["res.partner"].create(
             {"name": "Sponsor Norway", "country_id": self.env.ref("base.no").id}
@@ -196,9 +198,7 @@ class TestMultiCompany(DigitalSeamCase):
                 "company_id": self.company.id,
             }
         )
-        other_partner = self.env["res.partner"].create(
-            {"name": "Cross Sponsor Other"}
-        )
+        other_partner = self.env["res.partner"].create({"name": "Cross Sponsor Other"})
         method = self.env["payment.method"].search([], limit=1)
         token = self.env["payment.token"].create(
             {

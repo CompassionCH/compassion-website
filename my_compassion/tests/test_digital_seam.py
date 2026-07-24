@@ -92,9 +92,7 @@ class TestDigitalSeam(DigitalSeamCase):
             {"sponsorship_type": "standard", "payment_method": self.mode.id}
         )
         self.mode.is_published = True
-        self.assertEqual(
-            wizard._get_validated_payment_mode(self.company), self.mode
-        )
+        self.assertEqual(wizard._get_validated_payment_mode(self.company), self.mode)
 
     def test_validated_payment_mode_empty_selection(self):
         # flows without a payment step (e.g. Write&Pray) post no mode and
@@ -280,9 +278,7 @@ class TestDigitalSeam(DigitalSeamCase):
         self.assertEqual(len(tx), 1)
         self.assertEqual(tx.operation, "offline")
         self.assertEqual(tx.token_id, token)
-        self.assertEqual(
-            tx.provider_id, contract.payment_mode_id.payment_provider_id
-        )
+        self.assertEqual(tx.provider_id, contract.payment_mode_id.payment_provider_id)
         self.assertEqual(tx.partner_id, contract.partner_id)
         self.assertEqual(tx.amount, amount_due)
         # done charges are post-processed on the spot: reconciled invoice,
@@ -318,9 +314,7 @@ class TestDigitalSeam(DigitalSeamCase):
         invoice.invoice_date_due = fields.Date.today() - timedelta(days=1)
         self._run_charge_cron(lambda tx_self: tx_self._set_done())
         self.assertFalse(
-            self.env["payment.transaction"].search(
-                [("invoice_ids", "in", invoice.ids)]
-            )
+            self.env["payment.transaction"].search([("invoice_ids", "in", invoice.ids)])
         )
 
     def test_cron_skips_invoice_with_open_tx(self):
@@ -365,13 +359,9 @@ class TestDigitalSeam(DigitalSeamCase):
         with self.assertLogs(level="WARNING") as logs:
             self._run_charge_cron(lambda tx_self: tx_self._set_done())
         self.assertFalse(
-            self.env["payment.transaction"].search(
-                [("invoice_ids", "in", invoice.ids)]
-            )
+            self.env["payment.transaction"].search([("invoice_ids", "in", invoice.ids)])
         )
-        self.assertTrue(
-            any(invoice.name in message for message in logs.output)
-        )
+        self.assertTrue(any(invoice.name in message for message in logs.output))
 
     def test_cron_failed_charge_fires_handoff(self):
         contract, invoice, _token = self._make_chargeable_invoice()
@@ -385,9 +375,7 @@ class TestDigitalSeam(DigitalSeamCase):
             "_on_digital_charge_failed",
             record_handoff,
         ):
-            self._run_charge_cron(
-                lambda tx_self: tx_self._set_error("Card expired")
-            )
+            self._run_charge_cron(lambda tx_self: tx_self._set_error("Card expired"))
         self.assertEqual(len(handoffs), 1)
         failed_contracts, failed_invoice, reason = handoffs[0]
         self.assertEqual(failed_contracts, contract)

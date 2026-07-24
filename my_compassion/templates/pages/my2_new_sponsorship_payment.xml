@@ -13,10 +13,7 @@
     transaction_route, landing_route, access_token...) and `sponsorship`.
 -->
 <odoo>
-  <template
-    id="my2_new_sponsorship_payment_page"
-    name="New Sponsorship Payment Page"
-  >
+  <template id="my2_new_sponsorship_payment_page" name="New Sponsorship Payment Page">
     <t t-call="website.layout">
       <div class="container">
         <div class="single-column d-flex flex-column align-items-center">
@@ -44,15 +41,15 @@
           <div class="my-3 text-center">
             <span class="body-large bold">
               <t
-                t-out="monthly_amount"
-                t-options="{'widget': 'monetary', 'display_currency': currency}"
-              /> / month
+              t-out="monthly_amount"
+              t-options="{'widget': 'monetary', 'display_currency': currency}"
+            /> / month
             </span>
             <div class="body-small mt-1">
               First payment today:&#160;<t
-                t-out="amount"
-                t-options="{'widget': 'monetary', 'display_currency': currency}"
-              />
+              t-out="amount"
+              t-options="{'widget': 'monetary', 'display_currency': currency}"
+            />
             </div>
           </div>
           <!-- PAYMENT FORM -->

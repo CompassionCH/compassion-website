@@ -160,8 +160,10 @@ class MyCompassionUpdateCard(payment_portal.PaymentPortal):
             # saved: the charge would succeed but no card would replace
             # the failing one
             raise ValidationError(
-                _("The selected payment method cannot be saved for monthly"
-                  " payments. Please pay by card.")
+                _(
+                    "The selected payment method cannot be saved for monthly"
+                    " payments. Please pay by card."
+                )
             )
         tx_sudo.landing_route = f"{landing_route}&tx_id={tx_sudo.id}"
         # unfinished checkouts would block the group's invoices forever
@@ -191,8 +193,7 @@ class MyCompassionUpdateCard(payment_portal.PaymentPortal):
         belongs_to_group = tx and (
             tx.my2_card_update_group_id == group
             or (
-                tx.invoice_ids
-                and tx.invoice_ids.line_ids.contract_id.group_id == group
+                tx.invoice_ids and tx.invoice_ids.line_ids.contract_id.group_id == group
             )
         )
         retry_url = f"/my2/update-card?group_id={group.id}"
@@ -213,9 +214,7 @@ class MyCompassionUpdateCard(payment_portal.PaymentPortal):
         provider with forced tokenization (same keys the generic
         /payment/pay page builds)."""
         partner = group.partner_id
-        currency = (
-            invoices[0].currency_id if invoices else group.company_id.currency_id
-        )
+        currency = invoices[0].currency_id if invoices else group.company_id.currency_id
         providers_sudo = provider.sudo()
         payment_methods_sudo = (
             request.env["payment.method"]

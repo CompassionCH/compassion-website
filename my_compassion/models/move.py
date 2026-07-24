@@ -64,8 +64,7 @@ class AccountMove(models.Model):
         """
         if self.ids:
             self.env.cr.execute(
-                "UPDATE account_move SET write_date = write_date"
-                " WHERE id IN %s",
+                "UPDATE account_move SET write_date = write_date" " WHERE id IN %s",
                 [tuple(self.ids)],
             )
 
@@ -80,8 +79,10 @@ class AccountMove(models.Model):
         # the charge path reads provider and token records that invoice
         # staff cannot access; the view group-gates the button and the
         # charge amount/target come from the invoice itself
-        tx = self.env["recurring.contract.group"].sudo()._charge_digital_invoice(
-            self.sudo(), force=True
+        tx = (
+            self.env["recurring.contract.group"]
+            .sudo()
+            ._charge_digital_invoice(self.sudo(), force=True)
         )
         if tx is None:
             raise UserError(
