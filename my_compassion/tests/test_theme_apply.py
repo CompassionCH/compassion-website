@@ -52,6 +52,29 @@ class TestThemeAutoApply(TransactionCase):
             "MyCompassion website",
         )
 
+    def test_stylesheet_regen_invalidates_asset_bundle(self):
+        """Regenerating a dynamic stylesheet must invalidate the served
+        web.assets_frontend so the new content goes live without a server
+        restart. The bundle version is memoized in the assets cache, which a
+        bare clear_cache() does not clear.
+        """
+        qweb = self.env["ir.qweb"].sudo()
+        params = {"website_id": self.website.id}
+
+        def bundle_links():
+            return qweb._generate_asset_links_cache(
+                "web.assets_frontend", css=True, js=False, assets_params=params
+            )
+
+        before = bundle_links()
+        self.env["theme.compassion.icons"].sudo()._generate_stylesheet()
+        after = bundle_links()
+        self.assertNotEqual(
+            before,
+            after,
+            "regenerating a stylesheet must bump the frontend bundle version",
+        )
+
     def test_dynamic_stylesheets_resolve_without_website(self):
         attachment_model = self.env["ir.attachment"].sudo()
         for url in DYNAMIC_STYLESHEET_URLS:

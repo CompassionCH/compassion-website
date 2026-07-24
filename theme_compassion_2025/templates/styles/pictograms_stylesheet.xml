@@ -18,13 +18,19 @@
     <!-- Helps align pictograms with text -->
     vertical-align: middle;
     <!-- Use `mask` to display the SVG shape, allowing the background-color to show through -->
+    -webkit-mask-size: contain;
     mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
+    -webkit-mask-position: center;
     mask-position: center;
 }
 
 <t t-foreach="pictograms" t-as="pictogram">
 .<t t-esc="pictogram.class_name" /> {
+    -webkit-mask-image: url("/web/image/theme.compassion.pictograms/<t
+      t-esc="pictogram.id"
+    />/svg_file");
     mask-image: url("/web/image/theme.compassion.pictograms/<t
       t-esc="pictogram.id"
     />/svg_file");
