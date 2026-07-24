@@ -5,10 +5,10 @@ Page: My Compassion 2 Donations Page
     Description:
     This page allows users to manage and review their donations and sponsorships.
     It provides:
-      - Access to tax receipts by fiscal year.
-      - A list of active sponsorships with monthly cost summaries and payment slip downloads.
+      - A list of active sponsorships with monthly cost summaries.
       - A section showing open (unpaid) invoices related to sponsorships.
       - A paginated donation history with amount and beneficiary details.
+      - Anchors where country layers inject their own donation documents.
 
     Used in routes:
     - /my2/donations/
@@ -44,48 +44,7 @@ Page: My Compassion 2 Donations Page
               </t>
             </div>
             <!-- MY DONATION DETAILS -->
-            <div>
-              <div class="mt-4 mb-4">
-                <h3 id="tax_title" class="text-dark-blue">
-                                    My donation
-                                    details
-                                </h3>
-                <div class="d-flex flex-column">
-                  <!-- Allows the partner to download its tax receipt for a selected year -->
-                  <form
-                    id="tax_receipt_form"
-                    action="/my/download/tax_receipt"
-                    class="mb-3"
-                  >
-                    <div class="d-flex flex-row align-items-end">
-                      <t t-call="theme_compassion_2025.FormFieldComponent">
-                        <t t-set="label">Download your tax receipt</t>
-                        <t t-set="top_class" t-value="'me-2'" />
-                        <t t-call="theme_compassion_2025.SelectComponent">
-                          <t t-set="name" t-value="'year'" />
-                          <t t-set="id" t-value="'year'" />
-                          <t
-                            t-foreach="range(int(current_year) - 1, first_year - 1, -1)"
-                            t-as="fiscal_year"
-                          >
-                            <option t-att-value="fiscal_year">
-                              <t t-out="fiscal_year" />
-                            </option>
-                          </t>
-                        </t>
-                      </t>
-                      <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                        <t t-set="variant" t-value="'compact'" />
-                        <t t-set="variation" t-value="'filled'" />
-                        <t t-set="icon" t-value="'icon-download01'" />
-                        <t t-set="color" t-value="'dark-blue'" />
-                        <t t-set="icon_color" t-value="'low-yellow'" />
-                      </t>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
+            <div name="donations_details" />
             <!-- MY SPONSORSHIPS -->
             <div>
               <h3 class="text-dark-blue">My sponsorships</h3>
@@ -108,10 +67,8 @@ Page: My Compassion 2 Donations Page
                   <t t-if="not currency_total_last">,</t>
                 </t>
               </t>
-                                <br />
-                                A payment slip is available for download for each of
-                                your sponsored children.
-                            </p>
+              <span name="donations_sponsorships_hint" />
+            </p>
               <t t-foreach="active_sponsorships" t-as="sponsorship">
                 <t t-if="sponsorship">
                   <div class="mb-4">

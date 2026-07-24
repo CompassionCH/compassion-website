@@ -179,17 +179,7 @@
             }"
           />
         </t>
-        <t
-          t-set="secondary_buttons_data"
-          t-value="[
-                {
-                    'icon': 'download01',
-                    'color': 'low-blue',
-                    'action': 'link',
-                    'href': '/my/download/csp_bvr?csp_id=' + str(sponsorship.id),
-                }
-            ]"
-        />
+        <t t-set="secondary_buttons_data" t-value="[]" />
       </t>
     </t>
     <t t-else="">
@@ -209,17 +199,7 @@
             'color': 'low-blue'
         }"
       />
-      <t
-        t-set="secondary_buttons_data"
-        t-value="[
-            {
-                'icon': 'download01',
-                'color': 'low-blue',
-                'action': 'link',
-                'href': '/my/download/gift_bvr?child_id=' + str(sponsorship.child_id.id),
-            }
-        ]"
-      />
+      <t t-set="secondary_buttons_data" t-value="[]" />
     </t>
     <t t-call="my_compassion.DonationItemComponent">
       <t t-set="image_fallback_pictogram" t-value="image_fallback_pictogram" />
