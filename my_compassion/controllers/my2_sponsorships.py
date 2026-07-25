@@ -472,6 +472,10 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
     payment provider. Extends PaymentPortal for the _create_transaction /
     _validate_transaction_kwargs helpers."""
 
+    # by then any 3DS challenge is long expired. An unfinished checkout
+    # transaction is cancelled so it stops blocking the first invoice.
+    CHECKOUT_CLEANUP_MINUTES = 60
+
     @http.route(
         "/my2/new-sponsorship/payment",
         type="http",
@@ -571,6 +575,16 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
         sponsorship._schedule_digital_revert()
         if not invoice:
             raise ValidationError(_("There is nothing to pay for this sponsorship."))
+        # One charge request per invoice, like the cron and the update-card
+        # page. The lock is taken before the decision so two clicks cannot
+        # both pass.
+        invoice._my2_serialize_charge_attempts()
+        if invoice.transaction_ids.filtered(
+            lambda t: t.state in ("draft", "pending", "authorized", "done")
+        ):
+            raise ValidationError(
+                _("A payment is already in progress for this sponsorship.")
+            )
         # Server-side truth: the client never chooses what is charged, by
         # whom, through which provider, nor where it lands.
         kwargs.update(
@@ -587,6 +601,13 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
             custom_create_values={"invoice_ids": [Command.set(invoice.ids)]},
             my2_sponsorship=True,
             **kwargs,
+        )
+        # An abandoned checkout would otherwise hold the guard above closed
+        # and the sponsor could never pay.
+        tx_sudo.with_delay_sh(
+            "_my2_cancel_stale_checkout_tx",
+            eta=self.CHECKOUT_CLEANUP_MINUTES * 60,
+            identity_key=f"sponsorship_checkout_cleanup.{tx_sudo.id}",
         )
         return tx_sudo._get_processing_values()
 

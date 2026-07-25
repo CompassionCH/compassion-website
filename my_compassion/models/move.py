@@ -39,8 +39,10 @@ class AccountMove(models.Model):
             # invoice staff are not payment.provider/token admins: read
             # those records elevated, the compute only exposes a boolean
             move_sudo = move.sudo()
+            # The same set the forced staff charge refuses, so the button
+            # is never offered when it would fail.
             open_tx = move_sudo.transaction_ids.filtered(
-                lambda t: t.state in ("pending", "authorized", "done")
+                lambda t: t.state in ("draft", "authorized", "done")
             )
             move.my2_can_charge_digital = bool(
                 move.move_type == "out_invoice"

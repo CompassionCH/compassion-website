@@ -4475,3 +4475,81 @@ msgstr ""
 "Maksukorttisi on päivitetty.\n"
 "                  Kuukausittaiset kummiusmaksusi käyttävät nyt uutta\n"
 "                  korttia."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/my2_sponsorships.py:0
+msgid "A payment is already in progress for this sponsorship."
+msgstr "Tälle kummiudelle on jo maksu käynnissä."
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_payment_transaction__my2_card_update_group_id
+msgid "Card Update Group"
+msgstr "Kortin päivitysryhmä"
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/contracts.py:0
+msgid "Card payment failed, automatic dunning exhausted"
+msgstr "Korttimaksu epäonnistui, automaattiset muistutukset käytetty"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.view_move_form_digital_charge
+msgid "Charge Saved Card"
+msgstr "Veloita tallennettua korttia"
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_payment_transaction__my2_card_update_group_id
+msgid "Contract group whose saved instrument this validation transaction replaces (the update-card page with nothing due)."
+msgstr "Sopimusryhmä, jonka tallennetun maksuvälineen tämä vahvistustapahtuma korvaa (kortin päivityssivu ilman erääntyneitä maksuja)."
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_recurring_contract__my2_signup
+msgid "MyCompassion Signup"
+msgstr "MyCompassion-rekisteröinti"
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_account_move__my2_can_charge_digital
+msgid "The invoice can be charged off-session against the saved payment instrument of its contract group."
+msgstr "Lasku voidaan veloittaa ilman kummin läsnäoloa sopimusryhmän tallennetulta maksuvälineeltä."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/move.py:0
+msgid "The payment failed: %s"
+msgstr "Maksu epäonnistui: %s"
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/move.py:0
+msgid "The payment succeeded."
+msgstr "Maksu onnistui."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/move.py:0
+msgid "The payment was refused; the provider scheduled automatic retries."
+msgstr "Maksu hylättiin. Palveluntarjoaja on ajoittanut automaattiset uudelleenyritykset."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/contract_group.py:0
+msgid "The provider never reported the outcome of this payment. It is given up on after %s days."
+msgstr "Palveluntarjoaja ei koskaan ilmoittanut tämän maksun tulosta. Siitä luovutaan %s päivän jälkeen."
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_recurring_contract__my2_signup
+msgid "The sponsorship was created by the sponsor through the MyCompassion signup wizard. Such sponsors are invited to create their portal account once the sponsorship is confirmed."
+msgstr "Kummius luotiin kummin toimesta MyCompassion-ohjatun toiminnon kautta. Tällaiset kummit kutsutaan luomaan portaalitilinsä, kun kummius on vahvistettu."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/contracts.py:0
+msgid "The sponsor's saved card could not be charged and both fix-it emails were sent without effect. Please contact the sponsor or handle the arrears manually."
+msgstr "Kummin tallennettua korttia ei voitu veloittaa ja molemmat muistutusviestit lähetettiin tuloksetta. Ota yhteyttä kummiin tai hoida maksurästi manuaalisesti."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/move.py:0
+msgid "This invoice cannot be charged: a payment is already open or done, or no valid saved card is available."
+msgstr "Tätä laskua ei voi veloittaa. Maksu on jo avoinna tai suoritettu, tai voimassa olevaa tallennettua korttia ei ole."

@@ -157,7 +157,7 @@ class TestDigitalSeam(DigitalSeamCase):
         # reconciliation chain
         self.assertIn(invoice.payment_state, ("paid", "in_payment"))
         self.assertEqual(contract.state, "active")
-        # a later transaction with a fresh token replaces the group token
+        # paying another invoice of the group leaves the saved card alone
         token2 = token.copy({"provider_ref": "digital-seam-second-charge"})
         tx2 = tx.copy(
             {
@@ -168,6 +168,18 @@ class TestDigitalSeam(DigitalSeamCase):
         )
         tx2._set_done()
         tx2._post_process()
+        self.assertEqual(contract.group_id.payment_token_id, token)
+        # the update-card page stamps the group on the tx and may replace it
+        tx3 = tx.copy(
+            {
+                "reference": "digital-seam-card-update-tx",
+                "token_id": token2.id,
+                "invoice_ids": [Command.set(invoice.ids)],
+                "my2_card_update_group_id": contract.group_id.id,
+            }
+        )
+        tx3._set_done()
+        tx3._post_process()
         self.assertEqual(contract.group_id.payment_token_id, token2)
 
     def test_ensure_first_invoice_sync(self):
@@ -495,8 +507,8 @@ class TestDigitalSeam(DigitalSeamCase):
         self.assertEqual(group.payment_token_id, new_token)
 
     def test_stale_checkout_tx_cleanup(self):
-        # an abandoned pay-click (draft) or 3DS challenge (pending) must
-        # stop blocking the group's invoices; finished charges are kept
+        # an abandoned pay-click leaves a draft that must stop blocking the
+        # group's invoices, while pending and finished charges are kept
         contract, invoice, token = self._make_chargeable_invoice()
         method = self.env["payment.method"].search([], limit=1)
 
@@ -514,8 +526,8 @@ class TestDigitalSeam(DigitalSeamCase):
                 }
             )
 
-        abandoned = make_tx("digital-seam-abandoned-3ds")
-        abandoned._set_pending()
+        abandoned = make_tx("digital-seam-abandoned-click")
+        self.assertEqual(abandoned.state, "draft")
         self.assertFalse(contract.group_id._due_digital_invoices())
         # the job runs with the public user of the checkout session
         abandoned.with_user(
@@ -523,10 +535,46 @@ class TestDigitalSeam(DigitalSeamCase):
         )._my2_cancel_stale_checkout_tx()
         self.assertEqual(abandoned.state, "cancel")
         self.assertEqual(contract.group_id._due_digital_invoices(), invoice)
+        # a pending charge is left alone because the provider may still
+        # settle it, so only the sweeper closes it
+        in_flight = make_tx("digital-seam-abandoned-3ds")
+        in_flight._set_pending()
+        in_flight._my2_cancel_stale_checkout_tx()
+        self.assertEqual(in_flight.state, "pending")
         finished = make_tx("digital-seam-finished-checkout")
         finished._set_done()
         finished._my2_cancel_stale_checkout_tx()
         self.assertEqual(finished.state, "done")
+
+    def test_stale_pending_charge_is_swept(self):
+        # a pending charge whose outcome never arrives is given up on, so
+        # the invoice reopens and the contracts reach the dunning hook
+        contract, invoice, _token = self._make_chargeable_invoice()
+
+        def send_pending(tx_self):
+            tx_self._set_pending()
+
+        self._run_charge_cron(send_pending)
+        tx = invoice.transaction_ids
+        self.assertEqual(tx.state, "pending")
+        self.assertFalse(contract.group_id._due_digital_invoices())
+        Group = self.env["recurring.contract.group"]
+        # still inside the provider's window, so nothing happens yet
+        Group._cron_sweep_stale_pending_charges()
+        self.assertEqual(tx.state, "pending")
+        timeout = Group._my2_pending_charge_timeout_days(tx.provider_id)
+        tx.last_state_change = fields.Datetime.now() - timedelta(days=timeout + 1)
+        failures = []
+        with patch.object(
+            self.registry["recurring.contract"],
+            "_on_digital_charge_failed",
+            lambda self_, inv, reason: failures.append((inv, reason)),
+        ):
+            Group._cron_sweep_stale_pending_charges()
+        self.assertEqual(tx.state, "error")
+        self.assertTrue(failures)
+        # the invoice is collectable again once the dead charge is closed
+        self.assertEqual(contract.group_id._due_digital_invoices(), invoice)
 
     def test_charge_context_is_neutral_by_default(self):
         # provider-specific recovery opt-ins are extension-module business
@@ -562,16 +610,44 @@ class TestDigitalSeam(DigitalSeamCase):
             tx_self._set_pending()
 
         self._run_charge_cron(send_pending)
-        # a charge is in flight on the provider side: even the forced
-        # action must refuse
+        # a pending charge is offered to staff, who check the provider
+        # dashboard before recovering the invoice
+        self.assertTrue(invoice.my2_can_charge_digital)
+        with patch.object(
+            self.registry["payment.transaction"],
+            "_send_payment_request",
+            lambda tx_self: tx_self._set_done(),
+        ):
+            invoice.action_charge_digital_invoice()
+        self.assertEqual(
+            self.env["payment.transaction"].search_count(
+                [("invoice_ids", "in", invoice.ids)]
+            ),
+            2,
+        )
+        # the charge that succeeded is money, so the button closes for good
         self.assertFalse(invoice.my2_can_charge_digital)
         with self.assertRaises(UserError):
-            with patch.object(
-                self.registry["payment.transaction"],
-                "_send_payment_request",
-                lambda tx_self: tx_self._set_done(),
-            ):
-                invoice.action_charge_digital_invoice()
+            invoice.action_charge_digital_invoice()
+        self.assertEqual(
+            self.env["payment.transaction"].search_count(
+                [("invoice_ids", "in", invoice.ids)]
+            ),
+            2,
+        )
+
+    def test_staff_button_refuses_while_a_draft_is_in_flight(self):
+        _contract, invoice, _token = self._make_chargeable_invoice()
+
+        def stay_draft(tx_self):
+            return None
+
+        self._run_charge_cron(stay_draft)
+        # a draft may still be finishing at the provider, so nothing may
+        # charge the invoice again until it settles
+        self.assertFalse(invoice.my2_can_charge_digital)
+        with self.assertRaises(UserError):
+            invoice.action_charge_digital_invoice()
         self.assertEqual(
             self.env["payment.transaction"].search_count(
                 [("invoice_ids", "in", invoice.ids)]

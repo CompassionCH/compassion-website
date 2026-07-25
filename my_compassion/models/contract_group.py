@@ -120,6 +120,57 @@ class ContractGroup(models.Model):
                 )
 
     @api.model
+    def _my2_pending_charge_timeout_days(self, provider):
+        """Days after which a pending off-session charge is given up on.
+
+        Provider specific modules override this with their own recovery
+        window.
+        """
+        return 30
+
+    @api.model
+    def _cron_sweep_stale_pending_charges(self):
+        """Settle off-session charges whose outcome never arrived.
+
+        A pending charge blocks its invoice for the cron, for the sponsor
+        and for the staff. Past the provider's recovery window it counts as
+        failed, so the invoice reopens and the sponsor is told.
+        """
+        pending = self.env["payment.transaction"].search(
+            [
+                ("state", "=", "pending"),
+                ("operation", "=", "offline"),
+                ("invoice_ids.payment_mode_id.payment_provider_id", "!=", False),
+            ]
+        )
+        now = fields.Datetime.now()
+        for tx in pending:
+            timeout = self._my2_pending_charge_timeout_days(tx.provider_id)
+            changed = tx.last_state_change
+            if changed and (now - changed).days < timeout:
+                continue
+            try:
+                tx._set_error(
+                    _(
+                        "The provider never reported the outcome of this"
+                        " payment. It is given up on after %s days.",
+                        timeout,
+                    )
+                )
+                for invoice in tx.invoice_ids:
+                    invoice.line_ids.contract_id._on_digital_charge_failed(
+                        invoice, tx.state_message
+                    )
+                self._charge_cursor_commit()
+            except Exception:
+                self._charge_cursor_rollback()
+                _logger.exception(
+                    "Could not sweep the stale pending transaction id %s. The"
+                    " rest of the batch continues.",
+                    tx.id,
+                )
+
+    @api.model
     def _charge_cursor_commit(self):
         """Make charge bookkeeping durable - except inside tests, where
         committing the shared cursor is forbidden."""
@@ -190,15 +241,14 @@ class ContractGroup(models.Model):
                 invoice.name,
             )
             return None
-        # one charge request per invoice, ever: an open transaction is in
-        # flight or may still complete (a draft cannot be proven not to
-        # have reached the provider - a shopper checkout session may also
-        # still finish it), a done one is money, and an errored one already
-        # consumed this invoice's single attempt - only the forced staff
-        # action may charge again. Cancelled transactions never block.
+        # One charge request per invoice, ever. A draft may still be
+        # finishing at the provider and a done one is money, so both always
+        # block. An errored or pending one is released by the forced staff
+        # action, which is how a dead charge is recovered. Cancelled
+        # transactions never block.
         blocking = invoice.transaction_ids.filtered(
-            lambda t: t.state in ("draft", "pending", "authorized", "done")
-            or (t.state == "error" and not force)
+            lambda t: t.state in ("draft", "authorized", "done")
+            or (t.state in ("pending", "error") and not force)
         )
         if blocking:
             return None
@@ -285,8 +335,8 @@ class ContractGroup(models.Model):
 
         Made for emails rendered outside any web session, like the
         dunning emails. The signed token lets the sponsor open the page
-        without logging in. get_base_url resolves the company's website
-        domain, so each country's email links to its own site.
+        without logging in. The link points at the website of the group's
+        company, so each country's email stays on its own site.
         """
         self.ensure_one()
         # payment_utils.generate_access_token needs an HTTP request. This

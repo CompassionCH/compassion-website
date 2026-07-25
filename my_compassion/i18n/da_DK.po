@@ -4244,3 +4244,81 @@ msgid ""
 "                  Your monthly sponsorship payments will now use the new\n"
 "                  card."
 msgstr "Dit betalingskort er blevet opdateret. Dine månedlige fadderskabsbetalinger vil nu bruge det nye kort."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/my2_sponsorships.py:0
+msgid "A payment is already in progress for this sponsorship."
+msgstr "En betaling er allerede i gang for dette fadderskab."
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_payment_transaction__my2_card_update_group_id
+msgid "Card Update Group"
+msgstr "Kortopdateringsgruppe"
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/contracts.py:0
+msgid "Card payment failed, automatic dunning exhausted"
+msgstr "Kortbetalingen mislykkedes, automatiske rykkere opbrugt"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.view_move_form_digital_charge
+msgid "Charge Saved Card"
+msgstr "Debitér gemt kort"
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_payment_transaction__my2_card_update_group_id
+msgid "Contract group whose saved instrument this validation transaction replaces (the update-card page with nothing due)."
+msgstr "Aftalegruppe hvis gemte betalingsmiddel denne valideringstransaktion erstatter (kortopdateringssiden uden forfaldent beløb)."
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_recurring_contract__my2_signup
+msgid "MyCompassion Signup"
+msgstr "MyCompassion-tilmelding"
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_account_move__my2_can_charge_digital
+msgid "The invoice can be charged off-session against the saved payment instrument of its contract group."
+msgstr "Fakturaen kan debiteres uden fadderens tilstedeværelse mod det gemte betalingsmiddel i aftalegruppen."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/move.py:0
+msgid "The payment failed: %s"
+msgstr "Betalingen mislykkedes: %s"
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/move.py:0
+msgid "The payment succeeded."
+msgstr "Betalingen lykkedes."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/move.py:0
+msgid "The payment was refused; the provider scheduled automatic retries."
+msgstr "Betalingen blev afvist. Udbyderen har planlagt automatiske nye forsøg."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/contract_group.py:0
+msgid "The provider never reported the outcome of this payment. It is given up on after %s days."
+msgstr "Udbyderen rapporterede aldrig resultatet af denne betaling. Den opgives efter %s dage."
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_recurring_contract__my2_signup
+msgid "The sponsorship was created by the sponsor through the MyCompassion signup wizard. Such sponsors are invited to create their portal account once the sponsorship is confirmed."
+msgstr "Fadderskabet blev oprettet af fadderen via MyCompassion-guiden. Sådanne faddere inviteres til at oprette deres portalkonto, når fadderskabet er bekræftet."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/contracts.py:0
+msgid "The sponsor's saved card could not be charged and both fix-it emails were sent without effect. Please contact the sponsor or handle the arrears manually."
+msgstr "Fadderens gemte kort kunne ikke debiteres, og begge rykkermails blev sendt uden resultat. Kontakt fadderen eller håndtér restancen manuelt."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/move.py:0
+msgid "This invoice cannot be charged: a payment is already open or done, or no valid saved card is available."
+msgstr "Denne faktura kan ikke debiteres. En betaling er allerede åben eller gennemført, eller der findes intet gyldigt gemt kort."

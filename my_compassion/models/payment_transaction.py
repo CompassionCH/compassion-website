@@ -20,15 +20,15 @@ class PaymentTransaction(models.Model):
     def _my2_cancel_stale_checkout_tx(self):
         """Cleanup for shopper checkouts that never finished.
 
-        A draft (pay-click without provider submission) or pending
-        (abandoned 3DS challenge) transaction would otherwise block its
-        invoices forever. Both for the charge engine and for the
-        update-card page, which would misreport the arrears as settled.
-        Scheduled per transaction at pay-click. Finished transactions are
-        left alone.
+        A draft never reached the provider, so cancelling it is safe and
+        frees the invoice it blocks. Scheduled per transaction at pay-click.
+
+        Only drafts are cancelled. The provider owns the outcome of a
+        pending transaction, which _cron_sweep_stale_pending_charges closes
+        once the provider's window has passed.
         """
         self = self.sudo()  # scheduled from a public checkout session
-        for tx in self.filtered(lambda t: t.state in ("draft", "pending")):
+        for tx in self.filtered(lambda t: t.state == "draft"):
             tx._set_canceled(state_message=_("The checkout was abandoned."))
 
     def _post_process(self):
@@ -61,20 +61,27 @@ class PaymentTransaction(models.Model):
                     digital_invoices.mapped("name"),
                 )
             if tx.token_id:
+                # A group with no saved card takes the one that just paid.
+                # Replacing an existing card is only allowed from the
+                # update-card page, which authenticates the sponsor first.
                 groups = (
                     digital_invoices.line_ids.contract_id.group_id
                     | tx.my2_card_update_group_id
                 ).filtered(
                     lambda g, tx=tx: g.payment_mode_id.payment_provider_id
                     and g.payment_token_id != tx.token_id
+                    and (
+                        not g.payment_token_id
+                        or g == tx.my2_card_update_group_id
+                    )
                 )
                 try:
                     groups.payment_token_id = tx.token_id
                 except (ValidationError, UserError):
                     # A token incompatible with the group must never wedge the
                     # post-processing poll or cron into an eternal retry. The
-                    # partner constraint raises ValidationError and the company
-                    # one raises UserError.
+                    # partner constraint raises one error, the company the
+                    # other.
                     _logger.error(
                         "Could not save token %s on groups %s (tx %s);"
                         " monthly charges keep using the previous card.",
