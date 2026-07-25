@@ -111,13 +111,19 @@ class MyCompassionChildrenController(http.Controller):
 
     def _get_timeline_count(self, child_id, partner_ids):
         """Get total count of timeline records (correspondence + gifts + child_pictures + start + end)."""
+        # correspondence.child_id, sponsorship_gift.child_id and
+        # sponsorship_gift.partner_id are related fields with no database
+        # column of their own, so the child and the sponsor are read from the
+        # sponsorship instead. See _get_timeline_data.
         sql = """
             SELECT
-                (SELECT COUNT(*) FROM correspondence
-                 WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s) AND is_published = true)
+                (SELECT COUNT(*) FROM correspondence c
+                 JOIN recurring_contract cs ON cs.id = c.sponsorship_id
+                 WHERE cs.child_id = %(child_id)s AND c.partner_id = ANY(%(partner_ids)s) AND c.is_published = true)
                 +
-                (SELECT COUNT(*) FROM sponsorship_gift
-                 WHERE child_id = %(child_id)s AND partner_id = ANY(%(partner_ids)s))
+                (SELECT COUNT(*) FROM sponsorship_gift s
+                 JOIN recurring_contract ss ON ss.id = s.sponsorship_id
+                 WHERE ss.child_id = %(child_id)s AND ss.correspondent_id = ANY(%(partner_ids)s))
                 +
                 (SELECT COUNT(*)
                  FROM compassion_child_pictures p
@@ -154,6 +160,11 @@ class MyCompassionChildrenController(http.Controller):
         limit,
     ):
         """Fetch paginated timeline records (correspondence + gifts) ordered by date."""
+        # Several fields of correspondence and sponsorship_gift are related
+        # fields: child_id, partner_id, gift_type and sponsorship_gift_type
+        # have no database column that Odoo keeps up to date, only a leftover
+        # column with old values in it. The query joins the sponsorship and the
+        # gift type to read the live values.
         # ruff: noqa: E501 (query is more readable this way)
         sql = """
             SELECT * FROM (
@@ -173,9 +184,10 @@ class MyCompassionChildrenController(http.Controller):
                             THEN %(title_corr_translating)s
                         ELSE %(title_corr_processing)s
                     END AS title,
-                    c.child_id AS child_id
+                    cs.child_id AS child_id
                 FROM correspondence c
-                WHERE c.child_id = %(child_id)s
+                JOIN recurring_contract cs ON cs.id = c.sponsorship_id
+                WHERE cs.child_id = %(child_id)s
                   AND c.partner_id = ANY(%(partner_ids)s)
                   AND c.is_published = true
 
@@ -186,21 +198,23 @@ class MyCompassionChildrenController(http.Controller):
                     s.id::text AS record_id,
                     s.amount::text AS amount,
                     COALESCE(rc.name, %(default_currency)s) AS currency_name,
-                    s.gift_type || '|' || COALESCE(s.sponsorship_gift_type, '') AS metadata,
+                    COALESCE(gt.gmc_gift_type, '') || '|' || COALESCE(gt.gmc_sponsorship_gift_type, '') AS metadata,
                     s.create_date AS event_date,
                     CASE
-                        WHEN s.sponsorship_gift_type = 'Birthday' THEN %(title_gift_bday)s
-                        WHEN s.sponsorship_gift_type = 'General' THEN %(title_gift_general)s
-                        WHEN s.sponsorship_gift_type = 'Graduation/Final' THEN %(title_gift_grad)s
-                        WHEN s.gift_type = 'Family Gift' THEN %(title_gift_family)s
+                        WHEN gt.gmc_sponsorship_gift_type = 'Birthday' THEN %(title_gift_bday)s
+                        WHEN gt.gmc_sponsorship_gift_type = 'General' THEN %(title_gift_general)s
+                        WHEN gt.gmc_sponsorship_gift_type = 'Graduation/Final' THEN %(title_gift_grad)s
+                        WHEN gt.gmc_gift_type = 'Family Gift' THEN %(title_gift_family)s
                         ELSE %(title_gift_default)s
                     END AS title,
-                    s.child_id AS child_id
+                    ss.child_id AS child_id
                 FROM sponsorship_gift s
+                JOIN recurring_contract ss ON ss.id = s.sponsorship_id
+                LEFT JOIN sponsorship_gift_type gt ON gt.id = s.gift_type_id
                 LEFT JOIN account_move_line aml ON aml.gift_id = s.id
                 LEFT JOIN res_currency rc ON rc.id = aml.currency_id
-                WHERE s.child_id = %(child_id)s
-                  AND s.partner_id = ANY(%(partner_ids)s)
+                WHERE ss.child_id = %(child_id)s
+                  AND ss.correspondent_id = ANY(%(partner_ids)s)
 
                 UNION ALL
 
