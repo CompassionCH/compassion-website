@@ -96,8 +96,11 @@ class StylesheetGeneratorMixin(models.AbstractModel):
         )
         _logger.info(f"Successfully updated {attachment.name} file.")
 
-        # force bundle invalidation
-        self.env.registry.clear_cache()
+        # Invalidate the assets cache so the regenerated stylesheet goes live.
+        # A bare clear_cache() only clears the default cache. The frontend
+        # bundle version is memoized in the assets cache, so without this the
+        # served bundle stays stale until the next server restart.
+        self.env.registry.clear_cache("assets")
 
     @api.model_create_multi
     def create(self, vals_list):

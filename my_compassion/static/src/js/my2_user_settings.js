@@ -103,27 +103,13 @@ function initCommunicationSettings() {
     const target = e.target;
     // Skip if the event is not on an input or select
     if (!target.matches("input, select")) return;
-    let field = target.dataset.field;
+    const field = target.dataset.field;
     let value = null;
 
-    if (!field && target.tagName === "SELECT") {
-      switch (target.id) {
-        case "letter_preference_select":
-          field = "letter_delivery_preference";
-          break;
-        case "photo_preference_select":
-          field = "photo_delivery_preference";
-          break;
-        case "tax_preference_select":
-          field = "tax_certificate";
-          break;
-      }
-    }
     // Determine the value based on element type
     if (target.type === "checkbox") {
       value = target.checked;
-      // Handle inverted logic for opt_out
-      if (field === "opt_out") {
+      if (target.dataset.inverted === "1") {
         value = !value;
       }
     } else {
@@ -137,6 +123,8 @@ function initCommunicationSettings() {
         console.error("RPC Error:", err);
         toast.error("Could not save your changes. Please try again.");
       });
+    } else {
+      console.warn("Communication control has no data-field, not saved:", target);
     }
   });
 }

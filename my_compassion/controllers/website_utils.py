@@ -29,3 +29,16 @@ def resolve_host_my2_website():
     )
     website = website_model.browse(website_id)
     return website if website.is_my_compassion else website_model.browse()
+
+
+def safe_int(value, default=None):
+    """Return value parsed as an int, or default when it is not a valid int.
+
+    Query string and JSON parameters reach controllers as arbitrary text or
+    None. A bare int() on them turns a malformed request into a 500. This
+    keeps callers in control of the fallback.
+    """
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default

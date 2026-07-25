@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Page: New Sponsorship Payment
+
+    Description:
+    First-payment checkout for sponsorships collected by an online payment
+    provider. Embeds the standard payment form scoped to the provider of the
+    sponsorship's payment mode; the saved instrument is then charged monthly.
+
+    Context:
+    Rendered by /my2/new-sponsorship/payment with the payment form values
+    (providers_sudo, payment_methods_sudo, amount, currency,
+    transaction_route, landing_route, access_token...) and `sponsorship`.
+-->
+<odoo>
+  <template id="my2_new_sponsorship_payment_page" name="New Sponsorship Payment Page">
+    <t t-call="website.layout">
+      <div class="container">
+        <div class="single-column d-flex flex-column align-items-center">
+          <!-- PROGRESS BAR -->
+          <div class="mt-3 mb-2 px-2 px-lg-0 pt-2 w-100">
+            <t t-call="my_compassion.NewSponsorshipStepProgressBar">
+              <t t-set="n_steps" t-value="3" />
+              <t t-set="current_step" t-value="3" />
+            </t>
+          </div>
+          <!-- TITLE -->
+          <div class="mx-4">
+            <t t-call="theme_compassion_2025.TitleComponent">
+              <t t-set="title_content">One last step</t>
+              <t t-set="color" t-value="'core-blue'" />
+              <t t-set="show_underline" t-value="True" />
+              <t t-set="underline_color" t-value="'low-yellow'" />
+              <t t-set="description">Pay the first month to start your
+                sponsorship of&#160;<t
+                t-out="sponsorship.child_id.preferred_name"
+              />.</t>
+            </t>
+          </div>
+          <!-- AMOUNT SUMMARY -->
+          <div class="my-3 text-center">
+            <span class="body-large bold">
+              <t
+              t-out="monthly_amount"
+              t-options="{'widget': 'monetary', 'display_currency': currency}"
+            /> / month
+            </span>
+            <div class="body-small mt-1">
+              First payment today:&#160;<t
+              t-out="amount"
+              t-options="{'widget': 'monetary', 'display_currency': currency}"
+            />
+            </div>
+          </div>
+          <!-- PAYMENT FORM -->
+          <div class="w-100 px-2 px-lg-0 mb-3">
+            <t t-call="payment.form" />
+          </div>
+          <div class="mb-4 text-center body-small text-low-black">
+            Your payment details are securely saved with our payment provider
+            and charged each month for your sponsorship.
+          </div>
+        </div>
+      </div>
+    </t>
+  </template>
+</odoo>

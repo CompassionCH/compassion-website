@@ -674,50 +674,13 @@ Injected data:
             <!-- Communication settings tab -->
             <div class="tab-pane fade" id="communication-settings" role="tabpanel">
               <div class="p-3 bg-pure-white d-block">
-                <div class="form-check form-switch mb-2">
-                  <input
-                    type="checkbox"
-                    class="form-check-input"
-                    id="newsletterCheck"
-                    data-field="opt_out"
-                    t-att-checked="not partner.opt_out"
-                  />
-                  <label class="form-check-label" for="newsletterCheck">
-                                        I would like to receive the Compassion Newsletter
-                                    </label>
-                </div>
-                <div class="form-check form-switch  mb-2">
-                  <input
-                    type="checkbox"
-                    class="form-check-input"
-                    id="birthdaysCheck"
-                    data-field="birthday_reminder"
-                    t-att-checked="partner.birthday_reminder"
-                  />
-                  <label class="form-check-label" for="birthdaysCheck">
-                                        I
-                                        would like to receive reminders of the children
-                                        birthdays
-                                    </label>
-                </div>
-                <div class="form-check form-switch  mb-3">
-                  <input
-                    type="checkbox"
-                    class="form-check-input"
-                    id="anniversaryCheck"
-                    data-field="sponsorship_anniversary_card"
-                    t-att-checked="partner.sponsorship_anniversary_card"
-                  />
-                  <label class="form-check-label" for="anniversaryCheck">
-                                        I would like to receive the sponsorship anniversary
-                                        card
-                                    </label>
-                </div>
+                <div name="communication_settings_top" />
                 <div class="w-md-50 mb-3">
                   <t t-call="theme_compassion_2025.FormFieldComponent">
                     <t t-set="label">Letter Delivery Preference</t>
                     <t t-call="theme_compassion_2025.SelectComponent">
                       <t t-set="id" t-value="'letter_preference_select'" />
+                      <t t-set="data_field" t-value="'letter_delivery_preference'" />
                       <option
                         value="auto_digital"
                         t-att-selected="partner.letter_delivery_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']"
@@ -750,6 +713,7 @@ Injected data:
                     <t t-set="label">Photo Delivery Preference</t>
                     <t t-call="theme_compassion_2025.SelectComponent">
                       <t t-set="id" t-value="'photo_preference_select'" />
+                      <t t-set="data_field" t-value="'photo_delivery_preference'" />
                       <option
                         value="auto_digital"
                         t-att-selected="partner.photo_delivery_preference in ['digital', 'auto_digital', 'auto_digital_only', 'digital_only']"
@@ -777,28 +741,7 @@ Injected data:
                     </t>
                   </t>
                 </div>
-                <t t-call="theme_compassion_2025.FormFieldComponent">
-                  <t t-set="label">Tax Delivery Preference</t>
-                  <t t-set="top_class" t-value="'w-md-50'" />
-                  <t t-call="theme_compassion_2025.SelectComponent">
-                    <t t-set="id" t-value="'tax_preference_select'" />
-                    <option
-                      value="only_email"
-                      t-att-selected="partner.tax_certificate == 'only_email'"
-                    >
-                                            Email
-                                        </option>
-                    <option
-                      value="default"
-                      t-att-selected="partner.tax_certificate in ['paper', 'default']"
-                    >
-                                            Letter
-                                        </option>
-                    <option value="no" t-att-selected="partner.tax_certificate == 'no'">
-                                            None
-                                        </option>
-                  </t>
-                </t>
+                <div name="communication_settings_bottom" />
               </div>
             </div>
           </div>
