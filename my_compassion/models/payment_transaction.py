@@ -70,10 +70,7 @@ class PaymentTransaction(models.Model):
                 ).filtered(
                     lambda g, tx=tx: g.payment_mode_id.payment_provider_id
                     and g.payment_token_id != tx.token_id
-                    and (
-                        not g.payment_token_id
-                        or g == tx.my2_card_update_group_id
-                    )
+                    and (not g.payment_token_id or g == tx.my2_card_update_group_id)
                 )
                 try:
                     groups.payment_token_id = tx.token_id
