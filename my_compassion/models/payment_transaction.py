@@ -70,10 +70,11 @@ class PaymentTransaction(models.Model):
                 )
                 try:
                     groups.payment_token_id = tx.token_id
-                except ValidationError:
-                    # a token incompatible with the group (company/partner
-                    # constraint) must never wedge the post-processing
-                    # poll/cron into an eternal retry
+                except (ValidationError, UserError):
+                    # A token incompatible with the group must never wedge the
+                    # post-processing poll or cron into an eternal retry. The
+                    # partner constraint raises ValidationError and the company
+                    # one raises UserError.
                     _logger.error(
                         "Could not save token %s on groups %s (tx %s);"
                         " monthly charges keep using the previous card.",

@@ -104,6 +104,7 @@
     "depends": [
         "partner_communication_compassion",
         "sponsorship_sub_management",
+        "payment",
         "web",
         "website_sale",
         "website_child_protection",

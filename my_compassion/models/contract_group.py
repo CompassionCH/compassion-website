@@ -112,12 +112,12 @@ class ContractGroup(models.Model):
                 self._charge_digital_invoice(invoice)
                 self._charge_cursor_commit()
             except Exception:
-                _logger.exception(
-                    "Off-session charge of invoice %s crashed; continuing"
-                    " with the rest of the batch.",
-                    invoice.name,
-                )
                 self._charge_cursor_rollback()
+                _logger.exception(
+                    "Off-session charge of invoice id %s crashed. The rest of"
+                    " the batch continues.",
+                    invoice.id,
+                )
 
     @api.model
     def _charge_cursor_commit(self):

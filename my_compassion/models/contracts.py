@@ -56,7 +56,9 @@ class RecurringContract(models.Model):
         if self.state == "draft":
             sync.contract_waiting()
         invoices = self.invoice_line_ids.move_id.filtered(
-            lambda m: m.state == "posted" and m.payment_state in ("not_paid", "partial")
+            lambda m: m.move_type == "out_invoice"
+            and m.state == "posted"
+            and m.payment_state in ("not_paid", "partial")
         )
         return invoices.sorted("invoice_date")[:1]
 

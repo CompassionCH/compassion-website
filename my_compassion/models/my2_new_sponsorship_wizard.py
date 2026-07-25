@@ -232,7 +232,13 @@ class NewSponsorshipWizard(models.TransientModel):
             partner.sudo().write({"country_id": country.id})
 
         # Create new sponsorship
-        payment_mode = self._get_validated_payment_mode(company)
+        # Write&Pray sponsorships are never collected. They must stay without
+        # a payment mode, otherwise the charge cron picks up their invoices.
+        payment_mode = (
+            self.env["account.payment.mode"]
+            if self.sponsorship_type == "write_and_pray"
+            else self._get_validated_payment_mode(company)
+        )
         group = self.env["recurring.contract.group"]._find_or_create_group(
             partner, company, payment_mode
         )

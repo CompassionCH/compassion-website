@@ -76,9 +76,13 @@ class AccountMove(models.Model):
         attempt was consumed).
         """
         self.ensure_one()
-        # the charge path reads provider and token records that invoice
-        # staff cannot access; the view group-gates the button and the
-        # charge amount/target come from the invoice itself
+        # The view only hides the button from other groups. The RPC endpoint
+        # stays reachable by any logged in user, so the caller rights are
+        # checked here before anything is charged.
+        self.check_access("write")
+        # The charge path reads provider and token records that invoice staff
+        # cannot access. The charge amount and target come from the invoice
+        # itself, never from the caller.
         tx = (
             self.env["recurring.contract.group"]
             .sudo()

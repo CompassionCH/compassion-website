@@ -42,7 +42,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         current_year = date.today().year
 
         # Filtering params
-        page = safe_int(kwargs.get("page"), 1)
+        page = max(1, safe_int(kwargs.get("page"), 1))
         year_from = max(1, min(safe_int(kwargs.get("year_from"), 1900), 9999))
         year_to = max(1, min(safe_int(kwargs.get("year_to"), current_year), 9999))
         month_from = max(1, min(safe_int(kwargs.get("month_from"), 1), 12))
