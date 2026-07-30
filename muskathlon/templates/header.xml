@@ -17,20 +17,14 @@
                         data-url_code="fr_CH"
                         t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='fr_CH')"
                     >
-                        <img
-                            src="/theme_crowdfunding/static/src/img/FR.svg"
-                            style="margin:0 4px;"
-                        />
+                        <img src="/theme_crowdfunding/static/src/img/FR.svg" style="margin:0 4px;" />
                     </a>
                     <a
                         class="js_change_lang"
                         data-url_code="de"
                         t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='de_DE')"
                     >
-                        <img
-                            src="/theme_crowdfunding/static/src/img/DE.svg"
-                            style="margin:0 4px;"
-                        />
+                        <img src="/theme_crowdfunding/static/src/img/DE.svg" style="margin:0 4px;" />
                     </a>
                 </span>
             </xpath>
