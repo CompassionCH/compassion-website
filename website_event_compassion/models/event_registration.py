@@ -102,9 +102,11 @@ class EventRegistration(models.Model):
     host_url = fields.Char(compute="_compute_host_url")
     sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
     event_name = fields.Char(related="event_id.name", tracking=True)
-    profile_picture = fields.Image(
-        readonly=False, string="Profile picture", max_width=1200, max_height=1200
-    )
+    # Stored without downscaling: the picture is meant to be printed on
+    # fundraising material, and the resolution check below must see the
+    # uploaded resolution. Web pages request a resized version through
+    # /web/image/.
+    profile_picture = fields.Image(readonly=False, string="Profile picture")
     profile_name = fields.Char()
     ambassador_quote = fields.Text()
     criminal_record = fields.Binary(
@@ -285,7 +287,9 @@ class EventRegistration(models.Model):
         default_meta["default_opengraph"].update(
             {
                 "og:title": title,
-                "og:image": request.website.image_url(self, "profile_picture"),
+                "og:image": request.website.image_url(
+                    self, "profile_picture", size="1200x1200"
+                ),
             }
         )
         default_meta["default_twitter"].update(
@@ -420,43 +424,45 @@ class EventRegistration(models.Model):
     ##########################################################################
     #                              ORM METHODS                               #
     ##########################################################################
-    @staticmethod
-    def _check_profile_picture_min_size(picture_b64):
+    @api.constrains("profile_picture")
+    def _check_profile_picture_min_size(self):
         """Reject profile pictures whose resolution is too low to be
         printed on fundraising material.
 
-        This must run on the raw uploaded value, before the ``profile_picture``
-        field downsizes it, otherwise the check would always fail.
+        The field is stored without downscaling, so the value checked here is
+        the one that was uploaded. ``bin_size`` is disabled because it would
+        otherwise yield the file size instead of its content.
         """
-        if not picture_b64:
-            return
-        try:
-            with PILImage.open(io.BytesIO(base64.b64decode(picture_b64))) as img:
-                width, height = img.size
-        except (binascii.Error, OSError, TypeError):
-            # Let the Image field's own validation handle corrupted files
-            return
-        short_side, long_side = sorted((width, height))
-        if (
-            short_side < MIN_PROFILE_PICTURE_SHORT_SIDE
-            or long_side < MIN_PROFILE_PICTURE_LONG_SIDE
-        ):
-            raise ValidationError(
-                _(
-                    "The picture you uploaded is too small (%(width)s x %(height)s px)."
-                    " Please upload a picture of at least %(long)s x %(short)s px"
-                    " (portrait or landscape) so it also looks good once printed"
-                    " on fundraising material.",
-                    width=width,
-                    height=height,
-                    long=MIN_PROFILE_PICTURE_LONG_SIDE,
-                    short=MIN_PROFILE_PICTURE_SHORT_SIDE,
+        for registration in self.with_context(bin_size=False):
+            picture_b64 = registration.profile_picture
+            if not picture_b64:
+                continue
+            try:
+                with PILImage.open(io.BytesIO(base64.b64decode(picture_b64))) as img:
+                    width, height = img.size
+            except (binascii.Error, OSError, TypeError):
+                # Let the Image field's own validation handle corrupted files
+                continue
+            short_side, long_side = sorted((width, height))
+            if (
+                short_side < MIN_PROFILE_PICTURE_SHORT_SIDE
+                or long_side < MIN_PROFILE_PICTURE_LONG_SIDE
+            ):
+                raise ValidationError(
+                    _(
+                        "The picture you uploaded is too small"
+                        " (%(width)s x %(height)s px). Please upload a picture of"
+                        " at least %(long)s x %(short)s px (portrait or landscape)"
+                        " so it also looks good once printed on fundraising"
+                        " material.",
+                        width=width,
+                        height=height,
+                        long=MIN_PROFILE_PICTURE_LONG_SIDE,
+                        short=MIN_PROFILE_PICTURE_SHORT_SIDE,
+                    )
                 )
-            )
 
     def write(self, vals):
-        if "profile_picture" in vals:
-            self._check_profile_picture_min_size(vals["profile_picture"])
         if "stage_id" in vals:
             vals["stage_date"] = fields.Date.today()
             if "state" not in vals:
@@ -470,9 +476,6 @@ class EventRegistration(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        for vals in vals_list:
-            if "profile_picture" in vals:
-                self._check_profile_picture_min_size(vals["profile_picture"])
         records = super().create(vals_list)
         for registration in records:
             # Copy image fields
