@@ -60,109 +60,120 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
       return;
     }
 
-    let formData = null;
-    try {
-      formData = await this._collectFormData();
-    } catch (error) {
-      toast.error(error.message);
+    // Guard against a re-entrant submit (e.g. double-click)
+    if (this._isSubmitting) {
       return;
     }
-
-    const creationData = {
-      ...formData,
-      source: "mycompassion",
-      csrf_token: odoo.csrf_token,
-      mode: mode,
-    };
-
+    this._isSubmitting = true;
+    $(submitButton).prop("disabled", true);
     try {
-      const initialResult = await this._createGenerator(creationData);
-
-      if (!initialResult.generator_id) {
-        throw new Error(initialResult.error || _t("Could not save the letter."));
-      }
-      if (mode === "save_draft") {
-        this._handleResponse("save_draft", initialResult, formData.child_id);
-        toast.success(_t("Letter saved!"));
+      let formData = null;
+      try {
+        formData = await this._collectFormData();
+      } catch (error) {
+        toast.error(error.message);
         return;
       }
 
-      if (mode === "preview") {
-        const previewResult = await this._launchProcessingRPC({
+      const creationData = {
+        ...formData,
+        source: "mycompassion",
+        csrf_token: odoo.csrf_token,
+        mode: mode,
+      };
+
+      try {
+        const initialResult = await this._createGenerator(creationData);
+
+        if (!initialResult.generator_id) {
+          throw new Error(initialResult.error || _t("Could not save the letter."));
+        }
+        if (mode === "save_draft") {
+          this._handleResponse("save_draft", initialResult, formData.child_id);
+          toast.success(_t("Letter saved!"));
+          return;
+        }
+
+        if (mode === "preview") {
+          const previewResult = await this._launchProcessingRPC({
+            generator_id: initialResult.generator_id,
+            child_id: formData.child_id,
+            mode: "preview",
+            csrf_token: odoo.csrf_token,
+          });
+          if (
+            window.Capacitor &&
+            window.Capacitor.getPlatform() !== "web" &&
+            previewResult.preview_pdf_url
+          ) {
+            // Native app: hand the PDF to the OS viewer
+            const link = Object.assign(document.createElement("a"), {
+              href: previewResult.preview_pdf_url,
+            });
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+          } else {
+            // Web: show the server-rendered HTML letter in the preview modal.
+            this._showPreview(previewResult.preview_html);
+          }
+          return;
+        }
+
+        // Send: show a progress bar while the letter is generated, poll until
+        // it is ready, then open the letters listing.
+        const modalEl = document.getElementById("submitModal");
+        const modal = Modal.getOrCreateInstance(modalEl, {
+          backdrop: "static",
+          keyboard: false,
+        });
+        await new Promise((resolve) => {
+          modalEl.addEventListener(
+            "shown.bs.modal",
+            async () => {
+              const progressBarEl = modalEl.querySelector("#progress-bar-div");
+              progressBarEl.replaceChildren();
+              // Reuse the page's frontend env (Component.env); the
+              // imperative mount requires it to share the page services.
+              this.progressBarApp = await mountComponent(ProgressBar, progressBarEl, {
+                env: Component.env,
+                props: {steps: [_t("Sending your letter...")], flowing: true},
+              });
+              resolve();
+            },
+            {once: true}
+          );
+          modal.show();
+        });
+
+        this._launchProcessingRPC({
           generator_id: initialResult.generator_id,
           child_id: formData.child_id,
-          mode: "preview",
+          mode: "send",
           csrf_token: odoo.csrf_token,
+        }).catch((err) => console.error("Failed to launch letter generation:", err));
+
+        const finalResult = await this._pollForStatus({
+          generator_id: initialResult.generator_id,
+          child_id: formData.child_id,
         });
-        if (
-          window.Capacitor &&
-          window.Capacitor.getPlatform() !== "web" &&
-          previewResult.preview_pdf_url
-        ) {
-          // Native app: hand the PDF to the OS viewer
-          const link = Object.assign(document.createElement("a"), {
-            href: previewResult.preview_pdf_url,
-          });
-          document.body.appendChild(link);
-          link.click();
-          link.remove();
-        } else {
-          // Web: show the server-rendered HTML letter in the preview modal.
-          this._showPreview(previewResult.preview_html);
+        this._handleResponse("send", finalResult, formData.child_id);
+      } catch (error) {
+        if (this.progressBarApp) {
+          this.progressBarApp.destroy();
+          this.progressBarApp = null;
         }
-        return;
-      }
-
-      // Send: show a progress bar while the letter is generated, poll until
-      // it is ready, then open the letters listing.
-      const modalEl = document.getElementById("submitModal");
-      const modal = Modal.getOrCreateInstance(modalEl, {
-        backdrop: "static",
-        keyboard: false,
-      });
-      await new Promise((resolve) => {
-        modalEl.addEventListener(
-          "shown.bs.modal",
-          async () => {
-            const progressBarEl = modalEl.querySelector("#progress-bar-div");
-            progressBarEl.replaceChildren();
-            // Reuse the page's frontend env (Component.env); the
-            // imperative mount requires it to share the page services.
-            this.progressBarApp = await mountComponent(ProgressBar, progressBarEl, {
-              env: Component.env,
-              props: {steps: [_t("Sending your letter...")], flowing: true},
-            });
-            resolve();
-          },
-          {once: true}
+        Modal.getOrCreateInstance(document.getElementById("submitModal")).hide();
+        toast.error(
+          error.message ||
+            _t(
+              "An error occurred while processing your letter. Please try again or contact the support."
+            )
         );
-        modal.show();
-      });
-
-      this._launchProcessingRPC({
-        generator_id: initialResult.generator_id,
-        child_id: formData.child_id,
-        mode: "send",
-        csrf_token: odoo.csrf_token,
-      }).catch((err) => console.error("Failed to launch letter generation:", err));
-
-      const finalResult = await this._pollForStatus({
-        generator_id: initialResult.generator_id,
-        child_id: formData.child_id,
-      });
-      this._handleResponse("send", finalResult, formData.child_id);
-    } catch (error) {
-      if (this.progressBarApp) {
-        this.progressBarApp.destroy();
-        this.progressBarApp = null;
       }
-      Modal.getOrCreateInstance(document.getElementById("submitModal")).hide();
-      toast.error(
-        error.message ||
-          _t(
-            "An error occurred while processing your letter. Please try again or contact the support."
-          )
-      );
+    } finally {
+      this._isSubmitting = false;
+      $(submitButton).prop("disabled", false);
     }
   },
 
