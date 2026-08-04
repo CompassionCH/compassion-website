@@ -58,91 +58,108 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
-                let formData;
-                try {
-                    formData = await this._collectFormData();
-                } catch (error) {
-                    ToastService.error(error.message);
+                // Guard against a re-entrant submit (e.g. double-click)
+                if (this._isSubmitting) {
                     return;
                 }
-
-                const creationData = { ...formData, source: "mycompassion", csrf_token: odoo.csrf_token, mode: mode };
-
+                this._isSubmitting = true;
+                $(submitButton).prop("disabled", true);
                 try {
-                    const initialResult = await this._createGenerator(creationData);
-
-                    if (!initialResult.generator_id) {
-                        throw new Error(initialResult.error || _t("Could not save the letter."));
-                    }
-                    if (mode === "save_draft") {
-                        this._handleResponse("save_draft", initialResult, formData.child_id);
-                        ToastService.success(_t("Letter saved!"));
+                    let formData;
+                    try {
+                        formData = await this._collectFormData();
+                    } catch (error) {
+                        ToastService.error(error.message);
                         return;
                     }
 
-                    // --- Send Mode Logic ---
-                    const steps = (initialResult.steps || []).map((step) => step[2]);
-                    const statusMap = (initialResult.steps || []).reduce((map, step) => {
-                        map[step[1]] = step[0];
-                        return map;
-                    }, {});
-
-                    // 1. Create the widget object in memory BEFORE showing the modal.
-                    const ProgressBarWidgetClass = publicWidget.registry.ProgressBarWidget;
-                    this.progressBar = new ProgressBarWidgetClass(this, {
-                        density: "medium",
-                        steps: steps,
-                    });
-
-                    // 2. Use a Promise to wait for the modal and widget rendering to complete.
-                    await new Promise((resolve) => {
-                        const modal = $("#submitModal");
-                        modal.one("shown.bs.modal", async () => {
-                            // 3. The modal is now visible. Append the pre-made widget.
-                            await this.progressBar.appendTo(modal.find("#progress-bar-div"));
-                            this.progressBar.startProgress();
-                            resolve(); // Continue the main function
-                        });
-                        // 4. Trigger the modal to show.
-                        modal.modal({ backdrop: "static", keyboard: false }).modal("show");
-                    });
-
-                    // 5. With UI ready, launch and poll the backend task.
-                    this._launchProcessingRPC({
-                        generator_id: initialResult.generator_id,
-                        child_id: formData.child_id,
-                        mode: mode,
+                    const creationData = {
+                        ...formData,
+                        source: "mycompassion",
                         csrf_token: odoo.csrf_token,
-                    }).catch((err) => console.error("Failed to launch letter generation:", err));
-
-                    const updateProgress = (status) => {
-                        if (this.progressBar && status in statusMap) {
-                            this.progressBar.goToStep(statusMap[status]);
-                        }
+                        mode: mode,
                     };
-                    const processingPromise = this._pollForStatus(
-                        {
+
+                    try {
+                        const initialResult = await this._createGenerator(creationData);
+
+                        if (!initialResult.generator_id) {
+                            throw new Error(initialResult.error || _t("Could not save the letter."));
+                        }
+                        if (mode === "save_draft") {
+                            this._handleResponse("save_draft", initialResult, formData.child_id);
+                            ToastService.success(_t("Letter saved!"));
+                            return;
+                        }
+
+                        // --- Send Mode Logic ---
+                        const steps = (initialResult.steps || []).map((step) => step[2]);
+                        const statusMap = (initialResult.steps || []).reduce((map, step) => {
+                            map[step[1]] = step[0];
+                            return map;
+                        }, {});
+
+                        // 1. Create the widget object in memory BEFORE showing the modal.
+                        const ProgressBarWidgetClass = publicWidget.registry.ProgressBarWidget;
+                        const progressBar = new ProgressBarWidgetClass(this, {
+                            density: "medium",
+                            steps: steps,
+                        });
+                        this.progressBar = progressBar;
+
+                        // 2. Use a Promise to wait for the modal and widget rendering to complete.
+                        await new Promise((resolve) => {
+                            const modal = $("#submitModal");
+                            modal.one("shown.bs.modal", async () => {
+                                // 3. The modal is now visible. Append the pre-made widget.
+                                await progressBar.appendTo(modal.find("#progress-bar-div"));
+                                progressBar.startProgress();
+                                resolve(); // Continue the main function
+                            });
+                            // 4. Trigger the modal to show.
+                            modal.modal({ backdrop: "static", keyboard: false }).modal("show");
+                        });
+
+                        // 5. With UI ready, launch and poll the backend task.
+                        this._launchProcessingRPC({
                             generator_id: initialResult.generator_id,
                             child_id: formData.child_id,
                             mode: mode,
                             csrf_token: odoo.csrf_token,
-                        },
-                        updateProgress
-                    );
-                    const finalResult = await processingPromise;
+                        }).catch((err) => console.error("Failed to launch letter generation:", err));
 
-                    await this._handleResponse(mode, finalResult, formData.child_id);
-                } catch (error) {
-                    if (this.progressBar) {
-                        this.progressBar.destroy();
+                        const updateProgress = (status) => {
+                            if (this.progressBar && status in statusMap) {
+                                this.progressBar.goToStep(statusMap[status]);
+                            }
+                        };
+                        const processingPromise = this._pollForStatus(
+                            {
+                                generator_id: initialResult.generator_id,
+                                child_id: formData.child_id,
+                                mode: mode,
+                                csrf_token: odoo.csrf_token,
+                            },
+                            updateProgress
+                        );
+                        const finalResult = await processingPromise;
+
+                        await this._handleResponse(mode, finalResult, formData.child_id);
+                    } catch (error) {
+                        if (this.progressBar) {
+                            this.progressBar.destroy();
+                        }
+                        $("#submitModal").modal("hide");
+                        ToastService.error(
+                            error.message ||
+                                _t(
+                                    "An error occurred while processing your letter. Please try again or contact the support."
+                                )
+                        );
                     }
-                    $("#submitModal").modal("hide");
-                    ToastService.error(
-                        error.message ||
-                            _t(
-                                "An error occurred while processing your letter. Please try again or contact the support."
-                            )
-                    );
+                } finally {
+                    this._isSubmitting = false;
+                    $(submitButton).prop("disabled", false);
                 }
             },
 
