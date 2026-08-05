@@ -178,7 +178,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
     )
     def my2_letter_preview(self, uuid, **kwargs):
         """Serve the first letter page as a JPEG for the card preview.
-           Faster and more efficient than rendering the whole PDF. 
+        Faster and more efficient than rendering the whole PDF.
         """
         letter = (
             request.env["correspondence"].sudo().search([("uuid", "=", uuid)], limit=1)
