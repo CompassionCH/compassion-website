@@ -13,38 +13,5 @@
         </t>
       </xpath>
     </template>
-    <!-- Flag language switcher in the header (like the Kilimanjaro site) -->
-    <template
-      id="muskathlon_header_lang_selector"
-      inherit_id="website.template_header_default"
-    >
-      <xpath expr="//div[@id='top_menu_collapse']" position="after">
-        <span
-          t-if="website and website.name == 'Muskathlon Event'"
-          class="lang-selector"
-        >
-          <a
-            class="js_change_lang"
-            data-url_code="fr_CH"
-            t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='fr_CH')"
-          >
-            <img
-              src="/theme_crowdfunding/static/src/img/FR.svg"
-              style="margin:0 4px;"
-            />
-          </a>
-          <a
-            class="js_change_lang"
-            data-url_code="de"
-            t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='de_DE')"
-          >
-            <img
-              src="/theme_crowdfunding/static/src/img/DE.svg"
-              style="margin:0 4px;"
-            />
-          </a>
-        </span>
-      </xpath>
-    </template>
   </data>
 </odoo>
