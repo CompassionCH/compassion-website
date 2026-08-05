@@ -6,12 +6,14 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+import base64
 import calendar
 import json
 import logging
 from datetime import date
 
 import babel
+from werkzeug.exceptions import NotFound
 
 from odoo import _, fields, http
 from odoo.exceptions import AccessError
@@ -166,6 +168,39 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 letter.email_read = fields.Datetime.now()
             return {"status": "success"}
         return {"status": "error", "message": "Not found or unauthorized"}
+
+    @http.route(
+        "/my2/letter_preview/<string:uuid>",
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def my2_letter_preview(self, uuid, **kwargs):
+        """Serve the first letter page as a JPEG for the card preview.
+        Faster and more efficient than rendering the whole PDF.
+        """
+        letter = (
+            request.env["correspondence"].sudo().search([("uuid", "=", uuid)], limit=1)
+        )
+        if not letter or not letter.page_ids:
+            raise NotFound()
+        try:
+            image_b64 = letter.page_ids[0].fetch_image()
+        except Exception:
+            # Image source (Cloudinary/GMC) unreachable: show a blank preview
+            # rather than a 500 — the preview must never break the page.
+            _logger.warning("Letter preview unavailable for %s", uuid, exc_info=True)
+            image_b64 = None
+        if not image_b64:
+            raise NotFound()
+        return request.make_response(
+            base64.b64decode(image_b64),
+            headers=[
+                ("Content-Type", "image/jpeg"),
+                ("Cache-Control", "private, max-age=86400"),
+            ],
+        )
 
     @http.route(
         "/my2/children/letters/new",
