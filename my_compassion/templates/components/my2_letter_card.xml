@@ -32,19 +32,18 @@
         >
           <div class="env-body" />
           <div class="env-letter">
-            <!-- Letter preview -->
-            <!-- TODO Using an iframe for each letter card to show a preview can lead to significant performance issues.
-                              For better performance, consider lazy-loading the src of the <iframe>.
-                              You could set the src attribute via JavaScript only when the card is about to become visible in the viewport
-                              (e.g., using IntersectionObserver) or when the user initiates the envelope-opening animation.
-                        -->
-            <!-- The iframe is already loaded for the letters that have already been read -->
-            <!-- The iframe is added dynamically here to the unread letters only when clicking the closed envelope -->
+            <!-- Letter preview.
+                 Read letters carry the preview in data-src; my2_child_letters.js
+                 promotes it to src via IntersectionObserver only when the card nears
+                 the viewport, so a page of read letters doesn't fire N heavy
+                 /b2s_image PDF requests at once
+                 Unread letters get their iframe injected on envelope click. -->
             <div class="iframe-container">
               <t t-if="letter.email_read">
                 <iframe
-                  t-attf-src="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf"
+                  t-attf-data-src="/b2s_image?id={{letter.uuid}}&amp;disposition=inline&amp;file_type=pdf"
                   type="application/pdf"
+                  loading="lazy"
                 />
               </t>
             </div>
