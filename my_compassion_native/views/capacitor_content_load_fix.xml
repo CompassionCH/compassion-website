@@ -12,7 +12,7 @@
                     document.documentElement.style.opacity = '0';
                     document.documentElement.style.backgroundColor = '#ffffff';
 
-                    window.addEventListener('load', function() {
+                    document.addEventListener('DOMContentLoaded', function() {
                         document.documentElement.style.transition = 'opacity 0.25s ease-in-out';
                         document.documentElement.style.opacity = '1';
                     });
