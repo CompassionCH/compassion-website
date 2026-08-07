@@ -11,8 +11,6 @@ import logging
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
-from odoo.addons.auth_signup.models.res_partner import now
-
 _logger = logging.getLogger(__name__)
 
 
@@ -138,11 +136,7 @@ class ResUsers(models.Model):
             raise UserError(_("You cannot perform this action on an archived user."))
 
         # Prepare reset password signup
-        create_mode = bool(self.env.context.get("create_user"))
-        expiration = False if create_mode else now(days=+1)
-        self.mapped("partner_id").signup_prepare(
-            signup_type="reset", expiration=expiration
-        )
+        self.mapped("partner_id").signup_prepare(signup_type="reset")
 
         # Retrieve the communication config
         comm_config = self.env.ref(
