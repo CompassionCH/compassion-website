@@ -227,9 +227,10 @@ class MyAccountController(CustomerPortal):
             "created_with_magic_link": True,
         }
 
-        # create a signup_token and create the account
+        # The partner is passed in values, so no signup token is needed. Leftover
+        # v14 tokens are not signed and would fail v18 validation.
         partner.signup_prepare()
-        login, _ = res_users.signup(values=values, token=partner.signup_token)
+        login, _ = res_users.signup(values=values)
         return login
 
     ############################# REDIRECTS ################################

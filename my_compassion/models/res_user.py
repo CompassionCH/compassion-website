@@ -69,10 +69,9 @@ class ResUsers(models.Model):
                 user.login,
                 selected_partner.name,
             )
+            # v18 derives the signup token and URL from signup_type, so only
+            # that has to follow the partner.
             selected_partner.signup_type = old_partner.signup_type
-            selected_partner.signup_token = old_partner.signup_token
-            selected_partner.signup_expiration = old_partner.signup_expiration
-            selected_partner.signup_url = old_partner.signup_url
             old_partner.unlink()
             _logger.info("Partner deleted.")
 
