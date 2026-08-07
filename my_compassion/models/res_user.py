@@ -100,7 +100,7 @@ class ResUsers(models.Model):
         values.pop("privacy_policy", None)
 
         # Call the superclass's signup method
-        dbname, login, password = super().signup(values, token)
+        login, password = super().signup(values, token)
 
         if not token:
             email = values.get("email") or values.get("login")
@@ -111,7 +111,7 @@ class ResUsers(models.Model):
                 _logger.error(
                     "Signup failed: No user found with login '%s' after signup.", login
                 )
-                return dbname, login, password  # Or handle as appropriate
+                return login, password  # Or handle as appropriate
 
             # Ensure changes are flushed and committed before scheduling the job
             self.env.flush_all()
@@ -125,7 +125,7 @@ class ResUsers(models.Model):
                 user.login,
             )
 
-        return dbname, login, password
+        return login, password
 
     def action_reset_password(self):
         """Create signup token for each user and send their signup URL
