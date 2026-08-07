@@ -229,7 +229,7 @@ class MyAccountController(CustomerPortal):
 
         # create a signup_token and create the account
         partner.signup_prepare()
-        _, login, _ = res_users.signup(values=values, token=partner.signup_token)
+        login, _ = res_users.signup(values=values, token=partner.signup_token)
         return login
 
     ############################# REDIRECTS ################################
