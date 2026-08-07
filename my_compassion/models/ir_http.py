@@ -1,4 +1,5 @@
 from odoo import models
+from odoo.http import request
 
 from odoo.addons.website.models.ir_http import ModelConverter
 
@@ -24,3 +25,11 @@ class IrHttp(models.AbstractModel):
     def _get_translation_frontend_modules_name(cls):
         mods = super()._get_translation_frontend_modules_name()
         return mods + ["my_compassion"]
+
+    @classmethod
+    def _frontend_pre_dispatch(cls):
+        super()._frontend_pre_dispatch()
+        # Use default language if browser language is not supported
+        lang = request.env.context.get("lang")
+        if lang and not request.env["res.lang"]._get_data(code=lang):
+            request.update_context(lang=request.website.default_lang_id.code)
