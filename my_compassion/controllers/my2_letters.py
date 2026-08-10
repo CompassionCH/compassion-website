@@ -371,6 +371,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             "template_id": template_id,
             "image_ids": attachments,
             "source": post.get("source"),
+            "generation_mode": "single",
             "child_id": child.id,
             "user_id": request.env.user.id,
             "state": "draft",
