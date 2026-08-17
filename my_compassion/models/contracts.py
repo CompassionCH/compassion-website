@@ -23,6 +23,17 @@ class RecurringContract(models.Model):
         string="Can be shown on My Compassion",
         compute="_compute_can_show_on_my_compassion",
     )
+    can_write_letter_grace = fields.Boolean(
+        string="Can write letter (incl. suspension)",
+        compute="_compute_can_write_letter_grace",
+        help="Same as can_write_letter, but also true while the project is"
+        " suspended: such letters are held as an 'Exception' and"
+        " auto-resubmitted once the project reactivates (see"
+        " sbc_compassion correspondence.create_commkit()). Portal views"
+        " must read this field instead of can_write_letter directly, or a"
+        " terminated-but-in-grace-period sponsorship whose project is"
+        " currently suspended will incorrectly show as fully ended.",
+    )
     my2_signup = fields.Boolean(
         string="MyCompassion Signup",
         readonly=True,
@@ -30,6 +41,13 @@ class RecurringContract(models.Model):
         " MyCompassion signup wizard. Such sponsors are invited to create"
         " their portal account once the sponsorship is confirmed.",
     )
+
+    @api.depends("can_write_letter")
+    def _compute_can_write_letter_grace(self):
+        for contract in self:
+            contract.can_write_letter_grace = contract.with_context(
+                allow_during_suspension=True
+            ).can_write_letter
 
     def _compute_can_show_on_my_compassion(self):
         """

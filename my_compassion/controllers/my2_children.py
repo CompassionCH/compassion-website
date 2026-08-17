@@ -345,13 +345,13 @@ class MyCompassionChildrenController(http.Controller):
                 "active_sponsorships": sponsorships.filtered(
                     # all not terminated or terminated within grace period or exit comm not sent yet
                     lambda s: s.state != "terminated"
-                    or s.can_write_letter
+                    or s.can_write_letter_grace
                     or not s.exit_communication_sent
                 ),
                 "ended_sponsorships": sponsorships.filtered(
                     # terminated and not within grace period, excluding specific end reasons and exit comm sent
                     lambda s: s.state == "terminated"
-                    and not s.can_write_letter
+                    and not s.can_write_letter_grace
                     and s.exit_communication_sent
                     and s.end_reason_id.name
                     not in ["Subreject", "Mistake from our staff"]

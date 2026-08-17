@@ -93,13 +93,7 @@ class CompassionChild(models.Model):
         partner = self.env.user.partner_id
         for child in self:
             sponsorship = child.my_sponsorship_id
-            # Letters remain allowed while the project is suspended: they are
-            # held as an "Exception" and auto-resubmitted once it reactivates
-            # (see sbc_compassion correspondence.create_commkit()).
-            can_write_letter = sponsorship.with_context(
-                allow_during_suspension=True
-            ).can_write_letter
-            child.can_i_write_letter = can_write_letter and (
+            child.can_i_write_letter = sponsorship.can_write_letter_grace and (
                 partner == sponsorship.correspondent_id
                 or partner.portal_sponsorships == "all_info"
             )
