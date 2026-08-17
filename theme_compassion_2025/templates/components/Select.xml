@@ -13,6 +13,8 @@
     Props:
     - (t-out): Placeholder for injecting <option> elements dynamically.
     - select_class (string, optional): styling classes to the select element
+    - data_field (string, optional): rendered as a data-field attribute on the
+      select element, for change handlers that map controls to model fields
     - CSS Classes:
         - custom-select: Applied to the <select> element for custom styling.
         - select-divider: Visual separator in the UI.
@@ -29,6 +31,7 @@
         t-att-name="name"
         t-att-id="id"
         t-att-required="required"
+        t-att-data-field="data_field"
       >
         <t t-out="0" />
       </select>

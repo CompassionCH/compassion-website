@@ -63,12 +63,11 @@
   overflow: hidden;
 }
 /* Preview on the letter */
-.my2-envelope .env-letter iframe {
-  border: none;
-  transform: scale(0.1) translateY(-10%) translateX(-5%);
-  transform-origin: top left;
-  width: 1200%;
-  height: 1200%;
+.my2-envelope .env-letter img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
 }
 /* Envelope animation */
 .open .env-flap {

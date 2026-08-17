@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo noupdate="1">
+  <record id="cron_charge_digital_invoices" model="ir.cron">
+    <field name="name">Charge digital sponsorship invoices</field>
+    <field name="model_id" ref="recurring_contract.model_recurring_contract_group" />
+    <field name="state">code</field>
+    <field name="code">model._cron_charge_digital_invoices()</field>
+    <field name="interval_number">1</field>
+    <field name="interval_type">days</field>
+    <field name="user_id" ref="base.user_root" />
+    <field name="active" eval="True" />
+  </record>
+  <record id="cron_sweep_stale_pending_charges" model="ir.cron">
+    <field name="name">Sweep stale pending digital charges</field>
+    <field name="model_id" ref="recurring_contract.model_recurring_contract_group" />
+    <field name="state">code</field>
+    <field name="code">model._cron_sweep_stale_pending_charges()</field>
+    <field name="interval_number">1</field>
+    <field name="interval_type">days</field>
+    <field name="user_id" ref="base.user_root" />
+    <field name="active" eval="True" />
+  </record>
+  <record id="cron_digital_fixit_escalation" model="ir.cron">
+    <field name="name">Escalate digital payment fix-it dunning</field>
+    <field name="model_id" ref="recurring_contract.model_recurring_contract" />
+    <field name="state">code</field>
+    <field name="code">model._cron_digital_fixit_escalation()</field>
+    <field name="interval_number">1</field>
+    <field name="interval_type">days</field>
+    <field name="user_id" ref="base.user_root" />
+    <field name="active" eval="True" />
+  </record>
+  <record id="param_fixit_escalation_days" model="ir.config_parameter">
+    <field name="key">my_compassion.fixit_escalation_days</field>
+    <field name="value">14</field>
+  </record>
+  <record id="param_fixit_episode_days" model="ir.config_parameter">
+    <field name="key">my_compassion.fixit_episode_days</field>
+    <field name="value">60</field>
+  </record>
+</odoo>

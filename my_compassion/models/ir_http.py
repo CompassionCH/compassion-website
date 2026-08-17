@@ -3,11 +3,6 @@ from odoo.http import request
 
 from odoo.addons.website.models.ir_http import ModelConverter
 
-# Core sets "frontend_lang" as a session cookie, which the native app's WebView
-# clears on a full close, so the chosen language reverts on reopen. Persist it
-# for a year so the user's language choice survives.
-FRONTEND_LANG_MAX_AGE = 365 * 24 * 60 * 60
-
 
 class SafeModelConverter(ModelConverter):
     """Model converter that builds its slug URL with sudo, so slugifying a
@@ -32,16 +27,9 @@ class IrHttp(models.AbstractModel):
         return mods + ["my_compassion"]
 
     @classmethod
-    def _dispatch(cls, endpoint):
-        result = super()._dispatch(endpoint)
-        # Re-set the frontend language cookie with an expiry so it persists
-        # across a full app close (core sets it as a session-only cookie).
-        if (
-            request.is_frontend
-            and getattr(request, "lang", False)
-            and hasattr(result, "set_cookie")
-        ):
-            result.set_cookie(
-                "frontend_lang", request.lang.code, max_age=FRONTEND_LANG_MAX_AGE
-            )
-        return result
+    def _frontend_pre_dispatch(cls):
+        super()._frontend_pre_dispatch()
+        # Use default language if browser language is not supported
+        lang = request.env.context.get("lang")
+        if lang and not request.env["res.lang"]._get_data(code=lang):
+            request.update_context(lang=request.website.default_lang_id.code)

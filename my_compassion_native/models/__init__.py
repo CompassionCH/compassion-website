@@ -7,4 +7,11 @@
 #
 ##############################################################################
 
-from . import compassion_child, correspondence, device_token, res_user
+from . import (
+    compassion_child,
+    correspondence,
+    device_token,
+    res_config_settings,
+    res_user,
+    website,
+)

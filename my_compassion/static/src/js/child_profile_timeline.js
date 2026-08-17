@@ -35,7 +35,7 @@ whenReady(() => {
   };
 
   const limit = getLimitBasedOnContainer(); // Number of items to fetch per request
-  let offset = limit; // Initial offset for loading data
+  let offset = container?.querySelectorAll(".cd-timeline__block").length || 0;
   let isLoading = false; // Prevents multiple simultaneous requests
   let allLoaded = false; // Flags when all content has been loaded
 

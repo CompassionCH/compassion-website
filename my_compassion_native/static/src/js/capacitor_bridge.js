@@ -2,24 +2,22 @@
    This allows us to apply native-specific styles and behaviors.
  */
 (function () {
-    "use strict";
+  function initCapacitorFixes() {
+    if (!window.Capacitor || window.Capacitor.getPlatform() === "web") return;
 
-    function initCapacitorFixes() {
-        if (!window.Capacitor || window.Capacitor.getPlatform() === "web") return;
+    console.log("Capacitor Bridge: Native environment detected. Applying fixes...");
+    document.body.classList.add("is-native-app");
 
-        console.log("Capacitor Bridge: Native environment detected. Applying fixes...");
-        document.body.classList.add("is-native-app");
+    document.querySelectorAll('meta[name="viewport"]').forEach(function (vp) {
+      if (vp.content.indexOf("viewport-fit=cover") === -1) {
+        vp.content += ", viewport-fit=cover";
+      }
+    });
+  }
 
-        document.querySelectorAll('meta[name="viewport"]').forEach(function (vp) {
-            if (vp.content.indexOf("viewport-fit=cover") === -1) {
-                vp.content += ", viewport-fit=cover";
-            }
-        });
-    }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initCapacitorFixes);
-    } else {
-        initCapacitorFixes();
-    }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initCapacitorFixes);
+  } else {
+    initCapacitorFixes();
+  }
 })();

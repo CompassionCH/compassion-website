@@ -6,31 +6,26 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+import base64
 import calendar
 import json
 import logging
 from datetime import date
 
 import babel
+from werkzeug.exceptions import NotFound
 
 from odoo import _, fields, http
 from odoo.exceptions import AccessError
 from odoo.http import request
 
 from .my2_children import MyCompassionChildrenController
+from .website_utils import safe_int
 
 _logger = logging.getLogger(__name__)
 
 
 class MyCompassionCorrespondenceController(MyCompassionChildrenController):
-    # Helper function to safely parse integers from query params
-    @staticmethod
-    def _safe_int(value, default):
-        try:
-            return int(value)
-        except (ValueError, TypeError):
-            return default
-
     @http.route(
         [
             "/my2/children/letters",
@@ -49,16 +44,16 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         current_year = date.today().year
 
         # Filtering params
-        page = self._safe_int(kwargs.get("page"), 1)
-        year_from = self._safe_int(kwargs.get("year_from"), 1900)
-        year_to = self._safe_int(kwargs.get("year_to"), current_year)
-        month_from = self._safe_int(kwargs.get("month_from"), 1)
-        month_to = self._safe_int(kwargs.get("month_to"), 12)
+        page = max(1, safe_int(kwargs.get("page"), 1))
+        year_from = max(1, min(safe_int(kwargs.get("year_from"), 1900), 9999))
+        year_to = max(1, min(safe_int(kwargs.get("year_to"), current_year), 9999))
+        month_from = max(1, min(safe_int(kwargs.get("month_from"), 1), 12))
+        month_to = max(1, min(safe_int(kwargs.get("month_to"), 12), 12))
         letter_type = kwargs.get("type")
         sort_order = kwargs.get("sort", "newest")
         unread_filter = kwargs.get("unread", "all")
         nr_filters_applied = 0
-        child_id = self._safe_int(kwargs.get("child_id"), None)
+        child_id = safe_int(kwargs.get("child_id"), None)
         child = request.env["compassion.child"].browse(child_id)
 
         # Build filter date range
@@ -175,6 +170,39 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         return {"status": "error", "message": "Not found or unauthorized"}
 
     @http.route(
+        "/my2/letter_preview/<string:uuid>",
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def my2_letter_preview(self, uuid, **kwargs):
+        """Serve the first letter page as a JPEG for the card preview.
+        Faster and more efficient than rendering the whole PDF.
+        """
+        letter = (
+            request.env["correspondence"].sudo().search([("uuid", "=", uuid)], limit=1)
+        )
+        if not letter or not letter.page_ids:
+            raise NotFound()
+        try:
+            image_b64 = letter.page_ids[0].fetch_image()
+        except Exception:
+            # Image source (Cloudinary/GMC) unreachable: show a blank preview
+            # rather than a 500 — the preview must never break the page.
+            _logger.warning("Letter preview unavailable for %s", uuid, exc_info=True)
+            image_b64 = None
+        if not image_b64:
+            raise NotFound()
+        return request.make_response(
+            base64.b64decode(image_b64),
+            headers=[
+                ("Content-Type", "image/jpeg"),
+                ("Cache-Control", "private, max-age=86400"),
+            ],
+        )
+
+    @http.route(
         "/my2/children/letters/new",
         type="http",
         auth="user",
@@ -186,7 +214,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
         if not partner.is_writer:
             return request.redirect("/my2/children/")
 
-        child_id = self._safe_int(kwargs.get("child_id"), None)
+        child_id = safe_int(kwargs.get("child_id"), None)
         child = request.env["compassion.child"].browse(child_id)
         sponsorships = partner.sponsorship_ids.filtered("child_id.can_i_write_letter")
 
@@ -347,7 +375,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             "user_id": request.env.user.id,
             "state": "draft",
         }
-        generator_id = self._safe_int(post.get("generator_id"), 0)
+        generator_id = safe_int(post.get("generator_id"), 0)
         if generator_id:
             letter_generator = (
                 request.env["correspondence.s2b.generator"].browse(generator_id).sudo()
@@ -416,10 +444,15 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             # action_preview generates the draft letter synchronously; the
             # rendered HTML preview is then available on the generator.
             generator.action_preview()
+            letter = generator.letter_ids[:1]
+            # Portal users can't reach /report/pdf (ir.attachment ACL); the
+            # public+sudo /b2s_image route serves the letter PDF by uuid.
+            preview_pdf_url = f"/b2s_image?id={letter.uuid}" if letter else ""
             return {
                 "generator_id": generator.id,
                 "status": "done",
                 "preview_html": generator.preview or "",
+                "preview_pdf_url": preview_pdf_url,
             }
         if mode == "send":
             # generate_letters enqueues the OCA queue job; the client polls
@@ -488,7 +521,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             partner = request.env.user.partner_id
             child = request.env["compassion.child"]
             try:
-                child_id = self._safe_int(kw.get("child_id"), False)
+                child_id = safe_int(kw.get("child_id"), False)
                 if child_id:
                     child = request.env["compassion.child"].browse(child_id)
                     child.exists().ensure_one()

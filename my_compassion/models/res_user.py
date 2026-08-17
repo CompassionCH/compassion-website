@@ -11,8 +11,6 @@ import logging
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
-from odoo.addons.auth_signup.models.res_partner import now
-
 _logger = logging.getLogger(__name__)
 
 
@@ -71,10 +69,9 @@ class ResUsers(models.Model):
                 user.login,
                 selected_partner.name,
             )
+            # v18 derives the signup token and URL from signup_type, so only
+            # that has to follow the partner.
             selected_partner.signup_type = old_partner.signup_type
-            selected_partner.signup_token = old_partner.signup_token
-            selected_partner.signup_expiration = old_partner.signup_expiration
-            selected_partner.signup_url = old_partner.signup_url
             old_partner.unlink()
             _logger.info("Partner deleted.")
 
@@ -100,7 +97,7 @@ class ResUsers(models.Model):
         values.pop("privacy_policy", None)
 
         # Call the superclass's signup method
-        dbname, login, password = super().signup(values, token)
+        login, password = super().signup(values, token)
 
         if not token:
             email = values.get("email") or values.get("login")
@@ -111,7 +108,7 @@ class ResUsers(models.Model):
                 _logger.error(
                     "Signup failed: No user found with login '%s' after signup.", login
                 )
-                return dbname, login, password  # Or handle as appropriate
+                return login, password  # Or handle as appropriate
 
             # Ensure changes are flushed and committed before scheduling the job
             self.env.flush_all()
@@ -125,7 +122,7 @@ class ResUsers(models.Model):
                 user.login,
             )
 
-        return dbname, login, password
+        return login, password
 
     def action_reset_password(self):
         """Create signup token for each user and send their signup URL
@@ -138,11 +135,7 @@ class ResUsers(models.Model):
             raise UserError(_("You cannot perform this action on an archived user."))
 
         # Prepare reset password signup
-        create_mode = bool(self.env.context.get("create_user"))
-        expiration = False if create_mode else now(days=+1)
-        self.mapped("partner_id").signup_prepare(
-            signup_type="reset", expiration=expiration
-        )
+        self.mapped("partner_id").signup_prepare(signup_type="reset")
 
         # Retrieve the communication config
         comm_config = self.env.ref(
