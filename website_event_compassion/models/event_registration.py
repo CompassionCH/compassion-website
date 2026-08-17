@@ -26,6 +26,17 @@ _logger = logging.getLogger(__name__)
 MIN_PROFILE_PICTURE_LONG_SIDE = 1200
 MIN_PROFILE_PICTURE_SHORT_SIDE = 800
 
+# Cap on the stored picture, to keep the filestore reasonable.
+# INVARIANT: MAX_DIMENSION / MAX_RATIO >= MIN_SHORT_SIDE. fields.Image resizes
+# before constraints run and preserves the ratio, so a capped picture has a
+# short side of MAX_DIMENSION / ratio: rejecting ratios above MAX_RATIO is what
+# keeps the cap from rejecting pictures that were valid. Lower one, lower both.
+MAX_PROFILE_PICTURE_DIMENSION = 2400
+MAX_PROFILE_PICTURE_RATIO = 3
+
+# Set when the picture is not a user upload (duplicate of an existing record).
+SKIP_PROFILE_PICTURE_CHECK = "skip_profile_picture_check"
+
 
 class EventRegistration(models.Model):
     _inherit = [
@@ -102,11 +113,14 @@ class EventRegistration(models.Model):
     host_url = fields.Char(compute="_compute_host_url")
     sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
     event_name = fields.Char(related="event_id.name", tracking=True)
-    # Stored without downscaling: the picture is meant to be printed on
-    # fundraising material, and the resolution check below must see the
-    # uploaded resolution. Web pages request a resized version through
-    # /web/image/.
-    profile_picture = fields.Image(readonly=False, string="Profile picture")
+    # Capped high, not at display size: the picture is printed on fundraising
+    # material. Web pages request a smaller version through /web/image/.
+    profile_picture = fields.Image(
+        readonly=False,
+        string="Profile picture",
+        max_width=MAX_PROFILE_PICTURE_DIMENSION,
+        max_height=MAX_PROFILE_PICTURE_DIMENSION,
+    )
     profile_name = fields.Char()
     ambassador_quote = fields.Text()
     criminal_record = fields.Binary(
@@ -426,13 +440,16 @@ class EventRegistration(models.Model):
     ##########################################################################
     @api.constrains("profile_picture")
     def _check_profile_picture_min_size(self):
-        """Reject profile pictures whose resolution is too low to be
-        printed on fundraising material.
+        """Reject profile pictures that cannot be printed on fundraising
+        material, being either too small or too elongated.
 
-        The field is stored without downscaling, so the value checked here is
-        the one that was uploaded. ``bin_size`` is disabled because it would
-        otherwise yield the file size instead of its content.
+        The ratio is checked first: that is what keeps the size check exact
+        despite the cap (see the invariant on MAX_PROFILE_PICTURE_DIMENSION).
+        ``bin_size`` is disabled because it would otherwise yield the file size
+        instead of the image content.
         """
+        if self.env.context.get(SKIP_PROFILE_PICTURE_CHECK):
+            return
         for registration in self.with_context(bin_size=False):
             picture_b64 = registration.profile_picture
             if not picture_b64:
@@ -444,6 +461,18 @@ class EventRegistration(models.Model):
                 # Let the Image field's own validation handle corrupted files
                 continue
             short_side, long_side = sorted((width, height))
+            if long_side > short_side * MAX_PROFILE_PICTURE_RATIO:
+                raise ValidationError(
+                    _(
+                        "The picture you uploaded is too elongated"
+                        " (%(width)s x %(height)s px). Its longest side must not"
+                        " exceed %(ratio)s times its shortest side. Please crop it"
+                        " closer to the person before uploading it.",
+                        width=width,
+                        height=height,
+                        ratio=MAX_PROFILE_PICTURE_RATIO,
+                    )
+                )
             if (
                 short_side < MIN_PROFILE_PICTURE_SHORT_SIDE
                 or long_side < MIN_PROFILE_PICTURE_LONG_SIDE
@@ -452,15 +481,24 @@ class EventRegistration(models.Model):
                     _(
                         "The picture you uploaded is too small"
                         " (%(width)s x %(height)s px). Please upload a picture of"
-                        " at least %(long)s x %(short)s px (portrait or landscape)"
-                        " so it also looks good once printed on fundraising"
-                        " material.",
+                        " at least %(long)s px on its longest side and %(short)s px"
+                        " on its shortest side (portrait or landscape) so it also"
+                        " looks good once printed on fundraising material.",
                         width=width,
                         height=height,
                         long=MIN_PROFILE_PICTURE_LONG_SIDE,
                         short=MIN_PROFILE_PICTURE_SHORT_SIDE,
                     )
                 )
+
+    def copy(self, default=None):
+        # Pictures stored before the check existed are below the threshold:
+        # duplicating such a record must not blame the user for an upload they
+        # never made.
+        return super(
+            EventRegistration,
+            self.with_context(**{SKIP_PROFILE_PICTURE_CHECK: True}),
+        ).copy(default)
 
     def write(self, vals):
         if "stage_id" in vals:
