@@ -30,9 +30,12 @@ MIN_PROFILE_PICTURE_SHORT_SIDE = 800
 # INVARIANT: MAX_DIMENSION / MAX_RATIO >= MIN_SHORT_SIDE. fields.Image resizes
 # before constraints run and preserves the ratio, so a capped picture has a
 # short side of MAX_DIMENSION / ratio: rejecting ratios above MAX_RATIO is what
-# keeps the cap from rejecting pictures that were valid. Lower one, lower both.
+# keeps a capped picture above the printable minimum.
+# The ratio is deliberately kept well below MAX_DIMENSION / MIN_SHORT_SIDE so
+# the invariant still holds if the effective cap turns out to be lower than
+# MAX_DIMENSION: at 2:1 it holds down to a 1600 px cap.
 MAX_PROFILE_PICTURE_DIMENSION = 2400
-MAX_PROFILE_PICTURE_RATIO = 3
+MAX_PROFILE_PICTURE_RATIO = 2
 
 # Set when the picture is not a user upload (duplicate of an existing record).
 SKIP_PROFILE_PICTURE_CHECK = "skip_profile_picture_check"
@@ -443,10 +446,11 @@ class EventRegistration(models.Model):
         """Reject profile pictures that cannot be printed on fundraising
         material, being either too small or too elongated.
 
-        The ratio is checked first: that is what keeps the size check exact
-        despite the cap (see the invariant on MAX_PROFILE_PICTURE_DIMENSION).
-        ``bin_size`` is disabled because it would otherwise yield the file size
-        instead of the image content.
+        The ratio is checked first: rejecting elongated pictures is what keeps
+        the cap from storing a short side below the printable minimum (see the
+        invariant on MAX_PROFILE_PICTURE_DIMENSION). ``bin_size`` is disabled
+        because it would otherwise yield the file size instead of the image
+        content.
         """
         if self.env.context.get(SKIP_PROFILE_PICTURE_CHECK):
             return
