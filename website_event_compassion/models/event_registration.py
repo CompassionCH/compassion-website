@@ -26,15 +26,16 @@ _logger = logging.getLogger(__name__)
 MIN_PROFILE_PICTURE_LONG_SIDE = 1200
 MIN_PROFILE_PICTURE_SHORT_SIDE = 800
 
-# Cap on the stored picture, to keep the filestore reasonable.
-# INVARIANT: MAX_DIMENSION / MAX_RATIO >= MIN_SHORT_SIDE. fields.Image resizes
-# before constraints run and preserves the ratio, so a capped picture has a
-# short side of MAX_DIMENSION / ratio: rejecting ratios above MAX_RATIO is what
-# keeps a capped picture above the printable minimum.
-# The ratio is deliberately kept well below MAX_DIMENSION / MIN_SHORT_SIDE so
-# the invariant still holds if the effective cap turns out to be lower than
-# MAX_DIMENSION: at 2:1 it holds down to a 1600 px cap.
-MAX_PROFILE_PICTURE_DIMENSION = 2400
+# Cap on the stored picture, to keep the filestore reasonable. It matches
+# base.image_autoresize_max_px (1920x1920 by default), which ir.attachment
+# applies to every stored image on top of this one: capping lower here would
+# waste resolution, capping higher would make the constraint validate a picture
+# larger than the one actually kept.
+# INVARIANT: MAX_DIMENSION / MAX_RATIO >= MIN_SHORT_SIDE. Resizing preserves the
+# ratio, so a capped picture has a short side of MAX_DIMENSION / ratio:
+# rejecting ratios above MAX_RATIO is what keeps a capped picture above the
+# printable minimum. It must hold for whichever of the two caps is lower.
+MAX_PROFILE_PICTURE_DIMENSION = 1920
 MAX_PROFILE_PICTURE_RATIO = 2
 
 # Set when the picture is not a user upload (duplicate of an existing record).
@@ -117,7 +118,8 @@ class EventRegistration(models.Model):
     sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
     event_name = fields.Char(related="event_id.name", tracking=True)
     # Capped high, not at display size: the picture is printed on fundraising
-    # material. Web pages request a smaller version through /web/image/.
+    # material. Web pages request a smaller version through /web/image/. The cap
+    # also makes the constraint read the very picture that ends up stored.
     profile_picture = fields.Image(
         readonly=False,
         string="Profile picture",
