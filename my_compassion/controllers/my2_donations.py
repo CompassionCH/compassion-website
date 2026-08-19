@@ -376,20 +376,21 @@ class MyCompassionDonationsController(CustomerPortal):
         the app cannot rely on being redirected back to a confirmation page. It
         polls this route instead, which asks PostFinance directly rather than
         waiting for the sweep cron (T3378).
+
+        The transaction comes from the session key core sets when the donor hit
+        Pay, so this only ever reports on the checkout this browser started -
+        the last transaction of the partner could be an older payment, or a
+        second user of a shared partner.
         """
-        tx = (
-            request.env["payment.transaction"]
-            .sudo()
-            .search(
-                [
-                    ("partner_id", "=", request.env.user.partner_id.id),
-                    ("acquirer_id.provider", "=", "postfinance"),
-                ],
-                order="id desc",
-                limit=1,
-            )
-        )
-        if not tx:
+        tx_id = request.session.get("__website_sale_last_tx_id")
+        if not tx_id:
+            return {"state": False}
+        tx = request.env["payment.transaction"].sudo().browse(tx_id).exists()
+        if (
+            not tx
+            or tx.partner_id != request.env.user.partner_id
+            or tx.acquirer_id.provider != "postfinance"
+        ):
             return {"state": False}
 
         # Only chase a payment that can still move, and only a recent one, so a
