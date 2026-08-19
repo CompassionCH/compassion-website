@@ -21,6 +21,10 @@
         <t t-call="website.layout">
           <t t-set="message">message</t>
           <t t-set="params" t-value="request.params" />
+          <t
+            t-set="next_url"
+            t-value="website._get_safe_local_url(params.get('next_url'))"
+          />
           <div id="wrap">
             <div class="oe_structure" id="oe_structure_thanks_header" />
             <div class="container mt-4">
@@ -55,8 +59,8 @@
                       </h5>
                       <p class="text-center">We will get back to you shortly.</p>
                       <a
-                        t-att-href="params.get('next_url')"
-                        t-if="params.get('next_url')"
+                        t-att-href="next_url"
+                        t-if="next_url"
                         class="mt-2 btn btn-outline-primary btn-large w-100"
                       >Continue
                                             </a>

@@ -21,4 +21,5 @@ from . import (
     res_partner,
     sale_order_line,
     res_lang,
+    website,
 )
