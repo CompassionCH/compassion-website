@@ -4,5 +4,6 @@ from . import (
     test_digital_seam,
     test_donation_flow,
     test_multicompany,
+    test_recurring_instrument,
     test_theme_apply,
 )

@@ -121,6 +121,11 @@ class TestDigitalSeam(DigitalSeamCase):
         provider = self.env["payment.provider"]
         self.assertFalse(provider._is_tokenization_required())
         self.assertTrue(provider._is_tokenization_required(my2_sponsorship=True))
+        # the payment form rendering cannot pass the kwarg, it sends the
+        # flag through the environment instead
+        self.assertTrue(
+            provider.with_context(my2_sponsorship=True)._is_tokenization_required()
+        )
 
     def test_done_tx_token_lands_on_group(self):
         contract = self._make_digital_contract()
@@ -656,8 +661,16 @@ class TestDigitalSeam(DigitalSeamCase):
         )
 
     def test_digital_revert_cancels_abandoned(self):
+        # the shared dev database drifts: a held child of a live signup is
+        # genuinely not available any more, and holds expire as wall clock
+        # time passes. Only a free child with a still-valid hold works here.
         child = self.env["compassion.child"].search(
-            [("state", "=", "N"), ("hold_id", "!=", False)], limit=1
+            [
+                ("state", "=", "N"),
+                ("sponsor_id", "=", False),
+                ("hold_id.expiration_date", ">", fields.Datetime.now()),
+            ],
+            limit=1,
         )
         if not child:
             # stage one: the shared dev database may have no held child left

@@ -8,6 +8,7 @@ from odoo.addons.payment import utils as payment_utils
 from odoo.addons.payment.controllers import portal as payment_portal
 
 from ..models.contract_group import UPDATE_CARD_TOKEN_SCOPE
+from .website_utils import ensure_recurring_instrument
 
 
 class MyCompassionUpdateCard(payment_portal.PaymentPortal):
@@ -155,16 +156,7 @@ class MyCompassionUpdateCard(payment_portal.PaymentPortal):
     def _finalize_update_card_tx(self, tx_sudo, landing_route):
         """The created transaction must actually replace the card, report
         its own outcome on the landing page, and never linger unfinished."""
-        if not tx_sudo.tokenize and not tx_sudo.token_id:
-            # a crafted request may pick a payment method that cannot be
-            # saved: the charge would succeed but no card would replace
-            # the failing one
-            raise ValidationError(
-                _(
-                    "The selected payment method cannot be saved for monthly"
-                    " payments. Please pay by card."
-                )
-            )
+        ensure_recurring_instrument(tx_sudo)
         tx_sudo.landing_route = f"{landing_route}&tx_id={tx_sudo.id}"
         # unfinished checkouts would block the group's invoices forever
         tx_sudo.with_delay_sh(
@@ -215,23 +207,28 @@ class MyCompassionUpdateCard(payment_portal.PaymentPortal):
         /payment/pay page builds)."""
         partner = group.partner_id
         currency = invoices[0].currency_id if invoices else group.company_id.currency_id
-        providers_sudo = provider.sudo()
+        # The context flag reaches the provider inline form rendering
+        # through these recordsets. It tells _is_tokenization_required
+        # that this page must save the card (see that method).
+        providers_sudo = provider.sudo().with_context(my2_sponsorship=True)
         payment_methods_sudo = (
             request.env["payment.method"]
             .sudo()
+            .with_context(my2_sponsorship=True)
             ._get_compatible_payment_methods(
                 providers_sudo.ids,
                 partner.id,
                 currency_id=currency.id,
                 force_tokenization=True,
-                my2_sponsorship=True,
             )
         )
+        amount = sum(invoices.mapped("amount_residual"))
         return {
             "group": group,
             "current_card": group.payment_token_id,
+            "mode": "payment" if amount else "validation",
             "reference_prefix": None,
-            "amount": sum(invoices.mapped("amount_residual")),
+            "amount": amount,
             "currency": currency,
             "partner_id": partner.id,
             "providers_sudo": providers_sudo,

@@ -6,7 +6,42 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+import logging
+
+from odoo import _
+from odoo.exceptions import ValidationError
 from odoo.http import request
+
+from odoo.addons.payment.controllers.post_processing import PaymentPostProcessing
+
+_logger = logging.getLogger(__name__)
+
+
+def ensure_recurring_instrument(tx_sudo):
+    """Refuse a transaction that would leave no saved card behind.
+
+    The my2 pages exist to set up recurring payments, so their transaction
+    must either tokenize or pay with an already saved token. A crafted
+    request may pick a payment method that cannot be saved: the charge
+    would succeed but the monthly off-session charges would have no
+    instrument. The raise rolls the transaction back, so the session
+    pointer that monitor_transaction left on it is dropped too.
+    """
+    if tx_sudo.tokenize or tx_sudo.token_id:
+        return
+    _logger.warning(
+        "Transaction %s on provider %s would not save a payment method."
+        " Check allow_tokenization on the provider.",
+        tx_sudo.reference,
+        tx_sudo.provider_id.name,
+    )
+    request.session.pop(PaymentPostProcessing.MONITORED_TX_ID_KEY, None)
+    raise ValidationError(
+        _(
+            "The selected payment method cannot be saved for monthly"
+            " payments. Please pay by card."
+        )
+    )
 
 
 def resolve_host_my2_website():
