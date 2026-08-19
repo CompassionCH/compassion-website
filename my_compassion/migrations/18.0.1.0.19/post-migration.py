@@ -21,7 +21,8 @@ def migrate(cr, version):
         """
         UPDATE correspondence_s2b_generator
         SET generation_mode = 'single'
-        WHERE user_id IS NOT NULL and child_id IS NOT NULL;
+        WHERE user_id IS NOT NULL and child_id IS NOT NULL
+        RETURNING id;
         """
     )
     fixed = [row[0] for row in cr.fetchall()]
