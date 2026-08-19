@@ -136,7 +136,7 @@ class ProductTemplate(models.Model):
         product_limits = (
             self.env["gift.threshold.settings"]
             .sudo()
-            .search([("product_id", "=", self.id)], limit=1)
+            .search([("gift_type_id", "=", self.sponsorship_gift_type_id.id)], limit=1)
         )
         if product_limits:
             limits["min_amount"] = product_limits.currency_id._convert(
@@ -155,7 +155,7 @@ class ProductTemplate(models.Model):
             if product_limits.gift_frequency:
                 domain = [
                     ("partner_id", "=", partner.id),
-                    ("gift_type_id", "=", product_limits.gift_type_id.id),
+                    ("gift_type_id", "=", self.sponsorship_gift_type_id.id),
                 ]
 
                 if sponsorship_id:
