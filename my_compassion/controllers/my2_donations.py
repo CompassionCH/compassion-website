@@ -204,7 +204,8 @@ class MyCompassionDonationsController(CustomerPortal):
         # Get the current sales order and register it as last order
         # (usually done in a confirmation step that we don't have)
         order = request.website.sale_get_order()
-        request.session["sale_last_order_id"] = order.id
+        if order:
+            request.session["sale_last_order_id"] = order.id
 
         # Fetch gift thresholds
         limits = request.env["gift.threshold.settings"].sudo().search([])
