@@ -177,7 +177,7 @@ class ContractGroup(models.Model):
         if config["test_enable"]:
             self.env.flush_all()
         else:
-            self.env.cr.commit()
+            self.env.cr.commit()  # pylint: disable=invalid-commit
 
     @api.model
     def _charge_cursor_rollback(self):
