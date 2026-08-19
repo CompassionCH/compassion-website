@@ -1,0 +1,20 @@
+.my2-payment-banner {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000000;
+    padding: 1rem calc(1rem + env(safe-area-inset-right)) calc(1rem + env(safe-area-inset-bottom))
+        calc(1rem + env(safe-area-inset-left));
+    text-align: center;
+    font-weight: 600;
+    color: #fff;
+
+    &.my2-payment-banner-pending {
+        background-color: #2a5eec;
+    }
+
+    &.my2-payment-banner-failed {
+        background-color: #b3261e;
+    }
+}

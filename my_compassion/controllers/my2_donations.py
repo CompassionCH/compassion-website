@@ -8,6 +8,7 @@
 #
 ##############################################################################
 
+import logging
 import math
 from collections import defaultdict
 from datetime import datetime, timedelta
@@ -19,6 +20,8 @@ from odoo.http import request
 from odoo.tools.translate import _
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
+
+_logger = logging.getLogger(__name__)
 
 
 class MyCompassionDonationsController(CustomerPortal):
@@ -358,6 +361,66 @@ class MyCompassionDonationsController(CustomerPortal):
                 },
             )
         return request.redirect("/my2/dashboard")
+
+    @http.route(
+        "/my2/payment/status",
+        type="json",
+        auth="user",
+        website=True,
+        methods=["POST"],
+    )
+    def my2_payment_status(self, **post):
+        """Live status of the donor's last payment, for the mobile app.
+
+        The payment runs in an external browser whose session Odoo never sees, so
+        the app cannot rely on being redirected back to a confirmation page. It
+        polls this route instead, which asks PostFinance directly rather than
+        waiting for the sweep cron (T3378).
+
+        The transaction comes from the session key core sets when the donor hit
+        Pay, so this only ever reports on the checkout this browser started -
+        the last transaction of the partner could be an older payment, or a
+        second user of a shared partner.
+        """
+        tx_id = request.session.get("__website_sale_last_tx_id")
+        if not tx_id:
+            return {"state": False}
+        tx = request.env["payment.transaction"].sudo().browse(tx_id).exists()
+        if (
+            not tx
+            or tx.partner_id != request.env.user.partner_id
+            or tx.acquirer_id.provider != "postfinance"
+        ):
+            return {"state": False}
+
+        # Only chase a payment that can still move, and only a recent one, so a
+        # long-abandoned transaction cannot make the app call the gateway forever.
+        recent = tx.create_date > fields.Datetime.subtract(
+            fields.Datetime.now(), hours=2
+        )
+        if recent and tx.state not in ("done", "cancel", "error"):
+            try:
+                tx._postfinance_form_validate(data={})
+                if tx.state == "done" and not tx.is_processed:
+                    tx._post_process_after_done()
+            except Exception:
+                _logger.exception(
+                    "Could not refresh PostFinance transaction %s", tx.reference
+                )
+
+        order = tx.sale_order_ids[:1]
+        return {
+            "state": tx.state,
+            "seconds_ago": int(
+                (fields.Datetime.now() - tx.create_date).total_seconds()
+            ),
+            "gateway_state": tx.postfinance_state,
+            "processing": tx.state in ("draft", "pending"),
+            "amount": tx.amount,
+            "currency": tx.currency_id.name,
+            "order": order.name,
+            "reference": tx.reference,
+        }
 
     def _get_gift_eligible_sponsorships(self, partner):
         """
