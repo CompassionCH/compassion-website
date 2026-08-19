@@ -6,13 +6,40 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+import base64
+import binascii
+import io
 import logging
 
+from PIL import Image as PILImage
+
 from odoo import SUPERUSER_ID, _, api, fields, models
+from odoo.exceptions import ValidationError
 from odoo.http import request
 from odoo.tools import index_exists
 
 _logger = logging.getLogger(__name__)
+
+# Minimum resolution required for the profile picture so that it still looks
+# good once printed on fundraising material (flyers, posters, ...).
+# The image is accepted in portrait or landscape orientation.
+MIN_PROFILE_PICTURE_LONG_SIDE = 1200
+MIN_PROFILE_PICTURE_SHORT_SIDE = 800
+
+# Cap on the stored picture, to keep the filestore reasonable. It matches
+# base.image_autoresize_max_px (1920x1920 by default), which ir.attachment
+# applies to every stored image on top of this one: capping lower here would
+# waste resolution, capping higher would make the constraint validate a picture
+# larger than the one actually kept.
+# INVARIANT: MAX_DIMENSION / MAX_RATIO >= MIN_SHORT_SIDE. Resizing preserves the
+# ratio, so a capped picture has a short side of MAX_DIMENSION / ratio:
+# rejecting ratios above MAX_RATIO is what keeps a capped picture above the
+# printable minimum. It must hold for whichever of the two caps is lower.
+MAX_PROFILE_PICTURE_DIMENSION = 1920
+MAX_PROFILE_PICTURE_RATIO = 2
+
+# Set when the picture is not a user upload (duplicate of an existing record).
+SKIP_PROFILE_PICTURE_CHECK = "skip_profile_picture_check"
 
 
 class EventRegistration(models.Model):
@@ -90,8 +117,14 @@ class EventRegistration(models.Model):
     host_url = fields.Char(compute="_compute_host_url")
     sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
     event_name = fields.Char(related="event_id.name", tracking=True)
+    # Capped high, not at display size: the picture is printed on fundraising
+    # material. Web pages request a smaller version through /web/image/. The cap
+    # also makes the constraint read the very picture that ends up stored.
     profile_picture = fields.Image(
-        readonly=False, string="Profile picture", max_width=500, max_height=500
+        readonly=False,
+        string="Profile picture",
+        max_width=MAX_PROFILE_PICTURE_DIMENSION,
+        max_height=MAX_PROFILE_PICTURE_DIMENSION,
     )
     profile_name = fields.Char()
     ambassador_quote = fields.Text()
@@ -273,7 +306,9 @@ class EventRegistration(models.Model):
         default_meta["default_opengraph"].update(
             {
                 "og:title": title,
-                "og:image": request.website.image_url(self, "profile_picture"),
+                "og:image": request.website.image_url(
+                    self, "profile_picture", size="1200x1200"
+                ),
             }
         )
         default_meta["default_twitter"].update(
@@ -408,6 +443,69 @@ class EventRegistration(models.Model):
     ##########################################################################
     #                              ORM METHODS                               #
     ##########################################################################
+    @api.constrains("profile_picture")
+    def _check_profile_picture_min_size(self):
+        """Reject profile pictures that cannot be printed on fundraising
+        material, being either too small or too elongated.
+
+        The ratio is checked first: rejecting elongated pictures is what keeps
+        the cap from storing a short side below the printable minimum (see the
+        invariant on MAX_PROFILE_PICTURE_DIMENSION). ``bin_size`` is disabled
+        because it would otherwise yield the file size instead of the image
+        content.
+        """
+        if self.env.context.get(SKIP_PROFILE_PICTURE_CHECK):
+            return
+        for registration in self.with_context(bin_size=False):
+            picture_b64 = registration.profile_picture
+            if not picture_b64:
+                continue
+            try:
+                with PILImage.open(io.BytesIO(base64.b64decode(picture_b64))) as img:
+                    width, height = img.size
+            except (binascii.Error, OSError, TypeError):
+                # Let the Image field's own validation handle corrupted files
+                continue
+            short_side, long_side = sorted((width, height))
+            if long_side > short_side * MAX_PROFILE_PICTURE_RATIO:
+                raise ValidationError(
+                    _(
+                        "The picture you uploaded is too elongated"
+                        " (%(width)s x %(height)s px). Its longest side must not"
+                        " exceed %(ratio)s times its shortest side. Please crop it"
+                        " closer to the person before uploading it.",
+                        width=width,
+                        height=height,
+                        ratio=MAX_PROFILE_PICTURE_RATIO,
+                    )
+                )
+            if (
+                short_side < MIN_PROFILE_PICTURE_SHORT_SIDE
+                or long_side < MIN_PROFILE_PICTURE_LONG_SIDE
+            ):
+                raise ValidationError(
+                    _(
+                        "The picture you uploaded is too small"
+                        " (%(width)s x %(height)s px). Please upload a picture of"
+                        " at least %(long)s px on its longest side and %(short)s px"
+                        " on its shortest side (portrait or landscape) so it also"
+                        " looks good once printed on fundraising material.",
+                        width=width,
+                        height=height,
+                        long=MIN_PROFILE_PICTURE_LONG_SIDE,
+                        short=MIN_PROFILE_PICTURE_SHORT_SIDE,
+                    )
+                )
+
+    def copy(self, default=None):
+        # Pictures stored before the check existed are below the threshold:
+        # duplicating such a record must not blame the user for an upload they
+        # never made.
+        return super(
+            EventRegistration,
+            self.with_context(**{SKIP_PROFILE_PICTURE_CHECK: True}),
+        ).copy(default)
+
     def write(self, vals):
         if "stage_id" in vals:
             vals["stage_date"] = fields.Date.today()

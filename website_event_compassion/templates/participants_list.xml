@@ -23,7 +23,7 @@
               <t t-if="registration.profile_picture">
                 <t
                   t-set="ambassador_picture"
-                  t-value="'/web/image/event.registration/' + str(registration.id) + '/profile_picture'"
+                  t-value="'/web/image/event.registration/' + str(registration.id) + '/profile_picture/512x512'"
                 />
               </t>
               <a t-att-href="registration.website_url">
