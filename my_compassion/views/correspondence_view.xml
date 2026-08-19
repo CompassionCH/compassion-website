@@ -4,13 +4,49 @@
     <field name="model">correspondence.s2b.generator</field>
     <field name="inherit_id" ref="sbc_compassion.s2b_generator_form" />
     <field name="arch" type="xml">
+      <xpath expr="//div[@class='oe_title']" position="after">
+        <group>
+          <field
+            name="generation_mode"
+            widget="radio"
+            options="{'horizontal': true}"
+            readonly="state != 'draft'"
+          />
+        </group>
+        <div class="text-muted mb-3" invisible="state != 'draft'">
+          <span invisible="generation_mode != 'mass'">
+            One letter is generated for every sponsorship matching the
+            selection below.
+          </span>
+          <span invisible="generation_mode != 'single'">
+            One single letter is generated, for the chosen user and child.
+          </span>
+        </div>
+      </xpath>
       <field name="selection_domain" position="after">
-        <field name="user_id" domain="[('partner_id.number_sponsorships', '>', 0)]" />
+        <field
+          name="user_id"
+          domain="[('partner_id.number_sponsorships', '>', 0)]"
+          invisible="generation_mode != 'single'"
+          required="generation_mode == 'single'"
+          readonly="state != 'draft'"
+        />
         <field name="partner_id" invisible="1" />
-        <field name="child_id" domain="[('sponsor_id', '=', partner_id)]" />
+        <field
+          name="child_id"
+          domain="[('sponsor_id', '=', partner_id)]"
+          invisible="generation_mode != 'single'"
+          required="generation_mode == 'single'"
+          readonly="state != 'draft'"
+        />
       </field>
       <xpath expr="//field[@name='selection_domain']" position="attributes">
-        <attribute name="invisible">user_id and child_id</attribute>
+        <attribute name="invisible">generation_mode != 'mass'</attribute>
+      </xpath>
+      <xpath expr="//field[@name='month']" position="attributes">
+        <attribute
+          name="invisible"
+        >generation_mode != 'mass' or state == 'preview'</attribute>
       </xpath>
     </field>
   </record>

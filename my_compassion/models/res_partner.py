@@ -155,10 +155,16 @@ class Partner(models.Model):
     def _compute_is_writer(self):
         """
         Compute whether the partner can write letters to sponsored children.
+
+        Letters remain allowed while the project is suspended: they are held
+        as an "Exception" and auto-resubmitted once it reactivates (see
+        sbc_compassion correspondence.create_commkit()).
         """
         for partner in self:
             partner.is_writer = bool(
-                partner.sponsorship_ids.filtered_domain(
+                partner.sponsorship_ids.with_context(
+                    allow_during_suspension=True
+                ).filtered_domain(
                     [
                         ("can_write_letter_grace", "=", True),
                         "|",

@@ -10,7 +10,11 @@
                 amount of
                 your choice.
             </p>
-      <form action="donation" method="post" enctype="multipart/form-data">
+      <form
+        t-attf-action="#{registration.website_url}/donation"
+        method="post"
+        enctype="multipart/form-data"
+      >
         <input type="hidden" name="amount" id="input_amount" required="True" />
         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
         <div class="my-3 row">

@@ -12,6 +12,34 @@ import {whenReady} from "@odoo/owl";
 whenReady(() => {
   const okBtn = document.getElementById("filterOkBtn");
 
+  // Lazy-load read-letter preview images: promote data-src -> src only when
+  // the card nears the viewport, so a page of read letters doesn't fetch N
+  // previews at once.
+  const lazyPreviews = document.querySelectorAll(".iframe-container img[data-src]");
+  if (lazyPreviews.length) {
+    if (window.IntersectionObserver) {
+      const io = new window.IntersectionObserver(
+        (entries, obs) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              const el = entry.target;
+              el.src = el.dataset.src;
+              el.removeAttribute("data-src");
+              obs.unobserve(el);
+            }
+          }
+        },
+        {rootMargin: "300px"}
+      );
+      lazyPreviews.forEach((el) => io.observe(el));
+    } else {
+      lazyPreviews.forEach((el) => {
+        el.src = el.dataset.src;
+        el.removeAttribute("data-src");
+      });
+    }
+  }
+
   // Letter animation
   document.querySelectorAll(".my2-envelope").forEach((envelope) => {
     envelope.addEventListener("click", function () {

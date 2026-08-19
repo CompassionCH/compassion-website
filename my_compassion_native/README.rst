@@ -27,16 +27,15 @@ via Capacitor.
 
 Features:
 
--  Push notifications via Firebase Cloud Messaging (FCM) for new letters
-   and child birthdays
--  Device token registration and lifecycle management (register on
-   login, unregister on logout)
--  Apple Universal Links and Android App Links support so web URLs open
-   directly in the native app
--  Native PDF viewing using the device file system and file opener
-   plugin
--  UI adjustments for the native WebView (safe-area insets, viewport
-   fixes, scroll behaviour)
+- Push notifications via Firebase Cloud Messaging (FCM) for new letters
+  and child birthdays
+- Device token registration and lifecycle management (register on login,
+  unregister on logout)
+- Apple Universal Links and Android App Links support so web URLs open
+  directly in the native app
+- Native PDF viewing using the device file system and file opener plugin
+- UI adjustments for the native WebView (safe-area insets, viewport
+  fixes, scroll behaviour)
 
 **Table of contents**
 
@@ -73,67 +72,55 @@ Technical → System Parameters**.
 Universal Links / App Links
 ---------------------------
 
-+----------------------+----------------------+----------------------+
-| Key                  | Description          | Where to find the    |
-|                      |                      | value                |
-+======================+======================+======================+
-| ``my_compassion      | iOS app ID in the    | Apple Developer      |
-| _native.ios_app_id`` | format               | Portal → Identifiers |
-|                      | ``<T                 | → your App ID. Team  |
-|                      | eamID>.<BundleID>``, | ID is shown in the   |
-|                      | used for Apple       | top-right of your    |
-|                      | Universal Links      | account page.        |
-|                      | verification         |                      |
-+----------------------+----------------------+----------------------+
-| ``my_                | Android app package  | ``c                  |
-| compassion_native.an | name, used for App   | apacitor.config.ts`` |
-| droid_package_name`` | Links verification   | → ``appId`` field    |
-+----------------------+----------------------+----------------------+
-| ``my_compas          | SHA-256 certificate  | If using Google Play |
-| sion_native.android_ | fingerprint of the   | App Signing: **Play  |
-| sha256_fingerprint`` | Android signing key  | Console → your app → |
-|                      | (colon-separated).   | Release → App        |
-|                      |                      | integrity → App      |
-|                      |                      | signing key          |
-|                      |                      | certificate →        |
-|                      |                      | SHA-256 certificate  |
-|                      |                      | fingerprint**.       |
-|                      |                      | Otherwise run        |
-|                      |                      | `                    |
-|                      |                      | `keytool -list -v -k |
-|                      |                      | eystore <keystore>`` |
-|                      |                      | and copy the SHA-256 |
-|                      |                      | line.                |
-+----------------------+----------------------+----------------------+
++-----------------------------------------------------+--------------------------+-------------------------------------------+
+| Key                                                 | Description              | Where to find the value                   |
++=====================================================+==========================+===========================================+
+| ``my_compassion_native.ios_app_id``                 | iOS app ID in the format | Apple Developer Portal → Identifiers →    |
+|                                                     | ``<TeamID>.<BundleID>``, | your App ID. Team ID is shown in the      |
+|                                                     | used for Apple Universal | top-right of your account page.           |
+|                                                     | Links verification       |                                           |
++-----------------------------------------------------+--------------------------+-------------------------------------------+
+| ``my_compassion_native.android_package_name``       | Android app package      | ``capacitor.config.ts`` → ``appId`` field |
+|                                                     | name, used for App Links |                                           |
+|                                                     | verification             |                                           |
++-----------------------------------------------------+--------------------------+-------------------------------------------+
+| ``my_compassion_native.android_sha256_fingerprint`` | SHA-256 certificate      | If using Google Play App Signing: **Play  |
+|                                                     | fingerprint of the       | Console → your app → Release → App        |
+|                                                     | Android signing key      | integrity → App signing key certificate → |
+|                                                     | (colon-separated).       | SHA-256 certificate fingerprint**.        |
+|                                                     |                          | Otherwise run                             |
+|                                                     |                          | ``keytool -list -v -keystore <keystore>`` |
+|                                                     |                          | and copy the SHA-256 line.                |
++-----------------------------------------------------+--------------------------+-------------------------------------------+
 
 Firebase Push Notifications
 ---------------------------
 
-+----------------------+----------------------+----------------------+
-| Key                  | Description          | Where to find the    |
-|                      |                      | value                |
-+======================+======================+======================+
-| ``my_compassion.f    | Full JSON content of | **Google Cloud       |
-| cm_service_account`` | the Firebase service | Console → IAM &      |
-|                      | account key, used to | Admin → Service      |
-|                      | authenticate push    | Accounts → your      |
-|                      | notification         | service account →    |
-|                      | requests via FCM     | Keys → Add Key →     |
-|                      |                      | JSON**. Paste the    |
-|                      |                      | entire JSON as the   |
-|                      |                      | parameter value.     |
-+----------------------+----------------------+----------------------+
++---------------------------------------+----------------------+----------------------+
+| Key                                   | Description          | Where to find the    |
+|                                       |                      | value                |
++=======================================+======================+======================+
+| ``my_compassion.fcm_service_account`` | Full JSON content of | **Google Cloud       |
+|                                       | the Firebase service | Console → IAM &      |
+|                                       | account key, used to | Admin → Service      |
+|                                       | authenticate push    | Accounts → your      |
+|                                       | notification         | service account →    |
+|                                       | requests via FCM     | Keys → Add Key →     |
+|                                       |                      | JSON**. Paste the    |
+|                                       |                      | entire JSON as the   |
+|                                       |                      | parameter value.     |
++---------------------------------------+----------------------+----------------------+
 
 Notes
 -----
 
--  All parameters must be set independently on each server (staging and
-   production).
--  The Android SHA-256 fingerprint differs between debug, release, and
-   Play App Signing keys — use the fingerprint that matches the
-   installed build.
--  The FCM service account must have the **Firebase Cloud Messaging API
-   Admin** role in Google Cloud IAM.
+- All parameters must be set independently on each server (staging and
+  production).
+- The Android SHA-256 fingerprint differs between debug, release, and
+  Play App Signing keys — use the fingerprint that matches the installed
+  build.
+- The FCM service account must have the **Firebase Cloud Messaging API
+  Admin** role in Google Cloud IAM.
 
 Bug Tracker
 ===========
