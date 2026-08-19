@@ -6,6 +6,7 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+import logging
 import random
 import uuid
 from urllib.parse import urlencode
@@ -14,7 +15,7 @@ from dateutil.relativedelta import relativedelta
 from werkzeug.exceptions import BadRequest, NotFound
 
 from odoo import Command, fields, http
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 from odoo.http import request
 from odoo.tools.translate import _
 
@@ -23,6 +24,8 @@ from odoo.addons.payment.controllers import portal as payment_portal
 
 from ..models.compassion_child import ChildNotFound
 from .website_utils import safe_int
+
+_logger = logging.getLogger(__name__)
 
 # Hold up to 3 children (more is too slow)
 GLOBAL_FETCH_LIMIT = 3
@@ -130,8 +133,20 @@ class MyCompassionSponsorshipsController(http.Controller):
                 post["limit"] = GLOBAL_FETCH_LIMIT
                 child_obj.website_hold_child(post)
             except ChildNotFound:
-                # Error is already logged, the frontend will just show no results
-                pass
+                _logger.info(
+                    "Global pool found no child for these criteria: %s", str(post)
+                )
+            except UserError as error:
+                # An empty answer raises ChildNotFound and is caught above, so
+                # reaching this point means Connect or the hold pipeline failed.
+                # The visitor should still get an empty page instead of an error
+                # popup, but the failure must stay visible in the log.
+                _logger.warning(
+                    "Global pool search failed for these criteria: %s (%s)",
+                    str(post),
+                    error,
+                    exc_info=True,
+                )
         # Query matching children
         domain = self._get_filtered_domain(post)
         total_results = child_obj.search_count(domain)

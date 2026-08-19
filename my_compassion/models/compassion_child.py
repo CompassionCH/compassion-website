@@ -15,6 +15,9 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 from odoo.addons.child_compassion.models.compassion_hold import HoldType
+from odoo.addons.child_compassion.wizards.global_child_search import (
+    ChildpoolNoResultsError,
+)
 from odoo.addons.sponsorship_compassion.models.contracts import SPONSORSHIP_TYPE_LIST
 
 _logger = logging.getLogger(__name__)
@@ -188,6 +191,9 @@ class CompassionChild(models.Model):
             field_offices = field_offices.search(
                 [("field_office_id", "in", fo_code.split(","))]
             )
+            if not field_offices:
+                _logger.warning("Unknown field office requested: %s", fo_code)
+                raise ChildNotFound(_("No child found for the given country."))
         birthday = False
         if search_params.get("birthday"):
             birthday = fields.Date.from_string(search_params.get("birthday"))
@@ -209,7 +215,12 @@ class CompassionChild(models.Model):
                 "skip": 0,
             }
         )
-        childpool.do_search()
+        try:
+            childpool.do_search()
+        except ChildpoolNoResultsError as error:
+            raise ChildNotFound(
+                _("No child found for the given search parameters.")
+            ) from error
         hold_wizard = (
             childpool.env["child.hold.wizard"]
             .with_context(
@@ -234,13 +245,21 @@ class CompassionChild(models.Model):
         res = hold_wizard.send()
         try:
             child_ids = res["domain"][0][2]
-        except IndexError as error:
+        except (TypeError, KeyError, IndexError) as error:
             _logger.error(
                 "No child found for the given search parameters: %s", str(search_params)
             )
             raise ChildNotFound(
                 _("No child found for the given search parameters.")
             ) from error
+        if not child_ids:
+            # The search found children but the hold created none of them, for
+            # example when every child belongs to a restricted field office
+            _logger.warning(
+                "No child could be held for the given search parameters: %s",
+                str(search_params),
+            )
+            raise ChildNotFound(_("No child found for the given search parameters."))
         return child_ids
 
     def child_released(self, state="R"):
