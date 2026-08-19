@@ -166,7 +166,7 @@ class Partner(models.Model):
                     allow_during_suspension=True
                 ).filtered_domain(
                     [
-                        ("can_write_letter", "=", True),
+                        ("can_write_letter_grace", "=", True),
                         "|",
                         ("partner_id.portal_sponsorships", "=", "all_info"),
                         ("correspondent_id", "=", partner.id),
