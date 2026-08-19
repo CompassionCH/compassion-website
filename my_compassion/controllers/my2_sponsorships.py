@@ -22,7 +22,7 @@ from odoo.addons.payment import utils as payment_utils
 from odoo.addons.payment.controllers import portal as payment_portal
 
 from ..models.compassion_child import ChildNotFound
-from .website_utils import safe_int
+from .website_utils import ensure_recurring_instrument, safe_int
 
 # Hold up to 3 children (more is too slow)
 GLOBAL_FETCH_LIMIT = 3
@@ -602,8 +602,9 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
             my2_sponsorship=True,
             **kwargs,
         )
-        # An abandoned checkout would otherwise hold the guard above closed
-        # and the sponsor could never pay.
+        ensure_recurring_instrument(tx_sudo)
+        # An abandoned checkout would otherwise hold the payment-in-progress
+        # guard above closed and the sponsor could never pay.
         tx_sudo.with_delay_sh(
             "_my2_cancel_stale_checkout_tx",
             eta=self.CHECKOUT_CLEANUP_MINUTES * 60,
@@ -621,16 +622,19 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
         transaction route charges."""
         partner = sponsorship.partner_id
         currency = invoice.currency_id
-        providers_sudo = provider.sudo()
+        # The context flag reaches the provider inline form rendering
+        # through these recordsets. It tells _is_tokenization_required
+        # that this checkout must save the card (see that method).
+        providers_sudo = provider.sudo().with_context(my2_sponsorship=True)
         payment_methods_sudo = (
             request.env["payment.method"]
             .sudo()
+            .with_context(my2_sponsorship=True)
             ._get_compatible_payment_methods(
                 providers_sudo.ids,
                 partner.id,
                 currency_id=currency.id,
                 force_tokenization=True,
-                my2_sponsorship=True,
             )
         )
         # saved instruments only for the authenticated sponsor: the public
