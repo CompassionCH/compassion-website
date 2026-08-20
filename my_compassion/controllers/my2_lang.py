@@ -6,7 +6,7 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from odoo.http import request
+from odoo.http import route
 
 from odoo.addons.website.controllers.main import Website
 
@@ -17,14 +17,17 @@ FRONTEND_LANG_MAX_AGE = 365 * 24 * 60 * 60
 
 
 class WebsiteLangPersist(Website):
+    @route(
+        "/website/lang/<lang>",
+        type="http",
+        auth="public",
+        website=True,
+        multilang=False,
+    )
     def change_lang(self, lang, r="/", **kwargs):
         redirect = super().change_lang(lang, r=r, **kwargs)
-        # Persist the explicitly chosen language so it survives a full app
-        # close. Re-derive the code the way core does, handling the default.
-        if lang == "default":
-            lang = request.website.default_lang_id.url_code
-        lang_code = request.env["res.lang"]._get_data(url_code=lang).code or lang
         if hasattr(redirect, "set_cookie"):
+            lang_code = redirect.get_cookie("frontend_lang")
             redirect.set_cookie(
                 "frontend_lang", lang_code, max_age=FRONTEND_LANG_MAX_AGE
             )
