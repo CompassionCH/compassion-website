@@ -122,8 +122,11 @@ odoo.define("my_compassion_native.payment_resume", function (require) {
 
         stop();
         markHandled(status.reference);
-        closeNativePaymentSheet();
         if (status.state === "done") {
+            // Only on success: a failed payment leaves the gateway's own page on
+            // screen, and closing it out from under the donor would hide what
+            // went wrong.
+            closeNativePaymentSheet();
             clearBanner();
             if (window.location.pathname.indexOf("/my2/gifts/thankyou") === -1) {
                 window.location = "/my2/gifts/thankyou";
