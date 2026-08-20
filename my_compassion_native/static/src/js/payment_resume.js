@@ -4,39 +4,19 @@ odoo.define("my_compassion_native.payment_resume", function (require) {
     const core = require("web.core");
     const _t = core._t;
 
-    // The gateway is paid for outside this webview: iOS hands the PostFinance
-    // URL to an SFSafariViewController and reloads us when the sheet closes,
-    // Android can come back with the webview parked on the gateway. Either way
-    // the donor lands on a page whose cart the payment lock has emptied, with no
-    // confirmation anywhere - which is what made testers pay a second time
-    // (T3378). Ask the server, which queries PostFinance directly, instead of
-    // waiting for the sweep cron.
-
-    // On iOS the payment sheet sits on top of this page while the donor pays, so
-    // polling has to outlast the payment itself. Back off instead of hammering:
-    // every poll that finds the payment unfinished costs one gateway call.
+    // The donor pays in a browser this page cannot see into, and its own timers
+    // are suspended while that browser is on top - so it can only read the
+    // outcome from the server, once the donor is back (T3378).
+    // Each poll of an unfinished payment costs one gateway call.
     const GIVE_UP_MS = 300000;
-    const BACKOFF = [
-        [20000, 2000],
-        [90000, 5000],
-        [GIVE_UP_MS, 20000],
-    ];
-    // Ignore anything older than a payment made during this visit.
+    const POLL_MS = 3000;
     const MAX_AGE_S = 600;
     const HANDLED_KEY = "my2_payment_handled";
 
     let pollTimer = null;
     let startedAt = null;
 
-    function nextDelay() {
-        const elapsed = Date.now() - startedAt;
-        const step = BACKOFF.find((entry) => elapsed < entry[0]);
-        return step ? step[1] : null;
-    }
-
-    // SFSafariViewController can only be closed by the app that opened it, and it
-    // cannot see where it navigated - so unless we say so, the donor has to close
-    // the payment sheet by hand after paying.
+    // Only the app can close the sheet it opened.
     function closeNativePaymentSheet() {
         const handlers = window.webkit && window.webkit.messageHandlers;
         if (handlers && handlers.nativePayment) {
@@ -106,8 +86,7 @@ odoo.define("my_compassion_native.payment_resume", function (require) {
         }
 
         if (status.processing) {
-            // CONFIRMED means the gateway has the money and is settling; it is a
-            // success in progress, so never offer to pay again from here.
+            // Settling, not failed: never offer to pay again from here.
             banner(_t("Thank you! We're confirming your gift…"), "pending");
             if (Date.now() - startedAt > GIVE_UP_MS) {
                 banner(
@@ -123,9 +102,7 @@ odoo.define("my_compassion_native.payment_resume", function (require) {
         stop();
         markHandled(status.reference);
         if (status.state === "done") {
-            // Only on success: a failed payment leaves the gateway's own page on
-            // screen, and closing it out from under the donor would hide what
-            // went wrong.
+            // Success only: a failure must stay on screen to be read.
             closeNativePaymentSheet();
             clearBanner();
             if (window.location.pathname.indexOf("/my2/gifts/thankyou") === -1) {
@@ -139,9 +116,8 @@ odoo.define("my_compassion_native.payment_resume", function (require) {
 
     function poll() {
         function again() {
-            const delay = startedAt && nextDelay();
-            if (delay) {
-                pollTimer = window.setTimeout(poll, delay);
+            if (startedAt && Date.now() - startedAt < GIVE_UP_MS) {
+                pollTimer = window.setTimeout(poll, POLL_MS);
             } else {
                 stop();
             }
@@ -152,12 +128,13 @@ odoo.define("my_compassion_native.payment_resume", function (require) {
                     again();
                 }
             })
-            // Offline or server hiccup: keep the banner, try again.
             .catch(again);
     }
 
     function start() {
-        if (pollTimer) {
+        // The app and visibilitychange both resume; startedAt catches the second
+        // call, which lands before the first poll has scheduled a timer.
+        if (pollTimer || startedAt) {
             return;
         }
         startedAt = Date.now();
@@ -168,6 +145,8 @@ odoo.define("my_compassion_native.payment_resume", function (require) {
         if (!isNativeApp()) {
             return;
         }
+        // Called by the app once the payment browser is gone.
+        window.my2ResumePaymentPolling = start;
         start();
         document.addEventListener("visibilitychange", () => {
             if (document.visibilityState === "visible") {
