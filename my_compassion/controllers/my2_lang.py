@@ -6,6 +6,8 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+import re
+
 from odoo.http import route
 
 from odoo.addons.website.controllers.main import Website
@@ -27,8 +29,15 @@ class WebsiteLangPersist(Website):
     def change_lang(self, lang, r="/", **kwargs):
         redirect = super().change_lang(lang, r=r, **kwargs)
         if hasattr(redirect, "set_cookie"):
-            lang_code = redirect.get_cookie("frontend_lang")
-            redirect.set_cookie(
-                "frontend_lang", lang_code, max_age=FRONTEND_LANG_MAX_AGE
-            )
+            # Parse the lang value from the Set-Cookie response header because
+            lang_code = None
+            for header_val in redirect.headers.getlist("Set-Cookie"):
+                m = re.match(r"frontend_lang=([^;,\s]+)", header_val)
+                if m:
+                    lang_code = m.group(1)
+                    break
+            if lang_code:
+                redirect.set_cookie(
+                    "frontend_lang", lang_code, max_age=FRONTEND_LANG_MAX_AGE
+                )
         return redirect
