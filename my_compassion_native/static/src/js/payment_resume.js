@@ -12,14 +12,37 @@ odoo.define("my_compassion_native.payment_resume", function (require) {
     // (T3378). Ask the server, which queries PostFinance directly, instead of
     // waiting for the sweep cron.
 
-    const POLL_MS = 2000;
-    const GIVE_UP_MS = 60000;
+    // On iOS the payment sheet sits on top of this page while the donor pays, so
+    // polling has to outlast the payment itself. Back off instead of hammering:
+    // every poll that finds the payment unfinished costs one gateway call.
+    const GIVE_UP_MS = 300000;
+    const BACKOFF = [
+        [20000, 2000],
+        [90000, 5000],
+        [GIVE_UP_MS, 20000],
+    ];
     // Ignore anything older than a payment made during this visit.
     const MAX_AGE_S = 600;
     const HANDLED_KEY = "my2_payment_handled";
 
     let pollTimer = null;
     let startedAt = null;
+
+    function nextDelay() {
+        const elapsed = Date.now() - startedAt;
+        const step = BACKOFF.find((entry) => elapsed < entry[0]);
+        return step ? step[1] : null;
+    }
+
+    // SFSafariViewController can only be closed by the app that opened it, and it
+    // cannot see where it navigated - so unless we say so, the donor has to close
+    // the payment sheet by hand after paying.
+    function closeNativePaymentSheet() {
+        const handlers = window.webkit && window.webkit.messageHandlers;
+        if (handlers && handlers.nativePayment) {
+            handlers.nativePayment.postMessage("close");
+        }
+    }
 
     function isNativeApp() {
         return window.Capacitor && window.Capacitor.getPlatform() !== "web";
@@ -85,9 +108,12 @@ odoo.define("my_compassion_native.payment_resume", function (require) {
         if (status.processing) {
             // CONFIRMED means the gateway has the money and is settling; it is a
             // success in progress, so never offer to pay again from here.
-            banner(_t("Payment received. Confirming…"), "pending");
+            banner(_t("Thank you! We're confirming your gift…"), "pending");
             if (Date.now() - startedAt > GIVE_UP_MS) {
-                banner(_t("Your payment is being confirmed. You can safely leave this page."), "pending");
+                banner(
+                    _t("Your gift has arrived. We're confirming it shortly – you can safely close this page."),
+                    "pending"
+                );
                 stop();
                 return false;
             }
@@ -97,31 +123,37 @@ odoo.define("my_compassion_native.payment_resume", function (require) {
         stop();
         markHandled(status.reference);
         if (status.state === "done") {
+            // Only on success: a failed payment leaves the gateway's own page on
+            // screen, and closing it out from under the donor would hide what
+            // went wrong.
+            closeNativePaymentSheet();
             clearBanner();
             if (window.location.pathname.indexOf("/my2/gifts/thankyou") === -1) {
                 window.location = "/my2/gifts/thankyou";
             }
         } else {
-            banner(_t("Your payment did not go through. Nothing was charged."), "failed");
+            banner(_t("The payment didn't go through. Nothing was charged – feel free to try again."), "failed");
         }
         return false;
     }
 
     function poll() {
+        function again() {
+            const delay = startedAt && nextDelay();
+            if (delay) {
+                pollTimer = window.setTimeout(poll, delay);
+            } else {
+                stop();
+            }
+        }
         fetchStatus()
             .then((status) => {
                 if (handle(status)) {
-                    pollTimer = window.setTimeout(poll, POLL_MS);
+                    again();
                 }
             })
-            .catch(() => {
-                // Offline or server hiccup: keep the banner, try again.
-                if (startedAt && Date.now() - startedAt < GIVE_UP_MS) {
-                    pollTimer = window.setTimeout(poll, POLL_MS);
-                } else {
-                    stop();
-                }
-            });
+            // Offline or server hiccup: keep the banner, try again.
+            .catch(again);
     }
 
     function start() {
