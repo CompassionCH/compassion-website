@@ -25,6 +25,3 @@ def migrate(cr, version):
         RETURNING id;
         """
     )
-    fixed = [row[0] for row in cr.fetchall()]
-    if fixed:
-        _logger.info("fixed dead lang expression on mail templates %s", fixed)
