@@ -116,7 +116,7 @@ class CompassionChild(models.Model):
     def _compute_sponsorship_url(self):
         for child in self:
             base_url = child.get_base_url().rstrip("/")
-            child.website_url = f"{base_url}/my2/new-sponsorship/{child.id}"
+            child.sponsorship_url = f"{base_url}/my2/new-sponsorship/{child.id}"
 
     def get_education_status_data(self):
         """
