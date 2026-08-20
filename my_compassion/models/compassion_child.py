@@ -54,6 +54,7 @@ class CompassionChild(models.Model):
     )
     website_reservation_id = fields.Char()
     website_reservation_date = fields.Datetime()
+    sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
 
     @api.depends_context("uid")
     def _compute_my_sponsorship(self):
@@ -106,6 +107,16 @@ class CompassionChild(models.Model):
             child.can_i_make_gift = (
                 sponsorship.can_make_gift and partner == sponsorship.partner_id
             )
+
+    def _compute_website_url(self):
+        for child in self:
+            base_url = child.get_base_url().rstrip("/")
+            child.website_url = f"{base_url}/my2/children/{child.id}"
+
+    def _compute_sponsorship_url(self):
+        for child in self:
+            base_url = child.get_base_url().rstrip("/")
+            child.website_url = f"{base_url}/my2/new-sponsorship/{child.id}"
 
     def get_education_status_data(self):
         """
