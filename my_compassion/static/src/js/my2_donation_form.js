@@ -114,6 +114,7 @@ export const DonationForm = publicWidget.Widget.extend({
     } else {
       this.$(".amount-selection").attr("hidden", true);
       this.$(".limit-reached-message").attr("hidden", true);
+      this.$(".donation-request-error").attr("hidden", true);
     }
   },
 
