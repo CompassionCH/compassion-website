@@ -1,0 +1,36 @@
+// Status of a payment made outside the webview (T3378).
+//
+// The my2 bottom nav is fixed at bottom:0 with z-index $zindex-fixed + 100, so
+// the banner has to sit *above* it and stay *underneath* it - a status message
+// must never cover the navigation. It is also inert: nothing in it is
+// tappable, so it can never swallow a tap meant for the page.
+.my2-payment-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1120; // just below the bottom nav ($zindex-fixed + 100 = 1130)
+  pointer-events: none;
+  padding: 0.75rem calc(1rem + env(safe-area-inset-right))
+    calc(0.75rem + env(safe-area-inset-bottom)) calc(1rem + env(safe-area-inset-left));
+  text-align: center;
+  font-weight: 600;
+  color: #fff;
+
+  &.my2-payment-banner-pending {
+    background-color: #2a5eec;
+  }
+
+  &.my2-payment-banner-failed {
+    background-color: #b3261e;
+  }
+}
+
+// The bottom nav only exists below the md breakpoint; park the banner on top of
+// it there, and let the nav own the safe-area inset.
+@media (max-width: 767.98px) {
+  .my2-payment-banner {
+    bottom: calc(5rem + env(safe-area-inset-bottom));
+    padding-bottom: 0.75rem;
+  }
+}

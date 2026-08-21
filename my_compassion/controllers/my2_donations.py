@@ -8,6 +8,7 @@
 #
 ##############################################################################
 
+import logging
 import math
 from collections import defaultdict
 from datetime import datetime, timedelta
@@ -18,10 +19,13 @@ from odoo import fields, http
 from odoo.http import request
 from odoo.tools.translate import _
 
+from odoo.addons.payment.controllers.post_processing import PaymentPostProcessing
 from odoo.addons.portal.controllers.portal import CustomerPortal
 from odoo.addons.sale.controllers import portal as sale_portal
 
 from .website_utils import safe_int
+
+_logger = logging.getLogger(__name__)
 
 
 class MyCompassionDonationsController(CustomerPortal):
@@ -384,6 +388,58 @@ class MyCompassionDonationsController(CustomerPortal):
                 },
             )
         return request.redirect("/my2/dashboard")
+
+    @http.route(
+        "/my2/payment/status",
+        type="json",
+        auth="user",
+        website=True,
+        methods=["POST"],
+    )
+    def my2_payment_status(self, **post):
+        """Live status of the donor's last payment, for the mobile app.
+
+        The payment runs in an external browser whose session Odoo never sees,
+        so the app polls this instead of being told how it went (T3378). Ask
+        the gateway directly rather than waiting for the sweep.
+        """
+        tx = (
+            request.env["payment.transaction"]
+            .sudo()
+            .browse(request.session.get(PaymentPostProcessing.MONITORED_TX_ID_KEY))
+            .exists()
+        )
+        if (
+            not tx
+            or tx.partner_id != request.env.user.partner_id
+            or tx.provider_code != "postfinance"
+        ):
+            return {"state": False}
+
+        # Only chase a payment that can still move, and only a recent one.
+        recent = tx.create_date > fields.Datetime.subtract(
+            fields.Datetime.now(), hours=2
+        )
+        if recent and tx.state not in ("done", "cancel", "error"):
+            try:
+                tx._process_notification_data({})
+                if tx.state == "done" and not tx.is_post_processed:
+                    tx._post_process()
+            except Exception:
+                # A payment that cannot be post-processed is still a payment:
+                # report the state so the app stops asking for money.
+                _logger.exception(
+                    "Could not refresh PostFinance transaction %s", tx.reference
+                )
+
+        return {
+            "state": tx.state,
+            "seconds_ago": int(
+                (fields.Datetime.now() - tx.create_date).total_seconds()
+            ),
+            "processing": tx.state in ("draft", "pending"),
+            "reference": tx.reference,
+        }
 
     def _get_gift_eligible_sponsorships(self, partner):
         """Sponsorships that can receive a gift."""

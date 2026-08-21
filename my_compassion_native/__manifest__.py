@@ -34,6 +34,8 @@
             "my_compassion_native/static/src/js/capacitor_push.js",
             "my_compassion_native/static/src/js/capacitor_ui_fix.js",
             "my_compassion_native/static/src/js/native_pdf_intercept.js",
+            "my_compassion_native/static/src/js/payment_resume.js",
+            "my_compassion_native/static/src/scss/payment_banner.scss",
         ],
     },
     "depends": [
