@@ -1,8 +1,27 @@
+import logging
+
 from odoo import fields, models
+
+_logger = logging.getLogger(__name__)
 
 
 class Partner(models.Model):
     _inherit = "res.partner"
+
+    # Stands in for the sponsor's name between the fast-checkout payment and
+    # the moment their real name is known. Deliberately not name-shaped: it
+    # must never read as a real name, nor fuzzy-match one in res.partner.match.
+    # A single token also keeps payment_utils.split_partner_name from raising.
+    MY2_PLACEHOLDER_NAME = "(pending)"
+
+    my2_name_placeholder = fields.Boolean(
+        string="Name is a placeholder",
+        readonly=True,
+        copy=False,
+        help="The partner was created by a fast checkout before its sponsor"
+        " gave their name. Everything that greets the sponsor by name waits"
+        " for _my2_replace_placeholder_name to clear this flag.",
+    )
 
     # True if partner has ever been a sponsor.
     is_sponsor = fields.Boolean(compute="_compute_is_sponsor", compute_sudo=True)
@@ -25,6 +44,61 @@ class Partner(models.Model):
         inverse="_inverse_user_login",
         tracking=True,
     )
+
+    def _my2_replace_placeholder_name(self, firstname, lastname):
+        """Write a sponsor's real name over their fast-checkout placeholder.
+
+        The single entry point for "this name is real now": it is also what
+        releases whatever was held back while the name was a placeholder.
+        Called from the payment notification handler and from the
+        post-payment details form.
+
+        A partner whose name is already real is never touched, so a late
+        payment notification can never overwrite what the sponsor typed.
+
+        :return: the partners that were actually renamed.
+        """
+        updated = self.env["res.partner"]
+        for partner in self:
+            if not partner.my2_name_placeholder or not (firstname or lastname):
+                continue
+            partner.sudo().write(
+                {
+                    "firstname": firstname or False,
+                    "lastname": lastname or False,
+                    "my2_name_placeholder": False,
+                }
+            )
+            updated |= partner
+        updated._my2_on_placeholder_name_replaced()
+        return updated
+
+    def _my2_on_placeholder_name_replaced(self):
+        """Everything that had to wait for the sponsor's real name.
+
+        Extension point for the flows that complete a fast checkout. Kept
+        best-effort: it runs inside payment notification handling, where an
+        exception would roll back the recorded payment outcome and make the
+        provider redeliver the notification into the same crash.
+        """
+        if not self:
+            return
+        try:
+            with self.env.cr.savepoint():
+                contracts = (
+                    self.env["recurring.contract"]
+                    .sudo()
+                    .search([("partner_id", "in", self.ids)])
+                )
+                pending = contracts._my2_pending_portal_invitations()
+                pending._my2_send_portal_invitation()
+        except Exception:
+            _logger.error(
+                "Could not run the post-placeholder handling of partners %s;"
+                " their portal invitation may need to be sent by hand.",
+                self.ids,
+                exc_info=True,
+            )
 
     def get_portal_sponsorships(self, states=None):
         """Portal sponsorships, with grace handling for child departures.

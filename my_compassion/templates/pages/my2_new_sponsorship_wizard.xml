@@ -3,10 +3,12 @@
 Page: My Compassion 2 New Sponsorship Wizard Page
 
     Description:
-    This page guides the user through the 3-step sponsorship procedure:
-        1. User details
-        2. Payment options
-        3. Communication
+    This page guides the user through the sponsorship procedure. Which steps
+    run is decided by new.sponsorship.wizard.STEPS_CONFIGS / _get_step_xmlids;
+    every template below is one of them. Public visitors run the fast
+    checkout (email + consent, then payment options) and give their name
+    after paying; the user-details and communication steps are kept for the
+    flows and country extensions that still collect everything up front.
 
     Used in route:
     - /my2/new-sponsorship/<child-id>
@@ -66,6 +68,62 @@ Page: My Compassion 2 New Sponsorship Wizard Page
         </t>
       </div>
     </div>
+  </template>
+  <!-- NEW SPONSORSHIP WIZARD FAST CHECKOUT STEP -->
+  <template
+    id="my2_new_sponsorship_wizard_fast_checkout"
+    name="New Sponsorship Wizard Fast Checkout Step"
+  >
+    <div class="mb-3 p-3 rounded-lg bg-light-blue tiny-text">
+            Already have an account?
+            <a
+      t-att-href="login_url_redirect"
+      class="tiny-text bold text-core-blue"
+    >Log in</a>
+        </div>
+    <!-- Email -->
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <t t-set="label" t-value="'E-mail'" />
+      <t t-set="input_id" t-value="'email'" />
+      <input
+        id="email"
+        type="email"
+        name="email"
+        class="form-control"
+        t-att-value="wizard.email"
+        data-validate-type="email"
+        required=""
+      />
+      <div
+        class="mt-1 body-small text-low-black"
+      >For your receipt and news about&#160;<t
+        t-out="wizard.child_id.preferred_name"
+      />. Nothing else is needed right now.</div>
+    </t>
+    <!-- Privacy consent -->
+    <input type="hidden" name="privacy_consent" value="" />
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <div class="d-flex align-items-center">
+        <input
+          type="checkbox"
+          id="privacy_consent"
+          name="privacy_consent"
+          class="flex-shrink-0"
+          t-att-checked="wizard.privacy_consent"
+          required=""
+        />
+        <label class="ms-2 mb-0 body-small" for="privacy_consent">
+                    I agree that Compassion may use my details to set up and
+                    manage this sponsorship, as described in the
+                    <a
+          href="/legal"
+          class="body-small bold text-core-blue"
+        >privacy notice</a>.
+                </label>
+      </div>
+    </t>
   </template>
   <!-- NEW SPONSORSHIP WIZARD USER DETAILS STEP -->
   <template
@@ -544,7 +602,11 @@ Page: My Compassion 2 New Sponsorship Wizard Page
       </div>
     </div>
     <!-- PROGRESS BAR -->
-    <div t-if="wizard.n_steps > 1" class="mt-3 mb-2 px-2 px-lg-0 pt-2 w-100">
+    <!-- Rendered for every non-empty flow, single-step ones included: the
+         payment and thank-you pages that follow always show the bar, so
+         hiding it here would make it appear out of nowhere mid-checkout.
+         The bar itself centers its lone marker when n_steps == 1. -->
+    <div t-if="wizard.n_steps > 0" class="mt-3 mb-2 px-2 px-lg-0 pt-2 w-100">
       <t t-call="my_compassion.NewSponsorshipStepProgressBar">
         <t t-set="n_steps" t-value="wizard.n_steps" />
         <t t-set="current_step" t-value="wizard.current_step_idx" />

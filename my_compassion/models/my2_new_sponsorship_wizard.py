@@ -1,6 +1,20 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
+# The slim "email + consent" step of the fast checkout: it is all a public
+# visitor answers before paying. Everything else about them is collected
+# afterwards.
+FAST_CHECKOUT_STEP = "my_compassion.new_sponsorship_wizard_step_fast_checkout"
+
+# The pre-payment identity steps the fast checkout stands in for. Substituted
+# in _get_step_xmlids rather than edited out of every STEPS_CONFIGS entry, so
+# a flow's entry keeps listing the steps it owns and Write&Pray gets the same
+# slim step without the decision being spelled out twice.
+DEFERRED_DETAIL_STEPS = (
+    "my_compassion.new_sponsorship_wizard_step_user_details",
+    "my_compassion.new_sponsorship_wizard_step_communication_details",
+)
+
 
 class NewSponsorshipWizard(models.TransientModel):
     _name = "new.sponsorship.wizard"
@@ -9,8 +23,7 @@ class NewSponsorshipWizard(models.TransientModel):
     STEPS_CONFIGS = {
         "standard": {
             "public": [
-                "my_compassion.new_sponsorship_wizard_step_user_details",
-                "my_compassion.new_sponsorship_wizard_step_communication_details",
+                FAST_CHECKOUT_STEP,
                 "my_compassion.new_sponsorship_wizard_step_payment_methods",
             ],
             "logged_in": [
@@ -42,6 +55,15 @@ class NewSponsorshipWizard(models.TransientModel):
     is_done = fields.Boolean(
         compute="_compute_is_done",
         readonly=True,
+    )
+    details_deferred = fields.Boolean(
+        compute="_compute_details_deferred",
+        readonly=True,
+        help="The flow went through the fast-checkout step, so the sponsor's"
+        " identity is collected after payment instead of before it. The only"
+        " signal the placeholder-name handling is allowed to key on: keying"
+        " it on 'is this the public flow' would silently change every other"
+        " flow sharing finish_sponsorship().",
     )
 
     user_id = fields.Many2one(
@@ -87,6 +109,11 @@ class NewSponsorshipWizard(models.TransientModel):
     )
     sponsorship_plus = fields.Boolean()
 
+    # Privacy/data consent of the fast-checkout step. Persisted on the partner
+    # as legal_agreement_date, the same field the portal's own privacy
+    # acceptance writes (see controllers/my_account.py).
+    privacy_consent = fields.Boolean()
+
     # Write&Pray fields
     wap_contribution_amount = fields.Float()
 
@@ -120,6 +147,13 @@ class NewSponsorshipWizard(models.TransientModel):
         for wizard in self:
             wizard.is_done = wizard.current_step_idx >= wizard.n_steps
 
+    @api.depends("sponsorship_type", "user_id")
+    def _compute_details_deferred(self):
+        for wizard in self:
+            wizard.details_deferred = FAST_CHECKOUT_STEP in wizard._get_step_xmlids(
+                wizard.sponsorship_type, wizard.user_id._is_public()
+            )
+
     def update(self, post):
         values = {}
 
@@ -145,6 +179,7 @@ class NewSponsorshipWizard(models.TransientModel):
 
         update_field("payment_method", "payment_method", int)
         update_field("sponsorship_plus", "sponsorship_plus", bool)
+        update_field("privacy_consent", "privacy_consent", bool)
 
         if post.get("contribute") == "true":
             if post.get("suggested_amount") == "custom":
@@ -177,7 +212,7 @@ class NewSponsorshipWizard(models.TransientModel):
         Country extensions add their own keys before the matching runs.
         """
         self.ensure_one()
-        return {
+        vals = {
             "title": self.title.id,
             "lastname": self.lastname,
             "firstname": self.firstname,
@@ -190,6 +225,20 @@ class NewSponsorshipWizard(models.TransientModel):
             "country_id": self.country.id,
             "spoken_lang_ids": [(4, lang.id) for lang in self.spoken_languages],
         }
+        if self.details_deferred and not (self.firstname or self.lastname):
+            # A nameless partner cannot exist: partner_firstname's _check_name
+            # needs one of the two parts, and every PSP billing payload needs a
+            # non-empty partner.name (payment_utils.split_partner_name raises on
+            # an empty one). The real name lands later, from the payment
+            # notification or from the post-payment details form.
+            vals.update(
+                {
+                    "lastname": self.env["res.partner"].MY2_PLACEHOLDER_NAME,
+                    "firstname": False,
+                    "my2_name_placeholder": True,
+                }
+            )
+        return vals
 
     def _get_validated_payment_mode(self, company):
         """Return the selected payment mode, validated against the website company.
@@ -209,19 +258,37 @@ class NewSponsorshipWizard(models.TransientModel):
     def finish_sponsorship(self):
         self.ensure_one()
 
+        if self.details_deferred and not self.privacy_consent:
+            # The consent tick is the only thing the fast-checkout step asks
+            # besides the email. The step marks it required, but a checkbox is
+            # trivially omitted from a posted form.
+            raise ValidationError(
+                _("Please accept the privacy notice before continuing.")
+            )
+
         company = self.company_id or self.env.company
         partner = self.user_id.partner_id
         if self.user_id._is_public():
             # Look for existing partner, create one if not found
             partner_vals = self._get_new_partner_vals()
-            partner = self.env["res.partner.match"].match_values_to_partner(
-                partner_vals, match_update=False, match_create=False
-            )
-            if not partner:
+            if partner_vals.get("my2_name_placeholder"):
+                # A placeholder can never match a returning sponsor's real
+                # stored name, and feeding it to the fuzzy/ilike rules would
+                # risk matching an unrelated partner instead, so matching is
+                # skipped rather than run on a value that cannot inform it.
                 partner = self.env["res.partner"].create(partner_vals)
+            else:
+                partner = self.env["res.partner.match"].match_values_to_partner(
+                    partner_vals, match_update=False, match_create=False
+                )
+                if not partner:
+                    partner = self.env["res.partner"].create(partner_vals)
         else:
             if not partner.birthdate_date and self.birthdate:
                 partner.sudo().write({"birthdate_date": self.birthdate})
+
+        if self.privacy_consent and not partner.legal_agreement_date:
+            partner.sudo().write({"legal_agreement_date": fields.Datetime.now()})
 
         if not partner.country_id:
             country = self.country or company.country_id
@@ -280,11 +347,41 @@ class NewSponsorshipWizard(models.TransientModel):
         # Return the new sponsorship
         return sponsorship
 
-    def _get_steps(self):
-        xml_ids = self.STEPS_CONFIGS[self.sponsorship_type][
-            "public" if self.user_id._is_public() else "logged_in"
+    @api.model
+    def _get_step_xmlids(self, sponsorship_type, is_public):
+        """XML ids of the steps of one flow, in order.
+
+        Public flows run the fast checkout: the identity steps are replaced by
+        the single slim step, wherever a flow still lists them. Logged-in
+        flows are untouched - their sponsor is already identified.
+        """
+        xml_ids = self.STEPS_CONFIGS[sponsorship_type][
+            "public" if is_public else "logged_in"
         ]
-        return [self.env.ref(xml_id).id for xml_id in xml_ids]
+        if not is_public:
+            return list(xml_ids)
+        steps = []
+        for xml_id in xml_ids:
+            if xml_id in DEFERRED_DETAIL_STEPS:
+                xml_id = FAST_CHECKOUT_STEP
+            if xml_id not in steps:
+                steps.append(xml_id)
+        return steps
+
+    @api.model
+    def _flow_n_steps(self, sponsorship_type, is_public):
+        """Step count of a flow, for the pages that continue the wizard's
+        progress bar after the wizard record itself is gone (the payment and
+        thank-you pages)."""
+        return len(self._get_step_xmlids(sponsorship_type, is_public))
+
+    def _get_steps(self):
+        return [
+            self.env.ref(xml_id).id
+            for xml_id in self._get_step_xmlids(
+                self.sponsorship_type, self.user_id._is_public()
+            )
+        ]
 
 
 class NewSponsorshipWizardStep(models.Model):

@@ -27,6 +27,32 @@ from .website_utils import ensure_recurring_instrument, safe_int
 # Hold up to 3 children (more is too slow)
 GLOBAL_FETCH_LIMIT = 3
 
+# Signups this browser session created. It is the proof, on the thank-you
+# page, that the visitor is the one who just went through the checkout -
+# a bare sponsorship_id in the URL proves nothing, and the details token must
+# never be handed out on one. Only the most recent ones are kept: the session
+# is a cookie-sized store, and nobody returns to an old thank-you page.
+OWN_SIGNUPS_SESSION_KEY = "my2_own_sponsorship_ids"
+OWN_SIGNUPS_SESSION_LIMIT = 10
+
+
+def _flow_n_steps(sponsorship):
+    """Step count of the wizard flow that created this sponsorship.
+
+    The payment and thank-you pages continue the wizard's progress bar, so
+    they have to count the same steps. The wizard record itself is long gone
+    by then, but its flow is fully determined by the sponsorship type and
+    whether the visitor is logged in.
+    """
+    return (
+        request.env["new.sponsorship.wizard"]
+        .sudo()
+        ._flow_n_steps(
+            "write_and_pray" if sponsorship.type == "SWP" else "standard",
+            request.env.user._is_public(),
+        )
+    )
+
 
 def _product_display_price(default_code):
     """Monthly amount of a contract product, as rendered in the wizard copy.
@@ -338,10 +364,12 @@ class MyCompassionNewSponsorshipController(http.Controller):
         if not wizard:
             raise BadRequest()
 
-        # Cancel if person is too old for Write&Pray
-        if (
-            wizard.sponsorship_type == "write_and_pray"
-            and wizard.birthdate
+        # Cancel if person is too old for Write&Pray. The birthdate is asked
+        # by the Write&Pray step itself, so a submission without one is a
+        # tampered form, not an age to compare (False < date raises).
+        if wizard.sponsorship_type == "write_and_pray" and (
+            not wizard.birthdate
+            or wizard.birthdate
             < (fields.Datetime.now() - relativedelta(years=25)).date()
         ):
             raise BadRequest()
@@ -356,6 +384,11 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 },
             )
         sponsorship = wizard.finish_sponsorship()
+        own_signups = list(request.session.get(OWN_SIGNUPS_SESSION_KEY) or [])
+        own_signups.append(sponsorship.id)
+        request.session[OWN_SIGNUPS_SESSION_KEY] = own_signups[
+            -OWN_SIGNUPS_SESSION_LIMIT:
+        ]
 
         # Digital modes pay the first month live before the thank-you.
         if sponsorship.payment_mode_id.payment_provider_id:
@@ -384,16 +417,45 @@ class MyCompassionNewSponsorshipController(http.Controller):
             sponsorship_id = int(sponsorship_id)
         except (TypeError, ValueError) as error:
             raise NotFound() from error
-        sponsorship = request.env["recurring.contract"].sudo().browse(sponsorship_id)
+        sponsorship = (
+            request.env["recurring.contract"].sudo().browse(sponsorship_id).exists()
+        )
+        if not sponsorship:
+            raise NotFound()
 
         return request.render(
             "my_compassion.my2_new_sponsorship_thank_you_page",
             {
-                "n_steps": 3,
+                "n_steps": _flow_n_steps(sponsorship),
                 "sponsorship": sponsorship,
+                # Write credential of the post-payment details form. Minted
+                # only for a visitor who proved they own this signup, never
+                # off the id in the URL, and only while the signup is still
+                # waiting for a name. Empty otherwise, which is what tells
+                # the page it has no form to offer.
+                "details_token": self._issue_details_token(sponsorship),
                 "additional_title": _("Thank you"),
             },
         )
+
+    @staticmethod
+    def _issue_details_token(sponsorship):
+        """Mint the details-form token, if this visitor may have one.
+
+        Two proofs are accepted, and they are the two the design needs: the
+        session that went through the checkout (the sponsor coming back from
+        the gateway, same browser), and the authenticated sponsor. The
+        "do this later, we will email you" path does not come through here at
+        all - Phase 2 mints its token server-side into the email.
+        """
+        owns_signup = sponsorship.id in (
+            request.session.get(OWN_SIGNUPS_SESSION_KEY) or []
+        )
+        if not owns_signup and not MyCompassionSponsorshipPayment._is_sponsorship_user(
+            sponsorship
+        ):
+            return False
+        return sponsorship._my2_issue_details_token()
 
     @staticmethod
     def _render_form_content(wizard):
@@ -647,6 +709,7 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
             )
         return {
             "sponsorship": sponsorship,
+            "n_steps": _flow_n_steps(sponsorship),
             "reference_prefix": sponsorship.reference,
             "amount": invoice.amount_residual,
             "monthly_amount": sponsorship.total_amount,

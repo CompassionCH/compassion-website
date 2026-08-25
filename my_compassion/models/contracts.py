@@ -1,4 +1,5 @@
 import logging
+import secrets
 from datetime import timedelta
 
 from odoo import _, api, fields, models
@@ -18,6 +19,11 @@ class RecurringContract(models.Model):
     _inherit = ["recurring.contract", "utm.mixin"]
 
     REVERT_DELAY_MINUTES = 15
+
+    # How long a details token stays usable. Long enough for the "we will
+    # email you a link to finish later" path, short enough that a link left
+    # in a mailbox or a browser history stops working.
+    DETAILS_TOKEN_HOURS = 72
 
     can_show_on_my_compassion = fields.Boolean(
         string="Can be shown on My Compassion",
@@ -40,6 +46,20 @@ class RecurringContract(models.Model):
         help="The sponsorship was created by the sponsor through the"
         " MyCompassion signup wizard. Such sponsors are invited to create"
         " their portal account once the sponsorship is confirmed.",
+    )
+    my2_details_token = fields.Char(
+        string="Details form token",
+        readonly=True,
+        copy=False,
+        groups="base.group_system",
+        help="Write credential of the post-payment details form. See"
+        " _my2_issue_details_token.",
+    )
+    my2_details_token_expiration = fields.Datetime(
+        string="Details form token expiration",
+        readonly=True,
+        copy=False,
+        groups="base.group_system",
     )
 
     @api.depends("can_write_letter")
@@ -79,6 +99,74 @@ class RecurringContract(models.Model):
             and m.payment_state in ("not_paid", "partial")
         )
         return invoices.sorted("invoice_date")[:1]
+
+    def _my2_details_pending(self):
+        """Whether this signup is still waiting for its sponsor's real name.
+
+        The one state in which the details form may write to the partner.
+        """
+        self.ensure_one()
+        return bool(self.my2_signup and self.partner_id.my2_name_placeholder)
+
+    def _my2_issue_details_token(self):
+        """Mint the write credential of the post-payment details form.
+
+        Single-purpose, single-use and expiring on all three counts because a
+        deterministic, never-expiring token (the payment_utils
+        generate_access_token pattern) would be a permanent bearer credential
+        to rewrite a sponsor's identity, leaking through URLs, browser history
+        and referrers. Constraints this shape has to keep:
+
+        - never handed out on a bare record id: callers must have proved they
+          are the session that paid, or be the authenticated sponsor;
+        - useless once the name is real (_my2_details_pending), so a
+          replayed link cannot overwrite what the sponsor typed;
+        - a write credential only. It must never gate a read, or the form
+          becomes a "type an email, pay, read the owner's details" endpoint;
+        - burnt on the first successful save
+          (_my2_consume_details_token).
+
+        Issuing again replaces the previous token, which is what makes the
+        page reloadable and the "email me a link to finish later" path
+        possible.
+
+        :return: the token, or False when this signup wants no details.
+        """
+        self.ensure_one()
+        if not self._my2_details_pending():
+            return False
+        token = secrets.token_urlsafe(32)
+        self.sudo().write(
+            {
+                "my2_details_token": token,
+                "my2_details_token_expiration": fields.Datetime.now()
+                + timedelta(hours=self.DETAILS_TOKEN_HOURS),
+            }
+        )
+        return token
+
+    def _my2_check_details_token(self, token):
+        """Whether token may write this signup's missing sponsor details."""
+        self.ensure_one()
+        this = self.sudo()
+        if not token or not this.my2_details_token:
+            return False
+        if not this.my2_details_token_expiration:
+            return False
+        if this.my2_details_token_expiration <= fields.Datetime.now():
+            return False
+        if not this._my2_details_pending():
+            return False
+        return secrets.compare_digest(str(token), this.my2_details_token)
+
+    def _my2_consume_details_token(self):
+        """Burn the details token. Called once the details are saved."""
+        self.sudo().write(
+            {
+                "my2_details_token": False,
+                "my2_details_token_expiration": False,
+            }
+        )
 
     def _schedule_digital_revert(self):
         """One-shot delayed cleanup after a pay-click: if no payment
@@ -345,7 +433,9 @@ class RecurringContract(models.Model):
         # A digital signup is confirmed by its first successful payment.
         # That payment is what activates the contract.
         self.filtered(
-            lambda c: c.my2_signup and c.group_id.payment_mode_id.payment_provider_id
+            lambda c: c.my2_signup
+            and c.group_id.payment_mode_id.payment_provider_id
+            and not c.partner_id.my2_name_placeholder
         )._my2_send_portal_invitation()
         return res
 
@@ -357,8 +447,31 @@ class RecurringContract(models.Model):
         self.filtered(
             lambda c: c.my2_signup
             and not c.group_id.payment_mode_id.payment_provider_id
+            and not c.partner_id.my2_name_placeholder
         )._my2_send_portal_invitation()
         return res
+
+    def _my2_pending_portal_invitations(self):
+        """Confirmed signups whose invitation was held back for a name.
+
+        A fast checkout activates the contract before the sponsor has said
+        who they are, and the invitation email greets them by name, so it
+        waits. Activation itself never does. This is what
+        res.partner._my2_on_placeholder_name_replaced calls once the real
+        name lands, from the payment notification or the details form.
+
+        The confirmation test mirrors the two hooks above: a digital signup
+        is confirmed once active, a bank-collected one once waiting.
+        """
+        return self.filtered(
+            lambda c: c.my2_signup
+            and not c.partner_id.my2_name_placeholder
+            and (
+                c.state == "active"
+                if c.group_id.payment_mode_id.payment_provider_id
+                else c.state in ("waiting", "active")
+            )
+        )
 
     def _my2_send_portal_invitation(self):
         """Invite fresh wizard sponsors to create their MyCompassion

@@ -10,7 +10,8 @@
     Context:
     Rendered by /my2/new-sponsorship/payment with the payment form values
     (providers_sudo, payment_methods_sudo, amount, currency,
-    transaction_route, landing_route, access_token...) and `sponsorship`.
+    transaction_route, landing_route, access_token...), `sponsorship` and
+    `n_steps` (the step count of the wizard flow this checkout continues).
 -->
 <odoo>
   <template id="my2_new_sponsorship_payment_page" name="New Sponsorship Payment Page">
@@ -20,14 +21,14 @@
           <!-- PROGRESS BAR -->
           <div class="mt-3 mb-2 px-2 px-lg-0 pt-2 w-100">
             <t t-call="my_compassion.NewSponsorshipStepProgressBar">
-              <t t-set="n_steps" t-value="3" />
-              <t t-set="current_step" t-value="3" />
+              <t t-set="n_steps" t-value="n_steps" />
+              <t t-set="current_step" t-value="n_steps" />
             </t>
           </div>
           <!-- TITLE -->
           <div class="mx-4">
             <t t-call="theme_compassion_2025.TitleComponent">
-              <t t-set="title_content">One last step</t>
+              <t t-set="title_content">Almost there</t>
               <t t-set="color" t-value="'core-blue'" />
               <t t-set="show_underline" t-value="True" />
               <t t-set="underline_color" t-value="'low-yellow'" />
