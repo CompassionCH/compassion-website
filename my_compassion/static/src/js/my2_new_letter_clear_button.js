@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 this.$("#selected-template").remove();
 
                 // Restore the select template button label to default
-                const buttonLabel = this.$("#template-selection-label");
+                const buttonLabel = this.$("#template-selection-label, #text-template-selection-label");
                 if (buttonLabel.length) {
                     buttonLabel.text(_t("Select a template"));
                 }
@@ -81,7 +81,8 @@ document.addEventListener("DOMContentLoaded", function () {
              * @private
              */
             _toggleClearButton: function () {
-                const hasText = this.$("#letter-input").val().trim().length > 0;
+                const letterText = this.$("#letter-input").val();
+                const hasText = letterText && letterText.trim().length > 0;
                 const selectedTemplate = this.$("#selected-template").length > 0;
                 const hasAttachments = this.$("#letter-attachments")[0].files.length > 0;
 
