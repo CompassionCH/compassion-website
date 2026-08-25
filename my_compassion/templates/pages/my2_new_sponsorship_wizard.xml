@@ -25,6 +25,12 @@ Page: My Compassion 2 New Sponsorship Wizard Page
       modes the current step submits itself with, one button each (see
       new.sponsorship.wizard._get_payment_mode_buttons). Empty for the steps
       that keep the generic Continue/Finish button.
+    - step_offers_payment_modes (boolean): Whether those buttons are the
+      current step's submit (see
+      new.sponsorship.wizard._step_offers_payment_modes). False for the steps
+      that keep the generic button; True with an empty payment_mode_buttons
+      means the company has published no mode, and the page must then offer
+      no submit at all.
     - spoken_languages (array of 'res.lang.compassion' records): The list of spoken languages to choose from.
     - lead_sources (array of 'recurring.contract.origin' records): The list of lead sources to choose from.
     - details_token (string): Thank-you page only. Set while the signup still
@@ -719,8 +725,13 @@ Page: My Compassion 2 New Sponsorship Wizard Page
           </t>
         </div>
       </t>
+      <!-- The generic button stands in only for the steps whose submit it
+           actually is. A step submitted by its payment modes that has none
+           to show gets no submit at all: falling back here would finish a
+           standard sponsorship with no payment mode, collected by nothing,
+           behind a thank-you page saying it started. -->
       <div
-        t-else=""
+        t-elif="not step_offers_payment_modes"
         class="btn-next my-3 d-flex justify-content-center"
         data-action="next"
         t-att-data-sponsorship-type="wizard.sponsorship_type"
