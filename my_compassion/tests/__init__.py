@@ -5,6 +5,7 @@ from . import (
     test_donation_flow,
     test_fast_checkout,
     test_fast_checkout_details,
+    test_fast_checkout_page,
     test_multicompany,
     test_recurring_instrument,
     test_theme_apply,
