@@ -59,24 +59,24 @@
                                     ]"
           />
         </t>
-        <!-- MIN -->
+        <!-- FREQUENCY -->
         <t t-call="my_compassion.my2_giving_limits_modal_table_column">
-          <t t-set="title">Min</t>
+          <t t-set="title">Frequency</t>
           <t
             t-set="cells"
             t-value="[
-                        limit.get_ceiling_converted_amount(limit.min_amount, company, date)
+                        limit.get_gift_frequency_label()
                         for limit in limits
                     ]"
           />
         </t>
-        <!-- MAX -->
+        <!-- AMOUNT -->
         <t t-call="my_compassion.my2_giving_limits_modal_table_column">
-          <t t-set="title">Max</t>
+          <t t-set="title">Amount</t>
           <t
             t-set="cells"
             t-value="[
-                        limit.get_ceiling_converted_amount(limit.max_amount, company, date)
+                        limit.get_amount_range_label(company, date)
                         for limit in limits
                     ]"
           />
@@ -84,9 +84,7 @@
       </div>
       <!-- NOTES -->
       <div class="px-3 pt-1 super-tiny-text text-low-pink">
-                *A child gift can be given twice a year.
-                <br />
-                **Available in the child's final year of the program.
+                *Available in the child's final year of the program.
             </div>
     </div>
   </template>

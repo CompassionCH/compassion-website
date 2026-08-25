@@ -136,6 +136,12 @@
         <t t-call="my_compassion.DonationFormLimitsInfo" />
         <div class="mb-3" />
       </div>
+      <div class="donation-request-error alert alert-warning mt-3" hidden="">
+        <strong>Something went wrong</strong>
+        <div class="mt-1">
+                    We couldn't process your request. Please try again or contact us.
+                </div>
+      </div>
       <div
         class="amount-selection"
         t-att-hidden="product.my_compassion_donation_type == 'gift'"

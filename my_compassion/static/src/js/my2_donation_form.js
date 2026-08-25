@@ -93,6 +93,7 @@ export const DonationForm = publicWidget.Widget.extend({
           function (data) {
             this.$(".btn").prop("disabled", false);
             $recipient_select.prop("disabled", false);
+            this.$(".donation-request-error").attr("hidden", true);
 
             if (data.remaining_donations !== null && data.remaining_donations <= 0) {
               this.$(".limit-reached-message").removeAttr("hidden");
@@ -107,11 +108,13 @@ export const DonationForm = publicWidget.Widget.extend({
           function () {
             this.$(".btn").prop("disabled", false);
             $recipient_select.prop("disabled", false);
+            this.$(".donation-request-error").removeAttr("hidden");
           }.bind(this)
         );
     } else {
       this.$(".amount-selection").attr("hidden", true);
       this.$(".limit-reached-message").attr("hidden", true);
+      this.$(".donation-request-error").attr("hidden", true);
     }
   },
 
@@ -139,6 +142,7 @@ export const DonationForm = publicWidget.Widget.extend({
       .then(
         function (data) {
           this.$(".btn").prop("disabled", false);
+          this.$(".donation-request-error").attr("hidden", true);
 
           // Compute amount
           const suggested_amount = this.$(".suggested-amount:checked").val();
@@ -176,6 +180,7 @@ export const DonationForm = publicWidget.Widget.extend({
       .catch(
         function () {
           this.$(".btn").prop("disabled", false);
+          this.$(".donation-request-error").removeAttr("hidden");
         }.bind(this)
       );
   },
