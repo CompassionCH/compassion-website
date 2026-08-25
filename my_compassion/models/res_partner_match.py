@@ -1,4 +1,4 @@
-from odoo import models
+from odoo import api, models
 
 
 class PartnerMatch(models.AbstractModel):
@@ -14,11 +14,27 @@ class PartnerMatch(models.AbstractModel):
         res.extend(["firstname", "lastname"])
         return res
 
+    @api.model
+    def _joined_name(self, vals):
+        """The searchable name of vals, joined from its two name parts.
+
+        Missing keys raise KeyError, which is what makes the callers below
+        fall back to the parent's "name" rule. A key that is present but
+        empty is a different case - a sponsor who gave only one of the two
+        parts, or none at all under a deferred-details checkout - and must
+        degrade to a shorter search or to that same fallback, never to a
+        TypeError on a False operand.
+        """
+        name = f"{vals['firstname'] or ''} {vals['lastname'] or ''}".strip()
+        if not name:
+            raise KeyError("firstname")
+        return name
+
     def _match_email_and_name(self, vals):
         # Replace the rule with fuzzy search and using firstname and lastname
         try:
             email = vals["email"].strip()
-            name = vals["firstname"] + " " + vals["lastname"]
+            name = self._joined_name(vals)
             return self.env["res.partner"].search(
                 [
                     ("name", "%", name),
@@ -34,7 +50,7 @@ class PartnerMatch(models.AbstractModel):
     def _match_name_and_zip(self, vals):
         # Replace the rule for using firstname and lastname
         try:
-            name = vals["firstname"] + " " + vals["lastname"]
+            name = self._joined_name(vals)
             return self.env["res.partner"].search(
                 [
                     ("name", "ilike", name),
