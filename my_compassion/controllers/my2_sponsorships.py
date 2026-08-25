@@ -677,6 +677,10 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 # The step's own submit buttons, when it has any: one per
                 # payment mode, in place of the generic Continue/Finish one.
                 "payment_mode_buttons": wizard._get_payment_mode_buttons(),
+                # Whether those buttons are this step's submit at all, which
+                # is what says if the generic button may stand in when the
+                # list above is empty.
+                "step_offers_payment_modes": wizard._step_offers_payment_modes(),
             },
         )
 

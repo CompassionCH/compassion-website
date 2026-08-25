@@ -3,6 +3,7 @@ from unittest.mock import patch
 from dateutil.relativedelta import relativedelta
 
 from odoo import fields
+from odoo.exceptions import ValidationError
 from odoo.tests import tagged
 
 from odoo.addons.website.tools import MockRequest
@@ -273,6 +274,42 @@ class TestFastCheckoutOnePage(DigitalSeamCase):
         self.assertNotIn("data-payment-mode", html)
         self.assertNotIn('name="sponsorship_plus"', html)
         self.assertIn('id="finish_button"', html)
+
+    # === A company that has published no mode ===
+
+    def test_page_without_a_published_mode_offers_no_way_to_finish(self):
+        # the state a country is in before its go-live: the modes exist but
+        # none is published (Nordic creates them that way, see the Nordic
+        # module's hooks.py). The page must not fall back to the generic
+        # button, which would finish the wizard with no payment mode at all.
+        (self.digital_mode | self.bank_mode).is_published = False
+        wizard = self._wizard()
+        # still the step the buttons belong to, there is just nothing to
+        # make a button of - the two answers are told apart
+        self.assertTrue(wizard._step_offers_payment_modes())
+        self.assertFalse(wizard._get_payment_mode_buttons())
+        html = self._render(wizard)
+        self.assertNotIn("data-payment-mode", html)
+        self.assertNotIn('id="finish_button"', html)
+        # nothing on the page submits it at all
+        self.assertNotIn("btn-next", html)
+
+    def test_finishing_without_a_mode_is_refused_before_anything_is_written(self):
+        # the page offers no submit, so this is a tampered post - it must not
+        # leave a partner or an uncollectable sponsorship behind
+        (self.digital_mode | self.bank_mode).is_published = False
+        wizard = self._wizard(
+            email="one-page-no-mode@example.org",
+            privacy_consent=True,
+            country=self.env.ref("base.se").id,
+        )
+        with self.assertRaises(ValidationError):
+            wizard.finish_sponsorship()
+        self.assertFalse(
+            self.env["res.partner"].search(
+                [("email", "=", "one-page-no-mode@example.org")]
+            )
+        )
 
     def test_logged_in_page_keeps_the_dropdown_and_the_finish_button(self):
         html = self._render(self._wizard(public=False))

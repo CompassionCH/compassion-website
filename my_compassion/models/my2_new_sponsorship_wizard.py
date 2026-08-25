@@ -272,20 +272,36 @@ class NewSponsorshipWizard(models.TransientModel):
             )
         )
 
+    def _step_offers_payment_modes(self):
+        """Whether the current step is submitted by one button per payment
+        mode instead of by the generic Continue/Finish button.
+
+        Asked apart from _get_payment_mode_buttons so the page can tell the
+        two reasons for having no button to show apart. A step that keeps the
+        generic button offers no modes: the Write&Pray steps, since a
+        Write&Pray sponsorship is deliberately created without a payment mode
+        (see finish_sponsorship), and the logged-in payment step, which keeps
+        its dropdown - the DOM contract the Switzerland eBill extension is
+        built on. The fast-checkout page always offers them, so when the
+        company has published none it must render no submit at all rather
+        than fall back to the generic button, which would finish a standard
+        sponsorship with no payment mode, collected by nothing.
+        """
+        self.ensure_one()
+        if self.sponsorship_type == "write_and_pray":
+            return False
+        return self.current_step == self.env.ref(FAST_CHECKOUT_STEP)
+
     def _get_payment_mode_buttons(self):
         """The payment modes the current step submits itself with, one button
         each: pressing one picks the mode and ends the flow in one action.
 
-        Empty for every step that keeps the generic Continue/Finish button:
-        the Write&Pray steps, since a Write&Pray sponsorship is deliberately
-        created without a payment mode (see finish_sponsorship), and the
-        logged-in payment step, which keeps its dropdown - the DOM contract
-        the Switzerland eBill extension is built on.
+        Empty both for the steps that keep the generic Continue/Finish button
+        and for a fast-checkout page whose company has published no mode -
+        _step_offers_payment_modes is what tells those two apart.
         """
         self.ensure_one()
-        if self.sponsorship_type == "write_and_pray":
-            return self.env["account.payment.mode"]
-        if self.current_step != self.env.ref(FAST_CHECKOUT_STEP):
+        if not self._step_offers_payment_modes():
             return self.env["account.payment.mode"]
         return self._get_offered_payment_modes()
 
@@ -313,6 +329,23 @@ class NewSponsorshipWizard(models.TransientModel):
             # trivially omitted from a posted form.
             raise ValidationError(
                 _("Please accept the privacy notice before continuing.")
+            )
+
+        if (
+            self.details_deferred
+            and self.sponsorship_type != "write_and_pray"
+            and not self.payment_method
+        ):
+            # The fast-checkout page is submitted by its payment-mode buttons,
+            # so a post arriving here without a mode either came from a page
+            # that offered none - the company has published none, see
+            # _step_offers_payment_modes - or dropped the field. Refused here,
+            # before the partner exists, so that a sponsorship nothing would
+            # ever collect is not started behind a thank-you page saying it
+            # has. The logged-in flow is left alone: its payment step keeps
+            # the dropdown the eBill extension drives.
+            raise ValidationError(
+                _("Please choose a payment method before continuing.")
             )
 
         company = self.company_id or self.env.company
