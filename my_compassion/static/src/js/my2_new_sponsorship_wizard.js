@@ -61,6 +61,15 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     formData.push({name: "action", value: action});
     formData.push({name: "sponsorship_type", value: sponsorship_type});
 
+    // The fast-checkout page offers one button per payment mode instead of a
+    // dropdown: the mode of the button that was pressed is the choice. Sent
+    // the same way as the action above, so a mode button goes through the
+    // one step call every other button already uses.
+    const payment_mode = $(ev.currentTarget).data("payment-mode");
+    if (payment_mode) {
+      formData.push({name: "payment_method", value: payment_mode});
+    }
+
     // Use RPC to call the controller method
     rpc("/my2/new-sponsorship/step", this._serializeForm(formData))
       .then(

@@ -1,9 +1,10 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
-# The slim "email + consent" step of the fast checkout: it is all a public
-# visitor answers before paying. Everything else about them is collected
-# afterwards.
+# The single page of the fast checkout: e-mail, consent and one button per
+# payment mode. It is all a public visitor answers before paying - the mode
+# button they press both picks the mode and ends the flow. Everything else
+# about them is collected afterwards.
 FAST_CHECKOUT_STEP = "my_compassion.new_sponsorship_wizard_step_fast_checkout"
 
 # The pre-payment identity steps the fast checkout stands in for. Substituted
@@ -22,9 +23,10 @@ class NewSponsorshipWizard(models.TransientModel):
 
     STEPS_CONFIGS = {
         "standard": {
+            # One page: the fast-checkout step carries the payment-mode
+            # buttons itself, so there is no second step to select one on.
             "public": [
                 FAST_CHECKOUT_STEP,
-                "my_compassion.new_sponsorship_wizard_step_payment_methods",
             ],
             "logged_in": [
                 "my_compassion.new_sponsorship_wizard_step_payment_methods",
@@ -200,6 +202,15 @@ class NewSponsorshipWizard(models.TransientModel):
 
         self.write(values)
 
+        # A switch between flows (the Write&Pray age modal offers a standard
+        # sponsorship instead) changes the step list under the index, and the
+        # new flow is not necessarily as long as the one left behind. An index
+        # past its end reads as "done" and would finish the wizard without
+        # ever showing the step still to answer - the payment-mode buttons of
+        # the one-page standard checkout, in exactly that case.
+        if self.n_steps and self.current_step_idx >= self.n_steps:
+            self.current_step_idx = self.n_steps - 1
+
         # Move to previous / next step (only if current step didn't change)
         action = post.get("action")
         if action == "next" and initial_step.id == self.current_step.id:
@@ -239,6 +250,44 @@ class NewSponsorshipWizard(models.TransientModel):
                 }
             )
         return vals
+
+    def _get_offered_payment_modes(self):
+        """The payment modes the checkout offers, for the website's company.
+
+        One lookup behind both the buttons of the fast-checkout page and the
+        dropdown of the logged-in step, so a mode can never be offered by one
+        and unknown to the other. It is a display list, never a decision:
+        whatever comes back is re-validated in _get_validated_payment_mode.
+        """
+        self.ensure_one()
+        company = self.company_id or self.env.company
+        return (
+            self.env["account.payment.mode"]
+            .sudo()
+            .search(
+                [
+                    ("is_published", "=", True),
+                    ("company_id", "=", company.id),
+                ]
+            )
+        )
+
+    def _get_payment_mode_buttons(self):
+        """The payment modes the current step submits itself with, one button
+        each: pressing one picks the mode and ends the flow in one action.
+
+        Empty for every step that keeps the generic Continue/Finish button:
+        the Write&Pray steps, since a Write&Pray sponsorship is deliberately
+        created without a payment mode (see finish_sponsorship), and the
+        logged-in payment step, which keeps its dropdown - the DOM contract
+        the Switzerland eBill extension is built on.
+        """
+        self.ensure_one()
+        if self.sponsorship_type == "write_and_pray":
+            return self.env["account.payment.mode"]
+        if self.current_step != self.env.ref(FAST_CHECKOUT_STEP):
+            return self.env["account.payment.mode"]
+        return self._get_offered_payment_modes()
 
     def _get_validated_payment_mode(self, company):
         """Return the selected payment mode, validated against the website company.
@@ -352,8 +401,9 @@ class NewSponsorshipWizard(models.TransientModel):
         """XML ids of the steps of one flow, in order.
 
         Public flows run the fast checkout: the identity steps are replaced by
-        the single slim step, wherever a flow still lists them. Logged-in
-        flows are untouched - their sponsor is already identified.
+        the single slim page, wherever a flow still lists them - which leaves
+        the standard flow with that one page and nothing else. Logged-in flows
+        are untouched: their sponsor is already identified.
         """
         xml_ids = self.STEPS_CONFIGS[sponsorship_type][
             "public" if is_public else "logged_in"

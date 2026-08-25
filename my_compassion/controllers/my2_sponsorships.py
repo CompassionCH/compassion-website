@@ -630,16 +630,9 @@ class MyCompassionNewSponsorshipController(http.Controller):
             .sudo()
             .search([("translatable", "=", True)])
         )
-        payment_methods = (
-            request.env["account.payment.mode"]
-            .sudo()
-            .search(
-                [
-                    ("website_published", "=", True),
-                    ("company_id", "=", request.website.company_id.id),
-                ]
-            )
-        )
+        # Model-side lookup: the same list feeds the dropdown of the
+        # logged-in step and the buttons of the fast-checkout page.
+        payment_methods = wizard._get_offered_payment_modes()
         lead_sources = (
             request.env["recurring.contract.origin"]
             .sudo()
@@ -681,6 +674,9 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 "wizard": wizard,
                 "inner_step_html": inner_step_html,
                 "currency_name": currency_name,
+                # The step's own submit buttons, when it has any: one per
+                # payment mode, in place of the generic Continue/Finish one.
+                "payment_mode_buttons": wizard._get_payment_mode_buttons(),
             },
         )
 
