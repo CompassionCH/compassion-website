@@ -92,13 +92,21 @@ class TestFastCheckoutRoutes(HttpCase, DigitalSeamCase):
         # An available, unreserved child: wizard_start refuses anything else,
         # and a leftover reservation would send it to the "child unavailable"
         # page instead of the checkout.
-        self.child = self.env["compassion.child"].search(
-            [("state", "in", self.env["compassion.child"]._available_states())],
-            limit=1,
-        )
-        self.assertTrue(self.child, "the database needs an available child")
+        #
+        # Forced into that state rather than searched for: which states an
+        # instance's own child data happens to sit in is exactly the kind of
+        # thing this test must not depend on (a database can legitimately
+        # have every real child already reserved or sponsored), and every
+        # other fixture in this suite already picks "any child" the same
+        # unfiltered way - only its availability is this test's own concern.
+        self.child = self.env["compassion.child"].search([], limit=1)
+        self.assertTrue(self.child, "the database needs a child")
         self.child.write(
-            {"website_reservation_date": False, "website_reservation_id": False}
+            {
+                "state": self.env["compassion.child"]._available_states()[0],
+                "website_reservation_date": False,
+                "website_reservation_id": False,
+            }
         )
         # child_sponsored drives the GMC hold state, which the routes under
         # test have no part in. Outgoing GMC messages are stubbed for the same
