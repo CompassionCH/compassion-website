@@ -408,11 +408,95 @@ class MyCompassionNewSponsorshipController(http.Controller):
     @http.route(
         "/my2/new-sponsorship/thank-you", type="http", auth="public", website=True
     )
-    def wizard_thank_you(self, sponsorship_id=None, **kwargs):
+    def wizard_thank_you(
+        self, sponsorship_id=None, details_token=None, details_emailed=None, **kwargs
+    ):
         """
-        Renders the new sponsorship thank-you page.
+        Renders the new sponsorship thank-you page. Sponsors whose details are
+        still missing get the "Who shall we thank?" form on it.
+
+        details_token is the credential of the emailed "finish later" link.
+        details_emailed marks the render right after such a mail was sent, so
+        the page says so instead of offering the form again.
         return: An HTTP response containing a rendered template with the thank-you page.
         """
+        sponsorship = self._fetch_signup(sponsorship_id)
+        return request.render(
+            "my_compassion.my2_new_sponsorship_thank_you_page",
+            self._thank_you_values(
+                sponsorship,
+                details_token=details_token,
+                details_emailed=details_emailed,
+            ),
+        )
+
+    @http.route(
+        "/my2/new-sponsorship/complete-details",
+        type="http",
+        auth="public",
+        website=True,
+        methods=["POST"],
+    )
+    def sponsorship_complete_details(
+        self, sponsorship_id=None, details_token=None, **post
+    ):
+        """
+        Receives the "Who shall we thank?" form: the sponsor's name and phone,
+        plus their address if they chose to give one.
+
+        The token is the whole gate (see _fetch_details_signup) - nothing
+        posted here is trusted, the required fields included.
+        return: A redirection to the thank-you page, which now has no form
+        left to show, or the form again with an error when a required field
+        came back empty.
+        """
+        sponsorship = self._fetch_details_signup(sponsorship_id, details_token)
+        values = self._details_form_values(post)
+        if not (values["firstname"] and values["lastname"] and values["phone"]):
+            return request.render(
+                "my_compassion.my2_new_sponsorship_thank_you_page",
+                self._thank_you_values(
+                    sponsorship,
+                    details_token=details_token,
+                    details_error=_("Please tell us your name and phone number."),
+                    submitted=values,
+                ),
+            )
+        sponsorship._my2_apply_details(values)
+        return request.redirect(
+            f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
+        )
+
+    @http.route(
+        "/my2/new-sponsorship/details-later",
+        type="http",
+        auth="public",
+        website=True,
+        methods=["POST"],
+    )
+    def sponsorship_details_later(
+        self, sponsorship_id=None, details_token=None, **post
+    ):
+        """
+        The "Do this later - we will email you" escape hatch of the details
+        form: mails the sponsor a link back to it and drops the form from the
+        page.
+
+        Gated by the same token as the form itself, so this cannot be turned
+        into "post a sponsorship id, mail that sponsor".
+        return: A redirection to the thank-you page, telling them to look in
+        their mailbox.
+        """
+        sponsorship = self._fetch_details_signup(sponsorship_id, details_token)
+        sponsorship._my2_send_details_reminder()
+        return request.redirect(
+            f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
+            "&details_emailed=1"
+        )
+
+    @staticmethod
+    def _fetch_signup(sponsorship_id):
+        """The sudoed signup of a public page, or 404 on a bad id."""
         try:
             sponsorship_id = int(sponsorship_id)
         except (TypeError, ValueError) as error:
@@ -422,21 +506,95 @@ class MyCompassionNewSponsorshipController(http.Controller):
         )
         if not sponsorship:
             raise NotFound()
+        return sponsorship
 
-        return request.render(
-            "my_compassion.my2_new_sponsorship_thank_you_page",
-            {
-                "n_steps": _flow_n_steps(sponsorship),
-                "sponsorship": sponsorship,
-                # Write credential of the post-payment details form. Minted
-                # only for a visitor who proved they own this signup, never
-                # off the id in the URL, and only while the signup is still
-                # waiting for a name. Empty otherwise, which is what tells
-                # the page it has no form to offer.
-                "details_token": self._issue_details_token(sponsorship),
-                "additional_title": _("Thank you"),
-            },
-        )
+    @classmethod
+    def _fetch_details_signup(cls, sponsorship_id, details_token):
+        """The signup a details submission may write to, or 404.
+
+        The token is the only gate, and it is checked against the very
+        contract the request names: a token minted for one signup must not
+        open another. 404 rather than 403 everywhere, so a wrong, expired,
+        already-used or foreign token tells nothing apart from a wrong id.
+        """
+        sponsorship = cls._fetch_signup(sponsorship_id)
+        if not sponsorship._my2_check_details_token(details_token):
+            raise NotFound()
+        return sponsorship
+
+    @classmethod
+    def _thank_you_values(
+        cls,
+        sponsorship,
+        details_token=None,
+        details_emailed=None,
+        details_error=None,
+        submitted=None,
+    ):
+        """Rendering context of the thank-you page, with or without the form.
+
+        The token decides: empty means there is no form to offer, either
+        because the details are already in or because this visitor never
+        proved the signup is theirs.
+        """
+        token = False
+        if sponsorship._my2_details_pending() and not details_emailed:
+            if details_token and sponsorship._my2_check_details_token(details_token):
+                # The emailed link carries its own proof. Handed straight
+                # back to the form, never re-minted: the sponsor may still
+                # need that same link a second time.
+                token = details_token
+            else:
+                token = cls._issue_details_token(sponsorship)
+        values = {
+            "n_steps": _flow_n_steps(sponsorship),
+            "sponsorship": sponsorship,
+            # Write credential of the post-payment details form. Minted
+            # only for a visitor who proved they own this signup, never
+            # off the id in the URL, and only while the signup is still
+            # waiting for a name. Empty otherwise, which is what tells
+            # the page it has no form to offer.
+            "details_token": token,
+            "details_emailed": bool(details_emailed),
+            "details_error": details_error,
+            "additional_title": _("Thank you"),
+        }
+        if token:
+            # What the sponsor typed wins over the prefill, so a submission
+            # bounced for a missing field does not ask for the rest again.
+            values.update(
+                {
+                    "details_prefill": {
+                        **sponsorship._my2_details_prefill(),
+                        **(submitted or {}),
+                    },
+                    "countries": request.env["res.country"].search([]),
+                }
+            )
+        return values
+
+    @staticmethod
+    def _details_form_values(post):
+        """The details form's submission, cleaned up.
+
+        Whitespace-only is empty (an empty required field is the client's
+        problem to report, not something to store), and the country is kept
+        only if it names a real one - the id comes from the browser.
+        """
+
+        def text(key):
+            return (post.get(key) or "").strip()
+
+        country = request.env["res.country"].browse(safe_int(post.get("country")))
+        return {
+            "firstname": text("firstname"),
+            "lastname": text("lastname"),
+            "phone": text("phone"),
+            "street": text("street"),
+            "zip": text("zip"),
+            "city": text("city"),
+            "country_id": country.exists().id,
+        }
 
     @staticmethod
     def _issue_details_token(sponsorship):
@@ -446,7 +604,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
         session that went through the checkout (the sponsor coming back from
         the gateway, same browser), and the authenticated sponsor. The
         "do this later, we will email you" path does not come through here at
-        all - Phase 2 mints its token server-side into the email.
+        all - it mints its token server-side into the email.
         """
         owns_signup = sponsorship.id in (
             request.session.get(OWN_SIGNUPS_SESSION_KEY) or []
@@ -455,7 +613,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
             sponsorship
         ):
             return False
-        return sponsorship._my2_issue_details_token()
+        return sponsorship._my2_ensure_details_token()
 
     @staticmethod
     def _render_form_content(wizard):

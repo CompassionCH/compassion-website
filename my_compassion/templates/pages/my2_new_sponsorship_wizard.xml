@@ -22,6 +22,9 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     - payment_methods (array of 'account.payment.mode' records): The list of payment methods to choose from.
     - spoken_languages (array of 'res.lang.compassion' records): The list of spoken languages to choose from.
     - lead_sources (array of 'recurring.contract.origin' records): The list of lead sources to choose from.
+    - details_token (string): Thank-you page only. Set while the signup still
+      waits for its sponsor's name, and what makes the page show the
+      "Who shall we thank?" form (my2_new_sponsorship_details.xml).
 
     Note:
     The element IDs #payment_method and #finish_button are used by the
@@ -723,7 +726,17 @@ Page: My Compassion 2 New Sponsorship Wizard Page
               <t t-set="show_sponsor_me" t-value="False" />
             </t>
           </div>
-          <t t-if="request.env.user._is_public()">
+          <!-- The signup still waits for its sponsor's name: ask for it here
+               instead of inviting them to create an account they cannot be
+               greeted in yet. The controller only hands over a token while
+               that is the case, so this branch closes by itself. -->
+          <t t-if="details_token">
+            <t t-call="my_compassion.my2_new_sponsorship_details_form" />
+          </t>
+          <t t-elif="details_emailed">
+            <t t-call="my_compassion.my2_new_sponsorship_details_emailed" />
+          </t>
+          <t t-elif="request.env.user._is_public()">
             <div class="mb-4 text-center body-small">
               <t t-set="thank_you_msg">
                                 Create a MyCompassion account to stay connected with %s.
