@@ -1,3 +1,8 @@
+from unittest.mock import patch
+
+from dateutil.relativedelta import relativedelta
+
+from odoo import fields
 from odoo.tests import tagged
 
 from odoo.addons.website.tools import MockRequest
@@ -198,6 +203,53 @@ class TestFastCheckoutOnePage(DigitalSeamCase):
         self.assertEqual(wizard.current_step_idx, 0)
         self.assertEqual(wizard.current_step, self.env.ref(FAST_CHECKOUT_STEP))
         self.assertTrue(wizard._get_payment_mode_buttons())
+
+    # === Finishing a Write&Pray ===
+
+    def test_write_and_pray_finish_takes_no_payment(self):
+        """The pay-first checkout must not have taught Write&Pray to pay.
+
+        Write&Pray is the one flow that shares finish_sponsorship() without
+        ever taking money, so it is also the one a pay-first rewrite can break
+        without anyone noticing: a payment mode reaching its contract would
+        hand its invoices to the charge cron, and its sponsor would be debited
+        for something they were promised is free. The mode is picked on the
+        page on purpose here - it has to be ignored, not merely absent.
+        """
+        wizard = self._wizard(
+            sponsorship_type="write_and_pray",
+            email="one-page-wap-finish@example.org",
+            privacy_consent=True,
+            country=self.env.ref("base.ch").id,
+            birthdate=fields.Date.today() - relativedelta(years=20),
+            wap_contribution_amount=15.0,
+            payment_method=self.digital_mode.id,
+        )
+        # child_sponsored drives the GMC hold state and is out of scope here,
+        # stubbed the way the other finish_sponsorship tests stub it. The line
+        # builder is left real: which lines a Write&Pray ends up with is part
+        # of what is under test.
+        with patch.object(
+            self.registry["compassion.child"],
+            "child_sponsored",
+            lambda child_self, sponsor_id: None,
+        ):
+            sponsorship = wizard.finish_sponsorship()
+        self.assertEqual(sponsorship.type, "SWP")
+        self.assertEqual(sponsorship.child_id, self.child)
+        self.assertTrue(sponsorship.my2_signup)
+        # no mode on the contract, none on its group either: the group is
+        # what the charge cron reads the provider off
+        self.assertFalse(sponsorship.payment_mode_id)
+        self.assertFalse(sponsorship.group_id.payment_mode_id)
+        # the contribution the Write&Pray step asked for, and nothing else:
+        # no sponsorship amount and no Sponsorship+ line
+        self.assertEqual(sponsorship.total_amount, 15.0)
+        # the fast-checkout step did happen, so its sponsor is a placeholder
+        # waiting for the details form like any other, and the consent tick
+        # was persisted
+        self.assertTrue(sponsorship.partner_id.my2_name_placeholder)
+        self.assertTrue(sponsorship.partner_id.legal_agreement_date)
 
     # === The rendered page ===
 
