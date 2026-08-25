@@ -145,7 +145,10 @@ class TestFastCheckoutDetails(HttpCase, DigitalSeamCase):
         partner = self.signup.partner_id
         self.assertEqual(partner.firstname, "Jeanne")
         self.assertEqual(partner.lastname, "Dupont")
-        self.assertEqual(partner.phone, "+41 79 123 45 67")
+        # Some country modules (e.g. Switzerland's partner_compassion) refile
+        # a mobile-looking number from phone to mobile on write - the shared
+        # module only cares that the submitted number landed somewhere.
+        self.assertIn("+41 79 123 45 67", (partner.phone, partner.mobile))
         self.assertEqual(partner.street, "Rue du Test 1")
         self.assertEqual(partner.zip, "1000")
         self.assertEqual(partner.city, "Lausanne")
