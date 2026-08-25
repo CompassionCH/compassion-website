@@ -70,6 +70,9 @@ class TestMultiCompany(DigitalSeamCase):
                 "firstname": "Multi",
                 "lastname": "Company",
                 "email": "multi-company-signup@example.com",
+                # the public flow is the fast checkout, whose consent tick
+                # finish_sponsorship enforces
+                "privacy_consent": True,
                 # the partner needs a country so the contract's required
                 # country_id computes
                 "country": self.env.ref("base.se").id,
