@@ -10,7 +10,7 @@
 # pylint: disable=C8101
 {
     "name": "MyCompassion - Native App",
-    "version": "18.0.1.0.1",
+    "version": "18.0.1.0.2",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
@@ -20,7 +20,6 @@
         "security/ir.model.access.csv",
         "data/ir_push_notifications_cron.xml",
         "views/capacitor_content_load_fix.xml",
-        "views/capacitor_viewport_fix.xml",
         "views/my2_push_notification_wizard_view.xml",
         "views/my2_bottom_nav.xml",
         "views/my2_mobile_profile.xml",

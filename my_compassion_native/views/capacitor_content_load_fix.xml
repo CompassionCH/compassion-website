@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-  <!-- Fixes FOUC (Flash of Unstyled Content) in Capacitor-based native apps -->
+  <!-- Native-app-only head tweaks: the viewport (safe-area insets, no pinch-zoom)
+       and a fade-in that prevents a flash of unstyled content. Must run before
+       first paint, so it cannot live in an asset bundle. -->
   <template
     id="capacitor_fouc_fix"
     inherit_id="website.layout"
@@ -9,6 +11,11 @@
     <xpath expr="//head" position="inside">
       <script type="text/javascript">
                 if (window.Capacitor &amp;&amp; window.Capacitor.getPlatform() !== 'web') {
+                    var viewport = document.querySelector('meta[name="viewport"]');
+                    if (viewport) {
+                        viewport.setAttribute('content', 'width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover');
+                    }
+
                     document.documentElement.style.opacity = '0';
                     document.documentElement.style.backgroundColor = '#ffffff';
 
@@ -27,4 +34,8 @@
             </script>
     </xpath>
   </template>
+  <!-- `active` on a <template> is skipped on update, so set it here. -->
+  <record id="capacitor_fouc_fix" model="ir.ui.view">
+    <field name="active" eval="True" />
+  </record>
 </odoo>
