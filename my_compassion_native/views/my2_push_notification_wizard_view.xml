@@ -3,6 +3,7 @@
   <record id="view_my2_push_notification_wizard_form" model="ir.ui.view">
     <field name="name">my2.push.notification.wizard.form</field>
     <field name="model">my2.push.notification.wizard</field>
+    <field name="active" eval="True" />
     <field name="arch" type="xml">
       <form string="Send Manual Push Notification">
         <group>
@@ -26,6 +27,7 @@
   <record id="view_users_form_mobile_app" model="ir.ui.view">
     <field name="name">res.users.form.mobile.app</field>
     <field name="model">res.users</field>
+    <field name="active" eval="True" />
     <field name="inherit_id" ref="base.view_users_form" />
     <field name="arch" type="xml">
       <xpath expr="//notebook" position="inside">

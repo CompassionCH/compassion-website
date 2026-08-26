@@ -128,12 +128,20 @@ function start() {
   poll();
 }
 
+// Android freezes this page's timers while the payment browser is in front, and
+// a frozen setTimeout may never fire - so an explicit resume has to discard the
+// old cycle instead of being turned away by the guard above.
+function resume() {
+  stop();
+  start();
+}
+
 function init() {
   if (!isNativeApp()) {
     return;
   }
   // Called by the app once the payment browser is gone.
-  window.my2ResumePaymentPolling = start;
+  window.my2ResumePaymentPolling = resume;
   start();
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") {
