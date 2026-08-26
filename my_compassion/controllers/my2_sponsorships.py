@@ -117,9 +117,16 @@ class MyCompassionSponsorshipsController(http.Controller):
     def my2_render_write_and_pray_page(self, **kwargs):
         """
         Renders the write and pray variant of the sponsorships page.
+
+        Write&Pray is Switzerland-only: the free, no-financial-support
+        godparent role it offers is not a product the other countries sell.
+
         return: An HTTP response containing a rendered template with the
         sponsorships landing page.
         """
+        if request.website.company_id.country_id.code != "CH":
+            raise NotFound()
+
         countries = request.env["compassion.field.office"].search(
             [("available_on_childpool", "=", True)]
         )
@@ -283,6 +290,12 @@ class MyCompassionNewSponsorshipController(http.Controller):
         """
         child = child.sudo()
         if not child.exists() or child.state not in child._available_states():
+            raise NotFound()
+        # Write&Pray is Switzerland-only; see my2_render_write_and_pray_page.
+        if (
+            sponsorship_type == "write_and_pray"
+            and request.website.company_id.country_id.code != "CH"
+        ):
             raise NotFound()
 
         # Reserve child for 5 minutes
