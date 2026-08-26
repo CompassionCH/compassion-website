@@ -91,6 +91,16 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     id="my2_new_sponsorship_wizard_fast_checkout"
     name="New Sponsorship Wizard Fast Checkout Step"
   >
+    <!-- Set only by the Write&Pray page's own age check
+         (my2_new_sponsorship_wizard.js::_checkWAPAge), which redirects
+         here instead of offering a modal - there is nothing left to do on
+         that page once the sponsor is ineligible. -->
+    <div
+      t-if="request.params.get('wap_ineligible')"
+      class="mb-3 p-3 rounded-lg bg-high-eggshell tiny-text"
+    >
+            Write&amp;Pray is for people under 25, so here's the regular sponsorship instead.
+        </div>
     <div class="mb-3 p-3 rounded-lg bg-light-blue tiny-text">
             Already have an account?
             <a
@@ -98,6 +108,39 @@ Page: My Compassion 2 New Sponsorship Wizard Page
       class="tiny-text bold text-core-blue"
     >Log in</a>
         </div>
+    <!-- Child summary: what the sponsor is committing to, at a glance,
+         before the email/payment fields below. Reuses the same generic
+         row used for the donation history (my2_donation_item.xml) rather
+         than the full my2_children_card.xml profile card, which is sized
+         and laid out for a standalone profile tile, not an inline summary. -->
+    <div class="mb-3">
+      <t t-call="my_compassion.DonationItemComponent">
+        <t t-set="name"><t
+          t-if="wizard.sponsorship_type == 'write_and_pray'"
+        >Write&amp;Pray</t><t t-else="">Sponsorship</t>&#160;·&#160;<t
+          t-out="wizard.child_id.preferred_name"
+        />, <t t-out="wizard.child_id.age" /></t>
+        <t t-set="subtext"><t
+          t-out="wizard.child_id.field_office_id.country_id.name"
+        />&#160;·&#160;monthly</t>
+        <t
+          t-set="image"
+          t-valuef="/web/image/compassion.child/#{wizard.child_id.id}/portrait"
+        />
+        <t t-set="image_fallback_pictogram" t-value="'pictogram-child-sponsorship'" />
+        <t t-set="price" t-value="float(sponsorship_amount or 0)" />
+        <t t-set="currency_name" t-value="currency_name" />
+        <t t-set="bg_color" t-value="'light-blue'" />
+        <t t-set="accent_color" t-value="'low-blue'" />
+        <t t-set="title_color" t-value="'low-blue'" />
+        <t t-set="price_color" t-value="'low-blue'" />
+      </t>
+    </div>
+    <!-- Sponsorship plus -->
+    <t
+      t-if="wizard.sponsorship_type != 'write_and_pray'"
+      t-call="my_compassion.my2_new_sponsorship_wizard_sponsorship_plus"
+    />
     <!-- Email -->
     <t t-call="theme_compassion_2025.FormFieldComponent">
       <t t-set="top_class" t-value="'my-3'" />
@@ -108,12 +151,13 @@ Page: My Compassion 2 New Sponsorship Wizard Page
         type="email"
         name="email"
         class="form-control"
+        placeholder="you@example.com"
         t-att-value="wizard.email"
         data-validate-type="email"
         required=""
       />
       <div
-        class="mt-1 body-small text-low-black"
+        class="mt-2 very-tiny-text text-mid-grey"
       >For your receipt and news about&#160;<t
         t-out="wizard.child_id.preferred_name"
       />. Nothing else is needed right now.</div>
@@ -131,23 +175,15 @@ Page: My Compassion 2 New Sponsorship Wizard Page
           t-att-checked="wizard.privacy_consent"
           required=""
         />
-        <label class="ms-2 mb-0 body-small" for="privacy_consent">
-                    I agree that Compassion may use my details to set up and
-                    manage this sponsorship, as described in the
+        <label class="ms-2 mb-0 tiny-text text-mid-grey" for="privacy_consent">
+                    I accept the privacy policy as described in the
                     <a
           href="/legal"
-          class="body-small bold text-core-blue"
+          class="tiny-text bold text-core-blue"
         >privacy notice</a>.
                 </label>
       </div>
     </t>
-    <!-- Sponsorship plus. Only for a collected sponsorship: a Write&Pray
-         contract has no plus line to add (see finish_sponsorship), and its
-         own step asks for a contribution instead. -->
-    <t
-      t-if="wizard.sponsorship_type != 'write_and_pray'"
-      t-call="my_compassion.my2_new_sponsorship_wizard_sponsorship_plus"
-    />
     <!-- The payment-mode buttons that end this page are rendered by
          my2_new_sponsorship_wizard_form_content, next to the generic
          Continue/Finish button they stand in for. -->
@@ -159,39 +195,90 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     id="my2_new_sponsorship_wizard_sponsorship_plus"
     name="New Sponsorship Wizard Sponsorship Plus"
   >
-    <input type="hidden" name="sponsorship_plus" value="" />
-    <t t-call="theme_compassion_2025.FormFieldComponent">
-      <t t-set="top_class" t-value="'my-3'" />
-      <t t-set="label">Sponsorship plus</t>
-      <div class="d-flex align-items-center">
+    <div class="my-3">
+      <input type="hidden" name="sponsorship_plus" value="" />
+      <label
+        for="sponsorship_plus"
+        class="toggle-card d-flex align-items-center p-3 rounded rounded-lg bg-light-blue border border-mid-grey"
+      >
         <input
           type="checkbox"
           id="sponsorship_plus"
           name="sponsorship_plus"
-          class="flex-shrink-0"
+          class="d-none"
           t-att-checked="wizard.sponsorship_plus"
         />
-        <label
-          class="ms-2 mb-0 body-small bold"
-          t-att-for="'sponsorship_plus'"
-        >Yes</label>
-      </div>
-      <div class="mt-3 p-4 bg-high-eggshell rounded-lg body-small">
-                Sponsorship+ includes the basic sponsorship of
-                <t t-out="currency_name" />
-                <t t-out="sponsorship_amount" />.-, plus an additional gift of
-                <t t-out="currency_name" />
-                <t t-out="sponsorship_plus_extra" />.- per month.
-                <br />
-                <br />
-                The extra amount helps to fund urgent needs not covered by the
-                sponsorship (e.g. natural disasters,
-                medical interventions, malaria prevention, etc.).
-                <br />
-                <br />
-                This fund is available for all children supported through Compassion.
+        <span
+          class="toggle-card-check me-3 flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle bg-core-blue text-pure-white tiny-text bold"
+        >✓</span>
+        <span class="flex-grow-1">
+          <span
+            class="d-block text-dark-blue very-tiny-text bold"
+          >Sponsorship plus</span>
+          <span class="d-block text-mid-grey very-tiny-text"><t
+            t-out="currency_name"
+          />&#160;<t t-out="sponsorship_amount" />.- + <t
+            t-out="currency_name"
+          />&#160;<t t-out="sponsorship_plus_extra" />.- solidarity fund</span>
+        </span>
+        <span
+          class="toggle-card-price ms-3 text-core-blue very-tiny-text bold flex-shrink-0"
+        >+&#160;<t t-out="currency_name" />&#160;<t
+          t-out="sponsorship_plus_extra"
+        />.-</span>
+      </label>
+      <a
+        href="#"
+        class="d-inline-block mt-2 very-tiny-text bold text-core-blue"
+        data-bs-toggle="modal"
+        data-bs-target="#sponsorship-plus-info-modal"
+      >What does the extra go to?</a>
+    </div>
+    <!-- Sponsorship plus info modal -->
+    <div
+      class="modal fade"
+      id="sponsorship-plus-info-modal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="sponsorship-plus-info-modal-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0">
+          <div class="modal-body">
+            <button
+              type="button"
+              class="btn-close mt-3 me-3 icon-x-circle body-large text-mid-grey"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            />
+            <div class="px-4 pt-2 pb-4">
+              <div
+                id="sponsorship-plus-info-modal-title"
+                class="mb-2 text-dark-blue body-small bold"
+              >What does the extra go to?</div>
+              <div class="body-small">
+                            Sponsorship+ includes the basic sponsorship of
+                            <t t-out="currency_name" />
+                            <t
+                t-out="sponsorship_amount"
+              />.-, plus an additional gift of
+                            <t t-out="currency_name" />
+                            <t t-out="sponsorship_plus_extra" />.- per month.
+                            <br />
+                            <br />
+                            The extra amount helps to fund urgent needs not covered by the
+                            sponsorship (e.g. natural disasters,
+                            medical interventions, malaria prevention, etc.).
+                            <br />
+                            <br />
+                            This fund is available for all children supported through Compassion.
+                        </div>
             </div>
-    </t>
+          </div>
+        </div>
+      </div>
+    </div>
   </template>
   <!-- NEW SPONSORSHIP WIZARD USER DETAILS STEP -->
   <template
@@ -410,6 +497,221 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     <!-- Sponsorship plus -->
     <t t-call="my_compassion.my2_new_sponsorship_wizard_sponsorship_plus" />
   </template>
+  <!-- NEW SPONSORSHIP WIZARD WRITE & PRAY FAST CHECKOUT STEP -->
+  <!-- The public write_and_pray flow's only step (see STEPS_CONFIGS /
+       WAP_FAST_CHECKOUT_STEP) - the same one-page shape as the standard
+       fast checkout, but asking its own questions: date of birth (the
+       eligibility gate), the free-godparent-vs-contributing choice, and
+       only once contributing is picked, a suggested amount. Ends with the
+       generic Continue button (see _step_offers_payment_modes) rather than
+       payment-mode buttons: a Write&Pray sponsorship is never collected,
+       so there is no mode to choose regardless of the amount it names. The
+       logged-in flow still runs the older, plainer
+       my2_new_sponsorship_wizard_wap_options step below unchanged. -->
+  <template
+    id="my2_new_sponsorship_wizard_wap_fast_checkout"
+    name="New Sponsorship Wizard Write &amp; Pray Fast Checkout Step"
+  >
+    <div class="mb-3 p-3 rounded-lg bg-light-blue tiny-text">
+            Already have an account?
+            <a
+      t-att-href="login_url_redirect"
+      class="tiny-text bold text-core-blue"
+    >Log in</a>
+        </div>
+    <!-- Child summary: what the sponsor is committing to, at a glance.
+         Same DonationItemComponent the standard flow uses (see
+         my2_new_sponsorship_wizard_fast_checkout above), via price_label to
+         show "No payment" for the free-godparent branch instead of a
+         formatted amount, and price_id so the JS can still live-update it as
+         an amount is picked (see _updateWAPPrice). -->
+    <div class="mb-3">
+      <t t-call="my_compassion.DonationItemComponent">
+        <t t-set="name">Write&amp;Pray&#160;·&#160;<t
+          t-out="wizard.child_id.preferred_name"
+        />, <t t-out="wizard.child_id.age" /></t>
+        <t t-set="subtext"><t
+          t-out="wizard.child_id.field_office_id.country_id.name"
+        />&#160;·&#160;you write and pray</t>
+        <t
+          t-set="image"
+          t-valuef="/web/image/compassion.child/#{wizard.child_id.id}/portrait"
+        />
+        <t t-set="image_fallback_pictogram" t-value="'pictogram-child-sponsorship'" />
+        <t t-set="price" t-value="float(wizard.wap_contribution_amount or 0)" />
+        <t
+          t-set="price_label"
+          t-value="not wizard.wap_contribution_amount and 'No payment'"
+        />
+        <t t-set="price_id" t-value="'wap-child-price'" />
+        <t t-set="currency_name" t-value="currency_name" />
+        <t t-set="bg_color" t-value="'light-blue'" />
+        <t t-set="accent_color" t-value="'low-blue'" />
+        <t t-set="title_color" t-value="'low-blue'" />
+        <t t-set="price_color" t-value="'low-blue'" />
+      </t>
+    </div>
+    <!-- Date of birth: always asked here, unlike the older wap_options step
+         (which skips it once a previous step already set it - there is no
+         previous step any more). -->
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <t t-set="label">Date of birth</t>
+      <t t-set="input_id" t-value="'birthdate'" />
+      <input
+        id="birthdate"
+        type="date"
+        name="birthdate"
+        class="form-control"
+        t-att-value="wizard.birthdate"
+        required="required"
+      />
+      <div class="mt-2 very-tiny-text text-mid-grey">
+                Write&amp;Pray is for people under 25. This is the only extra question before you continue.
+            </div>
+    </t>
+    <!-- Email -->
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <t t-set="label" t-value="'E-mail'" />
+      <t t-set="input_id" t-value="'email'" />
+      <input
+        id="email"
+        type="email"
+        name="email"
+        class="form-control"
+        placeholder="you@example.com"
+        t-att-value="wizard.email"
+        data-validate-type="email"
+        required=""
+      />
+      <div class="mt-2 very-tiny-text text-mid-grey">For your documentation and&#160;<t
+        t-out="wizard.child_id.preferred_name"
+      />'s letters. Nothing else is needed right now.</div>
+    </t>
+    <!-- Which describes you -->
+    <div class="my-3">
+      <div class="mb-2 text-dark-blue body-small bold">Which describes you?</div>
+      <label
+        for="contribute-false"
+        class="radio-card d-flex align-items-start p-3 mb-2 rounded rounded-lg bg-white border border-mid-grey"
+      >
+        <input
+          type="radio"
+          value="false"
+          class="wap-contribute flex-shrink-0 mt-1"
+          name="contribute"
+          id="contribute-false"
+          t-att-checked="wizard.wap_contribution_amount == 0"
+        />
+        <span class="ms-3 tiny-text">
+                    I pray for and write to my godchild regularly. Someone else provides the financial support, but I
+                    am the child's official sponsor.
+                </span>
+      </label>
+      <label
+        for="contribute-true"
+        class="radio-card d-flex align-items-start p-3 rounded rounded-lg bg-white border border-mid-grey"
+      >
+        <input
+          type="radio"
+          value="true"
+          class="wap-contribute flex-shrink-0 mt-1"
+          name="contribute"
+          id="contribute-true"
+          t-att-checked="wizard.wap_contribution_amount != 0"
+        />
+        <span class="ms-3 tiny-text">
+                    I pray for and write to my sponsored child regularly, and I can contribute monthly.
+                </span>
+      </label>
+      <!-- Contribution amount -->
+      <div id="wap-contribution-amount">
+        <t
+          t-set="amounts"
+          t-value="wap_suggested_amounts or [
+                    { 'name': 'low', 'amount': 5 },
+                    { 'name': 'medium', 'amount': 10 },
+                    { 'name': 'high', 'amount': 20 },
+                ]"
+        />
+        <t t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="top_class" t-value="'mt-3 w-100'" />
+          <t t-set="label_color" t-value="'dark-blue'" />
+          <t t-set="label">Suggested amounts</t>
+          <div class="mt-1 d-flex justify-content-between">
+            <t t-foreach="amounts" t-as="amount">
+              <t t-if="amount_index &gt; 0" t-set="margin" t-value="'ms-3'" />
+              <div t-attf-class="contribution-suggested-amount flex-grow-1 #{margin}">
+                <input
+                  t-attf-id="suggested-#{amount['name']}"
+                  type="radio"
+                  t-attf-name="suggested_amount"
+                  t-att-value="amount['amount']"
+                  t-att-checked="wizard.wap_contribution_amount == amount['amount'] or (amount['name'] == 'low' and wizard.wap_contribution_amount == 0)"
+                  class="suggested-amount"
+                />
+                <label class="mb-0 w-100" t-attf-for="suggested-#{amount['name']}">
+                  <t t-out="currency_name" />
+                  <t t-out="amount['amount']" />
+                </label>
+              </div>
+            </t>
+          </div>
+        </t>
+        <t t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="top_class" t-value="'mt-3 w-100'" />
+          <t t-set="label_color" t-value="'dark-blue'" />
+          <t t-set="label">Or enter your own amount</t>
+          <!-- Hidden radio: keeps the existing suggested_amount/custom_amount
+               submit contract (new.sponsorship.wizard._update_wizard_from_step)
+               without a separate clickable "Custom amount" toggle - typing in
+               the field below checks it directly (see _onCustomAmountInput). -->
+          <input
+            t-attf-id="suggested-custom"
+            type="radio"
+            t-attf-name="suggested_amount"
+            value="custom"
+            t-att-checked="wizard.wap_contribution_amount not in [amount['amount'] for amount in amounts] + [0]"
+            class="suggested-amount d-none"
+          />
+          <input
+            type="text"
+            name="custom_amount"
+            data-validate-type="number"
+            t-att-placeholder="currency_name"
+            class="form-control"
+            t-att-value="'{:g}'.format(wizard.wap_contribution_amount) if wizard.wap_contribution_amount else ''"
+          />
+        </t>
+      </div>
+    </div>
+    <!-- Privacy consent -->
+    <input type="hidden" name="privacy_consent" value="" />
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <div class="d-flex align-items-center">
+        <input
+          type="checkbox"
+          id="privacy_consent"
+          name="privacy_consent"
+          class="flex-shrink-0"
+          t-att-checked="wizard.privacy_consent"
+          required=""
+        />
+        <label class="ms-2 mb-0 tiny-text text-mid-grey" for="privacy_consent">
+                    I accept the privacy policy as described in the
+                    <a
+          href="/legal"
+          class="tiny-text bold text-core-blue"
+        >privacy notice</a>.
+                </label>
+      </div>
+    </t>
+    <!-- Ends with the generic Continue button, rendered by
+         my2_new_sponsorship_wizard_form_content - see the template-level
+         comment above for why. -->
+  </template>
   <!-- NEW SPONSORSHIP WIZARD WRITE & PRAY OPTIONS STEP -->
   <template
     id="my2_new_sponsorship_wizard_wap_options"
@@ -582,67 +884,12 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     name="New Sponsorship Wizard Dynamic Content"
   >
     <input type="hidden" name="wizard_id" t-att-value="wizard.id" />
-    <!-- Write&Pray age modal -->
-    <div
-      t-if="wizard.sponsorship_type == 'write_and_pray'"
-      class="modal fade"
-      id="wap-age-modal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="edit-donation-modal-title"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content border-0">
-          <div class="modal-body">
-            <button
-              type="button"
-              class="btn-close mt-3 me-3 icon-x-circle body-large text-mid-grey"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            />
-            <div class="pt-5 p-4 d-flex flex-column justify-content-center">
-              <div class="text-center body-large">
-                                Write&amp;Pray sponsorships are only available for people under the age of 25.
-                                Would you like to become a sponsor for <t
-                t-out="currency_name"
-              /> <t t-out="sponsorship_amount" />.-/month?
-                            </div>
-              <div
-                class="btn-next align-self-stretch mt-5 d-flex justify-content-center"
-                data-action="next"
-                t-att-data-sponsorship-type="'standard'"
-              >
-                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                  <t t-set="variant" t-value="'default'" />
-                  <t t-set="variation" t-value="'filled'" />
-                  <t t-set="label">Sponsor&#160;<t
-                    t-out="wizard.child_id.preferred_name"
-                  /></t>
-                  <t t-set="color" t-value="'core-blue'" />
-                  <t t-set="text_color" t-value="'pure-white'" />
-                </t>
-              </div>
-              <div class="my-2 mt-3 d-flex justify-content-center">
-                <button
-                  class="back-button text-low-black body-small bold"
-                  data-bs-dismiss="modal"
-                  aria-label="Cancel"
-                >
-                                    Cancel
-                                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
     <!-- PROGRESS BAR -->
-    <!-- Rendered for every non-empty flow, single-step ones included: the
-         payment and thank-you pages that follow always show the bar, so
-         hiding it here would make it appear out of nowhere mid-checkout.
-         The bar itself centers its lone marker when n_steps == 1. -->
-    <div t-if="wizard.n_steps > 0" class="mt-3 mb-2 px-2 px-lg-0 pt-2 w-100">
+    <!-- Rendered only once there is more than one step to progress through:
+         a single-step flow (fast-checkout, or a single-step logged-in flow)
+         has nothing to show progress against, and a lone marker just reads
+         as a stray bullseye sitting above the title. -->
+    <div t-if="wizard.n_steps > 1" class="mt-3 mb-2 px-2 px-lg-0 pt-2 w-100">
       <t t-call="my_compassion.NewSponsorshipStepProgressBar">
         <t t-set="n_steps" t-value="wizard.n_steps" />
         <t t-set="current_step" t-value="wizard.current_step_idx" />
@@ -651,7 +898,15 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     <!-- TITLE -->
     <div class="mx-5 mt-4">
       <t t-call="theme_compassion_2025.TitleComponent">
-        <t t-set="title_content" t-value="wizard.current_step.title" />
+        <!-- The fast-checkout page's step title ("Your email") is generic
+             DB data shared with nothing else; the page itself is centered
+             on one child, so it gets a title naming them instead. -->
+        <t
+          t-if="step_offers_payment_modes"
+          t-set="title_content"
+          t-value="'Sponsor ' + (wizard.child_id.preferred_name or '')"
+        />
+        <t t-else="" t-set="title_content" t-value="wizard.current_step.title" />
         <t t-set="color" t-value="'core-blue'" />
         <t t-set="show_underline" t-value="True" />
         <t t-set="underline_color" t-value="'low-yellow'" />
@@ -681,44 +936,58 @@ Page: My Compassion 2 New Sponsorship Wizard Page
            my2_new_sponsorship_wizard.js posts, through the same step call as
            any other button. -->
       <t t-if="payment_mode_buttons">
-        <div
-          class="my-3 d-flex flex-column flex-sm-row flex-wrap justify-content-center align-items-center"
-        >
+        <!-- eBill and Postfinance Direct Debit each keep their own brand
+             color instead of one from the theme palette; every other mode
+             stays core-blue. Postfinance is matched by xmlid rather than
+             payment_method_id.code: CH's LSV and Postfinance Direct Debit
+             modes can share the same method code ("sepa.ch.dd") and are
+             only told apart by xmlid (see CH_PENDING_PAYMENT_MODES in
+             my_compassion_switzerland/models/contracts.py, same reason). -->
+        <t
+          t-set="postfinance_dd_xmlids"
+          t-value="[
+                        'sponsorship_switzerland.payment_mode_postfinance_dd',
+                        'sponsorship_switzerland.payment_mode_postfinance_dd_25th',
+                        'sponsorship_switzerland.payment_mode_postfinance_dd_multi_months',
+                    ]"
+        />
+        <div class="payment-mode-buttons my-3 d-flex flex-column">
           <t t-foreach="payment_mode_buttons" t-as="payment_mode">
-            <t
-              t-if="payment_mode_index &gt; 0"
-              t-set="spacing"
-              t-value="'mt-2 mt-sm-0 ms-sm-3'"
-            />
+            <t t-if="payment_mode_index &gt; 0" t-set="spacing" t-value="'mt-2'" />
             <div
-              t-attf-class="btn-next d-flex justify-content-center #{spacing}"
+              t-attf-class="btn-next d-flex #{spacing}"
               data-action="next"
               t-att-data-sponsorship-type="wizard.sponsorship_type"
               t-att-data-payment-mode="payment_mode.id"
               t-att-data-payment-code="payment_mode.payment_method_id.code"
             >
+              <t
+                t-if="payment_mode.payment_method_id.code == 'ebill'"
+                t-set="brand_class"
+                t-value="'btn-ebill'"
+              />
+              <t
+                t-elif="payment_mode.get_external_id().get(payment_mode.id) in postfinance_dd_xmlids"
+                t-set="brand_class"
+                t-value="'btn-postfinance-dd'"
+              />
+              <t t-else="" t-set="brand_class" t-value="False" />
               <t t-call="theme_compassion_2025.ThemedButtonComponent">
                 <t t-set="variant" t-value="'compact'" />
-                <!-- The modes come in their own order (sequence, then
-                     name), so the first one is the one the country put
-                     first: it gets the primary styling. -->
-                <t t-if="payment_mode_index == 0">
-                  <t t-set="variation" t-value="'filled'" />
-                  <t t-set="text_color" t-value="'pure-white'" />
-                </t>
-                <t t-else="">
-                  <t t-set="variation" t-value="'hollow'" />
-                  <t t-set="text_color" t-value="'core-blue'" />
-                </t>
+                <t t-set="variation" t-value="'filled'" />
+                <!-- #FFCC00 is too bright for white text to read on. -->
+                <t
+                  t-set="text_color"
+                  t-value="'dark-blue' if brand_class == 'btn-postfinance-dd' else 'pure-white'"
+                />
                 <!-- A mode with a provider charges the first month right
                      after this click; a bank-collected one never does. -->
                 <t
                   t-if="payment_mode.payment_provider_id"
                   t-set="label"
                 >Pay with&#160;<t t-out="payment_mode.name" /></t>
-                <t t-else="" t-set="label">Continue with&#160;<t
-                  t-out="payment_mode.name"
-                /></t>
+                <t t-else="" t-set="label" t-value="payment_mode.name" />
+                <t t-set="add_class" t-value="brand_class" />
                 <t t-set="color" t-value="'core-blue'" />
               </t>
             </div>
@@ -740,7 +1009,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
           <t t-set="variant" t-value="'compact'" />
           <t t-set="variation" t-value="'filled'" />
           <t
-            t-if="wizard.current_step_idx &lt; (wizard.n_steps-1)"
+            t-if="wizard.current_step_idx &lt; (wizard.n_steps-1) or wizard.sponsorship_type == 'write_and_pray'"
             t-set="label"
           >Continue</t>
           <t t-else="" t-set="label">Finish</t>
@@ -787,7 +1056,11 @@ Page: My Compassion 2 New Sponsorship Wizard Page
       <div class="container">
         <div class="single-column d-flex flex-column align-items-center">
           <!-- PROGRESS BAR -->
-          <div class="mt-3 mb-2 px-2 px-lg-0 pt-2 w-100">
+          <!-- Only rendered past one step, same as the wizard form itself
+               (my2_new_sponsorship_wizard_form_content): a single-step flow
+               has nothing to show progress against, and a lone marker just
+               reads as a stray bullseye. -->
+          <div t-if="n_steps &gt; 1" class="mt-3 mb-2 px-2 px-lg-0 pt-2 w-100">
             <t t-call="my_compassion.NewSponsorshipStepProgressBar">
               <t t-set="n_steps" t-value="n_steps" />
               <t t-set="current_step" t-value="n_steps + 1" />
@@ -811,13 +1084,6 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                             </t>
             </t>
           </div>
-          <!-- CHILD PROFILE -->
-          <div class="thank-you-child-profile mb-3">
-            <t t-call="my_compassion.my2_children_card_component">
-              <t t-set="child" t-value="sponsorship.child_id" />
-              <t t-set="show_sponsor_me" t-value="False" />
-            </t>
-          </div>
           <!-- The signup still waits for its sponsor's name: ask for it here
                instead of inviting them to create an account they cannot be
                greeted in yet. The controller only hands over a token while
@@ -829,39 +1095,193 @@ Page: My Compassion 2 New Sponsorship Wizard Page
             <t t-call="my_compassion.my2_new_sponsorship_details_emailed" />
           </t>
           <t t-elif="request.env.user._is_public()">
-            <div class="mb-4 text-center body-small">
-              <t t-set="thank_you_msg">
-                                Create a MyCompassion account to stay connected with %s.
-                                <br />
-                                Through your personalized portal, you can easily write letters, view recent pictures,
-                                and manage your sponsorship details.
-                            </t>
-              <t t-out="thank_you_msg % sponsorship.child_id.preferred_name" />
+            <!-- "All set" summary: the portal invitation (sign-in link) was
+                 already emailed by now - see recurring.contract
+                 ._my2_send_portal_invitation, triggered off the placeholder
+                 name being replaced (res.partner
+                 ._my2_on_placeholder_name_replaced), which is exactly what
+                 completing the "Who shall we thank?" form does. Nothing here
+                 sends it; this just tells the sponsor it happened. -->
+            <t
+              t-set="sponsorship_plus_line"
+              t-value="sponsorship.contract_line_ids.filtered(lambda l: l.product_id.default_code == 'fund_gen')"
+            />
+            <div class="mx-4">
+              <t t-call="theme_compassion_2025.TitleComponent">
+                <t t-set="title_content">All set,&#160;<t
+                  t-out="sponsorship.partner_id.firstname"
+                /></t>
+                <t t-set="color" t-value="'dark-blue'" />
+                <t t-set="show_underline" t-value="False" />
+              </t>
+            </div>
+            <div class="mb-3 text-center body-small text-low-black">
+              We'll send a sign-in link to&#160;<t
+              t-out="sponsorship.partner_id.email"
+            />&#160;to set up a password, and you'll have access to your account.
+            </div>
+            <div class="w-100 p-4 mb-3 rounded-lg bg-light-blue">
+              <!-- Write&Pray never collects a payment, so it has nothing to
+                   show under "First payment" - "Commitment: Confirmed" names
+                   what actually happened instead, and "Role" replaces the
+                   implied-sponsor framing the standard rows use. -->
+              <t t-if="sponsorship.type == 'SWP'">
+                <div class="d-flex justify-content-between mb-2">
+                  <span class="body-small text-mid-grey">Child</span>
+                  <span class="body-small bold text-dark-blue"><t
+                    t-out="sponsorship.child_id.preferred_name"
+                  />, <t
+                    t-out="sponsorship.child_id.field_office_id.country_id.name"
+                  /></span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span class="body-small text-mid-grey">Role</span>
+                  <span class="body-small bold text-dark-blue">
+                    <t
+                      t-if="sponsorship.total_amount"
+                    >Sponsor, writes and contributes</t>
+                    <t t-else="">Godparent, writes only</t>
+                  </span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span class="body-small text-mid-grey">Monthly gift</span>
+                  <span class="body-small bold text-dark-blue">
+                    <t t-if="sponsorship.total_amount">
+                      <t t-out="sponsorship.currency_id.name" />
+                      &#160;
+                      <t t-out="'%.2f' % sponsorship.total_amount" />
+                    </t>
+                    <t t-else="">No payment</t>
+                  </span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span class="body-small text-mid-grey">Commitment</span>
+                  <span class="body-small bold text-mid-green">Confirmed</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span class="body-small text-mid-grey">Contact details</span>
+                  <span class="body-small bold text-mid-green">Complete</span>
+                </div>
+              </t>
+              <t t-else="">
+                <div class="d-flex justify-content-between mb-2">
+                  <span class="body-small text-mid-grey">Sponsored child</span>
+                  <span class="body-small bold text-dark-blue"><t
+                    t-out="sponsorship.child_id.preferred_name"
+                  />, <t
+                    t-out="sponsorship.child_id.field_office_id.country_id.name"
+                  /></span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span class="body-small text-mid-grey">Monthly gift</span>
+                  <span class="body-small bold text-dark-blue">
+                    <t t-out="sponsorship.currency_id.name" />
+                    &#160;
+                    <t t-out="'%.2f' % sponsorship.total_amount" />
+                  </span>
+                </div>
+                <div
+                  t-if="sponsorship_plus_line"
+                  class="d-flex justify-content-between mb-2"
+                >
+                  <span class="tiny-text text-mid-grey">Sponsorship Plus</span>
+                  <span class="tiny-text bold text-core-blue">Included&#160;·&#160;<t
+                    t-out="sponsorship.currency_id.name"
+                  />&#160;<t t-out="'%.2f' % sponsorship_plus_line.amount" /></span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span class="body-small text-mid-grey">First payment</span>
+                  <span
+                    t-attf-class="body-small bold text-#{'mid-green' if sponsorship.state == 'active' else 'mid-orange'}"
+                  >
+                    <t
+                      t-out="'Received' if sponsorship.state == 'active' else 'Pending'"
+                    />
+                  </span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span class="body-small text-mid-grey">Contact details</span>
+                  <span class="body-small bold text-mid-green">Complete</span>
+                </div>
+              </t>
+            </div>
+            <!-- Skipped for Write&amp;Pray: the details box right above
+                 already names the child, and the wap-preferences-card /
+                 volunteering card below it are anchored independently of
+                 this one, so nothing else depends on it being present. -->
+            <div t-if="sponsorship.type != 'SWP'" class="all-set-child-card w-100 mb-3">
+              <t t-call="my_compassion.DonationItemComponent">
+                <t t-set="name" t-value="sponsorship.child_id.preferred_name" />
+                <t
+                  t-set="subtext"
+                  t-value="sponsorship.child_id.field_office_id.country_id.name"
+                />
+                <t
+                  t-set="image"
+                  t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait"
+                />
+                <t
+                  t-set="image_fallback_pictogram"
+                  t-value="'pictogram-child-sponsorship'"
+                />
+                <t t-set="price" t-value="sponsorship.total_amount" />
+                <t t-set="currency_name" t-value="sponsorship.currency_id.name" />
+                <t t-set="monthly_noabbr" t-value="True" />
+                <t t-set="bg_color" t-value="'light-blue'" />
+                <t t-set="accent_color" t-value="'low-blue'" />
+                <t t-set="title_color" t-value="'low-blue'" />
+                <t t-set="price_color" t-value="'low-blue'" />
+              </t>
+            </div>
+            <!-- Anchored on by my_compassion_switzerland's volunteering
+                 opt-in (new_sponsorship_wizard_volunteering) via
+                 wap-preferences-card, so it lands between this card and the
+                 dashboard button below regardless of whether this card
+                 itself renders (t-if false outside SWP or repeat W&amp;P). -->
+            <t
+              t-if="sponsorship.type == 'SWP'"
+              t-set="other_wap_count"
+              t-value="request.env['recurring.contract'].sudo().search_count([
+                    ('partner_id', '=', sponsorship.partner_id.id),
+                    ('type', '=', 'SWP'),
+                    ('id', '!=', sponsorship.id),
+                ])"
+            />
+            <div
+              t-if="sponsorship.type == 'SWP' and not other_wap_count"
+              class="wap-preferences-card w-100 p-3 mb-3 rounded rounded-lg bg-high-eggshell border border-low-yellow"
+            >
+              <div
+                class="body-small bold text-dark-blue mb-2"
+              >Write your first letter?</div>
+              <div class="tiny-text text-mid-grey mb-3">
+                            Now that you're all set, why not send&#160;<t
+                t-out="sponsorship.child_id.preferred_name"
+              />&#160;a first hello? A letter means the world to them.
+                        </div>
+              <div class="mb-2 text-center">
+                <a t-att-href="first_letter_url">
+                  <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                    <t t-set="variant" t-value="'compact'" />
+                    <t t-set="variation" t-value="'filled'" />
+                    <t t-set="label">Write my first letter</t>
+                    <t t-set="color" t-value="'core-blue'" />
+                    <t t-set="text_color" t-value="'pure-white'" />
+                  </t>
+                </a>
+              </div>
             </div>
             <div class="mb-3">
-              <a href="/web/signup?redirect=/my/home">
+              <a href="/web/login?redirect=/my/home">
                 <t t-call="theme_compassion_2025.ThemedButtonComponent">
                   <t t-set="variant" t-value="'compact'" />
                   <t t-set="variation" t-value="'filled'" />
-                  <t t-set="label">Sign up</t>
+                  <t t-set="label">Go to my dashboard</t>
                   <t t-set="color" t-value="'core-blue'" />
                   <t t-set="text_color" t-value="'pure-white'" />
                 </t>
               </a>
             </div>
-            <div class="mb-4 text-center body-small">
-                            Already have an account?
-                            <a href="/web/login?redirect=/my/home">
-              <span
-                class="body-small
-                                    bold text-core-blue"
-              >
-                <u>
-                  <t>Log in</t>
-                </u>
-              </span>
-            </a>
-                        </div>
           </t>
           <t t-else="">
             <!-- REVIEW PREFERENCES -->

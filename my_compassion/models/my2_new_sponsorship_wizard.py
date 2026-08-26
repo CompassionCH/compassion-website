@@ -7,6 +7,22 @@ from odoo.exceptions import ValidationError
 # about them is collected afterwards.
 FAST_CHECKOUT_STEP = "my_compassion.new_sponsorship_wizard_step_fast_checkout"
 
+# Write&Pray's own single page: date of birth (the eligibility gate),
+# e-mail, the free-godparent-vs-contributing choice and, only once
+# contributing is picked, the suggested amounts. Unlike the standard fast
+# checkout it never ends in a payment-mode button - a Write&Pray sponsorship
+# is deliberately created without one either way (see finish_sponsorship) -
+# so it keeps the generic Continue button. Kept as its own step rather than
+# folded into FAST_CHECKOUT_STEP: the two ask genuinely different questions
+# (age, correspondence-only vs contribution), which would make one shared
+# template do two unrelated jobs.
+WAP_FAST_CHECKOUT_STEP = "my_compassion.new_sponsorship_wizard_step_wap_fast_checkout"
+
+# Both fast-checkout variants, for the one thing they do share: their
+# identity fields (name, phone, address) are deferred to the post-payment
+# details form rather than asked up front.
+FAST_CHECKOUT_STEPS = (FAST_CHECKOUT_STEP, WAP_FAST_CHECKOUT_STEP)
+
 # The pre-payment identity steps the fast checkout stands in for. Substituted
 # in _get_step_xmlids rather than edited out of every STEPS_CONFIGS entry, so
 # a flow's entry keeps listing the steps it owns and Write&Pray gets the same
@@ -33,10 +49,11 @@ class NewSponsorshipWizard(models.TransientModel):
             ],
         },
         "write_and_pray": {
+            # One page, the same shape as the standard flow: WAP_FAST_CHECKOUT_STEP
+            # carries the age gate, email, the free-vs-contributing choice and
+            # (when contributing) the payment-mode buttons itself.
             "public": [
-                "my_compassion.new_sponsorship_wizard_step_user_details",
-                "my_compassion.new_sponsorship_wizard_step_communication_details",
-                "my_compassion.new_sponsorship_wizard_step_wap_options",
+                WAP_FAST_CHECKOUT_STEP,
             ],
             "logged_in": [
                 "my_compassion.new_sponsorship_wizard_step_wap_options",
@@ -152,8 +169,11 @@ class NewSponsorshipWizard(models.TransientModel):
     @api.depends("sponsorship_type", "user_id")
     def _compute_details_deferred(self):
         for wizard in self:
-            wizard.details_deferred = FAST_CHECKOUT_STEP in wizard._get_step_xmlids(
+            step_xmlids = wizard._get_step_xmlids(
                 wizard.sponsorship_type, wizard.user_id._is_public()
+            )
+            wizard.details_deferred = any(
+                step in step_xmlids for step in FAST_CHECKOUT_STEPS
             )
 
     def update(self, post):
@@ -278,13 +298,16 @@ class NewSponsorshipWizard(models.TransientModel):
 
         Asked apart from _get_payment_mode_buttons so the page can tell the
         two reasons for having no button to show apart. A step that keeps the
-        generic button offers no modes: the Write&Pray steps, since a
+        generic button offers no modes: the Write&Pray page, since a
         Write&Pray sponsorship is deliberately created without a payment mode
-        (see finish_sponsorship), and the logged-in payment step, which keeps
-        its dropdown - the DOM contract the Switzerland eBill extension is
-        built on. The fast-checkout page always offers them, so when the
-        company has published none it must render no submit at all rather
-        than fall back to the generic button, which would finish a standard
+        regardless of what it says about a monthly amount (see
+        finish_sponsorship) - so it ends with a plain "Continue" instead, the
+        same as any other step that keeps the generic button - and the
+        logged-in payment step, which keeps its dropdown - the DOM contract
+        the Switzerland eBill extension is built on. The standard
+        fast-checkout page always offers them, so when the company has
+        published none it must render no submit at all rather than fall
+        back to the generic button, which would finish a standard
         sponsorship with no payment mode, collected by nothing.
         """
         self.ensure_one()
@@ -382,7 +405,10 @@ class NewSponsorshipWizard(models.TransientModel):
 
         # Create new sponsorship
         # Write&Pray sponsorships are never collected. They must stay without
-        # a payment mode, otherwise the charge cron picks up their invoices.
+        # a payment mode, otherwise the charge cron picks up their invoices -
+        # the monthly amount it says is informational, not a real payment
+        # instruction, regardless of which "which describes you" option was
+        # picked.
         payment_mode = (
             self.env["account.payment.mode"]
             if self.sponsorship_type == "write_and_pray"

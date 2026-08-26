@@ -32,6 +32,10 @@
     - monthly_noabbr (bool): Whether the price is paid monthly (no abbreviation).            [False]
     - secondary_buttons (list[dict]): Secondary buttons with custom actions (see Button).    [none]
     - top_class (string): Classes to add to the top element of the item.                     [none]
+    - price_label (string): Text shown instead of the formatted price/currency,              [none]
+      for items with nothing to charge (e.g. Write&amp;Pray's free-godparent branch).
+    - price_id (string): id attribute on the price element, so a caller's own JS             [none]
+      can live-update it (e.g. as a Write&amp;Pray amount is picked).
 -->
 <odoo>
   <!-- DONATION ITEM BUTTON -->
@@ -83,11 +87,11 @@
       />
     </t>
     <div
-      t-attf-class="donation-item-container p-2 d-flex rounded-lg bg-#{bg_color} border-#{accent_color} #{top_class}"
+      t-attf-class="donation-item-container p-2 d-flex rounded rounded-lg bg-#{bg_color} border-#{accent_color} #{top_class}"
       t-attf-style="min-width: #{min_width}"
     >
       <div
-        t-attf-class="thumbnail responsive-lg me-3 flex-shrink-0 rounded-lg #{not image and image_fallback_pictogram or ''}"
+        t-attf-class="thumbnail responsive-lg me-3 flex-shrink-0 rounded rounded-lg #{not image and image_fallback_pictogram or ''}"
         t-attf-style="--image_url: url('#{image}');"
       />
       <t t-if="not primary_button" t-out="small_thumbnail_content" />
@@ -121,20 +125,27 @@
           <t t-if="primary_button" t-call="my_compassion.DonationItemButton">
             <t t-set="button" t-value="primary_button" />
           </t>
-          <div t-attf-class="text-#{price_color} ">
-            <t t-out="currency_name" />
-            <t
-              t-if="price % 1 == 0"
-              t-set="price"
-              t-value="'{0}.-'.format(int(price))"
-            />
-            <t t-else="" t-set="price" t-value="'{0:.2f}'.format(price)" />
-            <t t-if="monthly" t-set="monthly">/mo.</t>
-            <t t-elif="monthly_noabbr">
-              <t t-set="monthly">&#160;/month</t>
+          <div
+            t-attf-class="text-#{price_color} "
+            t-att-id="price_id"
+            t-att-data-currency-name="currency_name"
+          >
+            <t t-if="price_label" t-out="price_label" />
+            <t t-else="">
+              <t t-out="currency_name" />
+              <t
+                t-if="price % 1 == 0"
+                t-set="price"
+                t-value="'{0}.-'.format(int(price))"
+              />
+              <t t-else="" t-set="price" t-value="'{0:.2f}'.format(price)" />
+              <t t-if="monthly" t-set="monthly">/mo.</t>
+              <t t-elif="monthly_noabbr">
+                <t t-set="monthly">&#160;/month</t>
+              </t>
+              <t t-else="" t-set="monthly" />
+              <t t-out="price + monthly" />
             </t>
-            <t t-else="" t-set="monthly" />
-            <t t-out="price + monthly" />
           </div>
         </div>
       </div>

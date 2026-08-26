@@ -43,10 +43,11 @@ Page: My Compassion 2 Post-Payment Sponsor Details
       <input type="hidden" name="sponsorship_id" t-att-value="sponsorship.id" />
       <input type="hidden" name="details_token" t-att-value="details_token" />
       <!-- HEADING -->
-      <div class="h2 mb-1 text-core-blue text-center">Who shall we thank?</div>
-      <div class="mb-3 text-center body-small text-low-black">
-                We only need your name and phone number to finish setting up
-                your sponsorship.
+      <div class="h4 mb-1 text-low-black text-center">Who shall we thank?</div>
+      <div class="mb-3 text-center body-small text-low-black"><t
+        t-out="sponsorship.child_id.preferred_name"
+      /> writes to you by name, so we need it before their first letter -
+                and a phone number lets us reach you if anything comes up.
             </div>
       <!-- ERROR -->
       <div
@@ -109,7 +110,7 @@ Page: My Compassion 2 Post-Payment Sponsor Details
         t-value="details_prefill.get('street') or details_prefill.get('zip') or details_prefill.get('city')"
       />
       <details class="my-3" t-att-open="'open' if has_address else None">
-        <summary class="body-small bold text-core-blue">
+        <summary class="body-small bold text-dark-blue">
                     Add my address for a donation receipt (optional)
                 </summary>
         <!-- Street -->

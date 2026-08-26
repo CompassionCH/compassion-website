@@ -19,6 +19,7 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     "click .btn-sponsor": "_onSponsorClick",
     "change .wap-contribute": "_onWAPContributeChange",
     "change .suggested-amount": "_onAmountChange",
+    "input input[name=custom_amount]": "_onCustomAmountInput",
     "change #birthdate": "_onBirthDateChange",
   },
 
@@ -151,22 +152,64 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
   },
 
   /**
+   * Handles typing in the custom amount field: there is no separate
+   * "Custom amount" toggle any more, so typing here is itself what
+   * selects the custom amount over a suggested one.
+   * @private
+   * @param {Event} ev The jQuery event object.
+   */
+  _onCustomAmountInput: function (ev) {
+    this.$("#suggested-custom").prop("checked", true);
+    this._updateUI("fast");
+  },
+
+  /**
    * Updates UI
    * @private
    * @param speed
    */
   _updateUI: function (speed = 0) {
-    if (this.$(".wap-contribute:checked").val() === "true") {
+    const contributing = this.$(".wap-contribute:checked").val() === "true";
+
+    if (contributing) {
       this.$("#wap-contribution-amount").slideDown(speed);
     } else {
       this.$("#wap-contribution-amount").slideUp(speed);
     }
 
-    if (this.$(".suggested-amount:checked").val() === "custom") {
-      this.$(".custom-amount-field").slideDown(speed);
-    } else {
-      this.$(".custom-amount-field").slideUp(speed);
+    this._updateWAPPrice(contributing);
+  },
+
+  /**
+   * Reflects the "which describes you" choice (and, once contributing,
+   * the picked amount) on the child card's price, the same figure
+   * finish_sponsorship names on the contract line - "No payment" for the
+   * free-godparent branch, since a Write&Pray sponsorship is never
+   * collected either way.
+   * @param {Boolean} contributing
+   * @private
+   */
+  _updateWAPPrice: function (contributing) {
+    const $price = this.$("#wap-child-price");
+    if (!$price.length) {
+      return; // Not the Write&Pray fast-checkout step.
     }
+
+    if (!contributing) {
+      $price.text("No payment");
+      return;
+    }
+
+    let amount = this.$(".suggested-amount:checked").val();
+    if (amount === "custom") {
+      amount = this.$('input[name="custom_amount"]').val();
+    }
+    amount = parseFloat(amount);
+    if (!amount) {
+      $price.text("No payment");
+      return;
+    }
+    $price.text(`${$price.data("currencyName")} ${amount}.-`);
   },
 
   /**
@@ -174,9 +217,7 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
    * @param {Event} ev
    */
   _onBirthDateChange: function (ev) {
-    const sponsorship_type = this.$(".btn-next:not(#wap-age-modal .btn-next)").data(
-      "sponsorship-type"
-    );
+    const sponsorship_type = this.$(".btn-next").data("sponsorship-type");
 
     if (sponsorship_type === "write_and_pray") {
       this._checkWAPAge();
@@ -184,8 +225,13 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
   },
 
   /**
-   * Evaluates if the birthdate qualifies for Write & Pray.
-   * @returns {Boolean} - true if valid, false if too old.
+   * Evaluates if the birthdate qualifies for Write & Pray. Too old sends
+   * the visitor straight to the standard flow for the same child - not a
+   * modal offering to switch, since there is nothing left to do on this
+   * page once they are ineligible. wap_ineligible=1 is what makes the
+   * standard fast-checkout page explain why they landed there instead of
+   * where they clicked.
+   * @returns {Boolean} - true if valid, false if too old (about to redirect).
    */
   _checkWAPAge: function () {
     const birthdateVal = this.$('input[name="birthdate"]').val();
@@ -196,7 +242,7 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     const birthdate = new Date(birthdateVal);
 
     if (birthdate < dateThreshold) {
-      Modal.getOrCreateInstance(this.el.querySelector("#wap-age-modal")).show();
+      window.location.href = `${window.location.pathname}?sponsorship_type=standard&wap_ineligible=1`;
       return false;
     }
     return true;

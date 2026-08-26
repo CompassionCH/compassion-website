@@ -60,9 +60,42 @@
   height: 1.4rem;
 }
 
+/* Smaller than the wizard's other checkboxes (1.4rem): the consent text
+   next to it is tiny-text, so a full-size box reads oversized beside it. */
+#privacy_consent {
+  width: 1rem;
+  height: 1rem;
+}
+
 .new-sponsorship-wizard-form button {
   max-width: 300px;
   width: 100%;
+}
+
+/* A greyer border than Bootstrap's default form-control one. */
+#email {
+  border-color: var(--mid-grey);
+}
+
+/* The payment-mode buttons stand in for the page's one submit action, so
+   unlike other wizard buttons they should fill the form width rather than
+   stay capped at the generic 300px button size. */
+.payment-mode-buttons button {
+  max-width: none;
+  width: 100%;
+  font-family: "NeighbourSans DemiBold", sans-serif;
+}
+
+/* eBill's and Postfinance Direct Debit's own brand colors, not part of the
+   theme palette. Need 2-class specificity, not just !important: the theme's
+   bg-core-blue utility is also !important, and ties go to whichever loaded
+   later in the compiled bundle - not reliably this file. */
+.btn-ebill.btn-ebill {
+  background-color: #1fbbdc !important;
+}
+
+.btn-postfinance-dd.btn-postfinance-dd {
+  background-color: #ffcc00 !important;
 }
 
 .back-button {
@@ -105,14 +138,59 @@
   background-color: var(--low-blue);
 }
 
-#wap-age-modal .modal-body {
-  position: relative;
+/* Generic checkbox-driven toggle card: a bordered, clickable row whose
+   whole area (not just the checkbox) ticks a hidden/visually-hidden input.
+   Shared by the checkout page's Sponsorship Plus opt-in and the "All set"
+   page's volunteering opt-in - same interaction, same look. */
+.toggle-card {
+  cursor: pointer;
+  transition: 0.1s all linear;
 }
 
-#wap-age-modal .btn-close {
-  position: absolute;
-  width: 1.2em;
-  height: 1.2em;
-  top: 0;
-  right: 0;
+.toggle-card-check {
+  width: 24px;
+  height: 24px;
+  font-size: 0.7rem;
+}
+
+/* !important needed: the bg- and border- theme color utilities are
+   themselves !important (theme_compassion_2025's generated colors.scss),
+   so a plain override here would silently lose the cascade to them. */
+.toggle-card:has(input:not(:checked)) {
+  background-color: var(--pure-white) !important;
+  border-color: var(--low-grey) !important;
+}
+
+.toggle-card:has(input:not(:checked)) .toggle-card-check {
+  background-color: var(--pure-white) !important;
+  border: 1px solid var(--low-grey);
+  color: transparent;
+}
+
+.toggle-card:has(input:not(:checked)) .toggle-card-price {
+  color: var(--mid-grey) !important;
+}
+
+/* Radio-driven equivalent of .toggle-card: a bordered row per option, one
+   selected at a time by name (Write&Pray's "which describes you" choice),
+   rather than one row independently on/off. The radio itself stays visible
+   (unlike the checkbox toggle-card hides) since more than one option is on
+   screen at once and needs to read as a real choice, not a single opt-in. */
+.radio-card {
+  cursor: pointer;
+  transition: 0.1s all linear;
+}
+
+.radio-card:has(input:checked) {
+  background-color: var(--light-blue) !important;
+  border-color: var(--core-blue) !important;
+}
+
+/* The "Who shall we thank?" form's field labels (Firstname, Surname, Phone
+   number...): the shared FormFieldComponent bolds them by default, but with
+   the heading, the required asterisks and the buttons above/around them
+   already bold, that reads as too much bold on this one page. */
+.new-sponsorship-details-form .form-field-component label,
+.new-sponsorship-details-form summary {
+  font-family: "NeighbourSans Regular", sans-serif;
 }

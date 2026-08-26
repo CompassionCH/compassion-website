@@ -558,6 +558,21 @@ class MyCompassionNewSponsorshipController(http.Controller):
             "details_emailed": bool(details_emailed),
             "details_error": details_error,
             "additional_title": _("Thank you"),
+            # Public visitors have no session yet - the sign-in link they
+            # were just emailed still has to run first, so this sends them
+            # through the same login redirect "Go to my dashboard" uses,
+            # just aimed at the letter editor instead of the dashboard.
+            "first_letter_url": (
+                "/web/login?"
+                + urlencode(
+                    {
+                        "redirect": (
+                            "/my2/children/letters/new"
+                            f"?child_id={sponsorship.child_id.id}"
+                        )
+                    }
+                )
+            ),
         }
         if token:
             # What the sponsor typed wins over the prefill, so a submission
