@@ -125,8 +125,10 @@ publicWidget.registry.themeCompassionFormFieldValidator = publicWidget.Widget.ex
   validate: function () {
     this.clearError();
     const value = this.$input.val();
+    const isCheckbox = this.$input.is('[type="checkbox"]');
+    const isEmpty = isCheckbox ? !this.$input.prop("checked") : !value;
 
-    if (this.isRequired && !value) {
+    if (this.isRequired && isEmpty) {
       this.showError(this.errorMessages.required);
       return false;
     }
@@ -151,12 +153,17 @@ publicWidget.registry.themeCompassionFormFieldValidator = publicWidget.Widget.ex
 
   /**
    * Marks the input as invalid and inserts the error hint into the DOM.
-   * Placement: after the input element, or after its `.SelectComponent`
-   * ancestor when one is present. Color adapts to the background context.
+   * Placement: after the input element, after its `.SelectComponent`
+   * ancestor when one is present, or after the input's parent for a
+   * checkbox (a checkbox's label is its next sibling, not the select's
+   * children the other cases account for - inserting right after the
+   * input itself would land the hint between the box and its label).
+   * Color adapts to the background context.
    */
   showError: function (message) {
     this.$input.addClass("is-invalid");
 
+    const isCheckbox = this.$input.is('[type="checkbox"]');
     const isDark = this.$input.hasClass("dark-bg");
     const colorClass = isDark ? "text-pure-white" : "text-mid-orange";
     const classes = `input-invalid-hint ${colorClass} tiny-text mt-2`;
@@ -166,6 +173,8 @@ publicWidget.registry.themeCompassionFormFieldValidator = publicWidget.Widget.ex
     const $selectContainer = this.$input.closest(".SelectComponent");
     if ($selectContainer.length > 0) {
       $selectContainer.after($errorHint);
+    } else if (isCheckbox) {
+      this.$input.parent().after($errorHint);
     } else {
       this.$input.after($errorHint);
     }
