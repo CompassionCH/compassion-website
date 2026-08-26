@@ -59,24 +59,13 @@
                                     ]"
           />
         </t>
-        <!-- MIN -->
+        <!-- AMOUNT RANGE -->
         <t t-call="my_compassion.my2_giving_limits_modal_table_column">
-          <t t-set="title">Min</t>
+          <t t-set="title">Amount range</t>
           <t
             t-set="cells"
             t-value="[
-                        limit.get_ceiling_converted_amount(limit.min_amount, company, date)
-                        for limit in limits
-                    ]"
-          />
-        </t>
-        <!-- MAX -->
-        <t t-call="my_compassion.my2_giving_limits_modal_table_column">
-          <t t-set="title">Max</t>
-          <t
-            t-set="cells"
-            t-value="[
-                        limit.get_ceiling_converted_amount(limit.max_amount, company, date)
+                        limit.get_amount_range_label(company, date)
                         for limit in limits
                     ]"
           />
