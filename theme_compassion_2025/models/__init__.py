@@ -2,6 +2,7 @@ from . import (
     stylesheet_generator_mixin,
     colors,
     icons,
+    ir_http,
     pictograms,
     theme_compassion_2025,
     website,

@@ -31,38 +31,40 @@
  */
 
 import publicWidget from "@web/legacy/js/public/public_widget";
+import {_t} from "@web/core/l10n/translation";
 
 const validationConfig = {
   required: {
     suffix: '<span class="text-mid-orange required-asterisk">*</span>',
-    defaultErrorMessage: "This field is required.",
+    defaultErrorMessage: _t("This field is required."),
   },
   email: {
     regex: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-    defaultErrorMessage: "Please enter a valid email address.",
+    defaultErrorMessage: _t("Please enter a valid email address."),
   },
   phone: {
     regex: /^\+?(\d[\d\s-]{5,15}\d)$/,
-    defaultErrorMessage: "Please enter a valid phone number.",
+    defaultErrorMessage: _t("Please enter a valid phone number."),
   },
   name: {
     // Allow international letters, space, dot, apostrophe, hyphen.
     // Length: 2 to 50 characters.
     regex: /^[\p{L} .'-]{2,50}$/u,
-    defaultErrorMessage: "Please enter a valid name (2-50 characters, no numbers).",
+    defaultErrorMessage: _t("Please enter a valid name (2-50 characters, no numbers)."),
   },
   zip: {
     // Allow ZIP codes to start with at most 2 letters, max 15 characters.
     // Allowed 4802 (CH), 10115 (DE, FR, IT), SW1A 1AA (UK)
     // Not allowed: rhiq9rq4q4, DEC1234
     regex: /^([0-9]|[a-zA-Z]{1,2}[0-9\s-])[a-zA-Z0-9\s-]{1,14}$/,
-    defaultErrorMessage:
-      "Please enter a valid ZIP/Postal code. (enter 0000 if not applicable)",
+    defaultErrorMessage: _t(
+      "Please enter a valid ZIP/Postal code. (enter 0000 if not applicable)"
+    ),
   },
   number: {
     // Strictly positive numbers, integer or decimal (1, 2.5, .5; not 0 or -3).
     regex: /(^[1-9]\d*(\.\d+)?$)|(^0?\.\d*[1-9]\d*$)/,
-    defaultErrorMessage: "Please enter a valid number.",
+    defaultErrorMessage: _t("Please enter a valid number."),
   },
 };
 
