@@ -434,6 +434,12 @@ class MyCompassionNewSponsorshipController(http.Controller):
         return: An HTTP response containing a rendered template with the thank-you page.
         """
         sponsorship = self._fetch_signup(sponsorship_id)
+        if not sponsorship._my2_check_details_token(
+            details_token
+        ) and not self._owns_signup(sponsorship):
+            # The thank-you page is public, but the sponsorship details
+            # are private. If this visitor is not the sponsor, hide them.
+            raise NotFound()
         return request.render(
             "my_compassion.my2_new_sponsorship_thank_you_page",
             self._thank_you_values(
