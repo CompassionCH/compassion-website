@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Page: My Compassion 2 Post-Payment Sponsor Details
+
+    Description:
+    The "Who shall we thank?" form of the fast checkout. A public visitor
+    only answers their email before paying, so their partner carries a
+    placeholder name until this form is filled in. It is rendered inside the
+    thank-you page (my2_new_sponsorship_thank_you_page), in place of the
+    account-creation call to action, and only while the signup still waits
+    for a name.
+
+    Used in routes:
+    - /my2/new-sponsorship/thank-you (rendering)
+    - /my2/new-sponsorship/complete-details (submission)
+    - /my2/new-sponsorship/details-later (the "we will email you" escape hatch)
+
+    Injected data:
+    - sponsorship ('recurring.contract' record): The new signup.
+    - details_token (string): Write credential of the form. The form is only
+      rendered when the controller hands one over.
+    - details_prefill (dict): firstname/lastname (from the provider's
+      cardholder name, when it reported one), phone and address values to
+      start the fields with. Every one of them stays editable: a provider's
+      name is a suggestion, never the answer.
+    - details_error (string): Message to show above the form after a
+      submission came back with a required field empty.
+    - countries (array of 'res.country' records): The list of countries to
+      choose from, for the optional address.
+-->
+<odoo>
+  <!-- POST-PAYMENT SPONSOR DETAILS FORM -->
+  <template
+    id="my2_new_sponsorship_details_form"
+    name="New Sponsorship Post-Payment Details Form"
+  >
+    <form
+      class="new-sponsorship-details-form w-100 px-4 mb-4"
+      action="/my2/new-sponsorship/complete-details"
+      method="POST"
+    >
+      <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+      <input type="hidden" name="sponsorship_id" t-att-value="sponsorship.id" />
+      <input type="hidden" name="details_token" t-att-value="details_token" />
+      <!-- HEADING -->
+      <div class="h4 mb-1 text-low-black text-center">Who shall we thank?</div>
+      <div class="mb-3 text-center body-small text-low-black"><t
+        t-out="sponsorship.child_id.preferred_name"
+      /> writes to you by name, so we need it before their first letter -
+                and a phone number lets us reach you if anything comes up.
+            </div>
+      <!-- ERROR -->
+      <div
+        t-if="details_error"
+        class="mb-3 p-3 rounded-lg bg-low-eggshell text-mid-orange body-small"
+        role="alert"
+      >
+        <t t-out="details_error" />
+      </div>
+      <!-- Firstname -->
+      <t t-call="theme_compassion_2025.FormFieldComponent">
+        <t t-set="top_class" t-value="'my-3'" />
+        <t t-set="label">Firstname</t>
+        <t t-set="input_id" t-value="'details_firstname'" />
+        <input
+          id="details_firstname"
+          type="text"
+          name="firstname"
+          class="form-control"
+          t-att-value="details_prefill.get('firstname')"
+          data-validate-type="name"
+          required=""
+        />
+      </t>
+      <!-- Surname -->
+      <t t-call="theme_compassion_2025.FormFieldComponent">
+        <t t-set="top_class" t-value="'my-3'" />
+        <t t-set="label">Surname</t>
+        <t t-set="input_id" t-value="'details_lastname'" />
+        <input
+          id="details_lastname"
+          type="text"
+          name="lastname"
+          class="form-control"
+          t-att-value="details_prefill.get('lastname')"
+          data-validate-type="name"
+          required=""
+        />
+      </t>
+      <!-- Phone: never reported by any provider, so always asked. -->
+      <t t-call="theme_compassion_2025.FormFieldComponent">
+        <t t-set="top_class" t-value="'my-3'" />
+        <t t-set="label">Phone number</t>
+        <t t-set="input_id" t-value="'details_phone'" />
+        <input
+          id="details_phone"
+          type="tel"
+          name="phone"
+          class="form-control"
+          t-att-value="details_prefill.get('phone')"
+          data-validate-type="phone"
+          required=""
+        />
+      </t>
+      <!-- Optional address. A native disclosure, so the block folds away
+           without any JavaScript of its own, and stays open when it already
+           holds something. -->
+      <t
+        t-set="has_address"
+        t-value="details_prefill.get('street') or details_prefill.get('zip') or details_prefill.get('city')"
+      />
+      <details class="my-3" t-att-open="'open' if has_address else None">
+        <summary class="body-small bold text-dark-blue">
+                    Add my address for a donation receipt (optional)
+                </summary>
+        <!-- Street -->
+        <t t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="top_class" t-value="'my-3'" />
+          <t t-set="label">Street</t>
+          <t t-set="input_id" t-value="'details_street'" />
+          <input
+            id="details_street"
+            type="text"
+            name="street"
+            class="form-control"
+            t-att-value="details_prefill.get('street')"
+          />
+        </t>
+        <!-- Locality -->
+        <div class="d-flex">
+          <div class="flex-shrink-1 me-4">
+            <t t-call="theme_compassion_2025.FormFieldComponent">
+              <t t-set="top_class" t-value="'my-3'" />
+              <t t-set="label">Code</t>
+              <t t-set="input_id" t-value="'details_zip'" />
+              <input
+                id="details_zip"
+                type="text"
+                name="zip"
+                class="form-control"
+                t-att-value="details_prefill.get('zip')"
+                data-validate-type="zip"
+              />
+            </t>
+          </div>
+          <div class="w-100 flex-grow-1">
+            <t t-call="theme_compassion_2025.FormFieldComponent">
+              <t t-set="top_class" t-value="'my-3'" />
+              <t t-set="label">Locality</t>
+              <t t-set="input_id" t-value="'details_city'" />
+              <input
+                id="details_city"
+                type="text"
+                name="city"
+                class="form-control"
+                t-att-value="details_prefill.get('city')"
+              />
+            </t>
+          </div>
+        </div>
+        <!-- Country -->
+        <t t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="top_class" t-value="'my-3'" />
+          <t t-set="label">Country</t>
+          <t t-set="input_id" t-value="'details_country'" />
+          <t t-call="theme_compassion_2025.SelectComponent">
+            <t t-set="name" t-value="'country'" />
+            <t t-set="id" t-value="'details_country'" />
+            <option value="">Please select</option>
+            <t t-foreach="countries" t-as="country">
+              <option
+                t-att-selected="country.id == details_prefill.get('country_id')"
+                t-att-value="country.id"
+              >
+                <t t-out="country.name" />
+              </option>
+            </t>
+          </t>
+        </t>
+      </details>
+      <!-- BUTTONS -->
+      <div class="my-3 d-flex justify-content-center">
+        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+          <t t-set="variant" t-value="'compact'" />
+          <t t-set="variation" t-value="'filled'" />
+          <t t-set="label">Save and continue</t>
+          <t t-set="color" t-value="'core-blue'" />
+          <t t-set="text_color" t-value="'pure-white'" />
+          <t t-set="id" t-value="'save_details_button'" />
+        </t>
+      </div>
+      <!-- The escape hatch posts the same form to another route, so it needs
+           neither its own form (they cannot be nested) nor any JavaScript.
+           formnovalidate: the fields it skips are exactly the ones it is
+           there to skip. -->
+      <div class="mb-3 d-flex justify-content-center">
+        <button
+          type="submit"
+          class="back-button text-low-black body-small bold"
+          formaction="/my2/new-sponsorship/details-later"
+          formnovalidate=""
+        >
+                    Do this later - we will email you
+                </button>
+      </div>
+    </form>
+  </template>
+  <!-- POST-PAYMENT SPONSOR DETAILS EMAILED -->
+  <template
+    id="my2_new_sponsorship_details_emailed"
+    name="New Sponsorship Post-Payment Details Emailed"
+  >
+    <!-- The sponsor's email address is deliberately not printed here: this
+         page is reachable with nothing but a sponsorship id, so anything it
+         shows is public. -->
+    <div class="mb-4 px-4 text-center body-small">
+            No problem. We have emailed you a link - open it whenever you have
+            a minute and tell us who to thank.
+        </div>
+  </template>
+</odoo>

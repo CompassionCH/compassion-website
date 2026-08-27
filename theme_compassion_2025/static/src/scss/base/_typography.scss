@@ -76,6 +76,14 @@ h5 {
   }
 }
 
+.very-tiny-text {
+  @include type-style(12px, "NeighbourSans Regular", 100%);
+
+  &.bold {
+    font-family: "NeighbourSans DemiBold", sans-serif;
+  }
+}
+
 /*********************************************************/
 /* QUOTE Styles
 /*********************************************************/

@@ -31,38 +31,40 @@
  */
 
 import publicWidget from "@web/legacy/js/public/public_widget";
+import {_t} from "@web/core/l10n/translation";
 
 const validationConfig = {
   required: {
     suffix: '<span class="text-mid-orange required-asterisk">*</span>',
-    defaultErrorMessage: "This field is required.",
+    defaultErrorMessage: _t("This field is required."),
   },
   email: {
     regex: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-    defaultErrorMessage: "Please enter a valid email address.",
+    defaultErrorMessage: _t("Please enter a valid email address."),
   },
   phone: {
     regex: /^\+?(\d[\d\s-]{5,15}\d)$/,
-    defaultErrorMessage: "Please enter a valid phone number.",
+    defaultErrorMessage: _t("Please enter a valid phone number."),
   },
   name: {
     // Allow international letters, space, dot, apostrophe, hyphen.
     // Length: 2 to 50 characters.
     regex: /^[\p{L} .'-]{2,50}$/u,
-    defaultErrorMessage: "Please enter a valid name (2-50 characters, no numbers).",
+    defaultErrorMessage: _t("Please enter a valid name (2-50 characters, no numbers)."),
   },
   zip: {
     // Allow ZIP codes to start with at most 2 letters, max 15 characters.
     // Allowed 4802 (CH), 10115 (DE, FR, IT), SW1A 1AA (UK)
     // Not allowed: rhiq9rq4q4, DEC1234
     regex: /^([0-9]|[a-zA-Z]{1,2}[0-9\s-])[a-zA-Z0-9\s-]{1,14}$/,
-    defaultErrorMessage:
-      "Please enter a valid ZIP/Postal code. (enter 0000 if not applicable)",
+    defaultErrorMessage: _t(
+      "Please enter a valid ZIP/Postal code. (enter 0000 if not applicable)"
+    ),
   },
   number: {
     // Strictly positive numbers, integer or decimal (1, 2.5, .5; not 0 or -3).
     regex: /(^[1-9]\d*(\.\d+)?$)|(^0?\.\d*[1-9]\d*$)/,
-    defaultErrorMessage: "Please enter a valid number.",
+    defaultErrorMessage: _t("Please enter a valid number."),
   },
 };
 
@@ -125,8 +127,10 @@ publicWidget.registry.themeCompassionFormFieldValidator = publicWidget.Widget.ex
   validate: function () {
     this.clearError();
     const value = this.$input.val();
+    const isCheckbox = this.$input.is('[type="checkbox"]');
+    const isEmpty = isCheckbox ? !this.$input.prop("checked") : !value;
 
-    if (this.isRequired && !value) {
+    if (this.isRequired && isEmpty) {
       this.showError(this.errorMessages.required);
       return false;
     }
@@ -151,12 +155,17 @@ publicWidget.registry.themeCompassionFormFieldValidator = publicWidget.Widget.ex
 
   /**
    * Marks the input as invalid and inserts the error hint into the DOM.
-   * Placement: after the input element, or after its `.SelectComponent`
-   * ancestor when one is present. Color adapts to the background context.
+   * Placement: after the input element, after its `.SelectComponent`
+   * ancestor when one is present, or after the input's parent for a
+   * checkbox (a checkbox's label is its next sibling, not the select's
+   * children the other cases account for - inserting right after the
+   * input itself would land the hint between the box and its label).
+   * Color adapts to the background context.
    */
   showError: function (message) {
     this.$input.addClass("is-invalid");
 
+    const isCheckbox = this.$input.is('[type="checkbox"]');
     const isDark = this.$input.hasClass("dark-bg");
     const colorClass = isDark ? "text-pure-white" : "text-mid-orange";
     const classes = `input-invalid-hint ${colorClass} tiny-text mt-2`;
@@ -166,6 +175,8 @@ publicWidget.registry.themeCompassionFormFieldValidator = publicWidget.Widget.ex
     const $selectContainer = this.$input.closest(".SelectComponent");
     if ($selectContainer.length > 0) {
       $selectContainer.after($errorHint);
+    } else if (isCheckbox) {
+      this.$input.parent().after($errorHint);
     } else {
       this.$input.after($errorHint);
     }

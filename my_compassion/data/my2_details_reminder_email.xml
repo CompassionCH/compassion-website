@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <data noupdate="1">
+    <!-- The "do this later - we will email you" escape hatch of the
+         post-payment details form. Sent on the sponsor's own request, from
+         recurring.contract._my2_send_details_reminder, which mints the
+         single-use token the link carries before the body is rendered.
+
+         The sponsor has no name on file yet, which is the whole point of the
+         email, so nothing here may greet them by one (no salutation). -->
+    <record id="mail_details_reminder" model="mail.template">
+      <field name="name">Sponsorship details reminder</field>
+      <field
+        name="model_id"
+        ref="partner_communication.model_partner_communication_job"
+      />
+      <field
+        name="email_from"
+      >"{{object.company_id.name}}"&lt;{{(object.company_id.email or 'noreply@mycompassion.com')}}&gt;</field>
+      <field name="email_to">{{object.partner_id.email}}</field>
+      <field name="use_default_to">True</field>
+      <field name="subject">Finish setting up your sponsorship</field>
+      <field name="body_html" type="html">
+        <div>
+          <t t-set="sponsorship" t-value="object.get_objects()[:1]" />
+        </div>
+        <p>
+    Hello,
+</p>
+        <p>
+    Thank you for your sponsorship! We still need to know who to thank: your name and phone number are all that is missing.
+</p>
+        <p>
+    It takes a minute - just click the button below.
+</p>
+        <div style="margin:20px auto; text-align: center;">
+          <a
+            t-att-href="sponsorship._my2_details_url()"
+            style="padding: 12px 18px; font-size: 12px;
+     line-height: 18px; color: #FFFFFF; border-color:#0054A6; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #0054A6; border: 1px solid #0054A6; border-radius:3px"
+            title=""
+          >
+        Complete my details
+    </a>
+        </div>
+        <p>
+    The link works once, and only for a couple of weeks. If it has stopped working, or if you have already given us your details, you can safely ignore this email.
+</p>
+        <p>
+    Thank you for standing with your sponsored child!
+</p>
+        <p>
+          <t t-out="object.user_id.signature" />
+        </p>
+      </field>
+      <field name="lang">{{object.partner_id.lang}}</field>
+    </record>
+    <record id="config_details_reminder" model="partner.communication.config">
+      <field name="name">Sponsorship Details Reminder</field>
+      <!-- Digital only, and never printed instead: the whole email is a
+           link, so a letter version of it would be useless. -->
+      <field name="send_mode">digital</field>
+      <field name="print_if_not_email">False</field>
+      <field name="email_template_id" ref="mail_details_reminder" />
+      <field name="model_id" ref="recurring_contract.model_recurring_contract" />
+    </record>
+  </data>
+</odoo>

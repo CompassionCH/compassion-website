@@ -1,6 +1,37 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
+# The single page of the fast checkout: e-mail, consent and one button per
+# payment mode. It is all a public visitor answers before paying - the mode
+# button they press both picks the mode and ends the flow. Everything else
+# about them is collected afterwards.
+FAST_CHECKOUT_STEP = "my_compassion.new_sponsorship_wizard_step_fast_checkout"
+
+# Write&Pray's own single page: date of birth (the eligibility gate),
+# e-mail, the free-godparent-vs-contributing choice and, only once
+# contributing is picked, the suggested amounts. Unlike the standard fast
+# checkout it never ends in a payment-mode button - a Write&Pray sponsorship
+# is deliberately created without one either way (see finish_sponsorship) -
+# so it keeps the generic Continue button. Kept as its own step rather than
+# folded into FAST_CHECKOUT_STEP: the two ask genuinely different questions
+# (age, correspondence-only vs contribution), which would make one shared
+# template do two unrelated jobs.
+WAP_FAST_CHECKOUT_STEP = "my_compassion.new_sponsorship_wizard_step_wap_fast_checkout"
+
+# Both fast-checkout variants, for the one thing they do share: their
+# identity fields (name, phone, address) are deferred to the post-payment
+# details form rather than asked up front.
+FAST_CHECKOUT_STEPS = (FAST_CHECKOUT_STEP, WAP_FAST_CHECKOUT_STEP)
+
+# The pre-payment identity steps the fast checkout stands in for. Substituted
+# in _get_step_xmlids rather than edited out of every STEPS_CONFIGS entry, so
+# a flow's entry keeps listing the steps it owns and Write&Pray gets the same
+# slim step without the decision being spelled out twice.
+DEFERRED_DETAIL_STEPS = (
+    "my_compassion.new_sponsorship_wizard_step_user_details",
+    "my_compassion.new_sponsorship_wizard_step_communication_details",
+)
+
 
 class NewSponsorshipWizard(models.TransientModel):
     _name = "new.sponsorship.wizard"
@@ -8,20 +39,21 @@ class NewSponsorshipWizard(models.TransientModel):
 
     STEPS_CONFIGS = {
         "standard": {
+            # One page: the fast-checkout step carries the payment-mode
+            # buttons itself, so there is no second step to select one on.
             "public": [
-                "my_compassion.new_sponsorship_wizard_step_user_details",
-                "my_compassion.new_sponsorship_wizard_step_communication_details",
-                "my_compassion.new_sponsorship_wizard_step_payment_methods",
+                FAST_CHECKOUT_STEP,
             ],
             "logged_in": [
                 "my_compassion.new_sponsorship_wizard_step_payment_methods",
             ],
         },
         "write_and_pray": {
+            # One page, the same shape as the standard flow: WAP_FAST_CHECKOUT_STEP
+            # carries the age gate, email, the free-vs-contributing choice and
+            # (when contributing) the payment-mode buttons itself.
             "public": [
-                "my_compassion.new_sponsorship_wizard_step_user_details",
-                "my_compassion.new_sponsorship_wizard_step_communication_details",
-                "my_compassion.new_sponsorship_wizard_step_wap_options",
+                WAP_FAST_CHECKOUT_STEP,
             ],
             "logged_in": [
                 "my_compassion.new_sponsorship_wizard_step_wap_options",
@@ -42,6 +74,15 @@ class NewSponsorshipWizard(models.TransientModel):
     is_done = fields.Boolean(
         compute="_compute_is_done",
         readonly=True,
+    )
+    details_deferred = fields.Boolean(
+        compute="_compute_details_deferred",
+        readonly=True,
+        help="The flow went through the fast-checkout step, so the sponsor's"
+        " identity is collected after payment instead of before it. The only"
+        " signal the placeholder-name handling is allowed to key on: keying"
+        " it on 'is this the public flow' would silently change every other"
+        " flow sharing finish_sponsorship().",
     )
 
     user_id = fields.Many2one(
@@ -87,6 +128,11 @@ class NewSponsorshipWizard(models.TransientModel):
     )
     sponsorship_plus = fields.Boolean()
 
+    # Privacy/data consent of the fast-checkout step. Persisted on the partner
+    # as legal_agreement_date, the same field the portal's own privacy
+    # acceptance writes (see controllers/my_account.py).
+    privacy_consent = fields.Boolean()
+
     # Write&Pray fields
     wap_contribution_amount = fields.Float()
 
@@ -120,6 +166,16 @@ class NewSponsorshipWizard(models.TransientModel):
         for wizard in self:
             wizard.is_done = wizard.current_step_idx >= wizard.n_steps
 
+    @api.depends("sponsorship_type", "user_id")
+    def _compute_details_deferred(self):
+        for wizard in self:
+            step_xmlids = wizard._get_step_xmlids(
+                wizard.sponsorship_type, wizard.user_id._is_public()
+            )
+            wizard.details_deferred = any(
+                step in step_xmlids for step in FAST_CHECKOUT_STEPS
+            )
+
     def update(self, post):
         values = {}
 
@@ -145,6 +201,7 @@ class NewSponsorshipWizard(models.TransientModel):
 
         update_field("payment_method", "payment_method", int)
         update_field("sponsorship_plus", "sponsorship_plus", bool)
+        update_field("privacy_consent", "privacy_consent", bool)
 
         if post.get("contribute") == "true":
             if post.get("suggested_amount") == "custom":
@@ -165,6 +222,15 @@ class NewSponsorshipWizard(models.TransientModel):
 
         self.write(values)
 
+        # A switch between flows (the Write&Pray age modal offers a standard
+        # sponsorship instead) changes the step list under the index, and the
+        # new flow is not necessarily as long as the one left behind. An index
+        # past its end reads as "done" and would finish the wizard without
+        # ever showing the step still to answer - the payment-mode buttons of
+        # the one-page standard checkout, in exactly that case.
+        if self.n_steps and self.current_step_idx >= self.n_steps:
+            self.current_step_idx = self.n_steps - 1
+
         # Move to previous / next step (only if current step didn't change)
         action = post.get("action")
         if action == "next" and initial_step.id == self.current_step.id:
@@ -177,7 +243,7 @@ class NewSponsorshipWizard(models.TransientModel):
         Country extensions add their own keys before the matching runs.
         """
         self.ensure_one()
-        return {
+        vals = {
             "title": self.title.id,
             "lastname": self.lastname,
             "firstname": self.firstname,
@@ -190,6 +256,77 @@ class NewSponsorshipWizard(models.TransientModel):
             "country_id": self.country.id,
             "spoken_lang_ids": [(4, lang.id) for lang in self.spoken_languages],
         }
+        if self.details_deferred and not (self.firstname or self.lastname):
+            # A nameless partner cannot exist: partner_firstname's _check_name
+            # needs one of the two parts, and every PSP billing payload needs a
+            # non-empty partner.name (payment_utils.split_partner_name raises on
+            # an empty one). The real name lands later, from the payment
+            # notification or from the post-payment details form.
+            vals.update(
+                {
+                    "lastname": self.env["res.partner"].MY2_PLACEHOLDER_NAME,
+                    "firstname": False,
+                    "my2_name_placeholder": True,
+                }
+            )
+        return vals
+
+    def _get_offered_payment_modes(self):
+        """The payment modes the checkout offers, for the website's company.
+
+        One lookup behind both the buttons of the fast-checkout page and the
+        dropdown of the logged-in step, so a mode can never be offered by one
+        and unknown to the other. It is a display list, never a decision:
+        whatever comes back is re-validated in _get_validated_payment_mode.
+        """
+        self.ensure_one()
+        company = self.company_id or self.env.company
+        return (
+            self.env["account.payment.mode"]
+            .sudo()
+            .search(
+                [
+                    ("is_published", "=", True),
+                    ("company_id", "=", company.id),
+                ]
+            )
+        )
+
+    def _step_offers_payment_modes(self):
+        """Whether the current step is submitted by one button per payment
+        mode instead of by the generic Continue/Finish button.
+
+        Asked apart from _get_payment_mode_buttons so the page can tell the
+        two reasons for having no button to show apart. A step that keeps the
+        generic button offers no modes: the Write&Pray page, since a
+        Write&Pray sponsorship is deliberately created without a payment mode
+        regardless of what it says about a monthly amount (see
+        finish_sponsorship) - so it ends with a plain "Continue" instead, the
+        same as any other step that keeps the generic button - and the
+        logged-in payment step, which keeps its dropdown - the DOM contract
+        the Switzerland eBill extension is built on. The standard
+        fast-checkout page always offers them, so when the company has
+        published none it must render no submit at all rather than fall
+        back to the generic button, which would finish a standard
+        sponsorship with no payment mode, collected by nothing.
+        """
+        self.ensure_one()
+        if self.sponsorship_type == "write_and_pray":
+            return False
+        return self.current_step == self.env.ref(FAST_CHECKOUT_STEP)
+
+    def _get_payment_mode_buttons(self):
+        """The payment modes the current step submits itself with, one button
+        each: pressing one picks the mode and ends the flow in one action.
+
+        Empty both for the steps that keep the generic Continue/Finish button
+        and for a fast-checkout page whose company has published no mode -
+        _step_offers_payment_modes is what tells those two apart.
+        """
+        self.ensure_one()
+        if not self._step_offers_payment_modes():
+            return self.env["account.payment.mode"]
+        return self._get_offered_payment_modes()
 
     def _get_validated_payment_mode(self, company):
         """Return the selected payment mode, validated against the website company.
@@ -209,19 +346,54 @@ class NewSponsorshipWizard(models.TransientModel):
     def finish_sponsorship(self):
         self.ensure_one()
 
+        if self.details_deferred and not self.privacy_consent:
+            # The consent tick is the only thing the fast-checkout step asks
+            # besides the email. The step marks it required, but a checkbox is
+            # trivially omitted from a posted form.
+            raise ValidationError(
+                _("Please accept the privacy notice before continuing.")
+            )
+
+        if (
+            self.details_deferred
+            and self.sponsorship_type != "write_and_pray"
+            and not self.payment_method
+        ):
+            # The fast-checkout page is submitted by its payment-mode buttons,
+            # so a post arriving here without a mode either came from a page
+            # that offered none - the company has published none, see
+            # _step_offers_payment_modes - or dropped the field. Refused here,
+            # before the partner exists, so that a sponsorship nothing would
+            # ever collect is not started behind a thank-you page saying it
+            # has. The logged-in flow is left alone: its payment step keeps
+            # the dropdown the eBill extension drives.
+            raise ValidationError(
+                _("Please choose a payment method before continuing.")
+            )
+
         company = self.company_id or self.env.company
         partner = self.user_id.partner_id
         if self.user_id._is_public():
             # Look for existing partner, create one if not found
             partner_vals = self._get_new_partner_vals()
-            partner = self.env["res.partner.match"].match_values_to_partner(
-                partner_vals, match_update=False, match_create=False
-            )
-            if not partner:
+            if partner_vals.get("my2_name_placeholder"):
+                # A placeholder can never match a returning sponsor's real
+                # stored name, and feeding it to the fuzzy/ilike rules would
+                # risk matching an unrelated partner instead, so matching is
+                # skipped rather than run on a value that cannot inform it.
                 partner = self.env["res.partner"].create(partner_vals)
+            else:
+                partner = self.env["res.partner.match"].match_values_to_partner(
+                    partner_vals, match_update=False, match_create=False
+                )
+                if not partner:
+                    partner = self.env["res.partner"].create(partner_vals)
         else:
             if not partner.birthdate_date and self.birthdate:
                 partner.sudo().write({"birthdate_date": self.birthdate})
+
+        if self.privacy_consent and not partner.legal_agreement_date:
+            partner.sudo().write({"legal_agreement_date": fields.Datetime.now()})
 
         if not partner.country_id:
             country = self.country or company.country_id
@@ -233,7 +405,10 @@ class NewSponsorshipWizard(models.TransientModel):
 
         # Create new sponsorship
         # Write&Pray sponsorships are never collected. They must stay without
-        # a payment mode, otherwise the charge cron picks up their invoices.
+        # a payment mode, otherwise the charge cron picks up their invoices -
+        # the monthly amount it says is informational, not a real payment
+        # instruction, regardless of which "which describes you" option was
+        # picked.
         payment_mode = (
             self.env["account.payment.mode"]
             if self.sponsorship_type == "write_and_pray"
@@ -280,11 +455,42 @@ class NewSponsorshipWizard(models.TransientModel):
         # Return the new sponsorship
         return sponsorship
 
-    def _get_steps(self):
-        xml_ids = self.STEPS_CONFIGS[self.sponsorship_type][
-            "public" if self.user_id._is_public() else "logged_in"
+    @api.model
+    def _get_step_xmlids(self, sponsorship_type, is_public):
+        """XML ids of the steps of one flow, in order.
+
+        Public flows run the fast checkout: the identity steps are replaced by
+        the single slim page, wherever a flow still lists them - which leaves
+        the standard flow with that one page and nothing else. Logged-in flows
+        are untouched: their sponsor is already identified.
+        """
+        xml_ids = self.STEPS_CONFIGS[sponsorship_type][
+            "public" if is_public else "logged_in"
         ]
-        return [self.env.ref(xml_id).id for xml_id in xml_ids]
+        if not is_public:
+            return list(xml_ids)
+        steps = []
+        for xml_id in xml_ids:
+            if xml_id in DEFERRED_DETAIL_STEPS:
+                xml_id = FAST_CHECKOUT_STEP
+            if xml_id not in steps:
+                steps.append(xml_id)
+        return steps
+
+    @api.model
+    def _flow_n_steps(self, sponsorship_type, is_public):
+        """Step count of a flow, for the pages that continue the wizard's
+        progress bar after the wizard record itself is gone (the payment and
+        thank-you pages)."""
+        return len(self._get_step_xmlids(sponsorship_type, is_public))
+
+    def _get_steps(self):
+        return [
+            self.env.ref(xml_id).id
+            for xml_id in self._get_step_xmlids(
+                self.sponsorship_type, self.user_id._is_public()
+            )
+        ]
 
 
 class NewSponsorshipWizardStep(models.Model):

@@ -1,17 +1,21 @@
+#
 msgid ""
 msgstr ""
+"Project-Id-Version: Compassion Odoo 18\n"
+"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: POEditor.com\n"
-"Project-Id-Version: Compassion Odoo 18\n"
-"Language: sv\n"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
-msgid "(view\n"
+msgid ""
+"(view\n"
 "                                            agreement)"
-msgstr "(visa\n"
+msgstr ""
+"(visa\n"
 "                                            avtalet)"
 
 #. module: my_compassion
@@ -22,36 +26,48 @@ msgstr "(visa avtalet)"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.GivingLimitsTableComponent
-msgid "*A child gift can be given twice a year.\n"
+msgid ""
+"*A child gift can be given twice a year.\n"
 "                <br/>\n"
 "                **Available in the child's final year of the program."
-msgstr "*En gåva till barnet kan ges två gånger om året.\n"
+msgstr ""
+"*En gåva till barnet kan ges två gånger om året.\n"
 "                <br/>\n"
 "                **Tillgänglig under barnets sista år i programmet."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
-msgid ".\n"
+msgid ""
+".\n"
 "                            You can adjust your preferences at any time in your user settings for a tailored experience.\n"
 "                            <span class=\"body-small bold\">Would you like to review them now?</span>"
-msgstr ".\n"
+msgstr ""
+".\n"
 "                            Du kan när som helst justera dina inställningar i dina användarinställningar för en anpassad upplevelse.\n"
 "                            <span class=\"body-small bold\">Vill du granska dem nu?</span>"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.sponsor_a_child
-msgid ".\n"
+msgid ""
+".\n"
 "                    <br/>\n"
 "                    <br/>\n"
 "                    <br/>"
-msgstr ".\n"
+msgstr ""
+".\n"
 "                    <br/>\n"
 "                    <br/>\n"
 "                    <br/>"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
+msgid ". Nothing else is needed right now."
+msgstr ". Inget annat behövs just nu."
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_payment_method
-msgid ".- per month.\n"
+msgid ""
+".- per month.\n"
 "                <br/>\n"
 "                <br/>\n"
 "                The extra amount helps to fund urgent needs not covered by the\n"
@@ -60,7 +76,8 @@ msgid ".- per month.\n"
 "                <br/>\n"
 "                <br/>\n"
 "                This fund is available for all children supported through Compassion."
-msgstr ".- per månad.\n"
+msgstr ""
+".- per månad.\n"
 "                <br/>\n"
 "                <br/>\n"
 "                Det extra beloppet hjälper till att finansiera akuta behov som inte täcks av\n"
@@ -71,7 +88,7 @@ msgstr ".- per månad.\n"
 "                Denna fond är tillgänglig för alla barn som stöds genom Compassion."
 
 #. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_payment_method
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_sponsorship_plus
 msgid ".-, plus an additional gift of"
 msgstr ".-, plus en extra gåva på"
 
@@ -107,9 +124,11 @@ msgstr "/månad."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_change_password_fullpage
-msgid "2FA\n"
+msgid ""
+"2FA\n"
 "                                        is enabled."
-msgstr "2FA\n"
+msgstr ""
+"2FA\n"
 "                                        är aktiverat."
 
 #. module: my_compassion
@@ -145,18 +164,21 @@ msgstr "<b>Månatligt bidrag</b>"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.sponsor_a_child
-msgid "<br/>\n"
+msgid ""
+"<br/>\n"
 "                    <br/>\n"
 "                    <br/>\n"
 "                    You do not support any child yet. You can start a sponsorship by following"
-msgstr "<br/>\n"
+msgstr ""
+"<br/>\n"
 "                    <br/>\n"
 "                    <br/>\n"
 "                    Du stöder ännu inget barn. Du kan starta ett fadderskap genom att följa"
 
 #. module: my_compassion
 #: model:mail.template,body_html:my_compassion.signup_confirmation_set_password_email
-msgid "<div>\n"
+msgid ""
+"<div>\n"
 "          <t t-set=\"partner\" t-value=\"object.partner_id\"/>\n"
 "        </div>\n"
 "        <p>\n"
@@ -183,7 +205,8 @@ msgid "<div>\n"
 "          <t t-out=\"object.user_id.signature\"/>\n"
 "        </p>\n"
 "      "
-msgstr "<div>\n"
+msgstr ""
+"<div>\n"
 "          <t t-set=\"partner\" t-value=\"object.partner_id\"/>\n"
 "        </div>\n"
 "        <p>\n"
@@ -212,15 +235,77 @@ msgstr "<div>\n"
 "      "
 
 #. module: my_compassion
+#: model:mail.template,body_html:my_compassion.mail_details_reminder
+msgid ""
+"<div>\n"
+"          <t t-set=\"sponsorship\" t-value=\"object.get_objects()[:1]\"/>\n"
+"        </div>\n"
+"        <p>\n"
+"    Hello,\n"
+"</p>\n"
+"        <p>\n"
+"    Thank you for your sponsorship! We still need to know who to thank: your name and phone number are all that is missing.\n"
+"</p>\n"
+"        <p>\n"
+"    It takes a minute - just click the button below.\n"
+"</p>\n"
+"        <div style=\"margin:20px auto; text-align: center;\">\n"
+"          <a t-att-href=\"sponsorship._my2_details_url()\" style=\"padding: 12px 18px; font-size: 12px;      line-height: 18px; color: #FFFFFF; border-color:#0054A6; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #0054A6; border: 1px solid #0054A6; border-radius:3px\" title=\"\">\n"
+"        Complete my details\n"
+"    </a>\n"
+"        </div>\n"
+"        <p>\n"
+"    The link works once, and only for a couple of weeks. If it has stopped working, or if you have already given us your details, you can safely ignore this email.\n"
+"</p>\n"
+"        <p>\n"
+"    Thank you for standing with your sponsored child!\n"
+"</p>\n"
+"        <p>\n"
+"          <t t-out=\"object.user_id.signature\"/>\n"
+"        </p>\n"
+"      "
+msgstr ""
+"<div>\n"
+"          <t t-set=\"sponsorship\" t-value=\"object.get_objects()[:1]\"/>\n"
+"        </div>\n"
+"        <p>\n"
+"    Hej,\n"
+"</p>\n"
+"        <p>\n"
+"    Tack för ditt fadderskap! Vi vet fortfarande inte vem vi ska tacka: allt som saknas är ditt namn och telefonnummer.\n"
+"</p>\n"
+"        <p>\n"
+"    Det tar bara en minut - klicka bara på knappen nedan.\n"
+"</p>\n"
+"        <div style=\"margin:20px auto; text-align: center;\">\n"
+"          <a t-att-href=\"sponsorship._my2_details_url()\" style=\"padding: 12px 18px; font-size: 12px;      line-height: 18px; color: #FFFFFF; border-color:#0054A6; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #0054A6; border: 1px solid #0054A6; border-radius:3px\" title=\"\">\n"
+"        Fyll i mina uppgifter\n"
+"    </a>\n"
+"        </div>\n"
+"        <p>\n"
+"    Länken fungerar en gång, och bara i ett par veckor. Om den har slutat fungera, eller om du redan har lämnat dina uppgifter till oss, kan du tryggt ignorera det här mejlet.\n"
+"</p>\n"
+"        <p>\n"
+"    Tack för att du står vid ditt fadderbarns sida!\n"
+"</p>\n"
+"        <p>\n"
+"          <t t-out=\"object.user_id.signature\"/>\n"
+"        </p>\n"
+"      "
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.user_dropdown_settings_link
-msgid "<i class=\"fa fa-fw fa-cog me-1 small text-primary text-primary-emphasis\"/>\n"
+msgid ""
+"<i class=\"fa fa-fw fa-cog me-1 small text-primary text-primary-emphasis\"/>\n"
 "                Settings"
-msgstr "<i class=\"fa fa-fw fa-cog me-1 small text-primary text-primary-emphasis\"/>\n"
+msgstr ""
+"<i class=\"fa fa-fw fa-cog me-1 small text-primary text-primary-emphasis\"/>\n"
 "                Inställningar"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_letter_page
-msgid "<i class=\"icon-image-plus fa-2x text-dark-blue mb-3\"/>\n"
+msgid ""
+"<i class=\"icon-image-plus fa-2x text-dark-blue mb-3\"/>\n"
 "                  <br/>\n"
 "                  <span class=\"text-mid-grey\">\n"
 "                                        supported format:\n"
@@ -229,7 +314,8 @@ msgid "<i class=\"icon-image-plus fa-2x text-dark-blue mb-3\"/>\n"
 "                  <br/>\n"
 "                  <span class=\"text-mid-grey\">png, webp</span>\n"
 "                  <br/>"
-msgstr "<i class=\"icon-image-plus fa-2x text-dark-blue mb-3\"/>\n"
+msgstr ""
+"<i class=\"icon-image-plus fa-2x text-dark-blue mb-3\"/>\n"
 "                  <br/>\n"
 "                  <span class=\"text-mid-grey\">\n"
 "                                        format som stöds:\n"
@@ -241,14 +327,17 @@ msgstr "<i class=\"icon-image-plus fa-2x text-dark-blue mb-3\"/>\n"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_page
-msgid "<i class=\"mt-n1 icon-lock03\"/>\n"
+msgid ""
+"<i class=\"mt-n1 icon-lock03\"/>\n"
 "                                        Secure checkout"
-msgstr "<i class=\"mt-n1 icon-lock03\"/>\n"
+msgstr ""
+"<i class=\"mt-n1 icon-lock03\"/>\n"
 "                                        Säker betalning"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_sponsorships_page
-msgid "<i class=\"results-icon icon-users03 text-mid-grey me-2\"/>\n"
+msgid ""
+"<i class=\"results-icon icon-users03 text-mid-grey me-2\"/>\n"
 "            <span id=\"total-children-found-message\">\n"
 "                            <span id=\"total-results\">0</span>\n"
 "                            children found\n"
@@ -256,7 +345,8 @@ msgid "<i class=\"results-icon icon-users03 text-mid-grey me-2\"/>\n"
 "            <span id=\"randomly-chosen-child-message\" style=\"display: none;\">\n"
 "                            A child has been chosen for you\n"
 "                        </span>"
-msgstr "<i class=\"results-icon icon-users03 text-mid-grey me-2\"/>\n"
+msgstr ""
+"<i class=\"results-icon icon-users03 text-mid-grey me-2\"/>\n"
 "            <span id=\"total-children-found-message\">\n"
 "                            <span id=\"total-results\">0</span>\n"
 "                            barn hittades\n"
@@ -267,19 +357,23 @@ msgstr "<i class=\"results-icon icon-users03 text-mid-grey me-2\"/>\n"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.WeatherTimeContainer
-msgid "<i id=\"weather_icon\" class=\"m-2\"/>\n"
+msgid ""
+"<i id=\"weather_icon\" class=\"m-2\"/>\n"
 "          <span id=\"current_temperature\" class=\"center-info-card__temperature\"/>\n"
 "          <span class=\"small position-relative text-low-grey mt-n1\">°C</span>"
-msgstr "<i id=\"weather_icon\" class=\"m-2\"/>\n"
+msgstr ""
+"<i id=\"weather_icon\" class=\"m-2\"/>\n"
 "          <span id=\"current_temperature\" class=\"center-info-card__temperature\"/>\n"
 "          <span class=\"small position-relative text-low-grey mt-n1\">°C</span>"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
-msgid "<option value=\"\" disabled=\"disabled\" selected=\"selected\" hidden=\"true\">\n"
+msgid ""
+"<option value=\"\" disabled=\"disabled\" selected=\"selected\" hidden=\"true\">\n"
 "                                                Please select\n"
 "                                            </option>"
-msgstr "<option value=\"\" disabled=\"disabled\" selected=\"selected\" hidden=\"true\">\n"
+msgstr ""
+"<option value=\"\" disabled=\"disabled\" selected=\"selected\" hidden=\"true\">\n"
 "                                                Välj\n"
 "                                            </option>"
 
@@ -289,6 +383,7 @@ msgid "<option value=\"\">Month</option>"
 msgstr "<option value=\"\">Månad</option>"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_communication_details
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_payment_method
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
@@ -313,12 +408,14 @@ msgstr "<option value=\"\">År</option>"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
-msgid "<select class=\"form-control form-select\" id=\"child-info-tabs-mobile\">\n"
+msgid ""
+"<select class=\"form-control form-select\" id=\"child-info-tabs-mobile\">\n"
 "                <option value=\"#family-tab\" selected=\"1\">My Family</option>\n"
 "                <option value=\"#project-tab\">My Project</option>\n"
 "                <option value=\"#country-tab\">My Country</option>\n"
 "              </select>"
-msgstr "<select class=\"form-control form-select\" id=\"child-info-tabs-mobile\">\n"
+msgstr ""
+"<select class=\"form-control form-select\" id=\"child-info-tabs-mobile\">\n"
 "                <option value=\"#family-tab\" selected=\"1\">Min familj</option>\n"
 "                <option value=\"#project-tab\">Mitt projekt</option>\n"
 "                <option value=\"#country-tab\">Mitt land</option>\n"
@@ -326,7 +423,8 @@ msgstr "<select class=\"form-control form-select\" id=\"child-info-tabs-mobile\"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
-msgid "<select class=\"form-select\" id=\"user-settings-tabs-mobile\">\n"
+msgid ""
+"<select class=\"form-select\" id=\"user-settings-tabs-mobile\">\n"
 "                <option value=\"#personal-information\">\n"
 "                                    Personal\n"
 "                                    Information\n"
@@ -338,7 +436,8 @@ msgid "<select class=\"form-select\" id=\"user-settings-tabs-mobile\">\n"
 "                                    Settings\n"
 "                                </option>\n"
 "              </select>"
-msgstr "<select class=\"form-select\" id=\"user-settings-tabs-mobile\">\n"
+msgstr ""
+"<select class=\"form-select\" id=\"user-settings-tabs-mobile\">\n"
 "                <option value=\"#personal-information\">\n"
 "                                    Personlig\n"
 "                                    information\n"
@@ -353,37 +452,45 @@ msgstr "<select class=\"form-select\" id=\"user-settings-tabs-mobile\">\n"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
-msgid "<span class=\"badge bg-low-yellow\" title=\"Your sponsorship has ended\" aria-label=\"Sponsorship ended\">\n"
+msgid ""
+"<span class=\"badge bg-low-yellow\" title=\"Your sponsorship has ended\" aria-label=\"Sponsorship ended\">\n"
 "                                    Sponsorship ended\n"
 "                                </span>"
-msgstr "<span class=\"badge bg-low-yellow\" title=\"Ditt fadderskap har avslutats\" aria-label=\"Fadderskap avslutat\">\n"
+msgstr ""
+"<span class=\"badge bg-low-yellow\" title=\"Ditt fadderskap har avslutats\" aria-label=\"Fadderskap avslutat\">\n"
 "                                    Fadderskap avslutat\n"
 "                                </span>"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_children_card_component
-msgid "<span class=\"badge bg-low-yellow\" title=\"Your sponsorship has ended\" aria-label=\"Sponsorship ended\">\n"
+msgid ""
+"<span class=\"badge bg-low-yellow\" title=\"Your sponsorship has ended\" aria-label=\"Sponsorship ended\">\n"
 "                        Sponsorship ended\n"
 "                    </span>"
-msgstr "<span class=\"badge bg-low-yellow\" title=\"Ditt fadderskap har avslutats\" aria-label=\"Fadderskap avslutat\">\n"
+msgstr ""
+"<span class=\"badge bg-low-yellow\" title=\"Ditt fadderskap har avslutats\" aria-label=\"Fadderskap avslutat\">\n"
 "                        Fadderskap avslutat\n"
 "                    </span>"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
-msgid "<span class=\"badge bg-low-yellow\" title=\"Your sponsorship is being confirmed and will become active soon\" aria-label=\"Sponsorship pending confirmation\">\n"
+msgid ""
+"<span class=\"badge bg-low-yellow\" title=\"Your sponsorship is being confirmed and will become active soon\" aria-label=\"Sponsorship pending confirmation\">\n"
 "                                    Pending activation\n"
 "                                </span>"
-msgstr "<span class=\"badge bg-low-yellow\" title=\"Ditt fadderskap bekräftas och blir snart aktivt\" aria-label=\"Fadderskap väntar på bekräftelse\">\n"
+msgstr ""
+"<span class=\"badge bg-low-yellow\" title=\"Ditt fadderskap bekräftas och blir snart aktivt\" aria-label=\"Fadderskap väntar på bekräftelse\">\n"
 "                                    Väntar på aktivering\n"
 "                                </span>"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_children_card_component
-msgid "<span class=\"badge bg-low-yellow\" title=\"Your sponsorship is being confirmed and will become active soon\" aria-label=\"Sponsorship pending confirmation\">\n"
+msgid ""
+"<span class=\"badge bg-low-yellow\" title=\"Your sponsorship is being confirmed and will become active soon\" aria-label=\"Sponsorship pending confirmation\">\n"
 "                        Pending activation\n"
 "                    </span>"
-msgstr "<span class=\"badge bg-low-yellow\" title=\"Ditt fadderskap bekräftas och blir snart aktivt\" aria-label=\"Fadderskap väntar på bekräftelse\">\n"
+msgstr ""
+"<span class=\"badge bg-low-yellow\" title=\"Ditt fadderskap bekräftas och blir snart aktivt\" aria-label=\"Fadderskap väntar på bekräftelse\">\n"
 "                        Väntar på aktivering\n"
 "                    </span>"
 
@@ -445,28 +552,34 @@ msgstr "<span>Ditt meddelande har skickats</span>"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
-msgid "<strong class=\"tab-item-title\">\n"
+msgid ""
+"<strong class=\"tab-item-title\">\n"
 "                                                Population living on less than $3/day:\n"
 "                                            </strong>"
-msgstr "<strong class=\"tab-item-title\">\n"
+msgstr ""
+"<strong class=\"tab-item-title\">\n"
 "                                                Befolkning som lever på mindre än 3 $/dag:\n"
 "                                            </strong>"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
-msgid "<strong class=\"tab-item-title\">\n"
+msgid ""
+"<strong class=\"tab-item-title\">\n"
 "                                                Rural population with drinking water access:\n"
 "                                            </strong>"
-msgstr "<strong class=\"tab-item-title\">\n"
+msgstr ""
+"<strong class=\"tab-item-title\">\n"
 "                                                Landsbygdsbefolkning med tillgång till dricksvatten:\n"
 "                                            </strong>"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
-msgid "<strong class=\"tab-item-title\">\n"
+msgid ""
+"<strong class=\"tab-item-title\">\n"
 "                                                Urban population with drinking water access:\n"
 "                                            </strong>"
-msgstr "<strong class=\"tab-item-title\">\n"
+msgstr ""
+"<strong class=\"tab-item-title\">\n"
 "                                                Stadsbefolkning med tillgång till dricksvatten:\n"
 "                                            </strong>"
 
@@ -572,9 +685,11 @@ msgstr "En grupp avtal"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_page
-msgid "A member of Compassion from their local church will help them get something they really\n"
+msgid ""
+"A member of Compassion from their local church will help them get something they really\n"
 "                                need."
-msgstr "En medarbetare från Compassion i deras lokala kyrka hjälper dem att få något de verkligen\n"
+msgstr ""
+"En medarbetare från Compassion i deras lokala kyrka hjälper dem att få något de verkligen\n"
 "                                behöver."
 
 #. module: my_compassion
@@ -590,7 +705,8 @@ msgstr "Åtkomst nekad eller ogiltigt ID."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
-msgid "Account\n"
+msgid ""
+"Account\n"
 "                                    Settings"
 msgstr "Kontoinställningar"
 
@@ -650,6 +766,11 @@ msgid "Add a gift"
 msgstr "Lägg till en gåva"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
+msgid "Add my address for a donation receipt (optional)"
+msgstr "Lägg till min adress för ett gåvokvitto (valfritt)"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
 msgid "Address"
 msgstr "Adress"
@@ -660,13 +781,20 @@ msgid "All"
 msgstr "Alla"
 
 #. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_payment_page
+msgid "Almost there"
+msgstr "Nästan klar"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_signup_form
 msgid "Already have an account?"
 msgstr "Har du redan ett konto?"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.GivingLimitsTableComponent
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_donations_history_content
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_my_donations_page
 msgid "Amount"
@@ -675,8 +803,12 @@ msgstr "Belopp"
 #. module: my_compassion
 #. odoo-javascript
 #: code:addons/my_compassion/static/src/js/my2_new_letter.js:0
-msgid "An error occurred while processing your letter. Please try again or contact the support."
-msgstr "Ett fel uppstod när ditt brev behandlades. Försök igen eller kontakta supporten."
+msgid ""
+"An error occurred while processing your letter. Please try again or contact "
+"the support."
+msgstr ""
+"Ett fel uppstod när ditt brev behandlades. Försök igen eller kontakta "
+"supporten."
 
 #. module: my_compassion
 #. odoo-python
@@ -748,10 +880,12 @@ msgstr "Bannerrubrik"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
-msgid "Be aware: due to legal reasons,\n"
+msgid ""
+"Be aware: due to legal reasons,\n"
 "                                                        accountability data may still\n"
 "                                                        persist."
-msgstr "Observera: av juridiska skäl\n"
+msgstr ""
+"Observera: av juridiska skäl\n"
 "                                                        kan viss redovisningsdata fortfarande\n"
 "                                                        finnas kvar."
 
@@ -804,11 +938,13 @@ msgstr "Knappens textfärg"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
-msgid "By clicking \"Delete\" your\n"
+msgid ""
+"By clicking \"Delete\" your\n"
 "                                                            account will be\n"
 "                                                                <span class=\"font-weight-bold\">permanently</span>\n"
 "                                                                deleted."
-msgstr "Genom att klicka på \"Radera\" kommer ditt\n"
+msgstr ""
+"Genom att klicka på \"Radera\" kommer ditt\n"
 "                                                            konto att\n"
 "                                                                <span class=\"font-weight-bold\">permanent</span>\n"
 "                                                                raderas."
@@ -834,7 +970,6 @@ msgid "Can be shown on My Compassion"
 msgstr "Kan visas på My Compassion"
 
 #. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_form_content
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
 msgid "Cancel"
 msgstr "Avbryt"
@@ -850,6 +985,11 @@ msgstr "Kan inte schemalägga en mall som redan har upphört att gälla."
 #: code:addons/my_compassion/models/res_user.py:0
 msgid "Cannot send email: the partner %s has no email address."
 msgstr "Kan inte skicka e-post: partnern %s har ingen e-postadress."
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_payment_transaction__my2_cardholder_name
+msgid "Cardholder Name"
+msgstr "Kortinnehavarens namn"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_information_personal
@@ -922,7 +1062,7 @@ msgstr "Ort"
 #: model_terms:ir.ui.view,arch_db:my_compassion.GivingLimitsModalComponent
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_letter_page
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_form_content
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_sponsorship_plus
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
 msgid "Close"
 msgstr "Stäng"
@@ -933,12 +1073,15 @@ msgid "Close Icon Color"
 msgstr "Färg på stäng-ikon"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
 msgid "Code"
 msgstr "Kod"
 
 #. module: my_compassion
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_colors__color
+#: model:ir.model.fields,field_description:my_compassion.field_product_product__my_compassion_color
+#: model:ir.model.fields,field_description:my_compassion.field_product_template__my_compassion_color
+#: model_terms:ir.ui.view,arch_db:my_compassion.product_template_form_view
 msgid "Color"
 msgstr "Färg"
 
@@ -961,8 +1104,12 @@ msgstr "Företag"
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_new_sponsorship_wizard__company_id
-msgid "Company of the website the wizard was started on; scopes the offered payment modes and the contract group."
-msgstr "Företaget för den webbplats där guiden startades; avgränsar vilka betalningssätt och vilken avtalsgrupp som erbjuds."
+msgid ""
+"Company of the website the wizard was started on; scopes the offered payment"
+" modes and the contract group."
+msgstr ""
+"Företaget för den webbplats där guiden startades; avgränsar vilka "
+"betalningssätt och vilken avtalsgrupp som erbjuds."
 
 #. module: my_compassion
 #: model:mail.template,name:my_compassion.signup_confirmation_set_password_email
@@ -977,7 +1124,8 @@ msgstr "Compassion-center"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
-msgid "Compassion knows that children living in extreme\n"
+msgid ""
+"Compassion knows that children living in extreme\n"
 "                                        poverty are vulnerable.\n"
 "                                        We put their protection as our number one priority.\n"
 "                                        We ask our volunteering\n"
@@ -993,7 +1141,8 @@ msgid "Compassion knows that children living in extreme\n"
 "                                        your information is kept private and only used\n"
 "                                        internally. You can sign or review our data\n"
 "                                        protection policy from here."
-msgstr "Compassion vet att barn som lever i extrem\n"
+msgstr ""
+"Compassion vet att barn som lever i extrem\n"
 "                                        fattigdom är sårbara.\n"
 "                                        Vi sätter deras skydd som vår högsta prioritet.\n"
 "                                        Vi ber våra frivilliga\n"
@@ -1012,9 +1161,11 @@ msgstr "Compassion vet att barn som lever i extrem\n"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_information_privacy_data
-msgid "Compassion knows that children living in extreme poverty are vulnerable.\n"
+msgid ""
+"Compassion knows that children living in extreme poverty are vulnerable.\n"
 "                Their protection is our number one priority."
-msgstr "Compassion vet att barn som lever i extrem fattigdom är sårbara.\n"
+msgstr ""
+"Compassion vet att barn som lever i extrem fattigdom är sårbara.\n"
 "                Deras skydd är vår högsta prioritet."
 
 #. module: my_compassion
@@ -1029,9 +1180,11 @@ msgstr "Compassions överlevnadsprogram"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_information_privacy_data
-msgid "Compassion takes the protection of your personal data seriously. We keep your information private and\n"
+msgid ""
+"Compassion takes the protection of your personal data seriously. We keep your information private and\n"
 "                never share it with outside organizations. You can read or sign our data protection policy here."
-msgstr "Compassion tar skyddet av dina personuppgifter på allvar. Vi håller din information privat och\n"
+msgstr ""
+"Compassion tar skyddet av dina personuppgifter på allvar. Vi håller din information privat och\n"
 "                delar den aldrig med utomstående organisationer. Du kan läsa eller skriva under vår dataskyddspolicy här."
 
 #. module: my_compassion
@@ -1054,12 +1207,10 @@ msgstr "Bekräfta lösenord"
 #. odoo-python
 #: code:addons/my_compassion/models/correspondence_prewritten_letter.py:0
 msgid "Conflicts with the following records:\n"
-""
 msgstr "Står i konflikt med följande poster:\n"
-""
 
 #. module: my_compassion
-#: model_terms:theme.ir.ui.view,arch:theme_compassion_2025.footer_2025
+#: model:ir.model,name:my_compassion.model_res_partner
 msgid "Contact"
 msgstr "Kontakt"
 
@@ -1090,6 +1241,11 @@ msgid "Continue"
 msgstr "Fortsätt"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_form_content
+msgid "Continue with"
+msgstr "Fortsätt med"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_information_personal
 msgid "Coordinates"
 msgstr "Koordinater"
@@ -1117,6 +1273,7 @@ msgstr "Kunde inte spara brevet."
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__country
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_information_personal
@@ -1125,11 +1282,13 @@ msgstr "Land"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
-msgid "Create a MyCompassion account to stay connected with %s.\n"
+msgid ""
+"Create a MyCompassion account to stay connected with %s.\n"
 "                                <br/>\n"
 "                                Through your personalized portal, you can easily write letters, view recent pictures,\n"
 "                                and manage your sponsorship details."
-msgstr "Skapa ett MyCompassion-konto för att hålla kontakten med %s.\n"
+msgstr ""
+"Skapa ett MyCompassion-konto för att hålla kontakten med %s.\n"
 "                                <br/>\n"
 "                                Via din personliga portal kan du enkelt skriva brev, se de senaste bilderna\n"
 "                                och hantera uppgifterna om ditt fadderskap."
@@ -1150,16 +1309,24 @@ msgid "Created With Magic Link"
 msgstr "Skapad med magisk länk"
 
 #. module: my_compassion
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_colors__create_uid
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_icons__create_uid
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_pictograms__create_uid
+#: model:ir.model.fields,field_description:my_compassion.field_correspondence_prewritten_letter__create_uid
+#: model:ir.model.fields,field_description:my_compassion.field_donation_impact_line__create_uid
+#: model:ir.model.fields,field_description:my_compassion.field_donation_info_line__create_uid
+#: model:ir.model.fields,field_description:my_compassion.field_event_banner__create_uid
+#: model:ir.model.fields,field_description:my_compassion.field_my2_website_route__create_uid
+#: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__create_uid
+#: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard_step__create_uid
 msgid "Created by"
 msgstr "Skapad av"
 
 #. module: my_compassion
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_colors__create_date
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_icons__create_date
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_pictograms__create_date
+#: model:ir.model.fields,field_description:my_compassion.field_correspondence_prewritten_letter__create_date
+#: model:ir.model.fields,field_description:my_compassion.field_donation_impact_line__create_date
+#: model:ir.model.fields,field_description:my_compassion.field_donation_info_line__create_date
+#: model:ir.model.fields,field_description:my_compassion.field_event_banner__create_date
+#: model:ir.model.fields,field_description:my_compassion.field_my2_website_route__create_date
+#: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__create_date
+#: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard_step__create_date
 msgid "Created on"
 msgstr "Skapad den"
 
@@ -1228,6 +1395,7 @@ msgstr "Datum"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_options
 msgid "Date of birth"
 msgstr "Födelsedatum"
@@ -1255,10 +1423,27 @@ msgid "Description of the fund/gift visible on the MyCompassion website"
 msgstr "Beskrivning av fonden/gåvan som visas på MyCompassion-webbplatsen"
 
 #. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__details_deferred
+msgid "Details Deferred"
+msgstr "Uppgifter uppskjutna"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_recurring_contract__my2_details_token
+msgid "Details form token"
+msgstr "Token för uppgiftsformulär"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_recurring_contract__my2_details_token_expiration
+msgid "Details form token expiration"
+msgstr "Utgångsdatum för token för uppgiftsformulär"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_donations_history_content
-msgid "Details of\n"
+msgid ""
+"Details of\n"
 "                                donation"
-msgstr "Uppgifter om\n"
+msgstr ""
+"Uppgifter om\n"
 "                                gåvan"
 
 #. module: my_compassion
@@ -1272,9 +1457,13 @@ msgid "Disabled"
 msgstr "Inaktiverad"
 
 #. module: my_compassion
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_colors__display_name
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_icons__display_name
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_pictograms__display_name
+#: model:ir.model.fields,field_description:my_compassion.field_correspondence_prewritten_letter__display_name
+#: model:ir.model.fields,field_description:my_compassion.field_donation_impact_line__display_name
+#: model:ir.model.fields,field_description:my_compassion.field_donation_info_line__display_name
+#: model:ir.model.fields,field_description:my_compassion.field_event_banner__display_name
+#: model:ir.model.fields,field_description:my_compassion.field_my2_website_route__display_name
+#: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__display_name
+#: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard_step__display_name
 msgid "Display Name"
 msgstr "Visningsnamn"
 
@@ -1297,14 +1486,23 @@ msgid "Display the testimony section on the web page of the fund/gift"
 msgstr "Visa vittnesmålssektionen på webbsidan för fonden/gåvan"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
+msgid "Do this later - we will email you"
+msgstr "Gör det senare - vi mejlar dig"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_login_form
 msgid "Don't have an account?"
 msgstr "Har du inget konto?"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.http_error_custom
-msgid "Don't panic. If you think this is our mistake, please send us a message on this page."
-msgstr "Ingen panik. Om du tror att det är vårt misstag, skicka oss ett meddelande på den här sidan."
+msgid ""
+"Don't panic. If you think this is our mistake, please send us a message on "
+"this page."
+msgstr ""
+"Ingen panik. Om du tror att det är vårt misstag, skicka oss ett meddelande "
+"på den här sidan."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.DonationFormComponent
@@ -1362,13 +1560,18 @@ msgstr "Gåvohistorik"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_letter_card_component
-msgid "Download\n"
+msgid ""
+"Download\n"
 "                                <i class=\"icon-download01 ms-auto\"/>"
-msgstr "Ladda ner\n"
+msgstr ""
+"Ladda ner\n"
 "                                <i class=\"icon-download01 ms-auto\"/>"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
 msgid "E-mail"
 msgstr "E-post"
 
@@ -1479,9 +1682,11 @@ msgstr "Evenemangsbanners"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_page
-msgid "Every child deserves a secure home, safe water, and medicine to keep them healthy.\n"
+msgid ""
+"Every child deserves a secure home, safe water, and medicine to keep them healthy.\n"
 "                                That's why, when poverty places a child in critical need, we take action."
-msgstr "Varje barn förtjänar ett tryggt hem, rent vatten och medicin för att hålla sig friskt.\n"
+msgstr ""
+"Varje barn förtjänar ett tryggt hem, rent vatten och medicin för att hålla sig friskt.\n"
 "                                Därför agerar vi när fattigdom försätter ett barn i akut nöd."
 
 #. module: my_compassion
@@ -1516,15 +1721,22 @@ msgstr "Kvinna"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_letters_page
-msgid "Filter\n"
+msgid ""
+"Filter\n"
 "                                    letters"
-msgstr "Filtrera\n"
+msgstr ""
+"Filtrera\n"
 "                                    brev"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_form_content
 msgid "Finish"
 msgstr "Slutför"
+
+#. module: my_compassion
+#: model:mail.template,subject:my_compassion.mail_details_reminder
+msgid "Finish setting up your sponsorship"
+msgstr "Slutför ditt fadderskap"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
@@ -1538,15 +1750,18 @@ msgstr "Första betalningen idag:"
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__firstname
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
 msgid "Firstname"
 msgstr "Förnamn"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
-msgid "Follow the thread of hope and\n"
+msgid ""
+"Follow the thread of hope and\n"
 "                        encouragement you’ve woven together."
-msgstr "Följ tråden av hopp och\n"
+msgstr ""
+"Följ tråden av hopp och\n"
 "                        uppmuntran som ni har vävt tillsammans."
 
 #. module: my_compassion
@@ -1558,8 +1773,15 @@ msgstr "För"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_communication_details
-msgid "For correspondence with my sponsored child, I also understand the following languages:"
+msgid ""
+"For correspondence with my sponsored child, I also understand the following "
+"languages:"
 msgstr "För brevväxling med mitt fadderbarn förstår jag även följande språk:"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
+msgid "For your receipt and news about"
+msgstr "För ditt kvitto och nyheter om"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_login_form
@@ -1568,6 +1790,7 @@ msgstr "Glömt lösenordet?"
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_sale_order_line__frequency
+#: model_terms:ir.ui.view,arch_db:my_compassion.GivingLimitsTableComponent
 msgid "Frequency"
 msgstr "Frekvens"
 
@@ -1581,6 +1804,17 @@ msgstr "Från"
 #: model:ir.model,name:my_compassion.model_compassion_project
 msgid "Frontline Church Partner"
 msgstr "Lokal kyrkopartner"
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_payment_transaction__my2_cardholder_name
+msgid ""
+"Full name the provider reported for the payer, as read from its confirmed-"
+"payment notification. Used to fill in a fast-checkout sponsor's placeholder "
+"name."
+msgstr ""
+"Fullständigt namn som betalningsleverantören rapporterade för betalaren, "
+"hämtat från dess bekräftade betalningsavisering. Används för att fylla i en "
+"fadders platshållarnamn vid snabb utcheckning."
 
 #. module: my_compassion
 #: model:ir.model.fields.selection,name:my_compassion.selection__product_template__my_compassion_donation_type__fund
@@ -1670,9 +1904,11 @@ msgstr "Ge en Compassion-gåva"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
-msgid "Given the time it takes for mail to arrive, it could take between one and three months for\n"
+msgid ""
+"Given the time it takes for mail to arrive, it could take between one and three months for\n"
 "                            you to receive a reply."
-msgstr "Med tanke på hur lång tid posten tar kan det ta mellan en och tre månader innan\n"
+msgstr ""
+"Med tanke på hur lång tid posten tar kan det ta mellan en och tre månader innan\n"
 "                            du får ett svar."
 
 #. module: my_compassion
@@ -1698,10 +1934,12 @@ msgstr "HTTP-routning"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
-msgid "Have a question or want to learn more about our\n"
+msgid ""
+"Have a question or want to learn more about our\n"
 "                                    work? Fill out the form below, and we'll get back to\n"
 "                                    you as soon as possible."
-msgstr "Har du en fråga eller vill veta mer om vårt\n"
+msgstr ""
+"Har du en fråga eller vill veta mer om vårt\n"
 "                                    arbete? Fyll i formuläret nedan så återkommer vi till\n"
 "                                    dig så snart som möjligt."
 
@@ -1742,23 +1980,40 @@ msgstr "Hur fungerar det?"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.acceptance_full
-msgid "I accept the legal terms, the privacy policy &amp; conditions of this website."
-msgstr "Jag accepterar de juridiska villkoren, integritetspolicyn &amp; villkoren för den här webbplatsen."
+msgid ""
+"I accept the legal terms, the privacy policy &amp; conditions of this "
+"website."
+msgstr ""
+"Jag accepterar de juridiska villkoren, integritetspolicyn &amp; villkoren "
+"för den här webbplatsen."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
+msgid ""
+"I agree that Compassion may use my details to set up and\n"
+"                    manage this sponsorship, as described in the"
+msgstr ""
+"Jag godkänner att Compassion använder mina uppgifter för att skapa och "
+"hantera detta fadderskap, i enlighet med"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_options
-msgid "I agree to pray for and write to my sponsored child regularly. I understand that another person is\n"
+msgid ""
+"I agree to pray for and write to my sponsored child regularly. I understand that another person is\n"
 "                    providing\n"
 "                    financial support for this sponsorship, but that I am the child's official sponsor."
-msgstr "Jag lovar att be för och skriva till mitt fadderbarn regelbundet. Jag förstår att en annan person\n"
+msgstr ""
+"Jag lovar att be för och skriva till mitt fadderbarn regelbundet. Jag förstår att en annan person\n"
 "                    står för\n"
 "                    det ekonomiska stödet för detta fadderskap, men att jag är barnets officiella fadder."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_options
-msgid "I commit to praying for and writing to my sponsored child regularly, and I can contribute monthly\n"
+msgid ""
+"I commit to praying for and writing to my sponsored child regularly, and I can contribute monthly\n"
 "                    in the amount of:"
-msgstr "Jag åtar mig att be för och skriva till mitt fadderbarn regelbundet, och jag kan bidra varje månad\n"
+msgstr ""
+"Jag åtar mig att be för och skriva till mitt fadderbarn regelbundet, och jag kan bidra varje månad\n"
 "                    med ett belopp på:"
 
 #. module: my_compassion
@@ -1773,10 +2028,12 @@ msgstr "Jag har"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
-msgid "I understand that this\n"
+msgid ""
+"I understand that this\n"
 "                                                                step\n"
 "                                                                cannot be undone."
-msgstr "Jag förstår att detta\n"
+msgstr ""
+"Jag förstår att detta\n"
 "                                                                steg\n"
 "                                                                inte kan ångras."
 
@@ -1801,9 +2058,13 @@ msgid "I'm not enrolled in school"
 msgstr "Jag går inte i skolan"
 
 #. module: my_compassion
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_colors__id
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_icons__id
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_pictograms__id
+#: model:ir.model.fields,field_description:my_compassion.field_correspondence_prewritten_letter__id
+#: model:ir.model.fields,field_description:my_compassion.field_donation_impact_line__id
+#: model:ir.model.fields,field_description:my_compassion.field_donation_info_line__id
+#: model:ir.model.fields,field_description:my_compassion.field_event_banner__id
+#: model:ir.model.fields,field_description:my_compassion.field_my2_website_route__id
+#: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__id
+#: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard_step__id
 msgid "ID"
 msgstr "ID"
 
@@ -1814,43 +2075,63 @@ msgstr "Om markerad används den här mallen inom sitt datumintervall."
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_event_banner__target_route_ids
-msgid "If pages are selected, the banner is only visible on those pages. If empty, it is visible on all pages."
-msgstr "Om sidor väljs visas bannern endast på de sidorna. Om tomt visas den på alla sidor."
+msgid ""
+"If pages are selected, the banner is only visible on those pages. If empty, "
+"it is visible on all pages."
+msgstr ""
+"Om sidor väljs visas bannern endast på de sidorna. Om tomt visas den på alla"
+" sidor."
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_account_payment_mode__payment_provider_id
-msgid "If set, invoices collected through this mode are charged off-session against the sponsor's saved payment token via this provider, instead of a bank payment order. Leave empty for bank-collected modes."
-msgstr "Om angivet dras fakturor som samlas in via detta läge automatiskt (off-session) från fadderns sparade betalningsuppgift via denna leverantör, i stället för via en bankbetalningsorder. Lämna tomt för banksamlade lägen."
+msgid ""
+"If set, invoices collected through this mode are charged off-session against"
+" the sponsor's saved payment token via this provider, instead of a bank "
+"payment order. Leave empty for bank-collected modes."
+msgstr ""
+"Om angivet dras fakturor som samlas in via detta läge automatiskt (off-"
+"session) från fadderns sparade betalningsuppgift via denna leverantör, i "
+"stället för via en bankbetalningsorder. Lämna tomt för banksamlade lägen."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.view_my2_compassion_event_banner_form
-msgid "If tags are selected, the banner is only visible to users having at least one of these\n"
+msgid ""
+"If tags are selected, the banner is only visible to users having at least one of these\n"
 "                                tags.\n"
 "                                If empty, it is visible to everyone."
-msgstr "Om taggar väljs visas bannern endast för användare som har minst en av dessa\n"
+msgstr ""
+"Om taggar väljs visas bannern endast för användare som har minst en av dessa\n"
 "                                taggar.\n"
 "                                Om tomt visas den för alla."
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_event_banner__target_partner_tag_ids
-msgid "If tags are selected, the banner is only visible to users having at least one of these tags. If empty, it is visible to everyone."
-msgstr "Om taggar väljs visas bannern endast för användare som har minst en av dessa taggar. Om tomt visas den för alla."
+msgid ""
+"If tags are selected, the banner is only visible to users having at least "
+"one of these tags. If empty, it is visible to everyone."
+msgstr ""
+"Om taggar väljs visas bannern endast för användare som har minst en av dessa"
+" taggar. Om tomt visas den för alla."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.GivingLimitsModalComponent
-msgid "If you'd like to make a large donation to support the work of  Compassion, please get in\n"
+msgid ""
+"If you'd like to make a large donation to support the work of  Compassion, please get in\n"
 "                            touch with us directly and we can suggest how  your donation can make the greatest\n"
 "                            impact."
-msgstr "Om du vill ge en stor gåva för att stödja Compassions arbete, hör gärna av dig\n"
+msgstr ""
+"Om du vill ge en stor gåva för att stödja Compassions arbete, hör gärna av dig\n"
 "                            till oss direkt så kan vi föreslå hur din gåva kan göra störst\n"
 "                            nytta."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.DonationFormLimitsInfo
-msgid "If you'd like to make a large donation to support the work of  Compassion, please get in\n"
+msgid ""
+"If you'd like to make a large donation to support the work of  Compassion, please get in\n"
 "                    touch with us directly and we can suggest how  your donation can make the greatest\n"
 "                    impact."
-msgstr "Om du vill ge en stor gåva för att stödja Compassions arbete, hör gärna av dig\n"
+msgstr ""
+"Om du vill ge en stor gåva för att stödja Compassions arbete, hör gärna av dig\n"
 "                    till oss direkt så kan vi föreslå hur din gåva kan göra störst\n"
 "                    nytta."
 
@@ -1887,8 +2168,12 @@ msgstr "Informationsrader som visas på webbsidan för fonden/gåvan"
 #. module: my_compassion
 #. odoo-python
 #: code:addons/my_compassion/models/my2_event_banner.py:0
-msgid "Invalid button action URL. Please enter a valid relative path (e.g., /contact) or a full URL (e.g., https://example.com)."
-msgstr "Ogiltig åtgärds-URL för knappen. Ange en giltig relativ sökväg (t.ex. /contact) eller en fullständig URL (t.ex. https://example.com)."
+msgid ""
+"Invalid button action URL. Please enter a valid relative path (e.g., "
+"/contact) or a full URL (e.g., https://example.com)."
+msgstr ""
+"Ogiltig åtgärds-URL för knappen. Ange en giltig relativ sökväg (t.ex. "
+"/contact) eller en fullständig URL (t.ex. https://example.com)."
 
 #. module: my_compassion
 #. odoo-python
@@ -1960,16 +2245,24 @@ msgid "Last Name"
 msgstr "Efternamn"
 
 #. module: my_compassion
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_colors__write_uid
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_icons__write_uid
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_pictograms__write_uid
+#: model:ir.model.fields,field_description:my_compassion.field_correspondence_prewritten_letter__write_uid
+#: model:ir.model.fields,field_description:my_compassion.field_donation_impact_line__write_uid
+#: model:ir.model.fields,field_description:my_compassion.field_donation_info_line__write_uid
+#: model:ir.model.fields,field_description:my_compassion.field_event_banner__write_uid
+#: model:ir.model.fields,field_description:my_compassion.field_my2_website_route__write_uid
+#: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__write_uid
+#: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard_step__write_uid
 msgid "Last Updated by"
 msgstr "Senast uppdaterad av"
 
 #. module: my_compassion
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_colors__write_date
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_icons__write_date
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_pictograms__write_date
+#: model:ir.model.fields,field_description:my_compassion.field_correspondence_prewritten_letter__write_date
+#: model:ir.model.fields,field_description:my_compassion.field_donation_impact_line__write_date
+#: model:ir.model.fields,field_description:my_compassion.field_donation_info_line__write_date
+#: model:ir.model.fields,field_description:my_compassion.field_event_banner__write_date
+#: model:ir.model.fields,field_description:my_compassion.field_my2_website_route__write_date
+#: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__write_date
+#: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard_step__write_date
 msgid "Last Updated on"
 msgstr "Senast uppdaterad den"
 
@@ -2048,7 +2341,8 @@ msgstr "Brev"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_sponsorships_page
-msgid "Lifting a child out of poverty can also be a team effort! A donor pays. A sponsor writes to\n"
+msgid ""
+"Lifting a child out of poverty can also be a team effort! A donor pays. A sponsor writes to\n"
 "                            the\n"
 "                            child and prays for them. Thanks to the “Write&amp;Pray” sponsorship program set up for young\n"
 "                            people under the age of 25, These two acts of generosity can team up.\n"
@@ -2058,7 +2352,8 @@ msgid "Lifting a child out of poverty can also be a team effort! A donor pays. A
 "                            commitment? Pray for them regularly and write to them at least twice a year, sending letters\n"
 "                            of\n"
 "                            support and encouragement."
-msgstr "Att lyfta ett barn ur fattigdom kan också vara en lagsport! En givare betalar. En fadder skriver till\n"
+msgstr ""
+"Att lyfta ett barn ur fattigdom kan också vara en lagsport! En givare betalar. En fadder skriver till\n"
 "                            barnet\n"
 "                            och ber för det. Tack vare fadderprogrammet ”Write&amp;Pray” som skapats för unga\n"
 "                            under 25 år kan dessa två generösa handlingar gå ihop.\n"
@@ -2072,13 +2367,16 @@ msgstr "Att lyfta ett barn ur fattigdom kan också vara en lagsport! En givare b
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_product_product__my_compassion_impact_before_ids
 #: model:ir.model.fields,help:my_compassion.field_product_template__my_compassion_impact_before_ids
-msgid "Lines for the current reality displayed on the web page of the fund/gift"
-msgstr "Rader för den nuvarande verkligheten som visas på webbsidan för fonden/gåvan"
+msgid ""
+"Lines for the current reality displayed on the web page of the fund/gift"
+msgstr ""
+"Rader för den nuvarande verkligheten som visas på webbsidan för fonden/gåvan"
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_product_product__my_compassion_impact_after_ids
 #: model:ir.model.fields,help:my_compassion.field_product_template__my_compassion_impact_after_ids
-msgid "Lines for the donation impact displayed on the web page of the fund/gift"
+msgid ""
+"Lines for the donation impact displayed on the web page of the fund/gift"
 msgstr "Rader för gåvans effekt som visas på webbsidan för fonden/gåvan"
 
 #. module: my_compassion
@@ -2088,14 +2386,16 @@ msgid "Link copied to clipboard!"
 msgstr "Länken har kopierats!"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
 msgid "Locality"
 msgstr "Ort"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_login_form
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_signup_form
 msgid "Log in"
 msgstr "Logga in"
@@ -2141,9 +2441,11 @@ msgstr "Man"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_children_page
-msgid "Many thanks for your support – every sponsorship changes a life!\n"
+msgid ""
+"Many thanks for your support – every sponsorship changes a life!\n"
 "Would you like to bring hope to another child?"
-msgstr "Tack så mycket för ditt stöd – varje fadderskap förändrar ett liv!\n"
+msgstr ""
+"Tack så mycket för ditt stöd – varje fadderskap förändrar ett liv!\n"
 "Vill du ge hopp till ännu ett barn?"
 
 #. module: my_compassion
@@ -2388,11 +2690,19 @@ msgid "N Steps"
 msgstr "Antal steg"
 
 #. module: my_compassion
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_colors__name
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_icons__name
-#: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_pictograms__name
+#: model:ir.model.fields,field_description:my_compassion.field_correspondence_prewritten_letter__name
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_signup_fields
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
+#: model_terms:ir.ui.view,arch_db:my_compassion.my_information_personal
+#: model_terms:ir.ui.view,arch_db:my_compassion.product_template_form_view
 msgid "Name"
 msgstr "Namn"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_res_partner__my2_name_placeholder
+#: model:ir.model.fields,field_description:my_compassion.field_res_users__my2_name_placeholder
+msgid "Name is a placeholder"
+msgstr "Namnet är en platshållare"
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_product_product__my_compassion_name
@@ -2481,6 +2791,15 @@ msgid "No options available."
 msgstr "Inga alternativ tillgängliga."
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_emailed
+msgid ""
+"No problem. We have emailed you a link - open it whenever you have\n"
+"            a minute and tell us who to thank."
+msgstr ""
+"Inga problem. Vi har skickat en länk till din e-post - öppna den när du har "
+"en stund och berätta för oss vem vi ska tacka."
+
+#. module: my_compassion
 #. odoo-python
 #: code:addons/my_compassion/controllers/my_account.py:0
 msgid "No text provided for the letter."
@@ -2558,6 +2877,7 @@ msgstr "Öppna länk i ny flik"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.DonationFormComponent
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_options
 msgid "Or enter your own amount"
 msgstr "Eller ange ditt eget belopp"
@@ -2584,7 +2904,8 @@ msgid "Partner-related data of the user"
 msgstr "Partnerrelaterad data för användaren"
 
 #. module: my_compassion
-#: code:addons/theme_compassion_2025/static/src/xml/Password.xml:0
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_login_form
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_signup_fields
 msgid "Password"
 msgstr "Lösenord"
 
@@ -2595,10 +2916,17 @@ msgstr "Lösenordet har uppdaterats!"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_payment_page
-msgid "Pay the first month to start your\n"
+msgid ""
+"Pay the first month to start your\n"
 "                sponsorship of"
-msgstr "Betala den första månaden för att starta ditt\n"
+msgstr ""
+"Betala den första månaden för att starta ditt\n"
 "                fadderskap av"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_form_content
+msgid "Pay with"
+msgstr "Betala med"
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__payment_method
@@ -2644,9 +2972,11 @@ msgstr "Betalningsalternativ"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
-msgid "Personal\n"
+msgid ""
+"Personal\n"
 "                                    Information"
-msgstr "Personlig\n"
+msgstr ""
+"Personlig\n"
 "                                    information"
 
 #. module: my_compassion
@@ -2657,6 +2987,8 @@ msgstr "Telefon"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
 msgid "Phone number"
 msgstr "Telefonnummer"
@@ -2692,17 +3024,31 @@ msgstr "Bild"
 #. module: my_compassion
 #. odoo-python
 #: code:addons/my_compassion/models/my2_new_sponsorship_wizard.py:0
+msgid "Please accept the privacy notice before continuing."
+msgstr "Godkänn integritetspolicyn innan du fortsätter."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/my2_new_sponsorship_wizard.py:0
 msgid "Please add your country before sponsoring a child."
 msgstr "Vänligen ange ditt land innan du blir fadder till ett barn."
 
 #. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/my2_new_sponsorship_wizard.py:0
+msgid "Please choose a payment method before continuing."
+msgstr "Välj en betalningsmetod innan du fortsätter."
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
-msgid "Please contact Compassion\n"
+msgid ""
+"Please contact Compassion\n"
 "                                                            for\n"
 "                                                            assistance\n"
 "                                                            at:\n"
 "                                                                <br/>"
-msgstr "Kontakta Compassion\n"
+msgstr ""
+"Kontakta Compassion\n"
 "                                                            för\n"
 "                                                            hjälp\n"
 "                                                            på:\n"
@@ -2737,6 +3083,12 @@ msgid "Please select a template for your letter."
 msgstr "Välj en mall för ditt brev."
 
 #. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/my2_sponsorships.py:0
+msgid "Please tell us your name and phone number."
+msgstr "Berätta ditt namn och telefonnummer för oss."
+
+#. module: my_compassion
 #. odoo-javascript
 #: code:addons/my_compassion/static/src/js/my2_new_letter.js:0
 msgid "Please write something in your letter."
@@ -2765,9 +3117,11 @@ msgstr "Förhindrar webbpublicering när det ändras manuellt"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_letter_card_component
-msgid "Preview\n"
+msgid ""
+"Preview\n"
 "                                <i class=\"icon-eye ms-auto\"/>"
-msgstr "Förhandsvisa\n"
+msgstr ""
+"Förhandsvisa\n"
 "                                <i class=\"icon-eye ms-auto\"/>"
 
 #. module: my_compassion
@@ -2787,15 +3141,22 @@ msgstr "Förskriven text för S2B-brevväxling"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
-msgid "Privacy\n"
+msgid ""
+"Privacy\n"
 "                                    Data"
-msgstr "Integritet\n"
+msgstr ""
+"Integritet\n"
 "                                    och data"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_information_privacy_data
 msgid "Privacy &amp; Data Protection"
 msgstr "Integritet &amp; dataskydd"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__privacy_consent
+msgid "Privacy Consent"
+msgstr "Integritetsmedgivande"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_page
@@ -2816,8 +3177,10 @@ msgstr "Produkt"
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_product_product__activate_for_my_compassion
 #: model:ir.model.fields,help:my_compassion.field_product_template__activate_for_my_compassion
-msgid "Publish the product as an available donation on the MyCompassion website"
-msgstr "Publicera produkten som en tillgänglig gåva på MyCompassion-webbplatsen"
+msgid ""
+"Publish the product as an available donation on the MyCompassion website"
+msgstr ""
+"Publicera produkten som en tillgänglig gåva på MyCompassion-webbplatsen"
 
 #. module: my_compassion
 #: model:ir.actions.server,name:my_compassion.child_publish_action
@@ -2854,8 +3217,12 @@ msgstr "Fick ditt brev"
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_website__data_change_notification_email
-msgid "Recipient of partner data-change notifications from the portal. Defaults to the company email when empty."
-msgstr "Mottagare av aviseringar om ändrade partneruppgifter från portalen. Standard är företagets e-post när tomt."
+msgid ""
+"Recipient of partner data-change notifications from the portal. Defaults to "
+"the company email when empty."
+msgstr ""
+"Mottagare av aviseringar om ändrade partneruppgifter från portalen. Standard"
+" är företagets e-post när tomt."
 
 #. module: my_compassion
 #: model:ir.model,name:my_compassion.model_recurring_contract_origin
@@ -2881,9 +3248,11 @@ msgstr "Relaterad partner"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_letter_card_component
-msgid "Reply\n"
+msgid ""
+"Reply\n"
 "                                <i class=\"icon-pencil02 ms-auto\"/>"
-msgstr "Svara\n"
+msgstr ""
+"Svara\n"
 "                                <i class=\"icon-pencil02 ms-auto\"/>"
 
 #. module: my_compassion
@@ -2938,6 +3307,11 @@ msgid "Salutation"
 msgstr "Hälsning"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
+msgid "Save and continue"
+msgstr "Spara och fortsätt"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_letter_page
 msgid "Save draft"
 msgstr "Spara utkast"
@@ -2949,8 +3323,12 @@ msgstr "Spara inställningar"
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_recurring_contract_group__payment_token_id
-msgid "Saved payment instrument charged off-session each month when the payment mode is backed by an online payment provider."
-msgstr "Sparad betalningsuppgift som dras automatiskt (off-session) varje månad när betalningssättet backas upp av en betaltjänstleverantör online."
+msgid ""
+"Saved payment instrument charged off-session each month when the payment "
+"mode is backed by an online payment provider."
+msgstr ""
+"Sparad betalningsuppgift som dras automatiskt (off-session) varje månad när "
+"betalningssättet backas upp av en betaltjänstleverantör online."
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_recurring_contract_group__payment_token_id
@@ -2995,9 +3373,11 @@ msgstr "Se profil"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_letter_page
-msgid "Select a\n"
+msgid ""
+"Select a\n"
 "                                        Template"
-msgstr "Välj en\n"
+msgstr ""
+"Välj en\n"
 "                                        mall"
 
 #. module: my_compassion
@@ -3009,9 +3389,11 @@ msgstr "Välj en mall"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.view_my2_compassion_event_banner_form
-msgid "Select pages to display the banner on. If no page is selected, the banner will be\n"
+msgid ""
+"Select pages to display the banner on. If no page is selected, the banner will be\n"
 "                                    displayed on all pages. Click \"Refresh\" to update the list of available pages."
-msgstr "Välj sidor att visa bannern på. Om ingen sida väljs visas bannern\n"
+msgstr ""
+"Välj sidor att visa bannern på. Om ingen sida väljs visas bannern\n"
 "                                    på alla sidor. Klicka på \"Uppdatera\" för att uppdatera listan över tillgängliga sidor."
 
 #. module: my_compassion
@@ -3058,15 +3440,18 @@ msgstr "Inställningar"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_letter_card_component
-msgid "Share\n"
+msgid ""
+"Share\n"
 "                                <i class=\"icon-share06 ms-auto\"/>"
-msgstr "Dela\n"
+msgstr ""
+"Dela\n"
 "                                <i class=\"icon-share06 ms-auto\"/>"
 
 #. module: my_compassion
 #. odoo-javascript
 #: code:addons/my_compassion/static/src/js/my2_child_letters.js:0
-msgid "Sharing is not supported in this browser. Please share your letter manually."
+msgid ""
+"Sharing is not supported in this browser. Please share your letter manually."
 msgstr "Delning stöds inte i den här webbläsaren. Dela ditt brev manuellt."
 
 #. module: my_compassion
@@ -3121,22 +3506,26 @@ msgstr "Underskriftsdatum:"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.child_unavailable_page
-msgid "Someone else has decided to sponsor {child_name} just a moment ago. He and his\n"
+msgid ""
+"Someone else has decided to sponsor {child_name} just a moment ago. He and his\n"
 "                                        family will be happy! But don't leave just yet, other\n"
 "                                        children are waiting for life-changing support. Would you like to sponsor one of\n"
 "                                        these children?"
-msgstr "Någon annan har precis valt att bli fadder till {child_name}. Han och hans\n"
+msgstr ""
+"Någon annan har precis valt att bli fadder till {child_name}. Han och hans\n"
 "                                        familj blir glada! Men gå inte än – andra\n"
 "                                        barn väntar på livsförändrande stöd. Vill du bli fadder till ett av\n"
 "                                        dessa barn?"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.child_unavailable_page
-msgid "Someone else has decided to sponsor {child_name} just a moment ago. She and her\n"
+msgid ""
+"Someone else has decided to sponsor {child_name} just a moment ago. She and her\n"
 "                                        family will be happy! But don't leave just yet, other\n"
 "                                        children are waiting for life-changing support. Would you like to sponsor one of\n"
 "                                        these children?"
-msgstr "Någon annan har precis valt att bli fadder till {child_name}. Hon och hennes\n"
+msgstr ""
+"Någon annan har precis valt att bli fadder till {child_name}. Hon och hennes\n"
 "                                        familj blir glada! Men gå inte än – andra\n"
 "                                        barn väntar på livsförändrande stöd. Vill du bli fadder till ett av\n"
 "                                        dessa barn?"
@@ -3217,6 +3606,7 @@ msgstr "Fadderbarn"
 #. module: my_compassion
 #. odoo-python
 #: code:addons/my_compassion/models/move.py:0
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
 msgid "Sponsorship"
 msgstr "Fadderskap"
 
@@ -3224,6 +3614,11 @@ msgstr "Fadderskap"
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__sponsorship_plus
 msgid "Sponsorship Plus"
 msgstr "Sponsorship Plus"
+
+#. module: my_compassion
+#: model:mail.template,name:my_compassion.mail_details_reminder
+msgid "Sponsorship details reminder"
+msgstr "Påminnelse om fadderskapsuppgifter"
 
 #. module: my_compassion
 #. odoo-python
@@ -3247,15 +3642,17 @@ msgid "Sponsorship type"
 msgstr "Typ av fadderskap"
 
 #. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_payment_method
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_sponsorship_plus
 msgid "Sponsorship+ includes the basic sponsorship of"
 msgstr "Sponsorship+ inkluderar grundfadderskapet av"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_sponsorships_page
-msgid "Stand with the Church and See a Child Released from\n"
+msgid ""
+"Stand with the Church and See a Child Released from\n"
 "                            Poverty"
-msgstr "Stå tillsammans med kyrkan och se ett barn befrias från\n"
+msgstr ""
+"Stå tillsammans med kyrkan och se ett barn befrias från\n"
 "                            fattigdom"
 
 #. module: my_compassion
@@ -3297,6 +3694,7 @@ msgstr "Status"
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__street
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_information_personal
 msgid "Street"
@@ -3330,11 +3728,13 @@ msgstr "Föreslagna gåvor"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.DonationFormComponent
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_options
 msgid "Suggested amounts"
 msgstr "Föreslagna belopp"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
 msgid "Surname"
@@ -3358,8 +3758,12 @@ msgstr "Målsidor"
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_website__sponsor_child_url
-msgid "Target of the 'start a sponsorship' link shown to users without sponsorships. Defaults to /my2/children when empty."
-msgstr "Mål för länken \"starta ett fadderskap\" som visas för användare utan fadderskap. Standard är /my2/children när tomt."
+msgid ""
+"Target of the 'start a sponsorship' link shown to users without "
+"sponsorships. Defaults to /my2/children when empty."
+msgstr ""
+"Mål för länken \"starta ett fadderskap\" som visas för användare utan "
+"fadderskap. Standard är /my2/children när tomt."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_letter_page
@@ -3437,14 +3841,20 @@ msgstr "Tack!"
 #. module: my_compassion
 #. odoo-python
 #: code:addons/my_compassion/models/my2_event_banner.py:0
-msgid "The URL '{url}' could not be reached or is invalid. Please check the address. (Error: {error})"
-msgstr "URL:en '{url}' kunde inte nås eller är ogiltig. Kontrollera adressen. (Fel: {error})"
+msgid ""
+"The URL '{url}' could not be reached or is invalid. Please check the "
+"address. (Error: {error})"
+msgstr ""
+"URL:en '{url}' kunde inte nås eller är ogiltig. Kontrollera adressen. (Fel: "
+"{error})"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.DonationFormComponent
-msgid "The amount must comply with our\n"
+msgid ""
+"The amount must comply with our\n"
 "                        <span class=\"limits-toggle text-core-blue\">donation limits</span>"
-msgstr "Beloppet måste följa våra\n"
+msgstr ""
+"Beloppet måste följa våra\n"
 "                        <span class=\"limits-toggle text-core-blue\">gåvogränser</span>"
 
 #. module: my_compassion
@@ -3479,6 +3889,21 @@ msgid "The end date must be after the start date."
 msgstr "Slutdatumet måste vara efter startdatumet."
 
 #. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_new_sponsorship_wizard__details_deferred
+msgid ""
+"The flow went through the fast-checkout step, so the sponsor's identity is "
+"collected after payment instead of before it. The only signal the "
+"placeholder-name handling is allowed to key on: keying it on 'is this the "
+"public flow' would silently change every other flow sharing "
+"finish_sponsorship()."
+msgstr ""
+"Flödet gick igenom snabb-utcheckningssteget, så fadderns identitet samlas in"
+" efter betalningen i stället för innan den. Detta är den enda signal som "
+"platshållarnamn-hanteringen får styras av: att i stället styras av “är detta"
+" det publika flödet” skulle tyst ändra alla andra flöden som delar "
+"finish_sponsorship()."
+
+#. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_account_payment_mode__website_url
 #: model:ir.model.fields,help:my_compassion.field_compassion_child__website_url
 #: model:ir.model.fields,help:my_compassion.field_correspondence__website_url
@@ -3496,8 +3921,22 @@ msgstr "Det nya lösenordet och dess bekräftelse måste vara identiska."
 #. module: my_compassion
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_portal.py:0
-msgid "The old password you provided is incorrect, your password was not changed."
-msgstr "Det gamla lösenordet du angav är felaktigt, ditt lösenord ändrades inte."
+msgid ""
+"The old password you provided is incorrect, your password was not changed."
+msgstr ""
+"Det gamla lösenordet du angav är felaktigt, ditt lösenord ändrades inte."
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_res_partner__my2_name_placeholder
+#: model:ir.model.fields,help:my_compassion.field_res_users__my2_name_placeholder
+msgid ""
+"The partner was created by a fast checkout before its sponsor gave their "
+"name. Everything that greets the sponsor by name waits for "
+"_my2_replace_placeholder_name to clear this flag."
+msgstr ""
+"Partnern skapades av en snabb utcheckning innan faddern uppgav sitt namn. "
+"Allt som hälsar faddern med namn väntar på att _my2_replace_placeholder_name"
+" ska rensa den här flaggan."
 
 #. module: my_compassion
 #. odoo-python
@@ -3568,7 +4007,8 @@ msgstr "Det här barnet är inte tillgängligt för fadderskap."
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_user_settings.py:0
 msgid "This email is already used as a login by another user."
-msgstr "Den här e-postadressen används redan som inloggning av en annan användare."
+msgstr ""
+"Den här e-postadressen används redan som inloggning av en annan användare."
 
 #. module: my_compassion
 #. odoo-python
@@ -3578,8 +4018,12 @@ msgstr "Det här fältet får inte vara tomt."
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_recurring_contract__campaign_id
-msgid "This is a name that helps you keep track of your different campaign efforts, e.g. Fall_Drive, Christmas_Special"
-msgstr "Det här är ett namn som hjälper dig att hålla reda på dina olika kampanjinsatser, t.ex. Fall_Drive, Christmas_Special"
+msgid ""
+"This is a name that helps you keep track of your different campaign efforts,"
+" e.g. Fall_Drive, Christmas_Special"
+msgstr ""
+"Det här är ett namn som hjälper dig att hålla reda på dina olika "
+"kampanjinsatser, t.ex. Fall_Drive, Christmas_Special"
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_recurring_contract__medium_id
@@ -3588,8 +4032,12 @@ msgstr "Det här är leveransmetoden, t.ex. vykort, e-post eller bannerannons"
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_recurring_contract__source_id
-msgid "This is the source of the link, e.g. Search Engine, another domain, or name of email list"
-msgstr "Det här är källan till länken, t.ex. sökmotor, en annan domän eller namnet på en e-postlista"
+msgid ""
+"This is the source of the link, e.g. Search Engine, another domain, or name "
+"of email list"
+msgstr ""
+"Det här är källan till länken, t.ex. sökmotor, en annan domän eller namnet "
+"på en e-postlista"
 
 #. module: my_compassion
 #. odoo-python
@@ -3599,8 +4047,12 @@ msgstr "Det här fadderskapet kan inte längre betalas online."
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_website__is_my_compassion
-msgid "This website runs the MyCompassion sponsor portal. A multi-company instance flags one website per country."
-msgstr "Den här webbplatsen kör MyCompassion-fadderportalen. En instans med flera företag markerar en webbplats per land."
+msgid ""
+"This website runs the MyCompassion sponsor portal. A multi-company instance "
+"flags one website per country."
+msgstr ""
+"Den här webbplatsen kör MyCompassion-fadderportalen. En instans med flera "
+"företag markerar en webbplats per land."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
@@ -3648,7 +4100,8 @@ msgstr "Översätter brevet"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_change_password_fullpage
-msgid "Two\n"
+msgid ""
+"Two\n"
 "                                    Factor Authentication"
 msgstr "Tvåfaktorsautentisering"
 
@@ -3670,10 +4123,12 @@ msgstr "URL som knappens åtgärd. Lämna tomt för ingen knapp."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.GivingLimitsModalComponent
-msgid "Ultimately, we want to enable communities to support themselves. The last thing we want\n"
+msgid ""
+"Ultimately, we want to enable communities to support themselves. The last thing we want\n"
 "                            is to encourage a culture of dependency on gifts. Also, we don't want to overwhelm\n"
 "                            families or single them out for special treatment, which is why we have limits in place."
-msgstr "I slutänden vill vi göra samhällen självförsörjande. Det sista vi vill\n"
+msgstr ""
+"I slutänden vill vi göra samhällen självförsörjande. Det sista vi vill\n"
 "                            är att uppmuntra en kultur av beroende av gåvor. Vi vill inte heller överväldiga\n"
 "                            familjer eller peka ut dem för särbehandling, och därför har vi gränser på plats."
 
@@ -3759,11 +4214,13 @@ msgstr "Varning"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_information_privacy_data
-msgid "We ask our volunteers and the sponsors who visit their sponsored children to sign our child\n"
+msgid ""
+"We ask our volunteers and the sponsors who visit their sponsored children to sign our child\n"
 "                    protection charter.\n"
 "If you would like to go a step further and show that you share our commitment to child protection, we warmly invite you\n"
 "                    to sign it as well."
-msgstr "Vi ber våra volontärer och de faddrar som besöker sina fadderbarn att skriva under vår\n"
+msgstr ""
+"Vi ber våra volontärer och de faddrar som besöker sina fadderbarn att skriva under vår\n"
 "                    barnskyddspolicy.\n"
 "Om du vill ta ett steg till och visa att du delar vårt engagemang för barns skydd bjuder vi varmt in dig\n"
 "                    att skriva under den också."
@@ -3785,24 +4242,39 @@ msgid "We couldn't find your letter. Please try reloading the page."
 msgstr "Vi kunde inte hitta ditt brev. Försök att ladda om sidan."
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
+msgid ""
+"We only need your name and phone number to finish setting up\n"
+"                your sponsorship."
+msgstr ""
+"Vi behöver bara ditt namn och telefonnummer för att slutföra ditt "
+"fadderskap."
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.child_protection_charter_confirmation_page_override
-msgid "We successfully received your agreement to\n"
+msgid ""
+"We successfully received your agreement to\n"
 "                                            the Child Protection Charter."
-msgstr "Vi har tagit emot ditt godkännande av\n"
+msgstr ""
+"Vi har tagit emot ditt godkännande av\n"
 "                                            barnskyddspolicyn."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_information_privacy_data
-msgid "We thank you that you have signed our child protection charter. You can review the document at any\n"
+msgid ""
+"We thank you that you have signed our child protection charter. You can review the document at any\n"
 "                    time from here."
-msgstr "Tack för att du har skrivit under vår barnskyddspolicy. Du kan granska dokumentet när som\n"
+msgstr ""
+"Tack för att du har skrivit under vår barnskyddspolicy. Du kan granska dokumentet när som\n"
 "                    helst härifrån."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.GivingLimitsModalComponent
-msgid "We want to ensure your gifts really do benefit children, families and communities in the\n"
+msgid ""
+"We want to ensure your gifts really do benefit children, families and communities in the\n"
 "                        long-term, which is why we put limits on the amount  that can be sent."
-msgstr "Vi vill säkerställa att dina gåvor verkligen gynnar barn, familjer och samhällen på\n"
+msgstr ""
+"Vi vill säkerställa att dina gåvor verkligen gynnar barn, familjer och samhällen på\n"
 "                        lång sikt, och därför sätter vi gränser för hur stort belopp som kan skickas."
 
 #. module: my_compassion
@@ -3816,7 +4288,8 @@ msgid "Web Sort Date"
 msgstr "Webbsorteringsdatum"
 
 #. module: my_compassion
-#: model:ir.model,name:theme_compassion_2025.model_website
+#: model:ir.model,name:my_compassion.model_website
+#: model:ir.model.fields,field_description:my_compassion.field_compassion_child__website_id
 msgid "Website"
 msgstr "Webbplats"
 
@@ -3846,11 +4319,13 @@ msgstr "Webbplats-URL"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_dashboard_page
-msgid "Welcome to\n"
+msgid ""
+"Welcome to\n"
 "                            <br/>\n"
 "                            <span class=\"text-low-yellow mr-n1\">My</span>\n"
 "                            Compassion"
-msgstr "Välkommen till\n"
+msgstr ""
+"Välkommen till\n"
 "                            <br/>\n"
 "                            <span class=\"text-low-yellow mr-n1\">My</span>\n"
 "                            Compassion"
@@ -3867,6 +4342,11 @@ msgid "Who lives in"
 msgstr "Som bor i"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
+msgid "Who shall we thank?"
+msgstr "Vem ska vi tacka?"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_donation_details_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.product_template_form_view
 msgid "With your help we can..."
@@ -3878,6 +4358,7 @@ msgid "Write a last letter"
 msgstr "Skriv ett sista brev"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_letters_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_nav_items
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_letter_page
@@ -3890,12 +4371,22 @@ msgid "Write a letter to a child"
 msgstr "Skriv ett brev till ett barn"
 
 #. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_recurring_contract__my2_details_token
+msgid ""
+"Write credential of the post-payment details form. See "
+"_my2_issue_details_token."
+msgstr ""
+"Skrivbehörighet för formuläret för uppgifter efter betalning. Se "
+"_my2_issue_details_token."
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.dashboard_sponsorship_vignette
 msgid "Write to Your sponsored child"
 msgstr "Skriv till ditt fadderbarn"
 
 #. module: my_compassion
 #: model:ir.model.fields.selection,name:my_compassion.selection__new_sponsorship_wizard__sponsorship_type__write_and_pray
+#: model:new.sponsorship.wizard.step,title:my_compassion.new_sponsorship_wizard_step_wap_fast_checkout
 msgid "Write&Pray"
 msgstr "Write&Pray"
 
@@ -3906,14 +4397,20 @@ msgstr "Write&Pray-alternativ"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_options
-msgid "Write&amp;Pray sponsorships are available for people under the age of 25. Please provide your date of birth."
-msgstr "Write&amp;Pray-fadderskap är tillgängliga för personer under 25 år. Ange ditt födelsedatum."
+msgid ""
+"Write&amp;Pray sponsorships are available for people under the age of 25. "
+"Please provide your date of birth."
+msgstr ""
+"Write&amp;Pray-fadderskap är tillgängliga för personer under 25 år. Ange "
+"ditt födelsedatum."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_form_content
-msgid "Write&amp;Pray sponsorships are only available for people under the age of 25.\n"
+msgid ""
+"Write&amp;Pray sponsorships are only available for people under the age of 25.\n"
 "                                Would you like to become a sponsor for"
-msgstr "Write&amp;Pray-fadderskap är endast tillgängliga för personer under 25 år.\n"
+msgstr ""
+"Write&amp;Pray-fadderskap är endast tillgängliga för personer under 25 år.\n"
 "                                Vill du bli fadder till"
 
 #. module: my_compassion
@@ -3929,7 +4426,8 @@ msgstr "Ja"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_add_a_gift_page
-msgid "You are already contributing to all our current gift of compassion options."
+msgid ""
+"You are already contributing to all our current gift of compassion options."
 msgstr "Du bidrar redan till alla våra nuvarande Compassion-gåvoalternativ."
 
 #. module: my_compassion
@@ -3959,7 +4457,8 @@ msgstr "Du kan inte utföra den här åtgärden på en arkiverad användare."
 #. odoo-python
 #: code:addons/my_compassion/models/compassion_child.py:0
 msgid "You cannot publish a child that is not available for sponsorship."
-msgstr "Du kan inte publicera ett barn som inte är tillgängligt för fadderskap."
+msgstr ""
+"Du kan inte publicera ett barn som inte är tillgängligt för fadderskap."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_my_donations_page
@@ -3968,19 +4467,25 @@ msgstr "Du har för närvarande"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
-msgid "You currently have active\n"
+msgid ""
+"You currently have active\n"
 "                                                        sponsorships, so this action\n"
 "                                                        cannot be\n"
 "                                                        performed in the website."
-msgstr "Du har för närvarande aktiva\n"
+msgstr ""
+"Du har för närvarande aktiva\n"
 "                                                        fadderskap, så den här åtgärden\n"
 "                                                        kan inte\n"
 "                                                        utföras på webbplatsen."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_sponsorships_page
-msgid "You write to and pray for a child, while someone else pays for the sponsorship."
-msgstr "Du skriver till och ber för ett barn, medan någon annan betalar för fadderskapet."
+msgid ""
+"You write to and pray for a child, while someone else pays for the "
+"sponsorship."
+msgstr ""
+"Du skriver till och ber för ett barn, medan någon annan betalar för "
+"fadderskapet."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_content
@@ -3998,6 +4503,11 @@ msgid "Your donations will have an everlasting impact."
 msgstr "Dina gåvor får en bestående effekt."
 
 #. module: my_compassion
+#: model:new.sponsorship.wizard.step,title:my_compassion.new_sponsorship_wizard_step_fast_checkout
+msgid "Your email"
+msgstr "Din e-post"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
 msgid "Your generosity changes lives."
 msgstr "Din generositet förändrar liv."
@@ -4009,9 +4519,11 @@ msgstr "Din inkorg"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_my_donations_page
-msgid "Your latest payments may not already be taken into\n"
+msgid ""
+"Your latest payments may not already be taken into\n"
 "                                account."
-msgstr "Dina senaste betalningar är kanske inte redan\n"
+msgstr ""
+"Dina senaste betalningar är kanske inte redan\n"
 "                                medräknade."
 
 #. module: my_compassion
@@ -4022,20 +4534,30 @@ msgstr "Dina senaste betalningar är kanske inte redan medräknade."
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_payment_page
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_update_card_page
-msgid "Your payment details are securely saved with our payment provider\n"
+msgid ""
+"Your payment details are securely saved with our payment provider\n"
 "            and charged each month for your sponsorship."
-msgstr "Dina betalningsuppgifter sparas säkert hos vår betaltjänstleverantör\n"
+msgstr ""
+"Dina betalningsuppgifter sparas säkert hos vår betaltjänstleverantör\n"
 "            och dras varje månad för ditt fadderskap."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
-msgid "You’ll receive an email with everything you need to start the Write&amp;Pray soon."
-msgstr "Du får snart ett mejl med allt du behöver för att komma igång med Write&amp;Pray."
+msgid ""
+"You’ll receive an email with everything you need to start the Write&amp;Pray"
+" soon."
+msgstr ""
+"Du får snart ett mejl med allt du behöver för att komma igång med "
+"Write&amp;Pray."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
-msgid "You’ll receive an email with everything you need to start the sponsorship soon."
-msgstr "Du får snart ett mejl med allt du behöver för att komma igång med fadderskapet."
+msgid ""
+"You’ll receive an email with everything you need to start the sponsorship "
+"soon."
+msgstr ""
+"Du får snart ett mejl med allt du behöver för att komma igång med "
+"fadderskapet."
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__zip
@@ -4055,9 +4577,11 @@ msgstr "en syster"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_my_donations_page
-msgid "active\n"
+msgid ""
+"active\n"
 "                                sponsorship(s) for a total of"
-msgstr "aktiva\n"
+msgstr ""
+"aktiva\n"
 "                                fadderskap till ett totalt värde av"
 
 #. module: my_compassion
@@ -4137,6 +4661,12 @@ msgid "portrait image"
 msgstr "porträttbild"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
+msgid "privacy notice"
+msgstr "integritetspolicyn"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
 msgid "sisters"
 msgstr "systrar"
@@ -4153,11 +4683,12 @@ msgstr "med"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_children_card_component
-msgid "years old\n"
+msgid ""
+"years old\n"
 "                        <i class=\"icon-user01 bg-low-yellow mx-1\"/>"
-msgstr "år\n"
+msgstr ""
+"år\n"
 "                        <i class=\"icon-user01 bg-low-yellow mx-1\"/>"
-
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_update_card_page
@@ -4174,12 +4705,15 @@ msgstr "Dras från ditt nya kort idag."
 msgid ""
 "Enter a new card below. It replaces the\n"
 "                one used for your monthly sponsorship payments"
-msgstr "Ange ett nytt kort nedan. Det ersätter kortet som används för dina månatliga fadderskapsbetalningar"
+msgstr ""
+"Ange ett nytt kort nedan. Det ersätter kortet som används för dina månatliga"
+" fadderskapsbetalningar"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_update_card_page
 msgid "Nothing is due today - your new card will only be verified."
-msgstr "Inget belopp ska betalas idag - ditt nya kort kommer endast att verifieras."
+msgstr ""
+"Inget belopp ska betalas idag - ditt nya kort kommer endast att verifieras."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_update_card_page
@@ -4205,11 +4739,13 @@ msgstr "Betalningen gick inte igenom"
 
 #. module: my_compassion
 #. odoo-python
-#: code:addons/my_compassion/controllers/my2_update_card.py:0
+#: code:addons/my_compassion/controllers/website_utils.py:0
 msgid ""
 "The selected payment method cannot be saved for monthly payments. Please pay"
 " by card."
-msgstr "Den valda betalningsmetoden kan inte sparas för månatliga betalningar. Vänligen betala med kort."
+msgstr ""
+"Den valda betalningsmetoden kan inte sparas för månatliga betalningar. "
+"Vänligen betala med kort."
 
 #. module: my_compassion
 #. odoo-python
@@ -4242,7 +4778,9 @@ msgid ""
 "Your payment card has been updated.\n"
 "                  Your monthly sponsorship payments will now use the new\n"
 "                  card."
-msgstr "Ditt betalkort har uppdaterats. Dina månatliga fadderskapsbetalningar kommer nu att använda det nya kortet."
+msgstr ""
+"Ditt betalkort har uppdaterats. Dina månatliga fadderskapsbetalningar kommer"
+" nu att använda det nya kortet."
 
 #. module: my_compassion
 #. odoo-python
@@ -4268,8 +4806,12 @@ msgstr "Debitera sparat kort"
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_payment_transaction__my2_card_update_group_id
-msgid "Contract group whose saved instrument this validation transaction replaces (the update-card page with nothing due)."
-msgstr "Avtalsgrupp vars sparade betalningsmedel denna valideringstransaktion ersätter (kortuppdateringssidan utan något förfallet belopp)."
+msgid ""
+"Contract group whose saved instrument this validation transaction replaces "
+"(the update-card page with nothing due)."
+msgstr ""
+"Avtalsgrupp vars sparade betalningsmedel denna valideringstransaktion "
+"ersätter (kortuppdateringssidan utan något förfallet belopp)."
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_recurring_contract__my2_signup
@@ -4277,9 +4819,14 @@ msgid "MyCompassion Signup"
 msgstr "MyCompassion-registrering"
 
 #. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_account_bank_statement_line__my2_can_charge_digital
 #: model:ir.model.fields,help:my_compassion.field_account_move__my2_can_charge_digital
-msgid "The invoice can be charged off-session against the saved payment instrument of its contract group."
-msgstr "Fakturan kan debiteras utan sponsorns närvaro mot det sparade betalningsmedlet i dess avtalsgrupp."
+msgid ""
+"The invoice can be charged off-session against the saved payment instrument "
+"of its contract group."
+msgstr ""
+"Fakturan kan debiteras utan sponsorns närvaro mot det sparade "
+"betalningsmedlet i dess avtalsgrupp."
 
 #. module: my_compassion
 #. odoo-python
@@ -4297,27 +4844,298 @@ msgstr "Betalningen lyckades."
 #. odoo-python
 #: code:addons/my_compassion/models/move.py:0
 msgid "The payment was refused; the provider scheduled automatic retries."
-msgstr "Betalningen nekades. Leverantören har schemalagt automatiska nya försök."
+msgstr ""
+"Betalningen nekades. Leverantören har schemalagt automatiska nya försök."
 
 #. module: my_compassion
 #. odoo-python
 #: code:addons/my_compassion/models/contract_group.py:0
-msgid "The provider never reported the outcome of this payment. It is given up on after %s days."
-msgstr "Leverantören rapporterade aldrig resultatet av denna betalning. Den ges upp efter %s dagar."
+msgid ""
+"The provider never reported the outcome of this payment. It is given up on "
+"after %s days."
+msgstr ""
+"Leverantören rapporterade aldrig resultatet av denna betalning. Den ges upp "
+"efter %s dagar."
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_recurring_contract__my2_signup
-msgid "The sponsorship was created by the sponsor through the MyCompassion signup wizard. Such sponsors are invited to create their portal account once the sponsorship is confirmed."
-msgstr "Fadderskapet skapades av faddern via MyCompassion-guiden. Sådana faddrar bjuds in att skapa sitt portalkonto när fadderskapet har bekräftats."
+msgid ""
+"The sponsorship was created by the sponsor through the MyCompassion signup "
+"wizard. Such sponsors are invited to create their portal account once the "
+"sponsorship is confirmed."
+msgstr ""
+"Fadderskapet skapades av faddern via MyCompassion-guiden. Sådana faddrar "
+"bjuds in att skapa sitt portalkonto när fadderskapet har bekräftats."
 
 #. module: my_compassion
 #. odoo-python
 #: code:addons/my_compassion/models/contracts.py:0
-msgid "The sponsor's saved card could not be charged and both fix-it emails were sent without effect. Please contact the sponsor or handle the arrears manually."
-msgstr "Fadderns sparade kort kunde inte debiteras och båda påminnelsemejlen skickades utan resultat. Kontakta faddern eller hantera skulden manuellt."
+msgid ""
+"The sponsor's saved card could not be charged and both fix-it emails were "
+"sent without effect. Please contact the sponsor or handle the arrears "
+"manually."
+msgstr ""
+"Fadderns sparade kort kunde inte debiteras och båda påminnelsemejlen "
+"skickades utan resultat. Kontakta faddern eller hantera skulden manuellt."
 
 #. module: my_compassion
 #. odoo-python
 #: code:addons/my_compassion/models/move.py:0
-msgid "This invoice cannot be charged: a payment is already open or done, or no valid saved card is available."
-msgstr "Denna faktura kan inte debiteras. En betalning är redan öppen eller genomförd, eller så finns inget giltigt sparat kort."
+msgid ""
+"This invoice cannot be charged: a payment is already open or done, or no "
+"valid saved card is available."
+msgstr ""
+"Denna faktura kan inte debiteras. En betalning är redan öppen eller "
+"genomförd, eller så finns inget giltigt sparat kort."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
+msgid "'s letters. Nothing else is needed right now."
+msgstr ". Inget annat behövs just nu."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_sponsorship_plus
+msgid ""
+".- per month.\n"
+"                            <br/>\n"
+"                            <br/>\n"
+"                            The extra amount helps to fund urgent needs not covered by the\n"
+"                            sponsorship (e.g. natural disasters,\n"
+"                            medical interventions, malaria prevention, etc.).\n"
+"                            <br/>\n"
+"                            <br/>\n"
+"                            This fund is available for all children supported through Compassion."
+msgstr ""
+".- per månad.\n"
+"                            <br/>\n"
+"                            <br/>\n"
+"                            Det extra beloppet hjälper till att finansiera akuta behov som inte täcks av\n"
+"                            fadderskapet (t.ex. naturkatastrofer,\n"
+"                            medicinska insatser, malariaförebyggande osv.).\n"
+"                            <br/>\n"
+"                            <br/>\n"
+"                            Denna fond är tillgänglig för alla barn som stöds genom Compassion."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_sponsorship_plus
+msgid ".- solidarity fund"
+msgstr ".- solidaritetsfond"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "<span class=\"body-small text-mid-grey\">Child</span>"
+msgstr "<span class=\"body-small text-mid-grey\">Barn</span>"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid ""
+"<span class=\"body-small text-mid-grey\">Commitment</span>\n"
+"                  <span class=\"body-small bold text-mid-green\">Confirmed</span>"
+msgstr ""
+"<span class=\"body-small text-mid-grey\">Åtagande</span>\n"
+"                  <span class=\"body-small bold text-mid-green\">Bekräftat</span>"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid ""
+"<span class=\"body-small text-mid-grey\">Contact details</span>\n"
+"                  <span class=\"body-small bold text-mid-green\">Complete</span>"
+msgstr ""
+"<span class=\"body-small text-mid-grey\">Kontaktuppgifter</span>\n"
+"                  <span class=\"body-small bold text-mid-green\">Klart</span>"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "<span class=\"body-small text-mid-grey\">First payment</span>"
+msgstr "<span class=\"body-small text-mid-grey\">Första betalning</span>"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "<span class=\"body-small text-mid-grey\">Monthly gift</span>"
+msgstr "<span class=\"body-small text-mid-grey\">Månatlig gåva</span>"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "<span class=\"body-small text-mid-grey\">Role</span>"
+msgstr "<span class=\"body-small text-mid-grey\">Roll</span>"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "<span class=\"body-small text-mid-grey\">Sponsored child</span>"
+msgstr "<span class=\"body-small text-mid-grey\">Fadderbarn</span>"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_sponsorship_plus
+msgid ""
+"<span class=\"d-block text-dark-blue very-tiny-text bold\">Sponsorship "
+"plus</span>"
+msgstr ""
+"<span class=\"d-block text-dark-blue very-tiny-text bold\">Sponsorship "
+"plus</span>"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
+msgid ""
+"<span class=\"ms-3 tiny-text\">\n"
+"                    I pray for and write to my godchild regularly. Someone else provides the financial support, but I\n"
+"                    am the child's official sponsor.\n"
+"                </span>"
+msgstr ""
+"<span class=\"ms-3 tiny-text\">Jag ber för och skriver till mitt fadderbarn "
+"regelbundet. Någon annan står för det ekonomiska stödet, men jag är barnets "
+"officiella fadder.</span>"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
+msgid ""
+"<span class=\"ms-3 tiny-text\">\n"
+"                    I pray for and write to my sponsored child regularly, and I can contribute monthly.\n"
+"                </span>"
+msgstr ""
+"<span class=\"ms-3 tiny-text\">Jag ber för och skriver till mitt fadderbarn "
+"regelbundet, och jag kan bidra ekonomiskt varje månad.</span>"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "<span class=\"tiny-text text-mid-grey\">Sponsorship Plus</span>"
+msgstr "<span class=\"tiny-text text-mid-grey\">Sponsorship Plus</span>"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_sponsorship_plus
+msgid ""
+"<span class=\"toggle-card-check me-3 flex-shrink-0 d-flex align-items-center"
+" justify-content-center rounded-circle bg-core-blue text-pure-white tiny-"
+"text bold\">✓</span>"
+msgstr ""
+"<span class=\"toggle-card-check me-3 flex-shrink-0 d-flex align-items-center"
+" justify-content-center rounded-circle bg-core-blue text-pure-white tiny-"
+"text bold\">✓</span>"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "All set,"
+msgstr "Klart,"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
+msgid "For your documentation and"
+msgstr "För din dokumentation och framtida brev från"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "Go to my dashboard"
+msgstr "Gå till min översikt"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "Godparent, writes only"
+msgstr "Fadder, skriver bara"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
+msgid "I accept the privacy policy as described in the"
+msgstr "Jag godkänner sekretesspolicyn enligt beskrivningen i"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "Included ·"
+msgstr "Inkluderat ·"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "Now that you're all set, why not send"
+msgstr "Nu när allt är klart, varför inte skicka"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "Sponsor, writes and contributes"
+msgstr "Fadder, skriver och bidrar"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "We'll send a sign-in link to"
+msgstr "Vi skickar en inloggningslänk till"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_sponsorship_plus
+msgid "What does the extra go to?"
+msgstr "Vad går tillägget till?"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
+msgid "Which describes you?"
+msgstr "Vad stämmer bäst in på dig?"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "Write my first letter"
+msgstr "Skriv mitt första brev"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "Write your first letter?"
+msgstr "Skriv ditt första brev?"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
+msgid "Write&amp;Pray"
+msgstr "Write&amp;Pray"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
+msgid ""
+"Write&amp;Pray is for people under 25, so here's the regular sponsorship "
+"instead."
+msgstr ""
+"Write&amp;Pray är för personer under 25 år, så här är det vanliga "
+"fadderskapet istället."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
+msgid ""
+"Write&amp;Pray is for people under 25. This is the only extra question "
+"before you continue."
+msgstr ""
+"Write&amp;Pray är för personer under 25 år. Det här är den enda extra frågan"
+" innan du fortsätter."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
+msgid "Write&amp;Pray ·"
+msgstr "Write&amp;Pray ·"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "a first hello? A letter means the world to them."
+msgstr "en första hälsning? Ett brev betyder allt för dem."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "to set up a password, and you'll have access to your account."
+msgstr "för att skapa ett lösenord, så får du tillgång till ditt konto."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
+msgid ""
+"writes to you by name, so we need it before their first letter -\n"
+"                and a phone number lets us reach you if anything comes up."
+msgstr ""
+"skriver till dig med namn, så vi behöver det innan sitt första brev - och "
+"ett telefonnummer gör att vi kan nå dig om något dyker upp."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
+msgid "you@example.com"
+msgstr "you@example.com"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
+msgid "· monthly"
+msgstr "· månadsvis"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
+msgid "· you write and pray"
+msgstr "· du skriver och ber"

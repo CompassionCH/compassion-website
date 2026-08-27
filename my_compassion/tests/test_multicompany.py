@@ -23,13 +23,17 @@ class TestMultiCompany(DigitalSeamCase):
 
         The batch tests bill real companies (Sverige, Norge, ...) but only
         add rolled-back records to them, so no company config is mutated.
+
+        Skipped rather than failed where there is only one: this module is
+        shared, and the Swiss instance runs a single company - a test that
+        needs two of them has nothing to say there, and reporting it as a
+        failure would only teach everyone to ignore a red suite.
         """
         companies = (
             self.env["account.journal"].search([("type", "=", "sale")]).company_id
         )
-        self.assertGreaterEqual(
-            len(companies), 2, "the database needs two companies with sale accounting"
-        )
+        if len(companies) < 2:
+            self.skipTest("this instance has one company with sale accounting")
         return companies[0], companies[1]
 
     def test_finish_sponsorship_uses_website_company(self):
@@ -70,6 +74,9 @@ class TestMultiCompany(DigitalSeamCase):
                 "firstname": "Multi",
                 "lastname": "Company",
                 "email": "multi-company-signup@example.com",
+                # the public flow is the fast checkout, whose consent tick
+                # finish_sponsorship enforces
+                "privacy_consent": True,
                 # the partner needs a country so the contract's required
                 # country_id computes
                 "country": self.env.ref("base.se").id,

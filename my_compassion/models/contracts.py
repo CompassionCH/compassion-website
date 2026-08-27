@@ -1,7 +1,11 @@
 import logging
+import secrets
 from datetime import timedelta
+from urllib.parse import urlencode
 
 from odoo import _, api, fields, models
+
+from odoo.addons.payment import utils as payment_utils
 
 _logger = logging.getLogger(__name__)
 
@@ -18,6 +22,17 @@ class RecurringContract(models.Model):
     _inherit = ["recurring.contract", "utm.mixin"]
 
     REVERT_DELAY_MINUTES = 15
+
+    # How long a details token stays usable. Long enough for the "we will
+    # email you a link to finish later" path, short enough that a link left
+    # in a mailbox or a browser history stops working.
+    DETAILS_TOKEN_HOURS = 72
+    # The same credential, when it is mailed instead of shown: "later" is a
+    # mailbox, so it has to survive a weekend away and a holiday, not just a
+    # gateway round-trip. Still finite, and still single-use: the first save
+    # burns it, so the extra days only widen the window in which the sponsor
+    # can start, never the one in which a stale link keeps working.
+    DETAILS_TOKEN_EMAIL_HOURS = 24 * 14
 
     can_show_on_my_compassion = fields.Boolean(
         string="Can be shown on My Compassion",
@@ -40,6 +55,20 @@ class RecurringContract(models.Model):
         help="The sponsorship was created by the sponsor through the"
         " MyCompassion signup wizard. Such sponsors are invited to create"
         " their portal account once the sponsorship is confirmed.",
+    )
+    my2_details_token = fields.Char(
+        string="Details form token",
+        readonly=True,
+        copy=False,
+        groups="base.group_system",
+        help="Write credential of the post-payment details form. See"
+        " _my2_issue_details_token.",
+    )
+    my2_details_token_expiration = fields.Datetime(
+        string="Details form token expiration",
+        readonly=True,
+        copy=False,
+        groups="base.group_system",
     )
 
     @api.depends("can_write_letter")
@@ -79,6 +108,263 @@ class RecurringContract(models.Model):
             and m.payment_state in ("not_paid", "partial")
         )
         return invoices.sorted("invoice_date")[:1]
+
+    def _my2_details_pending(self):
+        """Whether this signup is still waiting for its sponsor's real name.
+
+        The one state in which the details form may write to the partner.
+        """
+        self.ensure_one()
+        return bool(self.my2_signup and self.partner_id.my2_name_placeholder)
+
+    def _my2_issue_details_token(self, hours=None):
+        """Mint the write credential of the post-payment details form.
+
+        Single-purpose, single-use and expiring on all three counts because a
+        deterministic, never-expiring token (the payment_utils
+        generate_access_token pattern) would be a permanent bearer credential
+        to rewrite a sponsor's identity, leaking through URLs, browser history
+        and referrers. Constraints this shape has to keep:
+
+        - never handed out on a bare record id: callers must have proved they
+          are the session that paid, or be the authenticated sponsor;
+        - useless once the name is real (_my2_details_pending), so a
+          replayed link cannot overwrite what the sponsor typed;
+        - a write credential only. It must never gate a read, or the form
+          becomes a "type an email, pay, read the owner's details" endpoint;
+        - burnt on the first successful save
+          (_my2_consume_details_token).
+
+        Issuing again replaces the previous token, which is what makes the
+        "email me a link to finish later" path possible: the mailed
+        credential supersedes whatever had been shown on a page before it.
+        A page reload reuses the live token instead of minting a new one -
+        see _my2_ensure_details_token.
+
+        :param hours: lifetime of the token, defaulting to
+            DETAILS_TOKEN_HOURS. The mailed path passes the longer
+            DETAILS_TOKEN_EMAIL_HOURS.
+        :return: the token, or False when this signup wants no details.
+        """
+        self.ensure_one()
+        if not self._my2_details_pending():
+            return False
+        token = secrets.token_urlsafe(32)
+        self.sudo().write(
+            {
+                "my2_details_token": token,
+                "my2_details_token_expiration": fields.Datetime.now()
+                + timedelta(hours=hours or self.DETAILS_TOKEN_HOURS),
+            }
+        )
+        return token
+
+    def _my2_ensure_details_token(self):
+        """The signup's live details token, minting one only if needed.
+
+        What the thank-you page uses. Re-minting on every render would
+        silently kill the link the sponsor was just told to look for in
+        their mailbox: one reload of a page still sitting in a tab, and the
+        mailed token is gone. A still-valid token is therefore handed back
+        as it is, and only a missing or expired one is replaced.
+
+        :return: a usable token, or False when this signup wants no details.
+        """
+        self.ensure_one()
+        if not self._my2_details_pending():
+            return False
+        token = self.sudo().my2_details_token
+        if self._my2_check_details_token(token):
+            return token
+        return self._my2_issue_details_token()
+
+    def _my2_serialize_details_submission(self):
+        """Serialize concurrent submissions of the post-payment details form.
+
+        Odoo runs at repeatable read: two overlapping requests carrying the
+        same details token would each pass _my2_check_details_token against
+        their own snapshot and both write - the second silently overwriting
+        whatever the first just saved, and burning an already-burnt token a
+        second time for nothing. The no-op update takes a row lock the same
+        way account.move._my2_serialize_charge_attempts does: the
+        concurrent loser blocks until the first commits, then either sees
+        the token already consumed (my2_check_details_token now false, so
+        a 404) or hits a serialization error Odoo retries against the
+        committed winner.
+        """
+        self.ensure_one()
+        self.env.cr.execute(
+            "UPDATE recurring_contract SET write_date = write_date WHERE id = %s",
+            (self.id,),
+        )
+
+    def _my2_check_details_token(self, token):
+        """Whether token may write this signup's missing sponsor details."""
+        self.ensure_one()
+        this = self.sudo()
+        if not token or not this.my2_details_token:
+            return False
+        if not this.my2_details_token_expiration:
+            return False
+        if this.my2_details_token_expiration <= fields.Datetime.now():
+            return False
+        if not this._my2_details_pending():
+            return False
+        return secrets.compare_digest(str(token), this.my2_details_token)
+
+    def _my2_consume_details_token(self):
+        """Burn the details token. Called once the details are saved."""
+        self.sudo().write(
+            {
+                "my2_details_token": False,
+                "my2_details_token_expiration": False,
+            }
+        )
+
+    def _my2_details_url(self, token=None):
+        """Absolute link to the details form of this signup.
+
+        Made for the "do this later, we will email you" email, rendered
+        outside any web session, so the token travels in the URL - it is the
+        only proof the sponsor has left once they close the checkout tab.
+        The link points at the website of the contract's company, so each
+        country's email stays on its own site (same reasoning as
+        recurring.contract.group._my2_update_card_url).
+
+        :param token: the credential to put in the link, defaulting to the
+            signup's live one - which is what the email template wants, since
+            _my2_send_details_reminder mints it just before rendering.
+        """
+        self.ensure_one()
+        query = urlencode(
+            {
+                "sponsorship_id": self.id,
+                "details_token": token or self.sudo().my2_details_token or "",
+            }
+        )
+        return f"{self.get_base_url()}/my2/new-sponsorship/thank-you?{query}"
+
+    def _my2_details_prefill(self):
+        """What the details form starts filled in with.
+
+        The name comes from the provider's cardholder name when its
+        notification carried one but the placeholder has not been replaced
+        yet (the sponsor is back from the gateway before post-processing
+        ran). It is only ever a suggestion the sponsor reviews, so the split
+        uses payment_utils.split_partner_name like everywhere else and an
+        imperfect result is harmless.
+
+        The phone is never prefilled: no provider reports one.
+        """
+        self.ensure_one()
+        partner = self.partner_id.sudo()
+        # A placeholder is never shown back to the sponsor: it is not a name.
+        placeholder = partner.my2_name_placeholder
+        vals = {
+            "firstname": "" if placeholder else partner.firstname or "",
+            "lastname": "" if placeholder else partner.lastname or "",
+            "phone": partner.phone or "",
+            "street": partner.street or "",
+            "zip": partner.zip or "",
+            "city": partner.city or "",
+            "country_id": partner.country_id.id,
+        }
+        if vals["firstname"] or vals["lastname"]:
+            return vals
+        cardholder_name = ""
+        transactions = self.sudo().invoice_line_ids.move_id.transaction_ids
+        for tx in transactions.sorted("id", reverse=True):
+            if tx.my2_cardholder_name:
+                cardholder_name = tx.my2_cardholder_name
+                break
+        if cardholder_name:
+            firstname, lastname = payment_utils.split_partner_name(cardholder_name)
+            vals.update({"firstname": firstname or "", "lastname": lastname or ""})
+        return vals
+
+    def _my2_apply_details(self, values):
+        """Save what the sponsor typed on the post-payment details form.
+
+        The token check belongs to the caller: this is the write it guards.
+
+        The contact details are written before the name, because replacing
+        the name is what releases the held-back portal invitation
+        (res.partner._my2_on_placeholder_name_replaced) - the sponsor's
+        phone and address are already on file by the time anything greets
+        them. The name itself only ever goes through
+        _my2_replace_placeholder_name, so a real name can never be
+        overwritten here either.
+
+        The token is burnt on the way out: one save per link.
+
+        :param values: firstname, lastname, phone and the optional address
+            keys (street, zip, city, country_id). Anything falsy is left
+            untouched rather than blanking what is already there.
+        """
+        self.ensure_one()
+        partner = self.partner_id.sudo()
+        contact_vals = {
+            key: values[key]
+            for key in ("phone", "street", "zip", "city", "country_id")
+            if values.get(key)
+        }
+        if contact_vals:
+            partner.write(contact_vals)
+        partner._my2_replace_placeholder_name(
+            values.get("firstname"), values.get("lastname")
+        )
+        self._my2_consume_details_token()
+        return partner
+
+    def _my2_details_reminder_config(self):
+        """Hook: config of the "finish your details later" email.
+
+        Shipped by this module, unlike the fix-it and portal-invitation
+        emails: the copy says nothing country-specific, and one shared
+        implementation for CH and Nordic is the whole point of this ticket.
+        A country module can still point this at its own config.
+        """
+        return (
+            self.env.ref(
+                "my_compassion.config_details_reminder", raise_if_not_found=False
+            )
+            or self.env["partner.communication.config"]
+        )
+
+    def _my2_send_details_reminder(self):
+        """Mail the sponsor a link back to the details form.
+
+        The escape hatch of the details form ("do this later - we will email
+        you"). The token is minted here, server-side, and only ever reaches
+        the sponsor's own mailbox: handing one out on a GET would turn any
+        guessed sponsorship id into a licence to rewrite that sponsor's
+        identity. It is mailed with the longer DETAILS_TOKEN_EMAIL_HOURS
+        lifetime, and supersedes the token of the page the sponsor is
+        leaving.
+
+        :return: the communication job, or an empty recordset when there is
+            nothing to send (details already given, no email on file, no
+            config).
+        """
+        self.ensure_one()
+        if not self._my2_details_pending():
+            return False
+        partner = self.partner_id.sudo()
+        config = self._my2_details_reminder_config()
+        if not partner.email or not config:
+            _logger.warning(
+                "Cannot mail the details link of signup %s: %s.",
+                self.id,
+                "no email on file" if not partner.email else "no communication config",
+            )
+            return False
+        token = self._my2_issue_details_token(hours=self.DETAILS_TOKEN_EMAIL_HOURS)
+        # The link belongs to whoever paid, so never mail the correspondent.
+        # Transactional: it goes out without staff review.
+        self.sudo().with_context(default_auto_send=True).send_communication(
+            config, correspondent=False
+        )
+        return token
 
     def _schedule_digital_revert(self):
         """One-shot delayed cleanup after a pay-click: if no payment
@@ -345,7 +631,9 @@ class RecurringContract(models.Model):
         # A digital signup is confirmed by its first successful payment.
         # That payment is what activates the contract.
         self.filtered(
-            lambda c: c.my2_signup and c.group_id.payment_mode_id.payment_provider_id
+            lambda c: c.my2_signup
+            and c.group_id.payment_mode_id.payment_provider_id
+            and not c.partner_id.my2_name_placeholder
         )._my2_send_portal_invitation()
         return res
 
@@ -357,8 +645,31 @@ class RecurringContract(models.Model):
         self.filtered(
             lambda c: c.my2_signup
             and not c.group_id.payment_mode_id.payment_provider_id
+            and not c.partner_id.my2_name_placeholder
         )._my2_send_portal_invitation()
         return res
+
+    def _my2_pending_portal_invitations(self):
+        """Confirmed signups whose invitation was held back for a name.
+
+        A fast checkout activates the contract before the sponsor has said
+        who they are, and the invitation email greets them by name, so it
+        waits. Activation itself never does. This is what
+        res.partner._my2_on_placeholder_name_replaced calls once the real
+        name lands, from the payment notification or the details form.
+
+        The confirmation test mirrors the two hooks above: a digital signup
+        is confirmed once active, a bank-collected one once waiting.
+        """
+        return self.filtered(
+            lambda c: c.my2_signup
+            and not c.partner_id.my2_name_placeholder
+            and (
+                c.state == "active"
+                if c.group_id.payment_mode_id.payment_provider_id
+                else c.state in ("waiting", "active")
+            )
+        )
 
     def _my2_send_portal_invitation(self):
         """Invite fresh wizard sponsors to create their MyCompassion
