@@ -562,6 +562,11 @@ class MyCompassionNewSponsorshipController(http.Controller):
         values = {
             "n_steps": _flow_n_steps(sponsorship),
             "sponsorship": sponsorship,
+            # Gates the sponsor's name and email on the "All set" summary:
+            # a bare sponsorship_id proves nothing (see _owns_signup), and
+            # those are the only two fields on this public page that name a
+            # real person rather than the sponsorship itself.
+            "sponsor_identity_visible": cls._owns_signup(sponsorship),
             # Write credential of the post-payment details form. Minted
             # only for a visitor who proved they own this signup, never
             # off the id in the URL, and only while the signup is still
@@ -625,21 +630,30 @@ class MyCompassionNewSponsorshipController(http.Controller):
         }
 
     @staticmethod
-    def _issue_details_token(sponsorship):
-        """Mint the details-form token, if this visitor may have one.
+    def _owns_signup(sponsorship):
+        """Whether this visitor may act on this signup as its sponsor.
 
         Two proofs are accepted, and they are the two the design needs: the
         session that went through the checkout (the sponsor coming back from
-        the gateway, same browser), and the authenticated sponsor. The
-        "do this later, we will email you" path does not come through here at
-        all - it mints its token server-side into the email.
+        the gateway, same browser), and the authenticated sponsor. A bare
+        sponsorship_id in the URL proves nothing on its own - ids are
+        sequential and every route touching this signup is public.
         """
         owns_signup = sponsorship.id in (
             request.session.get(OWN_SIGNUPS_SESSION_KEY) or []
         )
-        if not owns_signup and not MyCompassionSponsorshipPayment._is_sponsorship_user(
+        return owns_signup or MyCompassionSponsorshipPayment._is_sponsorship_user(
             sponsorship
-        ):
+        )
+
+    @classmethod
+    def _issue_details_token(cls, sponsorship):
+        """Mint the details-form token, if this visitor may have one.
+
+        The "do this later, we will email you" path does not come through
+        here at all - it mints its token server-side into the email.
+        """
+        if not cls._owns_signup(sponsorship):
             return False
         return sponsorship._my2_ensure_details_token()
 

@@ -1108,17 +1108,31 @@ Page: My Compassion 2 New Sponsorship Wizard Page
             />
             <div class="mx-4">
               <t t-call="theme_compassion_2025.TitleComponent">
-                <t t-set="title_content">All set,&#160;<t
-                  t-out="sponsorship.partner_id.firstname"
-                /></t>
+                <!-- sponsor_identity_visible: a bare sponsorship_id proves
+                     nothing (see MyCompassionNewSponsorshipController
+                     ._owns_signup), so this page names the sponsor only to
+                     the browser that just paid or the authenticated
+                     sponsor - never to a visitor who merely guessed or
+                     enumerated the id. -->
+                <t
+                  t-if="sponsor_identity_visible"
+                  t-set="title_content"
+                >All set,&#160;<t t-out="sponsorship.partner_id.firstname" /></t>
+                <t t-else="" t-set="title_content">All set</t>
                 <t t-set="color" t-value="'dark-blue'" />
                 <t t-set="show_underline" t-value="False" />
               </t>
             </div>
-            <div class="mb-3 text-center body-small text-low-black">
+            <div
+              t-if="sponsor_identity_visible"
+              class="mb-3 text-center body-small text-low-black"
+            >
               We'll send a sign-in link to&#160;<t
               t-out="sponsorship.partner_id.email"
             />&#160;to set up a password, and you'll have access to your account.
+            </div>
+            <div t-else="" class="mb-3 text-center body-small text-low-black">
+              We've sent a sign-in link by email to set up a password, and you'll have access to your account.
             </div>
             <div class="w-100 p-4 mb-3 rounded-lg bg-light-blue">
               <!-- Write&Pray never collects a payment, so it has nothing to

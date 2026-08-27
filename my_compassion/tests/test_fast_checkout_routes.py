@@ -301,11 +301,10 @@ class TestFastCheckoutRoutes(HttpCase, DigitalSeamCase):
         self.assertEqual(page.status_code, 200)
         self.assertIn("Almost there", page.text)
         self.assertIn(f"{invoice.amount_residual:.2f}", page.text)
-        # The step bar of a page that no longer knows its own step count:
-        # since the fast checkout it is computed from the flow, and the public
-        # standard flow is exactly one step, so this last one is it. Hard-coded
-        # to 3 before T3365, which would draw three markers here.
-        self.assertEqual(page.text.count("step-marker-container"), 1)
+        # The payment page dropped its progress bar: it is the last step
+        # before the thank-you page, and the title/description already say
+        # "you're almost there" - a marker count would only repeat that.
+        self.assertEqual(page.text.count("step-marker-container"), 0)
         # the id alone opens nothing: the token is the whole guard
         bare = self.url_open(f"/my2/new-sponsorship/payment?sponsorship_id={signup.id}")
         self.assertEqual(bare.status_code, 404)
@@ -363,6 +362,10 @@ class TestFastCheckoutRoutes(HttpCase, DigitalSeamCase):
         self.assertNotIn("/my2/new-sponsorship/details-later", page.text)
         # and no token was minted on the way out either
         self.assertFalse(signup.my2_details_token)
+        # nor is the sponsor's email handed to a stranger who merely knows
+        # (or enumerated) the sponsorship id
+        self.assertNotIn("route-walk@example.org", page.text)
+        self.assertIn("All set", page.text)
 
     def test_thank_you_refuses_an_unknown_signup(self):
         missing_id = (
