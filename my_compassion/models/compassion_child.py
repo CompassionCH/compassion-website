@@ -263,3 +263,20 @@ class CompassionChild(models.Model):
         # Unpublish the child if it's sponsored
         self.write({"is_published": False})
         return super().child_sponsored(sponsor_id)
+
+    def get_base_url(self):
+        company = self.env.company
+        website = (
+            self.env["website"]
+            .sudo()
+            .search(
+                [
+                    ("company_id", "=", company.id),
+                    ("is_my_compassion", "=", True),
+                ],
+                limit=1,
+            )
+        )
+        if website:
+            return website.domain
+        return super().get_base_url()
