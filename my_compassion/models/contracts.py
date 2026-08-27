@@ -178,6 +178,26 @@ class RecurringContract(models.Model):
             return token
         return self._my2_issue_details_token()
 
+    def _my2_serialize_details_submission(self):
+        """Serialize concurrent submissions of the post-payment details form.
+
+        Odoo runs at repeatable read: two overlapping requests carrying the
+        same details token would each pass _my2_check_details_token against
+        their own snapshot and both write - the second silently overwriting
+        whatever the first just saved, and burning an already-burnt token a
+        second time for nothing. The no-op update takes a row lock the same
+        way account.move._my2_serialize_charge_attempts does: the
+        concurrent loser blocks until the first commits, then either sees
+        the token already consumed (my2_check_details_token now false, so
+        a 404) or hits a serialization error Odoo retries against the
+        committed winner.
+        """
+        self.ensure_one()
+        self.env.cr.execute(
+            "UPDATE recurring_contract SET write_date = write_date WHERE id = %s",
+            (self.id,),
+        )
+
     def _my2_check_details_token(self, token):
         """Whether token may write this signup's missing sponsor details."""
         self.ensure_one()

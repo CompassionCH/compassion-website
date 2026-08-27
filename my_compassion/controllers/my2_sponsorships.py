@@ -529,8 +529,14 @@ class MyCompassionNewSponsorshipController(http.Controller):
         contract the request names: a token minted for one signup must not
         open another. 404 rather than 403 everywhere, so a wrong, expired,
         already-used or foreign token tells nothing apart from a wrong id.
+
+        Locked (see _my2_serialize_details_submission) before the check, so
+        two overlapping submissions of the same token cannot both pass it:
+        the second either sees the token already burnt by the first, or is
+        retried by Odoo against the committed result once it can proceed.
         """
         sponsorship = cls._fetch_signup(sponsorship_id)
+        sponsorship._my2_serialize_details_submission()
         if not sponsorship._my2_check_details_token(details_token):
             raise NotFound()
         return sponsorship
