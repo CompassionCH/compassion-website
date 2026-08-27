@@ -347,9 +347,8 @@ class RecurringContract(models.Model):
             config).
         """
         self.ensure_one()
-        job_model = self.env["partner.communication.job"].sudo()
         if not self._my2_details_pending():
-            return job_model
+            return False
         partner = self.partner_id.sudo()
         config = self._my2_details_reminder_config()
         if not partner.email or not config:
@@ -358,15 +357,14 @@ class RecurringContract(models.Model):
                 self.id,
                 "no email on file" if not partner.email else "no communication config",
             )
-            return job_model
-        self._my2_issue_details_token(hours=self.DETAILS_TOKEN_EMAIL_HOURS)
+            return False
+        token = self._my2_issue_details_token(hours=self.DETAILS_TOKEN_EMAIL_HOURS)
         # The link belongs to whoever paid, so never mail the correspondent.
         # Transactional: it goes out without staff review.
-        return (
-            self.sudo()
-            .with_context(default_auto_send=True)
-            .send_communication(config, correspondent=False)
+        self.sudo().with_context(default_auto_send=True).send_communication(
+            config, correspondent=False
         )
+        return token
 
     def _schedule_digital_revert(self):
         """One-shot delayed cleanup after a pay-click: if no payment

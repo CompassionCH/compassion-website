@@ -357,15 +357,9 @@ class TestFastCheckoutRoutes(HttpCase, DigitalSeamCase):
         page = self._open_in_a_fresh_session(
             f"/my2/new-sponsorship/thank-you?sponsorship_id={signup.id}"
         )
-        self.assertEqual(page.status_code, 200)
-        self.assertNotIn("/my2/new-sponsorship/complete-details", page.text)
-        self.assertNotIn("/my2/new-sponsorship/details-later", page.text)
-        # and no token was minted on the way out either
+        self.assertEqual(page.status_code, 404)
+        # no token was minted on the way out either
         self.assertFalse(signup.my2_details_token)
-        # nor is the sponsor's email handed to a stranger who merely knows
-        # (or enumerated) the sponsorship id
-        self.assertNotIn("route-walk@example.org", page.text)
-        self.assertIn("All set", page.text)
 
     def test_thank_you_refuses_an_unknown_signup(self):
         missing_id = (

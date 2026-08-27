@@ -397,11 +397,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 },
             )
         sponsorship = wizard.finish_sponsorship()
-        own_signups = list(request.session.get(OWN_SIGNUPS_SESSION_KEY) or [])
-        own_signups.append(sponsorship.id)
-        request.session[OWN_SIGNUPS_SESSION_KEY] = own_signups[
-            -OWN_SIGNUPS_SESSION_LIMIT:
-        ]
+        self._add_sponsorship_to_session(sponsorship.id)
 
         # Digital modes pay the first month live before the thank-you.
         if sponsorship.payment_mode_id.payment_provider_id:
@@ -482,6 +478,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 ),
             )
         sponsorship._my2_apply_details(values)
+        self._add_sponsorship_to_session(sponsorship.id)
         return request.redirect(
             f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
         )
@@ -507,10 +504,10 @@ class MyCompassionNewSponsorshipController(http.Controller):
         their mailbox.
         """
         sponsorship = self._fetch_details_signup(sponsorship_id, details_token)
-        sponsorship._my2_send_details_reminder()
+        token = sponsorship._my2_send_details_reminder()
         return request.redirect(
             f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
-            "&details_emailed=1"
+            f"&details_emailed=1&details_token={token}"
         )
 
     @staticmethod
@@ -739,6 +736,15 @@ class MyCompassionNewSponsorshipController(http.Controller):
         )
 
         return html_content
+
+    @staticmethod
+    def _add_sponsorship_to_session(sponsorship_id):
+        """Adds the sponsorship to the session's list of owned signups."""
+        own_signups = list(request.session.get(OWN_SIGNUPS_SESSION_KEY) or [])
+        own_signups.append(sponsorship_id)
+        request.session[OWN_SIGNUPS_SESSION_KEY] = own_signups[
+            -OWN_SIGNUPS_SESSION_LIMIT:
+        ]
 
 
 class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
