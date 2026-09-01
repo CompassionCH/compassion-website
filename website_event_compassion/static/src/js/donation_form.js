@@ -8,7 +8,7 @@ odoo.define("website_event_compassion.donation_form", function (require) {
 
         events: {
             "click .amount_button": "onAmountButtonClick",
-            "change #amount_custom_input": "onAmountCustomInputChange",
+            "input #amount_custom_input": "onAmountCustomInputChange",
             "submit form": "onFormSubmit",
         },
 
