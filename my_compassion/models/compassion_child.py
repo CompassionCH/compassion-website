@@ -24,6 +24,46 @@ class ChildNotFound(UserError):
     pass
 
 
+# Portal-only French phrasing for the "I'm in <level>" sentence, keyed by
+# the education_level selection's internal value. Not applied to the shared
+# education_level translation itself (also shown as a plain backend field),
+# where a baked-in preposition would look out of place.
+PORTAL_EDUCATION_LEVEL_FR = {
+    "Preschool": "à l'école enfantine",
+    "Primary": "à l'école primaire",
+    "Secondary": "à l'école secondaire",
+    "Highschool": "au lycée",
+    "University Graduate": "à l'université",
+}
+
+# Portal-only French phrasing for the "I love <hobbies>" sentence, keyed by
+# the hobby's canonical English value. Only the noun-style hobbies need an
+# article here ("j'aime LA musique") - verb-phrase hobbies ("danser",
+# "nager") are already correct without one and are left to fall back to the
+# normal translation. Not applied to the shared child.hobby translation
+# itself (also shown as a plain backend tag), where an article would look
+# out of place.
+PORTAL_HOBBY_LABELS_FR = {
+    "Ball Games": "les jeux de balle",
+    "Throwing a ball": "lancer une balle",
+    "Baseball": "le baseball",
+    "Art or drawing": "le bricolage et dessin",
+    "Story telling": "le conte",
+    "Group games": "les jeux collectifs",
+    "Jacks": "les cartes",
+    "Cricket": "le cricket",
+    "Reading": "la lecture",
+    "Marbles": "les billes",
+    "Music": "la musique",
+    "Basketball": "le basketball",
+    "Jump rope": "la corde à sauter",
+    "Sports": "les sports",
+    "Ping pong": "le ping-pong",
+    "Hide and seek": "le cache-cache",
+    "Volleyball or handball": "le volleyball ou le handball",
+}
+
+
 class CompassionChild(models.Model):
     _inherit = ["compassion.child", "website.published.multi.mixin"]
     _name = "compassion.child"
@@ -127,13 +167,44 @@ class CompassionChild(models.Model):
         subject_count = len(self.subject_ids)
         is_enrolled = self.education_level and self.education_level != "Not Enrolled"
 
+        level = self.translate("education_level")
+        if self.env.lang == "fr_CH":
+            level = PORTAL_EDUCATION_LEVEL_FR.get(self.education_level, level)
+
         return {
-            "level": self.translate("education_level").lower(),
+            "level": level.lower(),
             "is_enrolled": is_enrolled,
             "subjects_str": self.get_list("subject_ids.value").lower(),
             "has_multiple_subjects": subject_count > 1,
             "has_subjects": subject_count > 0,
         }
+
+    def get_portal_hobbies_list(self):
+        """
+        Hobby list for the portal "I love ..." sentence. Overrides the
+        shared child.hobby translation with a French phrasing that includes
+        the article for noun-style hobbies (which the shared translation
+        can't have, since it's also used for the admin hobby tags where an
+        article would look out of place).
+        """
+        self.ensure_one()
+        hobbies = self.hobby_ids
+        if self.env.lang != "fr_CH":
+            return self.get_list("hobby_ids.value")
+
+        en_values = hobbies.with_context(lang="en_US").mapped("value")
+        translated_values = hobbies.mapped("value")
+        values = []
+        for en_value, translated_value in zip(
+            en_values, translated_values, strict=False
+        ):
+            value = PORTAL_HOBBY_LABELS_FR.get(en_value, translated_value)
+            if value and value not in values:
+                values.append(value)
+
+        if len(values) > 1:
+            return ", ".join(values[:-1]) + " " + _("and") + " " + values[-1]
+        return values[0] if values else ""
 
     def website_publish_button(self):
         self.ensure_one()
