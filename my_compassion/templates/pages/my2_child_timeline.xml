@@ -272,7 +272,7 @@
                                         <t
                     t-out="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"
                   />
-                                        with
+                                        with<t t-esc="' '" />
                                         <t
                     t-if="compassion_child.household_id.father_living_with_child and compassion_child.household_id.mother_living_with_child"
                   >
