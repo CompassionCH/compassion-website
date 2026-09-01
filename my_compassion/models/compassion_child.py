@@ -128,9 +128,9 @@ class CompassionChild(models.Model):
         is_enrolled = self.education_level and self.education_level != "Not Enrolled"
 
         return {
-            "level": self.translate("education_level"),
+            "level": self.translate("education_level").lower(),
             "is_enrolled": is_enrolled,
-            "subjects_str": self.get_list("subject_ids.value"),
+            "subjects_str": self.get_list("subject_ids.value").lower(),
             "has_multiple_subjects": subject_count > 1,
             "has_subjects": subject_count > 0,
         }

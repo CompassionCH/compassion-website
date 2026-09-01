@@ -146,7 +146,7 @@
                   </div>
                   <p class="child-info-text">
                     <span class="text-mid-green font-weight-bold">I love</span>
-                    <t t-out="compassion_child.get_list('hobby_ids.value')" />
+                    <t t-out="compassion_child.get_list('hobby_ids.value').lower()" />
                   </p>
                 </div>
                 <t
