@@ -91,10 +91,6 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     id="my2_new_sponsorship_wizard_fast_checkout"
     name="New Sponsorship Wizard Fast Checkout Step"
   >
-    <!-- Set only by the Write&Pray page's own age check
-         (my2_new_sponsorship_wizard.js::_checkWAPAge), which redirects
-         here instead of offering a modal - there is nothing left to do on
-         that page once the sponsor is ineligible. -->
     <div
       t-if="request.params.get('wap_ineligible')"
       class="mb-3 p-3 rounded-lg bg-high-eggshell tiny-text ns-full-width"
@@ -108,11 +104,6 @@ Page: My Compassion 2 New Sponsorship Wizard Page
       class="tiny-text bold text-core-blue"
     >Log in</a>
         </div>
-    <!-- Child summary: what the sponsor is committing to, at a glance,
-         before the email/payment fields below. Reuses the same generic
-         row used for the donation history (my2_donation_item.xml) rather
-         than the full my2_children_card.xml profile card, which is sized
-         and laid out for a standalone profile tile, not an inline summary. -->
     <div class="mb-3 ns-aside-item">
       <t t-call="my_compassion.DonationItemComponent">
         <t t-set="name"><t
@@ -139,6 +130,19 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     <!-- Sponsorship plus -->
     <div t-if="wizard.sponsorship_type != 'write_and_pray'" class="ns-aside-item">
       <t t-call="my_compassion.my2_new_sponsorship_wizard_sponsorship_plus" />
+    </div>
+    <!-- Desktop-only heading: the shared wizard chrome's title
+         (my2_new_sponsorship_wizard_form_content) is hidden on desktop for
+         this step instead. -->
+    <div class="d-none d-lg-block mb-3">
+      <t t-call="theme_compassion_2025.TitleComponent">
+        <t t-set="title_content">Where should we send your receipt?</t>
+        <t t-set="color" t-value="'dark-blue'" />
+        <t t-set="show_underline" t-value="False" />
+        <t
+          t-set="description"
+        >One field, then pay. We will ask for your name and phone number straight after.</t>
+      </t>
     </div>
     <!-- Email -->
     <t t-call="theme_compassion_2025.FormFieldComponent">
@@ -550,6 +554,20 @@ Page: My Compassion 2 New Sponsorship Wizard Page
         <t t-set="price_color" t-value="'low-blue'" />
       </t>
     </div>
+    <div class="d-none d-lg-block mb-3">
+      <t t-call="theme_compassion_2025.TitleComponent">
+        <t
+          t-set="title_content"
+        >Let's set up your Write&amp;Pray and introduce you to&#160;<t
+          t-out="wizard.child_id.preferred_name"
+        /></t>
+        <t t-set="color" t-value="'dark-blue'" />
+        <t t-set="show_underline" t-value="False" />
+        <t
+          t-set="description"
+        >Two questions and a confirmation. We ask for your name and phone number straight after.</t>
+      </t>
+    </div>
     <!-- Date of birth: always asked here, unlike the older wap_options step
          (which skips it once a previous step already set it - there is no
          previous step any more). -->
@@ -884,10 +902,6 @@ Page: My Compassion 2 New Sponsorship Wizard Page
   >
     <input type="hidden" name="wizard_id" t-att-value="wizard.id" />
     <!-- PROGRESS BAR -->
-    <!-- Rendered only once there is more than one step to progress through:
-         a single-step flow (fast-checkout, or a single-step logged-in flow)
-         has nothing to show progress against, and a lone marker just reads
-         as a stray bullseye sitting above the title. -->
     <div t-if="wizard.n_steps > 1" class="mt-3 mb-2 px-2 px-lg-0 pt-2 w-100">
       <t t-call="my_compassion.NewSponsorshipStepProgressBar">
         <t t-set="n_steps" t-value="wizard.n_steps" />
@@ -895,11 +909,12 @@ Page: My Compassion 2 New Sponsorship Wizard Page
       </t>
     </div>
     <!-- TITLE -->
-    <div class="mx-5 mt-4">
+    <!-- Hidden on desktop for the two fast-checkout steps (details_deferred
+         - both, and only both): they render their own left-column title
+         instead (see my2_new_sponsorship_wizard_fast_checkout /
+         _wap_fast_checkout), matching the Figma desktop layout. -->
+    <div t-attf-class="mx-5 mt-4 #{'d-lg-none' if wizard.details_deferred else ''}">
       <t t-call="theme_compassion_2025.TitleComponent">
-        <!-- The fast-checkout page's step title ("Your email") is generic
-             DB data shared with nothing else; the page itself is centered
-             on one child, so it gets a title naming them instead. -->
         <t
           t-if="step_offers_payment_modes"
           t-set="title_content"
@@ -926,22 +941,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     <div class="p-1 d-flex flex-column ns-columns">
       <t t-out="inner_step_html" />
       <!-- BUTTONS -->
-      <!-- A step that offers payment modes submits itself with them: one
-           button per mode, pressing one both picks the mode and ends the
-           flow, so the generic button would be a second, ambiguous submit.
-           They are rendered here rather than inside the step template so
-           that "which modes are offered" and "is the generic button still
-           needed" stay one decision in one place. The pressed mode is what
-           my2_new_sponsorship_wizard.js posts, through the same step call as
-           any other button. -->
       <t t-if="payment_mode_buttons">
-        <!-- eBill and Postfinance Direct Debit each keep their own brand
-             color instead of one from the theme palette; every other mode
-             stays core-blue. Postfinance is matched by xmlid rather than
-             payment_method_id.code: CH's LSV and Postfinance Direct Debit
-             modes can share the same method code ("sepa.ch.dd") and are
-             only told apart by xmlid (see CH_PENDING_PAYMENT_MODES in
-             my_compassion_switzerland/models/contracts.py, same reason). -->
         <t
           t-set="postfinance_dd_xmlids"
           t-value="[
