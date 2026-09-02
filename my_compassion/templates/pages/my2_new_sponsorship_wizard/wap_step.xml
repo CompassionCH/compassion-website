@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Part of the new-sponsorship wizard page - see my2_new_sponsorship_wizard.xml
+     in this folder for the full page doc header. -->
+<odoo>
+  <!-- NEW SPONSORSHIP WIZARD WRITE & PRAY FAST CHECKOUT STEP -->
+  <!-- The public write_and_pray flow's only step (see STEPS_CONFIGS /
+       WAP_FAST_CHECKOUT_STEP) - the same one-page shape as the standard
+       fast checkout, but asking its own questions: date of birth (the
+       eligibility gate), the free-godparent-vs-contributing choice, and
+       only once contributing is picked, a suggested amount. Ends with the
+       generic Continue button (see _step_offers_payment_modes) rather than
+       payment-mode buttons: a Write&Pray sponsorship is never collected,
+       so there is no mode to choose regardless of the amount it names. The
+       logged-in flow still runs the older, plainer
+       my2_new_sponsorship_wizard_wap_options step (logged_in_steps.xml)
+       unchanged. -->
+  <template
+    id="my2_new_sponsorship_wizard_wap_fast_checkout"
+    name="New Sponsorship Wizard Write &amp; Pray Fast Checkout Step"
+  >
+    <div class="mb-3 p-3 rounded-lg bg-light-blue tiny-text ns-full-width">
+            Already have an account?
+            <a
+      t-att-href="login_url_redirect"
+      class="tiny-text bold text-core-blue"
+    >Log in</a>
+        </div>
+    <!-- Child summary: what the sponsor is committing to, at a glance.
+         Same DonationItemComponent the standard flow uses (see
+         my2_new_sponsorship_wizard_fast_checkout in standard_step.xml), via
+         price_label to show "No payment" for the free-godparent branch
+         instead of a formatted amount, and price_id so the JS can still
+         live-update it as an amount is picked (see _updateWAPPrice). -->
+    <div class="mb-3 ns-aside-item">
+      <t t-call="my_compassion.DonationItemComponent">
+        <t t-set="name">Write&amp;Pray&#160;·&#160;<t
+          t-out="wizard.child_id.preferred_name"
+        />, <t t-out="wizard.child_id.age" /></t>
+        <t t-set="subtext"><t
+          t-out="wizard.child_id.field_office_id.country_id.name"
+        />&#160;·&#160;you write and pray</t>
+        <t
+          t-set="image"
+          t-valuef="/web/image/compassion.child/#{wizard.child_id.id}/portrait"
+        />
+        <t t-set="image_fallback_pictogram" t-value="'pictogram-child-sponsorship'" />
+        <t t-set="price" t-value="float(wizard.wap_contribution_amount or 0)" />
+        <t
+          t-set="price_label"
+          t-value="not wizard.wap_contribution_amount and 'No payment'"
+        />
+        <t t-set="price_id" t-value="'wap-child-price'" />
+        <t t-set="currency_name" t-value="currency_name" />
+        <t t-set="bg_color" t-value="'light-blue'" />
+        <t t-set="accent_color" t-value="'low-blue'" />
+        <t t-set="title_color" t-value="'low-blue'" />
+        <t t-set="price_color" t-value="'low-blue'" />
+      </t>
+    </div>
+    <div class="d-none d-lg-block mb-3 ns-left-title">
+      <t t-call="theme_compassion_2025.TitleComponent">
+        <t
+          t-set="title_content"
+        >Let's set up your Write&amp;Pray and introduce you to&#160;<t
+          t-out="wizard.child_id.preferred_name"
+        /></t>
+        <t t-set="color" t-value="'dark-blue'" />
+        <t t-set="show_underline" t-value="False" />
+        <t
+          t-set="description"
+        >Two questions and a confirmation. We ask for your name and phone number straight after.</t>
+      </t>
+    </div>
+    <!-- Date of birth: always asked here, unlike the older wap_options step
+         (which skips it once a previous step already set it - there is no
+         previous step any more). -->
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <t t-set="label">Date of birth</t>
+      <t t-set="input_id" t-value="'birthdate'" />
+      <input
+        id="birthdate"
+        type="date"
+        name="birthdate"
+        class="form-control"
+        t-att-value="wizard.birthdate"
+        required="required"
+      />
+      <div class="mt-2 very-tiny-text text-mid-grey">
+                Write&amp;Pray is for people under 25. This is the only extra question before you continue.
+            </div>
+    </t>
+    <!-- Email -->
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <t t-set="label">E-mail</t>
+      <t t-set="input_id" t-value="'email'" />
+      <input
+        id="email"
+        type="email"
+        name="email"
+        class="form-control"
+        placeholder="you@example.com"
+        t-att-value="wizard.email"
+        data-validate-type="email"
+        required=""
+      />
+      <div class="mt-2 very-tiny-text text-mid-grey">For your documentation and&#160;<t
+        t-out="wizard.child_id.preferred_name"
+      />'s letters. Nothing else is needed right now.</div>
+    </t>
+    <!-- Which describes you -->
+    <div class="my-3">
+      <div class="mb-2 text-dark-blue body-small bold">Which describes you?</div>
+      <label
+        for="contribute-false"
+        class="radio-card d-flex align-items-start p-3 mb-2 rounded rounded-lg bg-white border border-mid-grey"
+      >
+        <input
+          type="radio"
+          value="false"
+          class="wap-contribute flex-shrink-0 mt-1"
+          name="contribute"
+          id="contribute-false"
+          t-att-checked="wizard.wap_contribution_amount == 0"
+        />
+        <span class="ms-3 tiny-text">
+                    I pray for and write to my godchild regularly. Someone else provides the financial support, but I
+                    am the child's official sponsor.
+                </span>
+      </label>
+      <label
+        for="contribute-true"
+        class="radio-card d-flex align-items-start p-3 rounded rounded-lg bg-white border border-mid-grey"
+      >
+        <input
+          type="radio"
+          value="true"
+          class="wap-contribute flex-shrink-0 mt-1"
+          name="contribute"
+          id="contribute-true"
+          t-att-checked="wizard.wap_contribution_amount != 0"
+        />
+        <span class="ms-3 tiny-text">
+                    I pray for and write to my sponsored child regularly, and I can contribute monthly.
+                </span>
+      </label>
+      <!-- Contribution amount -->
+      <div id="wap-contribution-amount">
+        <t
+          t-set="amounts"
+          t-value="wap_suggested_amounts or [
+                    { 'name': 'low', 'amount': 5 },
+                    { 'name': 'medium', 'amount': 10 },
+                    { 'name': 'high', 'amount': 20 },
+                ]"
+        />
+        <t t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="top_class" t-value="'mt-3 w-100'" />
+          <t t-set="label_color" t-value="'dark-blue'" />
+          <t t-set="label">Suggested amounts</t>
+          <div class="mt-1 d-flex justify-content-between">
+            <t t-foreach="amounts" t-as="amount">
+              <t t-if="amount_index &gt; 0" t-set="margin" t-value="'ms-3'" />
+              <div t-attf-class="contribution-suggested-amount flex-grow-1 #{margin}">
+                <input
+                  t-attf-id="suggested-#{amount['name']}"
+                  type="radio"
+                  t-attf-name="suggested_amount"
+                  t-att-value="amount['amount']"
+                  t-att-checked="wizard.wap_contribution_amount == amount['amount'] or (amount['name'] == 'low' and wizard.wap_contribution_amount == 0)"
+                  class="suggested-amount"
+                />
+                <label class="mb-0 w-100" t-attf-for="suggested-#{amount['name']}">
+                  <t t-out="currency_name" />
+                  <t t-out="amount['amount']" />
+                </label>
+              </div>
+            </t>
+          </div>
+        </t>
+        <t t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="top_class" t-value="'mt-3 w-100'" />
+          <t t-set="label_color" t-value="'dark-blue'" />
+          <t t-set="label">Or enter your own amount</t>
+          <!-- Hidden radio: keeps the existing suggested_amount/custom_amount
+               submit contract (new.sponsorship.wizard._update_wizard_from_step)
+               without a separate clickable "Custom amount" toggle - typing in
+               the field below checks it directly (see _onCustomAmountInput). -->
+          <input
+            t-attf-id="suggested-custom"
+            type="radio"
+            t-attf-name="suggested_amount"
+            value="custom"
+            t-att-checked="wizard.wap_contribution_amount not in [amount['amount'] for amount in amounts] + [0]"
+            class="suggested-amount d-none"
+          />
+          <input
+            type="text"
+            name="custom_amount"
+            data-validate-type="number"
+            t-att-placeholder="currency_name"
+            class="form-control"
+            t-att-value="'{:g}'.format(wizard.wap_contribution_amount) if wizard.wap_contribution_amount else ''"
+          />
+        </t>
+      </div>
+    </div>
+    <!-- Privacy consent -->
+    <input type="hidden" name="privacy_consent" value="" />
+    <t t-call="theme_compassion_2025.FormFieldComponent">
+      <t t-set="top_class" t-value="'my-3'" />
+      <div class="d-flex align-items-center">
+        <input
+          type="checkbox"
+          id="privacy_consent"
+          name="privacy_consent"
+          class="flex-shrink-0"
+          t-att-checked="wizard.privacy_consent"
+          required=""
+        />
+        <label class="ms-2 mb-0 tiny-text text-mid-grey" for="privacy_consent">
+                    I accept the privacy policy as described in the
+                    <a
+          href="/legal"
+          class="tiny-text bold text-core-blue"
+        >privacy notice</a>.
+                </label>
+      </div>
+    </t>
+    <!-- Ends with the generic Continue button, rendered by
+         my2_new_sponsorship_wizard_form_content - see the template-level
+         comment above for why. -->
+  </template>
+</odoo>
