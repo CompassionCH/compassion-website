@@ -194,3 +194,31 @@
 .new-sponsorship-details-form summary {
   font-family: "NeighbourSans Regular", sans-serif;
 }
+
+/* Desktop: form + child-summary sidebar side by side instead of stacked. */
+@media (min-width: 1024px) {
+  .new-sponsorship-container,
+  .new-sponsorship-thank-you-container {
+    max-width: min(1100px, 100% - 48px);
+  }
+
+  .ns-columns {
+    display: grid !important;
+    grid-template-columns: 1.15fr 0.85fr;
+    column-gap: 2.5rem;
+    align-items: start;
+  }
+
+  .ns-columns > * {
+    grid-column: 1;
+  }
+
+  .ns-aside-item {
+    grid-column: 2;
+    max-width: 420px;
+  }
+
+  .ns-full-width {
+    grid-column: 1 / -1;
+  }
+}

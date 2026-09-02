@@ -97,11 +97,11 @@ Page: My Compassion 2 New Sponsorship Wizard Page
          that page once the sponsor is ineligible. -->
     <div
       t-if="request.params.get('wap_ineligible')"
-      class="mb-3 p-3 rounded-lg bg-high-eggshell tiny-text"
+      class="mb-3 p-3 rounded-lg bg-high-eggshell tiny-text ns-full-width"
     >
             Write&amp;Pray is for people under 25, so here's the regular sponsorship instead.
         </div>
-    <div class="mb-3 p-3 rounded-lg bg-light-blue tiny-text">
+    <div class="mb-3 p-3 rounded-lg bg-light-blue tiny-text ns-full-width">
             Already have an account?
             <a
       t-att-href="login_url_redirect"
@@ -113,7 +113,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
          row used for the donation history (my2_donation_item.xml) rather
          than the full my2_children_card.xml profile card, which is sized
          and laid out for a standalone profile tile, not an inline summary. -->
-    <div class="mb-3">
+    <div class="mb-3 ns-aside-item">
       <t t-call="my_compassion.DonationItemComponent">
         <t t-set="name"><t
           t-if="wizard.sponsorship_type == 'write_and_pray'"
@@ -137,10 +137,9 @@ Page: My Compassion 2 New Sponsorship Wizard Page
       </t>
     </div>
     <!-- Sponsorship plus -->
-    <t
-      t-if="wizard.sponsorship_type != 'write_and_pray'"
-      t-call="my_compassion.my2_new_sponsorship_wizard_sponsorship_plus"
-    />
+    <div t-if="wizard.sponsorship_type != 'write_and_pray'" class="ns-aside-item">
+      <t t-call="my_compassion.my2_new_sponsorship_wizard_sponsorship_plus" />
+    </div>
     <!-- Email -->
     <t t-call="theme_compassion_2025.FormFieldComponent">
       <t t-set="top_class" t-value="'my-3'" />
@@ -512,7 +511,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     id="my2_new_sponsorship_wizard_wap_fast_checkout"
     name="New Sponsorship Wizard Write &amp; Pray Fast Checkout Step"
   >
-    <div class="mb-3 p-3 rounded-lg bg-light-blue tiny-text">
+    <div class="mb-3 p-3 rounded-lg bg-light-blue tiny-text ns-full-width">
             Already have an account?
             <a
       t-att-href="login_url_redirect"
@@ -525,7 +524,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
          show "No payment" for the free-godparent branch instead of a
          formatted amount, and price_id so the JS can still live-update it as
          an amount is picked (see _updateWAPPrice). -->
-    <div class="mb-3">
+    <div class="mb-3 ns-aside-item">
       <t t-call="my_compassion.DonationItemComponent">
         <t t-set="name">Write&amp;Pray&#160;·&#160;<t
           t-out="wizard.child_id.preferred_name"
@@ -924,7 +923,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
         />.</t>
       </t>
     </div>
-    <div class="p-1 d-flex flex-column">
+    <div class="p-1 d-flex flex-column ns-columns">
       <t t-out="inner_step_html" />
       <!-- BUTTONS -->
       <!-- A step that offers payment modes submits itself with them: one
@@ -1054,7 +1053,9 @@ Page: My Compassion 2 New Sponsorship Wizard Page
   >
     <t t-call="website.layout">
       <div class="container">
-        <div class="single-column d-flex flex-column align-items-center">
+        <div
+          class="single-column new-sponsorship-thank-you-container d-flex flex-column align-items-center"
+        >
           <!-- PROGRESS BAR -->
           <!-- Only rendered past one step, same as the wizard form itself
                (my2_new_sponsorship_wizard_form_content): a single-step flow
@@ -1089,7 +1090,36 @@ Page: My Compassion 2 New Sponsorship Wizard Page
                greeted in yet. The controller only hands over a token while
                that is the case, so this branch closes by itself. -->
           <t t-if="details_token">
-            <t t-call="my_compassion.my2_new_sponsorship_details_form" />
+            <div class="ns-columns w-100">
+              <div class="ns-aside-item mb-3">
+                <t t-call="my_compassion.DonationItemComponent">
+                  <t t-set="name" t-value="sponsorship.child_id.preferred_name" />
+                  <t
+                    t-set="subtext"
+                    t-value="sponsorship.child_id.field_office_id.country_id.name"
+                  />
+                  <t
+                    t-set="image"
+                    t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait"
+                  />
+                  <t
+                    t-set="image_fallback_pictogram"
+                    t-value="'pictogram-child-sponsorship'"
+                  />
+                  <t t-set="price" t-value="sponsorship.total_amount" />
+                  <t
+                    t-set="price_label"
+                    t-value="not sponsorship.total_amount and 'No payment'"
+                  />
+                  <t t-set="currency_name" t-value="sponsorship.currency_id.name" />
+                  <t t-set="bg_color" t-value="'light-blue'" />
+                  <t t-set="accent_color" t-value="'low-blue'" />
+                  <t t-set="title_color" t-value="'low-blue'" />
+                  <t t-set="price_color" t-value="'low-blue'" />
+                </t>
+              </div>
+              <t t-call="my_compassion.my2_new_sponsorship_details_form" />
+            </div>
           </t>
           <t t-elif="details_emailed">
             <t t-call="my_compassion.my2_new_sponsorship_details_emailed" />
@@ -1134,167 +1164,178 @@ Page: My Compassion 2 New Sponsorship Wizard Page
             <div t-else="" class="mb-3 text-center body-small text-low-black">
               We've sent a sign-in link by email to set up a password, and you'll have access to your account.
             </div>
-            <div class="w-100 p-4 mb-3 rounded-lg bg-light-blue">
-              <!-- Write&Pray never collects a payment, so it has nothing to
+            <div class="ns-columns w-100">
+              <div class="ns-aside-item">
+                <div class="w-100 p-4 mb-3 rounded-lg bg-light-blue">
+                  <!-- Write&Pray never collects a payment, so it has nothing to
                    show under "First payment" - "Commitment: Confirmed" names
                    what actually happened instead, and "Role" replaces the
                    implied-sponsor framing the standard rows use. -->
-              <t t-if="sponsorship.type == 'SWP'">
-                <div class="d-flex justify-content-between mb-2">
-                  <span class="body-small text-mid-grey">Child</span>
-                  <span class="body-small bold text-dark-blue"><t
-                    t-out="sponsorship.child_id.preferred_name"
-                  />, <t
-                    t-out="sponsorship.child_id.field_office_id.country_id.name"
-                  /></span>
+                  <t t-if="sponsorship.type == 'SWP'">
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="body-small text-mid-grey">Child</span>
+                      <span class="body-small bold text-dark-blue"><t
+                        t-out="sponsorship.child_id.preferred_name"
+                      />, <t
+                        t-out="sponsorship.child_id.field_office_id.country_id.name"
+                      /></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="body-small text-mid-grey">Role</span>
+                      <span class="body-small bold text-dark-blue">
+                        <t
+                          t-if="sponsorship.total_amount"
+                        >Sponsor, writes and contributes</t>
+                        <t t-else="">Godparent, writes only</t>
+                      </span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="body-small text-mid-grey">Monthly gift</span>
+                      <span class="body-small bold text-dark-blue">
+                        <t t-if="sponsorship.total_amount">
+                          <t t-out="sponsorship.currency_id.name" />
+                          &#160;
+                          <t t-out="'%.2f' % sponsorship.total_amount" />
+                        </t>
+                        <t t-else="">No payment</t>
+                      </span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="body-small text-mid-grey">Commitment</span>
+                      <span class="body-small bold text-mid-green">Confirmed</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <span class="body-small text-mid-grey">Contact details</span>
+                      <span class="body-small bold text-mid-green">Complete</span>
+                    </div>
+                  </t>
+                  <t t-else="">
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="body-small text-mid-grey">Sponsored child</span>
+                      <span class="body-small bold text-dark-blue"><t
+                        t-out="sponsorship.child_id.preferred_name"
+                      />, <t
+                        t-out="sponsorship.child_id.field_office_id.country_id.name"
+                      /></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="body-small text-mid-grey">Monthly gift</span>
+                      <span class="body-small bold text-dark-blue">
+                        <t t-out="sponsorship.currency_id.name" />
+                        &#160;
+                        <t t-out="'%.2f' % sponsorship.total_amount" />
+                      </span>
+                    </div>
+                    <div
+                      t-if="sponsorship_plus_line"
+                      class="d-flex justify-content-between mb-2"
+                    >
+                      <span class="tiny-text text-mid-grey">Sponsorship Plus</span>
+                      <span
+                        class="tiny-text bold text-core-blue"
+                      >Included&#160;·&#160;<t
+                        t-out="sponsorship.currency_id.name"
+                      />&#160;<t t-out="'%.2f' % sponsorship_plus_line.amount" /></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="body-small text-mid-grey">First payment</span>
+                      <span
+                        t-attf-class="body-small bold text-#{'mid-green' if sponsorship.state == 'active' else 'mid-orange'}"
+                      >
+                        <t
+                          t-out="'Received' if sponsorship.state == 'active' else 'Pending'"
+                        />
+                      </span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <span class="body-small text-mid-grey">Contact details</span>
+                      <span class="body-small bold text-mid-green">Complete</span>
+                    </div>
+                  </t>
                 </div>
-                <div class="d-flex justify-content-between mb-2">
-                  <span class="body-small text-mid-grey">Role</span>
-                  <span class="body-small bold text-dark-blue">
-                    <t
-                      t-if="sponsorship.total_amount"
-                    >Sponsor, writes and contributes</t>
-                    <t t-else="">Godparent, writes only</t>
-                  </span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                  <span class="body-small text-mid-grey">Monthly gift</span>
-                  <span class="body-small bold text-dark-blue">
-                    <t t-if="sponsorship.total_amount">
-                      <t t-out="sponsorship.currency_id.name" />
-                      &#160;
-                      <t t-out="'%.2f' % sponsorship.total_amount" />
-                    </t>
-                    <t t-else="">No payment</t>
-                  </span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                  <span class="body-small text-mid-grey">Commitment</span>
-                  <span class="body-small bold text-mid-green">Confirmed</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <span class="body-small text-mid-grey">Contact details</span>
-                  <span class="body-small bold text-mid-green">Complete</span>
-                </div>
-              </t>
-              <t t-else="">
-                <div class="d-flex justify-content-between mb-2">
-                  <span class="body-small text-mid-grey">Sponsored child</span>
-                  <span class="body-small bold text-dark-blue"><t
-                    t-out="sponsorship.child_id.preferred_name"
-                  />, <t
-                    t-out="sponsorship.child_id.field_office_id.country_id.name"
-                  /></span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                  <span class="body-small text-mid-grey">Monthly gift</span>
-                  <span class="body-small bold text-dark-blue">
-                    <t t-out="sponsorship.currency_id.name" />
-                    &#160;
-                    <t t-out="'%.2f' % sponsorship.total_amount" />
-                  </span>
-                </div>
-                <div
-                  t-if="sponsorship_plus_line"
-                  class="d-flex justify-content-between mb-2"
-                >
-                  <span class="tiny-text text-mid-grey">Sponsorship Plus</span>
-                  <span class="tiny-text bold text-core-blue">Included&#160;·&#160;<t
-                    t-out="sponsorship.currency_id.name"
-                  />&#160;<t t-out="'%.2f' % sponsorship_plus_line.amount" /></span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                  <span class="body-small text-mid-grey">First payment</span>
-                  <span
-                    t-attf-class="body-small bold text-#{'mid-green' if sponsorship.state == 'active' else 'mid-orange'}"
-                  >
-                    <t
-                      t-out="'Received' if sponsorship.state == 'active' else 'Pending'"
-                    />
-                  </span>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <span class="body-small text-mid-grey">Contact details</span>
-                  <span class="body-small bold text-mid-green">Complete</span>
-                </div>
-              </t>
-            </div>
-            <!-- Skipped for Write&amp;Pray: the details box right above
+                <!-- Skipped for Write&amp;Pray: the details box right above
                  already names the child, and the wap-preferences-card /
                  volunteering card below it are anchored independently of
                  this one, so nothing else depends on it being present. -->
-            <div t-if="sponsorship.type != 'SWP'" class="all-set-child-card w-100 mb-3">
-              <t t-call="my_compassion.DonationItemComponent">
-                <t t-set="name" t-value="sponsorship.child_id.preferred_name" />
-                <t
-                  t-set="subtext"
-                  t-value="sponsorship.child_id.field_office_id.country_id.name"
-                />
-                <t
-                  t-set="image"
-                  t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait"
-                />
-                <t
-                  t-set="image_fallback_pictogram"
-                  t-value="'pictogram-child-sponsorship'"
-                />
-                <t t-set="price" t-value="sponsorship.total_amount" />
-                <t t-set="currency_name" t-value="sponsorship.currency_id.name" />
-                <t t-set="monthly_noabbr" t-value="True" />
-                <t t-set="bg_color" t-value="'light-blue'" />
-                <t t-set="accent_color" t-value="'low-blue'" />
-                <t t-set="title_color" t-value="'low-blue'" />
-                <t t-set="price_color" t-value="'low-blue'" />
-              </t>
-            </div>
-            <!-- Anchored on by my_compassion_switzerland's volunteering
+                <div
+                  t-if="sponsorship.type != 'SWP'"
+                  class="all-set-child-card w-100 mb-3"
+                >
+                  <t t-call="my_compassion.DonationItemComponent">
+                    <t t-set="name" t-value="sponsorship.child_id.preferred_name" />
+                    <t
+                      t-set="subtext"
+                      t-value="sponsorship.child_id.field_office_id.country_id.name"
+                    />
+                    <t
+                      t-set="image"
+                      t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait"
+                    />
+                    <t
+                      t-set="image_fallback_pictogram"
+                      t-value="'pictogram-child-sponsorship'"
+                    />
+                    <t t-set="price" t-value="sponsorship.total_amount" />
+                    <t t-set="currency_name" t-value="sponsorship.currency_id.name" />
+                    <t t-set="monthly_noabbr" t-value="True" />
+                    <t t-set="bg_color" t-value="'light-blue'" />
+                    <t t-set="accent_color" t-value="'low-blue'" />
+                    <t t-set="title_color" t-value="'low-blue'" />
+                    <t t-set="price_color" t-value="'low-blue'" />
+                  </t>
+                </div>
+              </div>
+              <div>
+                <!-- Anchored on by my_compassion_switzerland's volunteering
                  opt-in (new_sponsorship_wizard_volunteering) via
                  wap-preferences-card, so it lands between this card and the
                  dashboard button below regardless of whether this card
                  itself renders (t-if false outside SWP or repeat W&amp;P). -->
-            <t
-              t-if="sponsorship.type == 'SWP'"
-              t-set="other_wap_count"
-              t-value="request.env['recurring.contract'].sudo().search_count([
+                <t
+                  t-if="sponsorship.type == 'SWP'"
+                  t-set="other_wap_count"
+                  t-value="request.env['recurring.contract'].sudo().search_count([
                     ('partner_id', '=', sponsorship.partner_id.id),
                     ('type', '=', 'SWP'),
                     ('id', '!=', sponsorship.id),
                 ])"
-            />
-            <div
-              t-if="sponsorship.type == 'SWP' and not other_wap_count"
-              class="wap-preferences-card w-100 p-3 mb-3 rounded rounded-lg bg-high-eggshell border border-low-yellow"
-            >
-              <div
-                class="body-small bold text-dark-blue mb-2"
-              >Write your first letter?</div>
-              <div class="tiny-text text-mid-grey mb-3">
+                />
+                <div
+                  t-if="sponsorship.type == 'SWP' and not other_wap_count"
+                  class="wap-preferences-card w-100 p-3 mb-3 rounded rounded-lg bg-high-eggshell border border-low-yellow"
+                >
+                  <div
+                    class="body-small bold text-dark-blue mb-2"
+                  >Write your first letter?</div>
+                  <div class="tiny-text text-mid-grey mb-3">
                             Now that you're all set, why not send&#160;<t
-                t-out="sponsorship.child_id.preferred_name"
-              />&#160;a first hello? A letter means the world to them.
+                    t-out="sponsorship.child_id.preferred_name"
+                  />&#160;a first hello? A letter means the world to them.
                         </div>
-              <div class="mb-2 text-center">
-                <a t-att-href="first_letter_url">
-                  <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                    <t t-set="variant" t-value="'compact'" />
-                    <t t-set="variation" t-value="'filled'" />
-                    <t t-set="label">Write my first letter</t>
-                    <t t-set="color" t-value="'core-blue'" />
-                    <t t-set="text_color" t-value="'pure-white'" />
-                  </t>
-                </a>
+                  <div class="mb-2 text-center">
+                    <a t-att-href="first_letter_url">
+                      <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                        <t t-set="variant" t-value="'compact'" />
+                        <t t-set="variation" t-value="'filled'" />
+                        <t t-set="label">Write my first letter</t>
+                        <t t-set="color" t-value="'core-blue'" />
+                        <t t-set="text_color" t-value="'pure-white'" />
+                      </t>
+                    </a>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <a href="/web/login?redirect=/my/home">
+                    <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                      <t t-set="variant" t-value="'compact'" />
+                      <t t-set="variation" t-value="'filled'" />
+                      <t t-set="label">Go to my dashboard</t>
+                      <t t-set="color" t-value="'core-blue'" />
+                      <t t-set="text_color" t-value="'pure-white'" />
+                    </t>
+                  </a>
+                </div>
               </div>
-            </div>
-            <div class="mb-3">
-              <a href="/web/login?redirect=/my/home">
-                <t t-call="theme_compassion_2025.ThemedButtonComponent">
-                  <t t-set="variant" t-value="'compact'" />
-                  <t t-set="variation" t-value="'filled'" />
-                  <t t-set="label">Go to my dashboard</t>
-                  <t t-set="color" t-value="'core-blue'" />
-                  <t t-set="text_color" t-value="'pure-white'" />
-                </t>
-              </a>
             </div>
           </t>
           <t t-else="">
