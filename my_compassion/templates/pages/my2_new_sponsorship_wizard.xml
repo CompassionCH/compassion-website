@@ -134,7 +134,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     <!-- Desktop-only heading: the shared wizard chrome's title
          (my2_new_sponsorship_wizard_form_content) is hidden on desktop for
          this step instead. -->
-    <div class="d-none d-lg-block mb-3">
+    <div class="d-none d-lg-block mb-3 ns-left-title">
       <t t-call="theme_compassion_2025.TitleComponent">
         <t t-set="title_content">Where should we send your receipt?</t>
         <t t-set="color" t-value="'dark-blue'" />
@@ -554,7 +554,7 @@ Page: My Compassion 2 New Sponsorship Wizard Page
         <t t-set="price_color" t-value="'low-blue'" />
       </t>
     </div>
-    <div class="d-none d-lg-block mb-3">
+    <div class="d-none d-lg-block mb-3 ns-left-title">
       <t t-call="theme_compassion_2025.TitleComponent">
         <t
           t-set="title_content"
