@@ -71,11 +71,20 @@ class OpenEventToParticipant(models.TransientModel):
         ticket = odoo_event.event_ticket_ids[:1]
         if ticket:
             ticket.write(ticket_vals)
-        elif self.product_id:
+        elif self.registration_fee:
             # The registration template may not define any ticket, in which
             # case the fee entered here would simply be lost.
-            ticket_vals["name"] = _("Registration")
-            odoo_event.event_ticket_ids = [Command.create(ticket_vals)]
+            odoo_event.event_ticket_ids = [
+                Command.create(
+                    {
+                        "name": _("Registration"),
+                        "price": self.registration_fee,
+                        "product_id": self.env.ref(
+                            "event_product.product_product_event"
+                        ).id,
+                    }
+                )
+            ]
         event.odoo_event_id = odoo_event
         return {
             "name": "Event",
