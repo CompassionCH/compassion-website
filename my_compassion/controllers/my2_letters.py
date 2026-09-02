@@ -246,7 +246,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             .sudo()
             .search(
                 [
-                    ("user_id", "=", request.env.user.id),
+                    ("partner_id", "=", request.env.user.partner_id.id),
                     ("child_id", "=", child.id),
                     ("state", "in", ["draft", "preview"]),
                 ],
@@ -285,7 +285,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
 
             draft = request.env["correspondence.s2b.generator"].search(
                 [
-                    ("user_id", "=", request.env.user.id),
+                    ("partner_id", "=", request.env.user.partner_id.id),
                     ("image_ids", "in", attachment.id),
                 ],
                 limit=1,
@@ -328,7 +328,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             .sudo()
             .search(
                 [
-                    ("user_id", "=", request.env.user.id),
+                    ("partner_id", "=", request.env.user.partner_id.id),
                     ("child_id", "=", child_id),
                     ("state", "in", ["draft", "preview"]),
                 ]
@@ -373,7 +373,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             "source": post.get("source"),
             "generation_mode": "single",
             "child_id": child.id,
-            "user_id": request.env.user.id,
+            "partner_id": request.env.user.partner_id.id,
             "state": "draft",
         }
         generator_id = safe_int(post.get("generator_id"), 0)
