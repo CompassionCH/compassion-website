@@ -5,5 +5,10 @@
     <field name="homepage_url">/events</field>
     <field name="default_lang_id" ref="base.lang_en" />
     <field name="logo" type="base64" file="muskathlon/static/src/img/muskathlon.png" />
+    <field
+      name="theme_id"
+      model="ir.module.module"
+      search="[('name', '=', 'theme_muskathlon')]"
+    />
   </record>
 </odoo>

@@ -29,7 +29,7 @@
 # pylint: disable=C8101
 {
     "name": "Muskathlon",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.0.1",
     "category": "Reports",
     "author": "Compassion CH",
     "license": "AGPL-3",
@@ -72,6 +72,7 @@
     },
     "depends": [
         "website_event_compassion",
+        "theme_muskathlon",
     ],
     "external_dependencies": {},
     "demo": [],

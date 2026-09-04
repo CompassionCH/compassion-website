@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
+  <!-- High priority so it lands after website.footer_copyright_company_name,
+       which rewrites the same span with the company name. -->
+  <template
+    id="footer_copyright"
+    inherit_id="website.layout"
+    name="Muskathlon Copyright"
+    priority="99"
+  >
+    <xpath
+      expr="//footer//span[hasclass('o_footer_copyright_name')]"
+      position="replace"
+    >
+      <span class="o_footer_copyright_name me-2">
+        Copyright © <t t-out="datetime.date.today().year" /> Compassion Switzerland
+      </span>
+    </xpath>
+  </template>
+</odoo>
