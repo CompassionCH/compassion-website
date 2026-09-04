@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
+  <!-- Flag language switcher in the header (like the Kilimanjaro site).
+       Replaces the stock selector, which is disabled in the theme post copy. -->
+  <template
+    id="header_lang_selector"
+    inherit_id="website.template_header_default"
+    name="Muskathlon Header Language Selector"
+  >
+    <xpath
+      expr="//t[@t-call='website.placeholder_header_language_selector']"
+      position="replace"
+    >
+      <li class="nav-item d-flex align-items-center lang-selector">
+        <a
+          class="js_change_lang"
+          data-url_code="fr_CH"
+          t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='fr_CH')"
+        >
+          <img
+            src="/theme_muskathlon/static/src/img/FR.svg"
+            alt="Français"
+            class="mx-1"
+          />
+        </a>
+        <a
+          class="js_change_lang"
+          data-url_code="de_DE"
+          t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='de_DE')"
+        >
+          <img
+            src="/theme_muskathlon/static/src/img/DE.svg"
+            alt="Deutsch"
+            class="mx-1"
+          />
+        </a>
+      </li>
+    </xpath>
+  </template>
+</odoo>
