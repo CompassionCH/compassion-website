@@ -16,10 +16,9 @@ class EventCompassion(models.Model):
     _name = "crm.event.compassion"
     _inherit = [
         "crm.event.compassion",
-        "website.published.mixin",
+        "website.published.multi.mixin",
         "translatable.model",
         "website.seo.metadata",
-        "website.multi.mixin",
         "website.cover_properties.mixin",
     ]
 
