@@ -1,8 +1,5 @@
 <odoo>
   <record id="events_page" model="website.page">
-    <!-- No name here: it is delegated to view_id, and writing one that differs
-         from the template's makes website.page.write regenerate the view key
-         (website.events-list), which breaks render("website_event_compassion.list"). -->
     <field name="website_published">True</field>
     <field name="url">/events</field>
     <field name="type">qweb</field>
