@@ -13,12 +13,6 @@ from odoo import _, models
 class Correspondence(models.Model):
     _inherit = "correspondence"
 
-    def process_letter(self):
-        result = super().process_letter()
-        for letter in self:
-            letter._notify_new_letter()
-        return result
-
     def _notify_new_letter(self):
         partner = self.sponsorship_id.sudo().partner_id
         users = partner.user_ids
