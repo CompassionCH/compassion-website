@@ -41,6 +41,10 @@ class CompassionChild(models.Model):
             order="create_date DESC",
         )
 
+        # A cancelled/draft duplicate must not shadow the live sponsorship: the
+        # sort is stable, so the newest live contract wins over a newer dead one.
+        sponsorships = sponsorships.sorted(lambda s: s.state in ("cancelled", "draft"))
+
         # Map the latest sponsorship for each child
         latest_sponsorships = {}
         for s in sponsorships:
