@@ -30,7 +30,7 @@
 # pylint: disable=C8101
 {
     "name": "MyCompassion - Sponsor portal website",
-    "version": "18.0.1.0.24",
+    "version": "18.0.1.0.25",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
@@ -149,10 +149,6 @@
             "my_compassion/static/src/css/child_profile_timeline.css",
             "my_compassion/static/src/css/my2_weather_time_container.css",
             "my_compassion/static/src/css/user_settings.css",
-            "theme_compassion_2025/static/src/js/components/RangeInput.js",
-            "theme_compassion_2025/static/src/js/components/ProgressBar.js",
-            "theme_compassion_2025/static/src/xml/RangeInput.xml",
-            "theme_compassion_2025/static/src/xml/ProgressBar.xml",
             # ES module JS
             "my_compassion/static/src/js/toast_service.js",
             "my_compassion/static/src/js/show_password.js",
