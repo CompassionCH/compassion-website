@@ -23,6 +23,7 @@ class Correspondence(models.Model):
     @api.depends(
         "direction",
         "state",
+        "on_hold",
         "communication_state",
         "communication_type_ids",
         "sponsorship_id.state",
@@ -35,9 +36,9 @@ class Correspondence(models.Model):
                 correspondence.is_published = correspondence.is_published
                 continue
             if correspondence.direction == "Supporter To Beneficiary":
-                correspondence.is_published = correspondence.state not in (
-                    "Exception",
-                    "Quality check unsuccessful",
+                correspondence.is_published = (
+                    correspondence.state != "Quality check unsuccessful"
+                    and (correspondence.state != "Exception" or correspondence.on_hold)
                 )
             else:
                 has_valid_state = correspondence.state == "Published to Global Partner"
