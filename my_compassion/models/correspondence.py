@@ -23,7 +23,6 @@ class Correspondence(models.Model):
     @api.depends(
         "direction",
         "state",
-        "on_hold",
         "communication_state",
         "communication_type_ids",
         "sponsorship_id.state",
@@ -36,6 +35,10 @@ class Correspondence(models.Model):
                 correspondence.is_published = correspondence.is_published
                 continue
             if correspondence.direction == "Supporter To Beneficiary":
+                # on_hold is deliberately not in @api.depends: it is only ever
+                # written together with state (which already triggers this
+                # compute), and adding it here would make Odoo recompute this
+                # field for every correspondence on the next module upgrade.
                 correspondence.is_published = (
                     correspondence.state != "Quality check unsuccessful"
                     and (correspondence.state != "Exception" or correspondence.on_hold)
