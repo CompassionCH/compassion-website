@@ -13,9 +13,9 @@
       expr="//footer//span[hasclass('o_footer_copyright_name')]"
       position="replace"
     >
-      <span class="o_footer_copyright_name me-2">
-        Copyright © <t t-out="datetime.date.today().year" /> Compassion Switzerland
-      </span>
+      <span class="o_footer_copyright_name me-2">Copyright © <t
+        t-out="datetime.date.today().year"
+      /> Compassion Switzerland</span>
     </xpath>
   </template>
 </odoo>

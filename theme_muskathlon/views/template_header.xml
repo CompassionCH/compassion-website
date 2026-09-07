@@ -2,7 +2,9 @@
 <odoo>
   <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
   <!-- Flag language switcher in the header (like the Kilimanjaro site).
-       Replaces the stock selector, which is disabled in the theme post copy. -->
+       Replaces the stock selector, which is disabled in the theme post copy.
+       url_code comes from the language record: js_change_lang redirects to
+       /website/lang/<data-url_code>, which is 'de' and not 'de_DE'. -->
   <template
     id="header_lang_selector"
     inherit_id="website.template_header_default"
@@ -12,11 +14,23 @@
       expr="//t[@t-call='website.placeholder_header_language_selector']"
       position="replace"
     >
-      <li class="nav-item d-flex align-items-center lang-selector">
+      <t
+        t-set="lang_fr"
+        t-value="website.language_ids.filtered_domain([('code', '=', 'fr_CH')])"
+      />
+      <t
+        t-set="lang_de"
+        t-value="website.language_ids.filtered_domain([('code', '=', 'de_DE')])"
+      />
+      <li
+        t-if="lang_fr or lang_de"
+        class="nav-item d-flex align-items-center lang-selector"
+      >
         <a
+          t-if="lang_fr"
           class="js_change_lang"
-          data-url_code="fr_CH"
-          t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='fr_CH')"
+          t-att-data-url_code="lang_fr.url_code"
+          t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code=lang_fr.code)"
         >
           <img
             src="/theme_muskathlon/static/src/img/FR.svg"
@@ -25,9 +39,10 @@
           />
         </a>
         <a
+          t-if="lang_de"
           class="js_change_lang"
-          data-url_code="de_DE"
-          t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code='de_DE')"
+          t-att-data-url_code="lang_de.url_code"
+          t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code=lang_de.code)"
         >
           <img
             src="/theme_muskathlon/static/src/img/DE.svg"
