@@ -29,7 +29,7 @@
 # pylint: disable=C8101
 {
     "name": "Website CRM Request",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.1.0",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
