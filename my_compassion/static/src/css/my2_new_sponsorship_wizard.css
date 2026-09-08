@@ -70,8 +70,8 @@
 .new-sponsorship-wizard-form input.payment-method-radio {
   appearance: none;
   -webkit-appearance: none;
-  width: 1rem;
-  height: 1rem;
+  width: 1.25rem;
+  height: 1.25rem;
   margin: 0;
   position: relative;
   border-radius: 50%;
@@ -89,8 +89,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.625rem;
+  height: 0.625rem;
   border-radius: 50%;
   background-color: var(--core-blue);
   transform: translate(-50%, -50%);
@@ -99,6 +99,12 @@
 .new-sponsorship-wizard-form button {
   max-width: 300px;
   width: 100%;
+}
+
+@media (max-width: 991.98px) {
+  #finish_button {
+    max-width: none;
+  }
 }
 
 /* A greyer border than Bootstrap's default form-control one. */
@@ -226,7 +232,8 @@
 #sponsorship_plus ~ .toggle-card-check {
   width: 1rem;
   height: 1rem;
-  font-size: 0.9rem;
+  font-size: 0.6rem;
+  line-height: 1;
   border-radius: 0.4rem !important;
 }
 
@@ -299,12 +306,44 @@
     flex-direction: row-reverse;
   }
 
-  /* Desktop-only highlight background for one column - the standard step's
-     donation-summary side. Not a Bootstrap utility so it stays out of the
-     mobile stacked layout entirely, unlike the bg-light-blue/p-3 classes
-     used before, which have no breakpoint variant of their own. */
   .ns-highlight-panel {
-    background-color: var(--light-blue);
+    display: flex;
+    flex-direction: column;
     padding: 1rem;
+  }
+
+  .ns-total-row {
+    margin-top: auto !important;
+  }
+
+  .ns-highlight-panel .donation-item-container {
+    border-left: none;
+  }
+
+  .ns-highlight-panel .thumbnail {
+    border-radius: 0.75rem;
+  }
+
+  /* Desktop-only split background, full browser width rather than only
+     .new-sponsorship-container's own (narrower, centered) width: a ::before
+     breaks out to 100vw while the row itself keeps its current centered
+     width/position for its actual content. Since the row is itself
+     horizontally centered on the page, its own midpoint already lines up
+     with the viewport's, so a plain 50% stop lands exactly on the gap
+     between the two (equal-width) columns with no calc() needed. */
+  .ns-flex-columns.ns-split-blue-right {
+    position: relative;
+  }
+
+  .ns-flex-columns.ns-split-blue-right::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    background: linear-gradient(to right, var(--pure-white) 50%, var(--light-blue) 50%);
+    z-index: -1;
   }
 }

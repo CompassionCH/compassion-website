@@ -20,7 +20,7 @@
       class="tiny-text bold text-core-blue"
     >Log in</a>
         </div>
-    <div class="ns-flex-columns ns-flex-columns-reverse">
+    <div class="ns-flex-columns ns-flex-columns-reverse ns-split-blue-right">
       <div class="ns-highlight-panel">
         <div class="mb-3">
           <t t-call="my_compassion.DonationItemComponent">
@@ -52,16 +52,48 @@
         <div t-if="wizard.sponsorship_type != 'write_and_pray'">
           <t t-call="my_compassion.my2_new_sponsorship_wizard_sponsorship_plus" />
         </div>
+        <!-- Total to be paid: base amount plus Sponsorship Plus's extra when
+             checked. Kept live by the "change #sponsorship_plus" handler in
+             my2_new_sponsorship_wizard.js, using this element's own
+             data-base-amount/data-plus-amount so it doesn't need a step
+             round-trip to reflect the toggle. -->
+        <t
+          t-set="ns_total_amount"
+          t-value="float(sponsorship_amount or 0) + (float(sponsorship_plus_extra or 0) if wizard.sponsorship_plus else 0)"
+        />
+        <t
+          t-if="ns_total_amount % 1 == 0"
+          t-set="ns_total_formatted"
+          t-value="'{0}.-'.format(int(ns_total_amount))"
+        />
+        <t
+          t-else=""
+          t-set="ns_total_formatted"
+          t-value="'{0:.2f}'.format(ns_total_amount)"
+        />
+        <div
+          class="ns-total-row mt-3 pt-3 border-top d-none d-lg-flex justify-content-between align-items-center"
+        >
+          <span class="text-dark-blue body-small bold">Total</span>
+          <span
+            id="ns-total-amount"
+            class="text-low-blue body-large bold"
+            t-att-data-base-amount="float(sponsorship_amount or 0)"
+            t-att-data-plus-amount="float(sponsorship_plus_extra or 0)"
+            t-att-data-currency-name="currency_name"
+          ><t t-out="currency_name" />&#160;<t t-out="ns_total_formatted" />/mo.</span>
+        </div>
       </div>
-      <div class="ns-aside-item">
+      <div class="ns-aside-item gap-4">
         <!-- Desktop-only heading: the shared wizard chrome's title
          (my2_new_sponsorship_wizard_form_content) is hidden on desktop for
          this step instead. -->
         <div class="d-none d-lg-block mb-3 ns-left-title">
           <t t-call="theme_compassion_2025.TitleComponent">
-            <t t-set="title_content">Where should we send your receipt?</t>
+            <t t-set="title_content">A few information are needed to proceed</t>
             <t t-set="color" t-value="'dark-blue'" />
             <t t-set="show_underline" t-value="False" />
+            <t t-set="description_color" t-value="'mid-grey'" />
             <t
               t-set="description"
             >One field, then pay. We will ask for your name and phone number straight after.</t>
@@ -71,6 +103,7 @@
         <t t-call="theme_compassion_2025.FormFieldComponent">
           <t t-set="top_class" t-value="'my-3'" />
           <t t-set="label">E-mail</t>
+          <t t-set="label_color" t-value="'dark-blue'" />
           <t t-set="input_id" t-value="'email'" />
           <input
             id="email"
@@ -84,9 +117,7 @@
           />
           <div
             class="mt-2 very-tiny-text text-mid-grey"
-          >For your receipt and news about&#160;<t
-            t-out="wizard.child_id.preferred_name"
-          />. Nothing else is needed right now.</div>
+          >For starting the process. Nothing else is needed right now.</div>
         </t>
         <!-- Privacy consent -->
         <input type="hidden" name="privacy_consent" value="" />
@@ -118,7 +149,7 @@
              checked radio (see the "change .payment-method-radio" handler
              in my2_new_sponsorship_wizard.js) so its own validation-code
              setup still runs before an eBill submit goes through. -->
-        <div t-if="payment_mode_buttons" class="my-3">
+        <div t-if="payment_mode_buttons" class="my-3 mt-4">
           <div
             class="mb-2 text-dark-blue body-small bold"
           >How would you like to pay?</div>
