@@ -21,6 +21,7 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     "change .suggested-amount": "_onAmountChange",
     "input input[name=custom_amount]": "_onCustomAmountInput",
     "change #birthdate": "_onBirthDateChange",
+    "change .payment-method-radio": "_onPaymentModeRadioChange",
   },
 
   /**
@@ -210,6 +211,26 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
       return;
     }
     $price.text(`${$price.data("currencyName")} ${amount}.-`);
+  },
+
+  /**
+   * Switzerland's fast checkout renders one radio per payment mode (instead
+   * of a button each, like Nordic's) in the step's own left column, with a
+   * single shared Continue button doing the actual submit. That button is
+   * generic - it carries no payment mode of its own - so whichever radio is
+   * checked has its data-payment-mode/data-payment-code copied onto it here.
+   * This is what lets the my_compassion_switzerland eBill extension's
+   * _onStepClick override keep recognizing an eBill submission (it reads
+   * those attributes off the clicked element) without that extension having
+   * to know radios are involved at all.
+   * @param {Event} ev
+   */
+  _onPaymentModeRadioChange: function (ev) {
+    const $radio = $(ev.currentTarget);
+    this.$(".btn-next").attr({
+      "data-payment-mode": $radio.data("payment-mode"),
+      "data-payment-code": $radio.data("payment-code"),
+    });
   },
 
   /**

@@ -701,6 +701,15 @@ class MyCompassionNewSponsorshipController(http.Controller):
             f"/web/login?{urlencode({'redirect': request.httprequest.full_path})}"
         )
 
+        # The step's own submit radios, when it has any: one per payment
+        # mode, in the fast-checkout step's own left column (see
+        # standard_step.xml), in place of the generic Continue/Finish button.
+        payment_mode_buttons = wizard._get_payment_mode_buttons()
+        # Whether those radios are this step's submit at all, which is what
+        # says if the generic button may stand in when the list above is
+        # empty.
+        step_offers_payment_modes = wizard._step_offers_payment_modes()
+
         # Render step template first
         inner_step_html = request.env["ir.qweb"]._render(
             wizard.current_step.template.id,
@@ -715,6 +724,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 "sponsorship_amount": _product_display_price("sponsorship"),
                 "sponsorship_plus_extra": _product_display_price("fund_gen"),
                 "login_url_redirect": login_url_redirect,
+                "payment_mode_buttons": payment_mode_buttons,
+                "step_offers_payment_modes": step_offers_payment_modes,
             },
         )
 
@@ -725,13 +736,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 "wizard": wizard,
                 "inner_step_html": inner_step_html,
                 "currency_name": currency_name,
-                # The step's own submit buttons, when it has any: one per
-                # payment mode, in place of the generic Continue/Finish one.
-                "payment_mode_buttons": wizard._get_payment_mode_buttons(),
-                # Whether those buttons are this step's submit at all, which
-                # is what says if the generic button may stand in when the
-                # list above is empty.
-                "step_offers_payment_modes": wizard._step_offers_payment_modes(),
+                "payment_mode_buttons": payment_mode_buttons,
+                "step_offers_payment_modes": step_offers_payment_modes,
             },
         )
 

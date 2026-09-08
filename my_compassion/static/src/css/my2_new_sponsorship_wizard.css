@@ -67,6 +67,35 @@
   height: 1rem;
 }
 
+.new-sponsorship-wizard-form input.payment-method-radio {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  position: relative;
+  border-radius: 50%;
+  border: 1px solid var(--light-grey);
+  background-color: var(--pure-white);
+  cursor: pointer;
+}
+
+.new-sponsorship-wizard-form input.payment-method-radio:checked {
+  border-color: var(--core-blue);
+}
+
+.new-sponsorship-wizard-form input.payment-method-radio:checked::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: var(--core-blue);
+  transform: translate(-50%, -50%);
+}
+
 .new-sponsorship-wizard-form button {
   max-width: 300px;
   width: 100%;
@@ -186,6 +215,21 @@
   border-color: var(--core-blue) !important;
 }
 
+.radio-card:hover {
+  border-color: var(--core-blue) !important;
+}
+
+.radio-card:hover .payment-method-radio {
+  border-color: var(--core-blue);
+}
+
+#sponsorship_plus ~ .toggle-card-check {
+  width: 1rem;
+  height: 1rem;
+  font-size: 0.9rem;
+  border-radius: 0.4rem !important;
+}
+
 /* The "Who shall we thank?" form's field labels (Firstname, Surname, Phone
    number...): the shared FormFieldComponent bolds them by default, but with
    the heading, the required asterisks and the buttons above/around them
@@ -213,16 +257,54 @@
     grid-column: 1;
   }
 
-  .ns-aside-item {
+  .ns-columns > .ns-aside-item {
     grid-column: 2;
     max-width: 420px;
   }
 
-  .ns-full-width {
+  .ns-columns > .ns-full-width {
     grid-column: 1 / -1;
   }
 
   .ns-left-title .title-component {
     text-align: left !important;
+  }
+
+  /* One step down the wizard's tiny-text/very-tiny-text scale (14px): the
+     shared TitleComponent's description has no size prop of its own, and
+     changing it there would affect every other title on the site. */
+  .ns-left-title .title-description {
+    font-size: 14px;
+  }
+}
+
+/* Desktop: same side-by-side job as .ns-columns above, but flexbox-based
+   (matches Bootstrap's own lg breakpoint, 992px, instead of .ns-columns'
+   1024px) for steps that lay their two divs out with plain flex utilities. */
+@media (min-width: 992px) {
+  .ns-flex-columns {
+    display: flex !important;
+    flex-direction: row;
+    gap: 2.5rem;
+    align-items: stretch;
+  }
+
+  .ns-flex-columns > .ns-aside-item,
+  .ns-flex-columns > :not(.ns-aside-item) {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .ns-flex-columns.ns-flex-columns-reverse {
+    flex-direction: row-reverse;
+  }
+
+  /* Desktop-only highlight background for one column - the standard step's
+     donation-summary side. Not a Bootstrap utility so it stays out of the
+     mobile stacked layout entirely, unlike the bg-light-blue/p-3 classes
+     used before, which have no breakpoint variant of their own. */
+  .ns-highlight-panel {
+    background-color: var(--light-blue);
+    padding: 1rem;
   }
 }

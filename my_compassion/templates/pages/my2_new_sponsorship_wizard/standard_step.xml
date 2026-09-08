@@ -11,100 +11,179 @@
       t-if="request.params.get('wap_ineligible')"
       class="mb-3 p-3 rounded-lg bg-high-eggshell tiny-text ns-full-width"
     >
-            Write&amp;Pray is for people under 25, so here's the regular sponsorship instead.
-        </div>
-    <div class="mb-3 p-3 rounded-lg bg-light-blue tiny-text ns-full-width">
+      Write&amp;Pray is for people under 25, so here's the regular sponsorship instead.
+    </div>
+    <div class="mb-3 p-3 rounded-lg bg-light-blue tiny-text d-lg-none">
             Already have an account?
             <a
       t-att-href="login_url_redirect"
       class="tiny-text bold text-core-blue"
     >Log in</a>
         </div>
-    <div class="mb-3 ns-aside-item">
-      <t t-call="my_compassion.DonationItemComponent">
-        <t t-set="name"><t
-          t-if="wizard.sponsorship_type == 'write_and_pray'"
-        >Write&amp;Pray</t><t t-else="">Sponsorship</t>&#160;·&#160;<t
-          t-out="wizard.child_id.preferred_name"
-        />, <t t-out="wizard.child_id.age" /></t>
-        <t t-set="subtext"><t
-          t-out="wizard.child_id.field_office_id.country_id.name"
-        />&#160;·&#160;monthly</t>
-        <t
-          t-set="image"
-          t-valuef="/web/image/compassion.child/#{wizard.child_id.id}/portrait"
-        />
-        <t t-set="image_fallback_pictogram" t-value="'pictogram-child-sponsorship'" />
-        <t t-set="price" t-value="float(sponsorship_amount or 0)" />
-        <t t-set="currency_name" t-value="currency_name" />
-        <t t-set="bg_color" t-value="'light-blue'" />
-        <t t-set="accent_color" t-value="'low-blue'" />
-        <t t-set="title_color" t-value="'low-blue'" />
-        <t t-set="price_color" t-value="'low-blue'" />
-      </t>
-    </div>
-    <!-- Sponsorship plus -->
-    <div t-if="wizard.sponsorship_type != 'write_and_pray'" class="ns-aside-item">
-      <t t-call="my_compassion.my2_new_sponsorship_wizard_sponsorship_plus" />
-    </div>
-    <!-- Desktop-only heading: the shared wizard chrome's title
+    <div class="ns-flex-columns ns-flex-columns-reverse">
+      <div class="ns-highlight-panel">
+        <div class="mb-3">
+          <t t-call="my_compassion.DonationItemComponent">
+            <t t-set="name"><t
+              t-if="wizard.sponsorship_type == 'write_and_pray'"
+            >Write&amp;Pray</t><t t-else="">Sponsorship</t>&#160;·&#160;<t
+              t-out="wizard.child_id.preferred_name"
+            />, <t t-out="wizard.child_id.age" /></t>
+            <t t-set="subtext"><t
+              t-out="wizard.child_id.field_office_id.country_id.name"
+            />&#160;·&#160;monthly</t>
+            <t
+              t-set="image"
+              t-valuef="/web/image/compassion.child/#{wizard.child_id.id}/portrait"
+            />
+            <t
+              t-set="image_fallback_pictogram"
+              t-value="'pictogram-child-sponsorship'"
+            />
+            <t t-set="price" t-value="float(sponsorship_amount or 0)" />
+            <t t-set="currency_name" t-value="currency_name" />
+            <t t-set="bg_color" t-value="'light-blue'" />
+            <t t-set="accent_color" t-value="'low-blue'" />
+            <t t-set="title_color" t-value="'low-blue'" />
+            <t t-set="price_color" t-value="'low-blue'" />
+          </t>
+        </div>
+        <!-- Sponsorship plus -->
+        <div t-if="wizard.sponsorship_type != 'write_and_pray'">
+          <t t-call="my_compassion.my2_new_sponsorship_wizard_sponsorship_plus" />
+        </div>
+      </div>
+      <div class="ns-aside-item">
+        <!-- Desktop-only heading: the shared wizard chrome's title
          (my2_new_sponsorship_wizard_form_content) is hidden on desktop for
          this step instead. -->
-    <div class="d-none d-lg-block mb-3 ns-left-title">
-      <t t-call="theme_compassion_2025.TitleComponent">
-        <t t-set="title_content">Where should we send your receipt?</t>
-        <t t-set="color" t-value="'dark-blue'" />
-        <t t-set="show_underline" t-value="False" />
-        <t
-          t-set="description"
-        >One field, then pay. We will ask for your name and phone number straight after.</t>
-      </t>
-    </div>
-    <!-- Email -->
-    <t t-call="theme_compassion_2025.FormFieldComponent">
-      <t t-set="top_class" t-value="'my-3'" />
-      <t t-set="label">E-mail</t>
-      <t t-set="input_id" t-value="'email'" />
-      <input
-        id="email"
-        type="email"
-        name="email"
-        class="form-control"
-        placeholder="you@example.com"
-        t-att-value="wizard.email"
-        data-validate-type="email"
-        required=""
-      />
-      <div
-        class="mt-2 very-tiny-text text-mid-grey"
-      >For your receipt and news about&#160;<t
-        t-out="wizard.child_id.preferred_name"
-      />. Nothing else is needed right now.</div>
-    </t>
-    <!-- Privacy consent -->
-    <input type="hidden" name="privacy_consent" value="" />
-    <t t-call="theme_compassion_2025.FormFieldComponent">
-      <t t-set="top_class" t-value="'my-3'" />
-      <div class="d-flex align-items-center">
-        <input
-          type="checkbox"
-          id="privacy_consent"
-          name="privacy_consent"
-          class="flex-shrink-0"
-          t-att-checked="wizard.privacy_consent"
-          required=""
-        />
-        <label class="ms-2 mb-0 tiny-text text-mid-grey" for="privacy_consent">
-                    I accept the privacy policy as described in the
-                    <a
-          href="/legal"
-          class="tiny-text bold text-core-blue"
-        >privacy notice</a>.
-                </label>
+        <div class="d-none d-lg-block mb-3 ns-left-title">
+          <t t-call="theme_compassion_2025.TitleComponent">
+            <t t-set="title_content">Where should we send your receipt?</t>
+            <t t-set="color" t-value="'dark-blue'" />
+            <t t-set="show_underline" t-value="False" />
+            <t
+              t-set="description"
+            >One field, then pay. We will ask for your name and phone number straight after.</t>
+          </t>
+        </div>
+        <!-- Email -->
+        <t t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="top_class" t-value="'my-3'" />
+          <t t-set="label">E-mail</t>
+          <t t-set="input_id" t-value="'email'" />
+          <input
+            id="email"
+            type="email"
+            name="email"
+            class="form-control"
+            placeholder="you@example.com"
+            t-att-value="wizard.email"
+            data-validate-type="email"
+            required=""
+          />
+          <div
+            class="mt-2 very-tiny-text text-mid-grey"
+          >For your receipt and news about&#160;<t
+            t-out="wizard.child_id.preferred_name"
+          />. Nothing else is needed right now.</div>
+        </t>
+        <!-- Privacy consent -->
+        <input type="hidden" name="privacy_consent" value="" />
+        <t t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="top_class" t-value="'my-3'" />
+          <div class="d-flex align-items-center">
+            <input
+              type="checkbox"
+              id="privacy_consent"
+              name="privacy_consent"
+              class="flex-shrink-0"
+              t-att-checked="wizard.privacy_consent"
+              required=""
+            />
+            <label class="ms-2 mb-0 very-tiny-text text-mid-grey" for="privacy_consent">
+                        I accept the privacy policy as described in the
+                        <a
+              href="/legal"
+              class="very-tiny-text bold text-core-blue"
+            >privacy notice</a>.
+                    </label>
+          </div>
+        </t>
+        <!-- Payment mode: rendered as radios here, in the left column;
+             selecting one only picks it, the generic Continue button
+             (my2_new_sponsorship_wizard_form_content) still does the actual
+             submit. The my_compassion_switzerland eBill extension keeps
+             that button's data-payment-mode/data-payment-code synced to the
+             checked radio (see the "change .payment-method-radio" handler
+             in my2_new_sponsorship_wizard.js) so its own validation-code
+             setup still runs before an eBill submit goes through. -->
+        <div t-if="payment_mode_buttons" class="my-3">
+          <div
+            class="mb-2 text-dark-blue body-small bold"
+          >How would you like to pay?</div>
+          <t t-foreach="payment_mode_buttons" t-as="payment_mode">
+            <t
+              t-if="payment_mode_first and payment_mode_last"
+              t-set="corner_class"
+              t-value="'rounded-top rounded-bottom'"
+            />
+            <t
+              t-elif="payment_mode_first"
+              t-set="corner_class"
+              t-value="'rounded-top'"
+            />
+            <t
+              t-elif="payment_mode_last"
+              t-set="corner_class"
+              t-value="'rounded-bottom'"
+            />
+            <t t-else="" t-set="corner_class" t-value="''" />
+            <label
+              t-attf-for="payment_method_#{payment_mode.id}"
+              t-attf-class="radio-card d-flex align-items-center p-2 #{corner_class} bg-white border border-light-grey"
+            >
+              <input
+                type="radio"
+                name="payment_method"
+                class="payment-method-radio flex-shrink-0"
+                t-att-id="'payment_method_' + str(payment_mode.id)"
+                t-att-value="payment_mode.id"
+                t-att-data-payment-mode="payment_mode.id"
+                t-att-data-payment-code="payment_mode.payment_method_id.code"
+              />
+              <span class="ms-3 tiny-text">
+                <t t-if="payment_mode.payment_provider_id">Pay with&#160;<t
+                  t-out="payment_mode.name"
+                /></t>
+                <t t-else="" t-out="payment_mode.name" />
+              </span>
+            </label>
+          </t>
+        </div>
+        <!-- This step's own Continue button, in the left column instead of
+             the parent chrome's shared one (my2_new_sponsorship_wizard_form_content):
+             keeps it out of the space below the two columns, so the right
+             column's blue highlight (which stretches to match this column's
+             height) reaches the footer instead of stopping short of it with
+             this button sitting in between. -->
+        <div
+          t-if="payment_mode_buttons"
+          class="btn-next my-3 d-flex justify-content-start"
+          data-action="next"
+          t-att-data-sponsorship-type="wizard.sponsorship_type"
+        >
+          <t t-call="theme_compassion_2025.ThemedButtonComponent">
+            <t t-set="variant" t-value="'compact'" />
+            <t t-set="variation" t-value="'filled'" />
+            <t t-set="label">Continue</t>
+            <t t-set="color" t-value="'core-blue'" />
+            <t t-set="text_color" t-value="'pure-white'" />
+            <!-- ID used by eBill extension in my_compassion_switzerland -->
+            <t t-set="id" t-value="'finish_button'" />
+          </t>
+        </div>
       </div>
-    </t>
-    <!-- The payment-mode buttons that end this page are rendered by
-         my2_new_sponsorship_wizard_form_content, next to the generic
-         Continue/Finish button they stand in for. -->
+    </div>
   </template>
 </odoo>
