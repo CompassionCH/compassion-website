@@ -27,8 +27,14 @@ class ThemeMuskathlon(models.AbstractModel):
             self.disable_view(footer)
         self.disable_view("website.option_footer_scrolltop")
 
+        website = self.env["website"].get_current_website()
+
         # New sites otherwise keep the "YOUR WEBSITE" placeholder as their logo.
         with file_open(LOGO_PATH, "rb") as logo:
-            self.env["website"].get_current_website().logo = base64.b64encode(
-                logo.read()
-            )
+            website.logo = base64.b64encode(logo.read())
+
+        # A new site inherits a copy of the default menu, whose length pushes the
+        # language selector out of the header. Muskathlon sites navigate from the
+        # event page itself; the header only carries the contact button that the
+        # theme renders next to the flags.
+        website.menu_id.child_id.unlink()
