@@ -122,7 +122,7 @@ class ProductTemplate(models.Model):
         help="Highest price suggestion when making a donation",
     )
 
-    def get_donation_limits(self, company, partner, sponsorship_id=None):
+    def get_donation_limits(self, company, partner, sponsorship_id=None, order=None):
         """
         Returns the donation limits for the product (optionally tied to a sponsorship)
         in the form:
@@ -131,6 +131,9 @@ class ProductTemplate(models.Model):
             "max_amount": int,               # If amount is limited
             "remaining_donations": int,      # If frequency is limited
         }
+        `order` is the donor's current cart. Only that cart may be counted: an
+        abandoned order stays in `draft` forever after a failed payment, so
+        counting every open order lets a failed payment eat the allowance (T3451).
         """
         limits = {}
         product_limits = (
@@ -184,18 +187,9 @@ class ProductTemplate(models.Model):
                 other_gifts_count = (
                     self.env["sponsorship.gift"].sudo().search_count(domain)
                 )
-                # Add gifts currently in the user's cart
-                sale_order = (
-                    self.env["sale.order"]
-                    .sudo()
-                    .search(
-                        [
-                            ("partner_id", "=", partner.id),
-                            ("state", "in", ["draft", "sent"]),
-                        ]
-                    )
-                )
-                order_lines = sale_order.order_line.filtered(
+                # Add gifts currently in the donor's cart
+                cart = order or self.env["sale.order"]
+                order_lines = cart.sudo().order_line.filtered(
                     lambda line: line.product_template_id.id == self.id
                     and (
                         (not sponsorship_id)

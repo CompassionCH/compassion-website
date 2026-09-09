@@ -18,6 +18,7 @@ from . import (
     res_partner,
     res_user,
     product_template,
+    sale_order,
     sale_order_line,
     my2_donation_info_line,
     my2_donation_impact_line,
