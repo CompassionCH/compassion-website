@@ -38,39 +38,45 @@
         <h2 t-out="additional_title" class="text-uppercase" />
         <section class="mt-5 pb-5" id="events_compassion_list">
           <div class="container">
-            <div class="card-deck">
-              <div t-foreach="registrations" t-as="registration" class="card">
-                <t t-set="event" t-value="registration.compassion_event_id" />
-                <a t-att-href="slug(registration)">
-                  <img
-                    t-att-src="event.website_image"
-                    alt=""
-                    class="card-img-top"
-                    loading="lazy"
-                    style="height: 30vh; object-fit: cover;"
-                  />
-                </a>
-                <div class="card-body">
-                  <h5 class="card-title" t-field="event.name" />
-                  <h6
-                    class="card-subtitle mb-2 text-muted"
-                    t-field="event.start_date"
-                    t-options="{'widget': 'date'}"
-                  />
-                  <div class="card-text mb-2" t-if="registration.amount_objective">
-                    <t t-call="website_event_compassion.event_barometer">
-                      <t t-set="barometer" t-value="registration" />
-                      <t t-set="amount_inside" t-value="False" />
-                      <t t-set="barometer_title_class" t-value="False" />
-                      <t t-set="barometer_amount_class">amount_raised</t>
-                    </t>
-                  </div>
-                  <a
-                    t-att-href="slug(registration)"
-                    class="btn btn-primary o_default_snippet_text"
-                  >
+            <div class="row g-4">
+              <div
+                t-foreach="registrations"
+                t-as="registration"
+                class="col-12 col-md-6 col-xl-4"
+              >
+                <div class="card h-100">
+                  <t t-set="event" t-value="registration.compassion_event_id" />
+                  <a t-att-href="slug(registration)">
+                    <img
+                      t-att-src="event.website_image"
+                      alt=""
+                      class="card-img-top"
+                      loading="lazy"
+                      style="height: 30vh; object-fit: cover;"
+                    />
+                  </a>
+                  <div class="card-body">
+                    <h5 class="card-title" t-field="event.name" />
+                    <h6
+                      class="card-subtitle mb-2 text-muted"
+                      t-field="event.start_date"
+                      t-options="{'widget': 'date'}"
+                    />
+                    <div class="card-text mb-2" t-if="registration.amount_objective">
+                      <t t-call="website_event_compassion.event_barometer">
+                        <t t-set="barometer" t-value="registration" />
+                        <t t-set="amount_inside" t-value="False" />
+                        <t t-set="barometer_title_class" t-value="False" />
+                        <t t-set="barometer_amount_class">amount_raised</t>
+                      </t>
+                    </div>
+                    <a
+                      t-att-href="slug(registration)"
+                      class="btn btn-primary o_default_snippet_text"
+                    >
                                         View details
                                     </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -144,7 +150,7 @@
           >
             <h3 class="d-inline align-text-top">Tasks</h3>
             <span
-              class="badge badge-pill badge-primary d-inline ml-2"
+              class="badge bg-primary rounded-pill d-inline ms-2"
               t-if="registration.incomplete_task_count"
               t-esc="registration.incomplete_task_count"
               style="font-size: small"
@@ -165,7 +171,7 @@
           </div>
         </div>
         <h3 class="mt-4" t-if="event.fundraising">
-          <span class="mr-2">Fundraising</span>
+          <span class="me-2">Fundraising</span>
           <a class="btn btn-primary mx-auto" href="fundraising">
             <i class="fa fa-handshake-o" />
             <span>Fundraising tools</span>
@@ -179,15 +185,11 @@
           <t t-set="barometer_bg_class">shadow-sm h-100</t>
         </t>
         <div class="row my-4" t-if="donations">
-          <div class="col col-sm-2 col-md-2 col-lg-2 font-weight-bold">Date</div>
-          <div
-            class="col col-sm-2 col-md-2 col-lg-2 font-weight-bold"
-          >Donor firstname</div>
-          <div
-            class="col col-sm-2 col-md-2 col-lg-2 font-weight-bold"
-          >Donor lastname</div>
-          <div class="col col-sm-4 col-md-4 col-lg-4 font-weight-bold">Donor email</div>
-          <div class="col col-sm-2 col-md-2 col-lg-2 font-weight-bold">Amount</div>
+          <div class="col col-sm-2 col-md-2 col-lg-2 fw-bold">Date</div>
+          <div class="col col-sm-2 col-md-2 col-lg-2 fw-bold">Donor firstname</div>
+          <div class="col col-sm-2 col-md-2 col-lg-2 fw-bold">Donor lastname</div>
+          <div class="col col-sm-4 col-md-4 col-lg-4 fw-bold">Donor email</div>
+          <div class="col col-sm-2 col-md-2 col-lg-2 fw-bold">Amount</div>
           <t t-foreach="donations" t-as="donation">
             <div class="col col-sm-2 col-md-2 col-lg-2" t-esc="donation['date_str']" />
             <div
@@ -203,7 +205,7 @@
               t-esc="donation['donor email']"
             />
             <div
-              class="col col-sm-2 col-md-2 col-lg-2 text-right"
+              class="col col-sm-2 col-md-2 col-lg-2 text-end"
               t-esc="donation['amount'] + ' ' + donation['currency']"
             />
           </t>

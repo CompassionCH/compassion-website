@@ -97,8 +97,8 @@ class EventsController(Controller):
         )
         return {
             "event": event,
-            "start_date": event.get_date("start_date", "full"),
-            "end_date": event.get_date("end_date", "full"),
+            "start_date": event.get_date("start_date", "dd MMMM YYYY"),
+            "end_date": event.get_date("end_date", "dd MMMM YYYY"),
             "additional_title": _("- Registration"),
             "titles": titles,
             "relation_types": relation_types,
