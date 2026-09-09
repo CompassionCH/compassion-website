@@ -93,10 +93,7 @@ Page: My Compassion 2 Dashboard Page
                         <t t-set="label">A new letter has arrived!</t>
                         <t t-set="color" t-value="'low-blue'" />
                         <t t-set="text_color" t-value="'low-blue'" />
-                        <t
-                            t-set="href"
-                            t-value="'/my2/children/letters?year_to=2025&amp;month_from=1&amp;month_to=12&amp;sort=newest&amp;unread=true&amp;page=1'"
-                        />
+                        <t t-set="href" t-value="'/my2/children/letters?sort=newest&amp;unread=true&amp;page=1'" />
                     </t>
                 </t>
                 <t t-if="partner.is_writer">
