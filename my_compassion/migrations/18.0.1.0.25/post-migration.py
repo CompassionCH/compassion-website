@@ -20,8 +20,10 @@ def migrate(cr, version):
     cr.execute(
         """
         UPDATE correspondence_s2b_generator
-        SET generation_mode = 'mass'
-        WHERE user_id IS NULL and child_id IS NULL
-        RETURNING id;
+        SET partner_id = (
+            SELECT partner_id FROM res_users
+            WHERE res_users.id = correspondence_s2b_generator.user_id
+        )
+        WHERE user_id IS NOT NULL;
         """
     )
