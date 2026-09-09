@@ -30,11 +30,37 @@ class EventTypeMail(models.Model):
         ondelete={"after_stage": "set default"},
     )
     stage_id = fields.Many2one("event.registration.stage", "Stage", readonly=False)
+    # Communication rules have no mail template to point at.
+    template_ref = fields.Reference(required=False)
 
     @api.onchange("notification_type", "communication_id")
     def onchange_communication_rule(self):
         if self.notification_type == "communication" and self.communication_id:
             self.template_ref = self.communication_id.email_template_id
+
+    def _prepare_event_mail_values(self):
+        """Values used to copy a scheduler from an event type to an event.
+
+        The original method always formats the mail template reference, which
+        communication rules don't have, and it ignores the fields we added on
+        the schedulers.
+        """
+        self.ensure_one()
+        if self.template_ref:
+            values = super()._prepare_event_mail_values()
+        else:
+            values = {
+                "interval_nbr": self.interval_nbr,
+                "interval_unit": self.interval_unit,
+                "interval_type": self.interval_type,
+            }
+        values.update(
+            {
+                "communication_id": self.communication_id.id,
+                "stage_id": self.stage_id.id,
+            }
+        )
+        return values
 
 
 class EventMail(models.Model):
@@ -62,6 +88,8 @@ class EventMail(models.Model):
 
     event_type_id = fields.Many2one("event.type", readonly=False)
     event_id = fields.Many2one(required=False, readonly=False)
+    # Communication rules have no mail template to point at.
+    template_ref = fields.Reference(required=False)
 
     @api.depends(
         "event_id.date_begin",
@@ -81,6 +109,30 @@ class EventMail(models.Model):
     def onchange_communication_rule(self):
         if self.notification_type == "communication" and self.communication_id:
             self.template_ref = self.communication_id.email_template_id
+
+    def _prepare_event_mail_values(self):
+        """Values used to copy a scheduler from an event type to an event.
+
+        The original method always formats the mail template reference, which
+        communication rules don't have, and it ignores the fields we added on
+        the schedulers.
+        """
+        self.ensure_one()
+        if self.template_ref:
+            values = super()._prepare_event_mail_values()
+        else:
+            values = {
+                "interval_nbr": self.interval_nbr,
+                "interval_unit": self.interval_unit,
+                "interval_type": self.interval_type,
+            }
+        values.update(
+            {
+                "communication_id": self.communication_id.id,
+                "stage_id": self.stage_id.id,
+            }
+        )
+        return values
 
     def execute(self):
         """

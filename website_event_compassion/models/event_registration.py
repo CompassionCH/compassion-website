@@ -642,7 +642,7 @@ class EventRegistration(models.Model):
         }
 
     def create_down_payment(self):
-        down_payment_product = self.env.ref("event_sale.product_product_event")
+        down_payment_product = self.env.ref("event_product.product_product_event")
         for registration in self:
             ticket = registration.event_id.event_ticket_ids.filtered(
                 lambda t: t.product_id == down_payment_product
@@ -661,12 +661,13 @@ class EventRegistration(models.Model):
                                     "price_unit": ticket.price,
                                     "product_uom_qty": 1,
                                     "registration_id": registration.id,
+                                    "event_id": registration.event_id.id,
+                                    "event_ticket_id": ticket.id,
                                 },
                             )
                         ],
                     }
                 )
-                order.order_line[0].event_id = registration.event_id.id
 
                 registration.write(
                     {
