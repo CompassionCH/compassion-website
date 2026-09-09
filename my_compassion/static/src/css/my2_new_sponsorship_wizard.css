@@ -320,6 +320,7 @@
     flex-direction: row;
     gap: 2.5rem;
     align-items: stretch;
+    padding: 2rem 0;
   }
 
   .ns-flex-columns > .ns-aside-item,
@@ -352,6 +353,10 @@
   }
 
   .ns-split-blue-left .ns-highlight-panel > * {
+    max-width: calc(100% - 5rem);
+  }
+
+  .ns-split-blue-right .ns-aside-item > * {
     max-width: calc(100% - 5rem);
   }
 

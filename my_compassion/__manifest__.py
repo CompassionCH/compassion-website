@@ -83,6 +83,7 @@
         "templates/pages/my2_new_sponsorship/logged_in_steps.xml",
         "templates/pages/my2_new_sponsorship/my2_new_sponsorship_wizard.xml",
         "templates/pages/my2_new_sponsorship/thank_you_page.xml",
+        "templates/pages/my2_new_sponsorship/all_set.xml",
         "templates/pages/my2_new_sponsorship/my2_new_sponsorship_payment.xml",
         "templates/pages/my2_new_sponsorship/my2_new_sponsorship_details.xml",
         "templates/pages/my2_update_card.xml",

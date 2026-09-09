@@ -5,19 +5,26 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     Description:
     This page guides the user through the sponsorship procedure. Which steps
     run is decided by new.sponsorship.wizard.STEPS_CONFIGS / _get_step_xmlids;
-    every template in this folder is one of them. Public visitors run the
-    fast checkout - one page holding the email, the consent and one button
-    per payment mode - and give their name after paying; the user-details and
-    communication steps (logged_in_steps.xml) are kept for the flows and
-    country extensions that still collect everything up front.
+    the step templates are some of the files in this folder (see below) -
+    not all of them, the folder also holds the rest of the new-sponsorship
+    journey that isn't a wizard step (payment, post-payment details,
+    thank-you). Public visitors run the fast checkout - one page holding the
+    email, the consent and one button per payment mode - and give their name
+    after paying; the user-details and communication steps
+    (logged_in_steps.xml) are kept for the flows and country extensions that
+    still collect everything up front.
 
     This file is the page's entry point: the outer form wrapper
     (my2_new_sponsorship_wizard_page) and the shared per-step chrome
     (my2_new_sponsorship_wizard_form_content - progress bar, title, buttons).
     The individual step templates it wraps live in sibling files in this
     same folder: standard_step.xml, wap_step.xml, sponsorship_plus.xml,
-    logged_in_steps.xml, progress_bar.xml. The thank-you/details/all-set page
-    is a separate top-level page, in thank_you_page.xml.
+    logged_in_steps.xml, progress_bar.xml. Also in this folder, but not
+    wizard steps: my2_new_sponsorship_payment.xml (the provider-payment
+    checkout some payment modes redirect to) and the thank-you/details/
+    all-set page (thank_you_page.xml, which embeds
+    my2_new_sponsorship_details.xml's "Who shall we thank?" form and
+    all_set.xml's "All set" summary).
 
     Used in route:
     - /my2/new-sponsorship/<child-id>
