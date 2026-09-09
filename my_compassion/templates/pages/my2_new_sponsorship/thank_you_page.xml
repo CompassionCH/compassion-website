@@ -31,7 +31,13 @@
                its title_content is t-esc'd (HTML-escaped) for safety, which
                would stop the core-blue span below from actually rendering
                as markup. -->
+          <!-- Skipped entirely for the "All set" branch (public user, name
+               already known): that branch has its own title/description
+               instead - see my2_new_sponsorship_all_set. Must mirror the
+               t-elif chain below exactly, since that's what decides which
+               branch actually renders. -->
           <div
+            t-if="details_token or details_emailed or not request.env.user._is_public()"
             t-attf-class="mx-4 title-component title-component--align-sm-center #{'d-lg-none' if details_token else ''}"
           >
             <h1 class="title-heading title-size-md text-dark-blue">

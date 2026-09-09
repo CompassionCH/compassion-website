@@ -360,6 +360,10 @@
     max-width: calc(100% - 5rem);
   }
 
+  .ns-all-set-columns .ns-highlight-panel > * {
+    max-width: calc(100% - 5rem);
+  }
+
   /* Desktop-only split background, full browser width rather than only
      .new-sponsorship-container's own (narrower, centered) width: a ::before
      breaks out to 100vw while the row itself keeps its current centered
@@ -391,4 +395,18 @@
   .ns-flex-columns.ns-split-blue-left::before {
     background: linear-gradient(to right, var(--light-blue) 50%, var(--pure-white) 50%);
   }
+}
+
+/* All-set summary box rows (sponsored child, monthly gift, etc.): a
+   mid-grey divider between rows, none after the last one. */
+.ns-summary-row {
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--mid-grey);
+}
+
+.ns-summary-row:last-child {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: none;
 }
