@@ -175,6 +175,12 @@
   margin-right: auto;
 }
 
+@media (max-width: 991.98px) {
+  .new-sponsorship-thank-you-container {
+    margin-bottom: 3rem;
+  }
+}
+
 .thank-you-child-profile {
   max-width: 350px;
 }
@@ -362,6 +368,20 @@
 
   .ns-all-set-columns .ns-highlight-panel > * {
     max-width: calc(100% - 5rem);
+  }
+
+  /* DOM order is aside-item (summary) first, highlight-panel (title +
+     volunteering card + dashboard button) second, so mobile's plain block
+     stacking already reads summary-then-volunteering-and-button - order
+     puts highlight-panel back on the visual left for desktop, as a plain
+     flex item (no shared grid rows), so its height is never coupled to
+     the summary column's. */
+  .ns-all-set-columns .ns-aside-item {
+    order: 2;
+  }
+
+  .ns-all-set-columns .ns-highlight-panel {
+    order: 1;
   }
 
   /* Desktop-only split background, full browser width rather than only
