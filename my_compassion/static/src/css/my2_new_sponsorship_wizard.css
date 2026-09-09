@@ -107,6 +107,32 @@
   }
 }
 
+/* The "who shall we thank" card names the child, not a price - the shared
+   DonationItemComponent always renders a price element, with no prop to
+   drop it entirely. */
+#thank-you-letter-card-price {
+  display: none;
+}
+
+.ns-letter-card .body-large {
+  font-size: 18px;
+}
+
+.ns-letter-card .body-small {
+  font-size: 13px;
+}
+
+/* Server-rendered bg-pure-white (also !important) is meant for desktop -
+   below the lg breakpoint the card goes back to light-blue. Double class
+   for specificity: a plain !important tie against another !important rule
+   falls back to bundle load order, which the .btn-ebill.btn-ebill rule
+   above already found isn't reliably this file. */
+@media (max-width: 991.98px) {
+  .ns-letter-card.ns-letter-card {
+    background-color: var(--light-blue) !important;
+  }
+}
+
 /* A greyer border than Bootstrap's default form-control one. */
 #email {
   border-color: var(--mid-grey);
@@ -309,7 +335,8 @@
   .ns-highlight-panel {
     display: flex;
     flex-direction: column;
-    padding: 1rem;
+    justify-content: center;
+    padding: 0 1rem 1rem;
   }
 
   .ns-total-row {
@@ -324,6 +351,10 @@
     border-radius: 0.75rem;
   }
 
+  .ns-split-blue-left .ns-highlight-panel > * {
+    max-width: calc(100% - 5rem);
+  }
+
   /* Desktop-only split background, full browser width rather than only
      .new-sponsorship-container's own (narrower, centered) width: a ::before
      breaks out to 100vw while the row itself keeps its current centered
@@ -331,11 +362,13 @@
      horizontally centered on the page, its own midpoint already lines up
      with the viewport's, so a plain 50% stop lands exactly on the gap
      between the two (equal-width) columns with no calc() needed. */
-  .ns-flex-columns.ns-split-blue-right {
+  .ns-flex-columns.ns-split-blue-right,
+  .ns-flex-columns.ns-split-blue-left {
     position: relative;
   }
 
-  .ns-flex-columns.ns-split-blue-right::before {
+  .ns-flex-columns.ns-split-blue-right::before,
+  .ns-flex-columns.ns-split-blue-left::before {
     content: "";
     position: absolute;
     top: 0;
@@ -343,7 +376,14 @@
     left: 50%;
     width: 100vw;
     transform: translateX(-50%);
-    background: linear-gradient(to right, var(--pure-white) 50%, var(--light-blue) 50%);
     z-index: -1;
+  }
+
+  .ns-flex-columns.ns-split-blue-right::before {
+    background: linear-gradient(to right, var(--pure-white) 50%, var(--light-blue) 50%);
+  }
+
+  .ns-flex-columns.ns-split-blue-left::before {
+    background: linear-gradient(to right, var(--light-blue) 50%, var(--pure-white) 50%);
   }
 }

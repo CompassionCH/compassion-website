@@ -35,7 +35,7 @@ Page: My Compassion 2 Post-Payment Sponsor Details
     name="New Sponsorship Post-Payment Details Form"
   >
     <form
-      class="new-sponsorship-details-form w-100 px-4 mb-4"
+      class="new-sponsorship-details-form w-100 px-4 mt-5 mb-4"
       action="/my2/new-sponsorship/complete-details"
       method="POST"
     >
@@ -43,8 +43,10 @@ Page: My Compassion 2 Post-Payment Sponsor Details
       <input type="hidden" name="sponsorship_id" t-att-value="sponsorship.id" />
       <input type="hidden" name="details_token" t-att-value="details_token" />
       <!-- HEADING -->
-      <div class="h4 mb-1 text-low-black text-center">Who shall we thank?</div>
-      <div class="mb-3 text-center body-small text-low-black"><t
+      <div
+        class="h4 mt-5 text-low-black text-center text-lg-start"
+      >Who shall we thank?</div>
+      <div class="mb-3 text-center text-lg-start tiny-text text-mid-grey"><t
         t-out="sponsorship.child_id.preferred_name"
       /> writes to you by name, so we need it before their first letter -
                 and a phone number lets us reach you if anything comes up.
@@ -58,35 +60,37 @@ Page: My Compassion 2 Post-Payment Sponsor Details
         <t t-out="details_error" />
       </div>
       <!-- Firstname -->
-      <t t-call="theme_compassion_2025.FormFieldComponent">
-        <t t-set="top_class" t-value="'my-3'" />
-        <t t-set="label">Firstname</t>
-        <t t-set="input_id" t-value="'details_firstname'" />
-        <input
-          id="details_firstname"
-          type="text"
-          name="firstname"
-          class="form-control"
-          t-att-value="details_prefill.get('firstname')"
-          data-validate-type="name"
-          required=""
-        />
-      </t>
-      <!-- Surname -->
-      <t t-call="theme_compassion_2025.FormFieldComponent">
-        <t t-set="top_class" t-value="'my-3'" />
-        <t t-set="label">Surname</t>
-        <t t-set="input_id" t-value="'details_lastname'" />
-        <input
-          id="details_lastname"
-          type="text"
-          name="lastname"
-          class="form-control"
-          t-att-value="details_prefill.get('lastname')"
-          data-validate-type="name"
-          required=""
-        />
-      </t>
+      <div class="d-flex flex-column flex-lg-row gap-lg-3">
+        <t t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="top_class" t-value="'my-3 flex-fill'" />
+          <t t-set="label">Firstname</t>
+          <t t-set="input_id" t-value="'details_firstname'" />
+          <input
+            id="details_firstname"
+            type="text"
+            name="firstname"
+            class="form-control"
+            t-att-value="details_prefill.get('firstname')"
+            data-validate-type="name"
+            required=""
+          />
+        </t>
+        <!-- Surname -->
+        <t t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="top_class" t-value="'my-3 flex-fill'" />
+          <t t-set="label">Surname</t>
+          <t t-set="input_id" t-value="'details_lastname'" />
+          <input
+            id="details_lastname"
+            type="text"
+            name="lastname"
+            class="form-control"
+            t-att-value="details_prefill.get('lastname')"
+            data-validate-type="name"
+            required=""
+          />
+        </t>
+      </div>
       <!-- Phone: never reported by any provider, so always asked. -->
       <t t-call="theme_compassion_2025.FormFieldComponent">
         <t t-set="top_class" t-value="'my-3'" />
@@ -109,8 +113,8 @@ Page: My Compassion 2 Post-Payment Sponsor Details
         t-set="has_address"
         t-value="details_prefill.get('street') or details_prefill.get('zip') or details_prefill.get('city')"
       />
-      <details class="my-3" t-att-open="'open' if has_address else None">
-        <summary class="body-small bold text-dark-blue">
+      <details class="my-4" t-att-open="'open' if has_address else None">
+        <summary class="mb-3 body-small bold text-dark-blue">
                     Add my address for a donation receipt (optional)
                 </summary>
         <!-- Street -->
@@ -179,7 +183,13 @@ Page: My Compassion 2 Post-Payment Sponsor Details
         </t>
       </details>
       <!-- BUTTONS -->
-      <div class="my-3 d-flex justify-content-center">
+      <!-- The escape hatch posts the same form to another route, so it needs
+           neither its own form (they cannot be nested) nor any JavaScript.
+           formnovalidate: the fields it skips are exactly the ones it is
+           there to skip. -->
+      <div
+        class="my-3 d-flex flex-column flex-lg-row justify-content-center justify-content-lg-start align-items-center gap-3"
+      >
         <t t-call="theme_compassion_2025.ThemedButtonComponent">
           <t t-set="variant" t-value="'compact'" />
           <t t-set="variation" t-value="'filled'" />
@@ -187,16 +197,11 @@ Page: My Compassion 2 Post-Payment Sponsor Details
           <t t-set="color" t-value="'core-blue'" />
           <t t-set="text_color" t-value="'pure-white'" />
           <t t-set="id" t-value="'save_details_button'" />
+          <t t-set="radius" t-value="'small'" />
         </t>
-      </div>
-      <!-- The escape hatch posts the same form to another route, so it needs
-           neither its own form (they cannot be nested) nor any JavaScript.
-           formnovalidate: the fields it skips are exactly the ones it is
-           there to skip. -->
-      <div class="mb-3 d-flex justify-content-center">
         <button
           type="submit"
-          class="back-button text-low-black body-small bold"
+          class="back-button text-mid-grey body-small bold"
           formaction="/my2/new-sponsorship/details-later"
           formnovalidate=""
         >

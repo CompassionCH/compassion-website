@@ -24,36 +24,66 @@
             </t>
           </div>
           <!-- TITLE -->
-          <div class="mx-4">
-            <t t-call="theme_compassion_2025.TitleComponent">
-              <t t-set="title_content">Thank you for sponsoring&#160;<t
-                t-out="sponsorship.child_id.preferred_name"
-              /></t>
-              <t t-set="color" t-value="'core-blue'" />
-              <t t-set="show_underline" t-value="True" />
-              <t t-set="underline_color" t-value="'low-yellow'" />
-              <t
-                t-if="sponsorship.type == 'SWP'"
-                t-set="description"
-              >You’ll receive an email with everything you need to start the Write&amp;Pray soon.</t>
-              <t t-else="" t-set="description">
-                                You’ll receive an email with everything you need to start the sponsorship soon.
-                            </t>
-            </t>
+          <!-- Hidden on desktop for the details-token branch: it renders
+               its own copy in the left column instead (see below), matching
+               the fast-checkout step's ns-left-title convention. -->
+          <!-- Hand-rolled instead of theme_compassion_2025.TitleComponent:
+               its title_content is t-esc'd (HTML-escaped) for safety, which
+               would stop the core-blue span below from actually rendering
+               as markup. -->
+          <div
+            t-attf-class="mx-4 title-component title-component--align-sm-center #{'d-lg-none' if details_token else ''}"
+          >
+            <h1 class="title-heading title-size-md text-dark-blue">
+              Thank you for sponsoring <span class="text-core-blue">
+              <t t-out="sponsorship.child_id.preferred_name" />
+            </span>
+            </h1>
+            <p t-if="sponsorship.type == 'SWP'" class="title-description text-mid-grey">
+              You’ll receive an email with everything you need to start the Write&amp;Pray soon.
+            </p>
+            <p t-else="" class="title-description text-mid-grey">
+              You’ll receive an email with everything you need to start the sponsorship soon.
+            </p>
           </div>
           <!-- The signup still waits for its sponsor's name: ask for it here
                instead of inviting them to create an account they cannot be
                greeted in yet. The controller only hands over a token while
                that is the case, so this branch closes by itself. -->
           <t t-if="details_token">
-            <div class="ns-columns w-100">
-              <div class="ns-aside-item mb-3">
+            <div class="ns-flex-columns ns-split-blue-left w-100">
+              <div class="ns-highlight-panel">
+                <!-- Hand-rolled instead of theme_compassion_2025.TitleComponent:
+                     see the top-level title above for why. -->
+                <div class="d-none d-lg-block mb-3 ns-left-title">
+                  <div class="title-component title-component--align-sm-center">
+                    <h1 class="title-heading title-size-md text-dark-blue">
+                      Thank you for sponsoring <span class="text-core-blue">
+                      <t t-out="sponsorship.child_id.preferred_name" />
+                    </span>
+                    </h1>
+                    <p
+                      t-if="sponsorship.type == 'SWP'"
+                      class="title-description text-low-grey"
+                    >
+                      You’ll receive an email with everything you need to start the Write&amp;Pray soon.
+                    </p>
+                    <p t-else="" class="title-description text-low-grey">
+                      You’ll receive an email with everything you need to start the sponsorship soon.
+                    </p>
+                  </div>
+                </div>
                 <t t-call="my_compassion.DonationItemComponent">
-                  <t t-set="name" t-value="sponsorship.child_id.preferred_name" />
+                  <t t-set="top_class" t-value="'ns-letter-card'" />
+                  <t
+                    t-set="name"
+                    t-value="(sponsorship.child_id.preferred_name or '') + ' is expecting your letter'"
+                  />
                   <t
                     t-set="subtext"
-                    t-value="sponsorship.child_id.field_office_id.country_id.name"
+                    t-value="('He' if sponsorship.child_id.gender == 'M' else 'She') + ' writes back by name, which is why we ask next.'"
                   />
+                  <t t-set="subtext_color" t-value="'mid-grey'" />
                   <t
                     t-set="image"
                     t-valuef="/web/image/compassion.child/#{sponsorship.child_id.id}/portrait"
@@ -67,14 +97,17 @@
                     t-set="price_label"
                     t-value="not sponsorship.total_amount and 'No payment'"
                   />
+                  <t t-set="price_id" t-value="'thank-you-letter-card-price'" />
                   <t t-set="currency_name" t-value="sponsorship.currency_id.name" />
-                  <t t-set="bg_color" t-value="'light-blue'" />
+                  <t t-set="bg_color" t-value="'pure-white'" />
                   <t t-set="accent_color" t-value="'low-blue'" />
                   <t t-set="title_color" t-value="'low-blue'" />
                   <t t-set="price_color" t-value="'low-blue'" />
                 </t>
               </div>
-              <t t-call="my_compassion.my2_new_sponsorship_details_form" />
+              <div class="ns-aside-item">
+                <t t-call="my_compassion.my2_new_sponsorship_details_form" />
+              </div>
             </div>
           </t>
           <t t-elif="details_emailed">
@@ -92,7 +125,10 @@
               t-set="sponsorship_plus_line"
               t-value="sponsorship.contract_line_ids.filtered(lambda l: l.product_id.default_code == 'fund_gen')"
             />
-            <div class="mx-4">
+            <!-- Hidden on desktop: renders its own copy in the left column
+                 instead (see below), same convention as the details-token
+                 branch above. -->
+            <div class="mx-4 d-lg-none">
               <t t-call="theme_compassion_2025.TitleComponent">
                 <!-- sponsor_identity_visible: a bare sponsorship_id proves
                      nothing (see MyCompassionNewSponsorshipController
@@ -120,8 +156,19 @@
             <div t-else="" class="mb-3 text-center body-small text-low-black">
               We've sent a sign-in link by email to set up a password, and you'll have access to your account.
             </div>
-            <div class="ns-columns w-100">
-              <div class="ns-aside-item">
+            <div class="ns-flex-columns ns-split-blue-left w-100">
+              <div class="ns-highlight-panel">
+                <div class="d-none d-lg-block mb-3 ns-left-title">
+                  <t t-call="theme_compassion_2025.TitleComponent">
+                    <t
+                      t-if="sponsor_identity_visible"
+                      t-set="title_content"
+                    >All set,&#160;<t t-out="sponsorship.partner_id.firstname" /></t>
+                    <t t-else="" t-set="title_content">All set</t>
+                    <t t-set="color" t-value="'dark-blue'" />
+                    <t t-set="show_underline" t-value="False" />
+                  </t>
+                </div>
                 <div class="w-100 p-4 mb-3 rounded-lg bg-light-blue">
                   <!-- Write&Pray never collects a payment, so it has nothing to
                    show under "First payment" - "Commitment: Confirmed" names
@@ -241,7 +288,7 @@
                   </t>
                 </div>
               </div>
-              <div>
+              <div class="ns-aside-item">
                 <!-- Anchored on by my_compassion_switzerland's volunteering
                  opt-in (new_sponsorship_wizard_volunteering) via
                  wap-preferences-card, so it lands between this card and the
