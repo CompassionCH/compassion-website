@@ -4436,6 +4436,16 @@ msgstr ""
 "Patenschaft bezahlt."
 
 #. module: my_compassion
+#: code:addons/my_compassion/models/sale_order.py:0
+#, python-format
+msgid ""
+"You've already reached the yearly limit of %(gift)s for %(child)s. Please "
+"remove it from your gift basket before paying."
+msgstr ""
+"Du hast für %(child)s das Jahreslimit für %(gift)s bereits erreicht. Bitte "
+"entferne es aus deinem Geschenkkorb, bevor du bezahlst."
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_content
 msgid "Your Gift Basket is empty."
 msgstr "Ihr Geschenkkorb ist leer."

@@ -187,7 +187,10 @@ class MyCompassionDonationsController(CustomerPortal):
                 raise BadRequest() from e
 
         limits = product.get_donation_limits(
-            request.website.company_id, request.env.user.partner_id, sponsorship_id
+            request.website.company_id,
+            request.env.user.partner_id,
+            sponsorship_id,
+            request.website.sale_get_order(),
         )
         return limits
 
