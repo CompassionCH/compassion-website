@@ -14,9 +14,6 @@ class ThemeMuskathlon(models.AbstractModel):
         self.enable_view("website.option_header_brand_logo")
         self.disable_view("website.option_header_brand_name")
 
-        # Muskathlon sites are public: visitors never sign in there.
-        self.disable_view("portal.user_sign_in")
-
         # Languages are offered by our own header flag selector only. Disabling
         # the footer parent view drops all of its variants at once.
         self.disable_view("website.header_language_selector")

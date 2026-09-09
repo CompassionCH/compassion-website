@@ -22,11 +22,7 @@
         t-att-data-url_code="lang_fr.url_code"
         t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code=lang_fr.code)"
       >
-        <img
-          src="/theme_muskathlon/static/src/img/FR.svg"
-          alt="Français"
-          class="mx-1"
-        />
+        <img src="/theme_muskathlon/static/src/img/FR.svg" alt="FR" class="mx-1" />
       </a>
       <a
         t-if="lang_de"
@@ -34,7 +30,7 @@
         t-att-data-url_code="lang_de.url_code"
         t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code=lang_de.code)"
       >
-        <img src="/theme_muskathlon/static/src/img/DE.svg" alt="Deutsch" class="mx-1" />
+        <img src="/theme_muskathlon/static/src/img/DE.svg" alt="DE" class="mx-1" />
       </a>
     </li>
   </template>
@@ -64,16 +60,9 @@
     inherit_id="website.template_header_mobile"
     name="Muskathlon Mobile Header Language Selector"
   >
-    <!-- Show the entries next to the logo rather than inside the offcanvas panel:
-         a lone menu item fits, so it is rendered instead of the burger. -->
+    <!-- Show the flags and the contact button next to the logo rather than
+         inside the offcanvas panel, where the burger would be the only way in. -->
     <xpath expr="//ul[hasclass('o_header_mobile_buttons_wrap')]" position="inside">
-      <li t-if="len(website.menu_id.child_id) == 1" class="nav-item">
-        <a
-          class="nav-link"
-          t-att-href="website.menu_id.child_id.url"
-          t-out="website.menu_id.child_id.name"
-        />
-      </li>
       <t t-call="theme_muskathlon.lang_flags" />
       <t t-call="theme_muskathlon.contact_button" />
     </xpath>
@@ -81,12 +70,15 @@
       expr="//t[@t-call='website.placeholder_header_language_selector']"
       position="replace"
     />
-    <!-- Only worth opening when it holds more than the single inlined entry. -->
+    <!-- The panel still holds the menu and, when enabled, sign in; drop the
+         burger only when opening it would show nothing. -->
     <xpath
       expr="//button[@data-bs-target='#top_menu_collapse_mobile']/.."
       position="attributes"
     >
-      <attribute name="t-if">len(website.menu_id.child_id) &gt; 1</attribute>
+      <attribute
+        name="t-if"
+      >website.menu_id.child_id or not user_id._is_public() or is_view_active('portal.user_sign_in')</attribute>
     </xpath>
   </template>
 </odoo>
