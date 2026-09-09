@@ -35,9 +35,13 @@ class Correspondence(models.Model):
                 correspondence.is_published = correspondence.is_published
                 continue
             if correspondence.direction == "Supporter To Beneficiary":
-                correspondence.is_published = correspondence.state not in (
-                    "Exception",
-                    "Quality check unsuccessful",
+                # on_hold is deliberately not in @api.depends: it is only ever
+                # written together with state (which already triggers this
+                # compute), and adding it here would make Odoo recompute this
+                # field for every correspondence on the next module upgrade.
+                correspondence.is_published = (
+                    correspondence.state != "Quality check unsuccessful"
+                    and (correspondence.state != "Exception" or correspondence.on_hold)
                 )
             else:
                 has_valid_state = correspondence.state == "Published to Global Partner"
