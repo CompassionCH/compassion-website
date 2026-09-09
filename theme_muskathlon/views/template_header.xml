@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <!-- Flag language switcher (like the Kilimanjaro site). url_code comes from the
+       language record: js_change_lang redirects to /website/lang/<data-url_code>,
+       which is 'de' and not 'de_DE'. -->
+  <template id="lang_flags" name="Muskathlon Language Flags">
+    <t
+      t-set="lang_fr"
+      t-value="website.language_ids.filtered_domain([('code', '=', 'fr_CH')])"
+    />
+    <t
+      t-set="lang_de"
+      t-value="website.language_ids.filtered_domain([('code', '=', 'de_DE')])"
+    />
+    <li
+      t-if="lang_fr or lang_de"
+      class="nav-item d-flex align-items-center lang-selector"
+    >
+      <a
+        t-if="lang_fr"
+        class="js_change_lang"
+        t-att-data-url_code="lang_fr.url_code"
+        t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code=lang_fr.code)"
+      >
+        <img
+          src="/theme_muskathlon/static/src/img/FR.svg"
+          alt="Français"
+          class="mx-1"
+        />
+      </a>
+      <a
+        t-if="lang_de"
+        class="js_change_lang"
+        t-att-data-url_code="lang_de.url_code"
+        t-att-href="url_for(request.httprequest.path + '?' + keep_query(), lang_code=lang_de.code)"
+      >
+        <img src="/theme_muskathlon/static/src/img/DE.svg" alt="Deutsch" class="mx-1" />
+      </a>
+    </li>
+  </template>
+  <!-- Contact button, as on the reference site. -->
+  <template id="contact_button" name="Muskathlon Contact Button">
+    <li class="nav-item d-flex align-items-center">
+      <a href="/contactus" class="btn btn-primary ms-3">Contact us</a>
+    </li>
+  </template>
+  <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
+  <template
+    id="header_lang_selector"
+    inherit_id="website.template_header_default"
+    name="Muskathlon Header Language Selector"
+  >
+    <xpath
+      expr="//t[@t-call='website.placeholder_header_language_selector']"
+      position="replace"
+    >
+      <t t-call="theme_muskathlon.lang_flags" />
+      <t t-call="theme_muskathlon.contact_button" />
+    </xpath>
+  </template>
+  <!-- oca-hooks:disable=xml-dangerous-qweb-replace-low-priority -->
+  <template
+    id="header_lang_selector_mobile"
+    inherit_id="website.template_header_mobile"
+    name="Muskathlon Mobile Header Language Selector"
+  >
+    <!-- Show the entries next to the logo rather than inside the offcanvas panel:
+         a lone menu item fits, so it is rendered instead of the burger. -->
+    <xpath expr="//ul[hasclass('o_header_mobile_buttons_wrap')]" position="inside">
+      <li t-if="len(website.menu_id.child_id) == 1" class="nav-item">
+        <a
+          class="nav-link"
+          t-att-href="website.menu_id.child_id.url"
+          t-out="website.menu_id.child_id.name"
+        />
+      </li>
+      <t t-call="theme_muskathlon.lang_flags" />
+      <t t-call="theme_muskathlon.contact_button" />
+    </xpath>
+    <xpath
+      expr="//t[@t-call='website.placeholder_header_language_selector']"
+      position="replace"
+    />
+    <!-- Only worth opening when it holds more than the single inlined entry. -->
+    <xpath
+      expr="//button[@data-bs-target='#top_menu_collapse_mobile']/.."
+      position="attributes"
+    >
+      <attribute name="t-if">len(website.menu_id.child_id) &gt; 1</attribute>
+    </xpath>
+  </template>
+</odoo>

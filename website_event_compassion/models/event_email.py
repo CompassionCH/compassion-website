@@ -16,9 +16,11 @@ class EventTypeMail(models.Model):
 
     notification_type = fields.Selection(
         selection_add=[("communication", "Communication rule")],
-        ondelete={"communication": "set default"},
-        default="communication",
+        ondelete={"communication": "set null"},
     )
+    # Communication rules are sent through partner.communication.config,
+    # so they don't need any mail template.
+    template_ref = fields.Reference(required=False)
     communication_id = fields.Many2one(
         "partner.communication.config",
         "Communication",
@@ -32,6 +34,24 @@ class EventTypeMail(models.Model):
     stage_id = fields.Many2one("event.registration.stage", "Stage", readonly=False)
     # Communication rules have no mail template to point at.
     template_ref = fields.Reference(required=False)
+
+    @api.depends("communication_id")
+    def _compute_notification_type(self):
+        super()._compute_notification_type()
+        self.filtered("communication_id").notification_type = "communication"
+
+    def _prepare_event_mail_values(self):
+        """Copy our own fields to the event mails and allow an empty template."""
+        self.ensure_one()
+        template = self.template_ref
+        return {
+            "interval_nbr": self.interval_nbr,
+            "interval_unit": self.interval_unit,
+            "interval_type": self.interval_type,
+            "template_ref": f"{template._name},{template.id}" if template else False,
+            "communication_id": self.communication_id.id,
+            "stage_id": self.stage_id.id,
+        }
 
     @api.onchange("notification_type", "communication_id")
     def onchange_communication_rule(self):
@@ -77,9 +97,9 @@ class EventMail(models.Model):
     )
     notification_type = fields.Selection(
         selection_add=[("communication", "Communication rule")],
-        ondelete={"communication": "set default"},
-        default="communication",
+        ondelete={"communication": "set null"},
     )
+    template_ref = fields.Reference(required=False)
     interval_type = fields.Selection(
         selection_add=[("after_stage", "After stage")],
         ondelete={"after_stage": "set default"},
@@ -90,6 +110,24 @@ class EventMail(models.Model):
     event_id = fields.Many2one(required=False, readonly=False)
     # Communication rules have no mail template to point at.
     template_ref = fields.Reference(required=False)
+
+    @api.depends("communication_id")
+    def _compute_notification_type(self):
+        super()._compute_notification_type()
+        self.filtered("communication_id").notification_type = "communication"
+
+    def _prepare_event_mail_values(self):
+        """Copy our own fields to the event mails and allow an empty template."""
+        self.ensure_one()
+        template = self.template_ref
+        return {
+            "interval_nbr": self.interval_nbr,
+            "interval_unit": self.interval_unit,
+            "interval_type": self.interval_type,
+            "template_ref": f"{template._name},{template.id}" if template else False,
+            "communication_id": self.communication_id.id,
+            "stage_id": self.stage_id.id,
+        }
 
     @api.depends(
         "event_id.date_begin",
@@ -169,7 +207,9 @@ class EventMail(models.Model):
                 ):
                     mail.event_id.send_communication(mail.communication_id.id)
                     mail.write({"mail_done": True})
-        return super().execute()
+        # Core only handles mail templates and would fail on our rules
+        others = self.filtered(lambda m: m.notification_type != "communication")
+        return super(EventMail, others).execute()
 
 
 class EventMailRegistration(models.Model):

@@ -3,13 +3,14 @@
     "category": "Theme/Compassion",
     "summary": "Compassion Muskathlon Theme",
     "sequence": 260,
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.0.1",
     "author": "Compassion Switzerland",
     "website": "https://github.com/CompassionCH/compassion-website",
     "depends": ["website_sale"],
     "data": [
         "views/images_content.xml",
-        "data/presets.xml",
+        "views/template_header.xml",
+        "views/layout.xml",
     ],
     "assets": {
         "web._assets_primary_variables": [
@@ -17,9 +18,7 @@
         ],
         "web.assets_frontend": [
             "theme_muskathlon/static/src/scss/font.scss",
-        ],
-        "web._assets_frontend_helpers": [
-            ("prepend", "theme_muskathlon/static/src/scss/bootstrap_overidden.scss"),
+            "theme_muskathlon/static/src/scss/website.scss",
         ],
     },
     "images": ["static/description/muskathlon_screenshot.jpeg"],
