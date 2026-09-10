@@ -125,10 +125,14 @@ Page: My Compassion 2 New Sponsorship Wizard Page
            reaches this: its own Continue button lives in
            standard_step.xml's left column instead (see there), so its blue
            highlight column stretches to match instead of stopping short of
-           the footer with this button in between. -->
+           the footer with this button in between. The Write&amp;Pray step
+           has its own desktop-only Continue button in its left column too
+           (see wap_step.xml) for the same reason, but - unlike the
+           fast-checkout step - still needs this one on mobile, so it's
+           hidden with d-lg-none there rather than skipped outright. -->
       <div
         t-if="not step_offers_payment_modes"
-        class="btn-next my-3 d-flex justify-content-center"
+        t-attf-class="btn-next my-3 d-flex justify-content-center #{'d-lg-none' if wizard.sponsorship_type == 'write_and_pray' else ''}"
         data-action="next"
         t-att-data-sponsorship-type="wizard.sponsorship_type"
       >
