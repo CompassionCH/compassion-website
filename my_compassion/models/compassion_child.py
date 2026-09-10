@@ -342,15 +342,24 @@ class CompassionChild(models.Model):
             .sudo()
             .search(
                 [
-                    "|",
-                    ("company_id", "=", False),
                     ("company_id", "=", company.id),
                     ("is_my_compassion", "=", True),
                 ],
-                order="company_id desc",
                 limit=1,
             )
         )
+        if not website:
+            website = (
+                self.env["website"]
+                .sudo()
+                .search(
+                    [
+                        ("default_lang_id.code", "=", self.env.lang),
+                        ("is_my_compassion", "=", True),
+                    ],
+                    limit=1,
+                )
+            )
         if website:
             return website.domain
         return super().get_base_url()
