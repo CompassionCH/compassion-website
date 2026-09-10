@@ -62,7 +62,12 @@
       </t>
     </xpath>
   </template>
-  <template id="custom_400" inherit_id="http_routing.400" name="Custom 400 Page">
+  <template
+    id="custom_400"
+    inherit_id="http_routing.400"
+    name="Custom 400 Page"
+    priority="99"
+  >
     <xpath expr="//div[@id='wrap']/div[hasclass('container')][1]" position="attributes">
       <attribute name="t-if">editable or debug</attribute>
     </xpath>
