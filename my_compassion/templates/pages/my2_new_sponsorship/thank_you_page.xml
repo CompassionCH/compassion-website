@@ -81,14 +81,17 @@
                 </div>
                 <t t-call="my_compassion.DonationItemComponent">
                   <t t-set="top_class" t-value="'ns-letter-card'" />
+                  <t t-set="name"><t
+                    t-out="sponsorship.child_id.preferred_name"
+                  /> is expecting your letter</t>
                   <t
-                    t-set="name"
-                    t-value="(sponsorship.child_id.preferred_name or '') + ' is expecting your letter'"
-                  />
-                  <t
+                    t-if="sponsorship.child_id.gender == 'M'"
                     t-set="subtext"
-                    t-value="('He' if sponsorship.child_id.gender == 'M' else 'She') + ' writes back by name, which is why we ask next.'"
-                  />
+                  >He writes back by name, which is why we ask next.</t>
+                  <t
+                    t-else=""
+                    t-set="subtext"
+                  >She writes back by name, which is why we ask next.</t>
                   <t t-set="subtext_color" t-value="'mid-grey'" />
                   <t
                     t-set="image"
