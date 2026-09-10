@@ -117,7 +117,8 @@
               <span
                 t-attf-class="tiny-text bold text-#{'mid-green' if sponsorship.state == 'active' else 'mid-orange'}"
               >
-                <t t-out="'Received' if sponsorship.state == 'active' else 'Pending'" />
+                <t t-if="sponsorship.state == 'active'">Received</t>
+                <t t-else="">Pending</t>
               </span>
             </div>
             <div class="d-flex justify-content-between ns-summary-row">
