@@ -342,9 +342,12 @@ class CompassionChild(models.Model):
             .sudo()
             .search(
                 [
+                    "|",
+                    ("company_id", "=", False),
                     ("company_id", "=", company.id),
                     ("is_my_compassion", "=", True),
                 ],
+                order="company_id desc",
                 limit=1,
             )
         )
