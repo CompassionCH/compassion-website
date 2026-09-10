@@ -21,6 +21,8 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     "change .suggested-amount": "_onAmountChange",
     "input input[name=custom_amount]": "_onCustomAmountInput",
     "change #birthdate": "_onBirthDateChange",
+    "change .payment-method-radio": "_onPaymentModeRadioChange",
+    "change #sponsorship_plus": "_onSponsorshipPlusChange",
   },
 
   /**
@@ -210,6 +212,45 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
       return;
     }
     $price.text(`${$price.data("currencyName")} ${amount}.-`);
+  },
+
+  /**
+   * The fast checkout renders one radio per payment mode in the step's own
+   * left column, with a single shared Continue button doing the actual
+   * submit. That button is generic - it carries no payment mode of its own -
+   * so whichever radio is checked has its data-payment-mode/data-payment-code
+   * copied onto it here. This is what lets the my_compassion_switzerland
+   * eBill extension's _onStepClick override keep recognizing an eBill
+   * submission (it reads those attributes off the clicked element) without
+   * that extension having to know radios are involved at all.
+   * @param {Event} ev
+   */
+  _onPaymentModeRadioChange: function (ev) {
+    const $radio = $(ev.currentTarget);
+    this.$(".btn-next").attr({
+      "data-payment-mode": $radio.data("payment-mode"),
+      "data-payment-code": $radio.data("payment-code"),
+    });
+  },
+
+  /**
+   * Keeps the fast checkout's right-column "Total" live as Sponsorship Plus
+   * is toggled, off the total element's own data-base-amount/data-plus-amount
+   * (server-rendered once, from the same amounts the donation card and the
+   * Sponsorship Plus toggle already show) rather than round-tripping a step
+   * call just to reflect a checkbox.
+   * @param {Event} ev
+   */
+  _onSponsorshipPlusChange: function (ev) {
+    const $total = this.$("#ns-total-amount");
+    if (!$total.length) {
+      return;
+    }
+    const base = parseFloat($total.data("baseAmount")) || 0;
+    const plus = parseFloat($total.data("plusAmount")) || 0;
+    const total = base + (ev.currentTarget.checked ? plus : 0);
+    const formatted = total % 1 === 0 ? `${total}.-` : total.toFixed(2);
+    $total.text(`${$total.data("currencyName")} ${formatted}/mo.`);
   },
 
   /**

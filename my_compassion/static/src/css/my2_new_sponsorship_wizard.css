@@ -67,9 +67,70 @@
   height: 1rem;
 }
 
+.new-sponsorship-wizard-form input.payment-method-radio {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+  position: relative;
+  border-radius: 50%;
+  border: 1px solid var(--light-grey);
+  background-color: var(--pure-white);
+  cursor: pointer;
+}
+
+.new-sponsorship-wizard-form input.payment-method-radio:checked {
+  border-color: var(--core-blue);
+}
+
+.new-sponsorship-wizard-form input.payment-method-radio:checked::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background-color: var(--core-blue);
+  transform: translate(-50%, -50%);
+}
+
 .new-sponsorship-wizard-form button {
   max-width: 300px;
   width: 100%;
+}
+
+@media (max-width: 991.98px) {
+  #finish_button {
+    max-width: none;
+  }
+}
+
+/* The "who shall we thank" card names the child, not a price - the shared
+   DonationItemComponent always renders a price element, with no prop to
+   drop it entirely. */
+#thank-you-letter-card-price {
+  display: none;
+}
+
+.ns-letter-card .body-large {
+  font-size: 18px;
+}
+
+.ns-letter-card .body-small {
+  font-size: 13px;
+}
+
+/* Server-rendered bg-pure-white (also !important) is meant for desktop -
+   below the lg breakpoint the card goes back to light-blue. Double class
+   for specificity: a plain !important tie against another !important rule
+   falls back to bundle load order, which the .btn-ebill.btn-ebill rule
+   above already found isn't reliably this file. */
+@media (max-width: 991.98px) {
+  .ns-letter-card.ns-letter-card {
+    background-color: var(--light-blue) !important;
+  }
 }
 
 /* A greyer border than Bootstrap's default form-control one. */
@@ -112,6 +173,12 @@
   max-width: calc(min(500px, 100% - 25px));
   margin-left: auto;
   margin-right: auto;
+}
+
+@media (max-width: 991.98px) {
+  .new-sponsorship-thank-you-container {
+    margin-bottom: 3rem;
+  }
 }
 
 .thank-you-child-profile {
@@ -186,6 +253,22 @@
   border-color: var(--core-blue) !important;
 }
 
+.radio-card:hover {
+  border-color: var(--core-blue) !important;
+}
+
+.radio-card:hover .payment-method-radio {
+  border-color: var(--core-blue);
+}
+
+#sponsorship_plus ~ .toggle-card-check {
+  width: 1rem;
+  height: 1rem;
+  font-size: 0.6rem;
+  line-height: 1;
+  border-radius: 0.4rem !important;
+}
+
 /* The "Who shall we thank?" form's field labels (Firstname, Surname, Phone
    number...): the shared FormFieldComponent bolds them by default, but with
    the heading, the required asterisks and the buttons above/around them
@@ -193,4 +276,157 @@
 .new-sponsorship-details-form .form-field-component label,
 .new-sponsorship-details-form summary {
   font-family: "NeighbourSans Regular", sans-serif;
+}
+
+/* Desktop: form + child-summary sidebar side by side instead of stacked. */
+@media (min-width: 1024px) {
+  .new-sponsorship-container,
+  .new-sponsorship-thank-you-container {
+    max-width: min(1100px, 100% - 48px);
+  }
+
+  .ns-columns {
+    display: grid !important;
+    grid-template-columns: 1.15fr 0.85fr;
+    column-gap: 2.5rem;
+    align-items: start;
+  }
+
+  .ns-columns > * {
+    grid-column: 1;
+  }
+
+  .ns-columns > .ns-aside-item {
+    grid-column: 2;
+    max-width: 420px;
+  }
+
+  .ns-columns > .ns-full-width {
+    grid-column: 1 / -1;
+  }
+
+  .ns-left-title .title-component {
+    text-align: left !important;
+  }
+
+  /* One step down the wizard's tiny-text/very-tiny-text scale (14px): the
+     shared TitleComponent's description has no size prop of its own, and
+     changing it there would affect every other title on the site. */
+  .ns-left-title .title-description {
+    font-size: 14px;
+  }
+}
+
+/* Desktop: same side-by-side job as .ns-columns above, but flexbox-based
+   (matches Bootstrap's own lg breakpoint, 992px, instead of .ns-columns'
+   1024px) for steps that lay their two divs out with plain flex utilities. */
+@media (min-width: 992px) {
+  .ns-flex-columns {
+    display: flex !important;
+    flex-direction: row;
+    gap: 2.5rem;
+    align-items: stretch;
+    padding: 2rem 0;
+  }
+
+  .ns-flex-columns > .ns-aside-item,
+  .ns-flex-columns > :not(.ns-aside-item) {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .ns-flex-columns.ns-flex-columns-reverse {
+    flex-direction: row-reverse;
+  }
+
+  .ns-highlight-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 1rem 1rem;
+  }
+
+  .ns-total-row {
+    margin-top: auto !important;
+  }
+
+  .ns-highlight-panel .donation-item-container {
+    border-left: none;
+  }
+
+  .ns-highlight-panel .thumbnail {
+    border-radius: 0.75rem;
+  }
+
+  .ns-split-blue-left .ns-highlight-panel > * {
+    max-width: calc(100% - 5rem);
+  }
+
+  .ns-split-blue-right .ns-aside-item > * {
+    max-width: calc(100% - 5rem);
+  }
+
+  .ns-all-set-columns .ns-highlight-panel > * {
+    max-width: calc(100% - 5rem);
+  }
+
+  /* DOM order is aside-item (summary) first, highlight-panel (title +
+     volunteering card + dashboard button) second, so mobile's plain block
+     stacking already reads summary-then-volunteering-and-button - order
+     puts highlight-panel back on the visual left for desktop, as a plain
+     flex item (no shared grid rows), so its height is never coupled to
+     the summary column's. */
+  .ns-all-set-columns .ns-aside-item {
+    order: 2;
+  }
+
+  .ns-all-set-columns .ns-highlight-panel {
+    order: 1;
+  }
+
+  /* Desktop-only split background, full browser width rather than only
+     .new-sponsorship-container's own (narrower, centered) width: a ::before
+     breaks out to 100vw while the row itself keeps its current centered
+     width/position for its actual content. Since the row is itself
+     horizontally centered on the page, its own midpoint already lines up
+     with the viewport's, so a plain 50% stop lands exactly on the gap
+     between the two (equal-width) columns with no calc() needed. */
+  .ns-flex-columns.ns-split-blue-right,
+  .ns-flex-columns.ns-split-blue-left {
+    position: relative;
+  }
+
+  .ns-flex-columns.ns-split-blue-right::before,
+  .ns-flex-columns.ns-split-blue-left::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    z-index: -1;
+  }
+
+  .ns-flex-columns.ns-split-blue-right::before {
+    background: linear-gradient(to right, var(--pure-white) 50%, var(--light-blue) 50%);
+  }
+
+  .ns-flex-columns.ns-split-blue-left::before {
+    background: linear-gradient(to right, var(--light-blue) 50%, var(--pure-white) 50%);
+  }
+}
+
+/* All-set summary box rows (sponsored child, monthly gift, etc.): a
+   mid-grey divider between rows, none after the last one. */
+.ns-summary-row {
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--mid-grey);
+}
+
+.ns-summary-row:last-child {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: none;
 }
