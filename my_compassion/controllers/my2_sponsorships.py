@@ -119,7 +119,7 @@ class MyCompassionSponsorshipsController(http.Controller):
         Renders the write and pray variant of the sponsorships page.
 
         Write&Pray is Switzerland-only: the free, no-financial-support
-        godparent role it offers is not a product the other countries sell.
+        sponsorship role it offers is not a product the other countries sell.
 
         return: An HTTP response containing a rendered template with the
         sponsorships landing page.
