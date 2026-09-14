@@ -26,6 +26,19 @@
         <a class="nav-link" href="/my2/donations">My donations</a>
       </li>
     </t>
+    <!-- Always last, so it sits on the far right regardless of which
+         conditional items above it are shown -->
+    <t t-call="website_sale.header_cart_link">
+      <t t-set="show_gift_basket_icon" t-value="True" />
+      <t t-set="_icon" t-value="True" />
+      <t t-set="_item_class" t-value="'nav-item'" />
+      <t
+        t-set="_link_class"
+        t-value="'nav-link my2-gift-link d-flex align-items-center text-reset h-100'"
+      />
+      <t t-set="_icon_wrap_class" t-value="'d-flex align-items-center h-100'" />
+      <t t-set="_badge_class" t-value="'rounded-1 ms-1'" />
+    </t>
   </template>
   <template
     id="my_compassion_dynamic_menu"
@@ -58,6 +71,24 @@
     <xpath expr="//t[@t-set='show_cart']" position="attributes">
       <attribute name="t-value">request.session.uid</attribute>
     </xpath>
+    <!-- t-nocache only carries through the caller values it explicitly lists
+         (see the t-nocache-* attributes below); a new one must be declared
+         here too or it silently reads as undefined inside this fragment. -->
+    <xpath expr="//t[@t-nocache]" position="attributes">
+      <attribute
+        name="t-nocache-show_gift_basket_icon"
+      >show_gift_basket_icon</attribute>
+    </xpath>
+    <!-- The gift basket icon now only renders next to the "Give" menu item
+         (see my2_nav_items), not at whichever spot each stock header layout
+         auto-injects website_sale.header_cart_link (icon cluster on desktop,
+         top bar on mobile) -->
+    <xpath
+      expr="//li[contains(@t-attf-class, 'o_wsale_my_cart')]"
+      position="attributes"
+    >
+      <attribute name="t-if">show_gift_basket_icon</attribute>
+    </xpath>
     <!-- Modify the behavior of the base Odoo cart for custom redirection and design -->
     <xpath expr="//a[@href='/shop/cart']" position="attributes">
       <attribute name="href">/my2/gift-package</attribute>
@@ -74,6 +105,9 @@
       <attribute
         name="t-attf-class"
       >my_cart_quantity badge bg-primary #{_badge_class} #{'d-none' if (website_sale_cart_quantity == 0) else ''}</attribute>
+      <attribute
+        name="style"
+      >padding: 0.28rem 0.4rem 0.22rem; display: inline-flex; align-items: center; justify-content: center; position: static;</attribute>
     </xpath>
   </template>
   <template
