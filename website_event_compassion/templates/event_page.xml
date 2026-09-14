@@ -37,7 +37,7 @@
     - barometer_title_class (optional): additional classes for the title, if any
     - barometer_bg_class (optional): additional classes for the barometer background, if any
     - barometer_amount_class (optional): additional classes for the amount, if any
-    - barometer_progress_text_dark (optional): text color as long as the progress doesn't reach it. Default 'text-dark' - only for amount_inside
+    - barometer_progress_text_dark (optional): text color as long as the progress doesn't reach it. Default 'text-body' - only for amount_inside
     - barometer_progress_text_light (optional): text color when the progress reaches it. Default 'text-white' - only for amount_inside
     -->
   <template id="event_barometer" name="Event barometer">
@@ -56,7 +56,7 @@
       />
       <t t-if="amount_inside">
         <div
-          t-attf-class="progress-amount position-absolute w-100 h-100 d-flex align-items-center justify-content-center #{ barometer_progress_text_dark or  'text-dark' } #{ barometer_amount_class }"
+          t-attf-class="progress-amount position-absolute w-100 h-100 d-flex align-items-center justify-content-center #{ barometer_progress_text_dark or 'text-body' } #{ barometer_amount_class }"
           style="pointer-events: none;"
         >
           <t t-call="website_event_compassion.event_barometer_amount" />
