@@ -5,25 +5,28 @@
   <template id="my2_nav_items" name="MyCompassion Menu Items">
     <t t-set="partner" t-value="request.env.user.partner_id" />
     <li class="nav-item">
-      <a class="nav-link" href="/my2/dashboard">Home</a>
+      <a class="nav-link my2-nav-link" href="/my2/dashboard">Home</a>
     </li>
     <t t-if="partner.is_sponsor">
       <li class="nav-item">
-        <a class="nav-link" href="/my2/children">My sponsorships</a>
+        <a class="nav-link my2-nav-link" href="/my2/children">My sponsorships</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/my2/children/letters">Letters</a>
+        <a class="nav-link my2-nav-link" href="/my2/children/letters">Letters</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/my2/children/letters/new">Write a letter</a>
+        <a
+          class="nav-link my2-nav-link"
+          href="/my2/children/letters/new"
+        >Write a letter</a>
       </li>
     </t>
     <li class="nav-item">
-      <a class="nav-link" href="/my2/gifts">Give</a>
+      <a class="nav-link my2-nav-link" href="/my2/gifts">Give</a>
     </li>
     <t t-if="partner.is_donor">
       <li class="nav-item">
-        <a class="nav-link" href="/my2/donations">My donations</a>
+        <a class="nav-link my2-nav-link" href="/my2/donations">My donations</a>
       </li>
     </t>
     <!-- Always last, so it sits on the far right regardless of which
@@ -79,15 +82,18 @@
         name="t-nocache-show_gift_basket_icon"
       >show_gift_basket_icon</attribute>
     </xpath>
-    <!-- The gift basket icon now only renders next to the "Give" menu item
-         (see my2_nav_items), not at whichever spot each stock header layout
-         auto-injects website_sale.header_cart_link (icon cluster on desktop,
-         top bar on mobile) -->
+    <!-- On the MyCompassion website only, the gift basket icon renders next
+         to the "Give" menu item (see my2_nav_items) instead of at whichever
+         spot each stock header layout auto-injects
+         website_sale.header_cart_link (icon cluster on desktop, top bar on
+         mobile); every other website keeps the standard cart link. -->
     <xpath
       expr="//li[contains(@t-attf-class, 'o_wsale_my_cart')]"
       position="attributes"
     >
-      <attribute name="t-if">show_gift_basket_icon</attribute>
+      <attribute
+        name="t-if"
+      >show_gift_basket_icon or website != request.env.ref('my_compassion.my2_website', raise_if_not_found=False)</attribute>
     </xpath>
     <!-- Modify the behavior of the base Odoo cart for custom redirection and design -->
     <xpath expr="//a[@href='/shop/cart']" position="attributes">
