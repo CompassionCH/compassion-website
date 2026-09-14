@@ -1,4 +1,20 @@
 <odoo>
+  <record
+    model="ir.actions.server"
+    id="base_automation_sale_donation_ir_actions_server"
+  >
+    <field name="name">Sale Donation: Create and Post Invoice</field>
+    <field name="model_id" ref="sale.model_sale_order" />
+    <field name="state">code</field>
+    <field name="code">
+payment = env["sale.advance.payment.inv"].create({})
+payment.with_context(
+    active_ids=records.ids, active_model="sale.order"
+).create_invoices()
+records.mapped("invoice_ids").filtered(lambda m: m.state == "draft").action_post()
+    </field>
+  </record>
+
   <record model="base.automation" id="base_automation_sale_donation">
     <field name="name">Sale Donation Automation</field>
     <field name="model_id" ref="sale.model_sale_order" />
@@ -8,13 +24,9 @@
       eval="[(6, 0, [ref('sale.field_sale_order__invoice_status')])]"
     />
     <field name="filter_domain">[("invoice_status", "=", "to invoice")]</field>
-    <field name="state">code</field>
-    <field name="code">
-payment = env["sale.advance.payment.inv"].create({})
-payment.with_context(
-    active_ids=records.ids, active_model="sale.order"
-).create_invoices()
-records.mapped("invoice_ids").action_post()
-        </field>
+    <field
+      name="action_server_ids"
+      eval="[(6, 0, [ref('base_automation_sale_donation_ir_actions_server')])]"
+    />
   </record>
 </odoo>

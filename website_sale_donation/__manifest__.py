@@ -22,7 +22,7 @@
         "partner_auto_match",
     ],
     "data": [
-        # "data/base_automation.xml",
+        "data/base_automation.xml",
         "templates/website_cart.xml",
         "templates/website_sale_confirmation.xml",
     ],
