@@ -118,6 +118,7 @@
         "auth_signup",
         "http_routing",
         "website",
+        "website_crm_request",  # the /contactus form posts a crm.claim
         "auth_signup_verify_email",  # OCA/server-auth
         "theme_compassion_2025",
         "utm",
@@ -178,6 +179,7 @@
         ],
         "web.assets_tests": [
             "my_compassion/static/src/js/tours/donation_tour.js",
+            "my_compassion/static/tests/tours/contact_us.js",
         ],
     },
     "demo": [],
