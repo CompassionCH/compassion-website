@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Page: My Compassion 2 New Sponsorship Wizard Page
+
+    Description:
+    This page guides the user through the sponsorship procedure. Which steps
+    run is decided by new.sponsorship.wizard.STEPS_CONFIGS / _get_step_xmlids;
+    the step templates are some of the files in this folder (see below) -
+    not all of them, the folder also holds the rest of the new-sponsorship
+    journey that isn't a wizard step (payment, post-payment details,
+    thank-you). Public visitors run the fast checkout - one page holding the
+    email, the consent and one button per payment mode - and give their name
+    after paying; the user-details and communication steps
+    (logged_in_steps.xml) are kept for the flows and country extensions that
+    still collect everything up front.
+
+    This file is the page's entry point: the outer form wrapper
+    (my2_new_sponsorship_wizard_page) and the shared per-step chrome
+    (my2_new_sponsorship_wizard_form_content - progress bar, title, buttons).
+    The individual step templates it wraps live in sibling files in this
+    same folder: standard_step.xml, wap_step.xml, sponsorship_plus.xml,
+    logged_in_steps.xml, progress_bar.xml. Also in this folder, but not
+    wizard steps: my2_new_sponsorship_payment.xml (the provider-payment
+    checkout some payment modes redirect to) and the thank-you/details/
+    all-set page (thank_you_page.xml, which embeds
+    my2_new_sponsorship_details.xml's "Who shall we thank?" form and
+    all_set.xml's "All set" summary).
+
+    Used in route:
+    - /my2/new-sponsorship/<child-id>
+    - /my2/new-sponsorship/thank-you
+    - /my2/new-sponsorship/step
+
+    Injected data:
+    - wizard ('new.sponsorship.wizard' record): The associated new sponsorship wizard record.
+    - titles (array of 'res.partner.title' records): The available titles to choose from.
+    - countries (array of 'res.country' records): The list of countries to choose from.
+    - payment_methods (array of 'account.payment.mode' records): The list of payment methods to choose from.
+    - payment_mode_buttons (array of 'account.payment.mode' records): The
+      modes the current step submits itself with (see
+      new.sponsorship.wizard._get_payment_mode_buttons), rendered as radios
+      in standard_step.xml's left column - selecting one only picks it, the
+      generic Continue button below still does the actual submit. Empty for
+      the steps that keep the generic Continue/Finish button as their only
+      way to submit.
+    - step_offers_payment_modes (boolean): Whether those radios are the
+      current step's submit (see
+      new.sponsorship.wizard._step_offers_payment_modes). False for the steps
+      that keep the generic button as their only way to submit; True with an
+      empty payment_mode_buttons means the company has published no mode,
+      and the page must then offer no submit at all.
+    - spoken_languages (array of 'res.lang.compassion' records): The list of spoken languages to choose from.
+    - lead_sources (array of 'recurring.contract.origin' records): The list of lead sources to choose from.
+    - details_token (string): Thank-you page only. Set while the signup still
+      waits for its sponsor's name, and what makes the page show the
+      "Who shall we thank?" form (my2_new_sponsorship_details.xml).
+
+    Note:
+    The element IDs #payment_method and #finish_button are used by the
+    Compassion Switzerland eBill extension (my_compassion_switzerland addon).
+    If renamed or modified, make sure to update the corresponding logic there
+    as well. They live on the payment-methods step, which the logged-in flow
+    still runs. The public fast-checkout page's payment-mode radios
+    deliberately avoid those two IDs - there is no #payment_method dropdown
+    here, and reusing the id on a non-<select> element would wrongly trip
+    the extension's "logged-in flow" detection (_initEbillState checks for
+    #payment_method's mere presence to decide whether to call the auth=user
+    /ebill/current-user/contract route, which a public visitor cannot use).
+    The fast-checkout page instead integrates through the extension's
+    data-payment-code-driven _onStepClick override: my2_new_sponsorship_wizard.js's
+    "change .payment-method-radio" handler keeps the generic Continue
+    button's own data-payment-mode/data-payment-code synced to whichever
+    radio is checked, so a click on it is indistinguishable, to that
+    override, from a dedicated per-mode button.
+-->
+<odoo>
+  <!-- NEW SPONSORSHIP WIZARD FORM CONTENT -->
+  <template
+    id="my2_new_sponsorship_wizard_form_content"
+    name="New Sponsorship Wizard Dynamic Content"
+  >
+    <input type="hidden" name="wizard_id" t-att-value="wizard.id" />
+    <!-- PROGRESS BAR -->
+    <div t-if="wizard.n_steps > 1" class="mt-3 mb-2 px-2 px-lg-0 pt-2 w-100">
+      <t t-call="my_compassion.NewSponsorshipStepProgressBar">
+        <t t-set="n_steps" t-value="wizard.n_steps" />
+        <t t-set="current_step" t-value="wizard.current_step_idx" />
+      </t>
+    </div>
+    <!-- TITLE -->
+    <!-- Hidden on desktop for the two fast-checkout steps (details_deferred
+         - both, and only both): they render their own left-column title
+         instead (see standard_step.xml / wap_step.xml), matching the Figma
+         desktop layout. -->
+    <div t-attf-class="mx-5 mt-4 #{'d-lg-none' if wizard.details_deferred else ''}">
+      <t t-call="theme_compassion_2025.TitleComponent">
+        <t
+          t-if="step_offers_payment_modes"
+          t-set="title_content"
+          t-value="'Sponsor ' + (wizard.child_id.preferred_name or '')"
+        />
+        <t t-else="" t-set="title_content" t-value="wizard.current_step.title" />
+        <t t-set="color" t-value="'core-blue'" />
+        <t t-set="show_underline" t-value="True" />
+        <t t-set="underline_color" t-value="'low-yellow'" />
+        <t
+          t-if="wizard.sponsorship_type == 'write_and_pray'"
+          t-set="description"
+        >Let's set up your Write&amp;Pray and introduce you to&#160;<t
+          t-out="wizard.child_id.preferred_name"
+        />.</t>
+        <t
+          t-else=""
+          t-set="description"
+        >Let's set up your sponsorship and introduce you to&#160;<t
+          t-out="wizard.child_id.preferred_name"
+        />.</t>
+      </t>
+    </div>
+    <!-- MAIN CONTENT with ARE YOU LOGGED? and PAYMENT BUTTONS-->
+    <div class="px-1 d-flex flex-column">
+      <t t-out="inner_step_html" />
+      <!-- The generic button stands in only for the steps whose submit it
+           actually is. The fast-checkout page's payment-mode step never
+           reaches this: its own Continue button lives in
+           standard_step.xml's left column instead (see there), so its blue
+           highlight column stretches to match instead of stopping short of
+           the footer with this button in between. The Write&amp;Pray step
+           has its own desktop-only Continue button in its left column too
+           (see wap_step.xml) for the same reason, but - unlike the
+           fast-checkout step - still needs this one on mobile, so it's
+           hidden with d-lg-none there rather than skipped outright. -->
+      <div
+        t-if="not step_offers_payment_modes"
+        t-attf-class="btn-next my-3 d-flex justify-content-center #{'d-lg-none' if wizard.sponsorship_type == 'write_and_pray' else ''}"
+        data-action="next"
+        t-att-data-sponsorship-type="wizard.sponsorship_type"
+      >
+        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+          <t t-set="variant" t-value="'compact'" />
+          <t t-set="variation" t-value="'filled'" />
+          <t
+            t-if="wizard.current_step_idx &lt; (wizard.n_steps-1) or wizard.sponsorship_type == 'write_and_pray'"
+            t-set="label"
+          >Continue</t>
+          <t t-else="" t-set="label">Finish</t>
+          <t t-set="color" t-value="'core-blue'" />
+          <t t-set="text_color" t-value="'pure-white'" />
+          <!-- ID used by eBill extension in my_compassion_switzerland -->
+          <t t-set="id" t-value="'finish_button'" />
+        </t>
+      </div>
+      <div
+        t-if="wizard.current_step_idx &gt; 0"
+        class="btn-previous mt-2 mb-3 d-flex justify-content-center"
+        data-action="previous"
+        t-att-data-sponsorship-type="wizard.sponsorship_type"
+      >
+        <button class="back-button text-low-black body-small bold">Back</button>
+      </div>
+    </div>
+  </template>
+  <!-- NEW SPONSORSHIP WIZARD PAGE -->
+  <template id="my2_new_sponsorship_wizard_page" name="New Sponsorship Wizard Page">
+    <t t-call="website.layout">
+      <div class="new-sponsorship-container">
+        <form
+          class="new-sponsorship-wizard-form"
+          action="/my2/new-sponsorship/submit"
+          method="POST"
+        >
+          <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+          <div class="new-sponsorship-wizard-form-content">
+            <!-- INITIAL FORM CONTENT -->
+            <t t-out="form_content_html" />
+          </div>
+        </form>
+      </div>
+    </t>
+  </template>
+</odoo>
