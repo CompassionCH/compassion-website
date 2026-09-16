@@ -29,6 +29,20 @@ class EventCompassion(models.Model):
     picture_1 = fields.Image("Banner image", attachment=True)
     website_image = fields.Char(compute="_compute_website_image")
     website_side_info = fields.Html(string="Side info", translate=True, sanitize=False)
+    # Per-trip texts pulled into the event communication rules, so that the same
+    # rule can serve any trip without editing its template.
+    trip_welcome_text = fields.Html(
+        string="Welcome sentence", translate=True, sanitize=False
+    )
+    trip_flight_info = fields.Html(
+        string="Recommended flights", translate=True, sanitize=False
+    )
+    trip_vaccination_info = fields.Html(
+        string="Vaccination information", translate=True, sanitize=False
+    )
+    trip_visa_info = fields.Html(
+        string="Visa information", translate=True, sanitize=False
+    )
     event_type_id = fields.Many2one(
         "event.type",
         "Registration Template",

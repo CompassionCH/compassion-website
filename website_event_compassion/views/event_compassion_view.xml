@@ -42,6 +42,20 @@
         <field name="website_id" groups="website.group_website_designer" />
         <field name="event_type_id" />
       </field>
+      <notebook>
+        <page
+          string="Trips"
+          name="trip_communication"
+          invisible="type not in ['sport', 'tour']"
+        >
+          <group string="Texts used by the trip communication rules">
+            <field name="trip_welcome_text" />
+            <field name="trip_flight_info" />
+            <field name="trip_vaccination_info" />
+            <field name="trip_visa_info" />
+          </group>
+        </page>
+      </notebook>
     </field>
   </record>
   <!-- Move events into the Events App and rename the menu for better clarity between Compassion Events and Odoo Events -->
