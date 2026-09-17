@@ -4,7 +4,7 @@ from odoo.addons.website_sale.controllers.main import WebsiteSale
 
 
 class WebsiteSaleDonation(WebsiteSale):
-    def sitemap_shop(self, env, rule, qs):
+    def sitemap_shop(env, rule, qs):
         return {}
 
     @http.route(
