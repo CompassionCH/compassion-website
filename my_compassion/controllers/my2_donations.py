@@ -396,6 +396,15 @@ class MyCompassionDonationsController(CustomerPortal):
         ):
             return {"state": False}
 
+        if not tx.acquirer_reference:
+            # PostFinance refused to create the payment, so there is nothing to
+            # poll: tell the app instead of spinning forever (T3472).
+            return {
+                "state": "error",
+                "processing": False,
+                "reference": tx.reference,
+            }
+
         # Only chase a payment that can still move, and only a recent one, so a
         # long-abandoned transaction cannot make the app call the gateway forever.
         recent = tx.create_date > fields.Datetime.subtract(
