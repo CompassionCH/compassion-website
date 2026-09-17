@@ -8,7 +8,7 @@ from odoo.exceptions import ValidationError
 FAST_CHECKOUT_STEP = "my_compassion.new_sponsorship_wizard_step_fast_checkout"
 
 # Write&Pray's own single page: date of birth (the eligibility gate),
-# e-mail, the free-godparent-vs-contributing choice and, only once
+# e-mail, the free-sponsorship-vs-contributing choice and, only once
 # contributing is picked, the suggested amounts. Unlike the standard fast
 # checkout it never ends in a payment-mode button - a Write&Pray sponsorship
 # is deliberately created without one either way (see finish_sponsorship) -
