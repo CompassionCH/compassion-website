@@ -15,6 +15,9 @@ class DonationController(Controller):
     )
     def project_donation_page(self, project, page=1, participant=None, **kwargs):
         """To preselect a participant, pass its id as participant query parameter"""
+        # Sudo from the start: crowdfunding.project delegates to utm.campaign
+        # (_inherits), which the public user has no read access to at all.
+        project = project.sudo()
         if not project.website_published and not request.env.user.has_group(
             "website.group_website_designer"
         ):
@@ -48,7 +51,7 @@ class DonationController(Controller):
         return request.render(
             "crowdfunding_compassion.project_donation_page",
             {
-                "project": project.sudo(),
+                "project": project,
                 "selected_participant": participant,
                 "page": page,
                 "skip_type_selection": skip_type_selection,
