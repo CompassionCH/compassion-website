@@ -262,7 +262,7 @@ class EventRegistration(models.Model):
         # Allow setting is_published manually
         pass
 
-    def _create_payment_link(self, move, description):
+    def _create_payment_link(self, move):
         payment_link = (
             request.env["payment.link.wizard"]
             .sudo()
@@ -274,7 +274,6 @@ class EventRegistration(models.Model):
                     "currency_id": move.currency_id.id,
                     "partner_id": move.partner_id.id,
                     "amount_max": move.amount_residual,
-                    "description": description,
                 }
             )
         )
@@ -284,11 +283,8 @@ class EventRegistration(models.Model):
         for registration in self:
             if registration.down_payment_id:
                 move = registration.down_payment_id
-                description = (
-                    _("Down payment for %s") % registration.compassion_event_id.name
-                )
                 registration.down_payment_link = (
-                    self._create_payment_link(move, description)
+                    self._create_payment_link(move)
                     + f"&return_url=/my/events/{registration.id}"
                 )
             else:
@@ -298,11 +294,8 @@ class EventRegistration(models.Model):
         for registration in self:
             if registration.trip_invoice_id:
                 move = registration.trip_invoice_id
-                description = (
-                    _("Payment for %s") % registration.compassion_event_id.name
-                )
                 registration.payment_link = (
-                    self._create_payment_link(move, description)
+                    self._create_payment_link(move)
                     + f"&return_url=/my/events/{registration.id}"
                 )
             else:
