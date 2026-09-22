@@ -84,8 +84,9 @@ class EventRegistration(models.Model):
         tracking=True,
         index=True,
         copy=False,
-        domain="['|', ('event_type_ids', '=', False),"
-        "      ('event_type_ids', '=', event_id.event_type_id)]",
+        domain="['&',"
+        "  '|', ('event_type_ids', '=', False), ('event_type_ids', '=', event_type_id),"
+        "  '|', ('trip_type_ids', '=', False), ('trip_type_ids', '=', trip_type_id)]",
         group_expand="_read_group_stage_ids",
         readonly=False,
     )
@@ -103,6 +104,15 @@ class EventRegistration(models.Model):
     is_stage_complete = fields.Boolean(compute="_compute_is_stage_complete")
     compassion_event_id = fields.Many2one(
         "crm.event.compassion", related="event_id.compassion_event_id", readonly=True
+    )
+    event_type_id = fields.Many2one(
+        "event.type", related="event_id.event_type_id", store=True, readonly=True
+    )
+    trip_type_id = fields.Many2one(
+        "event.trip.type",
+        related="event_id.compassion_event_id.trip_type_id",
+        store=True,
+        readonly=True,
     )
     fundraising = fields.Boolean(related="event_id.fundraising")
     amount_objective = fields.Monetary("Raise objective")
@@ -342,8 +352,12 @@ class EventRegistration(models.Model):
         # retrieve event type from the context and write the domain
         # - ('id', 'in', stages.ids): add columns that should be present
         type_id = self._context.get("default_event_type_id")
+        trip_type_id = self._context.get("default_trip_type_id")
         search_domain = [
             ("event_type_ids", "=", type_id),
+            "|",
+            ("trip_type_ids", "=", False),
+            ("trip_type_ids", "=", trip_type_id),
         ]
         if stages:
             search_domain = ["|", ("id", "in", stages.ids)] + search_domain
@@ -535,7 +549,7 @@ class EventRegistration(models.Model):
             ):
                 registration.amount_objective = event.participants_amount_objective
             if not registration.stage_id:
-                event_stages = registration.event_id.event_type_id.stage_ids
+                event_stages = registration.event_id._registration_stages()
                 registration.stage_id = event_stages[:1] or self._default_stage()
             # Set donation receipt preference
             registration.partner_id.receive_ambassador_receipts = True
@@ -757,15 +771,11 @@ class EventRegistration(models.Model):
         """Transition to next registration stage"""
         stage_complete = self.filtered("is_stage_complete")
         for registration in stage_complete:
-            next_stage = self.env["event.registration.stage"].search(
-                [
-                    ("sequence", ">", registration.stage_id.sequence),
-                    "|",
-                    ("event_type_ids", "in", registration.stage_id.event_type_ids.ids),
-                    ("event_type_ids", "=", False),
-                ],
-                limit=1,
+            stages = registration.event_id._registration_stages().filtered(
+                lambda stage, current=registration.stage_id: stage.sequence
+                > current.sequence
             )
+            next_stage = stages[:1]
             if next_stage:
                 registration.write({"stage_id": next_stage.id})
 

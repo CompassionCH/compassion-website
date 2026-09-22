@@ -29,6 +29,12 @@ class EventStage(models.Model):
         "Other event types will not be able to see or use this stage.",
         readonly=False,
     )
+    trip_type_ids = fields.Many2many(
+        "event.trip.type",
+        "event_registration_stage_to_trip_type_rel",
+        string="Trip types",
+        help="Trip types that use this stage. Leave empty to use it for all of them.",
+    )
     task_ids = fields.One2many("event.registration.task", "stage_id", "Tasks")
     fold = fields.Boolean(
         "Folded in Pipeline",

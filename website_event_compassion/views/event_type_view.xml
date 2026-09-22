@@ -8,6 +8,7 @@
       <div class="oe_title" position="after">
         <group>
           <field name="compassion_event_type" />
+          <field name="is_trip" />
         </group>
       </div>
       <field name="event_type_mail_ids" position="before">
@@ -43,6 +44,7 @@
           domain="['|', ('event_type_ids', '=', id), ('event_type_ids', '=', False)]"
           required="interval_type == 'after_stage'"
         />
+        <field name="trip_type_ids" widget="many2many_tags" optional="show" />
       </xpath>
       <xpath expr="/form/sheet" position="after">
         <chatter />

@@ -20,6 +20,11 @@ class EventType(models.Model):
     compassion_event_type = fields.Selection(
         EventCompassion.get_event_types, required=True, default="meeting"
     )
+    is_trip = fields.Boolean(
+        "Trip template",
+        help="Events using this template are trips: they get the Trip type "
+        "and the trip communication texts.",
+    )
     stage_ids = fields.Many2many(
         "event.registration.stage", "event_registration_stage_to_type_rel"
     )

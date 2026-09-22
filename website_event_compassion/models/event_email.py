@@ -32,6 +32,12 @@ class EventTypeMail(models.Model):
         ondelete={"after_stage": "set default"},
     )
     stage_id = fields.Many2one("event.registration.stage", "Stage", readonly=False)
+    trip_type_ids = fields.Many2many(
+        "event.trip.type",
+        "event_type_mail_to_trip_type_rel",
+        string="Trip types",
+        help="Trip types this rule applies to. Leave empty to use it for all of them.",
+    )
     # Communication rules have no mail template to point at.
     template_ref = fields.Reference(required=False)
 
@@ -78,6 +84,7 @@ class EventTypeMail(models.Model):
             {
                 "communication_id": self.communication_id.id,
                 "stage_id": self.stage_id.id,
+                "trip_type_ids": [(6, 0, self.trip_type_ids.ids)],
             }
         )
         return values
@@ -105,6 +112,12 @@ class EventMail(models.Model):
         ondelete={"after_stage": "set default"},
     )
     stage_id = fields.Many2one("event.registration.stage", "Stage", readonly=False)
+    trip_type_ids = fields.Many2many(
+        "event.trip.type",
+        "event_mail_to_trip_type_rel",
+        string="Trip types",
+        help="Trip types this rule applies to. Leave empty to use it for all of them.",
+    )
 
     event_type_id = fields.Many2one("event.type", readonly=False)
     event_id = fields.Many2one(required=False, readonly=False)
@@ -168,9 +181,17 @@ class EventMail(models.Model):
             {
                 "communication_id": self.communication_id.id,
                 "stage_id": self.stage_id.id,
+                "trip_type_ids": [(6, 0, self.trip_type_ids.ids)],
             }
         )
         return values
+
+    def _for_trip_type(self):
+        """Drop the schedulers that don't apply to their event's type of trip."""
+        return self.filtered(
+            lambda mail: not mail.trip_type_ids
+            or mail.event_id.compassion_event_id.trip_type_id in mail.trip_type_ids
+        )
 
     def execute(self):
         """
@@ -178,7 +199,7 @@ class EventMail(models.Model):
         partner communication jobs instead of mail_templates
         :return: True
         """
-        for mail in self:
+        for mail in self._for_trip_type():
             now = fields.Datetime.now()
             if mail.interval_type == "after_stage":
                 # update registration lines

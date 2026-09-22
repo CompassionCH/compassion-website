@@ -102,6 +102,14 @@ class Event(models.Model):
             if feedback_survey != event.feedback_survey_id:
                 event.feedback_survey_id = feedback_survey
 
+    def _registration_stages(self):
+        """Stages of this event's template, narrowed to its type of trip."""
+        self.ensure_one()
+        trip_type = self.compassion_event_id.trip_type_id
+        return self.event_type_id.stage_ids.filtered(
+            lambda stage: not stage.trip_type_ids or trip_type in stage.trip_type_ids
+        )
+
     def send_communication(
         self,
         config_id,

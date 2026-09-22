@@ -75,7 +75,11 @@ class MuskathlonRegistration(models.Model):
         """
         for vals in vals_list:
             event = self.env["event.event"].browse(vals.get("event_id"))
-            if event.compassion_event_id.is_muskathlon:
+            # Only the dedicated Muskathlon template needs this: two of its
+            # stages share sequence 0, so the first one has to be picked
+            # explicitly. A Muskathlon running on a shared trip template keeps
+            # that template's own pipeline.
+            if event.event_type_id == self.env.ref("muskathlon.event_type_muskathlon"):
                 vals["stage_id"] = self.env.ref("muskathlon.stage_unconfirmed").id
         registrations = super().create(vals_list)
         for registration in registrations.filtered("is_muskathlon"):

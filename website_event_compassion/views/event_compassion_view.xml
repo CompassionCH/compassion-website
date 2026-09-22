@@ -41,21 +41,61 @@
       <field name="type" position="before">
         <field name="website_id" groups="website.group_website_designer" />
         <field name="event_type_id" />
+        <field name="is_trip" invisible="1" />
+        <field name="trip_type_id" invisible="not is_trip" required="is_trip" />
       </field>
       <notebook>
-        <page
-          string="Trips"
-          name="trip_communication"
-          invisible="type not in ['sport', 'tour']"
-        >
-          <group string="Texts used by the trip communication rules">
-            <field name="trip_welcome_text" />
-            <field name="trip_flight_info" />
-            <field name="trip_vaccination_info" />
-            <field name="trip_visa_info" />
-          </group>
+        <page string="Trips" name="trip_communication" invisible="not is_trip">
+          <div class="text-muted mb-3">
+            These texts are pulled into the trip communication rules. Fill them in
+            every language the participants use.
+          </div>
+          <separator string="Welcome sentence" />
+          <field name="trip_welcome_text" nolabel="1" />
+          <separator string="Recommended flights" />
+          <field name="trip_flight_info" nolabel="1" />
+          <separator string="Vaccination information" />
+          <field name="trip_vaccination_info" nolabel="1" />
+          <separator string="Visa information" />
+          <field name="trip_visa_info" nolabel="1" />
         </page>
       </notebook>
+    </field>
+  </record>
+  <!-- Let the Events team find and group trips, which the legacy Type cannot do -->
+  <record id="view_event_filter_trip" model="ir.ui.view">
+    <field name="name">crm.event.compassion.select.trip</field>
+    <field name="model">crm.event.compassion</field>
+    <field name="inherit_id" ref="crm_compassion.view_event_filter" />
+    <field name="arch" type="xml">
+      <field name="type" position="after">
+        <field name="trip_type_id" />
+      </field>
+      <field name="user_id" position="after">
+        <filter
+          string="Trips"
+          name="trips"
+          domain="[('event_type_id.is_trip', '=', True)]"
+        />
+      </field>
+      <filter name="type" position="after">
+        <filter
+          string="Type of Trip"
+          name="group_trip_type"
+          domain="[]"
+          context="{'group_by': 'trip_type_id'}"
+        />
+      </filter>
+    </field>
+  </record>
+  <record id="view_events_tree_trip" model="ir.ui.view">
+    <field name="name">crm.event.compassion.list.trip</field>
+    <field name="model">crm.event.compassion</field>
+    <field name="inherit_id" ref="crm_compassion.view_events_tree" />
+    <field name="arch" type="xml">
+      <field name="type" position="after">
+        <field name="trip_type_id" optional="hide" />
+      </field>
     </field>
   </record>
   <!-- Move events into the Events App and rename the menu for better clarity between Compassion Events and Odoo Events -->

@@ -38,9 +38,14 @@ class EventCompassion(models.Model):
     )
 
     def _compute_is_muskathlon(self):
+        # Also honour trip_type, so that Muskathlons keep working once several
+        # trip kinds share one registration template.
+        muskathlon_type = self.env.ref("muskathlon.event_type_muskathlon")
         for event in self:
-            event.is_muskathlon = event.odoo_event_id.event_type_id == self.env.ref(
-                "muskathlon.event_type_muskathlon"
+            event.is_muskathlon = (
+                event.odoo_event_id.event_type_id == muskathlon_type
+                or event.trip_type_id
+                == self.env.ref("website_event_compassion.trip_type_muskathlon")
             )
 
     @api.onchange("event_type_id")
