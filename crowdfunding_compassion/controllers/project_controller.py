@@ -76,6 +76,8 @@ class ProjectController(HomepageController):
         # to at all.
         participant = participant.sudo()
         project = participant.project_id.sudo()
+        if not project.can_access_from_current_website():
+            raise werkzeug.exceptions.NotFound()
         if not project.website_published and not request.env.user.has_group(
             "website.group_website_designer"
         ):

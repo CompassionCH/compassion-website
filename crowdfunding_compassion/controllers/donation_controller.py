@@ -1,3 +1,5 @@
+import werkzeug
+
 from odoo.http import Controller, request, route
 
 
@@ -18,6 +20,8 @@ class DonationController(Controller):
         # Sudo from the start: crowdfunding.project delegates to utm.campaign
         # (_inherits), which the public user has no read access to at all.
         project = project.sudo()
+        if not project.can_access_from_current_website():
+            raise werkzeug.exceptions.NotFound()
         if not project.website_published and not request.env.user.has_group(
             "website.group_website_designer"
         ):
