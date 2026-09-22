@@ -1,18 +1,17 @@
 ##############################################################################
 #
 #    Copyright (C) 2026 Compassion CH (http://www.compassion.ch)
-#    @author: Daniel Gergely <dgergely@compassion.ch>
 #
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+from odoo import models
 
-from . import (
-    compassion_child,
-    correspondence,
-    device_token,
-    ir_http,
-    res_config_settings,
-    res_user,
-    website,
-)
+
+class IrHttp(models.AbstractModel):
+    _inherit = "ir.http"
+
+    @classmethod
+    def _get_translation_frontend_modules_name(cls):
+        mods = super()._get_translation_frontend_modules_name()
+        return mods + ["my_compassion_native"]
