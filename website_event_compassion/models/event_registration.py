@@ -764,11 +764,21 @@ class EventRegistration(models.Model):
         """Transition to next registration stage"""
         stage_complete = self.filtered("is_stage_complete")
         for registration in stage_complete:
-            stages = registration.event_id._registration_stages().filtered(
-                lambda stage, current=registration.stage_id: stage.sequence
-                > current.sequence
+            # Stages without an event type are terminal ones shared by every
+            # template (Confirmed, Attended, Cancelled), so they stay reachable.
+            candidates = self.env["event.registration.stage"].search(
+                [
+                    ("sequence", ">", registration.stage_id.sequence),
+                    "|",
+                    ("event_type_ids", "in", registration.stage_id.event_type_ids.ids),
+                    ("event_type_ids", "=", False),
+                ]
             )
-            next_stage = stages[:1]
+            trip_type = registration.trip_type_id
+            next_stage = candidates.filtered(
+                lambda stage, trip=trip_type: not stage.trip_type_ids
+                or trip in stage.trip_type_ids
+            )[:1]
             if next_stage:
                 registration.write({"stage_id": next_stage.id})
 
