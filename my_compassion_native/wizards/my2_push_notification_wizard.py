@@ -30,15 +30,22 @@ class My2PushNotificationWizard(models.TransientModel):
     def action_send(self):
         self.ensure_one()
         data = {"url": self.url} if self.url else {}
-        success = self.user_id.notify_mobile_app(self.title, self.body, data or None)
-        if not success:
+        report = self.user_id.notify_mobile_app_report(
+            self.title, self.body, data or None
+        )
+        if not report:
             raise UserError(
-                _(
-                    "Failed to send the push notification. "
-                    "Check that the user has registered devices and that "
-                    "Firebase is configured correctly."
-                )
+                _("%s has no device registered for push notifications.")
+                % self.user_id.name
             )
+
+        failures = [line for line in report if not line["sent"]]
+        if len(failures) == len(report):
+            raise UserError(
+                _("Failed to send the push notification:\n%s")
+                % self._format_failures(failures)
+            )
+
         self.env["partner.log.other.interaction"].create(
             {
                 "partner_id": self.user_id.partner_id.id,
@@ -49,14 +56,30 @@ class My2PushNotificationWizard(models.TransientModel):
                 "direction": "out",
             }
         )
+        sent = len(report) - len(failures)
+        # Say which devices took it: reporting the set as a whole is what let a
+        # notification that never arrived look like a success (T3480).
+        message = _("Sent to %(sent)s of %(total)s registered devices.") % {
+            "sent": sent,
+            "total": len(report),
+        }
+        if failures:
+            message += "\n" + self._format_failures(failures)
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
                 "title": _("Notification sent"),
-                "message": _("Push notification successfully sent to %s.")
-                % self.user_id.name,
-                "type": "success",
-                "sticky": False,
+                "message": message,
+                "type": "warning" if failures else "success",
+                "sticky": bool(failures),
             },
         }
+
+    @staticmethod
+    def _format_failures(failures):
+        return "\n".join(
+            _("%(device)s: %(error)s")
+            % {"device": line["device_type"], "error": line["error"]}
+            for line in failures
+        )
