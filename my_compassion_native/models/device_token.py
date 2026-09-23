@@ -14,7 +14,7 @@ import firebase_admin
 from firebase_admin import credentials, messaging
 from firebase_admin import exceptions as fb_exceptions
 
-from odoo import fields, models
+from odoo import _, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -77,10 +77,27 @@ class MyCompassionDeviceToken(models.Model):
 
     def _send_push_notification(self, title, body, data=None):
         """Internal method to send push via FCM HTTP v1 API"""
+        report = self._send_push_notification_report(title, body, data)
+        return any(line["sent"] for line in report)
+
+    def _send_push_notification_report(self, title, body, data=None):
+        """Send to every device and report what happened to each of them.
+
+        The boolean above answers for the whole set, so one device that worked
+        hides another that did not - which is how a notification that never
+        arrived could be reported as sent (T3480).
+        """
         app = self._get_firebase_app()
         if not app:
             _logger.error("Push Notification failed: Firebase app not initialized.")
-            return False
+            return [
+                {
+                    "device_type": device.device_type,
+                    "sent": False,
+                    "error": _("Firebase is not configured on this server."),
+                }
+                for device in self
+            ]
 
         sanitized_data = {str(k): str(v) for k, v in (data or {}).items()}
         records_with_tokens = self.filtered("token")
@@ -95,30 +112,46 @@ class MyCompassionDeviceToken(models.Model):
         ]
 
         if not messages:
-            return False
+            return []
 
         batch_response = messaging.send_each(messages, app=app)
 
-        success_count = 0
+        report = []
         for record, response in zip(
             records_with_tokens, batch_response.responses, strict=False
         ):
+            # Read the device before a failure can unlink it.
+            line = {"device_type": record.device_type, "sent": False, "error": False}
             if response.success:
                 _logger.info(
                     f"[Firebase] Successfully sent message to "
                     f"{record.user_id.login}: {response.message_id}"
                 )
-                success_count += 1
+                line["sent"] = True
             elif isinstance(response.exception, fb_exceptions.NotFoundError):
                 _logger.warning(
                     f"[Firebase] Token no longer valid for"
                     f" {record.user_id.login}, removing."
                 )
+                line["error"] = _("the device is no longer registered")
+                record.sudo().unlink()
+            elif isinstance(response.exception, messaging.SenderIdMismatchError):
+                # Minted against another Firebase project - a restored
+                # production backup, or a build of the other flavour. This
+                # server can never deliver to it, so it is as dead as an
+                # unregistered one (T3480).
+                _logger.warning(
+                    f"[Firebase] Token of {record.user_id.login} belongs to"
+                    f" another Firebase project, removing."
+                )
+                line["error"] = _("the device belongs to another Firebase project")
                 record.sudo().unlink()
             else:
                 _logger.error(
                     f"[Firebase] Failed to send push to token {record.token}:"
                     f" {response.exception}"
                 )
+                line["error"] = str(response.exception)
+            report.append(line)
 
-        return success_count > 0
+        return report
