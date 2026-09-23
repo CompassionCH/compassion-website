@@ -84,8 +84,9 @@ class EventRegistration(models.Model):
         tracking=True,
         index=True,
         copy=False,
-        domain="['|', ('event_type_ids', '=', False),"
-        "      ('event_type_ids', '=', event_id.event_type_id)]",
+        domain="['&',"
+        "  '|', ('event_type_ids', '=', False), ('event_type_ids', '=', event_type_id),"
+        "  '|', ('trip_type_ids', '=', False), ('trip_type_ids', '=', trip_type_id)]",
         group_expand="_read_group_stage_ids",
         readonly=False,
     )
@@ -103,6 +104,15 @@ class EventRegistration(models.Model):
     is_stage_complete = fields.Boolean(compute="_compute_is_stage_complete")
     compassion_event_id = fields.Many2one(
         "crm.event.compassion", related="event_id.compassion_event_id", readonly=True
+    )
+    event_type_id = fields.Many2one(
+        "event.type", related="event_id.event_type_id", store=True, readonly=True
+    )
+    trip_type_id = fields.Many2one(
+        "event.trip.type",
+        related="event_id.compassion_event_id.trip_type_id",
+        store=True,
+        readonly=True,
     )
     fundraising = fields.Boolean(related="event_id.fundraising")
     amount_objective = fields.Monetary("Raise objective")
@@ -252,7 +262,7 @@ class EventRegistration(models.Model):
         # Allow setting is_published manually
         pass
 
-    def _create_payment_link(self, move, description):
+    def _create_payment_link(self, move):
         payment_link = (
             request.env["payment.link.wizard"]
             .sudo()
@@ -264,7 +274,6 @@ class EventRegistration(models.Model):
                     "currency_id": move.currency_id.id,
                     "partner_id": move.partner_id.id,
                     "amount_max": move.amount_residual,
-                    "description": description,
                 }
             )
         )
@@ -274,11 +283,8 @@ class EventRegistration(models.Model):
         for registration in self:
             if registration.down_payment_id:
                 move = registration.down_payment_id
-                description = (
-                    _("Down payment for %s") % registration.compassion_event_id.name
-                )
                 registration.down_payment_link = (
-                    self._create_payment_link(move, description)
+                    self._create_payment_link(move)
                     + f"&return_url=/my/events/{registration.id}"
                 )
             else:
@@ -288,11 +294,8 @@ class EventRegistration(models.Model):
         for registration in self:
             if registration.trip_invoice_id:
                 move = registration.trip_invoice_id
-                description = (
-                    _("Payment for %s") % registration.compassion_event_id.name
-                )
                 registration.payment_link = (
-                    self._create_payment_link(move, description)
+                    self._create_payment_link(move)
                     + f"&return_url=/my/events/{registration.id}"
                 )
             else:
@@ -342,8 +345,12 @@ class EventRegistration(models.Model):
         # retrieve event type from the context and write the domain
         # - ('id', 'in', stages.ids): add columns that should be present
         type_id = self._context.get("default_event_type_id")
+        trip_type_id = self._context.get("default_trip_type_id")
         search_domain = [
             ("event_type_ids", "=", type_id),
+            "|",
+            ("trip_type_ids", "=", False),
+            ("trip_type_ids", "=", trip_type_id),
         ]
         if stages:
             search_domain = ["|", ("id", "in", stages.ids)] + search_domain
@@ -535,7 +542,7 @@ class EventRegistration(models.Model):
             ):
                 registration.amount_objective = event.participants_amount_objective
             if not registration.stage_id:
-                event_stages = registration.event_id.event_type_id.stage_ids
+                event_stages = registration.event_id._registration_stages()
                 registration.stage_id = event_stages[:1] or self._default_stage()
             # Set donation receipt preference
             registration.partner_id.receive_ambassador_receipts = True
@@ -757,15 +764,21 @@ class EventRegistration(models.Model):
         """Transition to next registration stage"""
         stage_complete = self.filtered("is_stage_complete")
         for registration in stage_complete:
-            next_stage = self.env["event.registration.stage"].search(
+            # Stages without an event type are terminal ones shared by every
+            # template (Confirmed, Attended, Cancelled), so they stay reachable.
+            candidates = self.env["event.registration.stage"].search(
                 [
                     ("sequence", ">", registration.stage_id.sequence),
                     "|",
                     ("event_type_ids", "in", registration.stage_id.event_type_ids.ids),
                     ("event_type_ids", "=", False),
-                ],
-                limit=1,
+                ]
             )
+            trip_type = registration.trip_type_id
+            next_stage = candidates.filtered(
+                lambda stage, trip=trip_type: not stage.trip_type_ids
+                or trip in stage.trip_type_ids
+            )[:1]
             if next_stage:
                 registration.write({"stage_id": next_stage.id})
 

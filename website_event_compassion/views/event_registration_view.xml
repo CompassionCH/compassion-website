@@ -36,11 +36,13 @@
         <attribute name="invisible">1</attribute>
       </field>
       <field name="state" position="after">
+        <field name="event_type_id" invisible="1" />
+        <field name="trip_type_id" invisible="1" />
         <field
           name="stage_id"
           widget="statusbar"
           clickable="True"
-          domain="['|', ('event_type_ids', '=', context.get('default_event_type_id', False)), ('event_type_ids', '=', False)]"
+          domain="['&amp;', '|', ('event_type_ids', '=', False), ('event_type_ids', '=', event_type_id), '|', ('trip_type_ids', '=', False), ('trip_type_ids', '=', trip_type_id)]"
           options="{'clickable': True}"
         />
       </field>

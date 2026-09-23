@@ -29,6 +29,22 @@ class EventCompassion(models.Model):
     picture_1 = fields.Image("Banner image", attachment=True)
     website_image = fields.Char(compute="_compute_website_image")
     website_side_info = fields.Html(string="Side info", translate=True, sanitize=False)
+    is_trip = fields.Boolean(related="event_type_id.is_trip")
+    trip_type_id = fields.Many2one("event.trip.type", "Type of Trip", readonly=False)
+    # Per-trip texts pulled into the event communication rules, so that the same
+    # rule can serve any trip without editing its template.
+    trip_welcome_text = fields.Html(
+        string="Welcome sentence", translate=True, sanitize=False
+    )
+    trip_flight_info = fields.Html(
+        string="Recommended flights", translate=True, sanitize=False
+    )
+    trip_vaccination_info = fields.Html(
+        string="Vaccination information", translate=True, sanitize=False
+    )
+    trip_visa_info = fields.Html(
+        string="Visa information", translate=True, sanitize=False
+    )
     event_type_id = fields.Many2one(
         "event.type",
         "Registration Template",
@@ -119,6 +135,7 @@ class EventCompassion(models.Model):
             "context": self.with_context(
                 default_compassion_event_id=self.id,
                 default_event_type_id=self.event_type_id.id,
+                default_trip_type_id=self.trip_type_id.id,
                 default_event_id=self.odoo_event_id.id,
                 default_amount_objective=self.odoo_event_id.participants_amount_objective,
             ).env.context,

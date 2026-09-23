@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <record id="view_event_trip_type_form" model="ir.ui.view">
+    <field name="name">event.trip.type.form</field>
+    <field name="model">event.trip.type</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <field name="name" />
+            <field name="description" />
+            <field name="sequence" />
+            <field name="active" />
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="view_event_trip_type_tree" model="ir.ui.view">
+    <field name="name">event.trip.type.list</field>
+    <field name="model">event.trip.type</field>
+    <field name="arch" type="xml">
+      <list editable="bottom">
+        <field name="sequence" widget="handle" />
+        <field name="name" />
+        <field name="description" />
+      </list>
+    </field>
+  </record>
+  <record id="action_event_trip_type" model="ir.actions.act_window">
+    <field name="name">Types of Trip</field>
+    <field name="res_model">event.trip.type</field>
+    <field name="view_mode">list,form</field>
+  </record>
+  <menuitem
+    id="menu_event_trip_type"
+    name="Types of Trip"
+    parent="event.menu_event_configuration"
+    action="action_event_trip_type"
+    sequence="25"
+  />
+</odoo>
