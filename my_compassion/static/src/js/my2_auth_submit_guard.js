@@ -28,9 +28,8 @@ if (AUTH_PATHS.some((path) => window.location.pathname.endsWith(path))) {
       }
       submitting = true;
       showNativeLoader();
-      // A navigation that never commits fires no event, so the form must free
-      // itself: on the next edit, or past any plausible response.
-      document.addEventListener("input", release, {once: true});
+      // A navigation that never commits fires no event, so the form can only
+      // free itself once no response can plausibly still arrive.
       window.setTimeout(release, RELEASE_MS);
     },
     true
