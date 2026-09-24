@@ -152,6 +152,7 @@
             "my_compassion/static/src/css/user_settings.css",
             # ES module JS
             "my_compassion/static/src/js/toast_service.js",
+            "my_compassion/static/src/js/my2_auth_submit_guard.js",
             "my_compassion/static/src/js/show_password.js",
             "my_compassion/static/src/js/my2_donation_form.js",
             "my_compassion/static/src/js/my2_donation_details.js",
