@@ -2,6 +2,7 @@ odoo.define("my_compassion_native.payment_resume", function (require) {
     "use strict";
 
     const core = require("web.core");
+    const session = require("web.session");
     const _t = core._t;
 
     // The donor pays in a browser this page cannot see into, and its own timers
@@ -143,6 +144,10 @@ odoo.define("my_compassion_native.payment_resume", function (require) {
 
     $(function () {
         if (!isNativeApp()) {
+            return;
+        }
+        // /my2/payment/status is auth="user" (T3481).
+        if (!session.user_id) {
             return;
         }
         // Called by the app once the payment browser is gone.

@@ -3,6 +3,7 @@ odoo.define("my_compassion_native.capacitor_push", function (require) {
 
     const ajax = require("web.ajax");
     const core = require("web.core");
+    const session = require("web.session");
 
     function saveTokenToOdoo(deviceToken) {
         ajax.jsonRpc("/my2/api/register_device", "call", {
@@ -70,28 +71,11 @@ odoo.define("my_compassion_native.capacitor_push", function (require) {
         const path = window.location.pathname.toLowerCase();
         if (!path.includes("login") && !path.includes("signup")) {
             $("body").addClass("capacitor-native-app");
-            initPushNotifications();
+            // register_device is auth="user": logged out it raises the
+            // "session expired" modal that reloads the page (T3481).
+            if (session.user_id) {
+                initPushNotifications();
+            }
         }
-    });
-});
-
-odoo.define("my_compassion_native.session_fix", function () {
-    "use strict";
-
-    $(document).ready(function () {
-        if (!window.Capacitor || window.Capacitor.getPlatform() === "web") return;
-        if (!window.location.pathname.includes("login")) return;
-
-        const observer = new MutationObserver(function () {
-            document.querySelectorAll(".modal").forEach(function (modal) {
-                if (modal.textContent.toLowerCase().includes("session expired")) {
-                    modal.remove();
-                    document.body.classList.remove("modal-open");
-                    document.querySelectorAll(".modal-backdrop").forEach((b) => b.remove());
-                }
-            });
-        });
-
-        observer.observe(document.body, { childList: true, subtree: true });
     });
 });
