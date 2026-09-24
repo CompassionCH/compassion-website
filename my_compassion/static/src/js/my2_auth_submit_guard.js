@@ -14,19 +14,28 @@ function showNativeLoader() {
 }
 
 if (AUTH_PATHS.some((path) => window.location.pathname.endsWith(path))) {
-  let submitting = false;
+  let pending = null;
   const release = () => {
-    submitting = false;
+    if (pending) {
+      pending
+        .querySelectorAll("button")
+        .forEach((button) => button.classList.remove("disabled"));
+      pending = null;
+    }
   };
 
   document.addEventListener(
     "submit",
     (ev) => {
-      if (submitting) {
+      if (pending) {
         ev.preventDefault();
         return;
       }
-      submitting = true;
+      pending = ev.target;
+      // Bootstrap dims a .disabled button and stops it taking taps.
+      pending
+        .querySelectorAll("button")
+        .forEach((button) => button.classList.add("disabled"));
       showNativeLoader();
       // A navigation that never commits fires no event, so the form can only
       // free itself once no response can plausibly still arrive.
