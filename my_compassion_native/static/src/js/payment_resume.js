@@ -3,6 +3,7 @@
 import {Component} from "@odoo/owl";
 import {_t} from "@web/core/l10n/translation";
 import {rpc} from "@web/core/network/rpc";
+import {session} from "@web/session";
 
 // The donor pays in a browser this page cannot see into, and its own timers are
 // suspended while that browser is on top - so it can only read the outcome from
@@ -150,6 +151,10 @@ function resume() {
 
 function init() {
   if (!isNativeApp()) {
+    return;
+  }
+  // /my2/payment/status is auth="user" (T3481).
+  if (session.is_public) {
     return;
   }
   // Called by the app once the payment browser is gone.
