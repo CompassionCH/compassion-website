@@ -3,7 +3,7 @@
 // The auth POSTs can take seconds with no feedback, and a second tap fails CSRF
 // and shows a 400 over the reset that already succeeded (T3481).
 const AUTH_PATHS = ["/web/login", "/web/signup", "/web/reset_password"];
-const RELEASE_MS = 10000;
+const RELEASE_MS = 15000;
 
 function showNativeLoader() {
   if (window.nativeLoader) {
@@ -15,6 +15,9 @@ function showNativeLoader() {
 
 if (AUTH_PATHS.some((path) => window.location.pathname.endsWith(path))) {
   let submitting = false;
+  const release = () => {
+    submitting = false;
+  };
 
   document.addEventListener(
     "submit",
@@ -25,16 +28,14 @@ if (AUTH_PATHS.some((path) => window.location.pathname.endsWith(path))) {
       }
       submitting = true;
       showNativeLoader();
-      // Never hold the form hostage if the navigation never lands.
-      window.setTimeout(() => {
-        submitting = false;
-      }, RELEASE_MS);
+      // A navigation that never commits fires no event, so the form must free
+      // itself: on the next edit, or past any plausible response.
+      document.addEventListener("input", release, {once: true});
+      window.setTimeout(release, RELEASE_MS);
     },
     true
   );
 
   // Restored from the back/forward cache: the form is live again.
-  window.addEventListener("pageshow", () => {
-    submitting = false;
-  });
+  window.addEventListener("pageshow", release);
 }
