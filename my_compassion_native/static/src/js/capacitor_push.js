@@ -71,7 +71,7 @@ odoo.define("my_compassion_native.capacitor_push", function (require) {
         const path = window.location.pathname.toLowerCase();
         if (!path.includes("login") && !path.includes("signup")) {
             $("body").addClass("capacitor-native-app");
-            // register_device is auth="user": logged out it raises the
+            // Logged out, register_device (auth="user") raises the
             // "session expired" modal that reloads the page (T3481).
             if (session.user_id) {
                 initPushNotifications();
