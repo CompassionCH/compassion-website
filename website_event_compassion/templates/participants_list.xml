@@ -64,15 +64,5 @@
         </t>
       </div>
     </div>
-    <!-- animation for participants details button -->
-    <script>
-            $('.participant_card a').hover(function() {
-            $(this).find('.details').css('animation-name', 'show_details_button').css('animation-fill-mode',
-            'forwards');
-            }, function() {
-            $(this).find('.details').css('animation-name', 'hide_details_button').css('animation-fill-mode',
-            'forwards');
-            });
-        </script>
   </template>
 </odoo>
