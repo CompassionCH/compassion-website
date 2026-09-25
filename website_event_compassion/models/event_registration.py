@@ -263,9 +263,14 @@ class EventRegistration(models.Model):
         pass
 
     def _create_payment_link(self, move):
+        if not move:
+            return False
+        if not request:
+            return move.get_base_url().rstrip("/") + move.get_portal_url()
         payment_link = (
-            request.env["payment.link.wizard"]
+            self.env["payment.link.wizard"]
             .sudo()
+            .with_context(active_model=move._name, active_id=move.id)
             .create(
                 {
                     "res_id": move.id,
@@ -277,29 +282,19 @@ class EventRegistration(models.Model):
                 }
             )
         )
-        return payment_link.link
+        return f"{payment_link.link}&return_url=/my/events/{self.id}"
 
     def _compute_down_payment_link(self):
         for registration in self:
-            if registration.down_payment_id:
-                move = registration.down_payment_id
-                registration.down_payment_link = (
-                    self._create_payment_link(move)
-                    + f"&return_url=/my/events/{registration.id}"
-                )
-            else:
-                registration.down_payment_link = False
+            registration.down_payment_link = registration._create_payment_link(
+                registration.down_payment_id
+            )
 
     def _compute_payment_link(self):
         for registration in self:
-            if registration.trip_invoice_id:
-                move = registration.trip_invoice_id
-                registration.payment_link = (
-                    self._create_payment_link(move)
-                    + f"&return_url=/my/events/{registration.id}"
-                )
-            else:
-                registration.payment_link = False
+            registration.payment_link = registration._create_payment_link(
+                registration.trip_invoice_id
+            )
 
     def _default_website_meta(self):
         default_meta = super()._default_website_meta()
@@ -525,9 +520,16 @@ class EventRegistration(models.Model):
             self._compute_tasks()
         return True
 
+    def _update_mail_schedulers(self):
+        if self.env.context.get("registration_incomplete"):
+            return True
+        return super()._update_mail_schedulers()
+
     @api.model_create_multi
     def create(self, vals_list):
-        records = super().create(vals_list)
+        records = super(
+            EventRegistration, self.with_context(registration_incomplete=True)
+        ).create(vals_list)
         for registration in records:
             # Copy image fields
             if registration.profile_picture:
@@ -553,9 +555,13 @@ class EventRegistration(models.Model):
             {"subtype_ids": [(4, self.env.ref("mail.mt_note").id)]}
         )
 
+        records.create_down_payment()
+
         # Automatically compute tasks and change stage if tasks are good
         records._compute_tasks()
+        records = records.with_context(registration_incomplete=False)
         records.next_stage()
+        records._update_mail_schedulers()
         return records
 
     ##########################################################################
@@ -654,7 +660,7 @@ class EventRegistration(models.Model):
             ticket = registration.event_id.event_ticket_ids.filtered(
                 lambda t: t.product_id == down_payment_product
             )
-            if ticket and not self.down_payment_id:
+            if ticket and not registration.down_payment_id:
                 order = self.env["sale.order"].create(
                     {
                         "partner_id": registration.partner_id.id,
@@ -680,12 +686,11 @@ class EventRegistration(models.Model):
                     {
                         "sale_order_id": order.id,
                         "sale_order_line_id": order.order_line[0].id,
+                        "event_ticket_id": ticket.id,
                     }
                 )
 
                 order.action_confirm()
-
-                registration.write({"event_ticket_id": ticket.id})
         return True
 
     def create_trip_invoice(self):

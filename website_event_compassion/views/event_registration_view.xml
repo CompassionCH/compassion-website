@@ -18,6 +18,8 @@
         />
       </button>
       <button name="action_cancel" position="after">
+        <field name="down_payment_id" invisible="1" />
+        <field name="trip_invoice_id" invisible="1" />
         <button
           name="create_down_payment"
           string="Create Down Payment"

@@ -11,7 +11,7 @@ class PartnerMatch(models.AbstractModel):
 
     def _get_valid_create_fields(self):
         res = super()._get_valid_create_fields()
-        res.extend(["firstname", "lastname"])
+        res.extend(["firstname", "lastname", "birthdate_date"])
         return res
 
     @api.model
