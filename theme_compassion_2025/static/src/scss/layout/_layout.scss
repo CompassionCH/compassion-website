@@ -20,10 +20,18 @@
     padding-right: $gutter-sm;
   }
 
+  // Unlike the plain .container (flush edge-to-edge above $breakpoint-sm), the
+  // header needs a permanent gutter so the logo/language-switcher never touch
+  // the window edge.
   &--header {
     @extend .container;
-    padding-left: 0px;
-    padding-right: 0px;
+    padding-left: $gutter-lg;
+    padding-right: $gutter-lg;
+
+    @media (max-width: $breakpoint-sm) {
+      padding-left: $gutter-sm;
+      padding-right: $gutter-sm;
+    }
   }
 }
 

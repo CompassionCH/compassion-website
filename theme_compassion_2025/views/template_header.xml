@@ -7,6 +7,11 @@
                 'align-items-left align-items-lg-center border-thread-right'
             </attribute>
     </xpath>
+    <!-- Give the header row a permanent gutter so the logo and language
+         switcher never sit flush against the window edge (T3486). -->
+    <xpath expr="//div[@id='o_main_nav']" position="attributes">
+      <attribute name="class" add="container--header" separator=" " />
+    </xpath>
     <!-- Compassion 4-color thread bar, placed after the navbar (rendered via t-call="website.navbar") -->
     <xpath expr="//t[@t-call='website.navbar']" position="after">
       <div class="d-flex compassion-thread">
