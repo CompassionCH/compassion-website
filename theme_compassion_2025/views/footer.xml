@@ -31,9 +31,9 @@
                 class="col-12 d-flex flex-column flex-lg-row justify-content-center align-items-center"
               >
                 <div
-                  class="py-1 px-lg-4 d-flex flex-column flex-lg-row align-items-center justify-content-center"
+                  class="mb-3 mb-md-0 py-1 px-lg-4 d-flex flex-column flex-lg-row align-items-center justify-content-center"
                 >
-                  <div class="mb-1 mb-lg-0 me-lg-2" style="font-size: 1.2rem;">
+                  <div class="mb-2 mb-lg-0 me-lg-2" style="font-size: 1.2rem;">
                     <i class="icon-marker-pin01 bg-low-yellow text-primary" />
                   </div>
                   <a
@@ -48,10 +48,10 @@
                   </a>
                 </div>
                 <div
-                  class="py-1 px-lg-4 d-flex flex-column flex-lg-row align-items-center justify-content-center"
+                  class="mb-3 mb-md-0 py-1 px-lg-4 d-flex flex-column flex-lg-row align-items-center justify-content-center"
                   t-if="displayed_footer_phone"
                 >
-                  <div class="mb-1 mb-lg-0 me-lg-2" style="font-size: 1.2rem;">
+                  <div class="mb-2 mb-lg-0 me-lg-2" style="font-size: 1.2rem;">
                     <i class="icon-phone bg-low-yellow text-primary" />
                   </div>
                   <a
@@ -62,10 +62,10 @@
                   </a>
                 </div>
                 <div
-                  class="py-1 px-lg-4 d-flex flex-column flex-lg-row align-items-center justify-content-center"
+                  class="mb-3 mb-md-0 py-1 px-lg-4 d-flex flex-column flex-lg-row align-items-center justify-content-center"
                   t-if="res_company.email"
                 >
-                  <div class="mb-1 mb-lg-0 me-lg-2" style="font-size: 1.2rem;">
+                  <div class="mb-2 mb-lg-0 me-lg-2" style="font-size: 1.2rem;">
                     <i class="icon-mail01 bg-low-yellow text-primary" />
                   </div>
                   <a
@@ -92,9 +92,9 @@
               <div
                 class="col-12 d-flex flex-column flex-md-row justify-content-center align-items-center"
               >
-                <div class="mb-2 mb-md-0" t-if="website.privacy_policy_url">
+                <div class="mb-4 mb-md-0" t-if="website.privacy_policy_url">
                   <a
-                    class="text-pure-white me-3"
+                    class="text-pure-white me-md-3"
                     t-att-href="website.privacy_policy_url"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -103,7 +103,7 @@
                                     </a>
                   <span class="d-none d-md-inline me-3">|</span>
                 </div>
-                <div class="d-flex">
+                <div class="mb-4 mb-md-0">
                   <a
                     t-if="website.social_facebook"
                     t-att-href="website.social_facebook"
@@ -151,7 +151,7 @@
                 </div>
                 <div class="mb-2 mb-md-0">
                   <span class="d-none d-md-inline ms-3">|</span>
-                  <a class="text-pure-white ms-3" href="/contactus">Contact</a>
+                  <a class="text-pure-white ms-0 ms-md-3" href="/contactus">Contact</a>
                 </div>
               </div>
             </div>
