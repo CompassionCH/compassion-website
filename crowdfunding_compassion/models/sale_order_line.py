@@ -36,12 +36,14 @@ class SaleOrderLine(models.Model):
     def _prepare_invoice_line(self, **optional_values):
         res = super()._prepare_invoice_line(**optional_values)
         participant = getattr(self, "participant_id", False)
-        analytic_id = participant.project_id.event_id.analytic_id.id
         if participant:
+            analytic_id = participant.project_id.event_id.analytic_id.id
             res.update(
                 {
                     "user_id": participant.partner_id.id,
-                    "analytic_account_id": analytic_id,
+                    "analytic_distribution": (
+                        {str(analytic_id): 100} if analytic_id else False
+                    ),
                     "crowdfunding_participant_id": participant.id,
                 }
             )

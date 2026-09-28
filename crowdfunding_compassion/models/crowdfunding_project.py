@@ -210,6 +210,20 @@ class CrowdfundingProject(models.Model):
                     )
                 )
 
+    @api.depends("name")
+    def _compute_display_name(self):
+        """
+        `name` is delegated to utm.campaign (_inherits), which the public
+        user has no read access to at all - and Odoo deliberately does not
+        let _inherits bypass that (related_sudo=False on inherited fields).
+        The project's title is meant to be public (it's rendered directly on
+        its own page), and some core mechanisms - e.g. the SEO-friendly URL
+        slug builder - read display_name before a controller ever gets a
+        chance to sudo() the record, so compute it with sudo here instead.
+        """
+        for project in self:
+            project.display_name = project.sudo().name
+
     def _compute_description_short(self):
         for project in self:
             if len(project.description) > 100:
