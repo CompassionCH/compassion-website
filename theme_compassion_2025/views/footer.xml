@@ -92,9 +92,9 @@
               <div
                 class="col-12 d-flex flex-column flex-md-row justify-content-center align-items-center"
               >
-                <div class="mb-2 mb-md-0" t-if="website.privacy_policy_url">
+                <div class="mb-4 mb-md-0" t-if="website.privacy_policy_url">
                   <a
-                    class="text-pure-white me-3"
+                    class="text-pure-white me-md-3"
                     t-att-href="website.privacy_policy_url"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -103,7 +103,7 @@
                                     </a>
                   <span class="d-none d-md-inline me-3">|</span>
                 </div>
-                <div class="d-flex">
+                <div class="mb-4 mb-md-0">
                   <a
                     t-if="website.social_facebook"
                     t-att-href="website.social_facebook"
@@ -151,7 +151,7 @@
                 </div>
                 <div class="mb-2 mb-md-0">
                   <span class="d-none d-md-inline ms-3">|</span>
-                  <a class="text-pure-white ms-3" href="/contactus">Contact</a>
+                  <a class="text-pure-white ms-0 ms-md-3" href="/contactus">Contact</a>
                 </div>
               </div>
             </div>
