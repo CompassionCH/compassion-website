@@ -18,11 +18,12 @@
         />
       </button>
       <button name="action_cancel" position="after">
+        <field name="sale_order_id" invisible="1" />
         <button
           name="create_down_payment"
           string="Create Down Payment"
           type="object"
-          invisible="down_payment_id"
+          invisible="sale_order_id"
         />
         <button
           name="create_trip_invoice"
