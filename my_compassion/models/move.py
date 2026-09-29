@@ -160,7 +160,8 @@ class AccountMove(models.Model):
         package with a gift and a fund, one bank transfer for both). The
         history lists each of them with its own amount, instead of the
         invoice total under the label of only one of them.
-        The fund part of a sponsorship stays with its sponsorship.
+        The fund part of a sponsorship stays with its sponsorship, gifts are
+        listed per child.
         @return: list of dicts with the kind of donation (sponsorship, gift,
                  fund, other), its invoice lines and its amount
         """
@@ -190,7 +191,7 @@ class AccountMove(models.Model):
             ):
                 key = ("sponsorship", False)
             elif categ == gift_cat:
-                key = ("gift", line.product_id.id)
+                key = ("gift", (line.product_id.id, line.contract_id.id))
             elif categ == fund_cat:
                 key = ("fund", line.product_id.id)
             else:
@@ -202,9 +203,11 @@ class AccountMove(models.Model):
             {
                 "kind": kind,
                 "lines": group_lines,
-                "amount": sum(group_lines.mapped("price_total")),
+                "amount": self.currency_id.round(
+                    sum(group_lines.mapped("price_total"))
+                ),
             }
-            for (kind, _product_id), group_lines in sorted(
+            for (kind, _detail), group_lines in sorted(
                 groups.items(), key=lambda item: kind_order.index(item[0][0])
             )
         ]

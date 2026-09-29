@@ -170,12 +170,21 @@ Page: My Compassion 2 Donations Page
                         t-out="group_lines.get_list('product_id.name')"
                       />
                                         </t>
+                      <t t-if="group['kind'] == 'other'">
+                        <t t-if="children">:</t>
+                        <t t-out="group_lines.get_list('product_id.name')" />
+                      </t>
                       <t t-if="group['kind'] == 'sponsorship'">
                         <span>(Sponsorship)</span>
                       </t>
                     </div>
                     <div class="col text-end">
-                      <span t-out="int(group['amount'])" />
+                      <!-- Cents are only shown when there are some, so the
+                           rows of an invoice add up to its total -->
+                      <t t-set="amount" t-value="group['amount']" />
+                      <span
+                        t-out="'%d' % amount if amount == int(amount) else '%.2f' % amount"
+                      />
                       <span t-out="invoice.currency_id.display_name" />
                     </div>
                   </div>
