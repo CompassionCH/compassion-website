@@ -141,49 +141,45 @@ Page: My Compassion 2 Donations Page
             </div>
             <div id="donation_history_rows">
               <t t-foreach="paid_invoices_subset" t-as="invoice">
-                <t
-                  t-set="children"
-                  t-value="invoice.invoice_line_ids.mapped('contract_id.child_id')"
-                />
-                <t
-                  t-set="gift_types"
-                  t-value="invoice.invoice_line_ids.get_list('gift_id.name')"
-                />
-                <div class="row p-2 border-bottom">
-                  <div class="col">
-                    <span t-out="invoice.last_payment" />
-                  </div>
-                  <div class="col">
-                    <t
-                      t-out="children.get_list('preferred_name', 3, children.get_number())"
-                    />
-                    <t t-if="invoice.invoice_category == 'gift'">
-                      <t t-if="gift_types">
-                                                :
-                                                <t t-out="gift_types" />
-                                            </t>
-                      <t t-else="">
+                <!-- One row per donation paid by the invoice -->
+                <t t-foreach="invoice._get_my2_history_groups()" t-as="group">
+                  <t t-set="group_lines" t-value="group['lines']" />
+                  <t
+                    t-set="children"
+                    t-value="group_lines.mapped('contract_id.child_id')"
+                  />
+                  <div class="row p-2 border-bottom">
+                    <div class="col">
+                      <span t-out="invoice.last_payment" />
+                    </div>
+                    <div class="col">
+                      <t
+                        t-out="children.get_list('preferred_name', 3, children.get_number())"
+                      />
+                      <!-- The product name is the translated gift type, the gift
+                           name carries sponsorship references -->
+                      <t t-if="group['kind'] == 'gift'">
                                                 :
                                                 <t
-                        t-out="invoice.invoice_line_ids.get_list('product_id.name')"
+                        t-out="group_lines.get_list('product_id.name')"
                       />
                                             </t>
-                    </t>
-                    <t t-if="invoice.invoice_category == 'fund'">
+                      <t t-if="group['kind'] == 'fund'">
                                             Donation for :
                                             <t
-                      t-out="invoice.invoice_line_ids.get_list('product_id.name')"
-                    />
+                        t-out="group_lines.get_list('product_id.name')"
+                      />
                                         </t>
-                    <t t-if="invoice.invoice_category == 'sponsorship'">
-                      <span>(Sponsorship)</span>
-                    </t>
+                      <t t-if="group['kind'] == 'sponsorship'">
+                        <span>(Sponsorship)</span>
+                      </t>
+                    </div>
+                    <div class="col text-end">
+                      <span t-out="int(group['amount'])" />
+                      <span t-out="invoice.currency_id.display_name" />
+                    </div>
                   </div>
-                  <div class="col text-end">
-                    <span t-out="int(invoice.amount_total)" />
-                    <span t-out="invoice.currency_id.display_name" />
-                  </div>
-                </div>
+                </t>
               </t>
             </div>
             <!-- Pager -->
