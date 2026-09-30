@@ -1,6 +1,4 @@
 # ruff: noqa: E501 -- email template HTML, kept on one line per paragraph
-import json
-
 from openupgradelib import openupgrade
 
 # The project emails are about one project: a new project must not be merged
@@ -14,14 +12,6 @@ PROJECT_VARS = """<t t-set="project" t-value="object.get_objects()[:1]"/>
 """
 
 PUBLISHED_BODY = {
-    "en_US": PROJECT_VARS
-    + """<div>
-<t t-out="partner.informal_salutation"/><br/><br/>
-Great news! Your project <t t-out="project.name"/> is now active on Together. Thanks to your project, more children will be released from extreme poverty.<br/><br/>
-You can start fundraising or motivate your network to sponsor a child. You just can share <a t-att-href="project_url">the link of your project</a> to invite people to join you in your efforts to change the world.<br/><br/>
-We wish you great success in your adventure!<br/><br/>
-The Together team of Compassion Switzerland
-</div>""",
     "de_DE": PROJECT_VARS
     + """<div>
 <t t-out="partner.informal_salutation"/><br/><br/>
@@ -50,16 +40,17 @@ Il team TOGETHER di Compassion Svizzera.
 </div>""",
 }
 
+# The person who joined shares their own page: donations made there are
+# credited to them, not to the project owner.
+JOINED_VARS = (
+    PROJECT_VARS
+    + """<t t-set="participant" t-value="project.participant_ids.filtered_domain([('partner_id', '=', partner.id)])[:1]"/>
+<t t-set="project_url" t-value="project.get_base_url() + (participant.website_url or project.website_url)"/>
+"""
+)
+
 JOINED_BODY = {
-    "en_US": PROJECT_VARS
-    + """<div>
-<t t-out="partner.informal_salutation"/><br/><br/>
-You joined the project <t t-out="project.name"/>. Amazing! Thanks to this project, more children will be released from extreme poverty.<br/><br/>
-In order to manage your project, you can use your Compassion login on the platform. If you don't have an account, you will get it in a separate e-mail. In case you have more questions, don't hesitate to write to us at together@compassion.ch<br/><br/>
-Thank you for your commitment to release more children from extreme poverty. Before the start of your project, we send you our best greetings and encouragements for your fundraising.<br/><br/>
-The Together team of Compassion Switzerland
-</div>""",
-    "de_DE": PROJECT_VARS
+    "de_DE": JOINED_VARS
     + """<div>
 <t t-out="partner.informal_salutation"/><br/><br/>
 Du hast dich erfolgreich dem Projekt <t t-out="project.name"/> angeschlossen. Wir freuen uns mit dir, dass mithilfe dieses Projektes noch mehr Kinder aus Armut befreit werden und Menschen eine bessere Zukunft erhalten – das ist ein Grund zum Feiern!<br/><br/>
@@ -68,7 +59,7 @@ Du kannst ab sofort mit Spenden sammeln und/oder Patenschaften vermitteln beginn
 Wir wünschen dir mit diesem Projekt-Abenteuer viele ermutigende, spannende, lohnende, erstaunliche Momente!<br/><br/>
 Dein «together»-Team von Compassion Schweiz
 </div>""",
-    "fr_CH": PROJECT_VARS
+    "fr_CH": JOINED_VARS
     + """<t t-set="plural" t-value="partner.title.plural or partner.title.id == 29"/>
 <t t-set="tu" t-value="'vous' if plural else 'tu'"/>
 <t t-set="te" t-value="'vous' if plural else 'te'"/>
@@ -83,7 +74,7 @@ Together: le nom de notre plateforme est clair. Ensemble, zusammen, insieme, nou
 Nous <t t-out="te"/> souhaitons de nombreux moments encourageants, surprenants et passionnants à travers l'aventure de ce projet.<br/><br/>
 L'équipe TOGETHER de Compassion.
 </div>""",
-    "it_IT": PROJECT_VARS
+    "it_IT": JOINED_VARS
     + """<div>
 <t t-out="partner.informal_salutation"/><br/><br/>
 Hai aderito con successo al progetto <t t-out="project.name"/>. È fantastico: grazie a questa tua iniziativa, sempre più bambini potranno essere liberati dalla povertà per un futuro migliore.<br/><br/>
@@ -112,10 +103,20 @@ def migrate(env, version):
         ("crowdfunding_compassion.project_join", JOINED_BODY),
     ):
         template = env.ref(xmlid, raise_if_not_found=False)
-        if template:
+        if not template:
+            continue
+        # Only the languages still in Jinja: keep English and any text
+        # already corrected by hand.
+        for lang, text in body.items():
             env.cr.execute(
-                "UPDATE mail_template SET body_html = %s WHERE id = %s",
-                (json.dumps(body), template.id),
+                r"""
+                UPDATE mail_template
+                SET body_html = jsonb_set(body_html, %s, to_jsonb(%s::text))
+                WHERE id = %s
+                  AND (body_html->>%s ~ '\$\{'
+                       OR body_html->>%s ~ '(^|\n)\s*%%\s*(set|if|endif)\M')
+                """,
+                ([lang], text, template.id, lang, lang),
             )
 
     # Project creation confirmation: French subject with the forms of address
@@ -128,7 +129,10 @@ def migrate(env, version):
         env.cr.execute(
             """
             UPDATE mail_template
-            SET subject = jsonb_set(subject, '{fr_CH}', to_jsonb(%s::text)),
+            SET subject = CASE
+                    WHEN subject->>'fr_CH' LIKE '{{"Tu y es presque!" if%%'
+                    THEN jsonb_set(subject, '{fr_CH}', to_jsonb(%s::text))
+                    ELSE subject END,
                 body_html = jsonb_set(body_html, '{fr_CH}', to_jsonb(
                     replace(body_html->>'fr_CH', 'pourra être activité', 'pourra être activé')))
             WHERE id = %s AND subject ? 'fr_CH' AND body_html ? 'fr_CH'
