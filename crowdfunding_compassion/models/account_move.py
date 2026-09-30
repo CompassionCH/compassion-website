@@ -35,10 +35,12 @@ class AccountInvoice(models.Model):
         for product_tmpl in self.mapped("invoice_line_ids.product_id.product_tmpl_id"):
             product_tmpl.recompute_amount()
 
+        # Kept pending: the thank-you letter of the product is sent already
         return comm_obj.create(
             {
                 "config_id": config.id,
                 "partner_id": self.partner_id.id,
                 "object_ids": self.ids,
+                "auto_send": False,
             }
         )
