@@ -38,6 +38,7 @@
       >global_communication_delivery_preference</field>
       <field name="print_if_not_email">False</field>
       <field name="email_template_id" ref="project_confirmation_email_template" />
+      <field name="forbid_merging" eval="True" />
       <field name="model_id" ref="model_crowdfunding_project" />
     </record>
 
@@ -79,6 +80,7 @@
       >global_communication_delivery_preference</field>
       <field name="print_if_not_email">False</field>
       <field name="email_template_id" ref="project_join" />
+      <field name="forbid_merging" eval="True" />
       <field name="model_id" ref="model_crowdfunding_project" />
     </record>
 
@@ -120,6 +122,7 @@
       >global_communication_delivery_preference</field>
       <field name="print_if_not_email">False</field>
       <field name="email_template_id" ref="project_published_email_template" />
+      <field name="forbid_merging" eval="True" />
       <field name="model_id" ref="model_crowdfunding_project" />
     </record>
 
