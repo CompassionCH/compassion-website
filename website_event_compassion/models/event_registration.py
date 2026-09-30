@@ -659,7 +659,7 @@ class EventRegistration(models.Model):
         for registration in self:
             ticket = registration.event_id.event_ticket_ids.filtered(
                 lambda t: t.product_id == down_payment_product
-            )
+            )[:1]
             if ticket and not registration.sale_order_id:
                 order = self.env["sale.order"].create(
                     {
