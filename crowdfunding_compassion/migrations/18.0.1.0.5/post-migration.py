@@ -127,10 +127,11 @@ def migrate(env, version):
     )
     if template:
         env.cr.execute(
-            """
+            r"""
             UPDATE mail_template
             SET subject = CASE
-                    WHEN subject->>'fr_CH' LIKE '{{"Tu y es presque!" if%%'
+                    -- old ${...} syntax from v14, or already converted to {{...}}
+                    WHEN subject->>'fr_CH' ~ '^\s*(\$\{|\{\{)\s*"Tu y es presque!"'
                     THEN jsonb_set(subject, '{fr_CH}', to_jsonb(%s::text))
                     ELSE subject END,
                 body_html = jsonb_set(body_html, '{fr_CH}', to_jsonb(
