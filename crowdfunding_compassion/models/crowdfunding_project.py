@@ -8,6 +8,7 @@ from babel.dates import format_timedelta
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
+from odoo.http import request
 from odoo.tools import file_open, ormcache
 from odoo.tools.image import ImageProcess
 
@@ -532,6 +533,18 @@ class CrowdfundingProject(models.Model):
                     "object_ids": project.id,
                 }
             )
+
+    def is_visible_to_website_visitor(self):
+        """Same rules as the project page: the project must belong to the
+        current website, and be published unless the visitor is a website
+        designer. Uses the request user, as website forms are processed as
+        superuser."""
+        self.ensure_one()
+        project = self.sudo()
+        return project.can_access_from_current_website() and (
+            project.website_published
+            or request.env.user.has_group("website.group_website_designer")
+        )
 
     @api.model
     def get_active_projects(
