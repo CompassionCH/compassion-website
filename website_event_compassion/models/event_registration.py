@@ -775,7 +775,7 @@ class EventRegistration(models.Model):
                 [
                     ("sequence", ">", registration.stage_id.sequence),
                     "|",
-                    ("event_type_ids", "in", registration.stage_id.event_type_ids.ids),
+                    ("event_type_ids", "in", registration.event_type_id.ids),
                     ("event_type_ids", "=", False),
                 ]
             )
