@@ -142,6 +142,10 @@ class ProjectsController(Controller):
                     .browse(step2_id)
                     .project_id.sudo()
                 )
+        if project and not project.is_visible_to_website_visitor():
+            if not project.can_access_from_current_website():
+                raise werkzeug.exceptions.NotFound()
+            return request.redirect("/projects")
         values = {
             "page": page,
             "funds": request.env["product.product"]

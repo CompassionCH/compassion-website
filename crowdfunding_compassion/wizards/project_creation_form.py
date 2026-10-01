@@ -101,6 +101,14 @@ class ProjectCreationStep2(models.TransientModel):
         if not product_goal and not sponsorship_goal and not csp_goal:
             raise NoGoalException
 
+        # The form is public: don't let a posted project id join a project
+        # the visitor cannot see on the website.
+        project_id = vals_list.get("project_id")
+        if project_id:
+            project = self.env["crowdfunding.project"].browse(int(project_id))
+            if not project.exists() or not project.is_visible_to_website_visitor():
+                raise NoProjectException
+
         if not product_goal:
             vals_list["product_id"] = False
         if product_goal and vals_list["product_id"]:
