@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Part of the new-sponsorship wizard page - see my2_new_sponsorship_wizard.xml
+     in this folder for the full page doc header. -->
+<odoo>
+  <!-- NEW SPONSORSHIP STEP PROGRESS BAR -->
+  <template id="NewSponsorshipStepProgressBar" name="New Sponsorship Step Progress Bar">
+    <!-- Default property values -->
+    <t t-set="n_steps" t-value="n_steps or 3" />
+    <t t-set="current_step" t-value="current_step or 0" />
+    <t t-set="marker_color" t-value="marker_color or 'mid-yellow'" />
+    <t t-set="progress_color" t-value="progress_color or 'low-yellow'" />
+    <t t-set="track_color" t-value="track_color or 'low-eggshell'" />
+    <!-- Step progress bar -->
+    <div class="step-progress-container">
+      <!-- Track -->
+      <div t-attf-class="step-progress-track d-flex">
+        <t t-foreach="range(n_steps)" t-as="i">
+          <div
+            t-if="i &lt; current_step"
+            t-attf-class="flex-grow-1 bg-#{progress_color}"
+          />
+          <div t-elif="i > current_step" t-attf-class="flex-grow-1 bg-#{track_color}" />
+        </t>
+      </div>
+      <!-- Steps -->
+      <t t-if="n_steps == 1" t-set="justify_content" t-value="'center'" />
+      <t t-else="" t-set="justify_content" t-value="'between'" />
+      <div t-attf-class="d-flex justify-content-#{justify_content}">
+        <t t-foreach="range(n_steps)" t-as="i">
+          <div class="step-marker-container">
+            <div
+              t-if="i &lt; current_step"
+              t-attf-class="step-marker-active bg-#{marker_color} border-#{marker_color}"
+            />
+            <div
+              t-elif="i == current_step"
+              t-attf-class="step-marker-active bg-#{progress_color} border-#{marker_color}"
+            />
+            <div t-else="" t-attf-class="step-marker bg-#{track_color}" />
+          </div>
+        </t>
+      </div>
+    </div>
+  </template>
+</odoo>
