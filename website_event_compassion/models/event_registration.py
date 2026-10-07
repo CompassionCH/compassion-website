@@ -10,6 +10,7 @@ import base64
 import binascii
 import io
 import logging
+from urllib.parse import urljoin
 
 from PIL import Image as PILImage
 
@@ -125,6 +126,7 @@ class EventRegistration(models.Model):
         compute="_compute_is_published", inverse="_inverse_is_published", store=True
     )
     host_url = fields.Char(compute="_compute_host_url")
+    portal_signup_url = fields.Char(compute="_compute_portal_signup_url")
     sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
     event_name = fields.Char(related="event_id.name", tracking=True)
     # Capped high, not at display size: the picture is printed on fundraising
@@ -252,6 +254,15 @@ class EventRegistration(models.Model):
         )
         for registration in self:
             registration.host_url = registration.website_id.domain or host
+
+    def _compute_portal_signup_url(self):
+        # The partner's signup url lands on the main website, not the event's.
+        for registration in self:
+            partner = registration.partner_id.sudo()
+            path = partner.with_context(relative_url=True)._get_signup_url_for_action(
+                url="/my/events"
+            )[partner.id]
+            registration.portal_signup_url = urljoin(registration.host_url, path)
 
     @api.depends("state")
     def _compute_is_published(self):
