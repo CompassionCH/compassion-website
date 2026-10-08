@@ -1,0 +1,4 @@
+- Emanuel Cino \<<ecino@compassion.ch>\>
+- Nicolas Praz \<<praznicolas@gmail.com>\>
+- Alexandre Philibert \<<alexandre.philibert@ik.me>\>
+- Luca De Lauretis \<<luca.delauren@gmail.com>\>

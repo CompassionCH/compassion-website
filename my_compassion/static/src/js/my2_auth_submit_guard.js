@@ -1,13 +1,14 @@
-/** @odoo-module **/
-
 // The auth POSTs can take seconds with no feedback, and a second tap fails CSRF
 // and shows a 400 over the reset that already succeeded (T3481).
 const AUTH_PATHS = ["/web/login", "/web/signup", "/web/reset_password"];
 const RELEASE_MS = 15000;
 
 function showNativeLoader() {
+  const webkitHandlers = window.webkit && window.webkit.messageHandlers;
   if (window.nativeLoader) {
     window.nativeLoader.postMessage("show");
+  } else if (webkitHandlers && webkitHandlers.nativeLoader) {
+    webkitHandlers.nativeLoader.postMessage("show");
   } else if (window.webkit?.messageHandlers?.nativeLoader) {
     window.webkit.messageHandlers.nativeLoader.postMessage("show");
   }

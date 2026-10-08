@@ -1,5 +1,3 @@
-/** @odoo-module **/
-
 /**
  * Handles the selection of template images by adding an ID to the clicked image
  * and removing it from any previously selected image.
