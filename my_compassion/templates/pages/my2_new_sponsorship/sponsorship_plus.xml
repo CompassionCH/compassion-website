@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Part of the new-sponsorship wizard page - see my2_new_sponsorship_wizard.xml
+     in this folder for the full page doc header. -->
+<odoo>
+  <!-- NEW SPONSORSHIP WIZARD SPONSORSHIP PLUS -->
+  <!-- Shared by the fast-checkout page and the logged-in payment step: both
+       offer the same opt-in, and it has to read the same on both. -->
+  <template
+    id="my2_new_sponsorship_wizard_sponsorship_plus"
+    name="New Sponsorship Wizard Sponsorship Plus"
+  >
+    <div class="my-3">
+      <input type="hidden" name="sponsorship_plus" value="" />
+      <label
+        for="sponsorship_plus"
+        class="toggle-card d-flex align-items-center p-3 rounded rounded-lg bg-light-blue border border-mid-grey"
+      >
+        <input
+          type="checkbox"
+          id="sponsorship_plus"
+          name="sponsorship_plus"
+          class="d-none"
+          t-att-checked="wizard.sponsorship_plus"
+        />
+        <span
+          class="toggle-card-check me-3 flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle bg-core-blue text-pure-white tiny-text bold"
+        >
+          <i class="fa fa-check" />
+        </span>
+        <span class="flex-grow-1">
+          <span
+            class="d-block text-dark-blue very-tiny-text bold"
+          >Sponsorship plus</span>
+          <span class="mt-1 d-block text-mid-grey very-tiny-text"><t
+            t-out="currency_name"
+          />&#160;<t t-out="sponsorship_amount" />.- + <t
+            t-out="currency_name"
+          />&#160;<t t-out="sponsorship_plus_extra" />.- solidarity fund</span>
+        </span>
+        <span
+          class="toggle-card-price ms-3 text-core-blue very-tiny-text bold flex-shrink-0"
+        >+&#160;<t t-out="currency_name" />&#160;<t
+          t-out="sponsorship_plus_extra"
+        />.-</span>
+      </label>
+      <a
+        href="#"
+        class="d-inline-block mt-2 very-tiny-text bold text-core-blue"
+        data-bs-toggle="modal"
+        data-bs-target="#sponsorship-plus-info-modal"
+      >What does the extra go to?</a>
+    </div>
+    <!-- Sponsorship plus info modal -->
+    <div
+      class="modal fade"
+      id="sponsorship-plus-info-modal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="sponsorship-plus-info-modal-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0">
+          <div class="modal-body">
+            <button
+              type="button"
+              class="btn-close position-absolute top-0 end-0 mt-3 me-3 icon-x-circle body-large text-mid-grey"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            />
+            <div class="m-4">
+              <div
+                id="sponsorship-plus-info-modal-title"
+                class="mb-2 text-dark-blue body-small bold"
+              >What does the extra go to?</div>
+              <div class="body-small">
+                            Sponsorship+ includes the basic sponsorship of
+                            <t t-out="currency_name" />
+                            <t
+                t-out="sponsorship_amount"
+              />.-, plus an additional gift of
+                            <t t-out="currency_name" />
+                            <t t-out="sponsorship_plus_extra" />.- per month.
+                            <br />
+                            <br />
+                            The extra amount helps to fund urgent needs not covered by the
+                            sponsorship (e.g. natural disasters,
+                            medical interventions, malaria prevention, etc.).
+                            <br />
+                            <br />
+                            This fund is available for all children supported through Compassion.
+                        </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+</odoo>

@@ -17,7 +17,10 @@
                         -
                         <t t-out="error_name" />
                     </h2>
-          <p class="lead">An unexpected error occurred.</p>
+          <p t-if="error_message" class="lead">
+            <t t-out="error_message" />
+          </p>
+          <p t-else="" class="lead">An unexpected error occurred.</p>
           <p class="lead">
                         Don't panic. If you think this is our mistake, please send us a message on this page.
                     </p>
@@ -56,6 +59,22 @@
         <t t-set="error_code" t-value="'404'" />
         <t t-set="error_name">Page Not Found</t>
         <t t-set="error_message">We couldn't find the page you were looking for!</t>
+      </t>
+    </xpath>
+  </template>
+  <template
+    id="custom_400"
+    inherit_id="http_routing.400"
+    name="Custom 400 Page"
+    priority="99"
+  >
+    <xpath expr="//div[@id='wrap']/div[hasclass('container')][1]" position="attributes">
+      <attribute name="t-if">editable or debug</attribute>
+    </xpath>
+    <xpath expr="//t[@t-call='http_routing.error_message']/.." position="replace">
+      <t t-call="my_compassion.http_error_custom">
+        <t t-set="error_code" t-value="'400'" />
+        <t t-set="error_name">Something Went Wrong</t>
       </t>
     </xpath>
   </template>
