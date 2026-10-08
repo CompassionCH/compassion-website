@@ -1,5 +1,3 @@
-/** @odoo-module **/
-
 /**
  * Handles the uploaded attachments files from the user when filling the new letter form
  *
@@ -186,6 +184,7 @@ whenReady(() => {
         }
 
         // Validate file size
+        // TODO - Replace alerts with a more user-friendly error display in the UI
         if (file.size > MAX_FILE_SIZE) {
           alert(`File ${file.name} is too large (max ${MAX_FILE_SIZE}MB)`);
           continue;

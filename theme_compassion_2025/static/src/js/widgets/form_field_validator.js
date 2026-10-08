@@ -1,5 +1,3 @@
-/** @odoo-module **/
-
 /**
  * Form Field Validator Widget
  *

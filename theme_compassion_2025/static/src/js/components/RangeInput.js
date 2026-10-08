@@ -1,5 +1,3 @@
-/** @odoo-module **/
-
 /**
  * Double-ended range slider.
  *
