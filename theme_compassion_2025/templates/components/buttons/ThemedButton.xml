@@ -68,6 +68,15 @@
     <t t-else="">
       <t t-set="style_class" t-value="'bg-black'" />
     </t>
+    <!-- Filled and hollow buttons swap their colours on hover
+         (invert-hover class in _buttons.scss) -->
+    <t t-if="variation in ('filled', 'hollow')">
+      <t t-set="style_class" t-value="style_class + ' btn--invert-hover'" />
+      <t
+        t-set="invert_style"
+        t-value="'--btn-color: var(--%s); --btn-text-color: var(--%s, #fff);' % (color, text_color)"
+      />
+    </t>
     <!-- Decide main button class depending on icon/label -->
     <t t-if="icon and not label">
       <t
@@ -93,6 +102,7 @@
         t-att-href="href"
         t-att-id="id"
         t-attf-class="btn #{btn_class} btn--radius-#{radius} #{style_class} text-#{text_color} #{add_class or ''}"
+        t-att-style="invert_style"
         t-att-data-custom="data_custom"
         t-att-target="target"
         t-att-rel="computed_rel or None"
@@ -105,6 +115,7 @@
       <button
         t-att-id="id"
         t-attf-class="btn #{btn_class} btn--radius-#{radius} #{style_class} text-#{text_color} #{add_class or ''}"
+        t-att-style="invert_style"
         t-att-data-custom="data_custom"
         t-att-data-mode="mode"
         t-att-data-bs-toggle="data_toggle"

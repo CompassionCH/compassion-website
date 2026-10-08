@@ -242,6 +242,47 @@ $btn-border-color: #000;
 }
 
 // =====================
+// Hover: colour inversion
+// =====================
+// Set by ThemedButtonComponent on filled and hollow buttons, with
+// --btn-color (background or border colour) and --btn-text-color.
+// The colour utility classes use !important, so this has to as well.
+
+.btn--invert-hover {
+  transition:
+    background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+
+  &:hover,
+  &:focus-visible {
+    .btn__icon {
+      color: inherit !important;
+    }
+  }
+}
+
+// Filled: the text colour becomes the background and the background colour
+// the text, outlined with the button colour so the button keeps its shape.
+.btn--invert-hover[class*="-filled"] {
+  &:hover,
+  &:focus-visible {
+    background-color: var(--btn-text-color) !important;
+    color: var(--btn-color) !important;
+    box-shadow: inset 0 0 0 2px var(--btn-color);
+  }
+}
+
+// Hollow: filled with the border colour, with white text.
+.btn--invert-hover[class*="-hollow"] {
+  &:hover,
+  &:focus-visible {
+    background-color: var(--btn-color) !important;
+    color: var(--pure-white, #fff) !important;
+  }
+}
+
+// =====================
 // Icon handling
 // =====================
 
