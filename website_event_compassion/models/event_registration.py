@@ -41,6 +41,9 @@ MAX_PROFILE_PICTURE_RATIO = 2
 
 # Set when the picture is not a user upload (duplicate of an existing record).
 SKIP_PROFILE_PICTURE_CHECK = "skip_profile_picture_check"
+# Set when a stage change must not confirm the registration: only an employee
+# confirms a registration.
+KEEP_UNCONFIRMED = "keep_registration_unconfirmed"
 
 
 class EventRegistration(models.Model):
@@ -263,6 +266,14 @@ class EventRegistration(models.Model):
                 url="/my/events"
             )[partner.id]
             registration.portal_signup_url = urljoin(registration.host_url, path)
+
+    def _compute_registration_status(self):
+        # Paying the down payment (or a free ticket) must not confirm the
+        # registration: an employee confirms it.
+        unconfirmed = self.filtered(lambda r: r.state == "draft")
+        res = super()._compute_registration_status()
+        unconfirmed.filtered(lambda r: r.state == "open").state = "draft"
+        return res
 
     @api.depends("state")
     def _compute_is_published(self):
@@ -524,7 +535,10 @@ class EventRegistration(models.Model):
             vals["stage_date"] = fields.Date.today()
             if "state" not in vals:
                 stage = self.env["event.registration.stage"].browse(vals["stage_id"])
-                if stage.registration_state:
+                if stage.registration_state and not (
+                    stage.registration_state == "open"
+                    and self.env.context.get(KEEP_UNCONFIRMED)
+                ):
                     vals["state"] = stage.registration_state
         super().write(vals)
         if "stage_id" in vals:
@@ -538,6 +552,9 @@ class EventRegistration(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        # Registrations wait for an employee to confirm them.
+        for vals in vals_list:
+            vals.setdefault("state", "draft")
         records = super(
             EventRegistration, self.with_context(registration_incomplete=True)
         ).create(vals_list)
@@ -556,7 +573,9 @@ class EventRegistration(models.Model):
                 registration.amount_objective = event.participants_amount_objective
             if not registration.stage_id:
                 event_stages = registration.event_id._registration_stages()
-                registration.stage_id = event_stages[:1] or self._default_stage()
+                registration.with_context(**{KEEP_UNCONFIRMED: True}).stage_id = (
+                    event_stages[:1] or self._default_stage()
+                )
             # Set donation receipt preference
             registration.partner_id.receive_ambassador_receipts = True
 
@@ -619,6 +638,12 @@ class EventRegistration(models.Model):
         if force_send:
             communications.send()
         return communications
+
+    def action_confirm(self):
+        res = super().action_confirm()
+        # Resume the pipeline that was waiting for the confirmation.
+        self.next_stage()
+        return res
 
     def action_set_done(self):
         super().action_set_done()
@@ -795,6 +820,12 @@ class EventRegistration(models.Model):
                 lambda stage, trip=trip_type: not stage.trip_type_ids
                 or trip in stage.trip_type_ids
             )[:1]
+            if registration.state == "draft" and next_stage.registration_state in (
+                "open",
+                "done",
+            ):
+                # Only an employee confirms a registration.
+                continue
             if next_stage:
                 registration.write({"stage_id": next_stage.id})
 
