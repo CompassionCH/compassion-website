@@ -171,7 +171,12 @@ class EventMail(models.Model):
         """
         for mail in self._for_trip_type():
             now = fields.Datetime.now()
-            if mail.interval_type == "after_stage":
+            # Communications after subscription go to each new registration,
+            # not once to the whole event.
+            if mail.interval_type == "after_stage" or (
+                mail.interval_type == "after_sub"
+                and mail.notification_type == "communication"
+            ):
                 # update registration lines
                 lines = [
                     (0, 0, {"registration_id": registration.id})
