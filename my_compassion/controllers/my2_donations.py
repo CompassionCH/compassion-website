@@ -202,6 +202,7 @@ class MyCompassionDonationsController(CustomerPortal):
             request.website.company_id,
             request.env.user.partner_id,
             sponsorship_id,
+            request.website.sale_get_order(),
         )
         return limits
 
