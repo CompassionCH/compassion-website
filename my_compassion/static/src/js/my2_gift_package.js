@@ -1,3 +1,5 @@
+/** @odoo-module **/
+
 /**
  * Gift package (cart) page widget.
  *

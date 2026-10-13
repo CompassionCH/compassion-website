@@ -1,3 +1,5 @@
+/** @odoo-module **/
+
 import {rpc} from "@web/core/network/rpc";
 import {session} from "@web/session";
 import {toast} from "@my_compassion/js/toast_service";

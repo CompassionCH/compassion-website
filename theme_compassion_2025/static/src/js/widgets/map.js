@@ -1,3 +1,5 @@
+/** @odoo-module **/
+
 /**
  * Google Maps Widget
  *

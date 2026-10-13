@@ -1,3 +1,5 @@
+/** @odoo-module **/
+
 /*
  * Handle the new sponsorship wizard. It handles users actions such as
  * step navigation (next/previous), form validation, dynamic content
