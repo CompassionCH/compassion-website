@@ -199,7 +199,10 @@ class MyCompassionDonationsController(CustomerPortal):
                 raise BadRequest() from e
 
         limits = product.get_donation_limits(
-            request.website.company_id, request.env.user.partner_id, sponsorship_id
+            request.website.company_id,
+            request.env.user.partner_id,
+            sponsorship_id,
+            request.website.sale_get_order(),
         )
         return limits
 
@@ -219,7 +222,8 @@ class MyCompassionDonationsController(CustomerPortal):
         # Get the current sales order and register it as last order
         # (usually done in a confirmation step that we don't have)
         order = request.website.sale_get_order()
-        request.session["sale_last_order_id"] = order.id
+        if order:
+            request.session["sale_last_order_id"] = order.id
 
         # Fetch gift thresholds
         limits = request.env["gift.threshold.settings"].sudo().search([])
@@ -416,6 +420,17 @@ class MyCompassionDonationsController(CustomerPortal):
         ):
             return {"state": False}
 
+        seconds_ago = int((fields.Datetime.now() - tx.create_date).total_seconds())
+        if not tx.provider_reference:
+            # PostFinance refused to create the payment, so there is nothing to
+            # poll: tell the app instead of spinning forever (T3472).
+            return {
+                "state": "error",
+                "seconds_ago": seconds_ago,
+                "processing": False,
+                "reference": tx.reference,
+            }
+
         # Only chase a payment that can still move, and only a recent one.
         recent = tx.create_date > fields.Datetime.subtract(
             fields.Datetime.now(), hours=2
@@ -434,9 +449,7 @@ class MyCompassionDonationsController(CustomerPortal):
 
         return {
             "state": tx.state,
-            "seconds_ago": int(
-                (fields.Datetime.now() - tx.create_date).total_seconds()
-            ),
+            "seconds_ago": seconds_ago,
             "processing": tx.state in ("draft", "pending"),
             "reference": tx.reference,
         }

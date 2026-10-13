@@ -40,6 +40,47 @@ whenReady(() => {
     }
   }
 
+  /**
+   * Filtering and pagination reload the whole page, which can take a few
+   * seconds on a large mailbox. Show an overlay right away so the sponsor
+   * sees something happening instead of an unchanged page.
+   */
+  let loadingTrigger = null;
+
+  function navigateWithLoading(url, trigger) {
+    if (trigger) {
+      trigger.disabled = true;
+      loadingTrigger = trigger;
+    }
+    let overlay = document.getElementById("lettersLoadingOverlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "lettersLoadingOverlay";
+      overlay.className = "letters-loading-overlay";
+      overlay.setAttribute("role", "status");
+      overlay.setAttribute("aria-live", "polite");
+      overlay.innerHTML =
+        '<div class="letters-loading-spinner" aria-label="' +
+        _t("Loading") +
+        '"></div>';
+      document.body.appendChild(overlay);
+    }
+    overlay.classList.add("is-visible");
+    window.location.href = url;
+  }
+
+  // Back/forward cache restores the page as it was left: overlay up, button off.
+  window.addEventListener("pageshow", (ev) => {
+    if (!ev.persisted) {
+      return;
+    }
+    document.getElementById("lettersLoadingOverlay")?.classList.remove("is-visible");
+    if (loadingTrigger) {
+      loadingTrigger.disabled = false;
+      loadingTrigger = null;
+    }
+  });
+
   // Letter animation
   document.querySelectorAll(".my2-envelope").forEach((envelope) => {
     envelope.addEventListener("click", function () {
@@ -103,20 +144,20 @@ whenReady(() => {
   });
 
   // Pagination: Next Page
-  document.getElementById("nextPageBtn")?.addEventListener("click", () => {
+  document.getElementById("nextPageBtn")?.addEventListener("click", (ev) => {
     const currentUrl = new URL(window.location.href);
     const currentPage = parseInt(currentUrl.searchParams.get("page") || "1", 10);
     currentUrl.searchParams.set("page", currentPage + 1);
-    window.location.href = currentUrl.toString();
+    navigateWithLoading(currentUrl.toString(), ev.currentTarget);
   });
 
   // Pagination: Previous Page
-  document.getElementById("prevPageBtn")?.addEventListener("click", () => {
+  document.getElementById("prevPageBtn")?.addEventListener("click", (ev) => {
     const currentUrl = new URL(window.location.href);
     const currentPage = parseInt(currentUrl.searchParams.get("page") || "1", 10);
     if (currentPage > 1) {
       currentUrl.searchParams.set("page", currentPage - 1);
-      window.location.href = currentUrl.toString();
+      navigateWithLoading(currentUrl.toString(), ev.currentTarget);
     }
   });
 
@@ -155,7 +196,7 @@ whenReady(() => {
         url.searchParams.delete("unread");
       }
 
-      window.location.href = url.toString();
+      navigateWithLoading(url.toString(), okBtn);
     });
   }
 

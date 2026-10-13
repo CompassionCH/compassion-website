@@ -11,6 +11,7 @@ from . import (
     compassion_child,
     correspondence,
     device_token,
+    partner_communication,
     ir_http,
     res_config_settings,
     res_user,
