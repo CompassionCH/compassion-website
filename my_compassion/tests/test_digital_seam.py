@@ -187,6 +187,40 @@ class TestDigitalSeam(DigitalSeamCase):
         tx3._post_process()
         self.assertEqual(contract.group_id.payment_token_id, token2)
 
+    def test_late_token_lands_on_group(self):
+        """A token saved after post-processing still reaches the group."""
+        contract = self._make_digital_contract()
+        invoice = contract._ensure_first_invoice()
+        provider = contract.payment_mode_id.payment_provider_id
+        method = self.env["payment.method"].search([], limit=1)
+        tx = self.env["payment.transaction"].create(
+            {
+                "provider_id": provider.id,
+                "payment_method_id": method.id,
+                "partner_id": contract.partner_id.id,
+                "amount": invoice.amount_residual,
+                "currency_id": invoice.currency_id.id,
+                "reference": "digital-seam-late-token-tx",
+                "operation": "online_direct",
+                "tokenize": True,
+                "invoice_ids": [Command.set(invoice.ids)],
+            }
+        )
+        tx._set_done()
+        tx._post_process()
+        self.assertFalse(contract.group_id.payment_token_id)
+        token = self.env["payment.token"].create(
+            {
+                "provider_id": provider.id,
+                "payment_method_id": method.id,
+                "partner_id": contract.partner_id.id,
+                "provider_ref": "digital-seam-late-token",
+                "payment_details": "4242",
+            }
+        )
+        tx.token_id = token
+        self.assertEqual(contract.group_id.payment_token_id, token)
+
     def test_ensure_first_invoice_sync(self):
         contract = self._make_digital_contract()
         self.assertEqual(contract.state, "draft")
