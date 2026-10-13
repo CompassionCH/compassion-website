@@ -420,11 +420,13 @@ class MyCompassionDonationsController(CustomerPortal):
         ):
             return {"state": False}
 
+        seconds_ago = int((fields.Datetime.now() - tx.create_date).total_seconds())
         if not tx.provider_reference:
             # PostFinance refused to create the payment, so there is nothing to
             # poll: tell the app instead of spinning forever (T3472).
             return {
                 "state": "error",
+                "seconds_ago": seconds_ago,
                 "processing": False,
                 "reference": tx.reference,
             }
@@ -447,9 +449,7 @@ class MyCompassionDonationsController(CustomerPortal):
 
         return {
             "state": tx.state,
-            "seconds_ago": int(
-                (fields.Datetime.now() - tx.create_date).total_seconds()
-            ),
+            "seconds_ago": seconds_ago,
             "processing": tx.state in ("draft", "pending"),
             "reference": tx.reference,
         }
