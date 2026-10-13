@@ -7,7 +7,11 @@
 #
 ##############################################################################
 
+import logging
+
 from odoo import models
+
+_logger = logging.getLogger(__name__)
 
 
 class CommunicationJob(models.Model):
@@ -26,5 +30,11 @@ class CommunicationJob(models.Model):
             [("communication_id", "in", self.ids)]
         )
         for letter in letters.filtered("is_published"):
-            letter._notify_new_letter()
+            # The letter has already left: a failed push must not roll back
+            # the communication's "done" state.
+            try:
+                with self.env.cr.savepoint():
+                    letter._notify_new_letter()
+            except Exception:
+                _logger.exception("New-letter push failed for letter %s", letter.id)
         return result
