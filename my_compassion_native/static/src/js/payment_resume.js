@@ -2,6 +2,7 @@
 
 import {Component} from "@odoo/owl";
 import {_t} from "@web/core/l10n/translation";
+import {rpc} from "@web/core/network/rpc";
 import {session} from "@web/session";
 
 // The donor pays in a browser this page cannot see into, and its own timers are
@@ -16,7 +17,7 @@ const HANDLED_KEY = "my2_payment_handled";
 let pollTimer = null;
 let startedAt = null;
 
-// Only the app can close the sheet it opened.
+// Only the app can close the browser it opened.
 function closeNativePaymentSheet() {
   const handlers = window.webkit && window.webkit.messageHandlers;
   if (handlers && handlers.nativePayment) {
@@ -36,13 +37,6 @@ function releasePaymentFormBlock() {
   while (ui && ui.isBlocked) {
     ui.unblock();
   }
-}
-function alreadyHandled(reference) {
-  return window.sessionStorage.getItem(HANDLED_KEY) === reference;
-}
-
-function markHandled(reference) {
-  window.sessionStorage.setItem(HANDLED_KEY, reference);
 }
 
 function banner(message, tone) {
@@ -72,24 +66,13 @@ function stop() {
   startedAt = null;
 }
 
-function fetchStatus() {
-  return fetch("/my2/payment/status", {
-    method: "POST",
-    credentials: "same-origin",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({jsonrpc: "2.0", method: "call", params: {}}),
-  })
-    .then((response) => response.json())
-    .then((payload) => (payload && payload.result) || null);
-}
-
 function handle(status) {
   if (!status || !status.state || status.seconds_ago > MAX_AGE_S) {
     clearBanner();
     stop();
     return false;
   }
-  if (alreadyHandled(status.reference)) {
+  if (window.sessionStorage.getItem(HANDLED_KEY) === status.reference) {
     stop();
     return false;
   }
@@ -111,7 +94,7 @@ function handle(status) {
   }
 
   stop();
-  markHandled(status.reference);
+  window.sessionStorage.setItem(HANDLED_KEY, status.reference);
   if (status.state === "done") {
     // Success only: a failure must stay on screen to be read.
     closeNativePaymentSheet();
@@ -138,7 +121,7 @@ function poll() {
       stop();
     }
   }
-  fetchStatus()
+  rpc("/my2/payment/status")
     .then((status) => {
       if (handle(status)) {
         again();
