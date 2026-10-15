@@ -109,6 +109,27 @@ class RecurringContract(models.Model):
         )
         return invoices.sorted("invoice_date")[:1]
 
+    def _my2_failed_first_payment(self):
+        """Whether the last attempt to pay the first invoice of a digital
+        signup failed, so the sponsor still has to pay it.
+
+        Odoo sends the payment flow to its landing route (the thank-you page)
+        on cancel and error too, not only on success.
+        """
+        self.ensure_one()
+        if not self.payment_mode_id.payment_provider_id or self.state not in (
+            "draft",
+            "waiting",
+        ):
+            return False
+        open_invoices = self.invoice_line_ids.move_id.filtered(
+            lambda m: m.move_type == "out_invoice"
+            and m.state == "posted"
+            and m.payment_state in ("not_paid", "partial")
+        )
+        last_tx = open_invoices.transaction_ids.sorted("id")[-1:]
+        return last_tx.state in ("cancel", "error")
+
     def _my2_details_pending(self):
         """Whether this signup is still waiting for its sponsor's real name.
 

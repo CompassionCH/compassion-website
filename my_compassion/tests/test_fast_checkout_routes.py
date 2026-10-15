@@ -372,3 +372,67 @@ class TestFastCheckoutRoutes(HttpCase, DigitalSeamCase):
         self.assertEqual(
             self.url_open("/my2/new-sponsorship/thank-you").status_code, 404
         )
+
+    # === failed first payment ===
+
+    def _first_payment(self, signup, state):
+        """A first-payment transaction of the signup ended in state."""
+        invoice = signup._ensure_first_invoice()
+        self.assertTrue(invoice)
+        tx = self.env["payment.transaction"].create(
+            {
+                "provider_id": self.provider.id,
+                "payment_method_id": self.env["payment.method"].search([], limit=1).id,
+                "amount": invoice.amount_residual,
+                "currency_id": invoice.currency_id.id,
+                "partner_id": signup.partner_id.id,
+                "reference": f"route-walk-first-payment-{state}",
+                "invoice_ids": [(6, 0, invoice.ids)],
+            }
+        )
+        if state == "cancel":
+            tx._set_canceled()
+        elif state == "error":
+            tx._set_error("declined")
+        elif state == "done":
+            tx._set_done()
+        return tx
+
+    def test_thank_you_sends_a_failed_payment_back_to_pay(self):
+        """The gateway lands on the thank-you page even when the payment
+        failed: the sponsor is sent back to pay, with another card."""
+        _location, signup = self._pay_first_page()
+        for state in ("cancel", "error"):
+            with self.subTest(state=state):
+                self._first_payment(signup, state)
+                page = self.url_open(
+                    f"/my2/new-sponsorship/thank-you?sponsorship_id={signup.id}",
+                    allow_redirects=False,
+                )
+                self.assertEqual(page.status_code, 303)
+                location = page.headers["Location"]
+                self.assertIn("/my2/new-sponsorship/payment", location)
+                self.assertIn("payment_failed=1", location)
+                retry = self.url_open(location)
+                self.assertEqual(retry.status_code, 200)
+                self.assertIn("Your payment did not go through", retry.text)
+
+    def test_thank_you_after_a_successful_payment(self):
+        _location, signup = self._pay_first_page()
+        self._first_payment(signup, "cancel")
+        # the retry went through
+        self._first_payment(signup, "done")
+        page = self.url_open(
+            f"/my2/new-sponsorship/thank-you?sponsorship_id={signup.id}",
+            allow_redirects=False,
+        )
+        self.assertEqual(page.status_code, 200)
+        self.assertIn("Who shall we thank?", page.text)
+
+    def test_payment_page_shows_no_failure_without_one(self):
+        """payment_failed in the URL alone does not show the message."""
+        location, signup = self._pay_first_page()
+        signup._ensure_first_invoice()
+        page = self.url_open(f"{location}&payment_failed=1")
+        self.assertEqual(page.status_code, 200)
+        self.assertNotIn("Your payment did not go through", page.text)
