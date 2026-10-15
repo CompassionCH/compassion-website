@@ -119,6 +119,13 @@ class EventRegistration(models.Model):
         readonly=True,
     )
     fundraising = fields.Boolean(related="event_id.fundraising")
+    source_id = fields.Many2one(
+        "utm.source",
+        "Source",
+        copy=False,
+        index="btree_not_null",
+        help="The participant as fundraiser: given to the sponsorships they bring.",
+    )
     amount_objective = fields.Monetary("Raise objective")
     amount_raised = fields.Monetary(readonly=True, compute="_compute_amount_raised")
     amount_raised_percents = fields.Integer(
@@ -550,6 +557,17 @@ class EventRegistration(models.Model):
             return True
         return super()._update_mail_schedulers()
 
+    def _create_fundraiser_source(self):
+        registrations = self.filtered(lambda r: not r.source_id)
+        sources = self.env["utm.source"].create(
+            [
+                {"name": f"{r.event_id.name} - {r.partner_id.name}"}
+                for r in registrations
+            ]
+        )
+        for registration, source in zip(registrations, sources, strict=True):
+            registration.source_id = source
+
     @api.model_create_multi
     def create(self, vals_list):
         # Registrations wait for an employee to confirm them.
@@ -578,6 +596,7 @@ class EventRegistration(models.Model):
                 )
             # Set donation receipt preference
             registration.partner_id.receive_ambassador_receipts = True
+        records.filtered("fundraising")._create_fundraiser_source()
 
         # check the subtype note by default
         # for all the default follower of a new registration
