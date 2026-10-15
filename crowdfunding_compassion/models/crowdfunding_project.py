@@ -304,6 +304,7 @@ class CrowdfundingProject(models.Model):
                     "name": project.name,
                     "type": "crowdfunding",
                     "crowdfunding_project_id": project.id,
+                    "campaign_id": project.campaign_id.id,
                     "company_id": self.env.user.company_id.id,
                     "start_date": project.deadline,
                     "end_date": project.deadline,
@@ -321,6 +322,7 @@ class CrowdfundingProject(models.Model):
                     "type": "crowdfunding",
                     "event_id": event.id,
                     "analytic_id": event.analytic_id.id,
+                    "campaign_id": project.campaign_id.id,
                 }
             )
             project.add_owner2participants()
