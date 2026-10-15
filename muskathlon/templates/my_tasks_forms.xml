@@ -26,8 +26,8 @@
                 'flight_type': 'outbound',
                 'flying_company': outbound_flight.flying_company,
                 'flight_number': outbound_flight.flight_number,
-                'departure': outbound_flight.get_date('departure', 'YYYY-MM-dd HH:mm:ss'),
-                'arrival': outbound_flight.get_date('arrival', 'YYYY-MM-dd HH:mm:ss'),
+                'departure': outbound_flight.get_date('departure', 'yyyy-MM-dd HH:mm:ss'),
+                'arrival': outbound_flight.get_date('arrival', 'yyyy-MM-dd HH:mm:ss'),
                 }"
     />
     <span
@@ -38,8 +38,8 @@
                 'flight_type': 'return',
                 'flying_company': inbound_flight.flying_company,
                 'flight_number': inbound_flight.flight_number,
-                'departure': inbound_flight.get_date('departure', 'YYYY-MM-D HH:mm:ss'),
-                'arrival': inbound_flight.get_date('arrival', 'YYYY-MM-D HH:mm:ss'),
+                'departure': inbound_flight.get_date('departure', 'yyyy-MM-dd HH:mm:ss'),
+                'arrival': inbound_flight.get_date('arrival', 'yyyy-MM-dd HH:mm:ss'),
                 }"
     />
     <h3>Outbound flight</h3>
