@@ -61,6 +61,24 @@ class Event(models.Model):
         store=True,
     )
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        events = super().create(vals_list)
+        events._fundraising_campaign()
+        return events
+
+    def write(self, vals):
+        res = super().write(vals)
+        if {"fundraising", "compassion_event_id"} & set(vals):
+            self._fundraising_campaign()
+        return res
+
+    def _fundraising_campaign(self):
+        """With fundraising, the event is a campaign and each participant a
+        source."""
+        self.filtered("fundraising").compassion_event_id._ensure_campaign()
+        self.filtered("fundraising").registration_ids._create_fundraiser_source()
+
     def _compute_registration_open(self):
         event_announced = self.env.ref("event.event_stage_announced")
         for event in self:

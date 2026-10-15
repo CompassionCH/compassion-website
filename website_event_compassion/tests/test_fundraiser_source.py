@@ -70,6 +70,12 @@ class TestFundraiserSource(TransactionCase):
             }
         )
 
+    def test_trip_with_fundraising_is_a_campaign(self):
+        campaign = self.compassion_event.campaign_id
+        self.assertEqual(campaign.title, self.compassion_event.full_name)
+        self.assertEqual(self.compassion_event.origin_id.campaign_id, campaign)
+        self.assertTrue(self.compassion_event._is_peer_to_peer())
+
     def test_registration_gets_source(self):
         self.assertIn(self.fundraiser.name, self.registration.source_id.name)
 

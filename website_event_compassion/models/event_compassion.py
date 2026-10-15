@@ -180,3 +180,16 @@ class EventCompassion(models.Model):
         base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
         link = super()._notify_get_action_link(link_type, **kwargs)
         return link.replace(self.get_base_url(), base_url)
+
+    def _is_peer_to_peer(self):
+        """The participants of a trip with fundraising raise funds on their page."""
+        return (
+            super()._is_peer_to_peer()
+            or self.odoo_event_id.fundraising
+            or bool(
+                self.env["event.event"].search_count(
+                    [("compassion_event_id", "=", self.id), ("fundraising", "=", True)],
+                    limit=1,
+                )
+            )
+        )
