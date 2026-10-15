@@ -817,15 +817,23 @@ class EventRegistration(models.Model):
     def next_stage(self):
         """Transition to next registration stage"""
         stage_complete = self.filtered("is_stage_complete")
+        # The terminal stages shipped with this module (Confirmed, Attended,
+        # Cancelled) are shared by every template when they have no event type.
+        # Other stages without a type (e.g. created in the UI and not linked yet)
+        # are not steps of every journey and must not be picked.
+        shared_stages = [
+            self.env.ref(f"website_event_compassion.stage_all_{name}").id
+            for name in ("confirmed", "attended", "cancelled")
+        ]
         for registration in stage_complete:
-            # Stages without an event type are terminal ones shared by every
-            # template (Confirmed, Attended, Cancelled), so they stay reachable.
             candidates = self.env["event.registration.stage"].search(
                 [
                     ("sequence", ">", registration.stage_id.sequence),
                     "|",
                     ("event_type_ids", "in", registration.event_type_id.ids),
+                    "&",
                     ("event_type_ids", "=", False),
+                    ("id", "in", shared_stages),
                 ]
             )
             trip_type = registration.trip_type_id
