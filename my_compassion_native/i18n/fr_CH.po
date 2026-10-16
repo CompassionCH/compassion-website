@@ -1,24 +1,42 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* my_compassion_native
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Compassion Odoo 18\n"
-"Language: fr\n"
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-16 19:14+0000\n"
+"PO-Revision-Date: 2026-10-16 19:14+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: POEditor.com\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: my_compassion_native
+#. odoo-python
+#: code:addons/my_compassion_native/wizards/my2_push_notification_wizard.py:0
+msgid "%(device)s: %(error)s"
+msgstr ""
+
+#. module: my_compassion_native
+#. odoo-python
+#: code:addons/my_compassion_native/wizards/my2_push_notification_wizard.py:0
+msgid "%s has no device registered for push notifications."
+msgstr ""
 
 #. module: my_compassion_native
 #. odoo-python
 #: code:addons/my_compassion_native/models/correspondence.py:0
 msgid "%s has written you a letter!"
-msgstr "%s vous a écrit une lettre !"
+msgstr ""
 
 #. module: my_compassion_native
 #: model:ir.model,name:my_compassion_native.model_res_users
 msgid "Adds authentication for users from external platforms."
-msgstr ""
+msgstr "Utilisateurs"
 
 #. module: my_compassion_native
 #: model:ir.model.fields,help:my_compassion_native.field_reformat_all_phonenumbers__my2_bottom_nav_on_web
@@ -46,9 +64,14 @@ msgid "Change Language"
 msgstr "Changer de langue"
 
 #. module: my_compassion_native
+#: model:ir.model,name:my_compassion_native.model_partner_communication_job
+msgid "Communication Job"
+msgstr ""
+
+#. module: my_compassion_native
 #: model:ir.model,name:my_compassion_native.model_res_config_settings
 msgid "Config Settings"
-msgstr ""
+msgstr "Paramètres de configuration"
 
 #. module: my_compassion_native
 #: model_terms:ir.ui.view,arch_db:my_compassion_native.my2_mobile_profile_page
@@ -107,8 +130,14 @@ msgstr "Mettre à jour mon profil"
 #. odoo-python
 #: code:addons/my_compassion_native/wizards/my2_push_notification_wizard.py:0
 msgid ""
-"Failed to send the push notification. Check that the user has registered "
-"devices and that Firebase is configured correctly."
+"Failed to send the push notification:\n"
+"%s"
+msgstr ""
+
+#. module: my_compassion_native
+#. odoo-python
+#: code:addons/my_compassion_native/models/device_token.py:0
+msgid "Firebase is not configured on this server."
 msgstr ""
 
 #. module: my_compassion_native
@@ -120,6 +149,11 @@ msgstr "Panier cadeau"
 #: model_terms:ir.ui.view,arch_db:my_compassion_native.my2_mobile_app_layout
 msgid "Give"
 msgstr "Donner"
+
+#. module: my_compassion_native
+#: model:ir.model,name:my_compassion_native.model_ir_http
+msgid "HTTP Routing"
+msgstr ""
 
 #. module: my_compassion_native
 #: model_terms:ir.ui.view,arch_db:my_compassion_native.my2_mobile_app_layout
@@ -147,7 +181,7 @@ msgstr ""
 #. module: my_compassion_native
 #: model:ir.model,name:my_compassion_native.model_correspondence
 msgid "Letter"
-msgstr ""
+msgstr "Lettre"
 
 #. module: my_compassion_native
 #: model_terms:ir.ui.view,arch_db:my_compassion_native.my2_mobile_app_layout
@@ -202,7 +236,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/my_compassion_native/models/correspondence.py:0
 msgid "New letter from %s"
-msgstr "Nouvelle lettre de %s"
+msgstr ""
 
 #. module: my_compassion_native
 #. odoo-python
@@ -224,12 +258,6 @@ msgid "Profile"
 msgstr "Profil"
 
 #. module: my_compassion_native
-#. odoo-python
-#: code:addons/my_compassion_native/wizards/my2_push_notification_wizard.py:0
-msgid "Push notification successfully sent to %s."
-msgstr ""
-
-#. module: my_compassion_native
 #: model_terms:ir.ui.view,arch_db:my_compassion_native.view_users_form_mobile_app
 msgid "Send Manual Notification"
 msgstr ""
@@ -246,6 +274,12 @@ msgid "Send Notification"
 msgstr ""
 
 #. module: my_compassion_native
+#. odoo-python
+#: code:addons/my_compassion_native/wizards/my2_push_notification_wizard.py:0
+msgid "Sent to %(sent)s of %(total)s registered devices."
+msgstr ""
+
+#. module: my_compassion_native
 #: model_terms:ir.ui.view,arch_db:my_compassion_native.res_config_settings_view_form_my2_bottom_nav
 msgid ""
 "Show the MyCompassion mobile app bottom navigation on mobile browsers for "
@@ -255,13 +289,13 @@ msgstr ""
 #. module: my_compassion_native
 #: model:ir.model,name:my_compassion_native.model_compassion_child
 msgid "Sponsored Child"
-msgstr ""
+msgstr "Enfant parrainé"
 
 #. module: my_compassion_native
 #. odoo-javascript
 #: code:addons/my_compassion_native/static/src/js/payment_resume.js:0
 msgid "Thank you! We're confirming your gift…"
-msgstr "Merci ! Nous confirmons ton don…"
+msgstr ""
 
 #. module: my_compassion_native
 #. odoo-javascript
@@ -269,7 +303,6 @@ msgstr "Merci ! Nous confirmons ton don…"
 msgid ""
 "The payment didn't go through. Nothing was charged – feel free to try again."
 msgstr ""
-"Le paiement n'a malheureusement pas abouti. Rien n'a été débité – tu peux réessayer quand tu veux."
 
 #. module: my_compassion_native
 #: model:ir.model.constraint,message:my_compassion_native.constraint_mycompassion_device_token_token_uniq
@@ -303,7 +336,7 @@ msgstr ""
 #. module: my_compassion_native
 #: model:ir.model,name:my_compassion_native.model_website
 msgid "Website"
-msgstr ""
+msgstr "Site Web"
 
 #. module: my_compassion_native
 #. odoo-javascript
@@ -312,9 +345,20 @@ msgid ""
 "Your gift has arrived. We're confirming it shortly – you can safely close "
 "this page."
 msgstr ""
-"Ton don est bien arrivé. Nous le confirmons sous peu – tu peux fermer cette page en toute tranquillité."
 
 #. module: my_compassion_native
 #: model:ir.model.fields.selection,name:my_compassion_native.selection__mycompassion_device_token__device_type__ios
 msgid "iOS"
+msgstr ""
+
+#. module: my_compassion_native
+#. odoo-python
+#: code:addons/my_compassion_native/models/device_token.py:0
+msgid "the device belongs to another Firebase project"
+msgstr ""
+
+#. module: my_compassion_native
+#. odoo-python
+#: code:addons/my_compassion_native/models/device_token.py:0
+msgid "the device is no longer registered"
 msgstr ""
