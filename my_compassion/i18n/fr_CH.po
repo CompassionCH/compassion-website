@@ -362,6 +362,9 @@ msgid ""
 "          <span id=\"current_temperature\" class=\"center-info-card__temperature\"/>\n"
 "          <span class=\"small position-relative text-low-grey mt-n1\">°C</span>"
 msgstr ""
+"<i id=\"weather_icon\" class=\"m-2\"/>\n"
+"          <span id=\"current_temperature\" class=\"center-info-card__temperature\"/>\n"
+"          <span class=\"small position-relative text-low-grey mt-n1\">°C</span>"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
@@ -578,6 +581,9 @@ msgid ""
 " justify-content-center rounded-circle bg-core-blue text-pure-white tiny-"
 "text bold\">✓</span>"
 msgstr ""
+"<span class=\"toggle-card-check me-3 flex-shrink-0 d-flex align-items-center"
+" justify-content-center rounded-circle bg-core-blue text-pure-white tiny-"
+"text bold\">✓</span>"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
@@ -846,7 +852,7 @@ msgstr "Le compte ne peut pas être supprimé en raison de parrainages actifs."
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_user_settings.py:0
 msgid "Account could not be deleted, please contact us. "
-msgstr "Le compte n'a pas pu être supprimé, veuillez nous contacter. "
+msgstr "Le compte n’a pas pu être supprimé, veuillez nous contacter."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
@@ -948,14 +954,14 @@ msgid ""
 "An error occurred while processing your letter. Please try again or contact "
 "the support."
 msgstr ""
-"Une erreur s'est produite lors du traitement de votre lettre. Veuillez "
+"Une erreur s’est produite lors du traitement de votre lettre. Veuillez "
 "réessayer ou contacter le support."
 
 #. module: my_compassion
 #. odoo-python
 #: code:addons/my_compassion/models/res_user.py:0
 msgid "An error occurred."
-msgstr "Une erreur s'est produite."
+msgstr "Une erreur s’est produite."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.http_error_custom
@@ -976,7 +982,7 @@ msgstr "Apparence"
 #. odoo-javascript
 #: code:addons/my_compassion/static/src/js/my2_new_letter.js:0
 msgid "Attachment ID is missing."
-msgstr "L'ID de la pièce jointe est manquant."
+msgstr "L’ID de la pièce jointe est manquant."
 
 #. module: my_compassion
 #. odoo-python
@@ -1049,7 +1055,7 @@ msgstr "Date de naissance"
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_children.py:0
 msgid "Birthday gift"
-msgstr "Cadeau d'anniversaire"
+msgstr "Cadeau d’anniversaire"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_children_card_component
@@ -1131,7 +1137,7 @@ msgstr "Impossible de planifier un modèle déjà expiré."
 #: code:addons/my_compassion/models/res_user.py:0
 msgid "Cannot send email: the partner %s has no email address."
 msgstr ""
-"Impossible d'envoyer l'e-mail : le partenaire %s n'a pas d'adresse e-mail."
+"Impossible d’envoyer l’e-mail : le partenaire %s n’a pas d’adresse e-mail."
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_payment_transaction__my2_card_update_group_id
@@ -1262,7 +1268,7 @@ msgstr "Couleur"
 #: model:new.sponsorship.wizard.step,title:my_compassion.new_sponsorship_wizard_step_communication_details
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
 msgid "Communication"
-msgstr "Libellé"
+msgstr "Communication"
 
 #. module: my_compassion
 #. odoo-python
@@ -1382,7 +1388,7 @@ msgstr "Confirmer le mot de passe"
 #. odoo-python
 #: code:addons/my_compassion/models/correspondence_prewritten_letter.py:0
 msgid "Conflicts with the following records:\n"
-msgstr "Conflits avec les enregistrements suivants :\n"
+msgstr "Conflit avec les enregistrements suivants :\n"
 
 #. module: my_compassion
 #: model:ir.model,name:my_compassion.model_res_partner
@@ -1448,7 +1454,7 @@ msgstr "Correspondance : Mettre à jour le statut des modèles de lettres"
 #. odoo-javascript
 #: code:addons/my_compassion/static/src/js/my2_new_letter.js:0
 msgid "Could not save the letter."
-msgstr "Impossible d'enregistrer la lettre."
+msgstr "Impossible d’enregistrer la lettre."
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__country
@@ -1557,7 +1563,7 @@ msgstr "Protection des données et accord légal"
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_donations_history_content
 msgid "Date"
-msgstr "Date "
+msgstr "Date"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
@@ -1745,7 +1751,7 @@ msgstr "Brouillon enregistré !"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
 msgid "E-mail"
-msgstr "Courriel"
+msgstr "E-mail"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_content
@@ -1840,7 +1846,7 @@ msgstr "Erreur"
 #. odoo-javascript
 #: code:addons/my_compassion/static/src/js/my2_new_letter.js:0
 msgid "Error occurred while removing the attachment."
-msgstr "Une erreur s'est produite lors de la suppression de la pièce jointe."
+msgstr "Une erreur s’est produite lors de la suppression de la pièce jointe."
 
 #. module: my_compassion
 #. odoo-javascript
@@ -1898,7 +1904,7 @@ msgstr "Échec du partage de la lettre."
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_children.py:0
 msgid "Family gift"
-msgstr "Cadeau de famille"
+msgstr "Cadeau familial"
 
 #. module: my_compassion
 #: model:ir.model.fields.selection,name:my_compassion.selection__account_move__gender__f
@@ -2132,7 +2138,7 @@ msgstr "Bonne nouvelle!"
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_children.py:0
 msgid "Graduation/Final gift"
-msgstr "Cadeau de fin de parrainage"
+msgstr "Cadeau de fin d’études / final"
 
 #. module: my_compassion
 #: model:ir.model.fields.selection,name:my_compassion.selection__correspondence_s2b_generator__generation_mode__mass
@@ -2283,7 +2289,7 @@ msgstr "Je ne vais pas à l'école"
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__id
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard_step__id
 msgid "ID"
-msgstr "Identifiant"
+msgstr "ID"
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_correspondence_prewritten_letter__is_active
@@ -2396,8 +2402,8 @@ msgid ""
 "Invalid button action URL. Please enter a valid relative path (e.g., "
 "/contact) or a full URL (e.g., https://example.com)."
 msgstr ""
-"URL d'action du bouton invalide. Veuillez saisir un chemin relatif valide "
-"(p. ex. /contact) ou une URL complète (p. ex. https://example.com)."
+"URL d’action du bouton invalide. Veuillez saisir un chemin relatif valide "
+"(par ex. /contact) ou une URL complète (par ex. https://example.com)."
 
 #. module: my_compassion
 #. odoo-python
@@ -2632,7 +2638,7 @@ msgstr "Se connecter"
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_user_settings.py:0
 msgid "Login cannot be empty."
-msgstr "L'identifiant de connexion ne peut pas être vide."
+msgstr "Le login ne peut pas être vide."
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_product_product__my_compassion_donation_amount_low
@@ -2716,7 +2722,7 @@ msgstr "Message"
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_information_personal
 msgid "Mobile"
-msgstr "Portable"
+msgstr "Mobile"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
@@ -2970,7 +2976,7 @@ msgstr "Nouveau mot de passe"
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_children.py:0
 msgid "New picture"
-msgstr "Nouvelle photo"
+msgstr "Nouvelle image"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_children_page
@@ -2992,7 +2998,7 @@ msgstr "Suivant"
 #. odoo-python
 #: code:addons/my_compassion/models/compassion_child.py:0
 msgid "No child found for the given search parameters."
-msgstr "Aucun enfant trouvé pour les paramètres de recherche donnés."
+msgstr "Aucun enfant n’a été trouvé selon les paramètres de recherche."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_children_card_component
@@ -3043,7 +3049,7 @@ msgstr "Aucun parrainage trouvé"
 #. odoo-python
 #: code:addons/my_compassion/controllers/my_account.py:0
 msgid "No text provided for the letter."
-msgstr "Aucun texte fourni pour la lettre."
+msgstr "Aucun texte n’a été fourni pour la lettre."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
@@ -3079,7 +3085,7 @@ msgstr "Nombre de parrainages"
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
 msgid "N°"
-msgstr ""
+msgstr "N°"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_letters_page
@@ -3279,8 +3285,7 @@ msgstr "Photo"
 #. odoo-python
 #: code:addons/my_compassion/models/my2_new_sponsorship_wizard.py:0
 msgid "Please accept the privacy notice before continuing."
-msgstr ""
-"Veuillez accepter la déclaration de confidentialité avant de continuer."
+msgstr "Veuillez accepter la politique de confidentialité avant de continuer."
 
 #. module: my_compassion
 #. odoo-python
@@ -3292,7 +3297,7 @@ msgstr "Veuillez indiquer votre pays avant de parrainer un enfant."
 #. odoo-python
 #: code:addons/my_compassion/models/my2_new_sponsorship_wizard.py:0
 msgid "Please choose a payment method before continuing."
-msgstr "Veuillez choisir un moyen de paiement avant de continuer."
+msgstr "Veuillez choisir un mode de paiement avant de continuer."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
@@ -3325,7 +3330,7 @@ msgstr "Merci d'entrer un montant valide."
 #: code:addons/my_compassion/controllers/my2_sponsorships.py:0
 msgid "Please log in to pay with a saved payment method."
 msgstr ""
-"Veuillez vous connecter pour payer avec un moyen de paiement enregistré."
+"Veuillez vous connecter pour payer avec un mode de paiement enregistré."
 
 #. module: my_compassion
 #. odoo-javascript
@@ -3348,7 +3353,7 @@ msgstr "Veuillez sélectionner un modèle pour votre lettre."
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_sponsorships.py:0
 msgid "Please tell us your name and phone number."
-msgstr "Veuillez nous indiquer votre nom et votre numéro de téléphone."
+msgstr "Merci de nous indiquer votre nom et votre numéro de téléphone."
 
 #. module: my_compassion
 #. odoo-javascript
@@ -3430,7 +3435,7 @@ msgstr "Politique de confidentialité"
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_children.py:0
 msgid "Processing letter"
-msgstr "Lettre en cours d'acheminement"
+msgstr "Traitement de la lettre"
 
 #. module: my_compassion
 #: model:ir.model,name:my_compassion.model_product_template
@@ -3469,13 +3474,13 @@ msgstr "Reçu"
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_children.py:0
 msgid "Received a gift"
-msgstr "Cadeau reçu"
+msgstr "A reçu un cadeau"
 
 #. module: my_compassion
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_children.py:0
 msgid "Received your letter"
-msgstr "Votre lettre a été reçue"
+msgstr "A reçu votre lettre"
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_website__data_change_notification_email
@@ -3702,7 +3707,7 @@ msgstr "Envoyer le message"
 #. odoo-javascript
 #: code:addons/my_compassion/static/src/js/my2_new_letter.js:0
 msgid "Sending your letter..."
-msgstr "Envoi de votre lettre..."
+msgstr "Envoi de votre lettre…"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_letters_page
@@ -3735,7 +3740,7 @@ msgstr ""
 msgid ""
 "Sharing is not supported in this browser. Please share your letter manually."
 msgstr ""
-"Le partage n'est pas pris en charge par ce navigateur. Veuillez partager "
+"Le partage n’est pas pris en charge dans ce navigateur. Veuillez partager "
 "votre lettre manuellement."
 
 #. module: my_compassion
@@ -3818,7 +3823,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_letters.py:0
 msgid "Something went wrong."
-msgstr "Une erreur s'est produite."
+msgstr "Un problème est survenu."
 
 #. module: my_compassion
 #. odoo-javascript
@@ -3829,7 +3834,7 @@ msgstr "Désolé, cette lettre ne peut pas être partagée."
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_recurring_contract__source_id
 msgid "Source"
-msgstr "Origine"
+msgstr "Source"
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_sale_order_line__frequency
@@ -4136,7 +4141,7 @@ msgid ""
 "The URL '{url}' could not be reached or is invalid. Please check the "
 "address. (Error: {error})"
 msgstr ""
-"L'URL '{url}' est inaccessible ou invalide. Veuillez vérifier l'adresse. "
+"L’URL '{url}' est inaccessible ou invalide. Veuillez vérifier l’adresse. "
 "(Erreur : {error})"
 
 #. module: my_compassion
@@ -4232,8 +4237,8 @@ msgstr "Le nouveau mot de passe et sa confirmation doivent être identiques."
 msgid ""
 "The old password you provided is incorrect, your password was not changed."
 msgstr ""
-"L'ancien mot de passe que vous avez saisi est incorrect, votre mot de passe "
-"n'a pas été modifié."
+"L’ancien mot de passe que vous avez saisi est incorrect ; votre mot de passe"
+" n’a pas été modifié."
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_res_partner__my2_name_placeholder
@@ -4310,7 +4315,7 @@ msgstr "La réalité..."
 #. odoo-python
 #: code:addons/my_compassion/models/my2_event_banner.py:0
 msgid "The relative URL '{url}' does not match any existing page."
-msgstr "L'URL relative '{url}' ne correspond à aucune page existante."
+msgstr "L’URL relative '{url}' ne correspond à aucune page existante."
 
 #. module: my_compassion
 #. odoo-python
@@ -4326,7 +4331,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/my_compassion/models/my2_new_sponsorship_wizard.py:0
 msgid "The selected payment method is not available."
-msgstr "Le moyen de paiement sélectionné n'est pas disponible."
+msgstr "Le mode de paiement sélectionné n'est pas disponible."
 
 #. module: my_compassion
 #. odoo-python
@@ -4384,14 +4389,14 @@ msgstr "Ce compte n'a aucun moyen de paiement en ligne à mettre à jour."
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_children.py:0
 msgid "This child is not available for sponsorship."
-msgstr "Cet enfant n'est pas disponible pour le parrainage."
+msgstr "Cet enfant n’est pas disponible pour le parrainage."
 
 #. module: my_compassion
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_user_settings.py:0
 msgid "This email is already used as a login by another user."
 msgstr ""
-"Cet e-mail est déjà utilisé comme identifiant de connexion par un autre "
+"Cette adresse e-mail est déjà utilisée comme identifiant par un autre "
 "utilisateur."
 
 #. module: my_compassion
@@ -4492,7 +4497,7 @@ msgstr "Montant total"
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_children.py:0
 msgid "Translating letter"
-msgstr "Lettre en cours de traduction"
+msgstr "Traduction de la lettre"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_update_card_done_page
@@ -4519,7 +4524,7 @@ msgstr "L'authentification à deux facteurs n'est pas activée."
 #: model:ir.model.fields,field_description:my_compassion.field_donation_impact_line__type
 #: model_terms:ir.ui.view,arch_db:my_compassion.GivingLimitsTableComponent
 msgid "Type"
-msgstr "Type d'origine"
+msgstr "Type"
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_event_banner__button_action_url
@@ -4649,7 +4654,8 @@ msgstr "Nous n'avons pas trouvé la page que vous recherchiez !"
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_letters.py:0
 msgid "We couldn't find your letter. Please try reloading the page."
-msgstr "Nous n'avons pas trouvé votre lettre. Veuillez recharger la page."
+msgstr ""
+"Nous n’avons pas trouvé votre lettre. Veuillez essayer de recharger la page."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.DonationFormComponent
@@ -4891,7 +4897,7 @@ msgstr "Vous contribuez déjà à toutes nos options actuelles de cadeaux."
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_children.py:0
 msgid "You are not authorized to view this child's information."
-msgstr "Vous n'êtes pas autorisé à consulter les informations de cet enfant."
+msgstr "Vous n’êtes pas autorisé à voir les informations de cet enfant."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.dashboard_sponsorship_vignette
@@ -4902,7 +4908,7 @@ msgstr "Vous parrainez"
 #. odoo-python
 #: code:addons/my_compassion/controllers/my2_portal.py:0
 msgid "You cannot leave any password empty."
-msgstr "Vous ne pouvez laisser aucun mot de passe vide."
+msgstr "Vous ne pouvez pas laisser un mot de passe vide."
 
 #. module: my_compassion
 #. odoo-python
@@ -4915,7 +4921,7 @@ msgstr "Vous ne pouvez pas effectuer cette action sur un utilisateur archivé."
 #: code:addons/my_compassion/models/compassion_child.py:0
 msgid "You cannot publish a child that is not available for sponsorship."
 msgstr ""
-"Vous ne pouvez pas publier un enfant qui n'est pas disponible pour le "
+"Vous ne pouvez pas publier un enfant qui n’est pas disponible pour le "
 "parrainage."
 
 #. module: my_compassion
@@ -5201,7 +5207,7 @@ msgstr "ans <i class=\"icon-user01 bg-low-yellow mx-1\"/>"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
 msgid "you@example.com"
-msgstr "vous@exemple.ch"
+msgstr "you@example.com"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
