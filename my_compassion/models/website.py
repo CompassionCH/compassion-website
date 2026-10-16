@@ -43,6 +43,25 @@ class Website(models.Model):
         " sponsorships. Defaults to /my2/children when empty.",
     )
 
+    def _my2_offers_payment_method(self, code):
+        """Whether a published payment provider of the website's company offers
+        the payment method ``code`` (e.g. "blik"): its logo is then shown
+        under the Pay button."""
+        self.ensure_one()
+        return bool(
+            self.env["payment.provider"]
+            .sudo()
+            .search_count(
+                [
+                    ("company_id", "=", self.company_id.id),
+                    ("state", "in", ("enabled", "test")),
+                    ("is_published", "=", True),
+                    ("payment_method_ids.code", "=", code),
+                ],
+                limit=1,
+            )
+        )
+
     @api.model
     def get_current_website(self, fallback=True):
         # On the MyCompassion portal routes (/my2 and localized /<lang>/my2),
