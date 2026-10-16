@@ -8,3 +8,4 @@ from . import account_move
 from . import product_product
 from . import res_partner_match
 from . import sale_order_line
+from . import sale_order
