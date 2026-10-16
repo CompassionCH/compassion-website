@@ -31,6 +31,8 @@ msgid ""
 "Address shown in the website footer for the current language. Falls back to "
 "the company's address when not set for a language."
 msgstr ""
+"Indirizzo mostrato nel piè di pagina del sito web per la lingua corrente. Se"
+" non impostato per una lingua, viene usato l'indirizzo dell'azienda."
 
 #. module: theme_compassion_2025
 #: model:ir.model.fields,help:theme_compassion_2025.field_theme_compassion_colors__class_name
@@ -67,7 +69,7 @@ msgstr "Contatto"
 #. module: theme_compassion_2025
 #: model_terms:theme.ir.ui.view,arch:theme_compassion_2025.footer_2025
 msgid "Copyright ©"
-msgstr ""
+msgstr "Copyright ©"
 
 #. module: theme_compassion_2025
 #: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_colors__create_uid
@@ -113,12 +115,12 @@ msgstr "Inserisci il nome del pittogramma."
 #. module: theme_compassion_2025
 #: model:ir.model.fields,field_description:theme_compassion_2025.field_website__footer_address
 msgid "Footer Address"
-msgstr ""
+msgstr "Indirizzo a piè di pagina"
 
 #. module: theme_compassion_2025
 #: model:ir.model.fields,field_description:theme_compassion_2025.field_website__footer_phone
 msgid "Footer Phone"
-msgstr ""
+msgstr "Telefono a piè di pagina"
 
 #. module: theme_compassion_2025
 #: model:ir.model,name:theme_compassion_2025.model_ir_http
@@ -130,7 +132,7 @@ msgstr "Routing HTTP"
 #: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_icons__id
 #: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_pictograms__id
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. module: theme_compassion_2025
 #: model:ir.actions.act_window,name:theme_compassion_2025.action_theme_compassion_icons
@@ -157,7 +159,7 @@ msgstr "Ultimo aggiornamento il"
 #. module: theme_compassion_2025
 #: model_terms:theme.ir.ui.view,arch:theme_compassion_2025.EventBannerComponent
 msgid "Learn more"
-msgstr ""
+msgstr "Scopri di più"
 
 #. module: theme_compassion_2025
 #: model_terms:theme.ir.ui.view,arch:theme_compassion_2025.VignetteComponent
@@ -190,7 +192,7 @@ msgstr "Nome"
 #. odoo-javascript
 #: code:addons/theme_compassion_2025/static/src/xml/Password.xml:0
 msgid "Password"
-msgstr ""
+msgstr "Password"
 
 #. module: theme_compassion_2025
 #: model:ir.model.fields,help:theme_compassion_2025.field_website__footer_phone
@@ -198,6 +200,9 @@ msgid ""
 "Phone number shown in the website footer for the current language. Falls "
 "back to the company's phone when not set for a language."
 msgstr ""
+"Numero di telefono mostrato nel piè di pagina del sito web per la lingua "
+"corrente. Se non impostato per una lingua, viene usato il telefono "
+"dell'azienda."
 
 #. module: theme_compassion_2025
 #: model:ir.actions.act_window,name:theme_compassion_2025.action_theme_compassion_pictograms
@@ -212,30 +217,31 @@ msgstr "Pittogrammi"
 #: code:addons/theme_compassion_2025/static/src/js/widgets/form_field_validator.js:0
 msgid "Please enter a valid ZIP/Postal code. (enter 0000 if not applicable)"
 msgstr ""
+"Inserisci un CAP/codice postale valido. (inserisci 0000 se non applicabile)"
 
 #. module: theme_compassion_2025
 #. odoo-javascript
 #: code:addons/theme_compassion_2025/static/src/js/widgets/form_field_validator.js:0
 msgid "Please enter a valid email address."
-msgstr ""
+msgstr "Inserisci un indirizzo e-mail valido."
 
 #. module: theme_compassion_2025
 #. odoo-javascript
 #: code:addons/theme_compassion_2025/static/src/js/widgets/form_field_validator.js:0
 msgid "Please enter a valid name (2-50 characters, no numbers)."
-msgstr ""
+msgstr "Inserisci un nome valido (2-50 caratteri, senza numeri)."
 
 #. module: theme_compassion_2025
 #. odoo-javascript
 #: code:addons/theme_compassion_2025/static/src/js/widgets/form_field_validator.js:0
 msgid "Please enter a valid number."
-msgstr ""
+msgstr "Inserisci un numero valido."
 
 #. module: theme_compassion_2025
 #. odoo-javascript
 #: code:addons/theme_compassion_2025/static/src/js/widgets/form_field_validator.js:0
 msgid "Please enter a valid phone number."
-msgstr ""
+msgstr "Inserisci un numero di telefono valido."
 
 #. module: theme_compassion_2025
 #: model_terms:theme.ir.ui.view,arch:theme_compassion_2025.footer_2025
@@ -245,7 +251,7 @@ msgstr "Politiche"
 #. module: theme_compassion_2025
 #: model:ir.model.fields,field_description:theme_compassion_2025.field_website__privacy_policy_url
 msgid "Privacy Policy URL"
-msgstr ""
+msgstr "URL dell'informativa sulla privacy"
 
 #. module: theme_compassion_2025
 #: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_icons__svg_file
@@ -256,7 +262,7 @@ msgstr "File SVG"
 #. module: theme_compassion_2025
 #: model_terms:theme.ir.ui.view,arch:theme_compassion_2025.user_dropdown
 msgid "Sign in"
-msgstr ""
+msgstr "Accedi"
 
 #. module: theme_compassion_2025
 #: model:ir.model,name:theme_compassion_2025.model_stylesheet_generator_mixin
@@ -268,6 +274,8 @@ msgstr "Generatore di fogli di stile Mixin"
 msgid ""
 "Target of the Policies link in the website footer, for the current language."
 msgstr ""
+"Destinazione del link alle Policy nel piè di pagina del sito web, per la "
+"lingua corrente."
 
 #. module: theme_compassion_2025
 #: model:ir.model.constraint,message:theme_compassion_2025.constraint_theme_compassion_colors_class_name_unique
@@ -290,7 +298,7 @@ msgstr "Utilità tema"
 #. odoo-javascript
 #: code:addons/theme_compassion_2025/static/src/js/widgets/form_field_validator.js:0
 msgid "This field is required."
-msgstr ""
+msgstr "Questo campo è obbligatorio."
 
 #. module: theme_compassion_2025
 #: model:ir.model.fields,help:theme_compassion_2025.field_theme_compassion_icons__svg_file
@@ -305,7 +313,7 @@ msgstr "Carica il file SVG del pittogramma."
 #. module: theme_compassion_2025
 #: model:ir.model.fields,field_description:theme_compassion_2025.field_website__social_vimeo
 msgid "Vimeo Account"
-msgstr ""
+msgstr "Account Vimeo"
 
 #. module: theme_compassion_2025
 #: model:ir.model,name:theme_compassion_2025.model_website

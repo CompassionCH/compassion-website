@@ -324,7 +324,7 @@ msgstr ""
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.event_registration_form
 msgid "<span class=\"s_website_form_label_content\">Mobile</span>"
-msgstr ""
+msgstr "<span class=\"s_website_form_label_content\">Mobile</span>"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.my_profile_edit
@@ -426,7 +426,7 @@ msgstr "Un participant ne peut avoir qu'un seul vol de chaque type."
 #. module: website_event_compassion
 #: model:mail.message.subtype,description:website_event_compassion.mt_registration_create
 msgid "A registration has been created"
-msgstr ""
+msgstr "Une inscription a été créée"
 
 #. module: website_event_compassion
 #: model:ir.model.constraint,message:website_event_compassion.constraint_event_registration_task_rel_task_registration_unique
@@ -482,7 +482,7 @@ msgstr "Icône de type d'activité"
 #: model:ir.model.fields.selection,name:website_event_compassion.selection__event_mail__interval_type__after_stage
 #: model:ir.model.fields.selection,name:website_event_compassion.selection__event_type_mail__interval_type__after_stage
 msgid "After stage"
-msgstr ""
+msgstr "Après l'étape"
 
 #. module: website_event_compassion
 #: model:mail.message.subtype,name:website_event_compassion.mt_event_s_registration
@@ -529,7 +529,7 @@ msgstr "Arrivée"
 #: model:ir.model.fields,help:website_event_compassion.field_event_registration_task__stage_id
 #: model:ir.model.fields,help:website_event_compassion.field_event_registration_task_rel__stage_id
 msgid "Associate this task to this registration stage."
-msgstr ""
+msgstr "Associer cette tâche à cette étape d'inscription."
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_type__message_attachment_count
@@ -550,12 +550,12 @@ msgstr "Retour à l'événement"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_crm_event_compassion__picture_1
 msgid "Banner image"
-msgstr ""
+msgstr "Image de bannière"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__birth_name
 msgid "Birth Name"
-msgstr ""
+msgstr "Nom de naissance"
 
 #. module: website_event_compassion
 #. odoo-javascript
@@ -641,7 +641,7 @@ msgstr "Type d'événement Compassion"
 #. module: website_event_compassion
 #: model:event.type,name:website_event_compassion.event_type_meeting
 msgid "Compassion Meeting"
-msgstr ""
+msgstr "Rencontre Compassion"
 
 #. module: website_event_compassion
 #: model:ir.model,name:website_event_compassion.model_crm_event_compassion
@@ -656,7 +656,7 @@ msgstr "Compléter en cliquant"
 #. module: website_event_compassion
 #: model:event.type,name:website_event_compassion.event_type_concert
 msgid "Concert"
-msgstr ""
+msgstr "Concert"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.event_registration_communication_wizard_form
@@ -672,7 +672,7 @@ msgstr "Confirmé"
 #. module: website_event_compassion
 #: model:ir.model,name:website_event_compassion.model_res_partner
 msgid "Contact"
-msgstr ""
+msgstr "Contact"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.form_success_ir_ui_view
@@ -775,7 +775,7 @@ msgstr "Départ"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_trip_type__description
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_crm_event_compassion_open_wizard__display_name
@@ -902,7 +902,7 @@ msgstr "Événement"
 #. module: website_event_compassion
 #: model:ir.model,name:website_event_compassion.model_event_mail
 msgid "Event Automated Mailing"
-msgstr ""
+msgstr "Envoi automatique d'e-mails d'événement"
 
 #. module: website_event_compassion
 #: model:ir.model,name:website_event_compassion.model_event_registration
@@ -983,6 +983,8 @@ msgstr ""
 #: model:ir.actions.server,name:website_event_compassion.past_event_toggle_partner_status_action
 msgid "Events: Update partner status for past events"
 msgstr ""
+"Événements : mettre à jour le statut des partenaires pour les événements "
+"passés"
 
 #. module: website_event_compassion
 #: model:ir.actions.server,name:website_event_compassion.past_event_toggle_partner_status_ir_actions_server
@@ -1002,7 +1004,7 @@ msgstr "Papa"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_event__feedback_survey_id
 msgid "Feedback Survey"
-msgstr ""
+msgstr "Enquête de satisfaction"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__feedback_survey_id
@@ -1025,12 +1027,12 @@ msgstr "Vol"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_flight__flight_number
 msgid "Flight Number"
-msgstr ""
+msgstr "Numéro de vol"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_flight__flight_type
 msgid "Flight Type"
-msgstr ""
+msgstr "Type de vol"
 
 #. module: website_event_compassion
 #. odoo-javascript
@@ -1053,7 +1055,7 @@ msgstr "Vols"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_flight__flying_company
 msgid "Flying Company"
-msgstr ""
+msgstr "Compagnie aérienne"
 
 #. module: website_event_compassion
 #. odoo-javascript
@@ -1064,7 +1066,7 @@ msgstr "Flying Company"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration_stage__fold
 msgid "Folded in Pipeline"
-msgstr ""
+msgstr "Replié dans le pipeline"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.portal_events
@@ -1137,7 +1139,7 @@ msgstr "A un message"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__host_url
 msgid "Host Url"
-msgstr ""
+msgstr "URL de l'hôte"
 
 #. module: website_event_compassion
 #: model:ir.model.fields.selection,name:website_event_compassion.selection__event_registration__emergency_relation_type__husband
@@ -1190,6 +1192,9 @@ msgid ""
 "track of their donations. They will have a profile page on the website where"
 " people can donate."
 msgstr ""
+"Si activé, les participants auront un compte utilisateur où ils pourront "
+"suivre leurs dons. Ils auront une page de profil sur le site web où l'on "
+"peut faire des dons."
 
 #. module: website_event_compassion
 #: model:ir.model.fields,help:website_event_compassion.field_event_type__message_needaction
@@ -1251,7 +1256,7 @@ msgstr "Informations pour le voyage"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__invoice_count
 msgid "Invoice Count"
-msgstr ""
+msgstr "Nombre de factures"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_type__message_is_follower
@@ -1331,7 +1336,7 @@ msgstr "Nom de famille"
 #. module: website_event_compassion
 #: model:ir.model,name:website_event_compassion.model_event_type_mail
 msgid "Mail Scheduling on Event Category"
-msgstr ""
+msgstr "Planification d'e-mails par type d'événement"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__partner_lang
@@ -1351,12 +1356,12 @@ msgstr "Mise à jour du match"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_crm_event_compassion_open_wizard__seats_max
 msgid "Maximum participants allowed"
-msgstr ""
+msgstr "Nombre maximum de participants autorisés"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_event__medical_survey_id
 msgid "Medical Survey"
-msgstr ""
+msgstr "Enquête médicale"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__medical_survey_id
@@ -1372,12 +1377,12 @@ msgstr "Erreur d'envoi du message"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_type__message_ids
 msgid "Messages"
-msgstr ""
+msgstr "Messages"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_crm_event_compassion_open_wizard__seats_min
 msgid "Minimum participants required"
-msgstr ""
+msgstr "Nombre minimum de participants requis"
 
 #. module: website_event_compassion
 #. odoo-javascript
@@ -1394,7 +1399,7 @@ msgstr "Mère"
 #. module: website_event_compassion
 #: model:event.trip.type,name:website_event_compassion.trip_type_muskathlon
 msgid "Muskathlon"
-msgstr ""
+msgstr "Muskathlon"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_event__my_activity_date_deadline
@@ -1497,12 +1502,12 @@ msgstr "Nombre de messages avec des erreurs d'envoi"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_crm_event_compassion__odoo_event_id
 msgid "Odoo Event"
-msgstr ""
+msgstr "Événement Odoo"
 
 #. module: website_event_compassion
 #: model:ir.model,name:website_event_compassion.model_crm_event_compassion_open_wizard
 msgid "Open event to participants wizard"
-msgstr ""
+msgstr "Assistant d'ouverture d'un événement aux participants"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration_task__open_new_tab
@@ -1563,7 +1568,7 @@ msgstr "Passeport"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__passport_expiration_date
 msgid "Passport Expiration Date"
-msgstr ""
+msgstr "Date d'expiration du passeport"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_res_partner__passport_name
@@ -1574,7 +1579,7 @@ msgstr "Nom sur le passeport"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__passport_number
 msgid "Passport Number"
-msgstr ""
+msgstr "Numéro de passeport"
 
 #. module: website_event_compassion
 #. odoo-javascript
@@ -1635,12 +1640,12 @@ msgstr "Présentation"
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.view_event_event_wordpress
 msgid "Print Feedback Surveys"
-msgstr ""
+msgstr "Imprimer les enquêtes de satisfaction"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.view_event_event_wordpress
 msgid "Print Medical Surveys"
-msgstr ""
+msgstr "Imprimer les enquêtes médicales"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__profile_name
@@ -1724,7 +1729,7 @@ msgstr "Inscription"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_event__registration_closed
 msgid "Registration Closed"
-msgstr ""
+msgstr "Inscriptions closes"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration_comments
@@ -1734,12 +1739,12 @@ msgstr "Inscription"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_crm_event_compassion_open_wizard__registration_fee
 msgid "Registration Fee"
-msgstr ""
+msgstr "Frais d'inscription"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_event__registration_full
 msgid "Registration Full"
-msgstr ""
+msgstr "Inscriptions complètes"
 
 #. module: website_event_compassion
 #: model:ir.model,name:website_event_compassion.model_event_mail_registration
@@ -1749,12 +1754,12 @@ msgstr "Planificateur d'email d'inscription"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_event__registration_not_started
 msgid "Registration Not Started"
-msgstr ""
+msgstr "Inscriptions pas encore ouvertes"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_event__registration_open
 msgid "Registration Open"
-msgstr ""
+msgstr "Inscriptions ouvertes"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration_stage__registration_state
@@ -1903,6 +1908,8 @@ msgid ""
 "Set a maximum duration (in days) after which the registration will be shown "
 "in red in the kanban view."
 msgstr ""
+"Définit une durée maximale (en jours) après laquelle l'inscription sera "
+"affichée en rouge dans la vue kanban."
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.participant_page
@@ -1917,7 +1924,7 @@ msgstr "Montre ton soutien à"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_crm_event_compassion__website_side_info
 msgid "Side info"
-msgstr ""
+msgstr "Informations latérales"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__single_room
@@ -1945,6 +1952,8 @@ msgid ""
 "Specific event types that use this stage. Other event types will not be able"
 " to see or use this stage."
 msgstr ""
+"Types d'événements spécifiques qui utilisent cette étape. Les autres types "
+"d'événements ne pourront pas voir ni utiliser cette étape."
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.event_registration_call_to_action
@@ -1987,7 +1996,7 @@ msgstr "Conversion des parrainages en dons"
 #. module: website_event_compassion
 #: model:event.type,name:website_event_compassion.event_type_sport
 msgid "Sport"
-msgstr ""
+msgstr "Sport"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_mail__stage_id
@@ -2002,7 +2011,7 @@ msgstr "Étape"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__stage_date
 msgid "Stage Date"
-msgstr ""
+msgstr "Date de l'étape"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration_stage__name
@@ -2012,7 +2021,7 @@ msgstr "Nom de l'étape"
 #. module: website_event_compassion
 #: model:event.type,name:website_event_compassion.event_type_stand
 msgid "Stand"
-msgstr ""
+msgstr "Stand"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,help:website_event_compassion.field_event_event__activity_state
@@ -2043,7 +2052,7 @@ msgstr "Soumettre"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__survey_count
 msgid "Survey Count"
-msgstr ""
+msgstr "Nombre d'enquêtes"
 
 #. module: website_event_compassion
 #. odoo-python
@@ -2109,6 +2118,10 @@ msgid ""
 "longest side must not exceed %(ratio)s times its shortest side. Please crop "
 "it closer to the person before uploading it."
 msgstr ""
+"La photo que vous avez téléversée est trop allongée (%(width)s x %(height)s "
+"px). Son plus grand côté ne doit pas dépasser %(ratio)s fois son plus petit "
+"côté. Veuillez la recadrer au plus près de la personne avant de la "
+"téléverser."
 
 #. module: website_event_compassion
 #. odoo-python
@@ -2119,18 +2132,23 @@ msgid ""
 "px on its shortest side (portrait or landscape) so it also looks good once "
 "printed on fundraising material."
 msgstr ""
+"La photo que vous avez téléversée est trop petite (%(width)s x %(height)s "
+"px). Veuillez téléverser une photo d'au moins %(long)s px sur son plus grand"
+" côté et %(short)s px sur son plus petit côté (portrait ou paysage) afin "
+"qu'elle soit aussi de bonne qualité une fois imprimée sur du matériel de "
+"collecte de fonds."
 
 #. module: website_event_compassion
 #. odoo-python
 #: code:addons/website_event_compassion/models/event_event.py:0
 msgid "There is no feedback survey to print"
-msgstr ""
+msgstr "Il n'y a pas d'enquête de satisfaction à imprimer"
 
 #. module: website_event_compassion
 #. odoo-python
 #: code:addons/website_event_compassion/models/event_event.py:0
 msgid "There is no medical survey to print"
-msgstr ""
+msgstr "Il n'y a pas d'enquête médicale à imprimer"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.view_muskathlon_event_website
@@ -2153,6 +2171,8 @@ msgid ""
 "This sets how much the barometer of the participant will be raised when a "
 "sponsorship is made for him."
 msgstr ""
+"Définit de combien le baromètre du participant augmentera lorsqu'un "
+"parrainage est effectué pour lui."
 
 #. module: website_event_compassion
 #: model:ir.model.fields,help:website_event_compassion.field_event_registration_stage__fold
@@ -2160,6 +2180,8 @@ msgid ""
 "This stage is folded in the kanban view when there are no records in that "
 "stage to display."
 msgstr ""
+"Cette étape est repliée dans la vue kanban lorsqu'il n'y a aucun "
+"enregistrement à afficher dans cette étape."
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__partner_title
@@ -2184,7 +2206,7 @@ msgstr "Déclencheur"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_event_registration__trip_invoice_id
 msgid "Trip invoice"
-msgstr ""
+msgstr "Facture du voyage"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_crm_event_compassion__is_trip
@@ -2253,7 +2275,7 @@ msgstr "Non confirmé"
 #. module: website_event_compassion
 #: model:ir.model.fields,help:website_event_compassion.field_event_registration_stage__sequence
 msgid "Used to order stages. Lower is better."
-msgstr ""
+msgstr "Sert à ordonner les étapes. Plus petit = meilleur."
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_crm_event_compassion__trip_vaccination_info
@@ -2303,7 +2325,7 @@ msgstr "Site Web"
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_crm_event_compassion__website_description
 msgid "Website Description"
-msgstr ""
+msgstr "Description du site web"
 
 #. module: website_event_compassion
 #: model:ir.model.fields,field_description:website_event_compassion.field_crm_event_compassion__website_image
@@ -2405,7 +2427,7 @@ msgstr "en conséquence."
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.event_participants_list
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.my_events_list
 msgid "amount_raised"
-msgstr ""
+msgstr "amount_raised"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.event_registration_call_to_action
@@ -2424,23 +2446,23 @@ msgstr ""
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.event_page
 msgid "bg-100"
-msgstr ""
+msgstr "bg-100"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.participant_page
 msgid "bg-100 shadow-sm h-100"
-msgstr ""
+msgstr "bg-100 shadow-sm h-100"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.my_event_details
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.participant_page
 msgid "breadcrumb"
-msgstr ""
+msgstr "fil d'Ariane"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.event_page
 msgid "fw-bold text-uppercase mb-2"
-msgstr ""
+msgstr "fw-bold text-uppercase mb-2"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.form_success_ir_ui_view
@@ -2460,7 +2482,7 @@ msgstr "Inscription"
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.my_event_details
 msgid "shadow-sm h-100"
-msgstr ""
+msgstr "shadow-sm h-100"
 
 #. module: website_event_compassion
 #: model_terms:ir.ui.view,arch_db:website_event_compassion.participant_page

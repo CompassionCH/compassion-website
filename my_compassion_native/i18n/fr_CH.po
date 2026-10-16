@@ -25,13 +25,13 @@ msgstr ""
 #. odoo-python
 #: code:addons/my_compassion_native/wizards/my2_push_notification_wizard.py:0
 msgid "%s has no device registered for push notifications."
-msgstr ""
+msgstr "%s n'a aucun appareil enregistré pour les notifications push."
 
 #. module: my_compassion_native
 #. odoo-python
 #: code:addons/my_compassion_native/models/correspondence.py:0
 msgid "%s has written you a letter!"
-msgstr ""
+msgstr "%s vous a écrit une lettre !"
 
 #. module: my_compassion_native
 #: model:ir.model,name:my_compassion_native.model_res_users
@@ -47,11 +47,15 @@ msgid ""
 "website, not only inside the native app. Off by default so the app shell "
 "stays native-only until a country opts in."
 msgstr ""
+"Affiche aussi la navigation du bas de l'application mobile dans les "
+"navigateurs mobiles pour ce site web, et pas seulement dans l'application "
+"native. Désactivé par défaut afin que l'interface de l'application reste "
+"exclusivement native jusqu'à ce qu'un pays l'active."
 
 #. module: my_compassion_native
 #: model:ir.model.fields.selection,name:my_compassion_native.selection__mycompassion_device_token__device_type__android
 msgid "Android"
-msgstr ""
+msgstr "Android"
 
 #. module: my_compassion_native
 #: model_terms:ir.ui.view,arch_db:my_compassion_native.view_my2_push_notification_wizard_form
@@ -66,7 +70,7 @@ msgstr "Changer de langue"
 #. module: my_compassion_native
 #: model:ir.model,name:my_compassion_native.model_partner_communication_job
 msgid "Communication Job"
-msgstr ""
+msgstr "Job de communication"
 
 #. module: my_compassion_native
 #: model:ir.model,name:my_compassion_native.model_res_config_settings
@@ -98,22 +102,22 @@ msgstr "Personnalisez votre expérience MyCompassion !"
 #. module: my_compassion_native
 #: model:ir.actions.server,name:my_compassion_native.ir_cron_birthday_push_notifications_ir_actions_server
 msgid "Daily: Send Child Birthday Push Notifications"
-msgstr ""
+msgstr "Quotidien : envoyer les notifications push d'anniversaire des enfants"
 
 #. module: my_compassion_native
 #: model:ir.model.fields,field_description:my_compassion_native.field_my2_push_notification_wizard__url
 msgid "Deep Link URL"
-msgstr ""
+msgstr "URL du lien profond"
 
 #. module: my_compassion_native
 #: model:ir.model.fields,field_description:my_compassion_native.field_mycompassion_device_token__token
 msgid "Device Token"
-msgstr ""
+msgstr "Jeton d'appareil"
 
 #. module: my_compassion_native
 #: model:ir.model.fields,field_description:my_compassion_native.field_mycompassion_device_token__device_type
 msgid "Device Type"
-msgstr ""
+msgstr "Type d'appareil"
 
 #. module: my_compassion_native
 #: model:ir.model.fields,field_description:my_compassion_native.field_my2_push_notification_wizard__display_name
@@ -133,12 +137,14 @@ msgid ""
 "Failed to send the push notification:\n"
 "%s"
 msgstr ""
+"Échec de l'envoi de la notification push :\n"
+"%s"
 
 #. module: my_compassion_native
 #. odoo-python
 #: code:addons/my_compassion_native/models/device_token.py:0
 msgid "Firebase is not configured on this server."
-msgstr ""
+msgstr "Firebase n'est pas configuré sur ce serveur."
 
 #. module: my_compassion_native
 #: model_terms:ir.ui.view,arch_db:my_compassion_native.my2_mobile_app_layout
@@ -153,7 +159,7 @@ msgstr "Donner"
 #. module: my_compassion_native
 #: model:ir.model,name:my_compassion_native.model_ir_http
 msgid "HTTP Routing"
-msgstr ""
+msgstr "Routage HTTP"
 
 #. module: my_compassion_native
 #: model_terms:ir.ui.view,arch_db:my_compassion_native.my2_mobile_app_layout
@@ -196,7 +202,7 @@ msgstr "Se déconnecter"
 #. module: my_compassion_native
 #: model:ir.model.fields,field_description:my_compassion_native.field_my2_push_notification_wizard__body
 msgid "Message"
-msgstr ""
+msgstr "Message"
 
 #. module: my_compassion_native
 #: model_terms:ir.ui.view,arch_db:my_compassion_native.view_users_form_mobile_app
@@ -206,7 +212,7 @@ msgstr "App Mobile"
 #. module: my_compassion_native
 #: model:ir.model.fields,field_description:my_compassion_native.field_res_users__device_token_ids
 msgid "Mobile Device Tokens"
-msgstr ""
+msgstr "Jetons d'appareils mobiles"
 
 #. module: my_compassion_native
 #: model:ir.model.fields,field_description:my_compassion_native.field_reformat_all_phonenumbers__my2_bottom_nav_on_web
@@ -214,7 +220,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:my_compassion_native.field_website__my2_bottom_nav_on_web
 #: model_terms:ir.ui.view,arch_db:my_compassion_native.res_config_settings_view_form_my2_bottom_nav
 msgid "Mobile app menu on web"
-msgstr ""
+msgstr "Menu de l'application mobile sur le web"
 
 #. module: my_compassion_native
 #: model_terms:ir.ui.view,arch_db:my_compassion_native.my2_mobile_profile_page
@@ -230,19 +236,19 @@ msgstr "Mes parrainages"
 #: model:ir.model.fields,field_description:my_compassion_native.field_reformat_all_phonenumbers__is_my_compassion
 #: model:ir.model.fields,field_description:my_compassion_native.field_res_config_settings__is_my_compassion
 msgid "MyCompassion Website"
-msgstr ""
+msgstr "Site web MyCompassion"
 
 #. module: my_compassion_native
 #. odoo-python
 #: code:addons/my_compassion_native/models/correspondence.py:0
 msgid "New letter from %s"
-msgstr ""
+msgstr "Nouvelle lettre de %s"
 
 #. module: my_compassion_native
 #. odoo-python
 #: code:addons/my_compassion_native/wizards/my2_push_notification_wizard.py:0
 msgid "Notification sent"
-msgstr ""
+msgstr "Notification envoyée"
 
 #. module: my_compassion_native
 #: model:ir.model.fields,help:my_compassion_native.field_my2_push_notification_wizard__url
@@ -250,6 +256,8 @@ msgid ""
 "Optional: navigate to this URL when the user taps the notification (e.g. "
 "/my/letters)"
 msgstr ""
+"Facultatif : naviguer vers cette URL lorsque l'utilisateur touche la "
+"notification (p. ex. /my/letters)"
 
 #. module: my_compassion_native
 #: model_terms:ir.ui.view,arch_db:my_compassion_native.my2_mobile_app_layout
@@ -260,24 +268,24 @@ msgstr "Profil"
 #. module: my_compassion_native
 #: model_terms:ir.ui.view,arch_db:my_compassion_native.view_users_form_mobile_app
 msgid "Send Manual Notification"
-msgstr ""
+msgstr "Envoyer une notification manuelle"
 
 #. module: my_compassion_native
 #: model:ir.model,name:my_compassion_native.model_my2_push_notification_wizard
 #: model_terms:ir.ui.view,arch_db:my_compassion_native.view_my2_push_notification_wizard_form
 msgid "Send Manual Push Notification"
-msgstr ""
+msgstr "Envoyer une notification push manuelle"
 
 #. module: my_compassion_native
 #: model_terms:ir.ui.view,arch_db:my_compassion_native.view_my2_push_notification_wizard_form
 msgid "Send Notification"
-msgstr ""
+msgstr "Envoyer la notification"
 
 #. module: my_compassion_native
 #. odoo-python
 #: code:addons/my_compassion_native/wizards/my2_push_notification_wizard.py:0
 msgid "Sent to %(sent)s of %(total)s registered devices."
-msgstr ""
+msgstr "Envoyée à %(sent)s appareils enregistrés sur %(total)s."
 
 #. module: my_compassion_native
 #: model_terms:ir.ui.view,arch_db:my_compassion_native.res_config_settings_view_form_my2_bottom_nav
@@ -285,6 +293,9 @@ msgid ""
 "Show the MyCompassion mobile app bottom navigation on mobile browsers for "
 "this website, not only inside the native app."
 msgstr ""
+"Afficher la navigation du bas de l'application mobile MyCompassion dans les "
+"navigateurs mobiles pour ce site web, et pas seulement dans l'application "
+"native."
 
 #. module: my_compassion_native
 #: model:ir.model,name:my_compassion_native.model_compassion_child
@@ -309,7 +320,7 @@ msgstr ""
 #. module: my_compassion_native
 #: model:ir.model.constraint,message:my_compassion_native.constraint_mycompassion_device_token_token_uniq
 msgid "This token already exists!"
-msgstr ""
+msgstr "Ce jeton existe déjà !"
 
 #. module: my_compassion_native
 #: model:ir.model.fields,help:my_compassion_native.field_reformat_all_phonenumbers__is_my_compassion
@@ -318,6 +329,8 @@ msgid ""
 "This website runs the MyCompassion sponsor portal. A multi-company instance "
 "flags one website per country."
 msgstr ""
+"Ce site web exploite le portail parrain MyCompassion. Une instance multi-"
+"sociétés désigne un site web par pays."
 
 #. module: my_compassion_native
 #: model:ir.model.fields,field_description:my_compassion_native.field_my2_push_notification_wizard__title
@@ -333,7 +346,7 @@ msgstr "Utilisateur"
 #. module: my_compassion_native
 #: model:ir.model,name:my_compassion_native.model_mycompassion_device_token
 msgid "User Device Tokens for Push Notifications"
-msgstr ""
+msgstr "Jetons d'appareil des utilisateurs pour les notifications push"
 
 #. module: my_compassion_native
 #: model:ir.model,name:my_compassion_native.model_website
@@ -353,16 +366,16 @@ msgstr ""
 #. module: my_compassion_native
 #: model:ir.model.fields.selection,name:my_compassion_native.selection__mycompassion_device_token__device_type__ios
 msgid "iOS"
-msgstr ""
+msgstr "iOS"
 
 #. module: my_compassion_native
 #. odoo-python
 #: code:addons/my_compassion_native/models/device_token.py:0
 msgid "the device belongs to another Firebase project"
-msgstr ""
+msgstr "l'appareil appartient à un autre projet Firebase"
 
 #. module: my_compassion_native
 #. odoo-python
 #: code:addons/my_compassion_native/models/device_token.py:0
 msgid "the device is no longer registered"
-msgstr ""
+msgstr "l'appareil n'est plus enregistré"
