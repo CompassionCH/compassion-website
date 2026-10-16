@@ -1,16 +1,19 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* website_sponsorship
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Compassion Odoo 14\n"
+"Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-28 11:15+0000\n"
-"PO-Revision-Date: \n"
+"POT-Creation-Date: 2026-10-16 18:57+0000\n"
+"PO-Revision-Date: 2026-10-16 18:57+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: fr_CH\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.4\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
 
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.child_legend
@@ -20,11 +23,12 @@ msgstr ""
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
 msgid ""
-"<font style=\"font-size: 62px; font-weight: bold;\">You want to sponsor a "
-"child, thank you!</font>"
+"<font style=\"font-size: 62px; font-weight: bold;\">\n"
+"                                You want to sponsor a child, thank you!\n"
+"                            </font>"
 msgstr ""
-"<font style=\"font-size : 62px ; font-weight : bold ;\">Vous souhaitez "
-"parrainer un enfant, merci!</font>."
+"<font style=\"font-size: 40px; font-weight: bold;\">Merci de vouloir "
+"parrainer un enfant !</font>"
 
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
@@ -32,68 +36,37 @@ msgid "<option value=\"\">Select a country</option>"
 msgstr "<option value=\"\">Sélectionner un pays</option>"
 
 #. module: website_sponsorship
-#: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
-msgid ""
-"<select class=\"form-control s_website_form_input\" name=\"partner_title\" "
-"id=\"o5l5ton80fmp\" style=\"\">\n"
-"                                        <option value=\"1\">Madam</option>\n"
-"                                        <option value=\"2\">Miss</option>\n"
-"                                        <option value=\"3\">Mister</option>\n"
-"                                    </select>"
-msgstr ""
-"<select class=\"form-control s_website_form_input\" name=\"partner_title\" "
-"id=\"o5l5ton80fmp\" style=\"\">\n"
-"                                        <option value=\"1\">Madame</option>\n"
-"                                        <option value=\"2\">Mademoiselle</"
-"option>\n"
-"                                        <option value=\"3\">Monsieur</"
-"option>\n"
-"                                    </select>"
-
-#. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
 msgid ""
 "<select name=\"age_group\" class=\"form-control\">\n"
-"                                    <option value=\"\">Select an age range </"
-"option>\n"
-"                                    <option value=\"0-3\">0-3 years old</"
-"option>\n"
-"                                    <option value=\"4-6\">4-6 years old</"
-"option>\n"
-"                                    <option value=\"7-10\">7-10 years old</"
-"option>\n"
-"                                    <option value=\"11-14\">11-14 years old</"
-"option>\n"
-"                                    <option value=\"15-50\">15+ years old</"
-"option>\n"
+"                                    <option value=\"\">Select an age range</option>\n"
+"                                    <option value=\"0-3\">0-3 years old</option>\n"
+"                                    <option value=\"4-6\">4-6 years old</option>\n"
+"                                    <option value=\"7-10\">7-10 years old</option>\n"
+"                                    <option value=\"11-14\">11-14 years old</option>\n"
+"                                    <option value=\"15-50\">15+ years old</option>\n"
 "                                </select>"
 msgstr ""
 "<select name=\"age_group\" class=\"form-control\">\n"
-"                                    <option value=\"\">Sélectionnez une "
-"tranche d'âge </option>\n"
+"                                    <option value=\"\">Sélectionner une tranche d'âge</option>\n"
 "                                    <option value=\"0-3\">0-3 ans</option>\n"
 "                                    <option value=\"4-6\">4-6 ans</option>\n"
-"                                    <option value=\"7-10\">7-10 ans</"
-"option>\n"
-"                                    <option value=\"11-14\">11-14 ans</"
-"option>\n"
-"                                    <option value=\"15-50\">15+ ans</"
-"option>\n"
+"                                    <option value=\"7-10\">7-10 ans</option>\n"
+"                                    <option value=\"11-14\">11-14 ans</option>\n"
+"                                    <option value=\"15-50\">15+ ans</option>\n"
 "                                </select>"
 
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
 msgid ""
 "<select name=\"gender\" class=\"form-control\">\n"
-"                                        <option value=\"\">Select a girl or "
-"a boy</option>\n"
+"                                        <option value=\"\">Select a girl or a boy</option>\n"
 "                                        <option value=\"F\">Girl</option>\n"
 "                                        <option value=\"M\">Boy</option>\n"
 "                                    </select>"
 msgstr ""
 "<select name=\"gender\" class=\"form-control\">\n"
-"                                        <option value=\"\">Sélectionnez une "
-"fille ou un garçon</option>\n"
+"                                        <option value=\"\">Sélectionner une fille ou un garçon</option>\n"
 "                                        <option value=\"F\">Fille</option>\n"
 "                                        <option value=\"M\">Garçon</option>\n"
 "                                    </select>"
@@ -101,11 +74,10 @@ msgstr ""
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
 msgid ""
-"<small id=\"passwordHelpBlock\" class=\"form-text text-muted text-"
-"right\">Search for children born on the same day</small>"
+"<small id=\"passwordHelpBlock\" class=\"form-text text-muted text-right\">\n"
+"                                    Search for children born on the same day\n"
+"                                </small>"
 msgstr ""
-"<small id=\"passwordHelpBlock\" class=\"form-text text-muted text-"
-"right\">Recherche d'enfants nés le même jour</small>"
 
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
@@ -136,23 +108,19 @@ msgstr "<span class=\"s_website_form_label_content\">Détails</span>"
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
 msgid ""
 "<span class=\"s_website_form_label_content\">Email</span>\n"
-"                                    <span class=\"s_website_form_mark\"> *</"
-"span>"
+"                                    <span class=\"s_website_form_mark\">*</span>"
 msgstr ""
 "<span class=\"s_website_form_label_content\">Email</span>\n"
-"                                    <span class=\"s_website_form_mark\"> *</"
-"span>"
+"                                    <span class=\"s_website_form_mark\"> *</span>"
 
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
 msgid ""
 "<span class=\"s_website_form_label_content\">Firstname</span>\n"
-"                                    <span class=\"s_website_form_mark\"> *</"
-"span>"
+"                                    <span class=\"s_website_form_mark\">*</span>"
 msgstr ""
 "<span class=\"s_website_form_label_content\">Prénom</span>\n"
-"                                    <span class=\"s_website_form_mark\"> *</"
-"span>"
+"                                    <span class=\"s_website_form_mark\"> *</span>"
 
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
@@ -161,8 +129,7 @@ msgstr "<span class=\"s_website_form_label_content\">Travail</span>"
 
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
-msgid ""
-"<span class=\"s_website_form_label_content\">Languages I can read</span>"
+msgid "<span class=\"s_website_form_label_content\">Languages I can read</span>"
 msgstr ""
 "<span class=\"s_website_form_label_content\">Langues que je peux lire</span>"
 
@@ -170,12 +137,10 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
 msgid ""
 "<span class=\"s_website_form_label_content\">Lastname</span>\n"
-"                                    <span class=\"s_website_form_mark\"> *</"
-"span>"
+"                                    <span class=\"s_website_form_mark\">*</span>"
 msgstr ""
 "<span class=\"s_website_form_label_content\">Nom de famille</span>\n"
-"                                    <span class=\"s_website_form_mark\"> *</"
-"span>"
+"                                    <span class=\"s_website_form_mark\"> *</span>"
 
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
@@ -185,20 +150,20 @@ msgstr "<span class=\"s_website_form_label_content\">Langue principale</span>"
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
 msgid "<span class=\"s_website_form_label_content\">Match Update</span>"
-msgstr ""
-"<span class=\"s_website_form_label_content\">Mise à jour du match</span>"
+msgstr "<span class=\"s_website_form_label_content\">Mise à jour du match</span>"
 
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
 msgid "<span class=\"s_website_form_label_content\">Mobile</span>"
-msgstr "<span class=\"s_website_form_label_content\">Mobile</span>"
+msgstr ""
 
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
 msgid ""
 "<span class=\"s_website_form_label_content\">Origin of my sponsorship</span>"
 msgstr ""
-"<span class=\"s_website_form_label_content\">Origine de mon parrainage</span>"
+"<span class=\"s_website_form_label_content\">Origine de mon "
+"parrainage</span>"
 
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
@@ -224,17 +189,15 @@ msgstr "<span class=\"s_website_form_label_content\">Titre</span>"
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
 msgid ""
 "<span class=\"s_website_form_label_content\">Type of sponsorship</span>\n"
-"                                    <span class=\"s_website_form_mark\"> *</"
-"span>"
+"                                    <span class=\"s_website_form_mark\">*</span>"
 msgstr ""
 "<span class=\"s_website_form_label_content\">Type de parrainage</span>\n"
-"                                    <span class=\"s_website_form_mark\"> *</"
-"span>"
+"                                    <span class=\"s_website_form_mark\"> *</span>"
 
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.child_sponsorship_form
 msgid "<span class=\"s_website_form_label_content\">Zip</span>"
-msgstr "<span class=\"s_website_form_label_content\">Zip</span>"
+msgstr ""
 
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.load_child_page
@@ -257,6 +220,7 @@ msgid "Campaign"
 msgstr "Campagne"
 
 #. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_account_payment_mode__can_publish
 #: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__can_publish
 #: model:ir.model.fields,field_description:website_sponsorship.field_recurring_contract_origin__can_publish
 #: model:ir.model.fields,field_description:website_sponsorship.field_res_partner_title__can_publish
@@ -266,17 +230,14 @@ msgstr "Peut publier"
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.sponsorship_done
 msgid ""
-"Can you imagine the enormous joy when our local employees are able to tell "
-"the child that he or she now has a sponsor on the other side of the world?\n"
-"                        <br/>\n"
-"                        You will soon receive all documentation needed to "
-"start the sponsorship in your mailbox."
+"Can you imagine the enormous joy when our local employees are able to tell the child that he\n"
+"                            or she now has a sponsor on the other side of the world?\n"
+"                            <br/>\n"
+"                            You will soon receive all documentation needed to start the sponsorship in your mailbox."
 msgstr ""
-"Pouvez-vous imaginer la joie lorsque notre personnel local peut annoncer à "
-"l'enfant qu'il a maintenant un parrain à l'autre bout du monde ?\n"
+"Pouvez-vous imaginer la joie lorsque notre personnel local peut annoncer à l'enfant qu'il a maintenant un parrain à l'autre bout du monde ?\n"
 "                        <br/>\n"
-"                        Toutes les informations pour démarrer votre "
-"parrainage vous parviendrons dans les prochains jours par email."
+"                        Toutes les informations pour démarrer votre parrainage vous parviendrons dans les prochains jours par email."
 
 #. module: website_sponsorship
 #: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__child_id
@@ -297,7 +258,7 @@ msgstr "Choisir un autre enfant"
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
 msgid "Choose for me"
-msgstr "Choisissez pour moi"
+msgstr "Choisir pour moi"
 
 #. module: website_sponsorship
 #: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_city
@@ -307,7 +268,7 @@ msgstr "Ville"
 #. module: website_sponsorship
 #: model:ir.model,name:website_sponsorship.model_res_partner
 msgid "Contact"
-msgstr "Contact"
+msgstr ""
 
 #. module: website_sponsorship
 #: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__contract_id
@@ -350,8 +311,8 @@ msgstr "Date de l'accord juridique"
 #, python-format
 msgid ""
 "Discover %s, a %s-year-old %s from %s. Become a sponsor and change %s life "
-"today. Join us in supporting %s's education, church activities, and favorite "
-"hobbies. Make a difference now!"
+"today. Join us in supporting %s's education, church activities, and favorite"
+" hobbies. Make a difference now!"
 msgstr ""
 "Découvrez %s, un %s âgé de %s ans et originaire de %s. Devenez parrain et "
 "changez la vie de %s aujourd'hui. Rejoignez-nous pour soutenir l'éducation "
@@ -359,6 +320,7 @@ msgstr ""
 "différence maintenant !"
 
 #. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_account_payment_mode__display_name
 #: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__display_name
 #: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__display_name
 #: model:ir.model.fields,field_description:website_sponsorship.field_ir_qweb_field_html__display_name
@@ -401,6 +363,7 @@ msgid "I'll do this later"
 msgstr "Je le ferai plus tard"
 
 #. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_account_payment_mode__id
 #: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__id
 #: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__id
 #: model:ir.model.fields,field_description:website_sponsorship.field_ir_qweb_field_html__id
@@ -409,9 +372,10 @@ msgstr "Je le ferai plus tard"
 #: model:ir.model.fields,field_description:website_sponsorship.field_res_partner_match__id
 #: model:ir.model.fields,field_description:website_sponsorship.field_res_partner_title__id
 msgid "ID"
-msgstr "ID"
+msgstr "Identifiant"
 
 #. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_account_payment_mode__is_published
 #: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__is_published
 #: model:ir.model.fields,field_description:website_sponsorship.field_recurring_contract_origin__is_published
 #: model:ir.model.fields,field_description:website_sponsorship.field_res_partner_title__is_published
@@ -421,13 +385,14 @@ msgstr "Est publié"
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.children_page_template
 msgid ""
-"It's hard to escape extreme poverty when you're born into it. That's why we "
-"support children in all areas of their lives. With CHF 42.- per month, you "
-"can free a child from extreme poverty."
+"It's hard to escape extreme poverty when you're born into it. That's why we support children\n"
+"                            in all areas of their lives. With CHF 42.- per month, you can free a child from extreme\n"
+"                            poverty."
 msgstr ""
-"Il est difficile d'échapper à l'extrême pauvreté quand on y est né. C'est "
-"pourquoi nous soutenons les enfants dans tous les domaines de leur vie. Avec "
-"CHF 42.- par mois, vous pouvez libérer un enfant de l'extrême pauvreté."
+"Grandir dans l'extrême pauvreté ne laisse que très peu d'issues. C'est "
+"pourquoi notre soutien holistique intervient précisément là où les besoins "
+"se font sentir. Grâce à votre engagement, vous libérez un enfant de la "
+"pauvreté et changez durablement sa vie."
 
 #. module: website_sponsorship
 #: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_function
@@ -440,6 +405,7 @@ msgid "Languages I can read"
 msgstr "Langues que je peux lire"
 
 #. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_account_payment_mode____last_update
 #: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship____last_update
 #: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child____last_update
 #: model:ir.model.fields,field_description:website_sponsorship.field_ir_qweb_field_html____last_update
@@ -448,7 +414,7 @@ msgstr "Langues que je peux lire"
 #: model:ir.model.fields,field_description:website_sponsorship.field_res_partner_match____last_update
 #: model:ir.model.fields,field_description:website_sponsorship.field_res_partner_title____last_update
 msgid "Last Modified on"
-msgstr "Dernière Modification le"
+msgstr "Dernière modification le"
 
 #. module: website_sponsorship
 #: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__write_uid
@@ -491,7 +457,7 @@ msgstr "Mise à jour du match"
 #. module: website_sponsorship
 #: model:ir.model,name:website_sponsorship.model_res_partner_match
 msgid "Match partner"
-msgstr "Match partner"
+msgstr ""
 
 #. module: website_sponsorship
 #: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__medium_id
@@ -519,6 +485,12 @@ msgid "My coordinates"
 msgstr "Mes coordonnées"
 
 #. module: website_sponsorship
+#: code:addons/website_sponsorship/models/compassion_child.py:0
+#, python-format
+msgid "No child found for the given search parameters."
+msgstr ""
+
+#. module: website_sponsorship
 #: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__notes
 msgid "Notes"
 msgstr "Commentaires"
@@ -537,16 +509,12 @@ msgstr "Parrainage PLUS"
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.sponsorship_plus_help
 msgid ""
-"PLUS Sponsorship is an <b>additional donation of CHF 8.00 per month</b>: it "
-"enables Compassion to finance projects to change the children's environment. "
-"The funds received under the Sponsorship Plus program contribute to a common "
-"fund and enable Compassion to support several projects each year."
+"PLUS Sponsorship is an\n"
+"                    <b>additional donation of CHF 8.00 per month</b>\n"
+"                    : it enables Compassion to finance projects to change the children's environment. The funds received\n"
+"                    under the Sponsorship Plus program contribute to a common fund and enable Compassion to support\n"
+"                    several projects each year."
 msgstr ""
-"Le Parrainage PLUS est un <b>don supplémentaire de 8 CHF par mois</b> : il "
-"permet à Compassion de financer des projets visant à changer l'environnement "
-"des enfants. Les fonds reçus dans le cadre du programme Parrainage Plus "
-"alimentent un fonds commun et permettent à Compassion de soutenir plusieurs "
-"projets chaque année."
 
 #. module: website_sponsorship
 #: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_id
@@ -556,7 +524,12 @@ msgstr "Partenaire"
 #. module: website_sponsorship
 #: model:ir.model,name:website_sponsorship.model_res_partner_title
 msgid "Partner Title"
-msgstr "TItre Partenaire"
+msgstr ""
+
+#. module: website_sponsorship
+#: model:ir.model,name:website_sponsorship.model_account_payment_mode
+msgid "Payment Modes"
+msgstr "Modes de paiement"
 
 #. module: website_sponsorship
 #: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__payment_mode_id
@@ -588,12 +561,12 @@ msgstr "Publié"
 #. module: website_sponsorship
 #: model:ir.model,name:website_sponsorship.model_ir_qweb_field_html
 msgid "Qweb Field HTML"
-msgstr "Qweb Field HTML"
+msgstr ""
 
 #. module: website_sponsorship
 #: model:ir.model,name:website_sponsorship.model_recurring_contract_origin
 msgid "Recurring Contract Origin"
-msgstr "Recurring Contract Origin"
+msgstr ""
 
 #. module: website_sponsorship
 #: model:ir.model.fields.selection,name:website_sponsorship.selection__cms_form_sponsorship__sponsorship_type__s
@@ -659,7 +632,7 @@ msgstr "Désolé, aucun enfant n'a été trouvé pour le moment."
 #: code:addons/website_sponsorship/wizards/sponsorship_form.py:0
 #, python-format
 msgid "Sorry, the child is no longer available."
-msgstr "Désolé, l'enfant n'est plus disponible."
+msgstr ""
 
 #. module: website_sponsorship
 #: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__source_id
@@ -707,6 +680,7 @@ msgid "Thank you for sponsoring"
 msgstr "Merci d'avoir choisi de parrainer"
 
 #. module: website_sponsorship
+#: model:ir.model.fields,help:website_sponsorship.field_account_payment_mode__website_url
 #: model:ir.model.fields,help:website_sponsorship.field_compassion_child__website_url
 #: model:ir.model.fields,help:website_sponsorship.field_recurring_contract_origin__website_url
 #: model:ir.model.fields,help:website_sponsorship.field_res_partner_title__website_url
@@ -716,16 +690,14 @@ msgstr "L'URL complète afin d'accéder au document à travers le site web."
 #. module: website_sponsorship
 #: model:ir.model.fields,help:website_sponsorship.field_cms_form_sponsorship__campaign_id
 msgid ""
-"This is a name that helps you keep track of your different campaign efforts, "
-"e.g. Fall_Drive, Christmas_Special"
+"This is a name that helps you keep track of your different campaign efforts,"
+" e.g. Fall_Drive, Christmas_Special"
 msgstr ""
-"This is a name that helps you keep track of your different campaign efforts, "
-"e.g. Fall_Drive, Christmas_Special"
 
 #. module: website_sponsorship
 #: model:ir.model.fields,help:website_sponsorship.field_cms_form_sponsorship__medium_id
 msgid "This is the method of delivery, e.g. Postcard, Email, or Banner Ad"
-msgstr "This is the method of delivery, e.g. Postcard, Email, or Banner Ad"
+msgstr ""
 
 #. module: website_sponsorship
 #: model:ir.model.fields,help:website_sponsorship.field_cms_form_sponsorship__source_id
@@ -733,19 +705,14 @@ msgid ""
 "This is the source of the link, e.g. Search Engine, another domain, or name "
 "of email list"
 msgstr ""
-"This is the source of the link, e.g. Search Engine, another domain, or name "
-"of email list"
 
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.sponsorship_done
 msgid ""
-"This seems to be your first sponsorship with Compassion. Do you have 5 "
-"minutes in order to review your preferences? Don't worry, you will be "
-"contacted later if you don't have time right now."
+"This seems to be your first sponsorship with Compassion. Do you have 5 minutes in order\n"
+"                                to review your preferences? Don't worry, you will be contacted later if you don't have\n"
+"                                time right now."
 msgstr ""
-"Il semble que ce soit votre premier parrainage avec Compassion. Avez-vous 5 "
-"minutes pour définir vos préférences ? Ne vous inquiétez pas, vous serez "
-"contacté plus tard si vous n'avez pas le temps maintenant."
 
 #. module: website_sponsorship
 #: model:ir.model.fields,field_description:website_sponsorship.field_cms_form_sponsorship__partner_title
@@ -763,6 +730,7 @@ msgid "Unpublished"
 msgstr "Non publié"
 
 #. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_account_payment_mode__website_published
 #: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__website_published
 #: model:ir.model.fields,field_description:website_sponsorship.field_recurring_contract_origin__website_published
 #: model:ir.model.fields,field_description:website_sponsorship.field_res_partner_title__website_published
@@ -795,6 +763,7 @@ msgid "Website Reservation Date"
 msgstr "Date de réservation du site web"
 
 #. module: website_sponsorship
+#: model:ir.model.fields,field_description:website_sponsorship.field_account_payment_mode__website_url
 #: model:ir.model.fields,field_description:website_sponsorship.field_compassion_child__website_url
 #: model:ir.model.fields,field_description:website_sponsorship.field_recurring_contract_origin__website_url
 #: model:ir.model.fields,field_description:website_sponsorship.field_res_partner_title__website_url
@@ -829,15 +798,15 @@ msgstr "Formulaire de parrainage du site web"
 #. module: website_sponsorship
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.child_page_template
 msgid ""
-"With CHF <span id=\"sponsorship_amount\">42</span>.- per month, you will "
-"release"
+"With CHF\n"
+"                                <span id=\"sponsorship_amount\">42</span>\n"
+"                                .- per month, you will release"
 msgstr ""
-"Avec CHF <span id=\"sponsorship_amount\">42</span>.- par mois, vous libérez"
 
 #. module: website_sponsorship
 #: model:ir.model.fields.selection,name:website_sponsorship.selection__cms_form_sponsorship__sponsorship_type__swp
 msgid "Write&Pray"
-msgstr "Write&Pray"
+msgstr ""
 
 #. module: website_sponsorship
 #: code:addons/website_sponsorship/models/compassion_child.py:0
@@ -868,16 +837,3 @@ msgstr "de la pauvreté !"
 #: model_terms:ir.ui.view,arch_db:website_sponsorship.child_legend
 msgid "y/o&amp;nbsp;"
 msgstr "ans&amp;nbsp;"
-
-#~ msgid "Become a sponsor and change"
-#~ msgstr "Devenez parrain et changez"
-
-#~ msgid "life today."
-#~ msgstr "la vie aujourd'hui."
-
-#~ msgid ""
-#~ "You will soon receive all documentation needed to start the sponsorship "
-#~ "in your mailbox."
-#~ msgstr ""
-#~ "Vous recevrez bientôt dans votre boîte aux lettres tous les documents "
-#~ "nécessaires au démarrage du parrainage."
