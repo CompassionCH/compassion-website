@@ -32,7 +32,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/crowdfunding_compassion/controllers/project_controller.py:0
 msgid "%s %s sponsored"
-msgstr ""
+msgstr "%s %s einen Paten bekommen"
 
 #. module: crowdfunding_compassion
 #. odoo-python
@@ -830,7 +830,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/crowdfunding_compassion/controllers/project_controller.py:0
 msgid "A mum and her baby"
-msgstr ""
+msgstr "Eine Mutter und ihr Baby"
 
 #. module: crowdfunding_compassion
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_project__ab_testing_winner_mailing_id
@@ -974,7 +974,7 @@ msgstr "Archiviert"
 #. odoo-python
 #: code:addons/crowdfunding_compassion/exceptions.py:0
 msgid "At least one goal must be set."
-msgstr ""
+msgstr "Es muss mindestens ein Ziel gesetzt werden."
 
 #. module: crowdfunding_compassion
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_participant__message_attachment_count
@@ -1049,7 +1049,7 @@ msgstr "Kampagnen-Bezeichnung"
 #. module: crowdfunding_compassion
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_project__title
 msgid "Campaign Name"
-msgstr ""
+msgstr "Kampagnen-Bezeichnung"
 
 #. module: crowdfunding_compassion
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.faq_page_template
@@ -1145,7 +1145,7 @@ msgstr ""
 #. module: crowdfunding_compassion
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.faq_page_template
 msgid "Compassion Switzerland takes"
-msgstr ""
+msgstr " "
 
 #. module: crowdfunding_compassion
 #: model:ir.model,name:crowdfunding_compassion.model_crm_event_compassion
@@ -1164,6 +1164,10 @@ msgid ""
 "                                                all Swiss cantons, donations made to Compassion can be tax-deductible.\n"
 "                                                In January, Compassion will send you a donation certificate."
 msgstr ""
+"Compassion ist eine gemeinnützige Organisation. Die Spenden an Compassion "
+"können in allen Kantonen vom steuerbaren Einkommen abgezogen werden. Im "
+"Januar bekommst du eine Spendenbestätigung für die Steuererklärung "
+"zugeschickt."
 
 #. module: crowdfunding_compassion
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.homepage_template
@@ -1549,7 +1553,7 @@ msgstr "E-Mail"
 #. module: crowdfunding_compassion
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_project__event_id
 msgid "Event"
-msgstr ""
+msgstr "Anlass"
 
 #. module: crowdfunding_compassion
 #: model:ir.actions.server,name:crowdfunding_compassion.check_project_done_ir_actions_server
@@ -1576,7 +1580,7 @@ msgstr "Facebook-Link"
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_participant__failed_message_ids
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_project__failed_message_ids
 msgid "Failed Messages"
-msgstr ""
+msgstr "Fehlgeschlagene Nachrichten"
 
 #. module: crowdfunding_compassion
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.project_list_page
@@ -1591,6 +1595,8 @@ msgid ""
 "                                                children. It remains visible on the platform to inspire future project\n"
 "                                                creators."
 msgstr ""
+"Zuerst: Feiern! Deine Projekt kann trotzdem weiterlaufen und du kannst "
+"weiter Spenden sammeln und Paten für Kinder finden."
 
 #. module: crowdfunding_compassion
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_cms_form_crowdfunding_project_step3__partner_firstname
@@ -1896,7 +1902,7 @@ msgstr "Einzelperson"
 #. odoo-python
 #: code:addons/crowdfunding_compassion/models/crowdfunding_project.py:0
 msgid "Individual project can only have one participant."
-msgstr ""
+msgstr "Ein einzelnes Projekt kann nur einen Teilnehmer haben."
 
 #. module: crowdfunding_compassion
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.layout
@@ -1942,6 +1948,8 @@ msgid ""
 "It doesn't matter: we celebrate! All donations will be allocated to the\n"
 "                                                chosen fund, just as the children can look forward to finding a sponsor."
 msgstr ""
+"Trotzdem: Feiern! Alle Spenden werden dem Spendenzweck zugeordnet und auch "
+"die Kinder freuen sich, einen Paten gefunden zu haben."
 
 #. module: crowdfunding_compassion
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_cms_form_crowdfunding_project_step3__partner_function
@@ -2083,12 +2091,12 @@ msgstr ""
 #. module: crowdfunding_compassion
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_cms_form_crowdfunding_project_step3__match_create
 msgid "Match Create"
-msgstr ""
+msgstr "Spiel erstellen"
 
 #. module: crowdfunding_compassion
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_cms_form_crowdfunding_project_step3__match_update
 msgid "Match Update"
-msgstr ""
+msgstr "Spiel-Update"
 
 #. module: crowdfunding_compassion
 #: model:ir.model,name:crowdfunding_compassion.model_res_partner_match
@@ -2210,6 +2218,8 @@ msgid ""
 "No project was defined during the previous steps. Please restart the "
 "registration process."
 msgstr ""
+"In den vorherigen Schritten wurde kein Projekt definiert. Bitte starte den "
+"Registrierungsprozess erneut."
 
 #. module: crowdfunding_compassion
 #: model:website,prevent_zero_price_sale_text:crowdfunding_compassion.crowdfunding_website
@@ -2565,7 +2575,7 @@ msgstr "Angebotszähler"
 #. odoo-python
 #: code:addons/crowdfunding_compassion/models/crowdfunding_participant.py:0
 msgid "Quote from %s %s"
-msgstr ""
+msgstr "Zitat von %s %s"
 
 #. module: crowdfunding_compassion
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_participant__rating_ids
@@ -2871,6 +2881,9 @@ msgid ""
 "                                        organisation in all Swiss cantons.\n"
 "                                    </b>"
 msgstr ""
+"TOGETHER ist eine Spenden-Plattform des Kinderhilfswerks Compassion Schweiz. Einzelpersonen oder Gruppen erstellen eigene Fundraising-Aktionen für ausgewählte Entwicklungsprojekte, die von Compassion umgesetzt werden.<br/><br/>\n"
+"                            Together funktioniert simpel und unkompliziert. Mit wenigen Klicks startest du dein eigenes Projekt. Du setzt dir ein Ziel und legst das Enddatum fest. Dann lädst du deine Familie und Freunde per E-Mail, Facebook oder Instagram dazu ein, dein Sammelziel mit ihren Spenden zu unterstützen.<br/><br/>\n"
+"                            Gespendet werden kann mit Kreditkarten, Postcard oder TWINT. Die Spenden fliessen direkt an Compassion und werden ausschliesslich für die gewählten Projekte verwendet. <b>Alle Spenden an Compassion können in der Schweiz vom steuerbaren Einkommen abgezogen werden.</b>"
 
 #. module: crowdfunding_compassion
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_project__tag_ids
@@ -2918,7 +2931,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/crowdfunding_compassion/exceptions.py:0
 msgid "The deadline must be in the future."
-msgstr ""
+msgstr "Die Frist muss in der Zukunft liegen."
 
 #. module: crowdfunding_compassion
 #. odoo-python
@@ -2963,6 +2976,8 @@ msgid ""
 "The video link must be from the 'www.youtube.com' or 'vimeo.com' domain "
 "only."
 msgstr ""
+"Der Video-Link darf nur von der Domain „www.youtube.com“ oder „vimeo.com“ "
+"sein."
 
 #. module: crowdfunding_compassion
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.product_template_form_view_crowdfunding
@@ -3037,7 +3052,7 @@ msgstr ""
 #. module: crowdfunding_compassion
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_participant__source_id
 msgid "UTM Source"
-msgstr ""
+msgstr "UTM-Quelle"
 
 #. module: crowdfunding_compassion
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.project_donation_page
@@ -3189,7 +3204,7 @@ msgstr "Was passiert, wenn ich mein Sammelziel erreicht habe?"
 #. odoo-python
 #: code:addons/crowdfunding_compassion/controllers/homepage_controller.py:0
 msgid "What we achieved so far"
-msgstr ""
+msgstr "Was wir zusammen schon erreicht haben:"
 
 #. module: crowdfunding_compassion
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.about_page_template
@@ -3263,6 +3278,11 @@ msgid ""
 "                                                donations for the benefit of children. You will find all the information\n"
 "                                                in our"
 msgstr ""
+"Deine Spende wird bei Compassion zweckbestimmt, wirksam und wirtschaftlich "
+"eingesetzt. Compassion arbeitet nach hohen, international gültigen "
+"Standards. Wir verpflichten uns, 80-100 Prozent der Spenden für das Wohl der"
+" Kinder (die sogenannte \"Programmarbeit\") einzusetzen. Umfassende "
+"Informationen findest du im "
 
 #. module: crowdfunding_compassion
 #: model:ir.model.fields,field_description:crowdfunding_compassion.field_crowdfunding_project__owner_firstname
@@ -3396,6 +3416,9 @@ msgid ""
 "                                                internal communication. Compassion has its own database and manages its\n"
 "                                                own contacts."
 msgstr ""
+"ist wichtig. Compassion Schweiz verwendet deine persönlichen Daten "
+"ausschliesslich für interne Zwecke und gibt sie nicht an Dritte weiter. "
+"Compassion hat eine eigene Datenbank und verwaltet ihre Adressen selber."
 
 #. module: crowdfunding_compassion
 #. odoo-python
@@ -3441,13 +3464,13 @@ msgstr ""
 #. odoo-python
 #: code:addons/crowdfunding_compassion/controllers/project_controller.py:0
 msgid "was"
-msgstr ""
+msgstr "hat"
 
 #. module: crowdfunding_compassion
 #. odoo-python
 #: code:addons/crowdfunding_compassion/controllers/project_controller.py:0
 msgid "were"
-msgstr ""
+msgstr "haben"
 
 #. module: crowdfunding_compassion
 #: model_terms:ir.ui.view,arch_db:crowdfunding_compassion.presentation_page
