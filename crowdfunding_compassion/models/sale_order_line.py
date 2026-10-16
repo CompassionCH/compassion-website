@@ -37,13 +37,12 @@ class SaleOrderLine(models.Model):
         res = super()._prepare_invoice_line(**optional_values)
         participant = getattr(self, "participant_id", False)
         if participant:
-            analytic_id = participant.project_id.event_id.analytic_id.id
+            # The analytic distribution stays the one of the product (fund,
+            # allocation); the project is followed by the event of the line.
             res.update(
                 {
                     "user_id": participant.partner_id.id,
-                    "analytic_distribution": (
-                        {str(analytic_id): 100} if analytic_id else False
-                    ),
+                    "event_id": participant.project_id.event_id.id,
                     "crowdfunding_participant_id": participant.id,
                 }
             )
