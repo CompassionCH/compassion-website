@@ -561,7 +561,10 @@ class EventRegistration(models.Model):
         registrations = self.filtered(lambda r: not r.source_id)
         sources = self.env["utm.source"].create(
             [
-                {"name": f"{r.event_id.name} - {r.partner_id.name}"}
+                {
+                    "name": f"{r.event_id.name} - {r.partner_id.name}",
+                    "category": "fundraiser",
+                }
                 for r in registrations
             ]
         )

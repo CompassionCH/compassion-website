@@ -42,11 +42,9 @@ class RecurringContract(models.Model):
 
     def _source_from_registration(self):
         """A sponsorship brought by a fundraiser gets the source of the
-        fundraiser, unless it has a source other than the one of its origin."""
+        fundraiser, unless it has a source other than the one of its origin
+        (or unknown)."""
         for contract in self:
             source = contract.registration_id.source_id
-            if source and (
-                not contract.source_id
-                or contract.source_id == contract.origin_id.source_id
-            ):
+            if source and contract._follows_origin("source_id"):
                 contract.source_id = source
