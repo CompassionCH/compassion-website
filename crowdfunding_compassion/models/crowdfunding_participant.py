@@ -99,6 +99,7 @@ class CrowdfundingParticipant(models.Model):
             partner = self.env["res.partner"].browse(vals.get("partner_id"))
             project = self.env["crowdfunding.project"].browse(vals.get("project_id"))
             vals["name"] = f"{project.name} - {partner.preferred_name}"
+            vals.setdefault("category", "fundraiser")
         return super().create(vals_list)
 
     @api.model
