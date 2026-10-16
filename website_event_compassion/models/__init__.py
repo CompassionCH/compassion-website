@@ -24,3 +24,4 @@ from . import (
     res_lang,
     website,
 )
+from . import sale_order

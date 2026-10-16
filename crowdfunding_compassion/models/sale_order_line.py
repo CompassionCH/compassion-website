@@ -38,7 +38,8 @@ class SaleOrderLine(models.Model):
         participant = getattr(self, "participant_id", False)
         if participant:
             # The analytic distribution stays the one of the product (fund,
-            # allocation); the project is followed by the event of the line.
+            # allocation): the project is followed by the UTM of the invoice
+            # and the event of the line.
             res.update(
                 {
                     "user_id": participant.partner_id.id,
