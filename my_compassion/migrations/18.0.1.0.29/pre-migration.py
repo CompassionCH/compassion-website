@@ -1,0 +1,50 @@
+##############################################################################
+#
+#    Copyright (C) 2026 Compassion CH (http://www.compassion.ch)
+#
+#    The licence is in the file __manifest__.py
+#
+##############################################################################
+"""Pre-migration to 18.0.1.0.29 of my_compassion.
+
+The MyCompassion activation and suggested amounts of the donation products
+become company-dependent (jsonb ``{company_id: value}``): the values set so far
+belong to the main company. Converted in place, before the ORM would move the
+old columns aside and lose them.
+"""
+
+COLUMNS = (
+    "activate_for_my_compassion",
+    "my_compassion_donation_amount_low",
+    "my_compassion_donation_amount_medium",
+    "my_compassion_donation_amount_high",
+)
+
+
+def migrate(cr, version):
+    if not version:
+        return
+    cr.execute(
+        "SELECT res_id FROM ir_model_data "
+        "WHERE module = 'base' AND name = 'main_company'"
+    )
+    row = cr.fetchone()
+    if not row:
+        return
+    company_key = str(row[0])
+    for column in COLUMNS:
+        cr.execute(
+            """SELECT data_type FROM information_schema.columns
+               WHERE table_name = 'product_template' AND column_name = %s""",
+            (column,),
+        )
+        data_type = (cr.fetchone() or [None])[0]
+        if data_type in (None, "jsonb"):
+            continue
+        # A false/empty value is the fallback: not stored.
+        keep = f"{column}" if data_type == "boolean" else f"{column} IS NOT NULL"
+        cr.execute(
+            f"""ALTER TABLE product_template ALTER COLUMN {column} TYPE jsonb
+                USING CASE WHEN {keep} THEN jsonb_build_object(%s, {column}) END""",
+            (company_key,),
+        )

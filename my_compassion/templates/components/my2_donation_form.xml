@@ -161,7 +161,7 @@
               />
               <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-low">
                 <t t-set="price" t-value="product.my_compassion_donation_amount_low" />
-                <t t-out="product.currency_id.name" />
+                <t t-out="product.my_compassion_currency_id.name" />
                 <t t-if="price % 1 == 0" t-out="int(price)" />
                 <t t-else="" t-out="'{0:.2f}'.format(price)" />
               </label>
@@ -180,7 +180,7 @@
                   t-set="price"
                   t-value="product.my_compassion_donation_amount_medium"
                 />
-                <t t-out="product.currency_id.name" />
+                <t t-out="product.my_compassion_currency_id.name" />
                 <t t-if="price % 1 == 0" t-out="int(price)" />
                 <t t-else="" t-out="'{0:.2f}'.format(price)" />
               </label>
@@ -196,7 +196,7 @@
               />
               <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-high">
                 <t t-set="price" t-value="product.my_compassion_donation_amount_high" />
-                <t t-out="product.currency_id.name" />
+                <t t-out="product.my_compassion_currency_id.name" />
                 <t t-if="price % 1 == 0" t-out="int(price)" />
                 <t t-else="" t-out="'{0:.2f}'.format(price)" />
               </label>
@@ -221,7 +221,7 @@
               id="custom-amount"
               type="text"
               name="custom_amount"
-              t-att-placeholder="placeholder_text + ' ' + product.currency_id.name"
+              t-att-placeholder="placeholder_text + ' ' + product.my_compassion_currency_id.name"
               class="form-control mt-2"
               t-att-value="'{:g}'.format(default_custom_amount) if default_custom_amount else ''"
             />
