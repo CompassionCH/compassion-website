@@ -436,6 +436,16 @@ class MyCompassionNewSponsorshipController(http.Controller):
             # The thank-you page is public, but the sponsorship details
             # are private. If this visitor is not the sponsor, hide them.
             raise NotFound()
+        if sponsorship._my2_failed_first_payment():
+            # The payment flow lands here whatever the result: back to the
+            # payment page, to pay with another card.
+            access_token = payment_utils.generate_access_token(
+                sponsorship.id, sponsorship.partner_id.id
+            )
+            return request.redirect(
+                f"/my2/new-sponsorship/payment?sponsorship_id={sponsorship.id}"
+                f"&access_token={access_token}&payment_failed=1"
+            )
         return request.render(
             "my_compassion.my2_new_sponsorship_thank_you_page",
             self._thank_you_values(
@@ -791,6 +801,9 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
         sponsorship._schedule_digital_revert()
         rendering_values = self._get_sponsorship_payment_values(
             sponsorship, provider, access_token, invoice
+        )
+        rendering_values["payment_failed"] = bool(
+            kwargs.get("payment_failed") and sponsorship._my2_failed_first_payment()
         )
         return request.render(
             "my_compassion.my2_new_sponsorship_payment_page", rendering_values

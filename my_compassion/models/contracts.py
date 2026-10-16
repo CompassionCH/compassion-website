@@ -102,12 +102,36 @@ class RecurringContract(models.Model):
         sync = self.with_context(queue_job__no_delay=True)
         if self.state == "draft":
             sync.contract_waiting()
+        return self._my2_first_open_invoice()
+
+    def _my2_first_open_invoice(self):
+        """The earliest open invoice: the one the checkout charges."""
+        self.ensure_one()
         invoices = self.invoice_line_ids.move_id.filtered(
             lambda m: m.move_type == "out_invoice"
             and m.state == "posted"
             and m.payment_state in ("not_paid", "partial")
         )
         return invoices.sorted("invoice_date")[:1]
+
+    def _my2_failed_first_payment(self):
+        """Whether the last attempt to pay the first invoice of a digital
+        signup failed, so the sponsor still has to pay it.
+
+        Odoo sends the payment flow to its landing route (the thank-you page)
+        on cancel and error too, not only on success.
+        """
+        self.ensure_one()
+        if not self.payment_mode_id.payment_provider_id or self.state not in (
+            "draft",
+            "waiting",
+        ):
+            return False
+        # Only the attempts on the invoice the checkout charges: with advance
+        # billing, a later invoice may have attempts of its own.
+        first_invoice = self._my2_first_open_invoice()
+        last_tx = first_invoice.transaction_ids.sorted("id")[-1:]
+        return last_tx.state in ("cancel", "error")
 
     def _my2_details_pending(self):
         """Whether this signup is still waiting for its sponsor's real name.
