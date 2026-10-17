@@ -197,6 +197,17 @@ class PaymentTransaction(models.Model):
             return ""
         return name
 
+    def _payu_gpo_buyer_names(self):
+        """payment_payu_gpo hook (only called when that module is installed):
+        a donor known by their email only has the placeholder name, which
+        PayU would show on its payment page. Send no name: PayU asks it."""
+        if (
+            not self.payu_gpo_cardholder_name
+            and self.partner_id.sudo().my2_name_placeholder
+        ):
+            return "", ""
+        return super()._payu_gpo_buyer_names()
+
     def _my2_apply_cardholder_name(self):
         """Fill in a fast-checkout sponsor's placeholder name.
 

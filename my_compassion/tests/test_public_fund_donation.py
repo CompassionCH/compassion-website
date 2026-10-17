@@ -221,6 +221,21 @@ class TestPublicFundDonation(HttpCase):
             self.opener = own_opener
         self.assertTrue(donor.my2_name_placeholder)
 
+    # === PayU never shows the placeholder ===
+
+    def test_no_placeholder_name_sent_to_payu(self):
+        tx_model = self.env["payment.transaction"]
+        if not hasattr(tx_model, "_payu_gpo_buyer_names"):
+            self.skipTest("payment_payu_gpo is not installed")
+        self._add_fund()
+        self._give_email()
+        donor = self._cart().partner_id
+        tx = tx_model.new({"partner_id": donor.id, "partner_name": donor.name})
+        self.assertEqual(tx._payu_gpo_buyer_names(), ("", ""))
+        # The name on the card, once typed, is sent.
+        tx.payu_gpo_cardholder_name = "Anna Nowak"
+        self.assertEqual(tx._payu_gpo_buyer_names(), ("Anna", "Nowak"))
+
     # === No Odoo sales email for a donation ===
 
     def test_no_sales_email_for_a_my_compassion_order(self):
