@@ -10,6 +10,10 @@ Page: My Compassion 2 Thank you Page
 
     Injected data:
     - sale_order: The sale order object containing the details of the donation
+    - donor_details_needed (bool): a visitor's donation whose payment did not
+      tell the donor's name: the name form is shown
+    - donor_details_prefill (dict): firstname/lastname to start the form with
+    - donor_details_error (bool): the last submission missed a field
 -->
 <odoo>
   <template id="my2_gifts_thank_you_page" name="My Compassion 2 Thank you Page">
@@ -104,18 +108,88 @@ Page: My Compassion 2 Thank you Page
                 </t>
               </t>
             </div>
+            <!-- DONOR NAME (visitor whose payment did not tell it) -->
+            <form
+              t-if="donor_details_needed"
+              class="my2-gifts-donor-details-form w-100 px-4 mb-4"
+              action="/my2/gifts/thankyou/details"
+              method="POST"
+            >
+              <input
+                type="hidden"
+                name="csrf_token"
+                t-att-value="request.csrf_token()"
+              />
+              <div class="h4 mb-1 text-low-black text-center">Who shall we thank?</div>
+              <div
+                class="mb-3 text-center body-small text-low-black"
+              >Your name goes on your donation receipt.</div>
+              <div
+                t-if="donor_details_error"
+                class="mb-3 p-3 rounded-lg bg-low-eggshell text-mid-orange body-small"
+                role="alert"
+              >Please fill in your first name and surname.</div>
+              <t t-call="theme_compassion_2025.FormFieldComponent">
+                <t t-set="top_class" t-value="'my-3'" />
+                <t t-set="label">Firstname</t>
+                <t t-set="input_id" t-value="'donor_firstname'" />
+                <input
+                  id="donor_firstname"
+                  type="text"
+                  name="firstname"
+                  class="form-control"
+                  t-att-value="donor_details_prefill.get('firstname')"
+                  data-validate-type="name"
+                  required=""
+                />
+              </t>
+              <t t-call="theme_compassion_2025.FormFieldComponent">
+                <t t-set="top_class" t-value="'my-3'" />
+                <t t-set="label">Surname</t>
+                <t t-set="input_id" t-value="'donor_lastname'" />
+                <input
+                  id="donor_lastname"
+                  type="text"
+                  name="lastname"
+                  class="form-control"
+                  t-att-value="donor_details_prefill.get('lastname')"
+                  data-validate-type="name"
+                  required=""
+                />
+              </t>
+              <div class="d-flex flex-column align-items-stretch">
+                <t t-call="theme_compassion_2025.ThemedButtonComponent">
+                  <t t-set="variant" t-value="'compact'" />
+                  <t t-set="variation" t-value="'filled'" />
+                  <t t-set="label">Save</t>
+                  <t t-set="color" t-value="'mid-green'" />
+                  <t t-set="text_color" t-value="'pure-white'" />
+                </t>
+              </div>
+            </form>
             <!-- BACK TO HOME PAGE  -->
             <div
               class="gifts-thank-you-buttons-container w-100 mt-3 mb-5
                                     d-flex flex-column align-items-stretch"
             >
-              <t t-call="theme_compassion_2025.ThemedButtonComponent">
+              <t
+                t-if="not request.env.user._is_public()"
+                t-call="theme_compassion_2025.ThemedButtonComponent"
+              >
                 <t t-set="variant" t-value="'compact'" />
                 <t t-set="variation" t-value="'filled'" />
                 <t t-set="label">Back to dashboard</t>
                 <t t-set="color" t-value="'dark-blue'" />
                 <t t-set="text_color" t-value="'pure-white'" />
                 <t t-set="href" t-value="'/my2/dashboard'" />
+              </t>
+              <t t-else="" t-call="theme_compassion_2025.ThemedButtonComponent">
+                <t t-set="variant" t-value="'compact'" />
+                <t t-set="variation" t-value="'filled'" />
+                <t t-set="label">Make another donation</t>
+                <t t-set="color" t-value="'dark-blue'" />
+                <t t-set="text_color" t-value="'pure-white'" />
+                <t t-set="href" t-value="'/my2/gifts'" />
               </t>
             </div>
           </div>
