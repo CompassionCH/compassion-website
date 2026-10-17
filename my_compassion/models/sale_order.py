@@ -5,6 +5,19 @@ from odoo.exceptions import ValidationError
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
+    def _send_order_notification_mail(self, mail_template):
+        """No Odoo sales email for a MyCompassion donation.
+
+        Paying online confirms the order, and sale then emails the donor an
+        order confirmation (or a "payment pending/executed" notice) - a
+        webshop email about an "order", in the partner's language or not,
+        on top of Compassion's own thanks and donation receipts. The other
+        websites (crowdfunding, events...) keep the standard behaviour.
+        """
+        if self.website_id.is_my_compassion:
+            return None
+        return super()._send_order_notification_mail(mail_template)
+
     def _check_cart_is_ready_to_be_paid(self):
         self._check_gift_limits()
         return super()._check_cart_is_ready_to_be_paid()
