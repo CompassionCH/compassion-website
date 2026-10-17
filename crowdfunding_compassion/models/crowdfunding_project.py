@@ -656,8 +656,12 @@ class CrowdfundingProject(models.Model):
         return format(value, ",d").replace(",", " ") if value > 9999 else value
 
     @ormcache()
+    def _get_total_sponsorships_reached(self):
+        return sum(self.sudo().search([]).mapped("number_sponsorships_reached"))
+
     def sponsorship_card_content(self):
-        value = sum(self.sudo().search([]).mapped("number_sponsorships_reached"))
+        # Not cached as a whole: the translated strings depend on the language
+        value = self._get_total_sponsorships_reached()
         return {
             "type": "sponsorship",
             "value": self.fund_impact_val_formatting(value),
