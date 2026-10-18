@@ -465,6 +465,9 @@ class MyCompassionDonationsController(CustomerPortal):
                 # website_sale sends a cancelled or refused payment here too,
                 # and empties the cart first (sale_reset): give the cart back
                 # and let the donor try again instead of thanking them.
+                if sale_order.state == "sent":
+                    # website_sale only takes a draft quotation as a cart.
+                    sale_order.action_draft()
                 request.session["sale_order_id"] = sale_order.id
                 request.session["website_sale_cart_quantity"] = sale_order.cart_quantity
                 return request.redirect("/my2/gift-package?payment_failed=1")
@@ -571,8 +574,9 @@ class MyCompassionDonationsController(CustomerPortal):
     @staticmethod
     def _my2_payment_failed(order):
         """Whether the last payment of a still unconfirmed donation order was
-        cancelled or refused (the order is confirmed once paid)."""
-        if not order.exists() or order.state != "draft":
+        cancelled or refused (the order is confirmed once paid). A payment
+        that was pending first has made the order a sent quotation."""
+        if not order.exists() or order.state not in ("draft", "sent"):
             return False
         return order.transaction_ids.sorted("id")[-1:].state in ("cancel", "error")
 

@@ -249,6 +249,9 @@ class TestPublicFundDonation(HttpCase):
         self._add_fund()
         self._give_email()
         self._pay("cancel")
+        # A payment pending first (late 3-D Secure, BLIK) made it a sent
+        # quotation: still unpaid.
+        self._cart().state = "sent"
         # The landing route of the payment form, as after a refused card: it
         # empties the cart (sale_reset), then confirmation -> thank-you.
         page = self.url_open("/shop/payment/validate")
