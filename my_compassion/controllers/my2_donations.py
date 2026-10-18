@@ -257,6 +257,7 @@ class MyCompassionDonationsController(CustomerPortal):
             {
                 "order": order,
                 "limits": limits,
+                "payment_failed": bool(kwargs.get("payment_failed")),
                 **donor_values,
                 **payment_form_values,
             },
@@ -460,6 +461,13 @@ class MyCompassionDonationsController(CustomerPortal):
         sale_order_id = request.session.get("sale_last_order_id")
         if sale_order_id:
             sale_order = request.env["sale.order"].sudo().browse(sale_order_id)
+            if self._my2_payment_failed(sale_order):
+                # website_sale sends a cancelled or refused payment here too,
+                # and empties the cart first (sale_reset): give the cart back
+                # and let the donor try again instead of thanking them.
+                request.session["sale_order_id"] = sale_order.id
+                request.session["website_sale_cart_quantity"] = sale_order.cart_quantity
+                return request.redirect("/my2/gift-package?payment_failed=1")
             return request.render(
                 "my_compassion.my2_gifts_thank_you_page",
                 {
@@ -559,6 +567,14 @@ class MyCompassionDonationsController(CustomerPortal):
             "processing": tx.state in ("draft", "pending"),
             "reference": tx.reference,
         }
+
+    @staticmethod
+    def _my2_payment_failed(order):
+        """Whether the last payment of a still unconfirmed donation order was
+        cancelled or refused (the order is confirmed once paid)."""
+        if not order.exists() or order.state != "draft":
+            return False
+        return order.transaction_ids.sorted("id")[-1:].state in ("cancel", "error")
 
     def _get_donation_product(self, product_id):
         """The donation product a visitor or user may give to, or an empty

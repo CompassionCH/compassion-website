@@ -221,6 +221,56 @@ class TestPublicFundDonation(HttpCase):
             self.opener = own_opener
         self.assertTrue(donor.my2_name_placeholder)
 
+    # === A failed payment is no thank-you ===
+
+    def _pay(self, state):
+        cart = self._cart()
+        provider = self.env["payment.provider"].create(
+            {
+                "name": "Visitor Test Provider",
+                "code": "none",
+                "company_id": self.website.company_id.id,
+            }
+        )
+        return self.env["payment.transaction"].create(
+            {
+                "provider_id": provider.id,
+                "payment_method_id": self.env.ref("payment.payment_method_unknown").id,
+                "amount": cart.amount_total,
+                "currency_id": cart.currency_id.id,
+                "partner_id": cart.partner_id.id,
+                "reference": f"my2-visitor-{state}",
+                "sale_order_ids": [(6, 0, cart.ids)],
+                "state": state,
+            }
+        )
+
+    def test_failed_payment_goes_back_to_the_basket(self):
+        self._add_fund()
+        self._give_email()
+        self._pay("cancel")
+        # The landing route of the payment form, as after a refused card: it
+        # empties the cart (sale_reset), then confirmation -> thank-you.
+        page = self.url_open("/shop/payment/validate")
+        self.assertIn("/my2/gift-package", page.url)
+        self.assertIn("payment_failed=1", page.url)
+        self.assertIn("Your payment did not go through", page.text)
+        self.assertNotIn('action="/my2/gifts/thankyou/details"', page.text)
+        # The cart is back: the donation can be paid again.
+        self.assertIn("o_payment_form", page.text)
+        self.assertEqual(self._cart().state, "draft")
+
+    def test_thank_you_after_a_done_payment(self):
+        self._add_fund()
+        self._give_email()
+        cart = self._cart()
+        self.url_open("/my2/gift-package")
+        self._pay("done")
+        cart.action_confirm()
+        page = self.url_open("/my2/gifts/thankyou")
+        self.assertNotIn("/my2/gift-package", page.url)
+        self.assertNotIn("Your payment did not go through", page.text)
+
     # === PayU never shows the placeholder ===
 
     def test_no_placeholder_name_sent_to_payu(self):

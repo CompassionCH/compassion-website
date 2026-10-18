@@ -264,6 +264,12 @@
             <div class="mt-3 px-4 body-small text-center">
                             Your donations will have an everlasting impact.
                         </div>
+            <!-- FAILED PAYMENT (back from the payment, see my2_gifts_thank_you_page) -->
+            <div
+              t-if="payment_failed"
+              class="mt-3 p-3 w-100 rounded-lg bg-low-eggshell text-mid-orange body-small text-center"
+              role="alert"
+            >Your payment did not go through. Please try again, or use another card.</div>
             <!-- GIFT PACKAGE CONTENT -->
             <div
               id="gift-package-content-wrapper"
