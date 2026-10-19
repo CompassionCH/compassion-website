@@ -227,6 +227,12 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
             .with_context(bin_size=False)
         )
 
+        popup_templates = (
+            request.env["correspondence.prewritten.letter"]
+            .sudo()
+            .search([("status", "=", "active")])
+        )
+
         return request.render(
             "my_compassion.my2_new_letter_page",
             {
@@ -234,6 +240,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                 "sponsorship_ids": sponsorships,
                 "templates": templates,
                 "draft": draft,
+                "text_templates": popup_templates,
             },
         )
 
@@ -494,12 +501,20 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
     def get_letter_templates(self, **kw):
         """
         This controller returns the currently active letter template.
+        MODIFIED: It now accepts a 'template_id' parameter to fetch a specific one.
         """
+
+        template_id = self._safe_int(kw.get("template_id"), None)
+        domain = [("status", "=", "active")]
+        limit = 1
+
+        if template_id:
+            domain.append(("id", "=", template_id))
 
         templates = (
             request.env["correspondence.prewritten.letter"]
             .sudo()
-            .search([("status", "=", "active")], limit=1)
+            .search(domain, limit=limit)
         )
 
         template_text = templates.text or ""
@@ -514,6 +529,7 @@ class MyCompassionCorrespondenceController(MyCompassionChildrenController):
                     self._check_sponsored_child_access(child)
             except (AccessError, ValueError):
                 _logger.warning("Invalid child access for letter template.")
+
             replacements = {
                 "%child%": child.preferred_name or "",
                 "%firstname%": partner.preferred_name or partner.name or "",

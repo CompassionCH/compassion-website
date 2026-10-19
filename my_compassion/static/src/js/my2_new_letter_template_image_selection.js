@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Get all template images
     const templateImages = document.querySelectorAll(".template-image");
+    const textInputs = document.querySelectorAll(".text-template-item");
 
     // Add click event listener to each image
     templateImages.forEach((image) => {
@@ -40,6 +41,15 @@ document.addEventListener("DOMContentLoaded", function () {
             img.setAttribute("data-template-id", selectedTemplateId);
 
             targetDiv.appendChild(img);
+        });
+    });
+
+    textInputs.forEach((textInput) => {
+        textInput.addEventListener("click", function () {
+            // Replace the button's label content with the template name selected
+            const button_label_element = document.getElementById("text-template-selection-label");
+            const selectedTemplateName = textInput.innerText;
+            button_label_element.textContent = selectedTemplateName;
         });
     });
 });
