@@ -18,6 +18,15 @@ class SaleOrder(models.Model):
             return None
         return super()._send_order_notification_mail(mail_template)
 
+    def _get_update_prices_lines(self):
+        """The donor chose the amounts of a MyCompassion cart: they are never
+        reset to the product's price, e.g. when a visitor logs in and the cart
+        moves to an account with another pricelist or fiscal position."""
+        lines = super()._get_update_prices_lines()
+        return lines.filtered(
+            lambda line: not line.order_id.website_id.is_my_compassion
+        )
+
     def _check_cart_is_ready_to_be_paid(self):
         self._check_gift_limits()
         return super()._check_cart_is_ready_to_be_paid()

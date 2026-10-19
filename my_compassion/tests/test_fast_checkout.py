@@ -229,22 +229,6 @@ class TestFastCheckoutPlumbing(DigitalSeamCase):
             "",
         )
         self.assertEqual(tx_model._my2_cardholder_name_stripe({"charge": None}), "")
-        # PayU: the buyer is the name on the card typed next to the Secure
-        # Form; the placeholder sent for a nameless payer is no name
-        self.assertEqual(
-            tx_model._my2_cardholder_name_payu_gpo(
-                {"order": {"buyer": {"firstName": "Anna", "lastName": "Nowak"}}}
-            ),
-            "Anna Nowak",
-        )
-        placeholder = self.env["res.partner"].MY2_PLACEHOLDER_NAME
-        self.assertEqual(
-            tx_model._my2_cardholder_name_payu_gpo(
-                {"order": {"buyer": {"firstName": placeholder, "lastName": ""}}}
-            ),
-            "",
-        )
-        self.assertEqual(tx_model._my2_cardholder_name_payu_gpo({"order": {}}), "")
 
     # === Details-form token ===
 

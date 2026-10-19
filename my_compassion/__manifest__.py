@@ -41,6 +41,7 @@
         # My Compassion 2 data
         "data/account_payment_method.xml",
         "data/digital_charge_cron.xml",
+        "data/abandoned_donors_cron.xml",
         "data/my2_website.xml",
         "data/auto_letter_templates_updater_cron.xml",
         # My compassion 2 assets, needs to be placed before others

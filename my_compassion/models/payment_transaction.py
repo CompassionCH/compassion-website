@@ -190,36 +190,6 @@ class PaymentTransaction(models.Model):
         """
         return ""
 
-    def _my2_cardholder_name_payu_gpo(self, notification_data):
-        """PayU (Poland) reports no cardholder name of its own: the order's
-        buyer is what Odoo sent. payment_payu_gpo asks the name on the card
-        next to the Secure Form and sends it as the buyer's first and last
-        name, so for a card payment the buyer is the payer. Without it (BLIK,
-        bank transfer) the buyer is the partner's placeholder: ignored, the
-        details form asks instead."""
-        buyer = (notification_data.get("order") or {}).get("buyer")
-        if not isinstance(buyer, dict):
-            return ""
-        name = " ".join(
-            part.strip()
-            for part in (buyer.get("firstName"), buyer.get("lastName"))
-            if isinstance(part, str) and part.strip()
-        )
-        if name == self.env["res.partner"].MY2_PLACEHOLDER_NAME:
-            return ""
-        return name
-
-    def _payu_gpo_buyer_names(self):
-        """payment_payu_gpo hook (only called when that module is installed):
-        a donor known by their email only has the placeholder name, which
-        PayU would show on its payment page. Send no name: PayU asks it."""
-        if (
-            not self.payu_gpo_cardholder_name
-            and self.partner_id.sudo().my2_name_placeholder
-        ):
-            return "", ""
-        return super()._payu_gpo_buyer_names()
-
     def _my2_apply_cardholder_name(self):
         """Fill in a fast-checkout sponsor's placeholder name.
 

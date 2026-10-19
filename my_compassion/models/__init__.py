@@ -7,6 +7,7 @@
 #
 ##############################################################################
 from . import (
+    communication_job,
     compassion_child_pictures,
     compassion_project,
     contract_group,

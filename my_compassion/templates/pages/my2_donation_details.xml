@@ -6,7 +6,7 @@
     This page displays details about a donation type and allows users to choose an amount to donate.
 
     Used in route:
-    - /my2/gifts/<product.template>
+    - /my2/gifts/<int:product_id>
 
     Injected data:
     - product ('product.template' record): The donation product.

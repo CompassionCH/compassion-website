@@ -1,8 +1,13 @@
 import logging
+from datetime import timedelta
 
 from odoo import fields, models
 
 _logger = logging.getLogger(__name__)
+
+# Days after which a donor left with the placeholder name and nothing else
+# (an abandoned email step) is archived.
+ABANDONED_DONOR_DAYS = 30
 
 
 class Partner(models.Model):
@@ -72,6 +77,46 @@ class Partner(models.Model):
             updated |= partner
         updated._my2_on_placeholder_name_replaced()
         return updated
+
+    def _my2_cron_archive_abandoned_donors(self, limit=500):
+        """Archive the donors of abandoned visitor checkouts: still the
+        placeholder name after ABANDONED_DONOR_DAYS, no account, and nothing
+        else - no contract, invoice, payment or confirmed order. Each email
+        step of a visitor creates one (an unverified email is never matched to
+        an existing partner)."""
+        candidates = self.search(
+            [
+                ("my2_name_placeholder", "=", True),
+                (
+                    "create_date",
+                    "<",
+                    fields.Datetime.now() - timedelta(days=ABANDONED_DONOR_DAYS),
+                ),
+                ("user_ids", "=", False),
+            ],
+            limit=limit,
+        )
+        if not candidates:
+            return
+        used = self.browse()
+        for model, fnames, extra in (
+            ("recurring.contract", ("partner_id", "correspondent_id"), []),
+            ("account.move", ("partner_id",), []),
+            (
+                "payment.transaction",
+                ("partner_id",),
+                [("state", "in", ("pending", "authorized", "done"))],
+            ),
+            ("sale.order", ("partner_id",), [("state", "=", "sale")]),
+        ):
+            records = self.env[model].with_context(active_test=False)
+            for fname in fnames:
+                used |= records.search([(fname, "in", candidates.ids), *extra]).mapped(
+                    fname
+                )
+        abandoned = candidates - used
+        abandoned.write({"active": False})
+        _logger.info("Archived %s abandoned visitor donors.", len(abandoned))
 
     def _my2_on_placeholder_name_replaced(self):
         """Everything that had to wait for the sponsor's real name.

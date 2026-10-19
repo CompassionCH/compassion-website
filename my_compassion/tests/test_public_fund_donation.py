@@ -1,8 +1,11 @@
+import base64
 import re
 import time
+from datetime import timedelta
 from unittest.mock import patch
 
-from odoo import http
+from odoo import fields, http
+from odoo.exceptions import UserError
 from odoo.tests import tagged
 from odoo.tests.common import (
     TEST_CURSOR_COOKIE_NAME,
@@ -157,6 +160,13 @@ class TestPublicFundDonation(HttpCase):
         self.assertNotEqual(cart, other_cart)
         self.assertEqual(cart.website_id, self.website)
         self.assertFalse(other_cart.order_line)
+
+    def test_an_archived_fund_is_refused(self):
+        self.fund.active = False
+        page = self.url_open(f"/my2/gifts/{self.fund.id}", allow_redirects=False)
+        self.assertEqual(page.status_code, 303)
+        with self.assertRaises(JsonRpcException):
+            self._add_fund()
 
     def test_visitor_gives_once(self):
         self._add_fund(frequency="monthly")
@@ -343,27 +353,40 @@ class TestPublicFundDonation(HttpCase):
         self.assertEqual((donor.firstname, donor.lastname), ("Anna", "Nowak"))
 
     def test_another_session_cannot_name_the_donor(self):
+        """The name form only ever names the donor of its own session: another
+        visitor, with a valid form of their own, names their donor only."""
         self._add_fund()
         self._give_email()
         donor = self._cart().partner_id
+        self._pay("pending", reference="my2-first-session")
         own_opener = self.opener
         self.opener = Opener(self.cr)
         self.opener.cookies[TEST_CURSOR_COOKIE_NAME] = own_opener.cookies[
             TEST_CURSOR_COOKIE_NAME
         ]
         try:
-            page = self.url_open("/my2/gifts")
-            csrf = CSRF_RE.search(page.text)
-            self.url_open(
+            self._add_fund()
+            self._give_email(email="eve@example.org")
+            other_donor = self._cart().partner_id
+            self.assertNotEqual(other_donor, donor)
+            self._pay("pending", reference="my2-other-session")
+            page = self.url_open("/my2/gifts/thankyou")
+            response = self.url_open(
                 "/my2/gifts/thankyou/details",
                 data={
-                    "csrf_token": csrf.group(1) if csrf else "",
+                    "csrf_token": CSRF_RE.search(page.text).group(1),
                     "firstname": "Eve",
                     "lastname": "Mallory",
                 },
+                allow_redirects=False,
             )
         finally:
             self.opener = own_opener
+        # The request reached the route (a missing CSRF token is a 400).
+        self.assertEqual(response.status_code, 303)
+        self.assertEqual(
+            (other_donor.firstname, other_donor.lastname), ("Eve", "Mallory")
+        )
         self.assertTrue(donor.my2_name_placeholder)
 
     # === A failed payment is no thank-you ===
@@ -523,21 +546,6 @@ class TestPublicFundDonation(HttpCase):
         self.assertNotIn("/my2/gift-package", page.url)
         self.assertNotIn("Your payment did not go through", page.text)
 
-    # === PayU never shows the placeholder ===
-
-    def test_no_placeholder_name_sent_to_payu(self):
-        tx_model = self.env["payment.transaction"]
-        if "payu_gpo_cardholder_name" not in tx_model._fields:
-            self.skipTest("payment_payu_gpo is not installed")
-        self._add_fund()
-        self._give_email()
-        donor = self._cart().partner_id
-        tx = tx_model.new({"partner_id": donor.id, "partner_name": donor.name})
-        self.assertEqual(tx._payu_gpo_buyer_names(), ("", ""))
-        # The name on the card, once typed, is sent.
-        tx.payu_gpo_cardholder_name = "Anna Nowak"
-        self.assertEqual(tx._payu_gpo_buyer_names(), ("Anna", "Nowak"))
-
     # === No Odoo sales email for a donation ===
 
     def test_no_sales_email_for_a_my_compassion_order(self):
@@ -548,3 +556,106 @@ class TestPublicFundDonation(HttpCase):
         messages = len(cart.message_ids)
         cart._send_order_notification_mail(template)
         self.assertEqual(len(cart.message_ids), messages)
+
+    # === Duplicates and abandoned donors ===
+
+    def test_second_donation_of_the_session_keeps_its_donor(self):
+        self._add_fund()
+        self._give_email()
+        first_cart = self._cart()
+        donor = first_cart.partner_id
+        self._pay("done")
+        first_cart.action_confirm()
+        self.url_open("/shop/payment/validate")
+        partners = self.env["res.partner"].search_count([])
+        self._add_fund()
+        second_cart = self._cart()
+        self.assertNotEqual(second_cart, first_cart)
+        self._give_email()
+        self.assertEqual(second_cart.partner_id, donor)
+        self.assertEqual(self.env["res.partner"].search_count([]), partners)
+
+    def test_replayed_email_step_keeps_the_donor(self):
+        """A double click: the replayed request has not seen the session of
+        the first one, but finds its donor on the cart."""
+        self._add_fund()
+        self._give_email()
+        donor = self._cart().partner_id
+        session = http.root.session_store.get(self.opener.cookies["session_id"])
+        session.pop("my2_donor_partner_id")
+        http.root.session_store.save(session)
+        partners = self.env["res.partner"].search_count([])
+        self._give_email()
+        self.assertEqual(self._cart().partner_id, donor)
+        self.assertEqual(self.env["res.partner"].search_count([]), partners)
+
+    def test_abandoned_donors_are_archived(self):
+        self._add_fund()
+        self._give_email()
+        abandoned = self._cart().partner_id
+        paid = abandoned.copy({"my2_name_placeholder": True, "email": "p@example.org"})
+        self._pay("done").partner_id = paid
+        old = fields.Datetime.now() - timedelta(days=40)
+        self.env.cr.execute(
+            "UPDATE res_partner SET create_date = %s WHERE id IN %s",
+            [old, tuple((abandoned | paid).ids)],
+        )
+        (abandoned | paid).invalidate_recordset(["create_date"])
+        self.env["res.partner"]._my2_cron_archive_abandoned_donors()
+        self.assertFalse(abandoned.active)
+        self.assertTrue(paid.active)
+
+    # === What waits for the donor's name ===
+
+    def test_thank_you_letter_waits_for_the_name(self):
+        config = self.env["partner.communication.config"].search(
+            [("model_id.model", "in", ("account.move", "account.move.line"))],
+            limit=1,
+        )
+        if not config:
+            self.skipTest("no communication about invoices on this database")
+        about = self.env[config.model_id.model].search([], limit=1)
+        if not about:
+            self.skipTest("no invoice on this database")
+        self._add_fund()
+        self._give_email()
+        donor = self._cart().partner_id
+        job = self.env["partner.communication.job"].create(
+            {
+                "config_id": config.id,
+                "partner_id": donor.id,
+                "object_ids": str(about.id),
+                "send_mode": "digital",
+            }
+        )
+        # Sent alone (a click on Send): the user is told why.
+        with self.assertRaises(UserError):
+            job.send()
+        # Sent in a batch: left pending, until the name comes.
+        other_donor = donor.copy(
+            {"my2_name_placeholder": True, "email": "other@example.org"}
+        )
+        jobs = job | job.copy({"partner_id": other_donor.id})
+        self.assertEqual(len(jobs), 2)
+        jobs.send()
+        self.assertEqual(set(jobs.mapped("state")), {"pending"})
+
+    # === Amounts and images ===
+
+    def test_chosen_amounts_are_never_reset(self):
+        self._add_fund(suggested_amount="custom", custom_amount="42")
+        cart = self._cart()
+        self.assertFalse(cart._get_update_prices_lines())
+        cart._recompute_prices()
+        self.assertEqual(cart.order_line.price_unit, 42.0)
+
+    def test_visitor_sees_the_fund_image(self):
+        png = base64.b64decode(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+        )
+        self.fund.my_compassion_image = base64.b64encode(png)
+        response = self.url_open(
+            f"/web/image/product.template/{self.fund.id}/my_compassion_image"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, png)

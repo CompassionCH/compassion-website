@@ -315,28 +315,39 @@ class MyCompassionDonationsController(CustomerPortal):
             return request.redirect("/my2/gift-package?donor_error=verify")
 
         order = order.sudo()
+        # A double click must not make two donors: the second request waits,
+        # then is replayed and finds the donor of the first one.
+        request.env.cr.execute(
+            "SELECT 1 FROM sale_order WHERE id = %s FOR NO KEY UPDATE", [order.id]
+        )
         partner = self._get_session_donor(order)
         if partner and partner.email == normalized:
             pass
         elif partner and self._my2_donor_is_visitor_only(partner, order):
             partner.email = normalized
         else:
-            company = request.website.company_id
-            partner = (
-                request.env["res.partner"]
-                .sudo()
-                .create(
-                    {
-                        "lastname": request.env["res.partner"].MY2_PLACEHOLDER_NAME,
-                        "firstname": False,
-                        "my2_name_placeholder": True,
-                        "email": normalized,
-                        "lang": request.lang.code,
-                        "country_id": company.country_id.id,
-                        "legal_agreement_date": fields.Datetime.now(),
-                    }
+            partner = self._my2_reusable_donor(order, normalized)
+            if not partner:
+                company = request.website.company_id
+                partner = (
+                    request.env["res.partner"]
+                    .sudo()
+                    .create(
+                        {
+                            "lastname": request.env["res.partner"].MY2_PLACEHOLDER_NAME,
+                            "firstname": False,
+                            "my2_name_placeholder": True,
+                            "email": normalized,
+                            "lang": request.lang.code,
+                            "country_id": company.country_id.id,
+                            "legal_agreement_date": fields.Datetime.now(),
+                        }
+                    )
                 )
-            )
+                request.session["my2_donors_created"] = [
+                    *self._my2_recent_donors_created(),
+                    fields.Datetime.now().timestamp(),
+                ]
             # The pricelist is written back with the partner: changing the
             # partner would recompute it, and with it the amounts the donor
             # chose.
@@ -349,11 +360,30 @@ class MyCompassionDonationsController(CustomerPortal):
                 }
             )
             request.session["my2_donor_partner_id"] = partner.id
-            request.session["my2_donors_created"] = [
-                *self._my2_recent_donors_created(),
-                fields.Datetime.now().timestamp(),
-            ]
         return request.redirect("/my2/gift-package")
+
+    def _my2_reusable_donor(self, order, email):
+        """A donor this session already made, with the same email, that is
+        still nobody's account: the donor of an earlier donation of the
+        session, or the cart's own donor (a replayed double click). Never a
+        partner found by its email alone: an unverified email must not attach
+        a donation to someone else."""
+        Partner = request.env["res.partner"].sudo()
+        candidates = Partner.browse(
+            [
+                request.session.get("my2_donor_partner_id"),
+                order.partner_id.id
+                if order.partner_id != request.website.partner_id
+                else None,
+            ]
+        )
+        for partner in candidates.exists():
+            if (
+                partner.email == email
+                and not partner.with_context(active_test=False).user_ids
+            ):
+                return partner
+        return Partner
 
     def _my2_donor_step_allowed(self):
         """A human, and not too many donors from this session: the email step
@@ -470,7 +500,6 @@ class MyCompassionDonationsController(CustomerPortal):
         return: An HTTP response containing a rendered template with the add a
         gift page.
         """
-        order = request.website.sale_get_order(force_create=True)
         donation_types = ["fund"] if request.env.user._is_public() else ["gift", "fund"]
         products = (
             request.env["product.template"]
@@ -492,7 +521,6 @@ class MyCompassionDonationsController(CustomerPortal):
                 "products": products,
                 "sponsorships": sponsorships,
                 "limits": limits,
-                "currency_name": order.pricelist_id.currency_id.name,
             },
         )
 
@@ -659,16 +687,21 @@ class MyCompassionDonationsController(CustomerPortal):
         recordset.
 
         Read in sudo (a visitor has no access to products), so this is the
-        gate: published on MyCompassion for the website's company, and a fund
-        for a visitor - a gift goes to a sponsored child, which takes an
-        account.
+        gate: published on MyCompassion for the website's company, active and
+        sold (with a variant to put in the cart), and a fund for a visitor - a
+        gift goes to a sponsored child, which takes an account.
         """
         try:
             product_id = int(product_id)
         except (TypeError, ValueError):
             return request.env["product.template"]
         product = request.env["product.template"].sudo().browse(product_id).exists()
-        if not product.activate_for_my_compassion:
+        if not (
+            product.activate_for_my_compassion
+            and product.active
+            and product.sale_ok
+            and product.product_variant_id
+        ):
             return request.env["product.template"]
         if (
             request.env.user._is_public()
