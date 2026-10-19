@@ -184,15 +184,12 @@
             class="flex-shrink-0"
             required=""
           />
-          <label
-            class="ms-2 mb-0 tiny-text text-mid-grey"
-            for="donor_privacy_consent"
-          >
+          <label class="ms-2 mb-0 tiny-text text-mid-grey" for="donor_privacy_consent">
                     I accept the privacy policy as described in the
                     <a
-              href="/legal"
-              class="tiny-text bold text-core-blue"
-            >privacy notice</a>.
+            href="/legal"
+            class="tiny-text bold text-core-blue"
+          >privacy notice</a>.
                 </label>
         </div>
       </t>
@@ -295,19 +292,22 @@
                 </t>
                 <div t-if="len(order.order_line) &gt;= 1" class="empty-order-hidden">
                   <!-- A visitor first says who gives (email only) -->
-                  <t t-if="donor_needed" t-call="my_compassion.my2_gift_package_donor_form" />
+                  <t
+                    t-if="donor_needed"
+                    t-call="my_compassion.my2_gift_package_donor_form"
+                  />
                   <t t-else="">
                     <div
                       t-if="donor_email"
                       class="mt-3 body-small text-low-black text-center"
                     >
                                             Your receipt goes to <span
-                        class="bold"
-                        t-out="donor_email"
-                      />. <a
-                        href="/my2/gift-package?change_donor=1"
-                        class="body-small bold text-core-blue"
-                      >Change</a>
+                      class="bold"
+                      t-out="donor_email"
+                    />. <a
+                      href="/my2/gift-package?change_donor=1"
+                      class="body-small bold text-core-blue"
+                    >Change</a>
                                         </div>
                     <t t-call="my_compassion.CheckoutComponent" />
                   </t>
