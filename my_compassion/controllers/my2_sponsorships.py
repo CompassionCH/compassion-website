@@ -54,14 +54,18 @@ def _flow_n_steps(sponsorship):
     )
 
 
-def _product_display_price(default_code):
+def _product_display_price(default_code, website=None):
     """Monthly amount of a contract product, as rendered in the wizard copy.
     Same product lookup as the contract lines (default_code), scoped to the
     website's company: a company-specific product wins over a shared one.
+    The contract lines are priced by a pricelist, so is the copy: the
+    products are shared between companies and their list price is the one
+    of a single country.
     """
-    company = request.website.company_id
+    website = website or request.website
+    company = website.company_id
     products = (
-        request.env["product.template"]
+        website.env["product.template"]
         .sudo()
         .with_company(company)
         .search(
@@ -72,7 +76,15 @@ def _product_display_price(default_code):
         )
     )
     product = products.filtered(lambda p: p.company_id == company)[:1] or products[:1]
-    return f"{product.list_price:g}" if product else ""
+    if not product:
+        return ""
+    pricelist = website.pricelist_id
+    price = (
+        pricelist._get_product_price(product.product_variant_id, 1.0)
+        if pricelist
+        else product.list_price
+    )
+    return f"{price:g}"
 
 
 def _get_reservation_uuid():
@@ -703,7 +715,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 ]
             )
         )
-        currency_name = request.website.company_id.currency_id.name
+        # the currency of the pricelist that prices the amounts below
+        currency_name = request.website.currency_id.name
 
         # Send the user back to the exact URL they came from after login,
         # preserving every query param (UTM, sponsorship_type, anything else).
