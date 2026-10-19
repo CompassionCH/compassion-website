@@ -259,8 +259,10 @@ class TestPublicFundDonation(HttpCase):
         self.assertIn("payment_failed=1", page.url)
         self.assertIn("Your payment did not go through", page.text)
         self.assertNotIn('action="/my2/gifts/thankyou/details"', page.text)
-        # The cart is back: the donation can be paid again.
-        self.assertIn("o_payment_form", page.text)
+        # The cart is back, with its donor: the donation can be paid again
+        # (the payment form itself depends on the providers of the database).
+        self.assertIn("Visitor Test Fund", page.text)
+        self.assertNotIn('action="/my2/gift-package/donor"', page.text)
         self.assertEqual(self._cart().state, "draft")
 
     def test_named_donor_keeps_the_cart_after_a_failed_payment(self):
