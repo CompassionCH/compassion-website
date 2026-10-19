@@ -251,6 +251,11 @@ class MyCompassionDonationsController(CustomerPortal):
                 "landing_route": "/shop/payment/validate",
                 "sale_order_id": order.id,
             }
+            if request.env.user._is_public():
+                # The cart's partner comes from an email anyone may type: its
+                # saved cards are never offered to a visitor (and a saved card
+                # sent all the same is refused, see MyCompassionShopPayment).
+                payment_form_values["tokens_sudo"] = request.env["payment.token"].sudo()
 
         return request.render(
             "my_compassion.my2_gift_package_page",
@@ -278,8 +283,11 @@ class MyCompassionDonationsController(CustomerPortal):
         on the card) or from the form of the thank-you page.
 
         No partner exists before this step, so a cart filled by a robot
-        creates none. The donor created here may change their email as long
-        as they have not paid: the same partner is updated.
+        creates none. The donor created here may change their email while
+        nobody else can own it (_my2_donor_is_visitor_only); otherwise a new
+        donor is created: the email of a partner that became someone's
+        account (signup links an account to a partner of the same email) is
+        never rewritten from a visitor's session.
         """
         if not request.env.user._is_public():
             return request.redirect("/my2/gift-package")
@@ -292,7 +300,9 @@ class MyCompassionDonationsController(CustomerPortal):
 
         order = order.sudo()
         partner = self._get_session_donor(order)
-        if partner:
+        if partner and partner.email == normalized:
+            pass
+        elif partner and self._my2_donor_is_visitor_only(partner, order):
             partner.email = normalized
         else:
             company = request.website.company_id
@@ -461,23 +471,29 @@ class MyCompassionDonationsController(CustomerPortal):
         sale_order_id = request.session.get("sale_last_order_id")
         if sale_order_id:
             sale_order = request.env["sale.order"].sudo().browse(sale_order_id)
-            if self._my2_payment_failed(sale_order):
-                # website_sale sends a cancelled or refused payment here too,
-                # and empties the cart first (sale_reset): give the cart back
-                # and let the donor try again instead of thanking them.
+            outcome = self._my2_payment_outcome(sale_order)
+            if outcome == "paid":
+                return request.render(
+                    "my_compassion.my2_gifts_thank_you_page",
+                    {
+                        "sale_order": sale_order,
+                        **self._get_donor_details_values(sale_order, **kwargs),
+                    },
+                )
+            # website_sale sends a cancelled or refused payment here too, and
+            # empties the cart first (sale_reset): give the cart back and let
+            # the donor try again instead of thanking them.
+            if sale_order.exists() and sale_order.state in ("draft", "sent"):
                 if sale_order.state == "sent":
                     # website_sale only takes a draft quotation as a cart.
                     sale_order.action_draft()
                 request.session["sale_order_id"] = sale_order.id
                 request.session["website_sale_cart_quantity"] = sale_order.cart_quantity
+            if outcome == "failed":
                 return request.redirect("/my2/gift-package?payment_failed=1")
-            return request.render(
-                "my_compassion.my2_gifts_thank_you_page",
-                {
-                    "sale_order": sale_order,
-                    **self._get_donor_details_values(sale_order, **kwargs),
-                },
-            )
+            return request.redirect("/my2/gift-package")
+        if request.env.user._is_public():
+            return request.redirect("/my2/gifts")
         return request.redirect("/my2/dashboard")
 
     @http.route(
@@ -572,13 +588,35 @@ class MyCompassionDonationsController(CustomerPortal):
         }
 
     @staticmethod
-    def _my2_payment_failed(order):
-        """Whether the last payment of a still unconfirmed donation order was
-        cancelled or refused (the order is confirmed once paid). A payment
-        that was pending first has made the order a sent quotation."""
-        if not order.exists() or order.state not in ("draft", "sent"):
-            return False
-        return order.transaction_ids.sorted("id")[-1:].state in ("cancel", "error")
+    def _my2_payment_outcome(order):
+        """What became of the payment of a donation order:
+
+        - "paid": the order is confirmed, or one of its payments may still
+          succeed (pending: BLIK in the bank app, 3DS, a provider that did
+          not answer; authorized; or a draft the provider already has) - the
+          donor is thanked, and never asked to pay a second time;
+        - "failed": its last payment was cancelled or refused, and none may
+          still succeed - the donor gets the cart back to pay again;
+        - "": it was never paid.
+
+        A refused payment is "error": the payment providers record a refusal
+        they are sure of as such, and an unknown outcome (e.g. PayU not
+        answering) as pending. Drafts are ignored, as website_sale does
+        (get_portal_last_transaction): an abandoned newer one hides nothing.
+        """
+        if not order.exists():
+            return ""
+        if order.state not in ("draft", "sent"):
+            return "paid"
+        may_succeed = order.transaction_ids.filtered(
+            lambda t: t.state in ("pending", "authorized", "done")
+            or (t.state == "draft" and t.provider_reference)
+        )
+        if may_succeed:
+            return "paid"
+        if order.get_portal_last_transaction().state in ("cancel", "error"):
+            return "failed"
+        return ""
 
     def _get_donation_product(self, product_id):
         """The donation product a visitor or user may give to, or an empty
@@ -616,6 +654,30 @@ class MyCompassionDonationsController(CustomerPortal):
         if not order or not donor_id or order.partner_id.id != donor_id:
             return partner
         return partner.browse(donor_id).exists()
+
+    @staticmethod
+    def _my2_donor_is_visitor_only(partner, order):
+        """Whether the donor of a visitor's cart is still theirs alone: no
+        account, still the placeholder name, and nothing but this cart - no
+        other order, invoice, saved card or payment."""
+        if partner.user_ids or not partner.my2_name_placeholder:
+            return False
+        env = partner.env
+        others = (
+            ("sale.order", [("id", "!=", order.id)]),
+            ("account.move", []),
+            ("payment.token", []),
+            (
+                "payment.transaction",
+                [("state", "in", ("pending", "authorized", "done"))],
+            ),
+        )
+        return not any(
+            env[model]
+            .with_context(active_test=False)
+            .search_count([("partner_id", "=", partner.id), *domain], limit=1)
+            for model, domain in others
+        )
 
     def _get_donor_step_values(self, order, **kwargs):
         """What the gift package page shows a visitor before the payment

@@ -291,6 +291,11 @@ class PaymentTransaction(models.Model):
                         tx.reference,
                         exc_info=True,
                     )
+        # The status page polls post-processing in sudo, but its request saves
+        # what is left as the payer - a visitor for a public donation - who may
+        # not read what post-processing changed (e.g. the amounts of the lines
+        # of a quotation turned into a sent one): save it while we still may.
+        self.env.flush_all()
         return res
 
     def _my2_save_token_on_groups(self, digital_invoices=None):
