@@ -501,7 +501,7 @@ class MyCompassionDonationsController(CustomerPortal):
             .browse(request.session.get("sale_last_order_id"))
             .exists()
         )
-        partner = self._get_session_donor(sale_order)
+        partner = self._get_session_donor(sale_order).filtered("my2_name_placeholder")
         firstname, lastname = (firstname or "").strip(), (lastname or "").strip()
         if not partner:
             return request.redirect("/my2/gifts/thankyou")
@@ -604,14 +604,18 @@ class MyCompassionDonationsController(CustomerPortal):
         return product
 
     def _get_session_donor(self, order):
-        """The placeholder donor this visitor's session created for order, or
-        an empty recordset: the only partner a visitor may write to."""
+        """The donor this visitor's session created for order, or an empty
+        recordset: the only partner a visitor may write to.
+
+        Still theirs once named (the name may be typed while the payment is
+        pending): a refused payment then gives the cart back to the same
+        donor, never to a second one. Only the name requires the placeholder.
+        """
         partner = request.env["res.partner"].sudo()
         donor_id = request.session.get("my2_donor_partner_id")
         if not order or not donor_id or order.partner_id.id != donor_id:
             return partner
-        donor = partner.browse(donor_id).exists()
-        return donor if donor.my2_name_placeholder else partner
+        return partner.browse(donor_id).exists()
 
     def _get_donor_step_values(self, order, **kwargs):
         """What the gift package page shows a visitor before the payment
@@ -631,7 +635,7 @@ class MyCompassionDonationsController(CustomerPortal):
         """The name form of the thank-you page, for the visitor whose payment
         did not tell their name (BLIK, PostFinance...)."""
         donor = self._get_session_donor(sale_order)
-        if not donor:
+        if not donor.my2_name_placeholder:
             return {}
         cardholder = (
             (

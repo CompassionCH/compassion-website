@@ -263,6 +263,33 @@ class TestPublicFundDonation(HttpCase):
         self.assertIn("o_payment_form", page.text)
         self.assertEqual(self._cart().state, "draft")
 
+    def test_named_donor_keeps_the_cart_after_a_failed_payment(self):
+        # The name may be typed on the thank-you page while the payment is
+        # still pending; when it is refused afterwards, the cart goes back to
+        # the same donor, without asking the email again.
+        self._add_fund()
+        self._give_email()
+        donor = self._cart().partner_id
+        page = self.url_open("/my2/gifts/thankyou")
+        self.url_open(
+            "/my2/gifts/thankyou/details",
+            data={
+                "csrf_token": CSRF_RE.search(page.text).group(1),
+                "firstname": "Anna",
+                "lastname": "Nowak",
+            },
+        )
+        self.assertFalse(donor.my2_name_placeholder)
+        partners = self.env["res.partner"].search_count([])
+        self._pay("cancel")
+        page = self.url_open("/shop/payment/validate")
+        self.assertIn("payment_failed=1", page.url)
+        self.assertNotIn('action="/my2/gift-package/donor"', page.text)
+        self.assertIn("donor@example.org", page.text)
+        self.assertEqual(self._cart().partner_id, donor)
+        self.assertEqual(self.env["res.partner"].search_count([]), partners)
+        self.assertEqual((donor.firstname, donor.lastname), ("Anna", "Nowak"))
+
     def test_thank_you_after_a_done_payment(self):
         self._add_fund()
         self._give_email()
@@ -278,7 +305,7 @@ class TestPublicFundDonation(HttpCase):
 
     def test_no_placeholder_name_sent_to_payu(self):
         tx_model = self.env["payment.transaction"]
-        if not hasattr(tx_model, "_payu_gpo_buyer_names"):
+        if "payu_gpo_cardholder_name" not in tx_model._fields:
             self.skipTest("payment_payu_gpo is not installed")
         self._add_fund()
         self._give_email()
