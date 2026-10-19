@@ -1,99 +1,91 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* website_sale_donation
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Compassion Odoo 14\n"
+"Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-29 13:40+0000\n"
-"PO-Revision-Date: \n"
+"POT-Creation-Date: 2026-10-16 19:15+0000\n"
+"PO-Revision-Date: 2026-10-16 19:15+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: de\n"
+"Language: it_IT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.4\n"
-
-#. module: website_sale_donation
-#: model_terms:ir.ui.view,arch_db:website_sale_donation.payment
-msgid "Back to summary"
-msgstr "Zurück"
 
 #. module: website_sale_donation
 #: model:ir.model.fields,field_description:website_sale_donation.field_sale_order_line__cart_link
 msgid "Cart Link"
-msgstr "Warenkorb Link"
+msgstr "Link al carrello"
 
 #. module: website_sale_donation
-#: model:ir.model.fields,field_description:website_sale_donation.field_account_move_line__display_name
-#: model:ir.model.fields,field_description:website_sale_donation.field_sale_order__display_name
-#: model:ir.model.fields,field_description:website_sale_donation.field_sale_order_line__display_name
-msgid "Display Name"
-msgstr "Anzeigename"
-
-#. module: website_sale_donation
+#. odoo-python
 #: code:addons/website_sale_donation/models/sale_order_line.py:0
-#, python-format
 msgid "Donation for %s"
-msgstr "Spende für %s"
+msgstr "Donazione per %s"
 
 #. module: website_sale_donation
-#: model:ir.model.fields,field_description:website_sale_donation.field_account_move_line__id
-#: model:ir.model.fields,field_description:website_sale_donation.field_sale_order__id
-#: model:ir.model.fields,field_description:website_sale_donation.field_sale_order_line__id
-msgid "ID"
-msgstr "ID"
+#: model:ir.actions.server,name:website_sale_donation.base_automation_sale_donation_ir_actions_server
+msgid "Execute Code"
+msgstr "Esegui codice"
 
 #. module: website_sale_donation
 #: model:ir.model.fields,field_description:website_sale_donation.field_account_move_line__is_anonymous
 #: model:ir.model.fields,field_description:website_sale_donation.field_sale_order_line__is_anonymous
 msgid "Is Anonymous"
-msgstr "Ist Anonym"
+msgstr "È anonimo"
 
 #. module: website_sale_donation
 #: model:ir.model.fields,field_description:website_sale_donation.field_sale_order__is_donation
 msgid "Is Donation"
-msgstr "Ist Spende"
+msgstr "È una donazione"
 
 #. module: website_sale_donation
 #: model:ir.model,name:website_sale_donation.model_account_move_line
 msgid "Journal Item"
-msgstr "Journalbuchung"
-
-#. module: website_sale_donation
-#: model:ir.model.fields,field_description:website_sale_donation.field_account_move_line____last_update
-#: model:ir.model.fields,field_description:website_sale_donation.field_sale_order____last_update
-#: model:ir.model.fields,field_description:website_sale_donation.field_sale_order_line____last_update
-msgid "Last Modified on"
-msgstr "Zuletzt geändert am"
+msgstr "Movimento contabile"
 
 #. module: website_sale_donation
 #: model:ir.model.fields,field_description:website_sale_donation.field_sale_order_line__opt_out
 msgid "Opt Out"
-msgstr "Opt-Out"
+msgstr "Rinuncia"
+
+#. module: website_sale_donation
+#: model:base.automation,name:website_sale_donation.base_automation_sale_donation
+msgid "Sale Donation Automation"
+msgstr "Automazione donazione di vendita"
 
 #. module: website_sale_donation
 #: model:ir.model,name:website_sale_donation.model_sale_order
 msgid "Sales Order"
-msgstr "Verkaufsauftrag"
+msgstr "Ordine di vendita"
 
 #. module: website_sale_donation
 #: model:ir.model,name:website_sale_donation.model_sale_order_line
 msgid "Sales Order Line"
-msgstr "Auftragsposition"
+msgstr "Voci d’ordine"
 
 #. module: website_sale_donation
 #: model:ir.model.fields,help:website_sale_donation.field_account_move_line__is_anonymous
 #: model:ir.model.fields,help:website_sale_donation.field_sale_order_line__is_anonymous
 msgid "Should the donation be anonymous?"
-msgstr "Sollte die Spende anonym sein?"
+msgstr "La donazione deve essere anonima?"
 
 #. module: website_sale_donation
 #: model:ir.model.fields,help:website_sale_donation.field_sale_order_line__opt_out
 msgid "Should the donor opt out of marketing?"
-msgstr "Sollte sich der Spender gegen Marketing entscheiden?"
+msgstr "Il donatore deve rinunciare al marketing?"
+
+#. module: website_sale_donation
+#: model_terms:ir.ui.view,arch_db:website_sale_donation.sale_confirmation
+msgid "Thank you for your donation!"
+msgstr "Grazie per la tua donazione!"
 
 #. module: website_sale_donation
 #: model:ir.model.fields,help:website_sale_donation.field_sale_order_line__cart_link
 msgid "What link to redirect when clicking on the order line from the cart"
 msgstr ""
-"Welcher Link soll weitergeleitet werden, wenn du auf die Bestellzeile im "
-"Warenkorb klickst?"
+"Quale link reindirizzare quando si clicca sulla riga dell'ordine dal "
+"carrello?"

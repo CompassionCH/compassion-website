@@ -656,8 +656,12 @@ class CrowdfundingProject(models.Model):
         return format(value, ",d").replace(",", " ") if value > 9999 else value
 
     @ormcache()
+    def _get_total_sponsorships_reached(self):
+        return sum(self.sudo().search([]).mapped("number_sponsorships_reached"))
+
     def sponsorship_card_content(self):
-        value = sum(self.sudo().search([]).mapped("number_sponsorships_reached"))
+        # Not cached as a whole: the translated strings depend on the language
+        value = self._get_total_sponsorships_reached()
         return {
             "type": "sponsorship",
             "value": self.fund_impact_val_formatting(value),
@@ -669,7 +673,7 @@ For 42 francs a month, you're opening the way out of poverty for a child. Sponso
  ensures that the child is known, loved and protected. In particular, it gives the child
  access to schooling, tutoring, regular balanced meals, medical care and training in the
  spiritual field, hygiene, etc. Every week, the child participates in the activities of
- one of the project center of the 8,000 local churches that are partners of
+ one of the project center of the 8,700 local churches that are partners of
  Compassion. They allow him or her to discover and develop his or her talents."""
             ),
             "icon_image": self.get_sponsor_icon(),

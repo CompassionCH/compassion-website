@@ -40,6 +40,18 @@ class PaymentTransaction(models.Model):
             nameless.partner_name = self.env["res.partner"].MY2_PLACEHOLDER_NAME
         return txs
 
+    def write(self, vals):
+        res = super().write(vals)
+        if vals.get("token_id"):
+            # A token saved after post-processing (e.g. fetched from the
+            # provider once 3DS completed) must still reach the group.
+            post_processed = self.filtered(
+                lambda t: t.state == "done" and t.is_post_processed
+            )
+            for tx in post_processed:
+                tx._my2_save_token_on_groups()
+        return res
+
     def _my2_cancel_stale_checkout_tx(self):
         """Cleanup for shopper checkouts that never finished.
 
@@ -263,33 +275,7 @@ class PaymentTransaction(models.Model):
                     tx.reference,
                     digital_invoices.mapped("name"),
                 )
-            if tx.token_id:
-                # A group with no saved card takes the one that just paid.
-                # Replacing an existing card is only allowed from the
-                # update-card page, which authenticates the sponsor first.
-                groups = (
-                    digital_invoices.line_ids.contract_id.group_id
-                    | tx.my2_card_update_group_id
-                ).filtered(
-                    lambda g, tx=tx: g.payment_mode_id.payment_provider_id
-                    and g.payment_token_id != tx.token_id
-                    and (not g.payment_token_id or g == tx.my2_card_update_group_id)
-                )
-                try:
-                    groups.payment_token_id = tx.token_id
-                except (ValidationError, UserError):
-                    # A token incompatible with the group must never wedge the
-                    # post-processing poll or cron into an eternal retry. The
-                    # partner constraint raises one error, the company the
-                    # other.
-                    _logger.error(
-                        "Could not save token %s on groups %s (tx %s);"
-                        " monthly charges keep using the previous card.",
-                        tx.token_id.id,
-                        groups.ids,
-                        tx.reference,
-                        exc_info=True,
-                    )
+            tx._my2_save_token_on_groups(digital_invoices)
             for invoice in digital_invoices.filtered(
                 lambda m: m.payment_state in ("paid", "in_payment")
             ):
@@ -306,3 +292,40 @@ class PaymentTransaction(models.Model):
                         exc_info=True,
                     )
         return res
+
+    def _my2_save_token_on_groups(self, digital_invoices=None):
+        """Make the transaction's token the card of its contract groups.
+
+        A group with no saved card takes the one that just paid. Replacing an
+        existing card is only allowed from the update-card page, which
+        authenticates the sponsor first.
+        """
+        self.ensure_one()
+        if not self.token_id:
+            return
+        if digital_invoices is None:
+            digital_invoices = self.invoice_ids.filtered(
+                "line_ids.contract_id.group_id.payment_mode_id.payment_provider_id"
+            )
+        groups = (
+            digital_invoices.line_ids.contract_id.group_id
+            | self.my2_card_update_group_id
+        ).filtered(
+            lambda g: g.payment_mode_id.payment_provider_id
+            and g.payment_token_id != self.token_id
+            and (not g.payment_token_id or g == self.my2_card_update_group_id)
+        )
+        try:
+            groups.payment_token_id = self.token_id
+        except (ValidationError, UserError):
+            # A token incompatible with the group must never wedge the
+            # post-processing poll or cron into an eternal retry. The
+            # partner constraint raises one error, the company the other.
+            _logger.error(
+                "Could not save token %s on groups %s (tx %s);"
+                " monthly charges keep using the previous card.",
+                self.token_id.id,
+                groups.ids,
+                self.reference,
+                exc_info=True,
+            )
