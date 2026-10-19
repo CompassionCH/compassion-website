@@ -42,6 +42,34 @@ class Website(models.Model):
         help="Target of the 'start a sponsorship' link shown to users without"
         " sponsorships. Defaults to /my2/children when empty.",
     )
+    my2_min_donation_amount = fields.Float(
+        "Minimum Donation to a Fund",
+        default=5.0,
+        help="Smallest amount, in the currency of the website's company, a donor"
+        " may give to a fund. Card testers try stolen cards with tiny payments"
+        " on public donation pages.",
+    )
+
+    def sale_get_order(self, force_create=False):
+        """On a MyCompassion website, only a draft cart of this website (and
+        its company) is the cart: the session may point to one started on
+        another website of the same domain (crowdfunding, events), which the
+        /my2 routes must never take over. A new cart is started instead."""
+        if self.is_my_compassion and request and request.session.get("sale_order_id"):
+            order = (
+                self.env["sale.order"]
+                .sudo()
+                .browse(request.session["sale_order_id"])
+                .exists()
+            )
+            if order and (
+                order.website_id != self
+                or order.company_id != self.company_id
+                or order.state != "draft"
+            ):
+                request.session.pop("sale_order_id", None)
+                request.session.pop("website_sale_cart_quantity", None)
+        return super().sale_get_order(force_create=force_create)
 
     def _my2_offers_payment_method(self, code):
         """Whether a published payment provider of the website's company offers

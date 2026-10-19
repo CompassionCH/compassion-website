@@ -1,4 +1,6 @@
 import re
+import time
+from unittest.mock import patch
 
 from odoo import http
 from odoo.tests import tagged
@@ -121,6 +123,41 @@ class TestPublicFundDonation(HttpCase):
         with self.assertRaises(JsonRpcException):
             self._add_fund()
 
+    def test_minimum_donation_to_a_fund(self):
+        """Card testers try stolen cards with tiny amounts."""
+        self.website.my2_min_donation_amount = 10.0
+        limits = self.make_jsonrpc_request(
+            "/my2/gifts/get-limits", {"product_id": self.fund.id}
+        )
+        self.assertEqual(limits["min_amount"], 10.0)
+        with self.assertRaises(JsonRpcException):
+            self._add_fund(suggested_amount="custom", custom_amount="1")
+        self._add_fund(suggested_amount="custom", custom_amount="10")
+        self.assertEqual(self._cart().order_line.price_unit, 10.0)
+
+    def test_cart_of_another_website_is_not_taken(self):
+        """/my2 resolves to MyCompassion on any domain, while the session's
+        cart may have been started on another website of that domain."""
+        other_website = self.env["website"].search(
+            [("id", "!=", self.website.id), ("is_my_compassion", "=", False)], limit=1
+        )
+        other_cart = self.env["sale.order"].create(
+            {
+                "partner_id": other_website.partner_id.id,
+                "website_id": other_website.id,
+                "company_id": other_website.company_id.id,
+            }
+        )
+        self.url_open("/my2/gifts")
+        session = http.root.session_store.get(self.opener.cookies["session_id"])
+        session["sale_order_id"] = other_cart.id
+        http.root.session_store.save(session)
+        self._add_fund()
+        cart = self._cart()
+        self.assertNotEqual(cart, other_cart)
+        self.assertEqual(cart.website_id, self.website)
+        self.assertFalse(other_cart.order_line)
+
     def test_visitor_gives_once(self):
         self._add_fund(frequency="monthly")
         line = self._cart().order_line
@@ -232,6 +269,44 @@ class TestPublicFundDonation(HttpCase):
                 },
             )
         self.assertFalse(cart.transaction_ids)
+
+    def test_email_step_needs_a_human(self):
+        self._add_fund()
+        ir_http = type(self.env["ir.http"])
+        with patch.object(
+            ir_http, "_verify_request_recaptcha_token", return_value=False
+        ):
+            response = self._give_email()
+        self.assertIn("donor_error=verify", response.url)
+        self.assertEqual(self._cart().partner_id, self.website.partner_id)
+
+    def test_email_step_limits_donors_per_session(self):
+        self._add_fund()
+        self.url_open("/my2/gift-package")
+        session = http.root.session_store.get(self.opener.cookies["session_id"])
+        session["my2_donors_created"] = [time.time()] * 5
+        http.root.session_store.save(session)
+        response = self._give_email()
+        self.assertIn("donor_error=verify", response.url)
+        self.assertIn("We could not verify your request", response.text)
+        self.assertEqual(self._cart().partner_id, self.website.partner_id)
+
+    def test_payment_attempts_are_limited(self):
+        self._add_fund()
+        self._give_email()
+        cart = self._cart()
+        for i in range(5):
+            self._pay("cancel", reference=f"my2-attempt-{i}")
+        with (
+            self.assertLogs("odoo.http", level="WARNING") as logs,
+            self.assertRaises(JsonRpcException),
+        ):
+            self.make_jsonrpc_request(
+                f"/shop/payment/transaction/{cart.id}",
+                {"access_token": cart._portal_ensure_token()},
+            )
+        self.assertIn("Too many payment attempts", "\n".join(logs.output))
+        self.assertEqual(len(cart.transaction_ids), 5)
 
     def test_email_step_needs_consent_and_a_valid_email(self):
         self._add_fund()

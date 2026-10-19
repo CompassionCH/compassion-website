@@ -116,6 +116,7 @@
         "website_legal_page",  # OCA/website
         "gift_compassion",
         "auth_signup",
+        "google_recaptcha",  # the email step of a visitor's donation
         "http_routing",
         "website",
         "website_crm_request",  # the /contactus form posts a crm.claim
@@ -158,6 +159,7 @@
             "my_compassion/static/src/js/my2_donation_details.js",
             "my_compassion/static/src/js/my2_add_a_gift.js",
             "my_compassion/static/src/js/my2_gift_package.js",
+            "my_compassion/static/src/js/my2_donor_captcha.esm.js",
             "my_compassion/static/src/js/my2_donations.js",
             "my_compassion/static/src/js/my2_sponsorships.js",
             "my_compassion/static/src/js/my2_new_sponsorship_wizard.js",

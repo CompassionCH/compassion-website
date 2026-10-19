@@ -17,6 +17,7 @@ from urllib.parse import quote
 from werkzeug.exceptions import BadRequest, NotFound
 
 from odoo import fields, http
+from odoo.exceptions import UserError, ValidationError
 from odoo.http import request
 from odoo.tools import email_normalize
 from odoo.tools.translate import _
@@ -29,6 +30,9 @@ from odoo.addons.sale.controllers import portal as sale_portal
 from .website_utils import safe_int
 
 _logger = logging.getLogger(__name__)
+
+# Donors a visitor's session may create within an hour (see the email step).
+MAX_DONORS_PER_SESSION = 5
 
 
 class MyCompassionDonationsController(CustomerPortal):
@@ -212,7 +216,17 @@ class MyCompassionDonationsController(CustomerPortal):
             sponsorship_id,
             request.website.sale_get_order(),
         )
+        minimum = self._my2_min_amount(product)
+        if minimum and minimum > (limits.get("min_amount") or 0):
+            limits["min_amount"] = minimum
         return limits
+
+    @staticmethod
+    def _my2_min_amount(product):
+        """The smallest amount a donor may give to this fund on this website."""
+        if product.my_compassion_donation_type != "fund":
+            return 0.0
+        return request.website.my2_min_donation_amount
 
     @http.route(
         "/my2/gift-package",
@@ -297,6 +311,8 @@ class MyCompassionDonationsController(CustomerPortal):
         normalized = email_normalize(email or "")
         if not normalized or not privacy_consent:
             return request.redirect("/my2/gift-package?donor_error=1")
+        if not self._my2_donor_step_allowed():
+            return request.redirect("/my2/gift-package?donor_error=verify")
 
         order = order.sudo()
         partner = self._get_session_donor(order)
@@ -333,7 +349,27 @@ class MyCompassionDonationsController(CustomerPortal):
                 }
             )
             request.session["my2_donor_partner_id"] = partner.id
+            request.session["my2_donors_created"] = [
+                *self._my2_recent_donors_created(),
+                fields.Datetime.now().timestamp(),
+            ]
         return request.redirect("/my2/gift-package")
+
+    def _my2_donor_step_allowed(self):
+        """A human, and not too many donors from this session: the email step
+        is the gate of public payments, which card testers would automate.
+        The reCAPTCHA check passes while no reCAPTCHA key is configured."""
+        if len(self._my2_recent_donors_created()) >= MAX_DONORS_PER_SESSION:
+            return False
+        try:
+            return request.env["ir.http"]._verify_request_recaptcha_token("my2_donor")
+        except (UserError, ValidationError):
+            return False
+
+    @staticmethod
+    def _my2_recent_donors_created():
+        since = fields.Datetime.now().timestamp() - 3600
+        return [t for t in request.session.get("my2_donors_created", []) if t > since]
 
     @http.route(
         "/my2/gift-package/render-edit-form",
@@ -690,7 +726,7 @@ class MyCompassionDonationsController(CustomerPortal):
         return {
             "donor_needed": bool(order.order_line) and (not donor or change),
             "donor_email": donor.email if donor else "",
-            "donor_error": bool(kwargs.get("donor_error")),
+            "donor_error": kwargs.get("donor_error"),
         }
 
     def _get_donor_details_values(self, sale_order, **kwargs):
@@ -747,6 +783,8 @@ class MyCompassionDonationsController(CustomerPortal):
 
             if price is None or price <= 0:
                 raise BadRequest()
+        if price < self._my2_min_amount(product_template):
+            raise BadRequest()
 
         # Get frequency and force one_time for gifts, and for visitors: a
         # monthly donation needs a payment instrument kept for an account.

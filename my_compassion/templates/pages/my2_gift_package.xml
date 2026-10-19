@@ -150,7 +150,12 @@
     >
       <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
       <div
-        t-if="donor_error"
+        t-if="donor_error == 'verify'"
+        class="mb-3 p-3 rounded-lg bg-low-eggshell text-mid-orange body-small"
+        role="alert"
+      >We could not verify your request. Please try again in a few minutes.</div>
+      <div
+        t-elif="donor_error"
         class="mb-3 p-3 rounded-lg bg-low-eggshell text-mid-orange body-small"
         role="alert"
       >Please give a valid email and accept the privacy notice.</div>
