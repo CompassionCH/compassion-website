@@ -197,6 +197,39 @@ class TestDigitalSeam(DigitalSeamCase):
         # idempotent: a second call returns the same invoice
         self.assertEqual(contract._ensure_first_invoice(), inv1)
 
+    def test_failed_first_payment_reads_the_first_invoice(self):
+        """With several open invoices, only the attempts on the earliest one,
+        which the checkout charges, tell whether the payment failed."""
+        contract = self._make_digital_contract()
+        first = contract._ensure_first_invoice()
+        later = first.copy({"invoice_date": first.invoice_date + timedelta(days=31)})
+        later.action_post()
+        self.assertEqual(contract._ensure_first_invoice(), first)
+        provider = contract.payment_mode_id.payment_provider_id
+        method = self.env["payment.method"].search([], limit=1)
+
+        def attempt(invoice, reference):
+            return self.env["payment.transaction"].create(
+                {
+                    "provider_id": provider.id,
+                    "payment_method_id": method.id,
+                    "partner_id": contract.partner_id.id,
+                    "amount": invoice.amount_residual,
+                    "currency_id": invoice.currency_id.id,
+                    "reference": reference,
+                    "operation": "online_direct",
+                    "invoice_ids": [Command.set(invoice.ids)],
+                }
+            )
+
+        # a failed attempt on a later invoice does not send the sponsor back
+        attempt(later, "digital-seam-later-failed")._set_error("declined")
+        self.assertFalse(contract._my2_failed_first_payment())
+        # the first invoice's failure is not hidden by a newer pending attempt
+        attempt(first, "digital-seam-first-failed")._set_canceled()
+        attempt(later, "digital-seam-later-pending")._set_pending()
+        self.assertTrue(contract._my2_failed_first_payment())
+
     def test_digital_revert_noop_when_paid(self):
         contract = self._make_digital_contract()
         invoice = contract._ensure_first_invoice()
