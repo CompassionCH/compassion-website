@@ -394,6 +394,7 @@ class EventRegistration(models.Model):
                 )
             )
 
+    @api.depends("stage_id", "task_ids.done", "task_ids.stage_id")
     def _compute_is_stage_complete(self):
         for registration in self:
             incomplete_tasks = registration.task_ids.filtered(
@@ -543,8 +544,45 @@ class EventRegistration(models.Model):
                     vals["state"] = stage.registration_state
         super().write(vals)
         if "stage_id" in vals:
+            # Before the tasks: completing them can move the registrations on
+            # right away (e.g. an account that is already activated).
+            self._schedule_stage_mails()
             self._compute_tasks()
+            # A stage set by hand completes no task, the mails must still go.
+            self._run_mail_schedulers()
         return True
+
+    def _schedule_stage_mails(self):
+        """Plan the mails of the stage the registrations just reached, while
+        they are still in it."""
+        for registration in self:
+            schedulers = (
+                registration.event_id.sudo()
+                .event_mail_ids.filtered(
+                    lambda mail, reg=registration: mail.interval_type == "after_stage"
+                    and mail.stage_id == reg.stage_id
+                )
+                ._for_trip_type()
+            )
+            lines = schedulers.mail_registration_ids.filtered(
+                lambda line, reg=registration: line.registration_id == reg
+            )
+            lines |= lines.create(
+                [
+                    {"scheduler_id": scheduler.id, "registration_id": registration.id}
+                    for scheduler in schedulers - lines.scheduler_id
+                ]
+            )
+            # Compute the date now, the registration may leave the stage
+            # before it is read again.
+            lines.mapped("scheduled_date")
+
+    def _run_mail_schedulers(self):
+        self.env["event.mail"].with_user(SUPERUSER_ID).with_delay_sh(
+            "run",
+            channel="root.partner_communication",
+            identity_key="event.registration.mail_scheduler",
+        )
 
     def _update_mail_schedulers(self):
         if self.env.context.get("registration_incomplete"):
@@ -851,11 +889,7 @@ class EventRegistration(models.Model):
                 registration.write({"stage_id": next_stage.id})
 
         # Send potential communications after stage transition
-        self.env["event.mail"].with_user(SUPERUSER_ID).with_delay_sh(
-            "run",
-            channel="root.partner_communication",
-            identity_key="event.registration.mail_scheduler",
-        )
+        self._run_mail_schedulers()
         return True
 
     def _track_subtype(self, init_values):
