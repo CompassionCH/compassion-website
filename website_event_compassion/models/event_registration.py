@@ -566,7 +566,7 @@ class EventRegistration(models.Model):
             if not registration.profile_name:
                 registration.profile_name = registration.partner_id.preferred_name
             # Set default fundraising objective if none was set
-            event = records.event_id
+            event = registration.event_id
             if (
                 not registration.amount_objective
                 and event.participants_amount_objective
