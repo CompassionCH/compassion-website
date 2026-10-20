@@ -222,6 +222,7 @@ class EventMailRegistration(models.Model):
         Add computation of scheduled date if interval type is after stage
         :return:
         """
+        now = fields.Datetime.now()
         for mail in self:
             if mail.scheduler_id.interval_type == "after_stage":
                 registration = mail.registration_id
@@ -231,6 +232,10 @@ class EventMailRegistration(models.Model):
                     mail.scheduled_date = date_open + _INTERVALS[
                         scheduler.interval_unit
                     ](scheduler.interval_nbr)
+                elif mail.scheduled_date and mail.scheduled_date <= now:
+                    # It was due while the registration was in the stage (e.g.
+                    # a stage left as soon as reached): it is still sent.
+                    mail.scheduled_date = mail.scheduled_date
                 else:
                     mail.scheduled_date = False
             else:
