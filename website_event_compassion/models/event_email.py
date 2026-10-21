@@ -220,8 +220,9 @@ class EventMail(models.Model):
                         or mail.event_id.date_end > now
                     )
                 ):
-                    mail.event_id.send_communication(mail.communication_id.id)
+                    # Done first: sending can run the schedulers again.
                     mail.write({"mail_done": True})
+                    mail.event_id.send_communication(mail.communication_id.id)
         # Core only handles mail templates and would fail on our rules
         others = self.filtered(lambda m: m.notification_type != "communication")
         return super(EventMail, others).execute()
@@ -269,8 +270,10 @@ class EventMailRegistration(models.Model):
             and reg_mail.scheduler_id.notification_type == "communication"
         )
         for reg_mail in todo:
+            # Sent first: sending can move the registration to another stage,
+            # which runs the schedulers again.
+            reg_mail.mail_sent = True
             reg_mail.registration_id.send_communication(
                 reg_mail.scheduler_id.communication_id.id
             )
-        todo.write({"mail_sent": True})
         return super().execute()

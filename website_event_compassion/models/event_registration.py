@@ -578,7 +578,11 @@ class EventRegistration(models.Model):
             lines.mapped("scheduled_date")
 
     def _run_mail_schedulers(self):
-        self.env["event.mail"].with_user(SUPERUSER_ID).with_delay_sh(
+        # Always a job of its own, even when the stage moved while a
+        # communication was sent right away (which runs its jobs at once).
+        self.env["event.mail"].with_user(SUPERUSER_ID).with_context(
+            queue_job__no_delay=False
+        ).with_delay_sh(
             "run",
             channel="root.partner_communication",
             identity_key="event.registration.mail_scheduler",
@@ -676,16 +680,20 @@ class EventRegistration(models.Model):
         @param filter_func: filter function to apply on the registrations
         @return: communication jobs
         """
-        communications = self.env["partner.communication.job"].create(
-            [
+        communications = self.env["partner.communication.job"]
+        for registration in self.filtered(filter_func):
+            # The texts are written for one registration: a pending job of the
+            # partner for another registration (e.g. a second trip) is not
+            # reused.
+            communications |= communications.with_context(
+                same_job_search=[("object_ids", "=", str(registration.id))]
+            ).create(
                 {
                     "config_id": config_id,
                     "partner_id": registration.partner_id.id,
                     "object_ids": [registration.id],
                 }
-                for registration in self.filtered(filter_func)
-            ]
-        )
+            )
         if force_send:
             communications.send()
         return communications
