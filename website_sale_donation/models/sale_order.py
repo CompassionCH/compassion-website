@@ -66,3 +66,15 @@ class SaleOrder(models.Model):
     def _get_update_prices_lines(self):
         lines = super()._get_update_prices_lines()
         return lines.filtered(lambda line: not line.order_id.is_donation)
+
+    def _send_payment_succeeded_for_order_mail(self):
+        # SKIP sending order emails, they don't make sense for us
+        return True
+
+    def _send_order_notification_mail(self, mail_template):
+        # SKIP sending order emails, they don't make sense for us
+        return True
+
+    def _send_order_confirmation_mail(self):
+        # SKIP sending order emails, they don't make sense for us
+        return True
