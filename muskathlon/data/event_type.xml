@@ -8,7 +8,7 @@
     <field name="compassion_event_type">sport</field>
     <field
       name="stage_ids"
-      eval="[(6, 0, [ref('stage_unconfirmed'), ref('stage_fill_profile'), ref('website_event_compassion.stage_all_confirmed'), ref('website_event_compassion.stage_all_attended'), ref('website_event_compassion.stage_all_cancelled')])]"
+      eval="[(6, 0, [ref('stage_unconfirmed'), ref('stage_fill_profile'), ref('stage_flights'), ref('stage_documents'), ref('stage_criminal_record'), ref('stage_ready'), ref('website_event_compassion.stage_all_staff'), ref('website_event_compassion.stage_all_attended'), ref('website_event_compassion.stage_all_cancelled')])]"
     />
     <field name="medical_survey_id" ref="muskathlon_form" />
   </record>
