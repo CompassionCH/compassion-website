@@ -17,8 +17,15 @@
     <field name="stage_id" ref="stage_criminal_record" />
     <field name="website_published" eval="True" />
   </record>
+  <!-- The outbound flight -->
   <record id="task_flight_details" model="event.registration.task">
-    <field name="name">Give flight details</field>
+    <field name="name">Give outbound flight</field>
+    <field name="sequence">3</field>
+    <field name="stage_id" ref="stage_flights" />
+    <field name="website_published" eval="True" />
+  </record>
+  <record id="task_return_flight" model="event.registration.task">
+    <field name="name">Give return flight</field>
     <field name="sequence">3</field>
     <field name="stage_id" ref="stage_flights" />
     <field name="website_published" eval="True" />
