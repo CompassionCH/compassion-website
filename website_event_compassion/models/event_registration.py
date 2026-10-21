@@ -359,7 +359,7 @@ class EventRegistration(models.Model):
             )
 
     @api.model
-    def _read_group_stage_ids(self, stages, domain, order):
+    def _read_group_stage_ids(self, stages, domain):
         # retrieve event type from the context and write the domain
         # - ('id', 'in', stages.ids): add columns that should be present
         type_id = self._context.get("default_event_type_id")
@@ -374,10 +374,9 @@ class EventRegistration(models.Model):
             search_domain = ["|", ("id", "in", stages.ids)] + search_domain
 
         # perform search
-        stage_ids = stages._search(
-            search_domain, order=order, access_rights_uid=SUPERUSER_ID
+        return stages.browse(
+            stages.sudo().search(search_domain, order=stages._order).ids
         )
-        return stages.browse(stage_ids)
 
     @api.model
     def _default_stage(self):
