@@ -494,4 +494,23 @@
       </div>
     </section>
   </template>
+  <!-- Bring the participant back to the event page after the medical survey -->
+  <template id="survey_done_back_to_event" inherit_id="survey.survey_fill_form_done">
+    <xpath
+      expr="//div[hasclass('o_survey_finished')]/div[hasclass('row')]"
+      position="after"
+    >
+      <t
+        t-set="registration"
+        t-value="answer.partner_id and request.env['event.registration'].sudo().search([('partner_id', '=', answer.partner_id.id), ('event_id.medical_survey_id', '=', answer.survey_id.id), ('state', '!=', 'cancel')], order='id desc', limit=1)"
+      />
+      <div class="mt-4" t-if="registration">
+        <a
+          role="button"
+          class="btn btn-primary btn-lg"
+          t-attf-href="/my/events/#{request.env['ir.http']._slug(registration)}"
+        >Continue</a>
+      </div>
+    </xpath>
+  </template>
 </odoo>
