@@ -16,6 +16,7 @@
             />
             <field name="trip_type_ids" widget="many2many_tags" />
             <field name="registration_state" />
+            <field name="manual_only" />
             <field name="duration" />
             <field name="fold" />
             <field name="task_ids">
@@ -38,6 +39,7 @@
         <field name="name" />
         <field name="event_type_ids" />
         <field name="trip_type_ids" widget="many2many_tags" />
+        <field name="manual_only" optional="show" />
       </list>
     </field>
   </record>
