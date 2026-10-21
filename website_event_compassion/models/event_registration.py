@@ -378,6 +378,25 @@ class EventRegistration(models.Model):
         )
 
     @api.model
+    def _read_group_fill_results(
+        self,
+        domain,
+        groupby,
+        annoted_aggregates,
+        read_group_result,
+        read_group_order=None,
+    ):
+        result = super()._read_group_fill_results(
+            domain, groupby, annoted_aggregates, read_group_result, read_group_order
+        )
+        if groupby == "stage_id":
+            # The stages nobody is in are folded in the kanban.
+            for line in result:
+                if not line.get("stage_id_count"):
+                    line["__fold"] = True
+        return result
+
+    @api.model
     def _default_stage(self):
         stage = self.env["event.registration.stage"].search(
             [("event_type_ids", "=", False)], limit=1
