@@ -76,6 +76,7 @@
     ],
     "external_dependencies": {},
     "demo": [],
+    "post_init_hook": "post_init_hook",
     "installable": True,
     "auto_install": False,
 }
