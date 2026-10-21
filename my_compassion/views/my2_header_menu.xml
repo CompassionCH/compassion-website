@@ -48,7 +48,7 @@
     inherit_id="website.template_header_default"
   >
     <xpath expr="//t[@t-call='website.navbar_nav']" position="before">
-      <t t-if="request.session.uid">
+      <t t-if="request.session.uid and website.is_my_compassion">
         <ul class="navbar-nav">
           <t t-call="my_compassion.my2_nav_items" />
         </ul>
@@ -60,7 +60,7 @@
     inherit_id="website.template_header_mobile"
   >
     <xpath expr="//t[@t-call='website.navbar_nav']" position="before">
-      <t t-if="request.session.uid">
+      <t t-if="request.session.uid and website.is_my_compassion">
         <t t-call="my_compassion.my2_nav_items" />
       </t>
     </xpath>
@@ -138,7 +138,12 @@
     name="MyCompassion User Settings Link"
   >
     <xpath expr="//div[@id='o_logout_divider']" position="before">
-      <a href="/my2/user_settings" role="menuitem" class="dropdown-item ps-3">
+      <a
+        t-if="website.is_my_compassion"
+        href="/my2/user_settings"
+        role="menuitem"
+        class="dropdown-item ps-3"
+      >
                 <i
         class="fa fa-fw fa-cog me-1 small text-primary text-primary-emphasis"
       />
