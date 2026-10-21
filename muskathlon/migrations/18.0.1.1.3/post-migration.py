@@ -190,8 +190,12 @@ def migrate(env, version):
     _load_texts(env)
     # It used the welcome mail of the portal users, which keeps the link to
     # activate the account: the account is already active at this stage.
-    _ref(env, "registration_confirmation_config").email_template_id = _ref(
-        env, "registration_confirmation_template"
+    # Sent by itself once the account is activated, like the other mails.
+    _ref(env, "registration_confirmation_config").write(
+        {
+            "email_template_id": _ref(env, "registration_confirmation_template").id,
+            "send_mode": "auto_digital",
+        }
     )
 
     events = env["event.event"].search(
