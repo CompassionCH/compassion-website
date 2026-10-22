@@ -266,6 +266,31 @@ class TestRecurringInstrument(DigitalSeamCase):
                 tx._my2_save_token_on_groups()
                 self.assertStoredCard(group, token)
 
+    def test_card_for_a_group_of_another_company_is_not_taken(self):
+        contract, _invoice, token = self._make_chargeable_invoice()
+        group = contract.group_id
+        self._move_to_another_company(group)
+        card = token.copy({"provider_ref": "moved-group-card"})
+        tx = self.env["payment.transaction"].create(
+            {
+                "provider_id": card.provider_id.id,
+                "payment_method_id": card.payment_method_id.id,
+                "partner_id": contract.partner_id.id,
+                "reference": "update-card-moved-group",
+                "amount": 10.0,
+                "currency_id": card.provider_id.company_id.currency_id.id,
+                "operation": "online_direct",
+                "token_id": card.id,
+                "my2_card_update_group_id": group.id,
+            }
+        )
+        # the group's own provider: only the company differs
+        self.assertEqual(group.payment_mode_id.payment_provider_id, tx.provider_id)
+        self.assertNotEqual(group.company_id, tx.company_id)
+        self.assertFalse(tx._my2_groups_taking_the_token())
+        tx._my2_save_token_on_groups()
+        self.assertStoredCard(group, self.env["payment.token"])
+
 
 @tagged("post_install", "-at_install")
 class TestUpdateCardPage(HttpCase, DigitalSeamCase):

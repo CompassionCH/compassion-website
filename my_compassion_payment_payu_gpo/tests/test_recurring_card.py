@@ -79,6 +79,25 @@ class TestRecurringCard(PayuDigitalCase):
                 )
                 self.assertFalse(tx._payu_gpo_card_is_recurring())
 
+    def test_card_for_a_group_of_another_company_is_on_file(self):
+        contract, _invoice, _token = self._make_payu_chargeable_invoice()
+        group = contract.group_id
+        provider = group.payment_mode_id.payment_provider_id
+        self._move_to_another_company(group)
+        tx = self.env["payment.transaction"].create(
+            {
+                "provider_id": provider.id,
+                "payment_method_id": self.env.ref("payment.payment_method_card").id,
+                "partner_id": contract.partner_id.id,
+                "reference": "payu-bridge-moved-group",
+                "amount": 10.0,
+                "currency_id": provider.company_id.currency_id.id,
+                "my2_card_update_group_id": group.id,
+            }
+        )
+        self.assertNotEqual(group.company_id, tx.company_id)
+        self.assertFalse(tx._payu_gpo_card_is_recurring())
+
     def test_update_card_page_saves_a_payu_card_with_a_payment(self):
         contract, invoice, _token = self._make_payu_chargeable_invoice()
         group = contract.group_id

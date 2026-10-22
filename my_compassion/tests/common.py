@@ -133,6 +133,21 @@ class DigitalSeamCase(TransactionCase):
             )
         }
 
+    def _move_to_another_company(self, group):
+        """Put the group, without its card, in another company than its
+        payment mode and provider. The ORM refuses that: forced, so that only
+        the company tells a card the group cannot be charged with."""
+        group.payment_token_id = False
+        other_company = self.env["res.company"].create(
+            {"name": "Digital Seam Moved Company"}
+        )
+        self.env.flush_all()
+        self.env.cr.execute(
+            "UPDATE recurring_contract_group SET company_id = %s WHERE id = %s",
+            [other_company.id, group.id],
+        )
+        self.env.invalidate_all()
+
     def _make_chargeable_invoice(self, company=None):
         """An active-cycle situation for the charge cron: a digital contract
         with a posted, due, unpaid invoice and a saved token on its group.
