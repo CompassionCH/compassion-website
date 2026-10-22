@@ -5,7 +5,7 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-"""Post-migration to 18.0.1.0.29 of my_compassion.
+"""Post-migration to 18.0.1.0.30 of my_compassion.
 
 The partners a visitor creates from an email they typed are flagged
 my2_email_unverified at creation, so that signup never links an account to

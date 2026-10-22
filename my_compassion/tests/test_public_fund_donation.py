@@ -1807,7 +1807,7 @@ class TestConcurrentPayments(TransactionCase):
 
 @tagged("post_install", "-at_install")
 class TestEmailUnverifiedPostMigration(TransactionCase):
-    """The post-migration to 18.0.1.0.29 flags the partners the fast checkout
+    """The post-migration to 18.0.1.0.30 flags the partners the fast checkout
     created from a visitor's email before my2_email_unverified existed."""
 
     def test_placeholder_partners_without_an_account_are_flagged(self):
@@ -1831,11 +1831,11 @@ class TestEmailUnverifiedPostMigration(TransactionCase):
         self.assertFalse(any(partners.mapped("my2_email_unverified")))
         self.env.flush_all()
         migrate = load_script(
-            "my_compassion/migrations/18.0.1.0.29/post-email-unverified.py",
-            "my_compassion_post_email_unverified_18_0_1_0_29",
+            "my_compassion/migrations/18.0.1.0.30/post-email-unverified.py",
+            "my_compassion_post_email_unverified_18_0_1_0_30",
         ).migrate
         for _run in range(2):  # a second run changes nothing
-            migrate(self.env.cr, "18.0.1.0.28")
+            migrate(self.env.cr, "18.0.1.0.29")
             partners.invalidate_recordset(["my2_email_unverified"])
             self.assertEqual(
                 partners.mapped("my2_email_unverified"), [True, False, False]
