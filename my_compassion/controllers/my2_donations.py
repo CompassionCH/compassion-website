@@ -63,6 +63,20 @@ class MyCompassionDonationsController(CustomerPortal):
         )
 
     @http.route(
+        "/my2/gifts/<string:slug>-<int:product_id>",
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def my2_redirect_slugged_donation_page(self, slug, product_id, **kwargs):
+        """Links with the product's slug (/my2/gifts/<name>-<id>, the form the
+        details page had) lead to the details page."""
+        if not self._get_donation_product(product_id):
+            raise NotFound()
+        return request.redirect(f"/my2/gifts/{product_id}", code=301)
+
+    @http.route(
         "/my2/gifts/new",
         type="json",
         auth="user",

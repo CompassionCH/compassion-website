@@ -325,3 +325,23 @@ class TestDonationProductWebsiteCompany(HttpCase):
             self.make_jsonrpc_request(
                 "/my2/gifts/get-limits", {"product_id": self.foreign_fund.id}
             )
+
+    def test_old_slugged_links(self):
+        """The details page had the product's slug in its URL."""
+        page = self.url_open(f"/my2/gifts/{self.shared_fund.id}")
+        self.assertEqual(page.status_code, 200)
+
+        page = self.url_open(
+            f"/my2/gifts/fund-of-both-companies-{self.shared_fund.id}",
+            allow_redirects=False,
+        )
+        self.assertEqual(page.status_code, 301)
+        self.assertTrue(
+            page.headers["Location"].endswith(f"/my2/gifts/{self.shared_fund.id}")
+        )
+
+        page = self.url_open(
+            f"/my2/gifts/fund-of-the-donor-company-{self.donor_fund.id}",
+            allow_redirects=False,
+        )
+        self.assertEqual(page.status_code, 404)
