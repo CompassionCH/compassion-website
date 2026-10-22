@@ -148,6 +148,7 @@ class MyCompassionUpdateCard(payment_portal.PaymentPortal):
         provider = group.payment_mode_id.payment_provider_id
         if invoices or not provider:
             return provider
+        # as staff: the published filter must not hide the group's own provider
         validating = (
             provider.env["payment.provider"]
             .with_user(SUPERUSER_ID)
