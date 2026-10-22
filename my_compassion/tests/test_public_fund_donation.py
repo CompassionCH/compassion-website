@@ -1386,6 +1386,25 @@ class TestPublicFundDonation(HttpCase):
         self.assertEqual(automatic.state, "done")
         self.assertEqual(manual.state, "pending")
 
+    def test_every_held_letter_is_sent(self):
+        """Two automatic letters of one rule for one donor (the rule does not
+        merge them) are both sent once the name is given: the queue does not
+        take the second send for a duplicate of the first."""
+        config = self._letter_config()
+        self._add_fund()
+        self._give_email()
+        donor = self._cart().partner_id
+        letters = self._letter(config, donor, auto_send=True) | self._letter(
+            config, donor, auto_send=True
+        )
+        job_class = type(self.env["partner.communication.job"])
+        with patch.object(job_class, "with_delay_sh", autospec=True) as delay:
+            donor._my2_replace_placeholder_name("Anna", "Nowak")
+        sends = [c for c in delay.call_args_list if c.args[1] == "send"]
+        self.assertEqual({c.args[0] for c in sends}, set(letters))
+        keys = {c.kwargs["identity_key"] for c in sends}
+        self.assertEqual(len(keys), 2, keys)
+
     def test_a_name_typed_by_staff_releases_the_letters(self):
         """Staff may call the donor and type their name on the partner."""
         config = self._letter_config()

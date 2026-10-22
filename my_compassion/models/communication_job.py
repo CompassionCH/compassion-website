@@ -53,7 +53,8 @@ class CommunicationJob(models.Model):
     def _my2_release_held(self):
         """What waited for the donor's real name: the text, rendered when the
         communication was created, is rendered again with it, and the
-        automatic ones are sent, in a queue job as at their creation. The
+        automatic ones are sent, in a queue job as at their creation - one
+        per communication: several of one rule may wait for one donor. The
         others wait for staff, as any pending communication."""
         self.refresh_text()
         for job in self.filtered("auto_send"):
@@ -63,5 +64,5 @@ class CommunicationJob(models.Model):
                 max_retries=1,
                 description="Autosend communication",
                 channel="root.partner_communication",
-                identity_key=f"{self._name}.send.{job.config_id.id}+{job.partner_id.id}",
+                identity_key=f"{self._name}.send.{job.id}",
             )
