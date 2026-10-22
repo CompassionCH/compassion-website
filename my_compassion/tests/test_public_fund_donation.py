@@ -259,6 +259,37 @@ class TestPublicFundDonation(HttpCase):
         page = self.url_open("/my2/gift-package")
         self.assertIn("Visitor Test Fund", page.text)
 
+    def test_shop_order_revival_never_reaches_the_basket(self):
+        """On another website, the MyCompassion basket kept for the visitor's
+        return is not the cart website_sale's abandoned-cart link merges
+        into: a shop order revived there stays a shop order."""
+        self._add_fund()
+        cart = self._cart()
+        other_website = self.env["website"].search(
+            [("id", "!=", self.website.id), ("is_my_compassion", "=", False)], limit=1
+        )
+        other_website.domain = "http://other.example.org"
+        product = self._shop_product()
+        shop_order = self.env["sale.order"].create(
+            {
+                "partner_id": other_website.partner_id.id,
+                "website_id": other_website.id,
+                "company_id": other_website.company_id.id,
+                "order_line": [(0, 0, {"product_id": product.id})],
+            }
+        )
+        cookies = "; ".join(f"{c.name}={c.value}" for c in self.opener.cookies)
+        self.url_open(
+            f"/shop/cart?access_token={shop_order._portal_ensure_token()}&revive=merge",
+            headers={"Host": "other.example.org", "Cookie": cookies},
+            allow_redirects=False,
+        )
+        self.assertEqual(cart.order_line.product_id, self.fund.product_variant_id)
+        self.assertEqual(shop_order.state, "draft")
+        self.assertEqual(shop_order.order_line.product_id, product)
+        page = self.url_open("/my2/gift-package")
+        self.assertIn("Visitor Test Fund", page.text)
+
     def test_shop_routes_never_add_to_the_cart(self):
         """Only the gift package's routes change a MyCompassion cart: a shop
         product priced under the fund minimum would get around it."""

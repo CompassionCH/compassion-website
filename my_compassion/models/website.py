@@ -66,46 +66,50 @@ class Website(models.Model):
     def sale_get_order(self, force_create=False):
         """Each cart stays on its website. The websites of a domain share the
         session (and /my2 resolves to MyCompassion on any domain), so its
-        cart may come from another website: on a MyCompassion website, only
-        a draft cart of this website (and its company) is the cart; another
-        website never takes a MyCompassion cart (the shop, crowdfunding and
-        events add lines through website_sale). A new cart is started
-        instead - and when the other website only reads its cart, the
-        MyCompassion one stays in the session for the visitor's return."""
-        my2_cart = None
-        if request and request.session.get("sale_order_id"):
+        cart may come from another website:
+
+        - on a MyCompassion website, only a draft cart of this website (and
+          its company) is the cart; a cart set aside by another website
+          (my2_sale_order_id) comes back when the session holds none;
+        - another website never takes a MyCompassion cart: it sets it aside
+          under its own session key - out of reach of website_sale, which
+          reads sale_order_id directly (e.g. to merge an abandoned cart) -
+          and starts its own cart if asked to.
+        """
+        if request:
+            session = request.session
             order = (
                 self.env["sale.order"]
                 .sudo()
-                .browse(request.session["sale_order_id"])
+                .browse(session.get("sale_order_id"))
                 .exists()
             )
-            if (
-                order
-                and self.is_my_compassion
-                and (
-                    order.website_id != self
-                    or order.company_id != self.company_id
-                    or order.state != "draft"
+            if self.is_my_compassion:
+                if order and not self._my2_is_own_cart(order):
+                    session.pop("sale_order_id", None)
+                    session.pop("website_sale_cart_quantity", None)
+                    order = order.browse()
+                set_aside = (
+                    self.env["sale.order"]
+                    .sudo()
+                    .browse(session.pop("my2_sale_order_id", None))
+                    .exists()
                 )
-            ):
-                request.session.pop("sale_order_id", None)
-                request.session.pop("website_sale_cart_quantity", None)
-            elif (
-                order
-                and not self.is_my_compassion
-                and order.website_id.is_my_compassion
-            ):
-                my2_cart = (
-                    request.session.pop("sale_order_id"),
-                    request.session.pop("website_sale_cart_quantity", None),
-                )
-        cart = super().sale_get_order(force_create=force_create)
-        if my2_cart and not cart and not request.session.get("sale_order_id"):
-            request.session["sale_order_id"] = my2_cart[0]
-            if my2_cart[1] is not None:
-                request.session["website_sale_cart_quantity"] = my2_cart[1]
-        return cart
+                if not order and set_aside and self._my2_is_own_cart(set_aside):
+                    session["sale_order_id"] = set_aside.id
+                    session["website_sale_cart_quantity"] = set_aside.cart_quantity
+            elif order.website_id.is_my_compassion:
+                session["my2_sale_order_id"] = session.pop("sale_order_id")
+                session.pop("website_sale_cart_quantity", None)
+        return super().sale_get_order(force_create=force_create)
+
+    def _my2_is_own_cart(self, order):
+        """Whether order is a draft cart of this website and its company."""
+        return (
+            order.website_id == self
+            and order.company_id == self.company_id
+            and order.state == "draft"
+        )
 
     def _my2_offers_payment_method(self, code):
         """Whether a published payment provider of the website's company offers
