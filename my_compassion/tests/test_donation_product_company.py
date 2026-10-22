@@ -512,3 +512,19 @@ class TestDonationProductWebsiteCompany(HttpCase):
         page = self.url_open(page.headers["Location"], allow_redirects=False)
         self.assertIn(page.status_code, (302, 303))
         self.assertIn("/web/login", page.headers["Location"])
+
+    def test_a_donor_edits_a_cart_line(self):
+        self._add(self.shared_fund, "low")
+        line = self.env["sale.order"].search(
+            [("partner_id", "=", self.donor.partner_id.id)]
+        ).order_line
+        self.make_jsonrpc_request(
+            "/my2/gifts/edit",
+            {
+                "order_line_id": line.id,
+                "suggested_amount": "high",
+                "frequency": "one_time",
+            },
+        )
+        line.invalidate_recordset()
+        self.assertEqual(line.price_unit, self.website_amounts[2])
