@@ -4281,19 +4281,6 @@ msgstr ""
 "geändert."
 
 #. module: my_compassion
-#: model:ir.model.fields,help:my_compassion.field_res_partner__my2_name_placeholder
-#: model:ir.model.fields,help:my_compassion.field_res_users__my2_name_placeholder
-msgid ""
-"The partner was created by a fast checkout before its sponsor gave their "
-"name. Everything that greets the sponsor by name waits for "
-"_my2_replace_placeholder_name to clear this flag."
-msgstr ""
-"Der Partner wurde durch einen Schnell-Checkout erstellt, bevor die Patin "
-"oder der Pate ihren Namen angegeben hat. Alles, was die Patin oder den Paten"
-" mit Namen begrüsst, wartet darauf, dass _my2_replace_placeholder_name "
-"dieses Flag löscht."
-
-#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_update_card_done_page
 msgid "The payment did not go through"
 msgstr "Die Zahlung ist nicht durchgegangen"
@@ -5592,13 +5579,13 @@ msgstr ""
 #: model:ir.model.fields,help:my_compassion.field_res_users__my2_name_placeholder
 msgid ""
 "The partner was created by a fast checkout or a visitor's donation before "
-"its sponsor gave their name. Everything that greets the sponsor by name "
+"its donor or sponsor gave their name. Everything that greets them by name "
 "waits for a real name to clear this flag."
 msgstr ""
-"Der Partner wurde durch eine Schnellanmeldung oder die Spende eines "
-"Besuchers erstellt, bevor der Pate seinen Namen angegeben hat. Alles, was "
-"den Paten mit Namen anspricht, wartet, bis ein echter Name dieses "
-"Kennzeichen aufhebt."
+"Der Partner wurde durch einen Schnell-Checkout oder die Spende eines "
+"Besuchers erstellt, bevor der Spender, die Patin oder der Pate den eigenen "
+"Namen angegeben hat. Alles, was diese Person mit Namen begrüsst, wartet "
+"darauf, dass ein echter Name dieses Flag löscht."
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_website__my2_payment_attempts_window
@@ -5610,8 +5597,13 @@ msgstr ""
 #. module: my_compassion
 #. odoo-python
 #: code:addons/my_compassion/models/sale_order.py:0
-msgid "This donation is already paid, or its payment is under way."
-msgstr "Diese Spende ist bereits bezahlt, oder ihre Zahlung ist im Gange."
+msgid ""
+"This donation is already paid, or its payment is still under way. Please "
+"wait for its outcome, or check with your bank, before paying again."
+msgstr ""
+"Diese Spende ist bereits bezahlt, oder ihre Zahlung ist noch im Gange. Bitte"
+" warte das Ergebnis ab oder frage bei deiner Bank nach, bevor du erneut "
+"bezahlst."
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_website__my2_payment_attempts_window
@@ -5627,3 +5619,22 @@ msgstr "Zahlungsversuche von Besuchern pro IP-Adresse"
 #: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__window_start
 msgid "Window Start"
 msgstr "Beginn des Zeitfensters"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_res_partner__my2_email_unverified
+#: model:ir.model.fields,field_description:my_compassion.field_res_users__my2_email_unverified
+msgid "Email not verified"
+msgstr "E-Mail nicht bestätigt"
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_res_partner__my2_email_unverified
+#: model:ir.model.fields,help:my_compassion.field_res_users__my2_email_unverified
+msgid ""
+"The partner was created from an email a visitor typed (a donation without an"
+" account, a fast checkout), which nobody has verified. Signup never links an"
+" account to it; giving a name does not change that."
+msgstr ""
+"Der Partner wurde aus einer E-Mail-Adresse erstellt, die ein Besucher "
+"eingegeben hat (eine Spende ohne Konto, ein Schnell-Checkout) und die "
+"niemand bestätigt hat. Die Registrierung verknüpft nie ein Konto mit ihm; "
+"daran ändert auch die Angabe eines Namens nichts."

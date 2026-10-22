@@ -27,8 +27,8 @@ class Partner(models.Model):
         readonly=True,
         copy=False,
         help="The partner was created by a fast checkout or a visitor's"
-        " donation before its sponsor gave their name. Everything that greets"
-        " the sponsor by name waits for a real name to clear this flag.",
+        " donation before its donor or sponsor gave their name. Everything that"
+        " greets them by name waits for a real name to clear this flag.",
     )
 
     my2_email_unverified = fields.Boolean(
