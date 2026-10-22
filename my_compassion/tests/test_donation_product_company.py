@@ -124,6 +124,12 @@ class TestDonationProductWebsiteCompany(HttpCase):
         cls.donor_fund = cls._product(
             "Fund Of The Donor Company", (cls.donor_company, cls.donor_amounts)
         )
+        # Owned by the donor's company: the website's company cannot publish it.
+        cls.foreign_fund = cls._product(
+            "Fund Owned By The Donor Company",
+            (cls.website_company, cls.website_amounts),
+            company=cls.donor_company,
+        )
 
         # A gift with giving limits, for the donor's sponsorship (in the
         # donor's company, as their contracts are).
@@ -305,3 +311,17 @@ class TestDonationProductWebsiteCompany(HttpCase):
         )
         self.assertEqual(line.gift_recipient_id, self.sponsorship)
         self.assertEqual(line.price_unit, self.website_amounts[1])
+
+    def test_a_product_of_another_company(self):
+        for url in ("/my2/gifts", "/my2/gift-package/add"):
+            page = self.url_open(url)
+            self.assertEqual(page.status_code, 200, url)
+            self.assertNotIn("Fund Owned By The Donor Company", page.text, url)
+        page = self.url_open(f"/my2/gifts/{self.foreign_fund.id}")
+        self.assertEqual(page.status_code, 404)
+        with self.assertRaises(JsonRpcException):
+            self._add(self.foreign_fund)
+        with self.assertRaises(JsonRpcException):
+            self.make_jsonrpc_request(
+                "/my2/gifts/get-limits", {"product_id": self.foreign_fund.id}
+            )

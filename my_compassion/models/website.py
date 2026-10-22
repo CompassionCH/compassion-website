@@ -70,7 +70,9 @@ class Website(models.Model):
         in env.company: that is the donor's own company when the website's
         company is not one of theirs (website's _frontend_pre_dispatch). Read
         in the website's company instead, the company of the cart; sudo, as
-        such a donor may not read in it, so the activation is the gate.
+        such a donor may not read in it, so the domain is the gate: activated
+        in the website's company, and shared or of that company (the product
+        multi-company rule does not apply in sudo).
         """
         self.ensure_one()
         return (
@@ -78,7 +80,11 @@ class Website(models.Model):
             .sudo()
             .with_company(self.company_id)
             .search(
-                [("activate_for_my_compassion", "=", True), *(domain or [])],
+                [
+                    ("activate_for_my_compassion", "=", True),
+                    ("company_id", "in", [False, self.company_id.id]),
+                    *(domain or []),
+                ],
                 order=order,
             )
         )
