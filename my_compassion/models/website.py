@@ -64,11 +64,14 @@ class Website(models.Model):
     )
 
     def sale_get_order(self, force_create=False):
-        """On a MyCompassion website, only a draft cart of this website (and
-        its company) is the cart: the session may point to one started on
-        another website of the same domain (crowdfunding, events), which the
-        /my2 routes must never take over. A new cart is started instead."""
-        if self.is_my_compassion and request and request.session.get("sale_order_id"):
+        """Each cart stays on its website. The websites of a domain share the
+        session (and /my2 resolves to MyCompassion on any domain), so its
+        cart may come from another website: on a MyCompassion website, only
+        a draft cart of this website (and its company) is the cart; another
+        website never takes a MyCompassion cart (the shop, crowdfunding and
+        events add lines through website_sale). A new cart is started
+        instead."""
+        if request and request.session.get("sale_order_id"):
             order = (
                 self.env["sale.order"]
                 .sudo()
@@ -76,9 +79,15 @@ class Website(models.Model):
                 .exists()
             )
             if order and (
-                order.website_id != self
-                or order.company_id != self.company_id
-                or order.state != "draft"
+                (
+                    self.is_my_compassion
+                    and (
+                        order.website_id != self
+                        or order.company_id != self.company_id
+                        or order.state != "draft"
+                    )
+                )
+                or (not self.is_my_compassion and order.website_id.is_my_compassion)
             ):
                 request.session.pop("sale_order_id", None)
                 request.session.pop("website_sale_cart_quantity", None)

@@ -163,6 +163,44 @@ class TestPublicFundDonation(HttpCase):
         self.assertEqual(cart.website_id, self.website)
         self.assertFalse(other_cart.order_line)
 
+    def _shop_product(self):
+        """A product the shop of every website sells."""
+        return self.env["product.product"].create(
+            {
+                "name": "Shop Bookmark",
+                "type": "service",
+                "sale_ok": True,
+                "list_price": 1.0,
+                "is_published": True,
+            }
+        )
+
+    def test_another_website_never_takes_the_cart(self):
+        """The session is shared by the websites of a domain: the
+        MyCompassion cart is never the cart of another one (the shop,
+        crowdfunding, events), which starts its own."""
+        self._add_fund()
+        cart = self._cart()
+        other_website = self.env["website"].search(
+            [("id", "!=", self.website.id), ("is_my_compassion", "=", False)], limit=1
+        )
+        other_website.domain = "http://other.example.org"
+        product = self._shop_product()
+        # Another host, the same session: requests files cookies under the
+        # Host header, so the session cookie is sent explicitly.
+        cookies = "; ".join(f"{c.name}={c.value}" for c in self.opener.cookies)
+        self.make_jsonrpc_request(
+            "/shop/cart/update_json",
+            {"product_id": product.id, "add_qty": 1},
+            headers={"Host": "other.example.org", "Cookie": cookies},
+        )
+        self.assertEqual(cart.order_line.product_id, self.fund.product_variant_id)
+        other_cart = self.env["sale.order"].search(
+            [("website_id", "=", other_website.id)], order="id desc", limit=1
+        )
+        self.assertNotEqual(other_cart, cart)
+        self.assertEqual(other_cart.order_line.product_id, product)
+
     def test_an_archived_fund_is_refused(self):
         self.fund.active = False
         page = self.url_open(f"/my2/gifts/{self.fund.id}", allow_redirects=False)
