@@ -1,11 +1,15 @@
 from odoo import Command
 from odoo.tests import tagged
 
-from odoo.addons.my_compassion.tests.common import DigitalSeamCase
+from odoo.addons.my_compassion.controllers.my2_update_card import (
+    MyCompassionUpdateCard,
+)
+
+from .common import PayuDigitalCase
 
 
 @tagged("post_install", "-at_install")
-class TestRecurringCard(DigitalSeamCase):
+class TestRecurringCard(PayuDigitalCase):
     def _transaction(self, contract, reference, **values):
         return self.env["payment.transaction"].create(
             {
@@ -37,6 +41,18 @@ class TestRecurringCard(DigitalSeamCase):
         contract = self._make_digital_contract()
         donation = self._transaction(contract, "payu-bridge-donation")
         self.assertFalse(donation._payu_gpo_card_is_recurring())
+
+    def test_update_card_page_saves_a_payu_card_with_a_payment(self):
+        contract, invoice, _token = self._make_payu_chargeable_invoice()
+        group = contract.group_id
+        provider = group.payment_mode_id.payment_provider_id
+        self.assertEqual(
+            MyCompassionUpdateCard._update_card_provider(group, invoice), provider
+        )
+        # PayU makes no card validation (zero-amount order)
+        self.assertFalse(
+            MyCompassionUpdateCard._update_card_provider(group, invoice.browse())
+        )
 
     # === The payer's name ===
 
