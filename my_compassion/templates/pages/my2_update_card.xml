@@ -37,9 +37,8 @@
                 t-out="current_card.payment_details"
               />)</t>.</t>
               <t t-else="" t-set="description">Nothing is due right now, and a
-                new card can only be saved with a payment. If a monthly payment
-                does not go through, pay it here with your new card: it then
-                replaces the current one.</t>
+                new card can only be saved with a payment. Your current card
+                stays in use for the next monthly payments.</t>
             </t>
           </div>
           <!-- AMOUNT SUMMARY -->
