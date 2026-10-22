@@ -372,15 +372,39 @@ ul.auto-toc {
 <p><a class="reference external image-reference" href="https://odoo-community.org/page/development-status"><img alt="Beta" src="https://img.shields.io/badge/maturity-Beta-yellow.png" /></a> <a class="reference external image-reference" href="http://www.gnu.org/licenses/agpl-3.0-standalone.html"><img alt="License: AGPL-3" src="https://img.shields.io/badge/licence-AGPL--3-blue.png" /></a> <a class="reference external image-reference" href="https://github.com/CompassionCH/compassion-website/tree/18.0/my_compassion_payment_payu_gpo"><img alt="CompassionCH/compassion-website" src="https://img.shields.io/badge/github-CompassionCH%2Fcompassion--website-lightgray.png?logo=github" /></a></p>
 <p>Glue between MyCompassion and the PayU GPO payment provider, installed
 automatically with both.</p>
-<p>A card a sponsor saves with PayU for their sponsorships (first payment
-of a digital sponsorship, or the update-card page) pays the monthly
-contributions: it is registered at PayU as a recurring card
-(<tt class="docutils literal">recurring: FIRST</tt>, then <tt class="docutils literal">STANDARD</tt>). Other saved cards stay cards
-on file.</p>
+<p>A card a sponsor saves with PayU that becomes the card of contract
+groups (first payment of a digital sponsorship, or the update-card page)
+pays the monthly contributions: it is registered at PayU as a recurring
+card (<tt class="docutils literal">recurring: FIRST</tt>, then <tt class="docutils literal">STANDARD</tt>). Other saved cards stay
+cards on file.</p>
 <p>A payer known by email only (fast checkout, visitor donation) has a
 placeholder name: no name is sent to PayU for them, and the name typed
 on the card (or PayU’s buyer) replaces the placeholder once the payment
 is done.</p>
+<p>A monthly charge PayU refuses (it cancels the order of the charge)
+reaches the contracts’ dunning (<tt class="docutils literal">_on_digital_charge_failed</tt>) once,
+when its notification or status read moves the charge to error. Repeated
+notifications, and notifications rejected as being about another order
+or amount, start nothing. A dunning that fails is logged for staff and
+never undoes the refusal.</p>
+<p>A payment PayU never confirmed is no certain refusal: my_compassion then
+does not give the basket back to be paid again, as the payment may have
+been made.</p>
+<p>A MyCompassion order takes one card payment at a time. Before PayU’s
+card route sends a card, my_compassion refuses it while another payment
+of the order may still succeed (two payment forms may each have made a
+draft); the route then cancels the draft and shows the reason.</p>
+<p>This module comes with changes in my_compassion, for every provider:</p>
+<ul class="simple">
+<li>the update-card page pays arrears with the new card, which then
+replaces the group’s card;</li>
+<li>with nothing due, the page saves a card without a payment only with a
+provider that can (PayU cannot), and otherwise says so;</li>
+<li>a group takes a card only of its sponsor, in its company and at its
+payment mode’s provider;</li>
+<li>an off-session charge decides on what its own send returned, not on a
+state a provider notification set since.</li>
+</ul>
 <p><strong>Table of contents</strong></p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
