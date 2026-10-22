@@ -20,14 +20,36 @@ from odoo.addons.website_sale.controllers.payment import PaymentPortal
 
 class MyCompassionWebsiteSale(Delivery):
     @http.route()
+    def shop_payment_validate(self, sale_order_id=None, **post):
+        """The landing route of the gift package's payment form validates the
+        donation order of the session, wherever it is reached: /shop routes
+        resolve to the website of the host, which may have a cart of its own
+        for the donor (/my2 is served on any domain)."""
+        if sale_order_id is None:
+            order = self._my2_last_order()
+            if order.website_id.is_my_compassion:
+                sale_order_id = order.id
+        return super().shop_payment_validate(sale_order_id=sale_order_id, **post)
+
+    @http.route()
     def shop_payment_confirmation(self, **post):
-        """On a MyCompassion portal website, send the donor to the branded
-        thank-you page instead of the sales order summary. The gift/donation
-        flow is the only path that reaches this route on such a website.
-        """
-        if request.website.is_my_compassion:
+        """A MyCompassion order is confirmed on the branded thank-you page,
+        whatever the host, instead of the sales order summary."""
+        if (
+            request.website.is_my_compassion
+            or self._my2_last_order().website_id.is_my_compassion
+        ):
             return request.redirect("/my2/gifts/thankyou")
         return super().shop_payment_confirmation(**post)
+
+    @staticmethod
+    def _my2_last_order():
+        return (
+            request.env["sale.order"]
+            .sudo()
+            .browse(request.session.get("sale_last_order_id"))
+            .exists()
+        )
 
     def _check_cart(self, order_sudo):
         """A MyCompassion cart is paid on the gift package only, never through

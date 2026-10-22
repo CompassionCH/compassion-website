@@ -971,6 +971,82 @@ class TestPublicFundDonation(HttpCase):
         session[PaymentPostProcessing.MONITORED_TX_ID_KEY] = tx.id
         http.root.session_store.save(session)
 
+    def _land_on_another_host(self):
+        """Follow the payment form's landing route on the host of another
+        website of the domain (/my2 is served on any domain, /shop routes
+        resolve to the website of the host): the page the donor ends on."""
+        other_website = self.env["website"].search(
+            [("id", "!=", self.website.id), ("is_my_compassion", "=", False)], limit=1
+        )
+        other_website.domain = "http://other.example.org"
+        # requests files cookies under the Host header: the session goes along
+        # explicitly.
+        cookies = "; ".join(f"{c.name}={c.value}" for c in self.opener.cookies)
+        headers = {"Host": "other.example.org", "Cookie": cookies}
+        validate = self.url_open(
+            "/shop/payment/validate", headers=headers, allow_redirects=False
+        )
+        self.assertEqual(validate.status_code, 303)
+        self.assertEqual(
+            urlparse(validate.headers["Location"]).path, "/shop/confirmation"
+        )
+        confirmation = self.url_open(
+            "/shop/confirmation", headers=headers, allow_redirects=False
+        )
+        self.assertEqual(confirmation.status_code, 303)
+        self.assertEqual(
+            urlparse(confirmation.headers["Location"]).path, "/my2/gifts/thankyou"
+        )
+        return self.url_open("/my2/gifts/thankyou")
+
+    def test_pending_payment_lands_on_the_thank_you_page_from_another_host(self):
+        self._add_fund()
+        self._give_email()
+        self._pay("pending")
+        page = self._land_on_another_host()
+        self.assertIn('action="/my2/gifts/thankyou/details"', page.text)
+
+    def test_refused_payment_lands_on_the_basket_from_another_host(self):
+        self._add_fund()
+        self._give_email()
+        self._pay("cancel")
+        page = self._land_on_another_host()
+        self.assertIn("payment_failed=1", page.url)
+        self.assertIn("Visitor Test Fund", page.text)
+
+    def test_paid_donation_lands_on_the_thank_you_page_from_another_host(self):
+        self._add_fund()
+        self._give_email()
+        self._pay("done")
+        page = self._land_on_another_host()
+        self.assertIn("/my2/gifts/thankyou", page.url)
+        self.assertNotIn("Your payment did not go through", page.text)
+
+    def test_logged_in_donor_with_another_cart_lands_on_the_thank_you_page(self):
+        """The website of the host has a cart of its own for the donor: the
+        landing route still validates the donation."""
+        user = self._portal_user("donor-with-a-shop-cart@example.org")
+        self._add_fund()
+        cart = self._cart()
+        self.url_open("/my2/gift-package")
+        other_website = self.env["website"].search(
+            [("id", "!=", self.website.id), ("is_my_compassion", "=", False)], limit=1
+        )
+        shop_cart = self.env["sale.order"].create(
+            {
+                "partner_id": user.partner_id.id,
+                "website_id": other_website.id,
+                "company_id": other_website.company_id.id,
+                "order_line": [(0, 0, {"product_id": self._shop_product().id})],
+            }
+        )
+        self._pay("pending")
+        page = self._land_on_another_host()
+        self.assertIn("/my2/gifts/thankyou", page.url)
+        self.assertNotIn("/my2/gift-package", page.url)
+        self.assertEqual(cart.transaction_ids.state, "pending")
+        self.assertEqual(shop_cart.state, "draft")
+
     def test_status_page_of_a_pending_payment(self):
         """A visitor's status page keeps polling while the payment is pending
         (BLIK, 3DS): the post-processing must not leave the request anything
