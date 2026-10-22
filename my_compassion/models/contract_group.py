@@ -267,15 +267,20 @@ class ContractGroup(models.Model):
         # durable before the provider call: whatever happens next, this
         # row blocks a second automatic charge of the invoice
         self._charge_cursor_commit()
+        sent_state = sent_message = None
         try:
             tx.with_context(
                 **self._digital_charge_context(invoice)
             )._send_payment_request()
+            # Decided on what the send returned: once it is committed, a
+            # provider notification may change the state, and its own
+            # handler then reports the outcome.
+            sent_state, sent_message = tx.state, tx.state_message
         finally:
             # the outcome - or the draft of an interrupted call - must
             # survive any exception raised while handling the response
             self._charge_cursor_commit()
-        if tx.state == "done":
+        if sent_state == "done":
             # no shopper session exists to poll the status page: reconcile
             # and notify the contracts on the spot
             try:
@@ -290,9 +295,9 @@ class ContractGroup(models.Model):
                     tx.reference,
                 )
                 self.env.ref("payment.cron_post_process_payment_tx")._trigger()
-        elif tx.state == "error":
+        elif sent_state == "error":
             invoice.line_ids.contract_id._on_digital_charge_failed(
-                invoice, tx.state_message
+                invoice, sent_message
             )
         # pending means the provider scheduled its own retries: the
         # terminal webhook settles the case
