@@ -119,7 +119,9 @@ class TestCardSubmission(PayuDigitalCase):
         self.assertEqual(first.state, "pending")
         self.assertEqual(
             second_answer["error"],
-            "This donation is already paid, or its payment is under way.",
+            "This donation is already paid, or its payment is still under way."
+            " Please wait for its outcome, or check with your bank, before"
+            " paying again.",
         )
         self.assertEqual(second.state, "cancel")
 
