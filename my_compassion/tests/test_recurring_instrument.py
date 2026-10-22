@@ -19,7 +19,7 @@ class TestRecurringInstrument(DigitalSeamCase):
 
     def _make_tx(self, contract, invoice, **extra):
         provider = contract.payment_mode_id.payment_provider_id
-        method = self.env["payment.method"].search([], limit=1)
+        method = self.env.ref("payment.payment_method_unknown")
         return self.env["payment.transaction"].create(
             {
                 "provider_id": provider.id,

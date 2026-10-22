@@ -122,7 +122,9 @@ class DigitalSeamCase(TransactionCase):
         invoice = contract._ensure_first_invoice()
         invoice.invoice_date_due = fields.Date.today() - timedelta(days=1)
         provider = contract.payment_mode_id.payment_provider_id
-        method = self.env["payment.method"].search([], limit=1)
+        # payment methods are inactive until a provider activates them: this
+        # one exists on every database
+        method = self.env.ref("payment.payment_method_unknown")
         token = self.env["payment.token"].create(
             {
                 "provider_id": provider.id,
