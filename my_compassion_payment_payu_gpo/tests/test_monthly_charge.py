@@ -1,9 +1,12 @@
+from contextlib import ExitStack
 from unittest.mock import patch
 
 from odoo import Command
 from odoo.tests import tagged
 
 from .common import PayuDigitalCase
+
+LOGGER = "odoo.addons.my_compassion_payment_payu_gpo.models.payment_transaction"
 
 
 @tagged("post_install", "-at_install")
@@ -14,6 +17,9 @@ class TestMonthlyCharge(PayuDigitalCase):
     def setUp(self):
         super().setUp()
         self.contract, self.invoice, _token = self._make_payu_chargeable_invoice()
+        self.start_dunning = self.registry[
+            "recurring.contract"
+        ]._on_digital_charge_failed
         self.handoffs = []
         patcher = patch.object(
             self.registry["recurring.contract"],
@@ -85,6 +91,43 @@ class TestMonthlyCharge(PayuDigitalCase):
         self._notify(tx, "CANCELED", totalAmount="1")
         self.assertEqual(tx.state, "error")
         self.assertFalse(self.handoffs)
+
+    def _refuse_with_a_failing_dunning(self, start_dunning, **patches):
+        """PayU refuses the pending charge, and the dunning fails."""
+        self._run_charge_cron(lambda tx: tx._set_pending())
+        tx = self.invoice.transaction_ids
+        contract_class = self.registry["recurring.contract"]
+        patches["_on_digital_charge_failed"] = start_dunning
+        with ExitStack() as stack:
+            for name, method in patches.items():
+                stack.enter_context(patch.object(contract_class, name, method))
+            stack.enter_context(self._bank_refuses_charges())
+            stack.enter_context(self.assertLogs(LOGGER, "ERROR"))
+            self._notify(tx, "CANCELED")
+        self.env.flush_all()
+        self.env.invalidate_all()
+        self.assertEqual(tx.state, "error")
+        # PayU delivers the notification again: nothing more happens
+        with self._bank_refuses_charges():
+            self._notify(tx, "CANCELED")
+        self.assertEqual(tx.state, "error")
+        return tx
+
+    def test_refusal_is_kept_when_the_dunning_setup_fails(self):
+        def no_configs(contracts):
+            raise RuntimeError("The fix-it configuration cannot be read.")
+
+        self._refuse_with_a_failing_dunning(
+            self.start_dunning, _my2_fixit_configs=no_configs
+        )
+
+    def test_writes_of_a_failing_dunning_are_undone(self):
+        def write_then_fail(contracts, invoice, reason):
+            contracts.partner_id.comment = "Dunning started"
+            raise RuntimeError("The dunning failed.")
+
+        self._refuse_with_a_failing_dunning(write_then_fail)
+        self.assertFalse(self.contract.partner_id.comment)
 
     def test_refusal_at_the_charge_is_handed_off_once(self):
         # PayU refuses the order at once: the charge hands it off, and the

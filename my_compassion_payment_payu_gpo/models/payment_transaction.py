@@ -5,9 +5,13 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+import logging
+
 from odoo import models
 
 from odoo.addons.payment_payu_gpo import const
+
+_logger = logging.getLogger(__name__)
 
 
 class PaymentTransaction(models.Model):
@@ -47,10 +51,27 @@ class PaymentTransaction(models.Model):
             for invoice in self.invoice_ids.filtered(
                 "line_ids.contract_id.group_id.payment_mode_id.payment_provider_id"
             ):
+                self._my2_start_dunning(invoice)
+        return res
+
+    def _my2_start_dunning(self, invoice):
+        """Hand the refused charge of invoice to its contracts' dunning.
+
+        A failure there must never undo the refusal: PayU would deliver the
+        notification again, into the same failure.
+        """
+        try:
+            with self.env.cr.savepoint():
                 invoice.line_ids.contract_id._on_digital_charge_failed(
                     invoice, self.state_message
                 )
-        return res
+        except Exception:
+            _logger.exception(
+                "Could not start the dunning of invoice %s after PayU refused"
+                " the charge %s. Staff must tell the sponsor.",
+                invoice.name,
+                self.reference,
+            )
 
     def _payu_gpo_buyer_names(self):
         """A payer known by email only (fast checkout, visitor donation) has
