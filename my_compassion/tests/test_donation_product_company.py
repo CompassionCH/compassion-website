@@ -80,6 +80,36 @@ class TestDonationProductCompany(TransactionCase):
             self.company_b.currency_id,
         )
 
+    def test_a_child_company_website_offers_its_parent_products(self):
+        """A country office under a regional company (Sverige under Compassion
+        Norden) gives to the products of its parent, not of a sibling."""
+        parent = self.env["res.company"].create({"name": "Regional Company"})
+        child, sibling = self.env["res.company"].create(
+            [
+                {"name": "Country Company", "parent_id": parent.id},
+                {"name": "Sibling Company", "parent_id": parent.id},
+            ]
+        )
+        website = self.env["website"].create(
+            {"name": "Country MyCompassion", "company_id": child.id}
+        )
+        products = self.env["product.template"]
+        for company in (parent, child, sibling):
+            product = products.create(
+                {
+                    "name": f"Fund Of {company.name}",
+                    "type": "service",
+                    "my_compassion_donation_type": "fund",
+                    "company_id": company.id,
+                }
+            )
+            product.with_company(child).activate_for_my_compassion = True
+            products |= product
+        self.assertEqual(
+            set(website._my2_donation_products([("id", "in", products.ids)])),
+            set(products[:2]),
+        )
+
 
 @tagged("post_install", "-at_install")
 class TestDonationProductPreMigration(TransactionCase):
