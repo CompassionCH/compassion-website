@@ -1,23 +1,18 @@
 from odoo.tests import tagged
 
-from odoo.addons.my_compassion.models.payment_transaction import (
-    PaymentTransaction as My2PaymentTransaction,
-)
-
+from ..models.payment_transaction import PaymentTransaction as BridgeTransaction
 from .common import PayuDigitalCase
 
 
 @tagged("post_install", "-at_install")
 class TestPaymentOutcome(PayuDigitalCase):
     def test_unconfirmed_payment_is_no_certain_refusal(self):
-        if not (
-            hasattr(My2PaymentTransaction, "_my2_refusal_is_certain")
-            and "payu_gpo_unconfirmed" in self.env["payment.transaction"]._fields
-        ):
-            self.skipTest(
-                "needs my_compassion's _my2_refusal_is_certain and"
-                " payment_payu_gpo's payu_gpo_unconfirmed"
-            )
+        # what the bridge's override calls with super()
+        below_the_bridge = super(
+            BridgeTransaction, self.registry["payment.transaction"]
+        )
+        if not hasattr(below_the_bridge, "_my2_refusal_is_certain"):
+            self.skipTest("needs my_compassion's _my2_refusal_is_certain")
         contract, invoice, _token = self._make_payu_chargeable_invoice()
         tx = self.env["payment.transaction"].create(
             {

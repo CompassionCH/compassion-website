@@ -80,7 +80,8 @@ class PaymentTransaction(models.Model):
 
         A failure there must never undo the refusal: PayU would deliver the
         notification again, into the same failure. A concurrent update is no
-        failure: Odoo replays the whole notification.
+        failure either, and is raised: Odoo replays the webhook request, and
+        the status-read cron reads the order again on its next run.
         """
         try:
             with self.env.cr.savepoint():

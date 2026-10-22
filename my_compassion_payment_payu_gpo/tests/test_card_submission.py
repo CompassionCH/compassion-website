@@ -4,14 +4,8 @@ from unittest.mock import patch
 from odoo import Command
 from odoo.tests import tagged
 
-from odoo.addons.my_compassion.models.payment_transaction import (
-    PaymentTransaction as My2PaymentTransaction,
-)
 from odoo.addons.payment import utils as payment_utils
 from odoo.addons.payment_payu_gpo.controllers.main import PayuGpoController
-from odoo.addons.payment_payu_gpo.models.payment_transaction import (
-    PaymentTransaction as PayuPaymentTransaction,
-)
 from odoo.addons.website.tools import MockRequest
 
 from .common import PayuDigitalCase
@@ -52,6 +46,12 @@ class TestCardSubmission(PayuDigitalCase):
                 "company_id": self.website.company_id.id,
                 "order_line": [Command.create({"product_id": product.id})],
             }
+        )
+
+    def _my_compassion_checks_card_submissions(self):
+        """What the bridge's override asks before calling the check."""
+        return hasattr(
+            self.registry["payment.transaction"], "_my2_check_card_submission"
         )
 
     def _draft(self, reference):
@@ -107,14 +107,8 @@ class TestCardSubmission(PayuDigitalCase):
             yield create_order
 
     def test_one_card_reaches_payu_per_order(self):
-        if not (
-            hasattr(PayuPaymentTransaction, "_payu_gpo_check_card_submission")
-            and hasattr(My2PaymentTransaction, "_my2_check_card_submission")
-        ):
-            self.skipTest(
-                "needs payment_payu_gpo's _payu_gpo_check_card_submission and"
-                " my_compassion's _my2_check_card_submission"
-            )
+        if not self._my_compassion_checks_card_submissions():
+            self.skipTest("needs my_compassion's _my2_check_card_submission")
         first = self._draft("payu-bridge-first-form")
         second = self._draft("payu-bridge-second-form")
         with self._payu_takes_the_card_of(first) as create_order:
@@ -132,7 +126,7 @@ class TestCardSubmission(PayuDigitalCase):
     def test_card_reaches_payu_without_the_order_check(self):
         """A my_compassion that does not check the card submission yet: the
         card route sends the card as usual."""
-        if hasattr(My2PaymentTransaction, "_my2_check_card_submission"):
+        if self._my_compassion_checks_card_submissions():
             self.skipTest("my_compassion checks the card submission")
         tx = self._draft("payu-bridge-only-form")
         with self._payu_takes_the_card_of(tx) as create_order:
