@@ -164,7 +164,7 @@ class TestPublicFundDonation(HttpCase):
         self.assertFalse(other_cart.order_line)
 
     def _shop_product(self):
-        """A product the shop of every website sells."""
+        """A product the shop of every website sells, under the fund minimum."""
         return self.env["product.product"].create(
             {
                 "name": "Shop Bookmark",
@@ -200,6 +200,18 @@ class TestPublicFundDonation(HttpCase):
         )
         self.assertNotEqual(other_cart, cart)
         self.assertEqual(other_cart.order_line.product_id, product)
+
+    def test_shop_routes_never_add_to_the_cart(self):
+        """Only the gift package's routes change a MyCompassion cart: a shop
+        product priced under the fund minimum would get around it."""
+        self._add_fund()
+        cart = self._cart()
+        product = self._shop_product()
+        with self.assertRaises(JsonRpcException):
+            self.make_jsonrpc_request(
+                "/shop/cart/update_json", {"product_id": product.id, "add_qty": 1}
+            )
+        self.assertEqual(cart.order_line.product_id, self.fund.product_variant_id)
 
     def test_an_archived_fund_is_refused(self):
         self.fund.active = False

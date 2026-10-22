@@ -27,14 +27,17 @@ class SaleOrder(models.Model):
             lambda line: not line.order_id.website_id.is_my_compassion
         )
 
-    def _update_cart_line_values(self, order_line, update_values):
-        """website_sale's cart never changes the quantity of a line of a
-        MyCompassion cart: the line would be priced again at the product's
-        list price instead of the amount the donor chose, possibly below the
-        minimum of the fund. The gift package edits the amount instead."""
-        if self.website_id.is_my_compassion and "product_uom_qty" in update_values:
-            raise UserError(_("Please change your donation in your gift package."))
-        return super()._update_cart_line_values(order_line, update_values)
+    def _cart_update(self, *args, **kwargs):
+        """Only the gift package's routes add or change the lines of a
+        MyCompassion cart (they write the lines themselves). website_sale's
+        cart routes would get around its checks: a new quantity prices a
+        donation at the product's list price again, and a shop product can
+        be priced under the fund minimum."""
+        if self.website_id.is_my_compassion:
+            raise UserError(
+                _("Please add and change your donations in your gift package.")
+            )
+        return super()._cart_update(*args, **kwargs)
 
     def _my2_payment_outcome(self):
         """What became of the payment of a donation order:
