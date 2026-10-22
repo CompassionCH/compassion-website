@@ -150,7 +150,8 @@ class TestPublicFundDonation(HttpCase):
                 "company_id": other_website.company_id.id,
             }
         )
-        self.url_open("/my2/gifts")
+        # A session the server keeps (a page alone does not store it).
+        self._add_fund()
         session = http.root.session_store.get(self.opener.cookies["session_id"])
         session["sale_order_id"] = other_cart.id
         http.root.session_store.save(session)
@@ -735,6 +736,30 @@ class TestPublicFundDonation(HttpCase):
         self.assertIn("/my2/gift-package", page.url)
         self.assertNotIn("payment_failed=1", page.url)
         self.assertNotIn('action="/my2/gifts/thankyou/details"', page.text)
+
+    def test_thank_you_page_reads_an_order_of_its_website(self):
+        """The session's last order may come from another website of the
+        domain (crowdfunding, events): it is neither thanked nor restored."""
+        other_website = self.env["website"].search(
+            [("id", "!=", self.website.id), ("is_my_compassion", "=", False)], limit=1
+        )
+        other_order = self.env["sale.order"].create(
+            {
+                "partner_id": other_website.partner_id.id,
+                "website_id": other_website.id,
+                "company_id": other_website.company_id.id,
+                "state": "sent",
+            }
+        )
+        # A session the server keeps (a page alone does not store it).
+        self._add_fund()
+        session = http.root.session_store.get(self.opener.cookies["session_id"])
+        session["sale_last_order_id"] = other_order.id
+        http.root.session_store.save(session)
+        page = self.url_open("/my2/gifts/thankyou", allow_redirects=False)
+        self.assertEqual(other_order.state, "sent")
+        self.assertEqual(page.status_code, 303)
+        self.assertTrue(page.headers["Location"].endswith("/my2/gifts"))
 
     def test_thank_you_after_a_done_payment(self):
         self._add_fund()

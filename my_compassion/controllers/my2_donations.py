@@ -532,10 +532,14 @@ class MyCompassionDonationsController(CustomerPortal):
         sitemap=False,
     )
     def my2_gifts_thank_you_page(self, **kwargs):
-        sale_order_id = request.session.get("sale_last_order_id")
-        if sale_order_id:
-            sale_order = request.env["sale.order"].sudo().browse(sale_order_id)
-            outcome = sale_order.exists()._my2_payment_outcome()
+        sale_order = (
+            request.env["sale.order"]
+            .sudo()
+            .browse(request.session.get("sale_last_order_id"))
+            .exists()
+        )
+        if sale_order.website_id == request.website:
+            outcome = sale_order._my2_payment_outcome()
             if outcome == "paid":
                 return request.render(
                     "my_compassion.my2_gifts_thank_you_page",
@@ -547,7 +551,7 @@ class MyCompassionDonationsController(CustomerPortal):
             # website_sale sends a cancelled or refused payment here too, and
             # empties the cart first (sale_reset): give the cart back and let
             # the donor try again instead of thanking them.
-            if sale_order.exists() and sale_order.state in ("draft", "sent"):
+            if sale_order.state in ("draft", "sent"):
                 if sale_order.state == "sent":
                     # website_sale only takes a draft quotation as a cart.
                     sale_order.action_draft()
