@@ -4431,6 +4431,26 @@ msgstr ""
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_update_card_page
+msgid ""
+"Nothing is due right now, and a\n"
+"                new card can only be saved with a payment. Your current card\n"
+"                stays in use for the next monthly payments."
+msgstr ""
+"Obecnie nie ma nic do zapłaty, a nową\n"
+"                kartę można zapisać tylko przy płatności. Twoja obecna karta\n"
+"                będzie nadal używana do kolejnych miesięcznych płatności."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/my2_update_card.py:0
+msgid ""
+"Nothing is due right now, and a new card can only be saved with a payment."
+msgstr ""
+"Obecnie nie ma nic do zapłaty, a nową kartę można zapisać tylko przy "
+"płatności."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_update_card_page
 msgid "Nothing is due today - your new card will only be verified."
 msgstr ""
 "Dzisiaj nie ma nic do zapłaty – Twoja nowa karta zostanie tylko "
@@ -4533,11 +4553,11 @@ msgstr "Obciąż zapisaną kartę"
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_payment_transaction__my2_card_update_group_id
 msgid ""
-"Contract group whose saved instrument this validation transaction replaces "
-"(the update-card page with nothing due)."
+"Contract group whose saved instrument this transaction replaces (the update-"
+"card page)."
 msgstr ""
 "Grupa umów, której zapisany instrument płatniczy zastępuje ta transakcja "
-"weryfikacyjna (strona aktualizacji karty bez kwoty do zapłaty)."
+"(strona aktualizacji karty)."
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_recurring_contract__my2_signup
