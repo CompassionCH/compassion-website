@@ -68,6 +68,24 @@ class TestMonthlyCharge(PayuDigitalCase):
         self._run_charge_cron(lambda tx: tx._set_pending())
         self.assertEqual(self.invoice.transaction_ids, tx)
 
+    def test_rejected_notification_is_for_staff(self):
+        # A notification about another amount or another order is rejected:
+        # the charge is in error for staff to check, and the sponsor is not
+        # asked to change a card that may have worked.
+        self._run_charge_cron(lambda tx: tx._set_pending())
+        tx = self.invoice.transaction_ids
+        tx.provider_reference = "PAYU-ORDER-A"
+        self._notify(tx, "CANCELED", orderId="PAYU-ORDER-B")
+        self.assertEqual(tx.state, "error")
+        self.assertFalse(self.handoffs)
+
+    def test_notification_of_another_amount_is_for_staff(self):
+        self._run_charge_cron(lambda tx: tx._set_pending())
+        tx = self.invoice.transaction_ids
+        self._notify(tx, "CANCELED", totalAmount="1")
+        self.assertEqual(tx.state, "error")
+        self.assertFalse(self.handoffs)
+
     def test_refusal_at_the_charge_is_handed_off_once(self):
         # PayU refuses the order at once: the charge hands it off, and the
         # notification that follows adds nothing.

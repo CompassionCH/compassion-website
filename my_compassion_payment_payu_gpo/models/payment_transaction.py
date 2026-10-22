@@ -27,17 +27,23 @@ class PaymentTransaction(models.Model):
 
         PayU answers a charge of a saved card only later, by notification
         or status read, both handled here: _charge_digital_invoice has long
-        returned by then. PayU repeats its notifications, so only the one
-        that moves the charge to error counts.
+        returned by then. PayU refuses a charge by cancelling its order, and
+        repeats its notifications: only the one that moves the charge to
+        error counts. A notification rejected as being about another order
+        or amount also errors the charge, which is for staff to check.
         """
-        was_error = self.state == "error"
-        res = super()._process_notification_data(notification_data)
-        if (
+        order = notification_data.get("order") or {}
+        refused = (
             self.provider_code == const.PROVIDER_CODE
             and self.operation == "offline"
-            and not was_error
-            and self.state == "error"
-        ):
+            and self.state != "error"
+            and order.get("status") in const.STATUS_MAPPING["canceled"]
+            and not self._payu_gpo_mismatch(
+                order, order.get("orderId"), self.amount, amount_key="totalAmount"
+            )
+        )
+        res = super()._process_notification_data(notification_data)
+        if refused and self.state == "error":
             for invoice in self.invoice_ids.filtered(
                 "line_ids.contract_id.group_id.payment_mode_id.payment_provider_id"
             ):
