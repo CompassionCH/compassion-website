@@ -80,6 +80,26 @@ class TestDonationProductCompany(TransactionCase):
             self.company_b.currency_id,
         )
 
+    def test_a_copy_keeps_the_suggested_amounts(self):
+        self.product.write(
+            {
+                "activate_for_my_compassion": True,
+                "my_compassion_donation_amount_low": 25.0,
+                "my_compassion_donation_amount_medium": 60.0,
+                "my_compassion_donation_amount_high": 120.0,
+            }
+        )
+        copy = self.product.copy()
+        self.assertEqual(
+            (
+                copy.activate_for_my_compassion,
+                copy.my_compassion_donation_amount_low,
+                copy.my_compassion_donation_amount_medium,
+                copy.my_compassion_donation_amount_high,
+            ),
+            (False, 25.0, 60.0, 120.0),
+        )
+
     def test_a_child_company_website_offers_its_parent_products(self):
         """A country office under a regional company (Sverige under Compassion
         Norden) gives to the products of its parent, not of a sibling."""
