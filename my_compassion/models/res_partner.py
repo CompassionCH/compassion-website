@@ -1,7 +1,8 @@
 import logging
 from datetime import timedelta
 
-from odoo import fields, models
+from odoo import _, fields, models
+from odoo.exceptions import UserError
 
 from .communication_job import NAMED_COMMUNICATION_MODELS
 
@@ -31,7 +32,9 @@ class Partner(models.Model):
     )
 
     # True if partner has ever been a sponsor.
-    is_sponsor = fields.Boolean(compute="_compute_is_sponsor", compute_sudo=True)
+    is_sponsor = fields.Boolean(
+        compute="_compute_is_sponsor", search="_search_is_sponsor", compute_sudo=True
+    )
 
     # True if partner has been a sponsor but is not currently sponsoring a child.
     is_ex_sponsor = fields.Boolean(compute="_compute_is_ex_sponsor", compute_sudo=True)
@@ -286,6 +289,31 @@ class Partner(models.Model):
                 or (c.state == "terminated" and not c.exit_communication_sent)
                 for c in partner_contracts
             )
+
+    def _search_is_sponsor(self, operator, value):
+        """Same rule as _compute_is_sponsor, evaluated on the contracts."""
+        if operator not in ("=", "!=") or not isinstance(value, bool):
+            raise UserError(
+                _("Operation not supported on is_sponsor: %(op)s %(value)s")
+                % {"op": operator, "value": value}
+            )
+        contracts = (
+            self.env["recurring.contract"]
+            .sudo()
+            .search(
+                [
+                    ("child_id", "!=", False),
+                    "|",
+                    ("state", "in", ["waiting", "mandate", "active"]),
+                    "&",
+                    ("state", "=", "terminated"),
+                    ("exit_communication_sent", "=", False),
+                ]
+            )
+        )
+        partner_ids = (contracts.partner_id | contracts.correspondent_id).ids
+        is_positive = (operator == "=") == value
+        return [("id", "in" if is_positive else "not in", partner_ids)]
 
     def _compute_is_ex_sponsor(self):
         """
