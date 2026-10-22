@@ -12,18 +12,12 @@ class PaymentTransaction(models.Model):
     _inherit = "payment.transaction"
 
     def _payu_gpo_card_is_recurring(self):
-        """A card saved for contract groups pays their monthly contributions:
-        scheduled recurring charges, registered as such at PayU and the bank.
-
-        These are the cards _my2_save_token_on_groups puts on the groups: of a
-        digital sponsorship's invoices, or of the update-card page.
+        """A card that becomes the card of contract groups pays their monthly
+        contributions: scheduled recurring charges, registered as such at
+        PayU and the bank. Any other saved card stays a card on file.
         """
         return bool(
-            self.my2_card_update_group_id
-            or self.invoice_ids.filtered(
-                "line_ids.contract_id.group_id.payment_mode_id.payment_provider_id"
-            )
-            or super()._payu_gpo_card_is_recurring()
+            self._my2_groups_taking_the_token() or super()._payu_gpo_card_is_recurring()
         )
 
     def _payu_gpo_buyer_names(self):

@@ -42,6 +42,22 @@ class TestRecurringCard(PayuDigitalCase):
         donation = self._transaction(contract, "payu-bridge-donation")
         self.assertFalse(donation._payu_gpo_card_is_recurring())
 
+    def test_card_the_group_does_not_take_is_on_file(self):
+        # An overdue invoice paid from the portal: the group keeps its card,
+        # so the new one is never charged monthly.
+        contract, invoice, _token = self._make_chargeable_invoice()
+        overdue_payment = self._transaction(
+            contract, "payu-bridge-overdue", invoice_ids=[Command.set(invoice.ids)]
+        )
+        self.assertFalse(overdue_payment._payu_gpo_card_is_recurring())
+        # The update-card page pays the same invoice with a card that
+        # replaces the group's.
+        _overrides, values = MyCompassionUpdateCard._update_card_tx_values(
+            contract.group_id, invoice
+        )
+        card_update = self._transaction(contract, "payu-bridge-arrears", **values)
+        self.assertTrue(card_update._payu_gpo_card_is_recurring())
+
     def test_update_card_page_saves_a_payu_card_with_a_payment(self):
         contract, invoice, _token = self._make_payu_chargeable_invoice()
         group = contract.group_id
