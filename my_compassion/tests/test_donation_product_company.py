@@ -515,9 +515,11 @@ class TestDonationProductWebsiteCompany(HttpCase):
 
     def test_a_donor_edits_a_cart_line(self):
         self._add(self.shared_fund, "low")
-        line = self.env["sale.order"].search(
-            [("partner_id", "=", self.donor.partner_id.id)]
-        ).order_line
+        line = (
+            self.env["sale.order"]
+            .search([("partner_id", "=", self.donor.partner_id.id)])
+            .order_line
+        )
         self.make_jsonrpc_request(
             "/my2/gifts/edit",
             {
