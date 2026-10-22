@@ -42,16 +42,18 @@ when its notification or status read moves the charge to error. Repeated
 notifications start nothing, nor does a notification that does not match
 the charge (the PayU module keeps it pending, for staff), nor a charge
 PayU cancelled because nobody captured it (automatic collection off on
-the point of sale): the card works. A dunning that fails is logged for
-staff and never undoes the refusal.
+the point of sale): the card works, and an error in the log tells staff
+to enable automatic collection and charge the invoice again. A dunning
+that fails is logged for staff and never undoes the refusal.
 
-A payment PayU never confirmed is no certain refusal: my_compassion then
-does not give the basket back to be paid again, as the payment may have
-been made.
+With my_compassion's ``_my2_refusal_is_certain``, a payment PayU never
+confirmed is no certain refusal: my_compassion then does not give the
+basket back to be paid again, as the payment may have been made.
 
-A MyCompassion order takes one card payment at a time. Before PayU's
-card route sends a card, my_compassion refuses it while another payment
-of the order may still succeed (two payment forms may each have made a
+With my_compassion's ``_my2_check_card_submission`` check, a
+MyCompassion order takes one card payment at a time. Before PayU's card
+route sends a card, my_compassion refuses it while another payment of
+the order may still succeed (two payment forms may each have made a
 draft); the route then cancels the draft and shows the reason.
 
 This module comes with changes in my_compassion, for every provider:
