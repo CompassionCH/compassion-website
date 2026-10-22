@@ -288,9 +288,13 @@ class MyCompassionDonationsController(CustomerPortal):
             }
             if request.env.user._is_public():
                 # The cart's partner comes from an email anyone may type: its
-                # saved cards are never offered to a visitor (and a saved card
-                # sent all the same is refused, see MyCompassionShopPayment).
+                # saved cards are never offered to a visitor, nor is saving
+                # theirs (a saved card or a request to save one sent all the
+                # same is refused or ignored, see MyCompassionShopPayment).
                 payment_form_values["tokens_sudo"] = request.env["payment.token"].sudo()
+                payment_form_values["show_tokenize_input_mapping"] = dict.fromkeys(
+                    payment_form_values["show_tokenize_input_mapping"], False
+                )
 
         return request.render(
             "my_compassion.my2_gift_package_page",

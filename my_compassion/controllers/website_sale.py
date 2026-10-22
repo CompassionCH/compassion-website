@@ -123,6 +123,7 @@ class MyCompassionShopPayment(PaymentPortal, SalePaymentPortal):
         order_sudo = self._my2_order(order_id, access_token)
         if order_sudo.website_id.is_my_compassion:
             self._my2_check_new_payment(order_sudo, **kwargs)
+            kwargs = self._my2_payment_kwargs(kwargs)
         return super().shop_payment_transaction(order_id, access_token, **kwargs)
 
     @http.route()
@@ -136,6 +137,7 @@ class MyCompassionShopPayment(PaymentPortal, SalePaymentPortal):
                     _("Please pay your donation from your gift package.")
                 )
             self._my2_check_new_payment(order_sudo, **kwargs)
+            kwargs = self._my2_payment_kwargs(kwargs)
         return super().portal_order_transaction(order_id, access_token, **kwargs)
 
     def _my2_order(self, order_id, access_token):
@@ -145,6 +147,15 @@ class MyCompassionShopPayment(PaymentPortal, SalePaymentPortal):
             return self._document_check_access("sale.order", order_id, access_token)
         except (AccessError, MissingError):
             return request.env["sale.order"].sudo()
+
+    @staticmethod
+    def _my2_payment_kwargs(kwargs):
+        """The payment values of a MyCompassion order, as created: a visitor's
+        card is never saved (the order's partner comes from an email anyone
+        may type, and may later be someone's account)."""
+        if request.env.user._is_public():
+            return {**kwargs, "tokenization_requested": False}
+        return kwargs
 
     def _my2_check_new_payment(self, order_sudo, token_id=None, **kwargs):
         """Before a new payment of a MyCompassion order:

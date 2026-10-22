@@ -566,6 +566,49 @@ class TestPublicFundDonation(HttpCase):
         self.assertEqual(user.partner_id, own_partner)
         self.assertFalse(donor.user_ids)
 
+    def _card_saving_provider(self):
+        """A published test provider that saves cards, with a payment method
+        that may be saved."""
+        method = self.env.ref("payment.payment_method_unknown")
+        provider = self.env["payment.provider"].create(
+            {
+                "name": "Card Saving Provider",
+                "code": "none",
+                "state": "test",
+                "is_published": True,
+                "allow_tokenization": True,
+                "company_id": self.website.company_id.id,
+                "payment_method_ids": [(6, 0, method.ids)],
+            }
+        )
+        method.active = True
+        return provider
+
+    def test_a_visitor_card_is_never_saved(self):
+        """The order's partner was created from an email anyone may type, and
+        may later be someone's account: a visitor is not offered to save the
+        card, and a request to save it is ignored. A logged-in donor keeps
+        the option."""
+        provider = self._card_saving_provider()
+        self._add_fund()
+        self._give_email()
+        cart = self._cart()
+        page = self.url_open("/my2/gift-package")
+        self.assertIn("o_payment_form", page.text)
+        self.assertNotIn('name="o_payment_tokenize_checkbox"', page.text)
+        self.make_jsonrpc_request(
+            f"/shop/payment/transaction/{cart.id}",
+            self._payment_values(
+                cart, provider_id=provider.id, tokenization_requested=True
+            ),
+        )
+        self.assertEqual(len(cart.transaction_ids), 1)
+        self.assertFalse(cart.transaction_ids.tokenize)
+        self._portal_user("card-saver@example.org")
+        self._add_fund()
+        page = self.url_open("/my2/gift-package")
+        self.assertIn('name="o_payment_tokenize_checkbox"', page.text)
+
     def test_visitor_never_sees_or_uses_saved_cards(self):
         self._add_fund()
         self._give_email()
