@@ -10,6 +10,7 @@ from psycopg2.errors import SerializationFailure
 
 from odoo import SUPERUSER_ID, api, fields, http
 from odoo.exceptions import UserError
+from odoo.modules.migration import load_script
 from odoo.tests import tagged
 from odoo.tests.common import (
     TEST_CURSOR_COOKIE_NAME,
@@ -1737,3 +1738,40 @@ class TestConcurrentPayments(TransactionCase):
         ):
             second.browse(second_id)._my2_check_card_submission()
         self.second.rollback()
+
+
+@tagged("post_install", "-at_install")
+class TestEmailUnverifiedPostMigration(TransactionCase):
+    """The post-migration to 18.0.1.0.29 flags the partners the fast checkout
+    created from a visitor's email before my2_email_unverified existed."""
+
+    def test_placeholder_partners_without_an_account_are_flagged(self):
+        Partner = self.env["res.partner"]
+        placeholder = {
+            "lastname": Partner.MY2_PLACEHOLDER_NAME,
+            "firstname": False,
+            "my2_name_placeholder": True,
+        }
+        waiting = Partner.create({**placeholder, "email": "waiting@example.org"})
+        with_account = Partner.create({**placeholder, "email": "account@example.org"})
+        self.env["res.users"].with_context(no_reset_password=True).create(
+            {
+                "login": "account@example.org",
+                "partner_id": with_account.id,
+                "groups_id": [(6, 0, [self.env.ref("base.group_portal").id])],
+            }
+        )
+        named = Partner.create({"name": "Named Sponsor", "email": "named@example.org"})
+        partners = waiting | with_account | named
+        self.assertFalse(any(partners.mapped("my2_email_unverified")))
+        self.env.flush_all()
+        migrate = load_script(
+            "my_compassion/migrations/18.0.1.0.29/post-email-unverified.py",
+            "my_compassion_post_email_unverified_18_0_1_0_29",
+        ).migrate
+        for _run in range(2):  # a second run changes nothing
+            migrate(self.env.cr, "18.0.1.0.28")
+            partners.invalidate_recordset(["my2_email_unverified"])
+            self.assertEqual(
+                partners.mapped("my2_email_unverified"), [True, False, False]
+            )
