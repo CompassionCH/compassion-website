@@ -31,6 +31,15 @@ class Partner(models.Model):
         " the sponsor by name waits for a real name to clear this flag.",
     )
 
+    my2_email_unverified = fields.Boolean(
+        string="Email not verified",
+        readonly=True,
+        copy=False,
+        help="The partner was created from an email a visitor typed (a donation"
+        " without an account, a fast checkout), which nobody has verified. Signup"
+        " never links an account to it; giving a name does not change that.",
+    )
+
     # True if partner has ever been a sponsor.
     is_sponsor = fields.Boolean(
         compute="_compute_is_sponsor", search="_search_is_sponsor", compute_sudo=True

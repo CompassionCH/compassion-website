@@ -49,13 +49,14 @@ class ResUsers(models.Model):
         old_partner = user.partner_id
         selected_partner = old_partner  # By default, keep the current partner
 
-        # Check for other partners with the same email, except a partner still
-        # known by a placeholder name: a visitor created it from an email they
-        # typed (a donation, a fast checkout), which nobody verified.
+        # Check for other partners with the same email, except one a visitor
+        # created from an email they typed (a donation, a fast checkout), which
+        # nobody verified - named since or not.
         partners = self.env["res.partner"].search(
             [
                 ("email", "=", email),
                 ("id", "!=", old_partner.id),
+                ("my2_email_unverified", "=", False),
                 ("my2_name_placeholder", "=", False),
             ]
         )

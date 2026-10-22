@@ -353,6 +353,7 @@ class MyCompassionDonationsController(CustomerPortal):
                             "lastname": request.env["res.partner"].MY2_PLACEHOLDER_NAME,
                             "firstname": False,
                             "my2_name_placeholder": True,
+                            "my2_email_unverified": True,
                             "email": normalized,
                             "lang": request.lang.code,
                             "country_id": company.country_id.id,

@@ -441,6 +441,44 @@ class TestPublicFundDonation(HttpCase):
         self.assertEqual(user.partner_id, own_partner)
         self.assertFalse(donor.user_ids)
 
+    def test_signup_never_takes_a_named_visitor_donor(self):
+        """Giving a name on the thank-you page needs no payment, and does not
+        verify the email either: the donor is still never relinked."""
+        self._add_fund()
+        self._give_email(email="victim@example.org")
+        donor = self._cart().partner_id
+        self.assertTrue(donor.my2_email_unverified)
+        self._pay("pending")
+        page = self.url_open("/my2/gifts/thankyou")
+        self.url_open(
+            "/my2/gifts/thankyou/details",
+            data={
+                "csrf_token": CSRF_RE.search(page.text).group(1),
+                "firstname": "Eve",
+                "lastname": "Mallory",
+            },
+        )
+        self.assertFalse(donor.my2_name_placeholder)
+        self.assertTrue(donor.my2_email_unverified)
+        user = (
+            self.env["res.users"]
+            .with_context(no_reset_password=True)
+            .create(
+                {
+                    "name": "Victim",
+                    "login": "victim@example.org",
+                    "email": "victim@example.org",
+                    "groups_id": [(6, 0, [self.env.ref("base.group_portal").id])],
+                }
+            )
+        )
+        own_partner = user.partner_id
+        self.env["res.users"]._find_and_replace_partner_async(
+            user.id, "victim@example.org"
+        )
+        self.assertEqual(user.partner_id, own_partner)
+        self.assertFalse(donor.user_ids)
+
     def test_visitor_never_sees_or_uses_saved_cards(self):
         self._add_fund()
         self._give_email()
