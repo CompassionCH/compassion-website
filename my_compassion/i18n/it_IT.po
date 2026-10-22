@@ -1304,6 +1304,7 @@ msgstr "Manca la configurazione della comunicazione."
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__company_id
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__company_id
 msgid "Company"
 msgstr "Azienda"
 
@@ -1668,6 +1669,7 @@ msgstr "Disabilitato"
 #: model:ir.model.fields,field_description:my_compassion.field_my2_website_route__display_name
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__display_name
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard_step__display_name
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__display_name
 msgid "Display Name"
 msgstr "Visualizza Nome"
 
@@ -2324,6 +2326,7 @@ msgstr "Non sono iscritto a scuola"
 #: model:ir.model.fields,field_description:my_compassion.field_my2_website_route__id
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__id
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard_step__id
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__id
 msgid "ID"
 msgstr "ID"
 
@@ -4768,6 +4771,7 @@ msgstr "Data di ordinamento web"
 #. module: my_compassion
 #: model:ir.model,name:my_compassion.model_website
 #: model:ir.model.fields,field_description:my_compassion.field_compassion_child__website_id
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__website_id
 msgid "Website"
 msgstr "Sito Web"
 
@@ -5498,3 +5502,127 @@ msgid ""
 msgstr ""
 "Il donatore non ha ancora indicato il suo nome: questa comunicazione lo "
 "attende."
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__attempts
+msgid "Attempts"
+msgstr "Tentativi"
+
+#. module: my_compassion
+#: model:ir.model,name:my_compassion.model_partner_communication_job
+msgid "Communication Job"
+msgstr "Lavoro di comunicazione"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__ip_address
+msgid "Ip Address"
+msgstr "Indirizzo IP"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_website__my2_min_donation_amount
+msgid "Minimum Donation to a Fund"
+msgstr "Donazione minima a un fondo"
+
+#. module: my_compassion
+#: model:ir.model,name:my_compassion.model_my2_payment_attempt_counter
+msgid "MyCompassion visitor payment attempts per IP"
+msgstr "MyCompassion: tentativi di pagamento dei visitatori per indirizzo IP"
+
+#. module: my_compassion
+#: model:ir.actions.server,name:my_compassion.cron_archive_abandoned_donors_ir_actions_server
+msgid "MyCompassion: archive abandoned visitor donors"
+msgstr ""
+"MyCompassion: archivia i donatori delle donazioni abbandonate dei visitatori"
+
+#. module: my_compassion
+#: model:ir.model.constraint,message:my_compassion.constraint_my2_payment_attempt_counter_website_ip_unique
+msgid "One counter per website and IP address."
+msgstr "Un solo contatore per sito web e indirizzo IP."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/sale_order.py:0
+msgid "Payment is already being processed."
+msgstr "Il pagamento è già in corso di elaborazione."
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_website__my2_max_payment_attempts_per_ip
+msgid ""
+"Payments visitors may start on this website from one IP address within the "
+"window below, all carts and sessions together; 0 for no limit. Card testers "
+"try stolen cards one after the other on public donation pages."
+msgstr ""
+"Numero di pagamenti che i visitatori possono avviare su questo sito da uno "
+"stesso indirizzo IP nella finestra qui sotto, considerando insieme tutti i "
+"carrelli e tutte le sessioni; 0 per nessun limite. Chi testa carte rubate le"
+" prova una dopo l'altra sulle pagine di donazione pubbliche."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/sale_order.py:0
+msgid "Please add and change your donations in your gift package."
+msgstr "Aggiungi e modifica le tue donazioni nel tuo carrello per i regali."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/website_sale.py:0
+msgid "Please give your email before paying."
+msgstr "Inserisci il tuo indirizzo e-mail prima di pagare."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/website_sale.py:0
+msgid "Please pay your donation from your gift package."
+msgstr "Paga la tua donazione dal tuo carrello per i regali."
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_website__my2_min_donation_amount
+msgid ""
+"Smallest amount, in the currency of the website's company, a donor may give "
+"to a fund. Card testers try stolen cards with tiny payments on public "
+"donation pages."
+msgstr ""
+"Importo minimo, nella valuta dell'azienda del sito, che un donatore può "
+"donare a un fondo. Chi testa carte rubate le prova con pagamenti minimi "
+"sulle pagine di donazione pubbliche."
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_res_partner__my2_name_placeholder
+#: model:ir.model.fields,help:my_compassion.field_res_users__my2_name_placeholder
+msgid ""
+"The partner was created by a fast checkout or a visitor's donation before "
+"its sponsor gave their name. Everything that greets the sponsor by name "
+"waits for a real name to clear this flag."
+msgstr ""
+"Il partner è stato creato da un'iscrizione rapida o dalla donazione di un "
+"visitatore prima che il sostenitore desse il suo nome. Tutto ciò che si "
+"rivolge al sostenitore per nome attende che un nome reale tolga questo "
+"indicatore."
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_website__my2_payment_attempts_window
+msgid "The window of the visitor payment attempts per IP address."
+msgstr ""
+"La finestra temporale in cui si contano i tentativi di pagamento dei "
+"visitatori per indirizzo IP."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/sale_order.py:0
+msgid "This donation is already paid, or its payment is under way."
+msgstr "Questa donazione è già stata pagata, oppure il pagamento è in corso."
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_website__my2_payment_attempts_window
+msgid "Visitor Payment Attempts Window (minutes)"
+msgstr "Finestra dei tentativi di pagamento dei visitatori (minuti)"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_website__my2_max_payment_attempts_per_ip
+msgid "Visitor Payment Attempts per IP"
+msgstr "Tentativi di pagamento dei visitatori per indirizzo IP"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__window_start
+msgid "Window Start"
+msgstr "Inizio della finestra"
