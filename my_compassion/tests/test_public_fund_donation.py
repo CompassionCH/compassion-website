@@ -1217,14 +1217,32 @@ class TestConcurrentPayments(TransactionCase):
         self.addCleanup(self.second.close)
 
     def _remove_committed_records(self):
+        """Through the ORM, so that the order's messages and followers go too."""
         with self.registry.cursor() as cr:
-            cr.execute(
-                "DELETE FROM payment_transaction WHERE id IN (SELECT transaction_id"
-                " FROM sale_order_transaction_rel WHERE sale_order_id = %s)",
-                [self.order_id],
-            )
-            cr.execute("DELETE FROM sale_order WHERE id = %s", [self.order_id])
-            cr.execute("DELETE FROM payment_provider WHERE id = %s", [self.provider_id])
+            env = api.Environment(cr, SUPERUSER_ID, {})
+            order = env["sale.order"].browse(self.order_id)
+            order.transaction_ids.unlink()
+            order.unlink()
+            env["payment.provider"].browse(self.provider_id).unlink()
+        self._assert_nothing_left()
+
+    def _assert_nothing_left(self):
+        """The fixtures were committed: nothing of them may stay behind."""
+        with self.registry.cursor() as cr:
+            for query in (
+                "SELECT count(*) FROM sale_order WHERE id = %(order)s",
+                "SELECT count(*) FROM sale_order_transaction_rel"
+                " WHERE sale_order_id = %(order)s",
+                "SELECT count(*) FROM payment_provider WHERE id = %(provider)s",
+                "SELECT count(*) FROM mail_message"
+                " WHERE model = 'sale.order' AND res_id = %(order)s",
+                "SELECT count(*) FROM mail_followers"
+                " WHERE res_model = 'sale.order' AND res_id = %(order)s",
+            ):
+                cr.execute(
+                    query, {"order": self.order_id, "provider": self.provider_id}
+                )
+                self.assertEqual(cr.fetchone()[0], 0, query)
 
     def _pay(self, cr):
         """What the payment routes do: the check, then the transaction - left
