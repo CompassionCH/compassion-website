@@ -118,21 +118,28 @@ class MyCompassionShopPayment(PaymentPortal, SalePaymentPortal):
         - for a visitor, only for the donor their session gave at the email
           step: not before it, nor from another session holding the order's
           access token;
-        - for a visitor, never a saved card: the order's partner was created
-          from an email anyone may type, and may later be someone's account -
-          their cards are theirs. The gift package shows a visitor no saved
-          card; this refuses one sent all the same;
+        - a saved card of the user's own (commercial) partner only - never one
+          for a visitor: the order's partner was created from an email anyone
+          may type, and may later be someone's account - their cards are
+          theirs. The gift package shows a visitor no saved card; this refuses
+          one sent all the same;
         - for a visitor, a few payment attempts per order and hour only, and
           a few per client IP on the website, all carts and sessions together
           (my2.payment.attempt.counter).
         """
         order_sudo._my2_lock_for_new_payment()
+        if token_id:
+            token = request.env["payment.token"].sudo().browse(int(token_id)).exists()
+            owner = token.partner_id.commercial_partner_id
+            if (
+                request.env.user._is_public()
+                or owner != request.env.user.partner_id.commercial_partner_id
+            ):
+                raise ValidationError(_("Please enter your card details."))
         if not request.env.user._is_public():
             return
         if request.session.get("my2_donor_partner_id") != order_sudo.partner_id.id:
             raise ValidationError(_("Please give your email before paying."))
-        if token_id:
-            raise ValidationError(_("Please enter your card details."))
         recent = order_sudo.transaction_ids.filtered(
             lambda t: t.create_date > fields.Datetime.now() - timedelta(hours=1)
         )

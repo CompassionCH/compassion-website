@@ -525,6 +525,34 @@ class TestPublicFundDonation(HttpCase):
             **values,
         }
 
+    def _assert_refused(self, route, params, message, **kwargs):
+        """route refuses the request with message (a UserError or a
+        ValidationError, which the HTTP layer logs)."""
+        with (
+            self.assertLogs("odoo.http", level="WARNING") as logs,
+            self.assertRaises(JsonRpcException),
+        ):
+            self.make_jsonrpc_request(route, params, **kwargs)
+        self.assertIn(message, "\n".join(logs.output))
+
+    def _portal_user(self, login):
+        """A MyCompassion account, logged in; its password is its login."""
+        user = (
+            self.env["res.users"]
+            .with_context(no_reset_password=True)
+            .create(
+                {
+                    "name": login.split("@")[0],
+                    "login": login,
+                    "email": login,
+                    "password": login,
+                    "groups_id": [(6, 0, [self.env.ref("base.group_portal").id])],
+                }
+            )
+        )
+        self.authenticate(login, login)
+        return user
+
     def test_gift_package_pays_through_the_shop_routes(self):
         self._add_fund()
         self._give_email()
@@ -578,6 +606,23 @@ class TestPublicFundDonation(HttpCase):
                 f"/shop/payment/transaction/{cart.id}", self._payment_values(cart)
             )
         self.assertEqual(len(cart.transaction_ids), 1)
+
+    def test_a_user_never_pays_with_another_partners_card(self):
+        """A logged-in user holding the access token of someone else's
+        MyCompassion order may not pay it with that person's saved card."""
+        self._add_fund()
+        self._give_email()
+        cart = self._cart()
+        token = self._saved_card(cart.partner_id)
+        self._portal_user("someone-else@example.org")
+        self._assert_refused(
+            f"/shop/payment/transaction/{cart.id}",
+            self._payment_values(
+                cart, flow="token", token_id=token.id, provider_id=token.provider_id.id
+            ),
+            "Please enter your card details.",
+        )
+        self.assertFalse(cart.transaction_ids)
 
     def test_portal_order_payment_is_refused_to_a_visitor(self):
         """sale's own payment route takes any amount and a saved card of the
