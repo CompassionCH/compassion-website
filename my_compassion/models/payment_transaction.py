@@ -15,8 +15,8 @@ class PaymentTransaction(models.Model):
         "recurring.contract.group",
         string="Card Update Group",
         readonly=True,
-        help="Contract group whose saved instrument this validation"
-        " transaction replaces (the update-card page with nothing due).",
+        help="Contract group whose saved instrument this transaction replaces"
+        " (the update-card page).",
     )
     my2_cardholder_name = fields.Char(
         string="Cardholder Name",

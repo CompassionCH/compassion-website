@@ -136,7 +136,8 @@ class MyCompassionUpdateCard(payment_portal.PaymentPortal):
     @staticmethod
     def _update_card_tx_values(group, invoices):
         """Transaction parameters of the card replacement: a payment of
-        the due invoices, or a card validation when nothing is due.
+        the due invoices, or a card validation when nothing is due. Either
+        way the transaction names the group whose card it replaces.
         Returns (kwargs overrides, custom create values)."""
         if invoices:
             invoices._my2_serialize_charge_attempts()
@@ -146,7 +147,10 @@ class MyCompassionUpdateCard(payment_portal.PaymentPortal):
                     "amount": sum(invoices.mapped("amount_residual")),
                     "is_validation": False,
                 },
-                {"invoice_ids": [Command.set(invoices.ids)]},
+                {
+                    "invoice_ids": [Command.set(invoices.ids)],
+                    "my2_card_update_group_id": group.id,
+                },
             )
         return (
             {"amount": None, "currency_id": None, "is_validation": True},

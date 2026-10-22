@@ -65,3 +65,30 @@ class TestRecurringInstrument(DigitalSeamCase):
         self.assertEqual(due["amount"], invoice.amount_residual)
         self.assertEqual(nothing_due["mode"], "validation")
         self.assertEqual(nothing_due["amount"], 0)
+
+    def test_update_card_payment_replaces_the_card(self):
+        """With arrears, the new card pays them and replaces the group's
+        card: the next monthly charges use it."""
+        contract, invoice, token = self._make_chargeable_invoice()
+        group = contract.group_id
+        overrides, create_values = MyCompassionUpdateCard._update_card_tx_values(
+            group, group._due_digital_invoices()
+        )
+        new_card = token.copy({"provider_ref": "update-card-new-card"})
+        tx = self.env["payment.transaction"].create(
+            {
+                "provider_id": token.provider_id.id,
+                "payment_method_id": token.payment_method_id.id,
+                "partner_id": group.partner_id.id,
+                "reference": "update-card-arrears",
+                "amount": overrides["amount"],
+                "currency_id": overrides["currency_id"],
+                "operation": "online_direct",
+                "token_id": new_card.id,
+                **create_values,
+            }
+        )
+        tx._set_done()
+        tx._post_process()
+        self.assertIn(invoice.payment_state, ("paid", "in_payment"))
+        self.assertEqual(group.payment_token_id, new_card)
