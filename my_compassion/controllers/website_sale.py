@@ -89,7 +89,9 @@ class MyCompassionShopPayment(PaymentPortal, SalePaymentPortal):
           from an email anyone may type, and may later be someone's account -
           their cards are theirs. The gift package shows a visitor no saved
           card; this refuses one sent all the same;
-        - for a visitor, a few payment attempts per order and hour only.
+        - for a visitor, a few payment attempts per order and hour only, and
+          a few per client IP on the website, all carts and sessions together
+          (my2.payment.attempt.counter).
         """
         if order_sudo._my2_payment_outcome() == "paid":
             raise UserError(
@@ -102,7 +104,10 @@ class MyCompassionShopPayment(PaymentPortal, SalePaymentPortal):
         recent = order_sudo.transaction_ids.filtered(
             lambda t: t.create_date > fields.Datetime.now() - timedelta(hours=1)
         )
-        if len(recent) >= MAX_VISITOR_PAYMENT_ATTEMPTS:
+        counter = request.env["my2.payment.attempt.counter"].sudo()
+        if len(recent) >= MAX_VISITOR_PAYMENT_ATTEMPTS or not (
+            counter._my2_count_attempt(order_sudo, request.httprequest.remote_addr)
+        ):
             raise ValidationError(
                 _("Too many payment attempts. Please try again later.")
             )

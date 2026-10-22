@@ -49,6 +49,19 @@ class Website(models.Model):
         " may give to a fund. Card testers try stolen cards with tiny payments"
         " on public donation pages.",
     )
+    my2_max_payment_attempts_per_ip = fields.Integer(
+        "Visitor Payment Attempts per IP",
+        default=10,
+        help="Payments visitors may start on this website from one IP address"
+        " within the window below, all carts and sessions together; 0 for no"
+        " limit. Card testers try stolen cards one after the other on public"
+        " donation pages.",
+    )
+    my2_payment_attempts_window = fields.Integer(
+        "Visitor Payment Attempts Window (minutes)",
+        default=60,
+        help="The window of the visitor payment attempts per IP address.",
+    )
 
     def sale_get_order(self, force_create=False):
         """On a MyCompassion website, only a draft cart of this website (and

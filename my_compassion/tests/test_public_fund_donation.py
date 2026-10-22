@@ -3,6 +3,7 @@ import re
 import time
 from datetime import timedelta
 from unittest.mock import patch
+from urllib.parse import urlparse
 
 from odoo import fields, http
 from odoo.tests import tagged
@@ -12,6 +13,7 @@ from odoo.tests.common import (
     JsonRpcException,
     Opener,
 )
+from odoo.tools import config
 
 from odoo.addons.payment.controllers.post_processing import PaymentPostProcessing
 
@@ -488,6 +490,98 @@ class TestPublicFundDonation(HttpCase):
             response = self._give_email(email=email, consent=consent)
             self.assertIn('action="/my2/gift-package/donor"', response.text)
             self.assertEqual(self._cart().partner_id, self.website.partner_id)
+
+    # === Payment attempts per client IP ===
+
+    def _visitor_pays(self, **headers):
+        """A new visitor - a browser of their own, with its session, cart and
+        donor - starts a payment. Whether it was accepted."""
+        own_opener = self.opener
+        self.opener = Opener(self.cr)
+        self.opener.cookies[TEST_CURSOR_COOKIE_NAME] = own_opener.cookies[
+            TEST_CURSOR_COOKIE_NAME
+        ]
+        try:
+            self._add_fund()
+            self._give_email()
+            cart = self._cart()
+            try:
+                self.make_jsonrpc_request(
+                    f"/shop/payment/transaction/{cart.id}",
+                    self._payment_values(cart),
+                    headers=headers,
+                )
+            except JsonRpcException:
+                return False
+            return bool(cart.transaction_ids)
+        finally:
+            self.opener = own_opener
+
+    def test_payment_attempts_are_limited_per_ip(self):
+        """Card testers start a new session and cart for each card: the
+        attempts of a client IP are counted on the website, all carts and
+        sessions together."""
+        self.assertFalse(
+            self.env["ir.config_parameter"].get_param("recaptcha_private_key"),
+            "the reCAPTCHA of the email step lets everyone through",
+        )
+        self.website.my2_max_payment_attempts_per_ip = 3
+        self.assertEqual(
+            [self._visitor_pays() for _attempt in range(4)], [True, True, True, False]
+        )
+        # Behind the proxy (proxy_mode), the client's own address counts.
+        with patch.dict(config.options, {"proxy_mode": True}):
+            self.assertTrue(
+                self._visitor_pays(
+                    **{
+                        "X-Forwarded-For": "203.0.113.7",
+                        "X-Forwarded-Host": urlparse(self.base_url()).netloc,
+                    }
+                )
+            )
+
+    def test_payment_attempts_per_ip_with_recaptcha_keys(self):
+        """The limit is the same once the reCAPTCHA of the email step has
+        its keys."""
+        ICP = self.env["ir.config_parameter"]
+        ICP.set_param("recaptcha_public_key", "test-public-key")
+        ICP.set_param("recaptcha_private_key", "test-private-key")
+        self.website.my2_max_payment_attempts_per_ip = 1
+        with patch.object(
+            type(self.env["ir.http"]),
+            "_verify_recaptcha_token",
+            return_value="is_human",
+        ) as verify:
+            self.assertEqual(
+                [self._visitor_pays() for _attempt in range(2)], [True, False]
+            )
+        self.assertTrue(verify.called)
+
+    def test_payment_attempts_per_ip_start_again_after_the_window(self):
+        self.website.my2_max_payment_attempts_per_ip = 1
+        self.assertEqual([self._visitor_pays() for _attempt in range(2)], [True, False])
+        counter = self.env["my2.payment.attempt.counter"].search(
+            [("website_id", "=", self.website.id)]
+        )
+        self.assertEqual(counter.attempts, 1)
+        counter.window_start -= timedelta(
+            minutes=self.website.my2_payment_attempts_window + 1
+        )
+        self.assertTrue(self._visitor_pays())
+        self.assertEqual(counter.attempts, 1)
+
+    def test_expired_attempt_counters_are_removed(self):
+        self.assertTrue(self._visitor_pays())
+        counter = self.env["my2.payment.attempt.counter"].search(
+            [("website_id", "=", self.website.id)]
+        )
+        counter._gc_my2_expired_counters()
+        self.assertTrue(counter.exists())
+        counter.window_start -= timedelta(
+            minutes=self.website.my2_payment_attempts_window + 1
+        )
+        counter._gc_my2_expired_counters()
+        self.assertFalse(counter.exists())
 
     # === The name, after the payment ===
 
