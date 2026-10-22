@@ -81,3 +81,8 @@ class PaymentTransaction(models.Model):
         if name == self.env["res.partner"].MY2_PLACEHOLDER_NAME:
             return ""
         return name
+
+    def _my2_refusal_is_certain(self):
+        """A payment PayU never confirmed may have been made: its error is
+        no refusal."""
+        return not self.payu_gpo_unconfirmed and super()._my2_refusal_is_certain()
