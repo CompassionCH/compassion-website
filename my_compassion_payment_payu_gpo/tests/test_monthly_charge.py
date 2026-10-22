@@ -40,58 +40,39 @@ class TestMonthlyCharge(PayuDigitalCase):
             {"order": {"extOrderId": tx.reference, "status": status, **order}},
         )
 
-    def _bank_refuses_charges(self, operations=("offline",)):
-        """The refusal of a charge made with a saved card, as
-        payment_payu_gpo records it: PayU cancels the order, and the
-        transaction is in error. operations: those recorded so."""
-        transaction_class = self.registry["payment.transaction"]
-        apply_order = transaction_class._payu_gpo_apply_order
-
-        def apply(tx, notification_data):
-            if (
-                tx.operation in operations
-                and notification_data["order"]["status"] == "CANCELED"
-            ):
-                tx._set_error("PayU: the bank refused the charge.")
-            else:
-                apply_order(tx, notification_data)
-
-        return patch.object(transaction_class, "_payu_gpo_apply_order", apply)
-
     def test_refused_charge_starts_the_dunning_once(self):
         self._run_charge_cron(lambda tx: tx._set_pending())
         tx = self.invoice.transaction_ids
         self.assertEqual((tx.operation, tx.state), ("offline", "pending"))
         self.assertFalse(self.handoffs)
-        with self._bank_refuses_charges():
-            self._notify(tx, "CANCELED")
-            self.assertEqual(tx.state, "error")
-            self.assertEqual(
-                self.handoffs, [(self.contract, self.invoice, tx.state_message)]
-            )
-            # PayU repeats its notifications
-            self._notify(tx, "CANCELED")
+        self._notify(tx, "CANCELED")
+        self.assertEqual(tx.state, "error")
+        self.assertEqual(
+            self.handoffs, [(self.contract, self.invoice, tx.state_message)]
+        )
+        # PayU repeats its notifications
+        self._notify(tx, "CANCELED")
         self.assertEqual(len(self.handoffs), 1)
         # the next daily run does not charge the card again
         self._run_charge_cron(lambda tx: tx._set_pending())
         self.assertEqual(self.invoice.transaction_ids, tx)
 
-    def test_rejected_notification_is_for_staff(self):
-        # A notification about another amount or another order is rejected:
-        # the charge is in error for staff to check, and the sponsor is not
-        # asked to change a card that may have worked.
+    def test_notification_of_another_order_is_for_staff(self):
+        # A notification that does not match the charge is held: the charge
+        # stays pending for staff to check, and the sponsor is not asked to
+        # change a card that may have worked.
         self._run_charge_cron(lambda tx: tx._set_pending())
         tx = self.invoice.transaction_ids
         tx.provider_reference = "PAYU-ORDER-A"
         self._notify(tx, "CANCELED", orderId="PAYU-ORDER-B")
-        self.assertEqual(tx.state, "error")
+        self.assertEqual(tx.state, "pending")
         self.assertFalse(self.handoffs)
 
     def test_notification_of_another_amount_is_for_staff(self):
         self._run_charge_cron(lambda tx: tx._set_pending())
         tx = self.invoice.transaction_ids
         self._notify(tx, "CANCELED", totalAmount="1")
-        self.assertEqual(tx.state, "error")
+        self.assertEqual(tx.state, "pending")
         self.assertFalse(self.handoffs)
 
     def _refuse_with_a_failing_dunning(self, start_dunning, **patches):
@@ -103,15 +84,13 @@ class TestMonthlyCharge(PayuDigitalCase):
         with ExitStack() as stack:
             for name, method in patches.items():
                 stack.enter_context(patch.object(contract_class, name, method))
-            stack.enter_context(self._bank_refuses_charges())
             stack.enter_context(self.assertLogs(LOGGER, "ERROR"))
             self._notify(tx, "CANCELED")
         self.env.flush_all()
         self.env.invalidate_all()
         self.assertEqual(tx.state, "error")
         # PayU delivers the notification again: nothing more happens
-        with self._bank_refuses_charges():
-            self._notify(tx, "CANCELED")
+        self._notify(tx, "CANCELED")
         self.assertEqual(tx.state, "error")
         return tx
 
@@ -137,8 +116,7 @@ class TestMonthlyCharge(PayuDigitalCase):
         self._run_charge_cron(lambda tx: tx._set_error("PayU: declined"))
         tx = self.invoice.transaction_ids
         self.assertEqual(len(self.handoffs), 1)
-        with self._bank_refuses_charges():
-            self._notify(tx, "CANCELED")
+        self._notify(tx, "CANCELED")
         self.assertEqual(tx.state, "error")
         self.assertEqual(len(self.handoffs), 1)
 
@@ -157,14 +135,14 @@ class TestMonthlyCharge(PayuDigitalCase):
                 "_on_digital_charge_failed",
                 conflict,
             ),
-            self._bank_refuses_charges(),
             self.assertRaises(SerializationFailure),
         ):
             self._notify(tx, "CANCELED")
 
     def test_sponsor_payment_refusal_is_no_failed_charge(self):
-        # The sponsor pays on the site and sees the refusal there, even one
-        # recorded as an error: it is no monthly charge to dun.
+        # The sponsor pays on the site and sees the refusal there: it is no
+        # monthly charge to dun, even were PayU's module to record it as an
+        # error (it cancels it).
         tx = self.env["payment.transaction"].create(
             {
                 "provider_id": self.contract.payment_mode_id.payment_provider_id.id,
@@ -178,7 +156,12 @@ class TestMonthlyCharge(PayuDigitalCase):
             }
         )
         tx._set_pending()
-        with self._bank_refuses_charges(operations=("offline", "online_direct")):
+        transaction_class = self.registry["payment.transaction"]
+        with patch.object(
+            transaction_class,
+            "_payu_gpo_apply_order",
+            lambda tx, notification_data: tx._set_error("PayU: refused."),
+        ):
             self._notify(tx, "CANCELED")
         self.assertEqual(tx.state, "error")
         self.assertFalse(self.handoffs)
