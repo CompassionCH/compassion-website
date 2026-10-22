@@ -150,6 +150,54 @@ class TestPublicFundDonation(HttpCase):
         self._add_fund(suggested_amount="custom", custom_amount="10")
         self.assertEqual(self._cart().order_line.price_unit, 10.0)
 
+    def _small_suggestions(self, minimum=5.0):
+        """Suggestions of 1, 3 and 5 (as the Swiss Medical Assistance fund)
+        and a minimum for visitors."""
+        self.fund.with_company(self.website.company_id).write(
+            {
+                "my_compassion_donation_amount_low": 1.0,
+                "my_compassion_donation_amount_medium": 3.0,
+                "my_compassion_donation_amount_high": 5.0,
+            }
+        )
+        self.website.my2_min_donation_amount = minimum
+
+    def test_visitor_below_the_minimum_is_told_why(self):
+        self._small_suggestions()
+        message = "The smallest donation to this fund is"
+        limits = self.make_jsonrpc_request(
+            "/my2/gifts/get-limits", {"product_id": self.fund.id}
+        )
+        self.assertEqual(limits["min_amount"], 5.0)
+        self.assertIn(message, limits["min_amount_message"])
+        self._assert_refused(
+            "/my2/gifts/new",
+            {
+                "product_id": self.fund.id,
+                "suggested_amount": "low",
+                "frequency": "one_time",
+            },
+            message,
+        )
+        self.assertFalse(
+            self.env["sale.order.line"].search(
+                [("product_id.product_tmpl_id", "=", self.fund.id)]
+            )
+        )
+
+    def test_logged_in_donor_gives_any_suggested_amount(self):
+        """The minimum keeps card testers off the public form: a donor with
+        an account gives every amount the fund suggests."""
+        self._small_suggestions()
+        self._portal_user("small-giver@example.org")
+        self.assertFalse(
+            self.make_jsonrpc_request(
+                "/my2/gifts/get-limits", {"product_id": self.fund.id}
+            ).get("min_amount")
+        )
+        self._add_fund(suggested_amount="low")
+        self.assertEqual(self._cart().order_line.price_unit, 1.0)
+
     def test_cart_of_another_website_is_not_taken(self):
         """/my2 resolves to MyCompassion on any domain, while the session's
         cart may have been started on another website of that domain."""

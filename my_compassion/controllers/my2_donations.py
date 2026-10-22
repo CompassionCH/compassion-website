@@ -19,7 +19,7 @@ from werkzeug.exceptions import BadRequest, NotFound
 from odoo import fields, http
 from odoo.exceptions import UserError, ValidationError
 from odoo.http import request
-from odoo.tools import email_normalize
+from odoo.tools import email_normalize, format_amount
 from odoo.tools.translate import _
 
 from odoo.addons.payment import utils as payment_utils
@@ -237,17 +237,20 @@ class MyCompassionDonationsController(CustomerPortal):
             sponsorship_id,
             request.website.sale_get_order(),
         )
-        minimum = self._my2_min_amount(product)
+        minimum = request.website._my2_fund_minimum(product)
         if minimum and minimum > (limits.get("min_amount") or 0):
             limits["min_amount"] = minimum
+            limits["min_amount_message"] = self._my2_minimum_message(product, minimum)
         return limits
 
     @staticmethod
-    def _my2_min_amount(product):
-        """The smallest amount a donor may give to this fund on this website."""
-        if product.my_compassion_donation_type != "fund":
-            return 0.0
-        return request.website.my2_min_donation_amount
+    def _my2_minimum_message(product, minimum):
+        return _(
+            "The smallest donation to this fund is %(amount)s.",
+            amount=format_amount(
+                request.env, minimum, product.my_compassion_currency_id
+            ),
+        )
 
     @http.route(
         "/my2/gift-package",
@@ -784,28 +787,25 @@ class MyCompassionDonationsController(CustomerPortal):
 
     def _extract_donation_order_line_fields(self, product_template, post):
         # Compute quantity
-        price = 0
+        # An amount is refused with a message the form shows the donor.
         amount_type = post.get("suggested_amount")
         if amount_type == "custom":
             try:
                 price = float(post.get("custom_amount"))
-            except (ValueError, TypeError) as e:
-                raise BadRequest() from e
-            # Make sure price is strictly positive
-            if price <= 0:
-                raise BadRequest()
+            except (ValueError, TypeError):
+                price = 0.0
         else:
             amounts = {
                 "low": product_template.my_compassion_donation_amount_low,
                 "medium": product_template.my_compassion_donation_amount_medium,
                 "high": product_template.my_compassion_donation_amount_high,
             }
-            price = amounts.get(amount_type)
-
-            if price is None or price <= 0:
-                raise BadRequest()
-        if price < self._my2_min_amount(product_template):
-            raise BadRequest()
+            price = amounts.get(amount_type) or 0.0
+        if not price > 0:
+            raise UserError(_("Please enter a valid amount."))
+        minimum = request.website._my2_fund_minimum(product_template)
+        if price < minimum:
+            raise UserError(self._my2_minimum_message(product_template, minimum))
 
         # Get frequency and force one_time for gifts, and for visitors: a
         # monthly donation needs a payment instrument kept for an account.

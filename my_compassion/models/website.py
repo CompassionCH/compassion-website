@@ -45,9 +45,9 @@ class Website(models.Model):
     my2_min_donation_amount = fields.Float(
         "Minimum Donation to a Fund",
         default=5.0,
-        help="Smallest amount, in the currency of the website's company, a donor"
-        " may give to a fund. Card testers try stolen cards with tiny payments"
-        " on public donation pages.",
+        help="Smallest amount, in the currency of the website's company, a"
+        " visitor (without an account) may give to a fund. Card testers try"
+        " stolen cards with tiny payments on public donation pages.",
     )
     my2_max_payment_attempts_per_ip = fields.Integer(
         "Visitor Payment Attempts per IP",
@@ -110,6 +110,19 @@ class Website(models.Model):
             and order.company_id == self.company_id
             and order.state == "draft"
         )
+
+    def _my2_fund_minimum(self, product):
+        """The smallest amount the current user may give to product on this
+        website: my2_min_donation_amount for a visitor giving to a fund (card
+        testers try stolen cards with tiny payments on public donation pages),
+        none for a donor with an account."""
+        self.ensure_one()
+        if (
+            product.my_compassion_donation_type != "fund"
+            or not self.env.user._is_public()
+        ):
+            return 0.0
+        return self.my2_min_donation_amount
 
     def _my2_offers_payment_method(self, code):
         """Whether a published payment provider of the website's company offers
