@@ -21,13 +21,8 @@ class MyCompassionGiftController(http.Controller):
         if type not in ("fund", "gift"):
             type = "fund"
 
-        domain = [
-            ("activate_for_my_compassion", "=", True),
-            ("my_compassion_donation_type", "=", type),
-        ]
-
-        my_compassion_gifts = request.env["product.template"].search(
-            domain, order="website_sequence"
+        my_compassion_gifts = request.website._my2_donation_products(
+            [("my_compassion_donation_type", "=", type)], order="website_sequence"
         )
         return request.render(
             "my_compassion.my2_gifts_page",

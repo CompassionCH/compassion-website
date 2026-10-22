@@ -35,7 +35,7 @@
   </template>
   <!-- GIVING LIMITS TABLE COMPONENT -->
   <template id="GivingLimitsTableComponent" name="Giving Limits Table Component">
-    <t t-set="company" t-value="request.website.company_id" />
+    <t t-set="company" t-value="res_company" />
     <t t-set="date" t-value="date or datetime.date.today()" />
     <div class="giving-limits-table d-flex flex-column">
       <!-- TABLE TITLE -->

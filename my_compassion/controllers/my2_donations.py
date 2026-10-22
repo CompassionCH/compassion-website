@@ -30,18 +30,21 @@ _logger = logging.getLogger(__name__)
 
 class MyCompassionDonationsController(CustomerPortal):
     @http.route(
-        '/my2/gifts/<model("product.template"):product>',
+        "/my2/gifts/<int:product_id>",
         type="http",
         auth="user",
         website=True,
         sitemap=False,
     )
-    def my2_render_donation_details_page(self, product, **kwargs):
+    def my2_render_donation_details_page(self, product_id, **kwargs):
         """
         Renders a donation details page for a specific donation (product).
         return: An HTTP response containing a rendered template with the donation
         details page.
         """
+        product = self._get_donation_product(product_id)
+        if not product:
+            raise NotFound()
         sponsorships = self._get_gift_eligible_sponsorships(request.env.user.partner_id)
         donation_limits = request.env["gift.threshold.settings"].sudo().search([])
 
@@ -76,12 +79,9 @@ class MyCompassionDonationsController(CustomerPortal):
             product_template_id = int(post.get("product_id"))
         except (ValueError, TypeError) as e:
             raise BadRequest() from e
-        product_template = (
-            request.env["product.template"].sudo().browse(product_template_id)
-        )
-
         # Make sure the product is available
-        if not product_template.activate_for_my_compassion:
+        product_template = self._get_donation_product(product_template_id)
+        if not product_template:
             raise NotFound()
         # Extract order line for the current product
         current_order_line_fields = self._extract_donation_order_line_fields(
@@ -189,7 +189,7 @@ class MyCompassionDonationsController(CustomerPortal):
             product_id = int(product_id)
         except (TypeError, ValueError) as e:
             raise BadRequest() from e
-        product = request.env["product.template"].search([("id", "=", product_id)])
+        product = self._get_donation_product(product_id)
         if not product:
             raise BadRequest()
         if sponsorship_id is not None:
@@ -352,13 +352,8 @@ class MyCompassionDonationsController(CustomerPortal):
         gift page.
         """
         order = request.website.sale_get_order(force_create=True)
-        products = request.env["product.template"].search(
-            [
-                ("activate_for_my_compassion", "=", True),
-                "|",
-                ("my_compassion_donation_type", "=", "gift"),
-                ("my_compassion_donation_type", "=", "fund"),
-            ]
+        products = request.website._my2_donation_products(
+            [("my_compassion_donation_type", "in", ("gift", "fund"))]
         )
 
         sponsorships = self._get_gift_eligible_sponsorships(request.env.user.partner_id)
@@ -453,6 +448,11 @@ class MyCompassionDonationsController(CustomerPortal):
             "processing": tx.state in ("draft", "pending"),
             "reference": tx.reference,
         }
+
+    def _get_donation_product(self, product_id):
+        """The donation product the website publishes, or an empty recordset
+        (see website._my2_donation_products)."""
+        return request.website._my2_donation_products([("id", "=", product_id)])
 
     def _get_gift_eligible_sponsorships(self, partner):
         """Sponsorships that can receive a gift."""
