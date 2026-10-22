@@ -35,7 +35,7 @@ export const DonationDetails = publicWidget.Widget.extend({
         function (error) {
           // Re-enable buttons, and tell the donor why
           this.$(".btn").prop("disabled", false);
-          showDonationRefusal(this.$el, error);
+          showDonationRefusal(this.$(ev.target), error);
         }.bind(this)
       );
   },
