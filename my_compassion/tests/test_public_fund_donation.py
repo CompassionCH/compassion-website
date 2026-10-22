@@ -23,6 +23,8 @@ from odoo.tools import config
 from odoo.addons.payment.controllers.post_processing import PaymentPostProcessing
 
 CSRF_RE = re.compile(r'name="csrf_token"\s+value="([^"]+)"')
+# The refusal of a payment while another one of the order may succeed.
+ALREADY_PAID = "This donation is already paid, or its payment is under way."
 
 
 @tagged("post_install", "-at_install")
@@ -212,10 +214,11 @@ class TestPublicFundDonation(HttpCase):
         self._add_fund()
         cart = self._cart()
         product = self._shop_product()
-        with self.assertRaises(JsonRpcException):
-            self.make_jsonrpc_request(
-                "/shop/cart/update_json", {"product_id": product.id, "add_qty": 1}
-            )
+        self._assert_refused(
+            "/shop/cart/update_json",
+            {"product_id": product.id, "add_qty": 1},
+            "Please add and change your donations in your gift package.",
+        )
         self.assertEqual(cart.order_line.product_id, self.fund.product_variant_id)
 
     def test_no_express_checkout_for_a_my_compassion_cart(self):
@@ -239,8 +242,9 @@ class TestPublicFundDonation(HttpCase):
                 {"partial_delivery_address": address},
             ),
         ):
-            with self.assertRaises(JsonRpcException, msg=route):
-                self.make_jsonrpc_request(route, params)
+            self._assert_refused(
+                route, params, "Please pay your donation from your gift package."
+            )
         self.assertEqual(cart.partner_id, self.website.partner_id)
         self.assertEqual(cart.partner_invoice_id, self.website.partner_id)
         page = self.url_open("/shop/cart", allow_redirects=False)
@@ -253,10 +257,11 @@ class TestPublicFundDonation(HttpCase):
         cart's access token."""
         self._add_fund()
         cart = self._cart()
-        with self.assertRaises(JsonRpcException):
-            self.make_jsonrpc_request(
-                f"/shop/payment/transaction/{cart.id}", self._payment_values(cart)
-            )
+        self._assert_refused(
+            f"/shop/payment/transaction/{cart.id}",
+            self._payment_values(cart),
+            "Please give your email before paying.",
+        )
         self._give_email()
         own_opener = self.opener
         self.opener = Opener(self.cr)
@@ -264,11 +269,11 @@ class TestPublicFundDonation(HttpCase):
             TEST_CURSOR_COOKIE_NAME
         ]
         try:
-            with self.assertRaises(JsonRpcException):
-                self.make_jsonrpc_request(
-                    f"/shop/payment/transaction/{cart.id}",
-                    self._payment_values(cart),
-                )
+            self._assert_refused(
+                f"/shop/payment/transaction/{cart.id}",
+                self._payment_values(cart),
+                "Please give your email before paying.",
+            )
         finally:
             self.opener = own_opener
         self.assertFalse(cart.transaction_ids)
@@ -486,21 +491,21 @@ class TestPublicFundDonation(HttpCase):
         token = self._saved_card(cart.partner_id)
         page = self.url_open("/my2/gift-package")
         self.assertNotIn("9876", page.text)
-        with self.assertRaises(JsonRpcException):
-            self.make_jsonrpc_request(
-                f"/shop/payment/transaction/{cart.id}",
-                {
-                    "access_token": cart._portal_ensure_token(),
-                    "token_id": token.id,
-                    "provider_id": token.provider_id.id,
-                    "payment_method_id": token.payment_method_id.id,
-                    "amount": cart.amount_total,
-                    "flow": "token",
-                    "tokenization_requested": False,
-                    "landing_route": "/shop/payment/validate",
-                    "is_validation": False,
-                },
-            )
+        self._assert_refused(
+            f"/shop/payment/transaction/{cart.id}",
+            {
+                "access_token": cart._portal_ensure_token(),
+                "token_id": token.id,
+                "provider_id": token.provider_id.id,
+                "payment_method_id": token.payment_method_id.id,
+                "amount": cart.amount_total,
+                "flow": "token",
+                "tokenization_requested": False,
+                "landing_route": "/shop/payment/validate",
+                "is_validation": False,
+            },
+            "Please enter your card details.",
+        )
         self.assertFalse(cart.transaction_ids)
 
     def _payment_values(self, cart, **values):
@@ -601,10 +606,11 @@ class TestPublicFundDonation(HttpCase):
         self.assertIn("/my2/gifts/thankyou", page.url)
         self.assertNotIn("Your payment did not go through", page.text)
         # As for a visitor, no second payment while this one may succeed.
-        with self.assertRaises(JsonRpcException):
-            self.make_jsonrpc_request(
-                f"/shop/payment/transaction/{cart.id}", self._payment_values(cart)
-            )
+        self._assert_refused(
+            f"/shop/payment/transaction/{cart.id}",
+            self._payment_values(cart),
+            ALREADY_PAID,
+        )
         self.assertEqual(len(cart.transaction_ids), 1)
 
     def test_a_user_never_pays_with_another_partners_card(self):
@@ -639,11 +645,11 @@ class TestPublicFundDonation(HttpCase):
                 "provider_id": token.provider_id.id,
             },
         ):
-            with self.assertRaises(JsonRpcException):
-                self.make_jsonrpc_request(
-                    f"/my/orders/{cart.id}/transaction",
-                    self._payment_values(cart, **values),
-                )
+            self._assert_refused(
+                f"/my/orders/{cart.id}/transaction",
+                self._payment_values(cart, **values),
+                "Please pay your donation from your gift package.",
+            )
         self.assertFalse(cart.transaction_ids)
 
     def test_payment_checks_follow_the_order_not_the_host(self):
@@ -660,17 +666,14 @@ class TestPublicFundDonation(HttpCase):
         # requests files cookies under the Host header: the session goes along
         # explicitly.
         cookies = "; ".join(f"{c.name}={c.value}" for c in self.opener.cookies)
-        with self.assertRaises(JsonRpcException):
-            self.make_jsonrpc_request(
-                f"/shop/payment/transaction/{cart.id}",
-                self._payment_values(
-                    cart,
-                    flow="token",
-                    token_id=token.id,
-                    provider_id=token.provider_id.id,
-                ),
-                headers={"Host": "other.example.org", "Cookie": cookies},
-            )
+        self._assert_refused(
+            f"/shop/payment/transaction/{cart.id}",
+            self._payment_values(
+                cart, flow="token", token_id=token.id, provider_id=token.provider_id.id
+            ),
+            "Please enter your card details.",
+            headers={"Host": "other.example.org", "Cookie": cookies},
+        )
         self.assertFalse(cart.transaction_ids)
 
     def test_cart_quantity_never_reprices_a_donation(self):
@@ -678,11 +681,11 @@ class TestPublicFundDonation(HttpCase):
         product's list price again (below the minimum for some funds)."""
         self._add_fund(suggested_amount="custom", custom_amount="42")
         line = self._cart().order_line
-        with self.assertRaises(JsonRpcException):
-            self.make_jsonrpc_request(
-                "/shop/cart/update_json",
-                {"product_id": line.product_id.id, "line_id": line.id, "set_qty": 2},
-            )
+        self._assert_refused(
+            "/shop/cart/update_json",
+            {"product_id": line.product_id.id, "line_id": line.id, "set_qty": 2},
+            "Please add and change your donations in your gift package.",
+        )
         self.assertEqual((line.product_uom_qty, line.price_unit), (1.0, 42.0))
 
     def test_email_step_needs_a_human(self):
@@ -1019,10 +1022,11 @@ class TestPublicFundDonation(HttpCase):
         self._give_email()
         cart = self._cart()
         self._pay("pending")
-        with self.assertRaises(JsonRpcException):
-            self.make_jsonrpc_request(
-                f"/shop/payment/transaction/{cart.id}", self._payment_values(cart)
-            )
+        self._assert_refused(
+            f"/shop/payment/transaction/{cart.id}",
+            self._payment_values(cart),
+            ALREADY_PAID,
+        )
         self.assertEqual(len(cart.transaction_ids), 1)
 
     def test_one_card_per_order_when_the_card_is_sent(self):
@@ -1037,7 +1041,10 @@ class TestPublicFundDonation(HttpCase):
         second._my2_check_card_submission()
         first._set_pending()
         first._my2_check_card_submission()  # its own payment does not count
-        with self.assertRaises(UserError):
+        with self.assertRaisesRegex(
+            UserError,
+            re.escape(ALREADY_PAID),
+        ):
             second._my2_check_card_submission()
         # Only MyCompassion orders: another website's order is left alone.
         other_website = self.env["website"].search(
@@ -1077,10 +1084,11 @@ class TestPublicFundDonation(HttpCase):
             page = self.url_open("/shop/payment/validate")
             self.assertNotIn("/my2/gift-package", page.url)
             self.assertNotIn("Your payment did not go through", page.text)
-            with self.assertRaises(JsonRpcException):
-                self.make_jsonrpc_request(
-                    f"/shop/payment/transaction/{cart.id}", self._payment_values(cart)
-                )
+            self._assert_refused(
+                f"/shop/payment/transaction/{cart.id}",
+                self._payment_values(cart),
+                ALREADY_PAID,
+            )
         self.assertEqual(len(cart.transaction_ids), 1)
         # A refusal the provider is sure of gives the basket back.
         page = self.url_open("/my2/gifts/thankyou")
@@ -1437,7 +1445,9 @@ class TestConcurrentPayments(TransactionCase):
 
     def test_a_payment_being_created_is_never_doubled(self):
         self._pay(self.first)
-        with self.assertRaises(UserError):
+        with self.assertRaisesRegex(
+            UserError, re.escape("Payment is already being processed.")
+        ):
             self._pay(self.second)
         self.second.rollback()
         self.first.commit()
@@ -1453,7 +1463,10 @@ class TestConcurrentPayments(TransactionCase):
             self._pay(self.second)
         # What Odoo does with a serialization failure: replay the request.
         self.second.rollback()
-        with self.assertRaises(UserError):
+        with self.assertRaisesRegex(
+            UserError,
+            re.escape(ALREADY_PAID),
+        ):
             self._pay(self.second)
         self.second.rollback()
         self.assertEqual(self._transaction_count(), 1)
@@ -1476,6 +1489,9 @@ class TestConcurrentPayments(TransactionCase):
         # What Odoo does with a serialization failure: replay the request.
         self.second.rollback()
         second = api.Environment(self.second, SUPERUSER_ID, {})["payment.transaction"]
-        with self.assertRaises(UserError):
+        with self.assertRaisesRegex(
+            UserError,
+            re.escape(ALREADY_PAID),
+        ):
             second.browse(second_id)._my2_check_card_submission()
         self.second.rollback()
