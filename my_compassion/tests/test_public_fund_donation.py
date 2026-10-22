@@ -790,11 +790,18 @@ class TestPublicFundDonation(HttpCase):
         self.assertEqual(self._cart().partner_id, donor)
         self.assertEqual(self.env["res.partner"].search_count([]), partners)
 
-    def test_abandoned_donors_are_archived(self):
+    def _abandoned_and_paid_donors(self):
         self._add_fund()
         self._give_email()
         abandoned = self._cart().partner_id
-        paid = abandoned.copy({"my2_name_placeholder": True, "email": "p@example.org"})
+        paid = self.env["res.partner"].create(
+            {
+                "lastname": abandoned.MY2_PLACEHOLDER_NAME,
+                "firstname": False,
+                "my2_name_placeholder": True,
+                "email": "p@example.org",
+            }
+        )
         self._pay("done").partner_id = paid
         old = fields.Datetime.now() - timedelta(days=40)
         self.env.cr.execute(
@@ -802,7 +809,22 @@ class TestPublicFundDonation(HttpCase):
             [old, tuple((abandoned | paid).ids)],
         )
         (abandoned | paid).invalidate_recordset(["create_date"])
+        return abandoned, paid
+
+    def test_abandoned_donors_are_archived(self):
+        abandoned, paid = self._abandoned_and_paid_donors()
         self.env["res.partner"]._my2_cron_archive_abandoned_donors()
+        self.assertFalse(abandoned.active)
+        self.assertTrue(paid.active)
+
+    def test_donors_kept_never_stall_the_cleanup(self):
+        """The donors the cleanup keeps (paid, with an account...) stay
+        placeholders: they must not fill every batch of later runs."""
+        abandoned, paid = self._abandoned_and_paid_donors()
+        # Same placeholder name: the newest comes first.
+        donors = self.env["res.partner"].search([("id", "in", (abandoned | paid).ids)])
+        self.assertEqual(donors[0], paid)
+        self.env["res.partner"]._my2_cron_archive_abandoned_donors(limit=1)
         self.assertFalse(abandoned.active)
         self.assertTrue(paid.active)
 

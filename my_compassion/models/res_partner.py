@@ -110,21 +110,36 @@ class Partner(models.Model):
         placeholder name after ABANDONED_DONOR_DAYS, no account, and nothing
         else - no contract, invoice, payment or confirmed order. Each email
         step of a visitor creates one (an unverified email is never matched to
-        an existing partner)."""
-        candidates = self.search(
-            [
-                ("my2_name_placeholder", "=", True),
-                (
-                    "create_date",
-                    "<",
-                    fields.Datetime.now() - timedelta(days=ABANDONED_DONOR_DAYS),
-                ),
-                ("user_ids", "=", False),
-            ],
-            limit=limit,
-        )
-        if not candidates:
-            return
+        an existing partner).
+
+        Goes through all of them, limit at a time: the donors it keeps stay
+        placeholders, and must not fill the batch of every later run."""
+        domain = [
+            ("my2_name_placeholder", "=", True),
+            (
+                "create_date",
+                "<",
+                fields.Datetime.now() - timedelta(days=ABANDONED_DONOR_DAYS),
+            ),
+            ("user_ids", "=", False),
+        ]
+        archived = 0
+        last_id = 0
+        while True:
+            candidates = self.search(
+                [*domain, ("id", ">", last_id)], order="id", limit=limit
+            )
+            if not candidates:
+                break
+            last_id = candidates[-1].id
+            abandoned = candidates - candidates._my2_used_donors()
+            abandoned.write({"active": False})
+            archived += len(abandoned)
+        _logger.info("Archived %s abandoned visitor donors.", archived)
+
+    def _my2_used_donors(self):
+        """The partners among self with a contract, an invoice, a payment that
+        went through or may still, or a confirmed order."""
         used = self.browse()
         for model, fnames, extra in (
             ("recurring.contract", ("partner_id", "correspondent_id"), []),
@@ -138,12 +153,8 @@ class Partner(models.Model):
         ):
             records = self.env[model].with_context(active_test=False)
             for fname in fnames:
-                used |= records.search([(fname, "in", candidates.ids), *extra]).mapped(
-                    fname
-                )
-        abandoned = candidates - used
-        abandoned.write({"active": False})
-        _logger.info("Archived %s abandoned visitor donors.", len(abandoned))
+                used |= records.search([(fname, "in", self.ids), *extra]).mapped(fname)
+        return used
 
     def _my2_on_placeholder_name_replaced(self):
         """Everything that had to wait for the sponsor's real name.
