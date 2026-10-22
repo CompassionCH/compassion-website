@@ -1,6 +1,6 @@
 from werkzeug.exceptions import NotFound
 
-from odoo import Command, _, http
+from odoo import SUPERUSER_ID, Command, _, http
 from odoo.exceptions import ValidationError
 from odoo.http import request
 
@@ -16,7 +16,8 @@ class MyCompassionUpdateCard(payment_portal.PaymentPortal):
 
     With arrears: the group's due invoices are settled with the new card in
     one tokenizing payment. Without: a validation transaction verifies the
-    card. Either way the saved instrument swaps through transaction
+    card, when the group's provider can save a card without a payment.
+    Either way the saved instrument swaps through transaction
     post-processing and every later monthly charge uses the new card.
     """
 
@@ -67,10 +68,10 @@ class MyCompassionUpdateCard(payment_portal.PaymentPortal):
     )
     def update_card_page(self, group_id=None, access_token=None, **kwargs):
         group = self._fetch_guarded_group(group_id, access_token)
-        provider = group.payment_mode_id.payment_provider_id
-        if not provider:
+        if not group.payment_mode_id.payment_provider_id:
             raise NotFound()  # nothing card-like to update on a bank group
         invoices = group._due_digital_invoices()
+        provider = self._update_card_provider(group, invoices)
         return request.render(
             "my_compassion.my2_update_card_page",
             self._get_update_card_values(group, provider, access_token, invoices),
@@ -87,8 +88,7 @@ class MyCompassionUpdateCard(payment_portal.PaymentPortal):
         processing values: a tokenizing payment of the due invoices, or a
         validation transaction when nothing is due."""
         group = self._fetch_guarded_group(group_id, access_token)
-        provider = group.payment_mode_id.payment_provider_id
-        if not provider:
+        if not group.payment_mode_id.payment_provider_id:
             raise ValidationError(
                 _("This account has no online payment method to update.")
             )
@@ -107,9 +107,16 @@ class MyCompassionUpdateCard(payment_portal.PaymentPortal):
         # the due set is recomputed at pay-click: a charge that settled the
         # arrears since the render (e.g. the nightly cron) degrades this
         # to a validation
-        overrides, custom_create_values = self._update_card_tx_values(
-            group, group._due_digital_invoices()
-        )
+        invoices = group._due_digital_invoices()
+        provider = self._update_card_provider(group, invoices)
+        if not provider:
+            raise ValidationError(
+                _(
+                    "Nothing is due right now, and a new card can only be saved"
+                    " with a payment."
+                )
+            )
+        overrides, custom_create_values = self._update_card_tx_values(group, invoices)
         # Server-side truth: the client never chooses what is charged, by
         # whom, through which provider, nor where it lands.
         kwargs.update(
@@ -125,6 +132,30 @@ class MyCompassionUpdateCard(payment_portal.PaymentPortal):
         )
         self._finalize_update_card_tx(tx_sudo, landing_route)
         return tx_sudo._get_processing_values()
+
+    @staticmethod
+    def _update_card_provider(group, invoices):
+        """The provider the new card is entered with: the group's.
+
+        With nothing due, the card is saved by a validation transaction,
+        which some providers cannot make. They leave themselves out of the
+        compatible providers of a validation, and the page then has no
+        provider. Only that criterion counts, so the providers are asked as
+        staff and for no partner: the page takes the group's provider
+        whoever the sponsor is (e.g. one in test mode is not published by
+        default, which hides it from a public user).
+        """
+        provider = group.payment_mode_id.payment_provider_id
+        if invoices or not provider:
+            return provider
+        validating = (
+            provider.env["payment.provider"]
+            .with_user(SUPERUSER_ID)
+            ._get_compatible_providers(
+                group.company_id.id, None, 0.0, is_validation=True
+            )
+        )
+        return provider & validating
 
     @staticmethod
     def _update_card_landing_route(group, access_token):
