@@ -75,6 +75,19 @@ class TestMonthlyCharge(PayuDigitalCase):
         self.assertEqual(tx.state, "pending")
         self.assertFalse(self.handoffs)
 
+    def test_charge_never_captured_is_no_card_failure(self):
+        # Automatic collection is off on the PayU point of sale: PayU
+        # authorized the charge, nobody captured it, and PayU cancelled it.
+        # The card works: no request to change it.
+        self._run_charge_cron(lambda tx: tx._set_pending())
+        tx = self.invoice.transaction_ids
+        self._notify(tx, "WAITING_FOR_CONFIRMATION")
+        self.assertEqual(tx.state, "pending")
+        self._notify(tx, "CANCELED")
+        self.assertEqual(tx.state, "error")
+        self.assertIn("never captured", tx.state_message)
+        self.assertFalse(self.handoffs)
+
     def _refuse_with_a_failing_dunning(self, start_dunning, **patches):
         """PayU refuses the pending charge, and the dunning fails."""
         self._run_charge_cron(lambda tx: tx._set_pending())

@@ -13,8 +13,10 @@ the card (or PayU's buyer) replaces the placeholder once the payment is done.
 A monthly charge PayU refuses (it cancels the order of the charge) reaches
 the contracts' dunning (`_on_digital_charge_failed`) once, when its
 notification or status read moves the charge to error. Repeated
-notifications, and notifications rejected as being about another order or
-amount, start nothing. A dunning that fails is logged for staff and never
+notifications start nothing, nor does a notification that does not match
+the charge (the PayU module keeps it pending, for staff), nor a charge PayU
+cancelled because nobody captured it (automatic collection off on the point
+of sale): the card works. A dunning that fails is logged for staff and never
 undoes the refusal.
 
 A payment PayU never confirmed is no certain refusal: my_compassion then
