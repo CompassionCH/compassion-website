@@ -1331,16 +1331,29 @@ class TestPublicFundDonation(HttpCase):
 
     def test_donors_kept_never_stall_the_cleanup(self):
         """The donors the cleanup keeps (paid, with an account...) stay
-        placeholders: they must not fill every batch of later runs."""
-        abandoned, paid = self._abandoned_and_paid_donors()
-        # Same placeholder name: the newest comes first.
-        donors = self.env["res.partner"].search([("id", "in", (abandoned | paid).ids)])
-        self.assertEqual(donors[0], paid)
+        placeholders: they must not fill every batch of later runs, whichever
+        end of the list a batch is read from."""
+        older = self.env["res.partner"].create(
+            {
+                "lastname": self.env["res.partner"].MY2_PLACEHOLDER_NAME,
+                "firstname": False,
+                "my2_name_placeholder": True,
+                "email": "older@example.org",
+            }
+        )
+        abandoned, newer = self._abandoned_and_paid_donors()
+        self._pay("done", reference="my2-older-paid").partner_id = older
+        self.env.cr.execute(
+            "UPDATE res_partner SET create_date = %s WHERE id = %s",
+            [fields.Datetime.now() - timedelta(days=40), older.id],
+        )
+        older.invalidate_recordset(["create_date"])
+        self.assertLess(older.id, abandoned.id)
+        self.assertLess(abandoned.id, newer.id)
         self.env["res.partner"]._my2_cron_archive_abandoned_donors(limit=1)
         self.assertFalse(abandoned.active)
-        self.assertTrue(paid.active)
-
-    # === What waits for the donor's name ===
+        self.assertTrue(older.active)
+        self.assertTrue(newer.active)
 
     def test_donor_of_an_uncertain_payment_is_kept(self):
         """A refused payment whose refusal is not certain may still succeed."""
