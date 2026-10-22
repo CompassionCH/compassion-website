@@ -168,9 +168,7 @@
       name="model_id"
       ref="partner_communication.model_partner_communication_job"
     />
-    <field
-      name="email_from"
-    >${object.user_id.company_id.partner_id.email_formatted | safe}</field>
+    <field name="email_from">Muskathlon &lt;muskathlon@compassion.ch&gt;</field>
     <field name="use_default_to" eval="True" />
     <field
       name="subject"
@@ -241,7 +239,7 @@
   </record>
   <record id="registration_confirmation_config" model="partner.communication.config">
     <field name="name">Muskathlon: Registration Confirmation</field>
-    <field name="send_mode">digital</field>
+    <field name="send_mode">auto_digital</field>
     <field name="send_mode_pref_field">global_communication_delivery_preference</field>
     <field name="email_template_id" ref="registration_confirmation_template" />
     <field name="model_id" ref="model_event_registration" />
@@ -254,9 +252,7 @@
       name="model_id"
       ref="partner_communication.model_partner_communication_job"
     />
-    <field
-      name="email_from"
-    >${object.user_id.company_id.partner_id.email_formatted | safe}</field>
+    <field name="email_from">Muskathlon &lt;muskathlon@compassion.ch&gt;</field>
     <field name="use_default_to" eval="True" />
     <field
       name="subject"
@@ -277,9 +273,7 @@
       name="model_id"
       ref="partner_communication.model_partner_communication_job"
     />
-    <field
-      name="email_from"
-    >${object.user_id.company_id.partner_id.email_formatted | safe}</field>
+    <field name="email_from">Muskathlon &lt;muskathlon@compassion.ch&gt;</field>
     <field name="use_default_to" eval="True" />
     <field
       name="subject"
@@ -300,9 +294,7 @@
       name="model_id"
       ref="partner_communication.model_partner_communication_job"
     />
-    <field
-      name="email_from"
-    >${object.user_id.company_id.partner_id.email_formatted | safe}</field>
+    <field name="email_from">Muskathlon &lt;muskathlon@compassion.ch&gt;</field>
     <field name="use_default_to" eval="True" />
     <field name="subject">${object.get_objects().event_id.name} - Vaccinations</field>
   </record>
@@ -321,9 +313,7 @@
       name="model_id"
       ref="partner_communication.model_partner_communication_job"
     />
-    <field
-      name="email_from"
-    >${object.user_id.company_id.partner_id.email_formatted | safe}</field>
+    <field name="email_from">Muskathlon &lt;muskathlon@compassion.ch&gt;</field>
     <field name="use_default_to" eval="True" />
     <field
       name="subject"
@@ -344,9 +334,7 @@
       name="model_id"
       ref="partner_communication.model_partner_communication_job"
     />
-    <field
-      name="email_from"
-    >${object.user_id.company_id.partner_id.email_formatted | safe}</field>
+    <field name="email_from">Muskathlon &lt;muskathlon@compassion.ch&gt;</field>
     <field name="use_default_to" eval="True" />
     <field name="subject">${object.get_objects().event_id.name} - Visa reminder</field>
   </record>
@@ -365,9 +353,7 @@
       name="model_id"
       ref="partner_communication.model_partner_communication_job"
     />
-    <field
-      name="email_from"
-    >${object.user_id.company_id.partner_id.email_formatted | safe}</field>
+    <field name="email_from">Muskathlon &lt;muskathlon@compassion.ch&gt;</field>
     <field name="use_default_to" eval="True" />
     <field
       name="subject"

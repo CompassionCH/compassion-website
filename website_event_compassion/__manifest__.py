@@ -29,7 +29,7 @@
 {
     "name": "Compassion Events Website",
     "summary": "Public website pages for Compassion Events with registration",
-    "version": "18.0.1.6.4",
+    "version": "18.0.1.6.5",
     "development_status": "Production/Stable",
     "category": "Marketing/Events",
     "website": "https://github.com/CompassionCH/compassion-website",
@@ -47,7 +47,6 @@
         "security/ir.model.access.csv",
         "security/access_rules.xml",
         "data/event_registration_stage.xml",
-        "data/base_automation.xml",
         "data/event_message_subtype.xml",
         "data/event_type.xml",
         "data/trip_type.xml",
