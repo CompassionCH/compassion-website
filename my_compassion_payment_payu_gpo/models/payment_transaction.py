@@ -7,6 +7,8 @@
 ##############################################################################
 from odoo import models
 
+from odoo.addons.payment_payu_gpo import const
+
 
 class PaymentTransaction(models.Model):
     _inherit = "payment.transaction"
@@ -19,6 +21,30 @@ class PaymentTransaction(models.Model):
         return bool(
             self._my2_groups_taking_the_token() or super()._payu_gpo_card_is_recurring()
         )
+
+    def _process_notification_data(self, notification_data):
+        """A refused monthly charge reaches the contracts' dunning once.
+
+        PayU answers a charge of a saved card only later, by notification
+        or status read, both handled here: _charge_digital_invoice has long
+        returned by then. PayU repeats its notifications, so only the one
+        that moves the charge to error counts.
+        """
+        was_error = self.state == "error"
+        res = super()._process_notification_data(notification_data)
+        if (
+            self.provider_code == const.PROVIDER_CODE
+            and self.operation == "offline"
+            and not was_error
+            and self.state == "error"
+        ):
+            for invoice in self.invoice_ids.filtered(
+                "line_ids.contract_id.group_id.payment_mode_id.payment_provider_id"
+            ):
+                invoice.line_ids.contract_id._on_digital_charge_failed(
+                    invoice, self.state_message
+                )
+        return res
 
     def _payu_gpo_buyer_names(self):
         """A payer known by email only (fast checkout, visitor donation) has
