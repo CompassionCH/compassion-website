@@ -502,6 +502,45 @@ class TestPublicFundDonation(HttpCase):
         self.assertIn("/my2/gifts/thankyou", page.url)
         self.assertIn('action="/my2/gifts/thankyou/details"', page.text)
 
+    def test_logged_in_donor_pays_from_the_gift_package(self):
+        """The visitor's guards leave the logged-in gift flow as it was."""
+        user = (
+            self.env["res.users"]
+            .with_context(no_reset_password=True)
+            .create(
+                {
+                    "name": "Logged Donor",
+                    "login": "logged-donor@example.org",
+                    "email": "logged-donor@example.org",
+                    "password": "logged-donor-password",
+                    "groups_id": [(6, 0, [self.env.ref("base.group_portal").id])],
+                }
+            )
+        )
+        self.authenticate(user.login, "logged-donor-password")
+        self._add_fund()
+        cart = self._cart()
+        self.assertEqual(cart.partner_id, user.partner_id)
+        page = self.url_open("/my2/gift-package")
+        self.assertEqual(page.status_code, 200)
+        self.assertNotIn('action="/my2/gift-package/donor"', page.text)
+        self.make_jsonrpc_request(
+            f"/shop/payment/transaction/{cart.id}", self._payment_values(cart)
+        )
+        tx = cart.transaction_ids
+        self.assertEqual(len(tx), 1)
+        self.assertEqual(tx.partner_id, user.partner_id)
+        tx._set_pending()
+        page = self.url_open("/shop/payment/validate")
+        self.assertIn("/my2/gifts/thankyou", page.url)
+        self.assertNotIn("Your payment did not go through", page.text)
+        # As for a visitor, no second payment while this one may succeed.
+        with self.assertRaises(JsonRpcException):
+            self.make_jsonrpc_request(
+                f"/shop/payment/transaction/{cart.id}", self._payment_values(cart)
+            )
+        self.assertEqual(len(cart.transaction_ids), 1)
+
     def test_portal_order_payment_is_refused_to_a_visitor(self):
         """sale's own payment route takes any amount and a saved card of the
         order's partner, and the gift package never uses it."""
