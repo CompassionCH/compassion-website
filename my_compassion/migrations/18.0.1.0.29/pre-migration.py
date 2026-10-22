@@ -10,8 +10,10 @@
 The MyCompassion activation and suggested amounts of the donation products
 become company-dependent (jsonb ``{company_id: value}``): the values set so far
 belong to the product's company, or to the main company for a shared product.
-Converted in place, before the ORM would move the old columns aside and lose
-them.
+Converted here, as the ORM's own conversion casts the column to jsonb
+(``column::jsonb``), which PostgreSQL cannot do from boolean or numeric. The
+default of a boolean column (``DEFAULT false``, set by the ORM) is dropped
+first: it cannot be cast either, and a company-dependent column has none.
 """
 
 COLUMNS = (
@@ -46,7 +48,9 @@ def migrate(cr, version):
         # (data/donation_amount_defaults.xml for the amounts).
         keep = f"{column}" if data_type == "boolean" else f"{column} IS NOT NULL"
         cr.execute(
-            f"""ALTER TABLE product_template ALTER COLUMN {column} TYPE jsonb
+            f"""ALTER TABLE product_template
+                ALTER COLUMN {column} DROP DEFAULT,
+                ALTER COLUMN {column} TYPE jsonb
                 USING CASE WHEN {keep} THEN jsonb_build_object(
                     COALESCE(company_id, %s)::text, {column}
                 ) END""",

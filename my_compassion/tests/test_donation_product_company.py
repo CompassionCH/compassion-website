@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 from odoo import Command, fields
+from odoo.modules.migration import load_script
 from odoo.tests import HttpCase, TransactionCase, tagged
 from odoo.tests.common import JsonRpcException
 
@@ -77,6 +78,90 @@ class TestDonationProductCompany(TransactionCase):
         self.assertEqual(
             self.product.with_company(self.company_b).my_compassion_currency_id,
             self.company_b.currency_id,
+        )
+
+
+@tagged("post_install", "-at_install")
+class TestDonationProductPreMigration(TransactionCase):
+    """The pre-migration to 18.0.1.0.29 turns the MyCompassion activation and
+    suggested amounts into company-dependent (jsonb) columns."""
+
+    COLUMNS = (
+        "activate_for_my_compassion",
+        "my_compassion_donation_amount_low",
+        "my_compassion_donation_amount_medium",
+        "my_compassion_donation_amount_high",
+    )
+
+    def _columns(self):
+        self.env.cr.execute(
+            """SELECT column_name, data_type, column_default
+               FROM information_schema.columns
+               WHERE table_name = 'product_template' AND column_name IN %s""",
+            [self.COLUMNS],
+        )
+        return {name: (kind, default) for name, kind, default in self.env.cr.fetchall()}
+
+    def test_the_values_go_to_the_product_company(self):
+        main = self.env.ref("base.main_company")
+        other = self.env["res.company"].create({"name": "Legacy Fund Company"})
+        shared, own, empty = self.env["product.template"].create(
+            [
+                {"name": "Legacy Shared Fund", "type": "service"},
+                {
+                    "name": "Legacy Fund Of A Company",
+                    "type": "service",
+                    "company_id": other.id,
+                },
+                {"name": "Legacy Empty Fund", "type": "service"},
+            ]
+        )
+        self.env.flush_all()
+        cr = self.env.cr
+        # The columns before: a boolean as the ORM creates it (DEFAULT false),
+        # and numeric amounts.
+        cr.execute(
+            """ALTER TABLE product_template
+               ALTER COLUMN activate_for_my_compassion TYPE boolean USING NULL,
+               ALTER COLUMN activate_for_my_compassion SET DEFAULT false,
+               ALTER COLUMN my_compassion_donation_amount_low TYPE numeric USING NULL,
+               ALTER COLUMN my_compassion_donation_amount_medium
+                   TYPE numeric USING NULL,
+               ALTER COLUMN my_compassion_donation_amount_high TYPE numeric USING NULL
+            """
+        )
+        for product, active, low in (
+            (shared, True, 20),
+            (own, True, 30),
+            (empty, False, None),
+        ):
+            cr.execute(
+                """UPDATE product_template
+                   SET activate_for_my_compassion = %s,
+                       my_compassion_donation_amount_low = %s
+                   WHERE id = %s""",
+                (active, low, product.id),
+            )
+
+        load_script(
+            "my_compassion/migrations/18.0.1.0.29/pre-migration.py",
+            "my_compassion_pre_migration_18_0_1_0_29",
+        ).migrate(cr, "18.0.1.0.28")
+
+        self.assertEqual(self._columns(), dict.fromkeys(self.COLUMNS, ("jsonb", None)))
+        cr.execute(
+            """SELECT activate_for_my_compassion, my_compassion_donation_amount_low,
+                      my_compassion_donation_amount_medium
+               FROM product_template WHERE id IN %s ORDER BY id""",
+            [(shared.id, own.id, empty.id)],
+        )
+        self.assertEqual(
+            cr.fetchall(),
+            [
+                ({str(main.id): True}, {str(main.id): 20}, None),
+                ({str(other.id): True}, {str(other.id): 30}, None),
+                (None, None, None),
+            ],
         )
 
 
