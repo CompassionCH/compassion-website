@@ -78,7 +78,15 @@
                         From
                         <span class="body-small bold">
             <t t-out="product.my_compassion_currency_id.name" />
-            <t t-set="price" t-value="product.my_compassion_donation_amount_low" />
+            <!-- The lowest amount the donation form offers. -->
+            <t
+              t-set="offered"
+              t-value="request.website._my2_offered_suggestions(product)"
+            />
+            <t
+              t-set="price"
+              t-value="min(amount for _key, amount in offered) if offered else request.website._my2_amount_bounds(product)[0]"
+            />
             <t
               t-if="price % 1 == 0"
               t-set="price"

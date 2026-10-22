@@ -129,6 +129,33 @@ class Website(models.Model):
         suggested = [a for _key, a in self._my2_suggested_amounts(product) if a > 0]
         return min([minimum, *suggested])
 
+    def _my2_amount_bounds(self, product):
+        """(minimum, maximum) of what the current user may give to product on
+        this website, the maximum None when there is none: a fund's minimum
+        (_my2_fund_minimum), a gift's limits (gift.threshold.settings, in the
+        currency of the website's company)."""
+        self.ensure_one()
+        if product.my_compassion_donation_type == "gift":
+            limits = product.get_donation_limits(
+                self.company_id.sudo(), self.env.user.partner_id
+            )
+            return limits.get("min_amount") or 0.0, limits.get("max_amount") or None
+        return self._my2_fund_minimum(product), None
+
+    def _my2_offered_suggestions(self, product):
+        """The suggested amounts the donation form offers the current user for
+        product, as [(key, amount)]: the positive ones within
+        _my2_amount_bounds - one offered, then refused, would leave the donor
+        on the form."""
+        minimum, maximum = self._my2_amount_bounds(product)
+        return [
+            (key, amount)
+            for key, amount in self._my2_suggested_amounts(product)
+            if amount > 0
+            and amount >= minimum
+            and (maximum is None or amount <= maximum)
+        ]
+
     @staticmethod
     def _my2_suggested_amounts(product):
         return [

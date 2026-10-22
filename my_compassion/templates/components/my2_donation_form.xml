@@ -62,19 +62,13 @@
     <t t-set="default_frequency" t-value="default_frequency or 'one_time'" />
     <t t-set="default_suggested_amount" t-value="default_suggested_amount or 'low'" />
     <t t-set="base_name" t-value="base_name or 'donation'" />
-    <!-- A visitor is offered no suggestion below the fund's minimum; the
-         default falls on the first one left, or on their own amount, filled
-         with the minimum. -->
-    <t t-set="min_amount" t-value="request.website._my2_fund_minimum(product)" />
+    <!-- No suggestion outside the amounts the donor may give (a fund's
+         minimum, a gift's limits); the default falls on the first one left,
+         or on their own amount, filled with the minimum. -->
+    <t t-set="min_amount" t-value="request.website._my2_amount_bounds(product)[0]" />
     <t
       t-set="suggestions"
-      t-value="[
-        (key, amount) for key, amount in (
-          ('low', product.my_compassion_donation_amount_low),
-          ('medium', product.my_compassion_donation_amount_medium),
-          ('high', product.my_compassion_donation_amount_high),
-        ) if amount &gt;= min_amount
-      ]"
+      t-value="request.website._my2_offered_suggestions(product)"
     />
     <t
       t-if="default_suggested_amount != 'custom' and default_suggested_amount not in [key for key, amount in suggestions]"

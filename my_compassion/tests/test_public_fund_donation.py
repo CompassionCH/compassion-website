@@ -235,6 +235,38 @@ class TestPublicFundDonation(HttpCase):
         self._add_fund(suggested_amount="custom", custom_amount="1")
         self.assertEqual(self._cart().order_line.price_unit, 1.0)
 
+    def test_gift_is_offered_only_amounts_within_its_limits(self):
+        """A gift's suggestions outside its limits (gift.threshold.settings,
+        in the currency of the website's company) were offered, then
+        refused."""
+        gift_type = self.env["sponsorship.gift.type"].create(
+            {"name": "Visitor Test Gift Type", "code": "VTGT"}
+        )
+        self.gift.sponsorship_gift_type_id = gift_type
+        self.env["gift.threshold.settings"].create(
+            {
+                "gift_type_id": gift_type.id,
+                "min_amount": 30.0,
+                "max_amount": 80.0,
+                "currency_id": self.website.company_id.currency_id.id,
+            }
+        )
+        self._portal_user("gift-giver@example.org")
+        page = self.url_open(f"/my2/gifts/{self.gift.id}").text
+        self.assertNotIn("-suggested-low", page)
+        self.assertNotIn("-suggested-high", page)
+        self.assertRegex(page, r'-suggested-medium"[^>]*data-amount="50.0"[^>]*checked')
+
+    def test_product_card_shows_the_lowest_amount_offered(self):
+        """The fund's card on the add page says "From" the lowest amount its
+        form offers: for a visitor, not a suggestion below the minimum."""
+        self._small_suggestions()
+        page = self.url_open("/my2/gift-package/add").text
+        lowest = re.search(
+            rf'href="/my2/gifts/{self.fund.id}"[\s\S]*?From[\s\S]*?([0-9.]+)\.-', page
+        )
+        self.assertEqual(lowest.group(1), "5")
+
     def test_cart_of_another_website_is_not_taken(self):
         """/my2 resolves to MyCompassion on any domain, while the session's
         cart may have been started on another website of that domain."""
