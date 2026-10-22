@@ -535,7 +535,7 @@ class MyCompassionDonationsController(CustomerPortal):
         sale_order_id = request.session.get("sale_last_order_id")
         if sale_order_id:
             sale_order = request.env["sale.order"].sudo().browse(sale_order_id)
-            outcome = self._my2_payment_outcome(sale_order)
+            outcome = sale_order.exists()._my2_payment_outcome()
             if outcome == "paid":
                 return request.render(
                     "my_compassion.my2_gifts_thank_you_page",
@@ -650,37 +650,6 @@ class MyCompassionDonationsController(CustomerPortal):
             "processing": tx.state in ("draft", "pending"),
             "reference": tx.reference,
         }
-
-    @staticmethod
-    def _my2_payment_outcome(order):
-        """What became of the payment of a donation order:
-
-        - "paid": the order is confirmed, or one of its payments may still
-          succeed (pending: BLIK in the bank app, 3DS, a provider that did
-          not answer; authorized; or a draft the provider already has) - the
-          donor is thanked, and never asked to pay a second time;
-        - "failed": its last payment was cancelled or refused, and none may
-          still succeed - the donor gets the cart back to pay again;
-        - "": it was never paid.
-
-        A refused payment is "error": the payment providers record a refusal
-        they are sure of as such, and an unknown outcome (e.g. PayU not
-        answering) as pending. Drafts are ignored, as website_sale does
-        (get_portal_last_transaction): an abandoned newer one hides nothing.
-        """
-        if not order.exists():
-            return ""
-        if order.state not in ("draft", "sent"):
-            return "paid"
-        may_succeed = order.transaction_ids.filtered(
-            lambda t: t.state in ("pending", "authorized", "done")
-            or (t.state == "draft" and t.provider_reference)
-        )
-        if may_succeed:
-            return "paid"
-        if order.get_portal_last_transaction().state in ("cancel", "error"):
-            return "failed"
-        return ""
 
     def _get_donation_product(self, product_id):
         """The donation product a visitor or user may give to, or an empty

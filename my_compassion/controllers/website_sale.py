@@ -10,7 +10,7 @@
 from datetime import timedelta
 
 from odoo import _, fields, http
-from odoo.exceptions import AccessError, MissingError, ValidationError
+from odoo.exceptions import AccessError, MissingError, UserError, ValidationError
 from odoo.http import request
 
 from odoo.addons.sale.controllers.portal import PaymentPortal as SalePaymentPortal
@@ -83,12 +83,18 @@ class MyCompassionShopPayment(PaymentPortal, SalePaymentPortal):
     def _my2_check_new_payment(self, order_sudo, token_id=None, **kwargs):
         """Before a new payment of a MyCompassion order:
 
+        - none while an earlier one is paid or may still succeed (a second
+          tab, a payment waiting in the bank app): both could be charged;
         - for a visitor, never a saved card: the order's partner was created
           from an email anyone may type, and may later be someone's account -
           their cards are theirs. The gift package shows a visitor no saved
           card; this refuses one sent all the same;
         - for a visitor, a few payment attempts per order and hour only.
         """
+        if order_sudo._my2_payment_outcome() == "paid":
+            raise UserError(
+                _("This donation is already paid, or its payment is under way.")
+            )
         if not request.env.user._is_public():
             return
         if token_id:

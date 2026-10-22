@@ -36,6 +36,39 @@ class SaleOrder(models.Model):
             raise UserError(_("Please change your donation in your gift package."))
         return super()._update_cart_line_values(order_line, update_values)
 
+    def _my2_payment_outcome(self):
+        """What became of the payment of a donation order:
+
+        - "paid": the order is confirmed, or one of its payments may still
+          succeed: pending (BLIK in the bank app, 3DS), authorized, a draft
+          the provider already has, or a cancelled or refused one whose
+          refusal is not certain (_my2_refusal_is_certain, e.g. a payment the
+          provider never confirmed nor refused) - the donor is thanked, and
+          never asked to pay a second time;
+        - "failed": its last payment was cancelled or refused for certain,
+          and none may still succeed - the donor gets the cart back to pay
+          again;
+        - "": it was never paid.
+
+        Drafts are ignored, as website_sale does (get_portal_last_transaction):
+        an abandoned newer one hides nothing.
+        """
+        if not self:
+            return ""
+        self.ensure_one()
+        if self.state not in ("draft", "sent"):
+            return "paid"
+        may_succeed = self.transaction_ids.filtered(
+            lambda t: t.state in ("pending", "authorized", "done")
+            or (t.state == "draft" and t.provider_reference)
+            or (t.state in ("cancel", "error") and not t._my2_refusal_is_certain())
+        )
+        if may_succeed:
+            return "paid"
+        if self.get_portal_last_transaction().state in ("cancel", "error"):
+            return "failed"
+        return ""
+
     def _check_cart_is_ready_to_be_paid(self):
         self._check_gift_limits()
         return super()._check_cart_is_ready_to_be_paid()

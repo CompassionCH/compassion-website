@@ -679,6 +679,44 @@ class TestPublicFundDonation(HttpCase):
             state="draft", provider_reference="AT-THE-PROVIDER"
         )
 
+    def test_second_tab_cannot_pay_while_one_is_pending(self):
+        """The basket open in two tabs: tab A's payment is pending (BLIK in
+        the bank app, 3-D Secure) when tab B pays."""
+        self._add_fund()
+        self._give_email()
+        cart = self._cart()
+        self._pay("pending")
+        with self.assertRaises(JsonRpcException):
+            self.make_jsonrpc_request(
+                f"/shop/payment/transaction/{cart.id}", self._payment_values(cart)
+            )
+        self.assertEqual(len(cart.transaction_ids), 1)
+
+    def test_an_unconfirmed_refusal_is_no_failure(self):
+        """A payment the provider never confirmed nor refused, given up on
+        after a while, may still succeed: the donor is not asked to pay
+        again."""
+        self._add_fund()
+        self._give_email()
+        cart = self._cart()
+        self._pay("error")
+        with patch.object(
+            type(self.env["payment.transaction"]),
+            "_my2_refusal_is_certain",
+            return_value=False,
+        ):
+            page = self.url_open("/shop/payment/validate")
+            self.assertNotIn("/my2/gift-package", page.url)
+            self.assertNotIn("Your payment did not go through", page.text)
+            with self.assertRaises(JsonRpcException):
+                self.make_jsonrpc_request(
+                    f"/shop/payment/transaction/{cart.id}", self._payment_values(cart)
+                )
+        self.assertEqual(len(cart.transaction_ids), 1)
+        # A refusal the provider is sure of gives the basket back.
+        page = self.url_open("/my2/gifts/thankyou")
+        self.assertIn("payment_failed=1", page.url)
+
     def test_abandoned_draft_hides_no_refusal(self):
         self._add_fund()
         self._give_email()

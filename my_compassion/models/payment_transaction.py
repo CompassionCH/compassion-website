@@ -52,6 +52,14 @@ class PaymentTransaction(models.Model):
                 tx._my2_save_token_on_groups()
         return res
 
+    def _my2_refusal_is_certain(self):
+        """Whether this cancelled or refused payment is known to have failed,
+        so that the donor may pay again (sale.order._my2_payment_outcome).
+        A provider that gives up waiting for an outcome it never learnt, and
+        records the payment as refused, overrides this for such payments."""
+        self.ensure_one()
+        return True
+
     def _my2_cancel_stale_checkout_tx(self):
         """Cleanup for shopper checkouts that never finished.
 
