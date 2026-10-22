@@ -1386,6 +1386,52 @@ class TestPublicFundDonation(HttpCase):
         self.assertEqual(automatic.state, "done")
         self.assertEqual(manual.state, "pending")
 
+    def _queued_sends(self, letter):
+        """The queued sends of letter."""
+        if "queue.job" in self.env:
+            jobs = self.env["queue.job"].search(
+                [
+                    ("model_name", "=", letter._name),
+                    ("method_name", "=", "send"),
+                    ("record_ids", "like", str(letter.id)),
+                ]
+            )
+        else:
+            jobs = self.env["queue.job.replacement"].search(
+                [
+                    ("res_model", "=", letter._name),
+                    ("job_function", "=", "send"),
+                    ("res_ids", "=", str(letter.ids)),
+                ]
+            )
+        return jobs
+
+    def test_held_letter_released_by_the_visitor_is_sent_as_superuser(self):
+        """The name form of the thank-you page runs as the public user: the
+        release it triggers renders and queues the letter as the superuser,
+        not as the visitor."""
+        config = self._letter_config()
+        self._add_fund()
+        self._give_email()
+        donor = self._cart().partner_id
+        letter = self._letter(config, donor, auto_send=True)
+        self.assertIn(donor.MY2_PLACEHOLDER_NAME, letter.body_html)
+        queued_before = self._queued_sends(letter)
+        self._pay("pending")
+        page = self.url_open("/my2/gifts/thankyou")
+        self.url_open(
+            "/my2/gifts/thankyou/details",
+            data={
+                "csrf_token": CSRF_RE.search(page.text).group(1),
+                "firstname": "Anna",
+                "lastname": "Nowak",
+            },
+        )
+        self.assertIn("Nowak", letter.body_html)
+        released = self._queued_sends(letter) - queued_before
+        self.assertEqual(len(released), 1)
+        self.assertEqual(released.user_id, self.env.ref("base.user_root"))
+
     def test_every_held_letter_is_sent(self):
         """Two automatic letters of one rule for one donor (the rule does not
         merge them) are both sent once the name is given: the queue does not

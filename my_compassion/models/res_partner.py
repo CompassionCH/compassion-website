@@ -1,7 +1,7 @@
 import logging
 from datetime import timedelta
 
-from odoo import _, fields, models
+from odoo import SUPERUSER_ID, _, fields, models
 from odoo.exceptions import UserError
 
 from .communication_job import NAMED_COMMUNICATION_MODELS
@@ -196,7 +196,10 @@ class Partner(models.Model):
             )
         try:
             with self.env.cr.savepoint():
-                self.env["partner.communication.job"].sudo().search(
+                # As the superuser, not as the visitor whose request gave the
+                # name: the letters are rendered, and their sends queued, as
+                # the user of this environment.
+                self.env["partner.communication.job"].with_user(SUPERUSER_ID).search(
                     [
                         ("partner_id", "in", self.ids),
                         ("state", "=", "pending"),
