@@ -70,7 +70,9 @@ class Website(models.Model):
         a draft cart of this website (and its company) is the cart; another
         website never takes a MyCompassion cart (the shop, crowdfunding and
         events add lines through website_sale). A new cart is started
-        instead."""
+        instead - and when the other website only reads its cart, the
+        MyCompassion one stays in the session for the visitor's return."""
+        my2_cart = None
         if request and request.session.get("sale_order_id"):
             order = (
                 self.env["sale.order"]
@@ -78,20 +80,32 @@ class Website(models.Model):
                 .browse(request.session["sale_order_id"])
                 .exists()
             )
-            if order and (
-                (
-                    self.is_my_compassion
-                    and (
-                        order.website_id != self
-                        or order.company_id != self.company_id
-                        or order.state != "draft"
-                    )
+            if (
+                order
+                and self.is_my_compassion
+                and (
+                    order.website_id != self
+                    or order.company_id != self.company_id
+                    or order.state != "draft"
                 )
-                or (not self.is_my_compassion and order.website_id.is_my_compassion)
             ):
                 request.session.pop("sale_order_id", None)
                 request.session.pop("website_sale_cart_quantity", None)
-        return super().sale_get_order(force_create=force_create)
+            elif (
+                order
+                and not self.is_my_compassion
+                and order.website_id.is_my_compassion
+            ):
+                my2_cart = (
+                    request.session.pop("sale_order_id"),
+                    request.session.pop("website_sale_cart_quantity", None),
+                )
+        cart = super().sale_get_order(force_create=force_create)
+        if my2_cart and not cart and not request.session.get("sale_order_id"):
+            request.session["sale_order_id"] = my2_cart[0]
+            if my2_cart[1] is not None:
+                request.session["website_sale_cart_quantity"] = my2_cart[1]
+        return cart
 
     def _my2_offers_payment_method(self, code):
         """Whether a published payment provider of the website's company offers

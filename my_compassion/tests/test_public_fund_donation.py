@@ -242,6 +242,22 @@ class TestPublicFundDonation(HttpCase):
         self.assertEqual(cart.order_line.product_id, self.fund.product_variant_id)
         self.assertEqual(shop_cart.order_line.product_id, product)
 
+    def test_another_website_page_keeps_the_basket(self):
+        """A page of another website that only reads the cart leaves the
+        MyCompassion basket in the session: back on /my2, it is there."""
+        self._add_fund()
+        other_website = self.env["website"].search(
+            [("id", "!=", self.website.id), ("is_my_compassion", "=", False)], limit=1
+        )
+        other_website.domain = "http://other.example.org"
+        cookies = "; ".join(f"{c.name}={c.value}" for c in self.opener.cookies)
+        page = self.url_open(
+            "/shop/cart", headers={"Host": "other.example.org", "Cookie": cookies}
+        )
+        self.assertEqual(page.status_code, 200)
+        page = self.url_open("/my2/gift-package")
+        self.assertIn("Visitor Test Fund", page.text)
+
     def test_shop_routes_never_add_to_the_cart(self):
         """Only the gift package's routes change a MyCompassion cart: a shop
         product priced under the fund minimum would get around it."""
