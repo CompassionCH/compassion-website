@@ -9,8 +9,9 @@
 
 The MyCompassion activation and suggested amounts of the donation products
 become company-dependent (jsonb ``{company_id: value}``): the values set so far
-belong to the main company. Converted in place, before the ORM would move the
-old columns aside and lose them.
+belong to the product's company, or to the main company for a shared product.
+Converted in place, before the ORM would move the old columns aside and lose
+them.
 """
 
 COLUMNS = (
@@ -31,7 +32,7 @@ def migrate(cr, version):
     row = cr.fetchone()
     if not row:
         return
-    company_key = str(row[0])
+    main_company_id = row[0]
     for column in COLUMNS:
         cr.execute(
             """SELECT data_type FROM information_schema.columns
@@ -41,10 +42,13 @@ def migrate(cr, version):
         data_type = (cr.fetchone() or [None])[0]
         if data_type in (None, "jsonb"):
             continue
-        # A false/empty value is the fallback: not stored.
+        # A false/empty value is not stored: the product reads the fallback
+        # (data/donation_amount_defaults.xml for the amounts).
         keep = f"{column}" if data_type == "boolean" else f"{column} IS NOT NULL"
         cr.execute(
             f"""ALTER TABLE product_template ALTER COLUMN {column} TYPE jsonb
-                USING CASE WHEN {keep} THEN jsonb_build_object(%s, {column}) END""",
-            (company_key,),
+                USING CASE WHEN {keep} THEN jsonb_build_object(
+                    COALESCE(company_id, %s)::text, {column}
+                ) END""",
+            (main_company_id,),
         )
