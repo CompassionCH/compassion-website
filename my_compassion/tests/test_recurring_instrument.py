@@ -157,6 +157,90 @@ class TestRecurringInstrument(DigitalSeamCase):
                 )
             self.assertEqual(self.env["payment.transaction"].search([]), transactions)
 
+    def _card(self, partner, provider, reference):
+        return self.env["payment.token"].create(
+            {
+                "provider_id": provider.id,
+                "payment_method_id": self.env.ref("payment.payment_method_unknown").id,
+                "partner_id": partner.id,
+                "provider_ref": reference,
+                "payment_details": "1111",
+            }
+        )
+
+    def _update_card_transaction(self, group, invoice, partner, card):
+        """A card update paying invoice, done with card."""
+        _overrides, values = MyCompassionUpdateCard._update_card_tx_values(
+            group, invoice
+        )
+        tx = self.env["payment.transaction"].create(
+            {
+                "provider_id": card.provider_id.id,
+                "payment_method_id": card.payment_method_id.id,
+                "partner_id": partner.id,
+                "reference": f"update-card-{card.provider_ref}",
+                "amount": invoice.amount_residual,
+                "currency_id": invoice.currency_id.id,
+                "operation": "online_direct",
+                "token_id": card.id,
+                **values,
+            }
+        )
+        tx._set_done()
+        return tx
+
+    def assertStoredCard(self, group, card):
+        """The card the database holds, not the cache."""
+        self.env.flush_all()
+        self.env.invalidate_all()
+        self.assertEqual(group.payment_token_id, card)
+
+    def test_card_of_a_former_sponsor_never_replaces_the_card(self):
+        # The group changed sponsor while the former one was changing its
+        # card on the update-card page.
+        contract, invoice, _token = self._make_chargeable_invoice()
+        group = contract.group_id
+        provider = group.payment_mode_id.payment_provider_id
+        former_card = self._card(contract.partner_id, provider, "former-sponsor")
+        tx = self._update_card_transaction(
+            group, invoice, contract.partner_id, former_card
+        )
+        new_sponsor = self.env["res.partner"].create({"name": "New Sponsor"})
+        new_card = self._card(new_sponsor, provider, "new-sponsor")
+        group.write({"partner_id": new_sponsor.id, "payment_token_id": new_card.id})
+        self.assertFalse(tx._my2_groups_taking_the_token())
+        tx._my2_save_token_on_groups()
+        self.assertStoredCard(group, new_card)
+
+    def test_refused_card_leaves_the_card_unchanged(self):
+        # A constraint refusing the new card after the field was written
+        contract, invoice, token = self._make_chargeable_invoice()
+        group = contract.group_id
+        tx = self._update_card_transaction(
+            group,
+            invoice,
+            contract.partner_id,
+            token.copy({"provider_ref": "refused-card"}),
+        )
+        group_class = self.registry["recurring.contract.group"]
+        write = group_class.write
+
+        def write_then_refuse(groups, vals):
+            res = write(groups, vals)
+            if "payment_token_id" in vals:
+                # pylint: disable=translation-required
+                raise ValidationError("The card is refused.")
+            return res
+
+        with (
+            patch.object(group_class, "write", write_then_refuse),
+            self.assertLogs(
+                "odoo.addons.my_compassion.models.payment_transaction", "ERROR"
+            ),
+        ):
+            tx._my2_save_token_on_groups()
+        self.assertStoredCard(group, token)
+
 
 @tagged("post_install", "-at_install")
 class TestUpdateCardPage(HttpCase, DigitalSeamCase):

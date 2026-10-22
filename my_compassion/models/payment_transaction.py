@@ -275,7 +275,10 @@ class PaymentTransaction(models.Model):
             lambda g: g.payment_token_id != self.token_id
         )
         try:
-            groups.payment_token_id = self.token_id
+            # Odoo caches the new value before the constraints run: only a
+            # savepoint undoes a refused assignment.
+            with self.env.cr.savepoint():
+                groups.payment_token_id = self.token_id
         except (ValidationError, UserError):
             # A token incompatible with the group must never wedge the
             # post-processing poll or cron into an eternal retry. The
@@ -296,7 +299,10 @@ class PaymentTransaction(models.Model):
 
         A group with no saved card takes the one that pays its invoices.
         Replacing an existing card is only allowed from the update-card page,
-        which authenticates the sponsor first.
+        which authenticates the sponsor first. Either way the card must be
+        one the group can be charged with: of its sponsor, in its company,
+        at its payment mode's provider. A group may change sponsor while a
+        payment is in flight.
         """
         self.ensure_one()
         if digital_invoices is None:
@@ -307,6 +313,9 @@ class PaymentTransaction(models.Model):
             digital_invoices.line_ids.contract_id.group_id
             | self.my2_card_update_group_id
         ).filtered(
-            lambda g: g.payment_mode_id.payment_provider_id
+            lambda g: g.payment_mode_id.payment_provider_id == self.provider_id
+            and g.company_id == self.company_id
+            and g.partner_id.commercial_partner_id
+            == self.partner_id.commercial_partner_id
             and (not g.payment_token_id or g == self.my2_card_update_group_id)
         )
