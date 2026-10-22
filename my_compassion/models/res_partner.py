@@ -175,15 +175,19 @@ class Partner(models.Model):
         best-effort: it runs inside payment notification handling, where an
         exception would roll back the recorded payment outcome and make the
         provider redeliver the notification into the same crash.
+
+        Runs as the superuser, not as the user whose request gave the name
+        (the public user for the thank-you and details forms): what it
+        creates and queues - invitations, letters - is created, rendered and
+        sent as the user of its environment.
         """
         if not self:
             return
+        self = self.with_user(SUPERUSER_ID)
         try:
             with self.env.cr.savepoint():
-                contracts = (
-                    self.env["recurring.contract"]
-                    .sudo()
-                    .search([("partner_id", "in", self.ids)])
+                contracts = self.env["recurring.contract"].search(
+                    [("partner_id", "in", self.ids)]
                 )
                 pending = contracts._my2_pending_portal_invitations()
                 pending._my2_send_portal_invitation()
@@ -196,10 +200,7 @@ class Partner(models.Model):
             )
         try:
             with self.env.cr.savepoint():
-                # As the superuser, not as the visitor whose request gave the
-                # name: the letters are rendered, and their sends queued, as
-                # the user of this environment.
-                self.env["partner.communication.job"].with_user(SUPERUSER_ID).search(
+                self.env["partner.communication.job"].search(
                     [
                         ("partner_id", "in", self.ids),
                         ("state", "=", "pending"),

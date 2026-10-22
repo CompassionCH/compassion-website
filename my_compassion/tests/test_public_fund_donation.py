@@ -1392,9 +1392,10 @@ class TestPublicFundDonation(HttpCase):
 
     # === What waits for the donor's name ===
 
-    def _letter_config(self):
+    def _letter_config(self, model="account.move"):
         """A communication about invoices (as the thank-you letters and the
-        donation receipts) that greets the donor by name."""
+        donation receipts), or about another model, that greets the donor by
+        name."""
         template = self.env["mail.template"].create(
             {
                 "name": "Visitor Thanks",
@@ -1407,7 +1408,7 @@ class TestPublicFundDonation(HttpCase):
         return self.env["partner.communication.config"].create(
             {
                 "name": "Visitor Thanks",
-                "model_id": self.env["ir.model"]._get_id("account.move"),
+                "model_id": self.env["ir.model"]._get_id(model),
                 "source_id": self.env["utm.source"].create({"name": "Thanks"}).id,
                 "send_mode": "digital",
                 "email_template_id": template.id,
@@ -1512,6 +1513,39 @@ class TestPublicFundDonation(HttpCase):
         released = self._queued_sends(letter) - queued_before
         self.assertEqual(len(released), 1)
         self.assertEqual(released.user_id, self.env.ref("base.user_root"))
+
+    def test_portal_invitation_released_by_the_visitor_comes_from_superuser(self):
+        """A donor who also signed up for a sponsorship gets the portal
+        invitation once named: given through the thank-you form, which runs
+        as the public user, it is still created as the superuser."""
+        config = self._letter_config(model="res.partner")
+        self._add_fund()
+        self._give_email()
+        donor = self._cart().partner_id
+        group = self.env["recurring.contract.group"].create({"partner_id": donor.id})
+        self.env["recurring.contract"].create(
+            {"partner_id": donor.id, "group_id": group.id, "my2_signup": True}
+        ).state = "waiting"
+        self._pay("pending")
+        page = self.url_open("/my2/gifts/thankyou")
+        with patch.object(
+            type(self.env["recurring.contract"]),
+            "_my2_portal_invitation_config",
+            return_value=config,
+        ):
+            self.url_open(
+                "/my2/gifts/thankyou/details",
+                data={
+                    "csrf_token": CSRF_RE.search(page.text).group(1),
+                    "firstname": "Anna",
+                    "lastname": "Nowak",
+                },
+            )
+        invitation = self.env["partner.communication.job"].search(
+            [("config_id", "=", config.id), ("partner_id", "=", donor.id)]
+        )
+        self.assertEqual(len(invitation), 1)
+        self.assertEqual(invitation.create_uid, self.env.ref("base.user_root"))
 
     def test_every_held_letter_is_sent(self):
         """Two automatic letters of one rule for one donor (the rule does not
