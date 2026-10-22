@@ -32,10 +32,7 @@ class PaymentAttemptCounter(models.Model):
     website_id = fields.Many2one(
         "website", required=True, readonly=True, ondelete="cascade"
     )
-    company_id = fields.Many2one(
-        "res.company", required=True, readonly=True, ondelete="cascade"
-    )
-    ip_address = fields.Char(required=True, readonly=True)
+    ip_address = fields.Char("IP Address", required=True, readonly=True)
     window_start = fields.Datetime(required=True, readonly=True)
     attempts = fields.Integer(required=True, readonly=True)
 
@@ -62,10 +59,9 @@ class PaymentAttemptCounter(models.Model):
             SQL(
                 """
                 INSERT INTO my2_payment_attempt_counter AS counter
-                    (website_id, company_id, ip_address, window_start, attempts)
-                VALUES (%(website)s, %(company)s, %(ip)s, %(now)s, 1)
+                    (website_id, ip_address, window_start, attempts)
+                VALUES (%(website)s, %(ip)s, %(now)s, 1)
                 ON CONFLICT (website_id, ip_address) DO UPDATE SET
-                    company_id = EXCLUDED.company_id,
                     attempts = CASE WHEN counter.window_start < %(since)s
                         THEN 1 ELSE counter.attempts + 1 END,
                     window_start = CASE WHEN counter.window_start < %(since)s
@@ -73,7 +69,6 @@ class PaymentAttemptCounter(models.Model):
                 RETURNING attempts
                 """,
                 website=website.id,
-                company=order.company_id.id,
                 ip=ip_address or "",
                 now=now,
                 since=since,
@@ -87,9 +82,18 @@ class PaymentAttemptCounter(models.Model):
     def _gc_my2_expired_counters(self):
         """The counters whose window is over: the next attempt of their IP
         starts a new one."""
-        now = fields.Datetime.now()
-        for website in self.sudo().search([]).website_id:
-            window = timedelta(minutes=website.my2_payment_attempts_window)
-            self.sudo().search(
-                [("website_id", "=", website.id), ("window_start", "<", now - window)]
-            ).unlink()
+        self.flush_model(["website_id", "window_start"])
+        self.env["website"].flush_model(["my2_payment_attempts_window"])
+        self.env.cr.execute(
+            SQL(
+                """
+                DELETE FROM my2_payment_attempt_counter counter
+                USING website
+                WHERE website.id = counter.website_id
+                    AND counter.window_start < %s
+                        - make_interval(mins => website.my2_payment_attempts_window)
+                """,
+                fields.Datetime.now(),
+            )
+        )
+        self.invalidate_model()
