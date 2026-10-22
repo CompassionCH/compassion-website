@@ -274,6 +274,8 @@ class PaymentTransaction(models.Model):
         groups = self._my2_groups_taking_the_token(digital_invoices).filtered(
             lambda g: g.payment_token_id != self.token_id
         )
+        if not groups:
+            return
         try:
             # Odoo caches the new value before the constraints run: only a
             # savepoint undoes a refused assignment.
