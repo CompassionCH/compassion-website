@@ -77,7 +77,7 @@
           <div t-attf-class="body-small text-#{price_color} ">
                         From
                         <span class="body-small bold">
-            <t t-out="currency_name" />
+            <t t-out="product.my_compassion_currency_id.name" />
             <t t-set="price" t-value="product.my_compassion_donation_amount_low" />
             <t
               t-if="price % 1 == 0"

@@ -3,6 +3,7 @@ from . import (
     test_contact_us,
     test_digital_fixit,
     test_digital_seam,
+    test_donation_product_company,
     test_donation_flow,
     test_fast_checkout,
     test_fast_checkout_details,

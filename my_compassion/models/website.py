@@ -43,6 +43,54 @@ class Website(models.Model):
         " sponsorships. Defaults to /my2/children when empty.",
     )
 
+    def _my2_offers_payment_method(self, code):
+        """Whether a published payment provider of the website's company offers
+        the payment method ``code`` (e.g. "blik"): its logo is then shown
+        under the Pay button."""
+        self.ensure_one()
+        return bool(
+            self.env["payment.provider"]
+            .sudo()
+            .search_count(
+                [
+                    ("company_id", "=", self.company_id.id),
+                    ("state", "in", ("enabled", "test")),
+                    ("is_published", "=", True),
+                    ("payment_method_ids.code", "=", code),
+                ],
+                limit=1,
+            )
+        )
+
+    def _my2_donation_products(self, domain=None, order=None):
+        """The donation products (funds and gifts) the website's company
+        publishes, in sudo.
+
+        Their activation, suggested amounts and currency are per company, read
+        in env.company: that is the donor's own company when the website's
+        company is not one of theirs (website's _frontend_pre_dispatch). Read
+        in the website's company instead, the company of the cart; sudo, as
+        such a donor may not read in it, so the domain is the gate: activated
+        in the website's company, and shared, of that company or of a parent
+        company, as the product multi-company rule (which sudo skips) allows.
+        """
+        self.ensure_one()
+        return (
+            self.env["product.template"]
+            .sudo()
+            .with_company(self.company_id)
+            .search(
+                [
+                    ("activate_for_my_compassion", "=", True),
+                    *self.env["product.template"]._check_company_domain(
+                        self.company_id
+                    ),
+                    *(domain or []),
+                ],
+                order=order,
+            )
+        )
+
     @api.model
     def get_current_website(self, fallback=True):
         # On the MyCompassion portal routes (/my2 and localized /<lang>/my2),

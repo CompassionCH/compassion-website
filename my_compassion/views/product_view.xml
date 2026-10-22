@@ -104,17 +104,24 @@
             string="Suggested Donations"
             invisible="not activate_for_my_compassion"
           >
+            <field name="my_compassion_currency_id" invisible="1" />
             <field
               name="my_compassion_donation_amount_low"
               string="Lowest suggested amount"
+              widget="monetary"
+              options="{'currency_field': 'my_compassion_currency_id'}"
             />
             <field
               name="my_compassion_donation_amount_medium"
               string="Medium suggested amount"
+              widget="monetary"
+              options="{'currency_field': 'my_compassion_currency_id'}"
             />
             <field
               name="my_compassion_donation_amount_high"
               string="High suggested amount"
+              widget="monetary"
+              options="{'currency_field': 'my_compassion_currency_id'}"
             />
           </group>
         </page>

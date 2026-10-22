@@ -1,11 +1,15 @@
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
+    # Per company: each office publishes its own funds and gifts (the products
+    # are shared between the companies).
     activate_for_my_compassion = fields.Boolean(
-        help="Publish the product as an available donation on the MyCompassion website"
+        company_dependent=True,
+        help="Publish the product as an available donation on the MyCompassion "
+        "website of the current company",
     )
 
     # General
@@ -100,27 +104,40 @@ class ProductTemplate(models.Model):
         help="Content of the testimony visible on the web page of the fund/gift",
     )
 
-    # Donation suggestions
-    my_compassion_donation_amount_low = fields.Monetary(
+    # Donation suggestions, per company in the currency of the company: a
+    # shared product's currency_id is always the main company's one. A company
+    # that sets none reads the company-less ir.default values
+    # (data/donation_amount_defaults.xml).
+    my_compassion_donation_amount_low = fields.Float(
         string="Lowest Amount",
-        currency_field="currency_id",
-        default=15.0,
+        company_dependent=True,
+        copy=True,
         help="Lowest price suggestion when making a donation",
     )
 
-    my_compassion_donation_amount_medium = fields.Monetary(
+    my_compassion_donation_amount_medium = fields.Float(
         string="Medium Amount",
-        currency_field="currency_id",
-        default=50.0,
+        company_dependent=True,
+        copy=True,
         help="Medium price suggestion when making a donation",
     )
 
-    my_compassion_donation_amount_high = fields.Monetary(
+    my_compassion_donation_amount_high = fields.Float(
         string="Highest Amount",
-        currency_field="currency_id",
-        default=100.0,
+        company_dependent=True,
+        copy=True,
         help="Highest price suggestion when making a donation",
     )
+
+    my_compassion_currency_id = fields.Many2one(
+        "res.currency",
+        compute="_compute_my_compassion_currency_id",
+        help="Currency of the suggested amounts: the current company's one",
+    )
+
+    @api.depends_context("company")
+    def _compute_my_compassion_currency_id(self):
+        self.my_compassion_currency_id = self.env.company.currency_id
 
     def get_donation_limits(self, company, partner, sponsorship_id=None, order=None):
         """

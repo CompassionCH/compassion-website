@@ -235,6 +235,12 @@
                       class="px-1 col-3"
                       src="/my_compassion/static/src/img/visa.png"
                     />
+                    <img
+                      t-if="website._my2_offers_payment_method('blik')"
+                      alt="BLIK"
+                      class="px-1 col-3"
+                      src="/payment/static/img/blik.png"
+                    />
                   </div>
                   <div class="mt-3 body-small bold text-mid-green text-center">
                                         <i class="mt-n1 icon-lock03" />
