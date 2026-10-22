@@ -1440,12 +1440,11 @@ msgstr "Weiter"
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_payment_transaction__my2_card_update_group_id
 msgid ""
-"Contract group whose saved instrument this validation transaction replaces "
-"(the update-card page with nothing due)."
+"Contract group whose saved instrument this transaction replaces (the update-"
+"card page)."
 msgstr ""
-"Vertragsgruppe, deren gespeichertes Zahlungsmittel durch diese "
-"Validierungstransaktion ersetzt wird (die Seite zur Kartenaktualisierung "
-"ohne offenen Betrag)."
+"Vertragsgruppe, deren gespeichertes Zahlungsmittel durch diese Transaktion "
+"ersetzt wird (die Seite zur Kartenaktualisierung)."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_information_personal
@@ -3111,6 +3110,26 @@ msgstr "Nicht zum Verkauf verfügbar"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_children_card_component
 msgid "Not specified"
 msgstr "Nicht angegeben"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_update_card_page
+msgid ""
+"Nothing is due right now, and a\n"
+"                new card can only be saved with a payment. Your current card\n"
+"                stays in use for the next monthly payments."
+msgstr ""
+"Im Moment ist nichts fällig, und eine\n"
+"                neue Karte kann nur mit einer Zahlung gespeichert werden. Deine aktuelle Karte\n"
+"                wird weiterhin für die nächsten monatlichen Zahlungen verwendet."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/my2_update_card.py:0
+msgid ""
+"Nothing is due right now, and a new card can only be saved with a payment."
+msgstr ""
+"Im Moment ist nichts fällig, und eine neue Karte kann nur mit einer Zahlung "
+"gespeichert werden."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_update_card_page

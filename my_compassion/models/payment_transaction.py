@@ -15,8 +15,8 @@ class PaymentTransaction(models.Model):
         "recurring.contract.group",
         string="Card Update Group",
         readonly=True,
-        help="Contract group whose saved instrument this validation"
-        " transaction replaces (the update-card page with nothing due).",
+        help="Contract group whose saved instrument this transaction replaces"
+        " (the update-card page).",
     )
     my2_cardholder_name = fields.Char(
         string="Cardholder Name",
@@ -304,27 +304,21 @@ class PaymentTransaction(models.Model):
     def _my2_save_token_on_groups(self, digital_invoices=None):
         """Make the transaction's token the card of its contract groups.
 
-        A group with no saved card takes the one that just paid. Replacing an
-        existing card is only allowed from the update-card page, which
-        authenticates the sponsor first.
+        See _my2_groups_taking_the_token for the groups.
         """
         self.ensure_one()
         if not self.token_id:
             return
-        if digital_invoices is None:
-            digital_invoices = self.invoice_ids.filtered(
-                "line_ids.contract_id.group_id.payment_mode_id.payment_provider_id"
-            )
-        groups = (
-            digital_invoices.line_ids.contract_id.group_id
-            | self.my2_card_update_group_id
-        ).filtered(
-            lambda g: g.payment_mode_id.payment_provider_id
-            and g.payment_token_id != self.token_id
-            and (not g.payment_token_id or g == self.my2_card_update_group_id)
+        groups = self._my2_groups_taking_the_token(digital_invoices).filtered(
+            lambda g: g.payment_token_id != self.token_id
         )
+        if not groups:
+            return
         try:
-            groups.payment_token_id = self.token_id
+            # Odoo caches the new value before the constraints run: only a
+            # savepoint undoes a refused assignment.
+            with self.env.cr.savepoint():
+                groups.payment_token_id = self.token_id
         except (ValidationError, UserError):
             # A token incompatible with the group must never wedge the
             # post-processing poll or cron into an eternal retry. The
@@ -337,3 +331,31 @@ class PaymentTransaction(models.Model):
                 self.reference,
                 exc_info=True,
             )
+
+    def _my2_groups_taking_the_token(self, digital_invoices=None):
+        """The contract groups whose monthly charges this transaction's card
+        pays once it is saved. It is known before the card is saved, so a
+        provider can register a card for monthly charges as such.
+
+        A group with no saved card takes the one that pays its invoices.
+        Replacing an existing card is only allowed from the update-card page,
+        which authenticates the sponsor first. Either way the card must be
+        one the group can be charged with: of its sponsor, in its company,
+        at its payment mode's provider. A group may change sponsor while a
+        payment is in flight.
+        """
+        self.ensure_one()
+        if digital_invoices is None:
+            digital_invoices = self.invoice_ids.filtered(
+                "line_ids.contract_id.group_id.payment_mode_id.payment_provider_id"
+            )
+        return (
+            digital_invoices.line_ids.contract_id.group_id
+            | self.my2_card_update_group_id
+        ).filtered(
+            lambda g: g.payment_mode_id.payment_provider_id == self.provider_id
+            and g.company_id == self.company_id
+            and g.partner_id.commercial_partner_id
+            == self.partner_id.commercial_partner_id
+            and (not g.payment_token_id or g == self.my2_card_update_group_id)
+        )
