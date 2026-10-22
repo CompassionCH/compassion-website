@@ -111,18 +111,21 @@ class ProductTemplate(models.Model):
     my_compassion_donation_amount_low = fields.Float(
         string="Lowest Amount",
         company_dependent=True,
+        copy=True,
         help="Lowest price suggestion when making a donation",
     )
 
     my_compassion_donation_amount_medium = fields.Float(
         string="Medium Amount",
         company_dependent=True,
+        copy=True,
         help="Medium price suggestion when making a donation",
     )
 
     my_compassion_donation_amount_high = fields.Float(
         string="Highest Amount",
         company_dependent=True,
+        copy=True,
         help="Highest price suggestion when making a donation",
     )
 

@@ -82,11 +82,16 @@ class MyCompassionDonationsController(CustomerPortal):
         sitemap=False,
     )
     def my2_redirect_slugged_donation_page(self, slug, product_id, **kwargs):
-        """Links with the product's slug (/my2/gifts/<name>-<id>, the form the
-        details page had) lead to the details page."""
-        if not self._get_donation_product(product_id):
+        """Links with the product's slug (/my2/gifts/<name>-<id>) lead to the
+        details page, with their language and query string, whoever follows
+        them: the details page decides who may see it."""
+        if not request.website._my2_donation_products([("id", "=", product_id)]):
             raise NotFound()
-        return request.redirect(f"/my2/gifts/{product_id}", code=301)
+        return request.redirect_query(
+            request.env["ir.http"]._url_for(f"/my2/gifts/{product_id}"),
+            request.httprequest.args,
+            code=301,
+        )
 
     @http.route(
         "/my2/gifts/new",

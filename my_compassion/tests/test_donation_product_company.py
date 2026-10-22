@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 from odoo import Command, fields
+from odoo.modules.migration import load_script
 from odoo.tests import HttpCase, TransactionCase, tagged
 from odoo.tests.common import JsonRpcException
 
@@ -79,6 +80,154 @@ class TestDonationProductCompany(TransactionCase):
             self.company_b.currency_id,
         )
 
+    def test_a_copy_keeps_the_suggested_amounts(self):
+        self.product.write(
+            {
+                "activate_for_my_compassion": True,
+                "my_compassion_donation_amount_low": 25.0,
+                "my_compassion_donation_amount_medium": 60.0,
+                "my_compassion_donation_amount_high": 120.0,
+            }
+        )
+        copy = self.product.copy()
+        self.assertEqual(
+            (
+                copy.activate_for_my_compassion,
+                copy.my_compassion_donation_amount_low,
+                copy.my_compassion_donation_amount_medium,
+                copy.my_compassion_donation_amount_high,
+            ),
+            (False, 25.0, 60.0, 120.0),
+        )
+
+    def test_a_child_company_website_offers_its_parent_products(self):
+        """A country office under a regional company (Sverige under Compassion
+        Norden) gives to the products of its parent, not of a sibling."""
+        parent = self.env["res.company"].create({"name": "Regional Company"})
+        child, sibling = self.env["res.company"].create(
+            [
+                {"name": "Country Company", "parent_id": parent.id},
+                {"name": "Sibling Company", "parent_id": parent.id},
+            ]
+        )
+        website = self.env["website"].create(
+            {"name": "Country MyCompassion", "company_id": child.id}
+        )
+        products = self.env["product.template"]
+        for company in (parent, child, sibling):
+            product = products.create(
+                {
+                    "name": f"Fund Of {company.name}",
+                    "type": "service",
+                    "my_compassion_donation_type": "fund",
+                    "company_id": company.id,
+                }
+            )
+            product.with_company(child).activate_for_my_compassion = True
+            products |= product
+        self.assertEqual(
+            set(website._my2_donation_products([("id", "in", products.ids)])),
+            set(products[:2]),
+        )
+
+
+@tagged("post_install", "-at_install")
+class TestDonationProductPreMigration(TransactionCase):
+    """The pre-migration to 18.0.1.0.29 turns the MyCompassion activation and
+    suggested amounts into company-dependent (jsonb) columns."""
+
+    COLUMNS = (
+        "activate_for_my_compassion",
+        "my_compassion_donation_amount_low",
+        "my_compassion_donation_amount_medium",
+        "my_compassion_donation_amount_high",
+    )
+
+    def _columns(self):
+        self.env.cr.execute(
+            """SELECT column_name, data_type, column_default
+               FROM information_schema.columns
+               WHERE table_name = 'product_template' AND column_name IN %s""",
+            [self.COLUMNS],
+        )
+        return {name: (kind, default) for name, kind, default in self.env.cr.fetchall()}
+
+    def test_the_values_go_to_the_product_company(self):
+        main = self.env.ref("base.main_company")
+        other = self.env["res.company"].create({"name": "Legacy Fund Company"})
+        shared, own, empty = self.env["product.template"].create(
+            [
+                {"name": "Legacy Shared Fund", "type": "service"},
+                {
+                    "name": "Legacy Fund Of A Company",
+                    "type": "service",
+                    "company_id": other.id,
+                },
+                {"name": "Legacy Empty Fund", "type": "service"},
+            ]
+        )
+        self.env.flush_all()
+        cr = self.env.cr
+        # The columns before: a boolean as the ORM creates it (DEFAULT false),
+        # and numeric amounts.
+        cr.execute(
+            """ALTER TABLE product_template
+               ALTER COLUMN activate_for_my_compassion TYPE boolean USING NULL,
+               ALTER COLUMN activate_for_my_compassion SET DEFAULT false,
+               ALTER COLUMN my_compassion_donation_amount_low TYPE numeric USING NULL,
+               ALTER COLUMN my_compassion_donation_amount_medium
+                   TYPE numeric USING NULL,
+               ALTER COLUMN my_compassion_donation_amount_high TYPE numeric USING NULL
+            """
+        )
+        # Distinct amounts, a zero among them: a zero is a value, kept.
+        for product, values in (
+            (shared, (True, 20, 0, 80)),
+            (own, (True, 30, 60, 90)),
+            (empty, (False, None, None, None)),
+        ):
+            cr.execute(
+                """UPDATE product_template
+                   SET activate_for_my_compassion = %s,
+                       my_compassion_donation_amount_low = %s,
+                       my_compassion_donation_amount_medium = %s,
+                       my_compassion_donation_amount_high = %s
+                   WHERE id = %s""",
+                (*values, product.id),
+            )
+
+        def values():
+            cr.execute(
+                """SELECT activate_for_my_compassion,
+                          my_compassion_donation_amount_low,
+                          my_compassion_donation_amount_medium,
+                          my_compassion_donation_amount_high
+                   FROM product_template WHERE id IN %s ORDER BY id""",
+                [(shared.id, own.id, empty.id)],
+            )
+            return cr.fetchall()
+
+        migrate = load_script(
+            "my_compassion/migrations/18.0.1.0.29/pre-migration.py",
+            "my_compassion_pre_migration_18_0_1_0_29",
+        ).migrate
+        migrate(cr, "18.0.1.0.28")
+
+        columns = dict.fromkeys(self.COLUMNS, ("jsonb", None))
+        self.assertEqual(self._columns(), columns)
+        m, o = str(main.id), str(other.id)
+        converted = [
+            ({m: True}, {m: 20}, {m: 0}, {m: 80}),
+            ({o: True}, {o: 30}, {o: 60}, {o: 90}),
+            (None, None, None, None),
+        ]
+        self.assertEqual(values(), converted)
+
+        # Run again: the jsonb columns are skipped, nothing changes.
+        migrate(cr, "18.0.1.0.28")
+        self.assertEqual(self._columns(), columns)
+        self.assertEqual(values(), converted)
+
 
 @tagged("post_install", "-at_install")
 class TestDonationProductWebsiteCompany(HttpCase):
@@ -93,6 +242,8 @@ class TestDonationProductWebsiteCompany(HttpCase):
         cls.website = cls.env.ref("my_compassion.my2_website")
         cls.website.domain = cls.base_url()
         cls.website_company = cls.website.company_id
+        cls.french = cls.env["res.lang"]._activate_lang("fr_FR")
+        cls.website.language_ids |= cls.french
         currency = cls.env.ref("base.PLN")
         if currency == cls.website_company.currency_id:
             currency = cls.env.ref("base.EUR")
@@ -328,7 +479,8 @@ class TestDonationProductWebsiteCompany(HttpCase):
             )
 
     def test_old_slugged_links(self):
-        """The details page had the product's slug in its URL."""
+        """Links with the product's slug lead to the details page, with their
+        language and query string."""
         page = self.url_open(f"/my2/gifts/{self.shared_fund.id}")
         self.assertEqual(page.status_code, 200)
 
@@ -346,3 +498,50 @@ class TestDonationProductWebsiteCompany(HttpCase):
             allow_redirects=False,
         )
         self.assertEqual(page.status_code, 404)
+
+        # Last: the session then prefers French.
+        lang = self.french.url_code
+        page = self.url_open(
+            f"/{lang}/my2/gifts/fund-of-both-companies-{self.shared_fund.id}"
+            "?utm_source=newsletter",
+            allow_redirects=False,
+        )
+        self.assertEqual(page.status_code, 301)
+        self.assertTrue(
+            page.headers["Location"].endswith(
+                f"/{lang}/my2/gifts/{self.shared_fund.id}?utm_source=newsletter"
+            ),
+            page.headers["Location"],
+        )
+
+    def test_an_old_slugged_link_signed_out(self):
+        """The slugged link leads to the details page, which asks a signed-out
+        visitor to log in."""
+        self.authenticate(None, None)
+        page = self.url_open(
+            f"/my2/gifts/gift-of-the-website-company-{self.gift.id}",
+            allow_redirects=False,
+        )
+        self.assertEqual(page.status_code, 301)
+        self.assertTrue(page.headers["Location"].endswith(f"/my2/gifts/{self.gift.id}"))
+        page = self.url_open(page.headers["Location"], allow_redirects=False)
+        self.assertIn(page.status_code, (302, 303))
+        self.assertIn("/web/login", page.headers["Location"])
+
+    def test_a_donor_edits_a_cart_line(self):
+        self._add(self.shared_fund, "low")
+        line = (
+            self.env["sale.order"]
+            .search([("partner_id", "=", self.donor.partner_id.id)])
+            .order_line
+        )
+        self.make_jsonrpc_request(
+            "/my2/gifts/edit",
+            {
+                "order_line_id": line.id,
+                "suggested_amount": "high",
+                "frequency": "one_time",
+            },
+        )
+        line.invalidate_recordset()
+        self.assertEqual(line.price_unit, self.website_amounts[2])
