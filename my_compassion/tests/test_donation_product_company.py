@@ -208,6 +208,8 @@ class TestDonationProductWebsiteCompany(HttpCase):
         cls.website = cls.env.ref("my_compassion.my2_website")
         cls.website.domain = cls.base_url()
         cls.website_company = cls.website.company_id
+        cls.french = cls.env["res.lang"]._activate_lang("fr_FR")
+        cls.website.language_ids |= cls.french
         currency = cls.env.ref("base.PLN")
         if currency == cls.website_company.currency_id:
             currency = cls.env.ref("base.EUR")
@@ -442,7 +444,8 @@ class TestDonationProductWebsiteCompany(HttpCase):
             )
 
     def test_old_slugged_links(self):
-        """The details page had the product's slug in its URL."""
+        """Links with the product's slug lead to the details page, with their
+        language and query string."""
         page = self.url_open(f"/my2/gifts/{self.shared_fund.id}")
         self.assertEqual(page.status_code, 200)
 
@@ -460,3 +463,32 @@ class TestDonationProductWebsiteCompany(HttpCase):
             allow_redirects=False,
         )
         self.assertEqual(page.status_code, 404)
+
+        # Last: the session then prefers French.
+        lang = self.french.url_code
+        page = self.url_open(
+            f"/{lang}/my2/gifts/fund-of-both-companies-{self.shared_fund.id}"
+            "?utm_source=newsletter",
+            allow_redirects=False,
+        )
+        self.assertEqual(page.status_code, 301)
+        self.assertTrue(
+            page.headers["Location"].endswith(
+                f"/{lang}/my2/gifts/{self.shared_fund.id}?utm_source=newsletter"
+            ),
+            page.headers["Location"],
+        )
+
+    def test_an_old_slugged_link_signed_out(self):
+        """The slugged link leads to the details page, which asks a signed-out
+        visitor to log in."""
+        self.authenticate(None, None)
+        page = self.url_open(
+            f"/my2/gifts/gift-of-the-website-company-{self.gift.id}",
+            allow_redirects=False,
+        )
+        self.assertEqual(page.status_code, 301)
+        self.assertTrue(page.headers["Location"].endswith(f"/my2/gifts/{self.gift.id}"))
+        page = self.url_open(page.headers["Location"], allow_redirects=False)
+        self.assertIn(page.status_code, (302, 303))
+        self.assertIn("/web/login", page.headers["Location"])
