@@ -60,6 +60,20 @@ class PaymentTransaction(models.Model):
         self.ensure_one()
         return True
 
+    def _my2_check_card_submission(self):
+        """Before the card of this payment is sent to the provider: refuse
+        it if another payment of its MyCompassion order may still succeed.
+
+        Two payment forms of one order can each create a draft before
+        either card is sent, and the check at creation
+        (sale.order._my2_lock_for_new_payment) sees no draft the provider
+        has yet. The same order lock serializes the card submissions.
+        """
+        self.ensure_one()
+        orders = self.sudo().sale_order_ids.filtered("website_id.is_my_compassion")
+        for order in orders:
+            order._my2_lock_for_new_payment(except_transaction=self)
+
     def _my2_cancel_stale_checkout_tx(self):
         """Cleanup for shopper checkouts that never finished.
 

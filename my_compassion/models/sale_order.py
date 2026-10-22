@@ -42,7 +42,7 @@ class SaleOrder(models.Model):
             )
         return super()._cart_update(*args, **kwargs)
 
-    def _my2_payment_outcome(self):
+    def _my2_payment_outcome(self, except_transaction=None):
         """What became of the payment of a donation order:
 
         - "paid": the order is confirmed, or one of its payments may still
@@ -57,14 +57,18 @@ class SaleOrder(models.Model):
         - "": it was never paid.
 
         Drafts are ignored, as website_sale does (get_portal_last_transaction):
-        an abandoned newer one hides nothing.
+        an abandoned newer one hides nothing. except_transaction is left out
+        of the payments that may still succeed (the one being checked).
         """
         if not self:
             return ""
         self.ensure_one()
         if self.state not in ("draft", "sent"):
             return "paid"
-        may_succeed = self.transaction_ids.filtered(
+        transactions = self.transaction_ids
+        if except_transaction:
+            transactions -= except_transaction
+        may_succeed = transactions.filtered(
             lambda t: t.state in ("pending", "authorized", "done")
             or (t.state == "draft" and t.provider_reference)
             or (t.state in ("cancel", "error") and not t._my2_refusal_is_certain())
@@ -75,7 +79,7 @@ class SaleOrder(models.Model):
             return "failed"
         return ""
 
-    def _my2_lock_for_new_payment(self):
+    def _my2_lock_for_new_payment(self, except_transaction=None):
         """Refuse a new payment of this order while an earlier one is paid or
         may still succeed (_my2_payment_outcome): a second tab, or a payment
         waiting in the bank app, would be charged as well.
@@ -87,7 +91,7 @@ class SaleOrder(models.Model):
         the lock fails with a serialization error instead, and Odoo replays
         the request against the committed payment. A payment of the order
         still being created holds the row: refused at once, as website_sale
-        does.
+        does. except_transaction is not counted (see _my2_payment_outcome).
         """
         self.ensure_one()
         try:
@@ -102,7 +106,7 @@ class SaleOrder(models.Model):
         self.env.cr.execute(
             SQL("UPDATE sale_order SET write_date = write_date WHERE id = %s", self.id)
         )
-        if self._my2_payment_outcome() == "paid":
+        if self._my2_payment_outcome(except_transaction) == "paid":
             raise UserError(
                 _("This donation is already paid, or its payment is under way.")
             )

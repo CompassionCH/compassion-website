@@ -942,6 +942,42 @@ class TestPublicFundDonation(HttpCase):
             )
         self.assertEqual(len(cart.transaction_ids), 1)
 
+    def test_one_card_per_order_when_the_card_is_sent(self):
+        """Two payment forms of one order each made a draft before either
+        card was sent: once one payment is under way, the other card is
+        refused."""
+        self._add_fund()
+        self._give_email()
+        first = self._pay("draft", reference="my2-first-form")
+        second = self._pay("draft", reference="my2-second-form")
+        first._my2_check_card_submission()
+        second._my2_check_card_submission()
+        first._set_pending()
+        first._my2_check_card_submission()  # its own payment does not count
+        with self.assertRaises(UserError):
+            second._my2_check_card_submission()
+        # Only MyCompassion orders: another website's order is left alone.
+        other_website = self.env["website"].search(
+            [("id", "!=", self.website.id), ("is_my_compassion", "=", False)], limit=1
+        )
+        other_order = self.env["sale.order"].create(
+            {
+                "partner_id": other_website.partner_id.id,
+                "website_id": other_website.id,
+                "company_id": other_website.company_id.id,
+            }
+        )
+        other_tx = first.copy(
+            {"reference": "my2-other-website", "sale_order_ids": other_order.ids}
+        )
+        other_tx.copy(
+            {
+                "reference": "my2-other-website-pending",
+                "sale_order_ids": other_order.ids,
+            }
+        )._set_pending()
+        other_tx._my2_check_card_submission()
+
     def test_an_unconfirmed_refusal_is_no_failure(self):
         """A payment the provider never confirmed nor refused, given up on
         after a while, may still succeed: the donor is not asked to pay
@@ -1261,6 +1297,8 @@ class TestConcurrentPayments(TransactionCase):
             env = api.Environment(cr, SUPERUSER_ID, {})
             order = env["sale.order"].browse(self.order_id)
             order.transaction_ids.unlink()
+            # A pending payment made the quotation a sent one.
+            order.filtered(lambda o: o.state == "sent").action_draft()
             order.unlink()
             env["payment.provider"].browse(self.provider_id).unlink()
         self._assert_nothing_left()
@@ -1287,8 +1325,11 @@ class TestConcurrentPayments(TransactionCase):
         """What the payment routes do: the check, then the transaction - left
         pending, as a payment the provider may still confirm."""
         env = api.Environment(cr, SUPERUSER_ID, {})
+        env["sale.order"].browse(self.order_id)._my2_lock_for_new_payment()
+        return self._transaction(env, "pending")
+
+    def _transaction(self, env, state):
         order = env["sale.order"].browse(self.order_id)
-        order._my2_lock_for_new_payment()
         return env["payment.transaction"].create(
             {
                 "provider_id": self.provider_id,
@@ -1298,7 +1339,7 @@ class TestConcurrentPayments(TransactionCase):
                 "partner_id": order.partner_id.id,
                 "reference": f"my2-concurrent-{uuid4().hex}",
                 "sale_order_ids": [(6, 0, order.ids)],
-                "state": "pending",
+                "state": state,
             }
         )
 
@@ -1333,3 +1374,25 @@ class TestConcurrentPayments(TransactionCase):
             self._pay(self.second)
         self.second.rollback()
         self.assertEqual(self._transaction_count(), 1)
+
+    def test_a_card_sent_meanwhile_is_never_doubled(self):
+        """Two payment forms of the order made a draft each; the second card
+        is sent by a request whose snapshot predates the first card."""
+        with self.registry.cursor() as cr:
+            env = api.Environment(cr, SUPERUSER_ID, {})
+            first_id = self._transaction(env, "draft").id
+            second_id = self._transaction(env, "draft").id
+        self.second.execute("SELECT 1")
+        first = api.Environment(self.first, SUPERUSER_ID, {})["payment.transaction"]
+        first.browse(first_id)._my2_check_card_submission()
+        first.browse(first_id)._set_pending()
+        self.first.commit()
+        second = api.Environment(self.second, SUPERUSER_ID, {})["payment.transaction"]
+        with self.assertRaises(SerializationFailure):
+            second.browse(second_id)._my2_check_card_submission()
+        # What Odoo does with a serialization failure: replay the request.
+        self.second.rollback()
+        second = api.Environment(self.second, SUPERUSER_ID, {})["payment.transaction"]
+        with self.assertRaises(UserError):
+            second.browse(second_id)._my2_check_card_submission()
+        self.second.rollback()
