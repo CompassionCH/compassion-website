@@ -381,13 +381,17 @@ class NewSponsorshipWizard(models.TransientModel):
                 # stored name, and feeding it to the fuzzy/ilike rules would
                 # risk matching an unrelated partner instead, so matching is
                 # skipped rather than run on a value that cannot inform it.
-                partner = self.env["res.partner"].create(partner_vals)
+                partner = self.env["res.partner"].create(
+                    {**partner_vals, "my2_email_unverified": True}
+                )
             else:
                 partner = self.env["res.partner.match"].match_values_to_partner(
                     partner_vals, match_update=False, match_create=False
                 )
                 if not partner:
-                    partner = self.env["res.partner"].create(partner_vals)
+                    partner = self.env["res.partner"].create(
+                        {**partner_vals, "my2_email_unverified": True}
+                    )
         else:
             if not partner.birthdate_date and self.birthdate:
                 partner.sudo().write({"birthdate_date": self.birthdate})

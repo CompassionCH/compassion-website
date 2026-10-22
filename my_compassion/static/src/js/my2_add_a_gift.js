@@ -10,6 +10,7 @@
 
 import publicWidget from "@web/legacy/js/public/public_widget";
 import {rpc} from "@web/core/network/rpc";
+import {showDonationRefusal} from "@my_compassion/js/my2_donation_form";
 
 export const AddAGift = publicWidget.Widget.extend({
   selector: ".my2-add-a-gift",
@@ -55,9 +56,10 @@ export const AddAGift = publicWidget.Widget.extend({
         window.location.href = "/my2/gift-package";
       })
       .catch(
-        function () {
-          // Re-enable buttons
+        function (error) {
+          // Re-enable buttons, and tell the donor why
           this.$(".btn").prop("disabled", false);
+          showDonationRefusal(this.$(ev.target), error);
         }.bind(this)
       );
   },

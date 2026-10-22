@@ -1363,6 +1363,7 @@ msgstr "Wyłączone"
 #: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_colors__display_name
 #: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_icons__display_name
 #: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_pictograms__display_name
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__display_name
 msgid "Display Name"
 msgstr "Nazwa wyświetlana"
 
@@ -1463,6 +1464,7 @@ msgstr ""
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_donor_form
 msgid "E-mail"
 msgstr "E-mail"
 
@@ -1637,6 +1639,7 @@ msgstr "Pierwsza płatność dzisiaj:"
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__firstname
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
 msgid "Firstname"
 msgstr "Imię"
 
@@ -1919,6 +1922,7 @@ msgstr "Nie chodzę do szkoły"
 #: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_colors__id
 #: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_icons__id
 #: model:ir.model.fields,field_description:theme_compassion_2025.field_theme_compassion_pictograms__id
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__id
 msgid "ID"
 msgstr "ID"
 
@@ -2879,6 +2883,8 @@ msgstr ""
 "                                                                <br/>"
 
 #. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/my2_donations.py:0
 #: model_terms:ir.ui.view,arch_db:my_compassion.DonationFormComponent
 msgid "Please enter a valid amount."
 msgstr "Podaj poprawną kwotę."
@@ -3538,6 +3544,7 @@ msgstr "Sugerowane kwoty"
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
 msgid "Surname"
 msgstr "Nazwisko"
 
@@ -4060,6 +4067,7 @@ msgstr "Data sortowania w sieci"
 
 #. module: my_compassion
 #: model:ir.model,name:theme_compassion_2025.model_website
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__website_id
 msgid "Website"
 msgstr "Strona internetowa"
 
@@ -4634,3 +4642,254 @@ msgid ""
 msgstr ""
 "Nie można obciążyć tej faktury: płatność jest już otwarta lub zrealizowana "
 "albo brak ważnej zapisanej karty."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_page
+msgid "Change"
+msgstr "Zmień"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_donor_form
+msgid "Continue to payment"
+msgstr "Przejdź do płatności"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_donor_form
+msgid "For your donation receipt. Nothing else is needed right now."
+msgstr "Do potwierdzenia darowizny. Na razie nic więcej nie potrzebujemy."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_donor_form
+msgid "I accept the privacy policy as described in the"
+msgstr "Akceptuję politykę prywatności opisaną w"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
+msgid "Make another donation"
+msgstr "Przekaż kolejną darowiznę"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
+msgid "Please fill in your first name and surname."
+msgstr "Wpisz swoje imię i nazwisko."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_donor_form
+msgid "Please give a valid email and accept the privacy notice."
+msgstr "Podaj prawidłowy adres e-mail i zaakceptuj informację o prywatności."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
+msgid "Save"
+msgstr "Zapisz"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
+msgid "Who shall we thank?"
+msgstr "Komu mamy podziękować?"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
+msgid "Your name goes on your donation receipt."
+msgstr "Twoje imię i nazwisko znajdzie się na potwierdzeniu darowizny."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_page
+msgid "Your receipt goes to"
+msgstr "Potwierdzenie wyślemy na adres"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_donor_form
+msgid "privacy notice"
+msgstr "informacji o prywatności"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_page
+msgid ""
+"Your payment did not go through. Please try again, or use another card."
+msgstr "Płatność nie powiodła się. Spróbuj ponownie lub użyj innej karty."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/website_sale.py:0
+msgid "Please enter your card details."
+msgstr "Wprowadź dane swojej karty."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/website_sale.py:0
+msgid "Too many payment attempts. Please try again later."
+msgstr "Zbyt wiele prób płatności. Spróbuj ponownie później."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_donor_form
+msgid "We could not verify your request. Please try again in a few minutes."
+msgstr ""
+"Nie udało się zweryfikować Twojego zgłoszenia. Spróbuj ponownie za kilka "
+"minut."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/communication_job.py:0
+msgid ""
+"The donor has not given their name yet: this communication waits for it."
+msgstr ""
+"Darczyńca nie podał jeszcze swojego imienia i nazwiska: ta komunikacja na "
+"nie czeka."
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__attempts
+msgid "Attempts"
+msgstr "Próby"
+
+#. module: my_compassion
+#: model:ir.model,name:my_compassion.model_partner_communication_job
+msgid "Communication Job"
+msgstr "Zadanie komunikacji"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__ip_address
+msgid "IP Address"
+msgstr "Adres IP"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_website__my2_min_donation_amount
+msgid "Minimum Donation to a Fund"
+msgstr "Minimalna darowizna na fundusz"
+
+#. module: my_compassion
+#: model:ir.model,name:my_compassion.model_my2_payment_attempt_counter
+msgid "MyCompassion visitor payment attempts per IP"
+msgstr "MyCompassion: próby płatności odwiedzających według adresu IP"
+
+#. module: my_compassion
+#: model:ir.actions.server,name:my_compassion.cron_archive_abandoned_donors_ir_actions_server
+msgid "MyCompassion: archive abandoned visitor donors"
+msgstr ""
+"MyCompassion: archiwizacja darczyńców porzuconych darowizn odwiedzających"
+
+#. module: my_compassion
+#: model:ir.model.constraint,message:my_compassion.constraint_my2_payment_attempt_counter_website_ip_unique
+msgid "One counter per website and IP address."
+msgstr "Jeden licznik na stronę internetową i adres IP."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/sale_order.py:0
+msgid "Payment is already being processed."
+msgstr "Płatność jest już przetwarzana."
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_website__my2_max_payment_attempts_per_ip
+msgid ""
+"Payments visitors may start on this website from one IP address within the "
+"window below, all carts and sessions together; 0 for no limit. Card testers "
+"try stolen cards one after the other on public donation pages."
+msgstr ""
+"Liczba płatności, jakie odwiedzający mogą rozpocząć na tej stronie z jednego"
+" adresu IP w poniższym przedziale czasu, łącznie dla wszystkich koszyków i "
+"sesji; 0 oznacza brak limitu. Osoby testujące karty sprawdzają skradzione "
+"karty jedną po drugiej na publicznych stronach darowizn."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/sale_order.py:0
+msgid "Please add and change your donations in your gift package."
+msgstr "Dodawaj i zmieniaj swoje darowizny w koszyku prezentów."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/website_sale.py:0
+msgid "Please give your email before paying."
+msgstr "Podaj swój adres e-mail przed zapłatą."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/website_sale.py:0
+msgid "Please pay your donation from your gift package."
+msgstr "Opłać swoją darowiznę w koszyku prezentów."
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_website__my2_min_donation_amount
+msgid ""
+"Smallest amount, in the currency of the website's company, a visitor may "
+"give to a fund. A donor with an account may give every suggested amount, and"
+" a custom one from the smaller of this and the fund's lowest suggestion. "
+"Card testers try stolen cards with tiny payments on public donation pages."
+msgstr ""
+"Najmniejsza kwota w walucie firmy, do której należy strona, jaką "
+"odwiedzający może przekazać na fundusz. Darczyńca z kontem może przekazać "
+"każdą sugerowaną kwotę, a własną kwotę od mniejszej z tej wartości i "
+"najniższej sugerowanej kwoty funduszu. Osoby testujące karty sprawdzają "
+"skradzione karty bardzo małymi płatnościami na publicznych stronach "
+"darowizn."
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_res_partner__my2_name_placeholder
+#: model:ir.model.fields,help:my_compassion.field_res_users__my2_name_placeholder
+msgid ""
+"The partner was created by a fast checkout or a visitor's donation before "
+"its donor or sponsor gave their name. Everything that greets them by name "
+"waits for a real name to clear this flag."
+msgstr ""
+"Partner został utworzony przez szybką płatność lub darowiznę odwiedzającego,"
+" zanim darczyńca lub patron podał swoje imię i nazwisko. Wszystko, co zwraca"
+" się do tej osoby po imieniu, czeka, aż prawdziwe imię i nazwisko usunie to "
+"oznaczenie."
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_website__my2_payment_attempts_window
+msgid "The window of the visitor payment attempts per IP address."
+msgstr ""
+"Przedział czasu, w którym liczone są próby płatności odwiedzających z "
+"jednego adresu IP."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/sale_order.py:0
+msgid ""
+"This donation is already paid, or its payment is still under way. Please "
+"wait for its outcome, or check with your bank, before paying again."
+msgstr ""
+"Ta darowizna jest już opłacona albo jej płatność wciąż trwa. Zaczekaj na jej"
+" wynik lub sprawdź w swoim banku, zanim zapłacisz ponownie."
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_website__my2_payment_attempts_window
+msgid "Visitor Payment Attempts Window (minutes)"
+msgstr "Przedział prób płatności odwiedzających (w minutach)"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_website__my2_max_payment_attempts_per_ip
+msgid "Visitor Payment Attempts per IP"
+msgstr "Próby płatności odwiedzających na adres IP"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__window_start
+msgid "Window Start"
+msgstr "Początek przedziału"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_res_partner__my2_email_unverified
+#: model:ir.model.fields,field_description:my_compassion.field_res_users__my2_email_unverified
+msgid "Email not verified"
+msgstr "Adres e-mail niezweryfikowany"
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_res_partner__my2_email_unverified
+#: model:ir.model.fields,help:my_compassion.field_res_users__my2_email_unverified
+msgid ""
+"The partner was created from an email a visitor typed (a donation without an"
+" account, a fast checkout), which nobody has verified. Signup never links an"
+" account to it; giving a name does not change that."
+msgstr ""
+"Partner został utworzony na podstawie adresu e-mail wpisanego przez "
+"odwiedzającego (darowizna bez konta, szybka płatność), którego nikt nie "
+"zweryfikował. Rejestracja nigdy nie łączy z nim konta; podanie imienia i "
+"nazwiska tego nie zmienia."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/my2_donations.py:0
+msgid "The smallest donation to this fund is %(amount)s."
+msgstr "Najmniejsza darowizna na ten fundusz wynosi %(amount)s."

@@ -42,6 +42,127 @@ class Website(models.Model):
         help="Target of the 'start a sponsorship' link shown to users without"
         " sponsorships. Defaults to /my2/children when empty.",
     )
+    my2_min_donation_amount = fields.Float(
+        "Minimum Donation to a Fund",
+        default=5.0,
+        help="Smallest amount, in the currency of the website's company, a"
+        " visitor may give to a fund. A donor with an account may give every"
+        " suggested amount, and a custom one from the smaller of this and the"
+        " fund's lowest suggestion. Card testers try stolen cards with tiny"
+        " payments on public donation pages.",
+    )
+    my2_max_payment_attempts_per_ip = fields.Integer(
+        "Visitor Payment Attempts per IP",
+        default=10,
+        help="Payments visitors may start on this website from one IP address"
+        " within the window below, all carts and sessions together; 0 for no"
+        " limit. Card testers try stolen cards one after the other on public"
+        " donation pages.",
+    )
+    my2_payment_attempts_window = fields.Integer(
+        "Visitor Payment Attempts Window (minutes)",
+        default=60,
+        help="The window of the visitor payment attempts per IP address.",
+    )
+
+    def sale_get_order(self, force_create=False):
+        """Each cart stays on its website. The websites of a domain share the
+        session (and /my2 resolves to MyCompassion on any domain), so its
+        cart may come from another website:
+
+        - on a MyCompassion website, only a draft cart of this website (and
+          its company) is the cart; a cart set aside by another website
+          (my2_sale_order_id) comes back when the session holds none;
+        - another website never takes a MyCompassion cart: it sets it aside
+          under its own session key - out of reach of website_sale, which
+          reads sale_order_id directly (e.g. to merge an abandoned cart) -
+          and starts its own cart if asked to.
+        """
+        if request:
+            session = request.session
+            order = (
+                self.env["sale.order"]
+                .sudo()
+                .browse(session.get("sale_order_id"))
+                .exists()
+            )
+            if self.is_my_compassion:
+                if order and not self._my2_is_own_cart(order):
+                    session.pop("sale_order_id", None)
+                    session.pop("website_sale_cart_quantity", None)
+                    order = order.browse()
+                set_aside = (
+                    self.env["sale.order"]
+                    .sudo()
+                    .browse(session.pop("my2_sale_order_id", None))
+                    .exists()
+                )
+                if not order and set_aside and self._my2_is_own_cart(set_aside):
+                    session["sale_order_id"] = set_aside.id
+                    session["website_sale_cart_quantity"] = set_aside.cart_quantity
+            elif order.website_id.is_my_compassion:
+                session["my2_sale_order_id"] = session.pop("sale_order_id")
+                session.pop("website_sale_cart_quantity", None)
+        return super().sale_get_order(force_create=force_create)
+
+    def _my2_is_own_cart(self, order):
+        """Whether order is a draft cart of this website and its company."""
+        return (
+            order.website_id == self
+            and order.company_id == self.company_id
+            and order.state == "draft"
+        )
+
+    def _my2_fund_minimum(self, product):
+        """The smallest amount the current user may give to product, a fund,
+        on this website. For a visitor, my2_min_donation_amount: card testers
+        try stolen cards with tiny payments on public donation pages. For a
+        donor with an account (signup is open too), the smaller of that and
+        the fund's lowest suggestion: every suggestion stays theirs, a custom
+        amount does not go below it. None for a gift."""
+        self.ensure_one()
+        if product.my_compassion_donation_type != "fund":
+            return 0.0
+        minimum = self.my2_min_donation_amount
+        if self.env.user._is_public():
+            return minimum
+        suggested = [a for _key, a in self._my2_suggested_amounts(product) if a > 0]
+        return min([minimum, *suggested])
+
+    def _my2_amount_bounds(self, product):
+        """(minimum, maximum) of what the current user may give to product on
+        this website, the maximum None when there is none: a fund's minimum
+        (_my2_fund_minimum), a gift's limits (gift.threshold.settings, in the
+        currency of the website's company)."""
+        self.ensure_one()
+        if product.my_compassion_donation_type == "gift":
+            limits = product.get_donation_limits(
+                self.company_id.sudo(), self.env.user.partner_id
+            )
+            return limits.get("min_amount") or 0.0, limits.get("max_amount") or None
+        return self._my2_fund_minimum(product), None
+
+    def _my2_offered_suggestions(self, product):
+        """The suggested amounts the donation form offers the current user for
+        product, as [(key, amount)]: the positive ones within
+        _my2_amount_bounds - one offered, then refused, would leave the donor
+        on the form."""
+        minimum, maximum = self._my2_amount_bounds(product)
+        return [
+            (key, amount)
+            for key, amount in self._my2_suggested_amounts(product)
+            if amount > 0
+            and amount >= minimum
+            and (maximum is None or amount <= maximum)
+        ]
+
+    @staticmethod
+    def _my2_suggested_amounts(product):
+        return [
+            ("low", product.my_compassion_donation_amount_low),
+            ("medium", product.my_compassion_donation_amount_medium),
+            ("high", product.my_compassion_donation_amount_high),
+        ]
 
     def _my2_offers_payment_method(self, code):
         """Whether a published payment provider of the website's company offers

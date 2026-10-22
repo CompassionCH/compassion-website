@@ -139,6 +139,76 @@
       </div>
     </div>
   </template>
+  <!-- GIFT PACKAGE DONOR FORM -->
+  <!-- The email step of a visitor, before the payment form: the same two
+       questions as the sponsorship fast checkout. -->
+  <template id="my2_gift_package_donor_form" name="Gift Package Donor Form">
+    <form
+      class="my2-gift-package-donor-form mt-3 w-100"
+      action="/my2/gift-package/donor"
+      method="POST"
+    >
+      <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+      <div
+        t-if="donor_error == 'verify'"
+        class="mb-3 p-3 rounded-lg bg-low-eggshell text-mid-orange body-small"
+        role="alert"
+      >We could not verify your request. Please try again in a few minutes.</div>
+      <div
+        t-elif="donor_error"
+        class="mb-3 p-3 rounded-lg bg-low-eggshell text-mid-orange body-small"
+        role="alert"
+      >Please give a valid email and accept the privacy notice.</div>
+      <!-- Email -->
+      <t t-call="theme_compassion_2025.FormFieldComponent">
+        <t t-set="top_class" t-value="'my-3'" />
+        <t t-set="label">E-mail</t>
+        <t t-set="input_id" t-value="'donor_email'" />
+        <input
+          id="donor_email"
+          type="email"
+          name="email"
+          class="form-control"
+          placeholder="you@example.com"
+          t-att-value="donor_email"
+          data-validate-type="email"
+          required=""
+        />
+        <div
+          class="mt-2 very-tiny-text text-mid-grey"
+        >For your donation receipt. Nothing else is needed right now.</div>
+      </t>
+      <!-- Privacy consent -->
+      <t t-call="theme_compassion_2025.FormFieldComponent">
+        <t t-set="top_class" t-value="'my-3'" />
+        <div class="d-flex align-items-center">
+          <input
+            type="checkbox"
+            id="donor_privacy_consent"
+            name="privacy_consent"
+            class="flex-shrink-0"
+            required=""
+          />
+          <label class="ms-2 mb-0 tiny-text text-mid-grey" for="donor_privacy_consent">
+                    I accept the privacy policy as described in the
+                    <a
+            href="/legal"
+            class="tiny-text bold text-core-blue"
+          >privacy notice</a>.
+                </label>
+        </div>
+      </t>
+      <div class="d-flex flex-column align-items-stretch">
+        <t t-call="theme_compassion_2025.ThemedButtonComponent">
+          <t t-set="variant" t-value="'compact'" />
+          <t t-set="variation" t-value="'filled'" />
+          <t t-set="label">Continue to payment</t>
+          <t t-set="color" t-value="'mid-green'" />
+          <t t-set="text_color" t-value="'pure-white'" />
+        </t>
+      </div>
+    </form>
+  </template>
   <!-- GIFT PACKAGE PAGE -->
   <template id="my2_gift_package_page" name="Gift Package Page">
     <t t-set="additional_title">Gift Basket</t>
@@ -196,6 +266,12 @@
             <div class="mt-3 px-4 body-small text-center">
                             Your donations will have an everlasting impact.
                         </div>
+            <!-- FAILED PAYMENT (back from the payment, see my2_gifts_thank_you_page) -->
+            <div
+              t-if="payment_failed"
+              class="mt-3 p-3 w-100 rounded-lg bg-low-eggshell text-mid-orange body-small text-center"
+              role="alert"
+            >Your payment did not go through. Please try again, or use another card.</div>
             <!-- GIFT PACKAGE CONTENT -->
             <div
               id="gift-package-content-wrapper"
@@ -220,7 +296,26 @@
                   <t t-set="href" t-value="'/my2/gift-package/add'" />
                 </t>
                 <div t-if="len(order.order_line) &gt;= 1" class="empty-order-hidden">
-                  <t t-call="my_compassion.CheckoutComponent" />
+                  <!-- A visitor first says who gives (email only) -->
+                  <t
+                    t-if="donor_needed"
+                    t-call="my_compassion.my2_gift_package_donor_form"
+                  />
+                  <t t-else="">
+                    <div
+                      t-if="donor_email"
+                      class="mt-3 body-small text-low-black text-center"
+                    >
+                                            Your receipt goes to <span
+                      class="bold"
+                      t-out="donor_email"
+                    />. <a
+                      href="/my2/gift-package?change_donor=1"
+                      class="body-small bold text-core-blue"
+                    >Change</a>
+                                        </div>
+                    <t t-call="my_compassion.CheckoutComponent" />
+                  </t>
                   <div
                     class="mt-3 px-5 d-flex align-items-center"
                     name="checkout_payment_brands"

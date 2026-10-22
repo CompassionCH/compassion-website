@@ -52,6 +52,39 @@ class PaymentTransaction(models.Model):
                 tx._my2_save_token_on_groups()
         return res
 
+    def _my2_refusal_is_certain(self):
+        """Whether this cancelled or refused payment is known to have failed,
+        so that the donor may pay again (sale.order._my2_payment_outcome).
+        A provider that gives up waiting for an outcome it never learnt, and
+        records the payment as refused, overrides this for such payments."""
+        self.ensure_one()
+        return True
+
+    def _my2_may_still_succeed(self):
+        """The payments among self that went through or may still: pending
+        (BLIK in the bank app, 3DS), authorized, done, a draft the provider
+        already has, or a cancelled or refused one whose refusal is not
+        certain (_my2_refusal_is_certain)."""
+        return self.filtered(
+            lambda t: t.state in ("pending", "authorized", "done")
+            or (t.state == "draft" and t.provider_reference)
+            or (t.state in ("cancel", "error") and not t._my2_refusal_is_certain())
+        )
+
+    def _my2_check_card_submission(self):
+        """Before the card of this payment is sent to the provider: refuse
+        it if another payment of its MyCompassion order may still succeed.
+
+        Two payment forms of one order can each create a draft before
+        either card is sent, and the check at creation
+        (sale.order._my2_lock_for_new_payment) sees no draft the provider
+        has yet. The same order lock serializes the card submissions.
+        """
+        self.ensure_one()
+        orders = self.sudo().sale_order_ids.filtered("website_id.is_my_compassion")
+        for order in orders:
+            order._my2_lock_for_new_payment(except_transaction=self)
+
     def _my2_cancel_stale_checkout_tx(self):
         """Cleanup for shopper checkouts that never finished.
 
@@ -261,6 +294,11 @@ class PaymentTransaction(models.Model):
                         tx.reference,
                         exc_info=True,
                     )
+        # The status page polls post-processing in sudo, but its request saves
+        # what is left as the payer - a visitor for a public donation - who may
+        # not read what post-processing changed (e.g. the amounts of the lines
+        # of a quotation turned into a sent one): save it while we still may.
+        self.env.flush_all()
         return res
 
     def _my2_save_token_on_groups(self, digital_invoices=None):
