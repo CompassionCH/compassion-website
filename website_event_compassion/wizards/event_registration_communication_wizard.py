@@ -23,13 +23,21 @@ class EventRegistrationCommunicationWizard(models.TransientModel):
     )
 
     def button_open_mail_sender(self):
-        communication = self.env["partner.communication.job"].create(
-            {
-                "config_id": self.config_id.id,
-                "partner_id": self.env.context["partner_id"],
-                "object_ids": self.env.context["object_ids"],
-                "auto_send": False,
-            }
+        object_ids = self.env.context["object_ids"]
+        # Only a pending job for the same registrations is reused.
+        communication = (
+            self.env["partner.communication.job"]
+            .with_context(
+                same_job_search=[("object_ids", "=", ",".join(map(str, object_ids)))]
+            )
+            .create(
+                {
+                    "config_id": self.config_id.id,
+                    "partner_id": self.env.context["partner_id"],
+                    "object_ids": object_ids,
+                    "auto_send": False,
+                }
+            )
         )
 
         return {

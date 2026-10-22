@@ -494,4 +494,25 @@
       </div>
     </section>
   </template>
+  <!-- Bring the participant back to the event page after the medical survey -->
+  <template id="survey_done_back_to_event" inherit_id="survey.survey_fill_form_done">
+    <xpath
+      expr="//div[hasclass('o_survey_finished')]/div[hasclass('row')]"
+      position="after"
+    >
+      <t
+        t-set="registrations"
+        t-value="answer.partner_id and request.env['event.registration'].sudo().search([('partner_id', '=', answer.partner_id.id), ('event_id.medical_survey_id', '=', answer.survey_id.id), ('state', '!=', 'cancel')])"
+      />
+      <!-- Trips can share their survey: the answer doesn't tell which one
+           it was filled for, My events lists them all. -->
+      <div class="mt-4" t-if="registrations">
+        <a
+          role="button"
+          class="btn btn-primary btn-lg"
+          t-attf-href="/my/events#{'/' + request.env['ir.http']._slug(registrations) if len(registrations) == 1 else ''}"
+        >Continue</a>
+      </div>
+    </xpath>
+  </template>
 </odoo>
