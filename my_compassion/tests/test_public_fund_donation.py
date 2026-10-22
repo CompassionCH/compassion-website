@@ -211,6 +211,37 @@ class TestPublicFundDonation(HttpCase):
         self.assertNotEqual(other_cart, cart)
         self.assertEqual(other_cart.order_line.product_id, product)
 
+    def test_abandoned_cart_revival_never_crosses_websites(self):
+        """website_sale's abandoned-cart link (/shop/cart?access_token=...
+        &revive=merge) moves the lines of the abandoned order into the cart
+        of the session and cancels it: never between a MyCompassion order
+        and a cart of another website."""
+        self._add_fund()
+        cart = self._cart()
+        other_website = self.env["website"].search(
+            [("id", "!=", self.website.id), ("is_my_compassion", "=", False)], limit=1
+        )
+        other_website.domain = "http://other.example.org"
+        cookies = "; ".join(f"{c.name}={c.value}" for c in self.opener.cookies)
+        headers = {"Host": "other.example.org", "Cookie": cookies}
+        product = self._shop_product()
+        self.make_jsonrpc_request(
+            "/shop/cart/update_json",
+            {"product_id": product.id, "add_qty": 1},
+            headers=dict(headers),
+        )
+        shop_cart = self.env["sale.order"].search(
+            [("website_id", "=", other_website.id)], order="id desc", limit=1
+        )
+        self.url_open(
+            f"/shop/cart?access_token={cart._portal_ensure_token()}&revive=merge",
+            headers=headers,
+            allow_redirects=False,
+        )
+        self.assertEqual(cart.state, "draft")
+        self.assertEqual(cart.order_line.product_id, self.fund.product_variant_id)
+        self.assertEqual(shop_cart.order_line.product_id, product)
+
     def test_shop_routes_never_add_to_the_cart(self):
         """Only the gift package's routes change a MyCompassion cart: a shop
         product priced under the fund minimum would get around it."""

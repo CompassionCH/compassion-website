@@ -65,9 +65,25 @@ class MyCompassionWebsiteSale(Delivery):
     @http.route()
     def cart(self, access_token=None, revive="", **post):
         """The gift package is the cart page of a MyCompassion cart: website_sale's
-        one would offer an express payment form with the cart's access token."""
+        one would offer an express payment form with the cart's access token.
+
+        The abandoned-cart link (access_token, revive) is not followed across
+        websites when either is a MyCompassion one: it would move the lines
+        of one order into the other and cancel the first.
+        """
         if request.website.sale_get_order().website_id.is_my_compassion:
             return request.redirect("/my2/gift-package")
+        if access_token:
+            abandoned = (
+                request.env["sale.order"]
+                .sudo()
+                .search([("access_token", "=", access_token)], limit=1)
+            )
+            if abandoned.website_id != request.website and (
+                abandoned.website_id.is_my_compassion
+                or request.website.is_my_compassion
+            ):
+                access_token = None
         return super().cart(access_token=access_token, revive=revive, **post)
 
     @http.route()
