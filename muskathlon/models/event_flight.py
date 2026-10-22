@@ -16,15 +16,12 @@ class EventFlight(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        # Each flight has its own task
+        # Check if all flights are entered
         flights = super().create(vals_list)
-        tasks = {
-            "outbound": self.env.ref("muskathlon.task_flight_details"),
-            "return": self.env.ref("muskathlon.task_return_flight"),
-        }
-        for flight in flights:
-            task = tasks.get(flight.flight_type)
-            flight.registration_id.task_ids.filtered(
-                lambda t, task=task: t.task_id == task
-            ).write({"done": True})
+        task_flight = self.env.ref("muskathlon.task_flight_details")
+        for registration in flights.mapped("registration_id"):
+            if len(registration.flight_ids) == 2:
+                registration.task_ids.filtered(
+                    lambda t: t.task_id == task_flight
+                ).write({"done": True})
         return flights

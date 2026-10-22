@@ -19,7 +19,6 @@ class Event(models.Model):
     compassion_event_id = fields.Many2one(
         "crm.event.compassion", "Event", readonly=False
     )
-    reminder_config_id = fields.Many2one(related="event_type_id.reminder_config_id")
     participants_amount_objective = fields.Integer(
         "Default raise objective by participant", default=10000
     )
@@ -117,65 +116,6 @@ class Event(models.Model):
                 event.medical_survey_id = medical_survey
             if feedback_survey != event.feedback_survey_id:
                 event.feedback_survey_id = feedback_survey
-
-    def action_send_reminder(self):
-        """Remind the participants who still have something to do on their
-        My events page."""
-        for event in self:
-            event.registration_ids.send_communication(
-                event.reminder_config_id.id,
-                filter_func=lambda reg: (
-                    reg.state not in ("cancel", "done") and reg.incomplete_task_count
-                ),
-            )
-        return True
-
-    def _sync_template_mails(self, configs):
-        """Give the events the template's rules of the given communications,
-        or remove them when the template no longer has one. The other rules
-        of the events (e.g. a communication made for one event) are kept.
-
-        The participants already in (or past) the stage of a rule sent after
-        a stage don't get it late.
-        """
-        for event in self:
-            rules = event.event_type_id.event_type_mail_ids
-            for config in configs:
-                rule = rules.filtered(lambda mail, c=config: mail.communication_id == c)
-                scheduler = event.event_mail_ids.filtered(
-                    lambda mail, c=config: mail.communication_id == c
-                )
-                if not rule:
-                    scheduler.unlink()
-                    continue
-                values = rule[:1]._prepare_event_mail_values()
-                if scheduler:
-                    scheduler.write(values)
-                else:
-                    scheduler = self.env["event.mail"].create(
-                        dict(values, event_id=event.id)
-                    )
-                for stage_scheduler in scheduler.filtered(
-                    lambda mail: mail.interval_type == "after_stage"
-                ):
-                    passed = event.registration_ids.filtered(
-                        lambda reg, stage=stage_scheduler.stage_id: (
-                            reg.stage_id.sequence >= stage.sequence
-                            or reg.state == "cancel"
-                        )
-                    )
-                    self.env["event.mail.registration"].create(
-                        [
-                            {
-                                "scheduler_id": stage_scheduler.id,
-                                "registration_id": reg.id,
-                                "mail_sent": True,
-                            }
-                            for reg in passed
-                            - stage_scheduler.mail_registration_ids.registration_id
-                        ]
-                    )
-        return True
 
     def _registration_stages(self):
         """Stages of this event's template, narrowed to its type of trip."""

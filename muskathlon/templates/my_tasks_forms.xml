@@ -15,43 +15,51 @@
       t-value="registration.flight_ids.filtered(lambda r: r.flight_type == 'outbound')"
     />
     <t
-      t-set="return_flight"
+      t-set="inbound_flight"
       t-value="registration.flight_ids.filtered(lambda r: r.flight_type == 'return')"
+    />
+    <span
+      class="hidden"
+      data-for="outbound_flight_form"
+      t-att-data-values="{
+                'registration_id': registration.id,
+                'flight_type': 'outbound',
+                'flying_company': outbound_flight.flying_company,
+                'flight_number': outbound_flight.flight_number,
+                'departure': outbound_flight.get_date('departure', 'yyyy-MM-dd HH:mm:ss'),
+                'arrival': outbound_flight.get_date('arrival', 'yyyy-MM-dd HH:mm:ss'),
+                }"
+    />
+    <span
+      class="hidden"
+      data-for="return_flight_form"
+      t-att-data-values="{
+                'registration_id': registration.id,
+                'flight_type': 'return',
+                'flying_company': inbound_flight.flying_company,
+                'flight_number': inbound_flight.flight_number,
+                'departure': inbound_flight.get_date('departure', 'yyyy-MM-dd HH:mm:ss'),
+                'arrival': inbound_flight.get_date('arrival', 'yyyy-MM-dd HH:mm:ss'),
+                }"
     />
     <h3>Outbound flight</h3>
     <t t-call="muskathlon.flight_details">
-      <t t-set="flight_type" t-value="'outbound'" />
-      <t t-set="flight" t-value="outbound_flight" />
-      <t t-set="other_flight" t-value="return_flight" />
+      <t t-set="form_id">outbound_flight_form</t>
+      <t t-set="form_flight_type">outbound</t>
     </t>
-    <h3>Return flight</h3>
-    <t t-call="muskathlon.flight_details">
-      <t t-set="flight_type" t-value="'return'" />
-      <t t-set="flight" t-value="return_flight" />
-      <t t-set="other_flight" t-value="outbound_flight" />
+    <h3 t-if="outbound_flight">Return flight</h3>
+    <t t-if="outbound_flight" t-call="muskathlon.flight_details">
+      <t t-set="form_id">return_flight_form</t>
+      <t t-set="form_flight_type">return</t>
     </t>
   </template>
-  <!-- One flight: both are on the same page, their ids are named after the
-       flight type. Back to this page until the other flight is given too. -->
   <template id="flight_details">
-    <t t-set="form_id" t-value="'%s_flight_form' % flight_type" />
-    <span
-      class="hidden"
-      t-att-data-for="form_id"
-      t-att-data-values="{
-                'registration_id': registration.id,
-                'flight_type': flight_type,
-                'flying_company': flight.flying_company,
-                'flight_number': flight.flight_number,
-                'departure': flight.get_date('departure', 'yyyy-MM-dd HH:mm:ss'),
-                'arrival': flight.get_date('arrival', 'yyyy-MM-dd HH:mm:ss'),
-                }"
-    />
     <section
       class="s_website_form pt16 pb16 o_colored_level"
       data-vcss="001"
       data-snippet="s_website_form"
       data-name="Form"
+      style=""
     >
       <div class="container">
         <form
@@ -62,7 +70,7 @@
           class="o_mark_required"
           data-mark="*"
           data-success-mode="redirect"
-          t-attf-data-success-page="/my/events/#{slug(registration)}#{'' if other_flight else '/flight'}"
+          t-attf-data-success-page="/my/events/#{slug(registration)}"
           data-model_name="event.flight"
         >
           <div class="s_website_form_rows row s_col_no_bgcolor">
@@ -75,7 +83,7 @@
                 <label
                   class="col-sm-auto s_website_form_label"
                   style="width: 200px"
-                  t-attf-for="#{flight_type}_flight_type"
+                  for="okfvreeifaa"
                 >
                   <span class="s_website_form_label_content">Flight type</span>
                 </label>
@@ -84,48 +92,23 @@
                     type="hidden"
                     class="form-control s_website_form_input"
                     name="flight_type"
-                    t-att-value="flight_type"
+                    t-att-value="form_flight_type"
                     required="true"
-                    t-attf-id="#{flight_type}_flight_type"
+                    id="okfvreeifaa"
                   />
                 </div>
               </div>
             </div>
             <div
-              class="form-group s_website_form_field col-12 s_website_form_dnone"
+              class="form-group s_website_form_field col-12  s_website_form_model_required  "
               data-type="char"
               data-name="Field"
             >
               <div class="row s_col_no_resize s_col_no_bgcolor">
                 <label
-                  class="col-form-label col-sm-auto s_website_form_label"
+                  class="col-form-label col-sm-auto s_website_form_label "
                   style="width: 200px"
-                  t-attf-for="#{flight_type}_registration_id"
-                >
-                  <span class="s_website_form_label_content">Registration</span>
-                </label>
-                <div class="col-sm">
-                  <input
-                    type="hidden"
-                    class="form-control s_website_form_input"
-                    name="registration_id"
-                    t-att-value="registration.id"
-                    required="true"
-                    t-attf-id="#{flight_type}_registration_id"
-                  />
-                </div>
-              </div>
-            </div>
-            <div
-              class="form-group s_website_form_field col-12 s_website_form_model_required"
-              data-type="char"
-              data-name="Field"
-            >
-              <div class="row s_col_no_resize s_col_no_bgcolor">
-                <label
-                  class="col-form-label col-sm-auto s_website_form_label"
-                  style="width: 200px"
-                  t-attf-for="#{flight_type}_flying_company"
+                  for="obmdlabkn9gh"
                 >
                   <span class="s_website_form_label_content">Flying company</span>
                   <span class="s_website_form_mark">*</span>
@@ -136,21 +119,21 @@
                     class="form-control s_website_form_input"
                     name="flying_company"
                     required="true"
-                    t-attf-id="#{flight_type}_flying_company"
+                    id="obmdlabkn9gh"
                   />
                 </div>
               </div>
             </div>
             <div
-              class="form-group s_website_form_field col-12 s_website_form_model_required"
+              class="form-group s_website_form_field col-12  s_website_form_model_required  "
               data-type="char"
               data-name="Field"
             >
               <div class="row s_col_no_resize s_col_no_bgcolor">
                 <label
-                  class="col-form-label col-sm-auto s_website_form_label"
+                  class="col-form-label col-sm-auto s_website_form_label "
                   style="width: 200px"
-                  t-attf-for="#{flight_type}_flight_number"
+                  for="olhli9dppwwe"
                 >
                   <span class="s_website_form_label_content">Flight number</span>
                   <span class="s_website_form_mark">*</span>
@@ -161,56 +144,114 @@
                     class="form-control s_website_form_input"
                     name="flight_number"
                     required="true"
-                    t-attf-id="#{flight_type}_flight_number"
+                    id="olhli9dppwwe"
                   />
                 </div>
               </div>
             </div>
-            <t t-foreach="['departure', 'arrival']" t-as="moment">
-              <div
-                class="form-group s_website_form_field col-12"
-                data-type="datetime"
-                data-name="Field"
-              >
-                <div class="row s_col_no_resize s_col_no_bgcolor">
-                  <label
-                    class="col-form-label col-sm-auto s_website_form_label"
-                    style="width: 200px"
-                    t-attf-for="#{flight_type}_#{moment}"
+            <div
+              class="form-group s_website_form_field col-12  s_website_form_dnone  "
+              data-type="char"
+              data-name="Field"
+            >
+              <div class="row s_col_no_resize s_col_no_bgcolor">
+                <label
+                  class="col-form-label col-sm-auto s_website_form_label "
+                  style="width: 200px"
+                  for="oob60xqow5m"
+                >
+                  <span class="s_website_form_label_content">Registration</span>
+                </label>
+                <div class="col-sm">
+                  <input
+                    type="hidden"
+                    class="form-control s_website_form_input"
+                    name="registration_id"
+                    t-att-value="registration.id"
+                    required="true"
+                    id="oob60xqow5m"
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              class="form-group s_website_form_field col-12    "
+              data-type="datetime"
+              data-name="Field"
+            >
+              <div class="row s_col_no_resize s_col_no_bgcolor">
+                <label
+                  class="col-form-label col-sm-auto s_website_form_label "
+                  style="width: 200px"
+                  for="oqq3dtt420ts"
+                >
+                  <span class="s_website_form_label_content">Departure</span>
+                </label>
+                <div class="col-sm">
+                  <div
+                    class="s_website_form_datetime input-group date"
+                    id="datetimepicker2924868279152417"
+                    data-target-input="nearest"
                   >
-                    <span
-                      class="s_website_form_label_content"
-                      t-if="moment == 'departure'"
-                    >Departure</span>
-                    <span class="s_website_form_label_content" t-else="">Arrival</span>
-                  </label>
-                  <div class="col-sm">
+                    <input
+                      type="text"
+                      class="form-control datetimepicker-input s_website_form_input"
+                      data-target="#datetimepicker2924868279152417"
+                      name="departure"
+                      id="oqq3dtt420ts"
+                    />
                     <div
-                      class="s_website_form_datetime input-group date"
-                      t-attf-id="#{flight_type}_#{moment}_picker"
-                      data-target-input="nearest"
+                      class="input-group-append"
+                      data-target="#datetimepicker2924868279152417"
+                      data-toggle="datetimepicker"
                     >
-                      <input
-                        type="text"
-                        class="form-control datetimepicker-input s_website_form_input"
-                        t-attf-data-target="##{flight_type}_#{moment}_picker"
-                        t-att-name="moment"
-                        t-attf-id="#{flight_type}_#{moment}"
-                      />
-                      <div
-                        class="input-group-append"
-                        t-attf-data-target="##{flight_type}_#{moment}_picker"
-                        data-toggle="datetimepicker"
-                      >
-                        <div class="input-group-text">
-                          <i class="fa fa-calendar" />
-                        </div>
+                      <div class="input-group-text">
+                        <i class="fa fa-calendar" />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </t>
+            </div>
+            <div
+              class="form-group s_website_form_field col-12    "
+              data-type="datetime"
+              data-name="Field"
+            >
+              <div class="row s_col_no_resize s_col_no_bgcolor">
+                <label
+                  class="col-form-label col-sm-auto s_website_form_label "
+                  style="width: 200px"
+                  for="odwoqsatebwd"
+                >
+                  <span class="s_website_form_label_content">Arrival</span>
+                </label>
+                <div class="col-sm">
+                  <div
+                    class="s_website_form_datetime input-group date"
+                    id="datetimepicker1760002398087972"
+                    data-target-input="nearest"
+                  >
+                    <input
+                      type="text"
+                      class="form-control datetimepicker-input s_website_form_input"
+                      data-target="#datetimepicker1760002398087972"
+                      name="arrival"
+                      id="odwoqsatebwd"
+                    />
+                    <div
+                      class="input-group-append"
+                      data-target="#datetimepicker1760002398087972"
+                      data-toggle="datetimepicker"
+                    >
+                      <div class="input-group-text">
+                        <i class="fa fa-calendar" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div
               class="form-group col-12 s_website_form_submit"
               data-name="Submit Button"

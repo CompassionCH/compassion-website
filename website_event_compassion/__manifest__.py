@@ -47,6 +47,7 @@
         "security/ir.model.access.csv",
         "security/access_rules.xml",
         "data/event_registration_stage.xml",
+        "data/base_automation.xml",
         "data/event_message_subtype.xml",
         "data/event_type.xml",
         "data/trip_type.xml",

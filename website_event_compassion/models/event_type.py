@@ -30,10 +30,3 @@ class EventType(models.Model):
     )
     medical_survey_id = fields.Many2one("survey.survey", "Medical survey")
     feedback_survey_id = fields.Many2one("survey.survey", "Feedback survey")
-    reminder_config_id = fields.Many2one(
-        "partner.communication.config",
-        "Missing documents reminder",
-        domain=[("model_id.model", "=", "event.registration")],
-        help="Sent from the event to the participants who still have something "
-        "to do on their My events page.",
-    )

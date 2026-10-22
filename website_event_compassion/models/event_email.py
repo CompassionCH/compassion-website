@@ -220,9 +220,8 @@ class EventMail(models.Model):
                         or mail.event_id.date_end > now
                     )
                 ):
-                    # Done first: sending can run the schedulers again.
-                    mail.write({"mail_done": True})
                     mail.event_id.send_communication(mail.communication_id.id)
+                    mail.write({"mail_done": True})
         # Core only handles mail templates and would fail on our rules
         others = self.filtered(lambda m: m.notification_type != "communication")
         return super(EventMail, others).execute()
@@ -251,12 +250,6 @@ class EventMailRegistration(models.Model):
                     mail.scheduled_date = date_open + _INTERVALS[
                         scheduler.interval_unit
                     ](scheduler.interval_nbr)
-                elif mail.scheduled_date:
-                    # Planned while the registration was in the stage: it is
-                    # still sent after it left it (e.g. a stage left as soon
-                    # as reached, or the invitation to sponsor 15 days after
-                    # the confirmation of a Muskathlete already in Flights).
-                    mail.scheduled_date = mail.scheduled_date
                 else:
                     mail.scheduled_date = False
             else:
@@ -271,10 +264,8 @@ class EventMailRegistration(models.Model):
             and reg_mail.scheduler_id.notification_type == "communication"
         )
         for reg_mail in todo:
-            # Sent first: sending can move the registration to another stage,
-            # which runs the schedulers again.
-            reg_mail.mail_sent = True
             reg_mail.registration_id.send_communication(
                 reg_mail.scheduler_id.communication_id.id
             )
+        todo.write({"mail_sent": True})
         return super().execute()

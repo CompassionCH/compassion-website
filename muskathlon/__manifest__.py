@@ -29,7 +29,7 @@
 # pylint: disable=C8101
 {
     "name": "Muskathlon",
-    "version": "18.0.1.1.4",
+    "version": "18.0.1.1.1",
     "category": "Reports",
     "author": "Compassion CH",
     "license": "AGPL-3",
@@ -76,7 +76,6 @@
     ],
     "external_dependencies": {},
     "demo": [],
-    "post_init_hook": "post_init_hook",
     "installable": True,
     "auto_install": False,
 }
