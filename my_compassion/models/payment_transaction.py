@@ -266,24 +266,13 @@ class PaymentTransaction(models.Model):
     def _my2_save_token_on_groups(self, digital_invoices=None):
         """Make the transaction's token the card of its contract groups.
 
-        A group with no saved card takes the one that just paid. Replacing an
-        existing card is only allowed from the update-card page, which
-        authenticates the sponsor first.
+        See _my2_groups_taking_the_token for the groups.
         """
         self.ensure_one()
         if not self.token_id:
             return
-        if digital_invoices is None:
-            digital_invoices = self.invoice_ids.filtered(
-                "line_ids.contract_id.group_id.payment_mode_id.payment_provider_id"
-            )
-        groups = (
-            digital_invoices.line_ids.contract_id.group_id
-            | self.my2_card_update_group_id
-        ).filtered(
-            lambda g: g.payment_mode_id.payment_provider_id
-            and g.payment_token_id != self.token_id
-            and (not g.payment_token_id or g == self.my2_card_update_group_id)
+        groups = self._my2_groups_taking_the_token(digital_invoices).filtered(
+            lambda g: g.payment_token_id != self.token_id
         )
         try:
             groups.payment_token_id = self.token_id
@@ -299,3 +288,25 @@ class PaymentTransaction(models.Model):
                 self.reference,
                 exc_info=True,
             )
+
+    def _my2_groups_taking_the_token(self, digital_invoices=None):
+        """The contract groups whose monthly charges this transaction's card
+        pays once it is saved. It is known before the card is saved, so a
+        provider can register a card for monthly charges as such.
+
+        A group with no saved card takes the one that pays its invoices.
+        Replacing an existing card is only allowed from the update-card page,
+        which authenticates the sponsor first.
+        """
+        self.ensure_one()
+        if digital_invoices is None:
+            digital_invoices = self.invoice_ids.filtered(
+                "line_ids.contract_id.group_id.payment_mode_id.payment_provider_id"
+            )
+        return (
+            digital_invoices.line_ids.contract_id.group_id
+            | self.my2_card_update_group_id
+        ).filtered(
+            lambda g: g.payment_mode_id.payment_provider_id
+            and (not g.payment_token_id or g == self.my2_card_update_group_id)
+        )
