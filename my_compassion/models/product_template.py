@@ -105,25 +105,24 @@ class ProductTemplate(models.Model):
     )
 
     # Donation suggestions, per company in the currency of the company: a
-    # shared product's currency_id is always the main company's one.
+    # shared product's currency_id is always the main company's one. A company
+    # that sets none reads the company-less ir.default values
+    # (data/donation_amount_defaults.xml).
     my_compassion_donation_amount_low = fields.Float(
         string="Lowest Amount",
         company_dependent=True,
-        default=15.0,
         help="Lowest price suggestion when making a donation",
     )
 
     my_compassion_donation_amount_medium = fields.Float(
         string="Medium Amount",
         company_dependent=True,
-        default=50.0,
         help="Medium price suggestion when making a donation",
     )
 
     my_compassion_donation_amount_high = fields.Float(
         string="Highest Amount",
         company_dependent=True,
-        default=100.0,
         help="Highest price suggestion when making a donation",
     )
 

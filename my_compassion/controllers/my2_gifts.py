@@ -32,17 +32,10 @@ class MyCompassionGiftController(http.Controller):
                 "/web/login?redirect=" + quote("/my2/gifts?type=gift")
             )
 
-        domain = [
-            ("activate_for_my_compassion", "=", True),
-            ("my_compassion_donation_type", "=", type),
-        ]
-
-        # sudo: a visitor has no access to products; the domain is the gate,
-        # and activate_for_my_compassion is read for the website's company.
-        my_compassion_gifts = (
-            request.env["product.template"]
-            .sudo()
-            .search(domain, order="website_sequence")
+        # sudo: a visitor has no access to products; the website's company
+        # publishes them (see website._my2_donation_products).
+        my_compassion_gifts = request.website._my2_donation_products(
+            [("my_compassion_donation_type", "=", type)], order="website_sequence"
         )
         return request.render(
             "my_compassion.my2_gifts_page",

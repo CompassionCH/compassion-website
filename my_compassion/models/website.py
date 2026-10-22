@@ -90,6 +90,27 @@ class Website(models.Model):
             )
         )
 
+    def _my2_donation_products(self, domain=None, order=None):
+        """The donation products (funds and gifts) the website's company
+        publishes, in sudo.
+
+        Their activation, suggested amounts and currency are per company, read
+        in env.company: that is the donor's own company when the website's
+        company is not one of theirs (website's _frontend_pre_dispatch). Read
+        in the website's company instead, the company of the cart; sudo, as
+        such a donor may not read in it, so the activation is the gate.
+        """
+        self.ensure_one()
+        return (
+            self.env["product.template"]
+            .sudo()
+            .with_company(self.company_id)
+            .search(
+                [("activate_for_my_compassion", "=", True), *(domain or [])],
+                order=order,
+            )
+        )
+
     @api.model
     def get_current_website(self, fallback=True):
         # On the MyCompassion portal routes (/my2 and localized /<lang>/my2),

@@ -501,15 +501,8 @@ class MyCompassionDonationsController(CustomerPortal):
         gift page.
         """
         donation_types = ["fund"] if request.env.user._is_public() else ["gift", "fund"]
-        products = (
-            request.env["product.template"]
-            .sudo()
-            .search(
-                [
-                    ("activate_for_my_compassion", "=", True),
-                    ("my_compassion_donation_type", "in", donation_types),
-                ]
-            )
+        products = request.website._my2_donation_products(
+            [("my_compassion_donation_type", "in", donation_types)]
         )
 
         sponsorships = self._get_gift_eligible_sponsorships(request.env.user.partner_id)
@@ -659,22 +652,18 @@ class MyCompassionDonationsController(CustomerPortal):
         """The donation product a visitor or user may give to, or an empty
         recordset.
 
-        Read in sudo (a visitor has no access to products), so this is the
-        gate: published on MyCompassion for the website's company, active and
-        sold (with a variant to put in the cart), and a fund for a visitor - a
-        gift goes to a sponsored child, which takes an account.
+        The gate, read in sudo (a visitor has no access to products):
+        published on MyCompassion by the website's company and active
+        (website._my2_donation_products), sold (with a variant to put in the
+        cart), and a fund for a visitor - a gift goes to a sponsored child,
+        which takes an account.
         """
         try:
             product_id = int(product_id)
         except (TypeError, ValueError):
             return request.env["product.template"]
-        product = request.env["product.template"].sudo().browse(product_id).exists()
-        if not (
-            product.activate_for_my_compassion
-            and product.active
-            and product.sale_ok
-            and product.product_variant_id
-        ):
+        product = request.website._my2_donation_products([("id", "=", product_id)])
+        if not (product.sale_ok and product.product_variant_id):
             return request.env["product.template"]
         if (
             request.env.user._is_public()
