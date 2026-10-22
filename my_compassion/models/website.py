@@ -46,8 +46,10 @@ class Website(models.Model):
         "Minimum Donation to a Fund",
         default=5.0,
         help="Smallest amount, in the currency of the website's company, a"
-        " visitor (without an account) may give to a fund. Card testers try"
-        " stolen cards with tiny payments on public donation pages.",
+        " visitor may give to a fund. A donor with an account may give every"
+        " suggested amount, and a custom one from the smaller of this and the"
+        " fund's lowest suggestion. Card testers try stolen cards with tiny"
+        " payments on public donation pages.",
     )
     my2_max_payment_attempts_per_ip = fields.Integer(
         "Visitor Payment Attempts per IP",
@@ -112,17 +114,28 @@ class Website(models.Model):
         )
 
     def _my2_fund_minimum(self, product):
-        """The smallest amount the current user may give to product on this
-        website: my2_min_donation_amount for a visitor giving to a fund (card
-        testers try stolen cards with tiny payments on public donation pages),
-        none for a donor with an account."""
+        """The smallest amount the current user may give to product, a fund,
+        on this website. For a visitor, my2_min_donation_amount: card testers
+        try stolen cards with tiny payments on public donation pages. For a
+        donor with an account (signup is open too), the smaller of that and
+        the fund's lowest suggestion: every suggestion stays theirs, a custom
+        amount does not go below it. None for a gift."""
         self.ensure_one()
-        if (
-            product.my_compassion_donation_type != "fund"
-            or not self.env.user._is_public()
-        ):
+        if product.my_compassion_donation_type != "fund":
             return 0.0
-        return self.my2_min_donation_amount
+        minimum = self.my2_min_donation_amount
+        if self.env.user._is_public():
+            return minimum
+        suggested = [a for _key, a in self._my2_suggested_amounts(product) if a > 0]
+        return min([minimum, *suggested])
+
+    @staticmethod
+    def _my2_suggested_amounts(product):
+        return [
+            ("low", product.my_compassion_donation_amount_low),
+            ("medium", product.my_compassion_donation_amount_medium),
+            ("high", product.my_compassion_donation_amount_high),
+        ]
 
     def _my2_offers_payment_method(self, code):
         """Whether a published payment provider of the website's company offers

@@ -209,12 +209,30 @@ class TestPublicFundDonation(HttpCase):
         self._portal_user("small-giver@example.org")
         page = self.url_open(f"/my2/gifts/{self.fund.id}").text
         self.assertRegex(page, r'-suggested-low"[^>]*data-amount="1.0"[^>]*checked')
-        self.assertFalse(
-            self.make_jsonrpc_request(
-                "/my2/gifts/get-limits", {"product_id": self.fund.id}
-            ).get("min_amount")
-        )
         self._add_fund(suggested_amount="low")
+        self.assertEqual(self._cart().order_line.price_unit, 1.0)
+
+    def test_account_gives_a_custom_amount_from_the_lowest_suggestion(self):
+        """Signup is open: a donor with an account chooses every suggestion,
+        but no custom amount below the smaller of the website's minimum and
+        the fund's lowest suggestion."""
+        self._small_suggestions()
+        self._portal_user("custom-giver@example.org")
+        limits = self.make_jsonrpc_request(
+            "/my2/gifts/get-limits", {"product_id": self.fund.id}
+        )
+        self.assertEqual(limits["min_amount"], 1.0)
+        self._assert_refused(
+            "/my2/gifts/new",
+            {
+                "product_id": self.fund.id,
+                "suggested_amount": "custom",
+                "custom_amount": "0.5",
+                "frequency": "one_time",
+            },
+            "The smallest donation to this fund is",
+        )
+        self._add_fund(suggested_amount="custom", custom_amount="1")
         self.assertEqual(self._cart().order_line.price_unit, 1.0)
 
     def test_cart_of_another_website_is_not_taken(self):

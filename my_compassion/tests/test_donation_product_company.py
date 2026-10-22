@@ -419,14 +419,17 @@ class TestDonationProductWebsiteCompany(HttpCase):
     def test_the_website_company_decides_what_is_published(self):
         page = self.url_open(f"/my2/gifts/{self.website_fund.id}")
         self.assertEqual(page.status_code, 200)
-        # A fund has no gift limit, and the website's minimum is the
-        # visitors' only.
-        self.assertEqual(
-            self.make_jsonrpc_request(
-                "/my2/gifts/get-limits", {"product_id": self.website_fund.id}
-            ),
-            {},
+        # A fund has no gift limit; a donor with an account gives a custom
+        # amount from the smaller of the website's minimum and the fund's
+        # lowest suggestion.
+        limits = self.make_jsonrpc_request(
+            "/my2/gifts/get-limits", {"product_id": self.website_fund.id}
         )
+        self.assertEqual(
+            limits["min_amount"],
+            min(self.website.my2_min_donation_amount, self.website_amounts[0]),
+        )
+        self.assertNotIn("max_amount", limits)
 
         page = self.url_open(f"/my2/gifts/{self.donor_fund.id}")
         self.assertEqual(page.status_code, 404)
