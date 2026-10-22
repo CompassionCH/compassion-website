@@ -49,9 +49,15 @@ class ResUsers(models.Model):
         old_partner = user.partner_id
         selected_partner = old_partner  # By default, keep the current partner
 
-        # Check for other partners with the same email
+        # Check for other partners with the same email, except a partner still
+        # known by a placeholder name: a visitor created it from an email they
+        # typed (a donation, a fast checkout), which nobody verified.
         partners = self.env["res.partner"].search(
-            [("email", "=", email), ("id", "!=", old_partner.id)]
+            [
+                ("email", "=", email),
+                ("id", "!=", old_partner.id),
+                ("my2_name_placeholder", "=", False),
+            ]
         )
 
         if partners:

@@ -28,6 +28,17 @@ class MyCompassionWebsiteSale(WebsiteSale):
             return request.redirect("/my2/gifts/thankyou")
         return super().shop_payment_confirmation(**post)
 
+    def _check_cart(self, order_sudo):
+        """A MyCompassion cart is paid on the gift package only, never through
+        the standard checkout (/shop/checkout, /shop/address and its submit,
+        /shop/confirm_order, /shop/payment): its address form edits the
+        cart's partner, which for a visitor is a donor created from an email
+        anyone may type. Decided on the cart's website: a session can reach
+        /shop on another website of the same domain."""
+        if order_sudo.website_id.is_my_compassion:
+            return request.redirect("/my2/gift-package")
+        return super()._check_cart(order_sudo)
+
 
 # Payment attempts of a visitor's cart within an hour: card testers try stolen
 # card numbers one after the other on public donation pages.

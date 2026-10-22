@@ -256,6 +256,75 @@ class TestPublicFundDonation(HttpCase):
             }
         )
 
+    def test_standard_checkout_sends_back_to_the_gift_package(self):
+        """website_sale's checkout would show a MyCompassion cart its address
+        form (which edits the cart's partner) and its own payment page."""
+        self._add_fund()
+        self._give_email()
+        for route in (
+            "/shop/checkout",
+            "/shop/address",
+            "/shop/confirm_order",
+            "/shop/payment",
+        ):
+            response = self.url_open(route, allow_redirects=False)
+            self.assertEqual(response.status_code, 303, route)
+            self.assertIn("/my2/gift-package", response.headers["Location"], route)
+
+    def test_address_form_never_changes_the_donor(self):
+        """The donor of a visitor's cart may become someone's account (signup
+        links an account to the partner of its email): website_sale's address
+        form must not change its email from the visitor's session."""
+        self._add_fund()
+        self._give_email(email="victim@example.org")
+        donor = self._cart().partner_id
+        page = self.url_open("/my2/gift-package?change_donor=1")
+        response = self.url_open(
+            "/shop/address/submit",
+            data={
+                "csrf_token": CSRF_RE.search(page.text).group(1),
+                "partner_id": donor.id,
+                "address_type": "billing",
+                "name": "Eve Mallory",
+                "email": "attacker@example.org",
+                "phone": "+41 21 000 00 00",
+                "street": "Rue du Test 1",
+                "city": "Lausanne",
+                "zip": "1000",
+                "country_id": self.env.ref("base.ch").id,
+            },
+        )
+        self.assertEqual(donor.email, "victim@example.org")
+        self.assertTrue(donor.my2_name_placeholder)
+        self.assertEqual(self._cart().partner_id, donor)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("/my2/gift-package", response.json()["redirectUrl"])
+
+    def test_signup_never_takes_a_visitor_donor(self):
+        """Signup moves a new account onto an existing partner of the same
+        email, but never onto a visitor's donor: anyone may have typed it."""
+        self._add_fund()
+        self._give_email(email="victim@example.org")
+        donor = self._cart().partner_id
+        user = (
+            self.env["res.users"]
+            .with_context(no_reset_password=True)
+            .create(
+                {
+                    "name": "Victim",
+                    "login": "victim@example.org",
+                    "email": "victim@example.org",
+                    "groups_id": [(6, 0, [self.env.ref("base.group_portal").id])],
+                }
+            )
+        )
+        own_partner = user.partner_id
+        self.env["res.users"]._find_and_replace_partner_async(
+            user.id, "victim@example.org"
+        )
+        self.assertEqual(user.partner_id, own_partner)
+        self.assertFalse(donor.user_ids)
+
     def test_visitor_never_sees_or_uses_saved_cards(self):
         self._add_fund()
         self._give_email()
