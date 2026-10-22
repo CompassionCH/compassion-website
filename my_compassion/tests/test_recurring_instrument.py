@@ -241,6 +241,31 @@ class TestRecurringInstrument(DigitalSeamCase):
             tx._my2_save_token_on_groups()
         self.assertStoredCard(group, token)
 
+    def test_card_the_group_cannot_charge_is_not_taken(self):
+        # From the update-card page, whose transaction may replace the card
+        contract, _invoice, token = self._make_chargeable_invoice()
+        group = contract.group_id
+        providers = self._providers_the_group_cannot_charge_with(group)
+        for reason, provider in providers.items():
+            with self.subTest(provider=reason):
+                card = self._card(contract.partner_id, provider, f"{reason}-card")
+                tx = self.env["payment.transaction"].create(
+                    {
+                        "provider_id": provider.id,
+                        "payment_method_id": card.payment_method_id.id,
+                        "partner_id": contract.partner_id.id,
+                        "reference": f"update-card-{reason}-provider",
+                        "amount": 10.0,
+                        "currency_id": provider.company_id.currency_id.id,
+                        "operation": "online_direct",
+                        "token_id": card.id,
+                        "my2_card_update_group_id": group.id,
+                    }
+                )
+                self.assertFalse(tx._my2_groups_taking_the_token())
+                tx._my2_save_token_on_groups()
+                self.assertStoredCard(group, token)
+
 
 @tagged("post_install", "-at_install")
 class TestUpdateCardPage(HttpCase, DigitalSeamCase):

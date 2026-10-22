@@ -58,6 +58,27 @@ class TestRecurringCard(PayuDigitalCase):
         card_update = self._transaction(contract, "payu-bridge-arrears", **values)
         self.assertTrue(card_update._payu_gpo_card_is_recurring())
 
+    def test_card_the_group_cannot_charge_is_on_file(self):
+        contract, _invoice, _token = self._make_chargeable_invoice()
+        group = contract.group_id
+        providers = self._providers_the_group_cannot_charge_with(group)
+        for reason, provider in providers.items():
+            with self.subTest(provider=reason):
+                tx = self.env["payment.transaction"].create(
+                    {
+                        "provider_id": provider.id,
+                        "payment_method_id": self.env.ref(
+                            "payment.payment_method_unknown"
+                        ).id,
+                        "partner_id": contract.partner_id.id,
+                        "reference": f"payu-bridge-{reason}-provider",
+                        "amount": 10.0,
+                        "currency_id": provider.company_id.currency_id.id,
+                        "my2_card_update_group_id": group.id,
+                    }
+                )
+                self.assertFalse(tx._payu_gpo_card_is_recurring())
+
     def test_update_card_page_saves_a_payu_card_with_a_payment(self):
         contract, invoice, _token = self._make_payu_chargeable_invoice()
         group = contract.group_id

@@ -111,6 +111,28 @@ class DigitalSeamCase(TransactionCase):
             vals.update({"type": "S", "child_id": child.id})
         return self.env["recurring.contract"].with_context(no_upsert=True).create(vals)
 
+    def _providers_the_group_cannot_charge_with(self, group):
+        """{reason: provider} for providers whose cards a group never takes:
+        another provider than its payment mode's, or one of another
+        company."""
+        other_company = self.env["res.company"].create(
+            {"name": "Digital Seam Other Company"}
+        )
+        return {
+            reason: self.env["payment.provider"].create(
+                {
+                    "name": f"Digital Seam {reason} provider",
+                    "code": "none",
+                    "company_id": company.id,
+                    "state": "test",
+                }
+            )
+            for reason, company in (
+                ("another", group.company_id),
+                ("foreign", other_company),
+            )
+        }
+
     def _make_chargeable_invoice(self, company=None):
         """An active-cycle situation for the charge cron: a digital contract
         with a posted, due, unpaid invoice and a saved token on its group.
