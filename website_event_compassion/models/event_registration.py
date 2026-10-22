@@ -12,6 +12,7 @@ import io
 import logging
 from urllib.parse import urljoin
 
+from markupsafe import Markup
 from PIL import Image as PILImage
 
 from odoo import SUPERUSER_ID, _, api, fields, models
@@ -659,7 +660,19 @@ class EventRegistration(models.Model):
         records = records.with_context(registration_incomplete=False)
         records.next_stage()
         records._update_mail_schedulers()
+        records._notify_new_registration()
         return records
+
+    def _notify_new_registration(self):
+        """Inform the event responsible and the followers of the event."""
+        for registration in self:
+            event = registration.event_id.sudo()
+            event.message_post(
+                body=Markup(_("New registration: %(name)s"))
+                % {"name": registration._get_html_link()},
+                subtype_xmlid="mail.mt_comment",
+                partner_ids=event.user_id.partner_id.ids,
+            )
 
     ##########################################################################
     #                             PUBLIC METHODS                             #

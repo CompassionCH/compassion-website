@@ -156,6 +156,25 @@ class EventMail(models.Model):
         )
         return values
 
+    def write(self, vals):
+        """Communications sent per registration are never done: the cron skips
+        the done schedulers, so the registrations reaching the stage later
+        would never get their communication."""
+        if vals.get("mail_done"):
+            per_registration = self.filtered(
+                lambda mail: mail.communication_id
+                and mail.interval_type in ("after_stage", "after_sub")
+            )
+            if per_registration:
+                others = self - per_registration
+                if others:
+                    super(EventMail, others).write(vals)
+                vals = {key: val for key, val in vals.items() if key != "mail_done"}
+                if vals:
+                    super(EventMail, per_registration).write(vals)
+                return True
+        return super().write(vals)
+
     def _for_trip_type(self):
         """Drop the schedulers that don't apply to their event's type of trip."""
         return self.filtered(
