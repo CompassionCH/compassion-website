@@ -467,9 +467,10 @@ class TestDigitalSeam(DigitalSeamCase):
         self.assertEqual(reason, "Card expired")
         self.assertEqual(contract.state, "waiting")
 
-    def test_outcome_notified_after_the_charge_is_handed_off_once(self):
-        # The provider's notification commits a refusal right after the
-        # charge was sent: its own handler hands it off, the charge does not.
+    def test_charge_decides_on_its_own_send(self):
+        # A provider notification commits a refusal right after the charge
+        # was sent: the charge decides on what its send returned, and leaves
+        # that refusal to the notification's handling.
         _contract, invoice, _token = self._make_chargeable_invoice()
         group_class = self.registry["recurring.contract.group"]
         commit = group_class._charge_cursor_commit
@@ -494,13 +495,19 @@ class TestDigitalSeam(DigitalSeamCase):
                 group_class, "_charge_cursor_commit", commit_then_notification
             ),
             patch.object(
+                self.registry["payment.transaction"],
+                "_send_payment_request",
+                lambda tx_self: tx_self._set_pending(),
+            ),
+            patch.object(
                 self.registry["recurring.contract"],
                 "_on_digital_charge_failed",
                 lambda contracts, failed_invoice, reason: handoffs.append(reason),
             ),
         ):
-            self._run_charge_cron(lambda tx_self: tx_self._set_pending())
-        self.assertGreaterEqual(len(commits), 2)
+            tx = self.env["recurring.contract.group"]._charge_digital_invoice(invoice)
+        self.assertEqual(len(commits), 2)
+        self.assertEqual(tx.state, "error")
         self.assertFalse(handoffs)
 
     def test_cron_one_failure_never_aborts_batch(self):
