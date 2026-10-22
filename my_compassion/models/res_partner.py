@@ -3,6 +3,8 @@ from datetime import timedelta
 
 from odoo import fields, models
 
+from .communication_job import NAMED_COMMUNICATION_MODELS
+
 _logger = logging.getLogger(__name__)
 
 # Days after which a donor left with the placeholder name and nothing else
@@ -23,9 +25,9 @@ class Partner(models.Model):
         string="Name is a placeholder",
         readonly=True,
         copy=False,
-        help="The partner was created by a fast checkout before its sponsor"
-        " gave their name. Everything that greets the sponsor by name waits"
-        " for _my2_replace_placeholder_name to clear this flag.",
+        help="The partner was created by a fast checkout or a visitor's"
+        " donation before its sponsor gave their name. Everything that greets"
+        " the sponsor by name waits for a real name to clear this flag.",
     )
 
     # True if partner has ever been a sponsor.
@@ -53,10 +55,10 @@ class Partner(models.Model):
     def _my2_replace_placeholder_name(self, firstname, lastname):
         """Write a sponsor's real name over their fast-checkout placeholder.
 
-        The single entry point for "this name is real now": it is also what
-        releases whatever was held back while the name was a placeholder.
-        Called from the payment notification handler and from the
-        post-payment details form.
+        It also releases whatever was held back while the name was a
+        placeholder, as a real name written on the partner another way does
+        (see write). Called from the payment notification handler and from
+        the post-payment details form.
 
         A partner whose name is already real is never touched, so a late
         payment notification can never overwrite what the sponsor typed.
@@ -77,6 +79,31 @@ class Partner(models.Model):
             updated |= partner
         updated._my2_on_placeholder_name_replaced()
         return updated
+
+    def write(self, vals):
+        """A real name written over the placeholder another way than
+        _my2_replace_placeholder_name (e.g. staff typing it on the partner
+        after calling the donor) clears the flag too, and releases what
+        waited for it, once the whole write is done (the name's inverse
+        writes the first and last names one after the other)."""
+        if (
+            "my2_name_placeholder" in vals
+            or not {"name", "firstname", "lastname"} & vals.keys()
+            or self.env.context.get("my2_naming")
+        ):
+            return super().write(vals)
+        placeholders = self.filtered("my2_name_placeholder")
+        if not placeholders:
+            return super().write(vals)
+        res = super(Partner, self.with_context(my2_naming=True)).write(vals)
+        named = placeholders.filtered(
+            lambda p: (p.firstname or p.lastname)
+            and self.MY2_PLACEHOLDER_NAME not in (p.firstname, p.lastname)
+        )
+        if named:
+            named.write({"my2_name_placeholder": False})
+            named._my2_on_placeholder_name_replaced()
+        return res
 
     def _my2_cron_archive_abandoned_donors(self, limit=500):
         """Archive the donors of abandoned visitor checkouts: still the
@@ -141,6 +168,22 @@ class Partner(models.Model):
             _logger.error(
                 "Could not run the post-placeholder handling of partners %s;"
                 " their portal invitation may need to be sent by hand.",
+                self.ids,
+                exc_info=True,
+            )
+        try:
+            with self.env.cr.savepoint():
+                self.env["partner.communication.job"].sudo().search(
+                    [
+                        ("partner_id", "in", self.ids),
+                        ("state", "=", "pending"),
+                        ("model", "in", NAMED_COMMUNICATION_MODELS),
+                    ]
+                )._my2_release_held()
+        except Exception:
+            _logger.error(
+                "Could not release the communications held for the name of"
+                " partners %s; they wait in the pending communications.",
                 self.ids,
                 exc_info=True,
             )

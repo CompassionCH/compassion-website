@@ -5,7 +5,6 @@ from datetime import timedelta
 from unittest.mock import patch
 
 from odoo import fields, http
-from odoo.exceptions import UserError
 from odoo.tests import tagged
 from odoo.tests.common import (
     TEST_CURSOR_COOKIE_NAME,
@@ -809,38 +808,97 @@ class TestPublicFundDonation(HttpCase):
 
     # === What waits for the donor's name ===
 
-    def test_thank_you_letter_waits_for_the_name(self):
-        config = self.env["partner.communication.config"].search(
-            [("model_id.model", "in", ("account.move", "account.move.line"))],
-            limit=1,
+    def _letter_config(self):
+        """A communication about invoices (as the thank-you letters and the
+        donation receipts) that greets the donor by name."""
+        template = self.env["mail.template"].create(
+            {
+                "name": "Visitor Thanks",
+                "model_id": self.env["ir.model"]._get_id("partner.communication.job"),
+                "subject": "Thank you",
+                "email_from": "thanks@example.org",
+                "body_html": '<p>Dear <t t-out="object.partner_id.name"/></p>',
+            }
         )
-        if not config:
-            self.skipTest("no communication about invoices on this database")
-        about = self.env[config.model_id.model].search([], limit=1)
-        if not about:
-            self.skipTest("no invoice on this database")
-        self._add_fund()
-        self._give_email()
-        donor = self._cart().partner_id
-        job = self.env["partner.communication.job"].create(
+        return self.env["partner.communication.config"].create(
+            {
+                "name": "Visitor Thanks",
+                "model_id": self.env["ir.model"]._get_id("account.move"),
+                "source_id": self.env["utm.source"].create({"name": "Thanks"}).id,
+                "send_mode": "digital",
+                "email_template_id": template.id,
+                "forbid_merging": True,
+            }
+        )
+
+    def _letter(self, config, donor, **values):
+        invoice = self.env["account.move"].create(
+            {"move_type": "out_invoice", "partner_id": donor.id}
+        )
+        return self.env["partner.communication.job"].create(
             {
                 "config_id": config.id,
                 "partner_id": donor.id,
-                "object_ids": str(about.id),
+                "object_ids": str(invoice.id),
                 "send_mode": "digital",
+                **values,
             }
         )
-        # Sent alone (a click on Send): the user is told why.
-        with self.assertRaises(UserError):
-            job.send()
+
+    def test_thank_you_letter_waits_for_the_name(self):
+        config = self._letter_config()
+        self._add_fund()
+        self._give_email()
+        donor = self._cart().partner_id
+        job = self._letter(config, donor, auto_send=True)
+        self.assertIn(donor.MY2_PLACEHOLDER_NAME, job.body_html)
+        # Sent alone (the queued automatic send, or a click on Send): nothing
+        # fails, and the user is told why.
+        action = job.send()
+        self.assertEqual(action["tag"], "display_notification")
+        self.assertEqual(job.state, "pending")
         # Sent in a batch: left pending, until the name comes.
         other_donor = donor.copy(
             {"my2_name_placeholder": True, "email": "other@example.org"}
         )
-        jobs = job | job.copy({"partner_id": other_donor.id})
-        self.assertEqual(len(jobs), 2)
+        jobs = job | self._letter(config, other_donor)
         jobs.send()
         self.assertEqual(set(jobs.mapped("state")), {"pending"})
+
+    def test_held_letters_go_once_the_name_is_given(self):
+        """The text is rendered again with the real name; what was to be sent
+        automatically is sent, the rest waits for staff."""
+        config = self._letter_config()
+        self._add_fund()
+        self._give_email()
+        donor = self._cart().partner_id.with_context(queue_job__no_delay=True)
+        automatic = self._letter(config, donor, auto_send=True)
+        manual = self._letter(config, donor)
+        for job in automatic | manual:
+            self.assertIn(donor.MY2_PLACEHOLDER_NAME, job.body_html)
+        donor._my2_replace_placeholder_name("Anna", "Nowak")
+        for job in automatic | manual:
+            self.assertIn("Nowak", job.body_html)
+            self.assertNotIn(donor.MY2_PLACEHOLDER_NAME, job.body_html)
+        self.assertEqual(automatic.state, "done")
+        self.assertEqual(manual.state, "pending")
+
+    def test_a_name_typed_by_staff_releases_the_letters(self):
+        """Staff may call the donor and type their name on the partner."""
+        config = self._letter_config()
+        self._add_fund()
+        self._give_email()
+        donor = self._cart().partner_id.with_context(queue_job__no_delay=True)
+        job = self._letter(config, donor, auto_send=True)
+        self.assertIn(donor.MY2_PLACEHOLDER_NAME, job.body_html)
+        donor.write({"phone": "+48 600 000 000"})
+        self.assertTrue(donor.my2_name_placeholder)
+        donor.write({"firstname": "Anna"})
+        self.assertTrue(donor.my2_name_placeholder, "the surname is still missing")
+        donor.write({"lastname": "Nowak"})
+        self.assertFalse(donor.my2_name_placeholder)
+        self.assertIn("Nowak", job.body_html)
+        self.assertEqual(job.state, "done")
 
     # === Amounts and images ===
 
