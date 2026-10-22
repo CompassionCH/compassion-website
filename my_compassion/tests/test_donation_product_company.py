@@ -33,6 +33,10 @@ class TestDonationProductCompany(TransactionCase):
             product.my_compassion_donation_amount_high,
         )
 
+    def test_every_company_starts_from_the_same_suggestions(self):
+        for company in (self.company_a, self.company_b):
+            self.assertEqual(self._settings(company), (False, 15.0, 50.0, 100.0))
+
     def test_each_company_has_its_own_settings(self):
         self.product.with_company(self.company_a).write(
             {
@@ -43,9 +47,7 @@ class TestDonationProductCompany(TransactionCase):
             }
         )
         # The other company does not publish it, and keeps the defaults.
-        defaults = self._settings(self.company_b)
-        self.assertFalse(defaults[0])
-        self.assertNotEqual(defaults[1:], (25.0, 50.0, 100.0))
+        self.assertEqual(self._settings(self.company_b), (False, 15.0, 50.0, 100.0))
 
         self.product.with_company(self.company_b).write(
             {
