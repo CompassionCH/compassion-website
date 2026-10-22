@@ -1013,6 +1013,11 @@ msgid "Attachment not found"
 msgstr "Allegato non trovato"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_page
+msgid "BLIK"
+msgstr "BLIK"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_form_content
 msgid "Back"
 msgstr "Indietro"
@@ -1522,6 +1527,12 @@ msgstr "Creato da"
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard_step__create_date
 msgid "Created on"
 msgstr "Creato il"
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_product_product__my_compassion_currency_id
+#: model:ir.model.fields,help:my_compassion.field_product_template__my_compassion_currency_id
+msgid "Currency of the suggested amounts: the current company's one"
+msgstr "Valuta degli importi suggeriti: quella dell'azienda corrente"
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_product_product__my_compassion_impact_before_ids
@@ -2778,6 +2789,12 @@ msgid "My Compassion"
 msgstr "My Compassion"
 
 #. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_product_product__my_compassion_currency_id
+#: model:ir.model.fields,field_description:my_compassion.field_product_template__my_compassion_currency_id
+msgid "My Compassion Currency"
+msgstr "Valuta My Compassion"
+
+#. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_product_product__my_compassion_description
 #: model:ir.model.fields,field_description:my_compassion.field_product_template__my_compassion_description
 msgid "My Compassion Description"
@@ -3469,9 +3486,11 @@ msgstr "Prodotto"
 #: model:ir.model.fields,help:my_compassion.field_product_product__activate_for_my_compassion
 #: model:ir.model.fields,help:my_compassion.field_product_template__activate_for_my_compassion
 msgid ""
-"Publish the product as an available donation on the MyCompassion website"
+"Publish the product as an available donation on the MyCompassion website of "
+"the current company"
 msgstr ""
-"Pubblica il prodotto come donazione disponibile sul sito web MyCompassion"
+"Pubblica il prodotto come donazione disponibile sul sito web MyCompassion "
+"dell'azienda corrente"
 
 #. module: my_compassion
 #: model:ir.actions.server,name:my_compassion.child_publish_action
