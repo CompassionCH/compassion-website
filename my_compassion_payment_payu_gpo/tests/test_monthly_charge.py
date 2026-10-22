@@ -40,16 +40,16 @@ class TestMonthlyCharge(PayuDigitalCase):
             {"order": {"extOrderId": tx.reference, "status": status, **order}},
         )
 
-    def _bank_refuses_charges(self):
+    def _bank_refuses_charges(self, operations=("offline",)):
         """The refusal of a charge made with a saved card, as
         payment_payu_gpo records it: PayU cancels the order, and the
-        transaction is in error."""
+        transaction is in error. operations: those recorded so."""
         transaction_class = self.registry["payment.transaction"]
         apply_order = transaction_class._payu_gpo_apply_order
 
         def apply(tx, notification_data):
             if (
-                tx.operation == "offline"
+                tx.operation in operations
                 and notification_data["order"]["status"] == "CANCELED"
             ):
                 tx._set_error("PayU: the bank refused the charge.")
@@ -162,8 +162,9 @@ class TestMonthlyCharge(PayuDigitalCase):
         ):
             self._notify(tx, "CANCELED")
 
-    def test_sponsor_payment_error_is_no_failed_charge(self):
-        # The sponsor pays on the site and sees the outcome there.
+    def test_sponsor_payment_refusal_is_no_failed_charge(self):
+        # The sponsor pays on the site and sees the refusal there, even one
+        # recorded as an error: it is no monthly charge to dun.
         tx = self.env["payment.transaction"].create(
             {
                 "provider_id": self.contract.payment_mode_id.payment_provider_id.id,
@@ -177,7 +178,7 @@ class TestMonthlyCharge(PayuDigitalCase):
             }
         )
         tx._set_pending()
-        # an order of another amount is refused
-        self._notify(tx, "COMPLETED", totalAmount="1")
+        with self._bank_refuses_charges(operations=("offline", "online_direct")):
+            self._notify(tx, "CANCELED")
         self.assertEqual(tx.state, "error")
         self.assertFalse(self.handoffs)
