@@ -108,7 +108,11 @@ class SaleOrder(models.Model):
         )
         if self._my2_payment_outcome(except_transaction) == "paid":
             raise UserError(
-                _("This donation is already paid, or its payment is under way.")
+                _(
+                    "This donation is already paid, or its payment is still under"
+                    " way. Please wait for its outcome, or check with your bank,"
+                    " before paying again."
+                )
             )
 
     def _check_cart_is_ready_to_be_paid(self):
