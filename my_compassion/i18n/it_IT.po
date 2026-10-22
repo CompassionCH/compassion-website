@@ -3368,6 +3368,8 @@ msgid "Please enter a new payment method."
 msgstr "Inserisci un nuovo metodo di pagamento."
 
 #. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/my2_donations.py:0
 #: model_terms:ir.ui.view,arch_db:my_compassion.DonationFormComponent
 msgid "Please enter a valid amount."
 msgstr "Ti preghiamo di inserire un importo valido."
@@ -5565,13 +5567,13 @@ msgstr "Paga la tua donazione dal tuo carrello per i regali."
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_website__my2_min_donation_amount
 msgid ""
-"Smallest amount, in the currency of the website's company, a donor may give "
-"to a fund. Card testers try stolen cards with tiny payments on public "
-"donation pages."
+"Smallest amount, in the currency of the website's company, a visitor "
+"(without an account) may give to a fund. Card testers try stolen cards with "
+"tiny payments on public donation pages."
 msgstr ""
-"Importo minimo, nella valuta dell'azienda del sito, che un donatore può "
-"donare a un fondo. Chi testa carte rubate le prova con pagamenti minimi "
-"sulle pagine di donazione pubbliche."
+"Importo minimo, nella valuta dell'azienda del sito, che un visitatore (senza"
+" account) può donare a un fondo. Chi testa carte rubate le prova con "
+"pagamenti minimi sulle pagine di donazione pubbliche."
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_res_partner__my2_name_placeholder
@@ -5636,3 +5638,9 @@ msgstr ""
 "(una donazione senza account, un pagamento rapido), che nessuno ha "
 "verificato. La registrazione non gli collega mai un account; indicare un "
 "nome non cambia nulla."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/my2_donations.py:0
+msgid "The smallest donation to this fund is %(amount)s."
+msgstr "La donazione minima per questo fondo è di %(amount)s."

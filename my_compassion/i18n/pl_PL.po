@@ -2883,6 +2883,8 @@ msgstr ""
 "                                                                <br/>"
 
 #. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/my2_donations.py:0
 #: model_terms:ir.ui.view,arch_db:my_compassion.DonationFormComponent
 msgid "Please enter a valid amount."
 msgstr "Podaj poprawną kwotę."
@@ -4810,13 +4812,14 @@ msgstr "Opłać swoją darowiznę w koszyku prezentów."
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_website__my2_min_donation_amount
 msgid ""
-"Smallest amount, in the currency of the website's company, a donor may give "
-"to a fund. Card testers try stolen cards with tiny payments on public "
-"donation pages."
+"Smallest amount, in the currency of the website's company, a visitor "
+"(without an account) may give to a fund. Card testers try stolen cards with "
+"tiny payments on public donation pages."
 msgstr ""
-"Najmniejsza kwota w walucie firmy, do której należy strona, jaką darczyńca "
-"może przekazać na fundusz. Osoby testujące karty sprawdzają skradzione karty"
-" bardzo małymi płatnościami na publicznych stronach darowizn."
+"Najmniejsza kwota w walucie firmy, do której należy strona, jaką "
+"odwiedzający (bez konta) może przekazać na fundusz. Osoby testujące karty "
+"sprawdzają skradzione karty bardzo małymi płatnościami na publicznych "
+"stronach darowizn."
 
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_res_partner__my2_name_placeholder
@@ -4881,3 +4884,9 @@ msgstr ""
 "odwiedzającego (darowizna bez konta, szybka płatność), którego nikt nie "
 "zweryfikował. Rejestracja nigdy nie łączy z nim konta; podanie imienia i "
 "nazwiska tego nie zmienia."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/my2_donations.py:0
+msgid "The smallest donation to this fund is %(amount)s."
+msgstr "Najmniejsza darowizna na ten fundusz wynosi %(amount)s."
