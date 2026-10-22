@@ -272,9 +272,8 @@ class ContractGroup(models.Model):
             tx.with_context(
                 **self._digital_charge_context(invoice)
             )._send_payment_request()
-            # Decided on what the send returned: once it is committed, a
-            # provider notification may change the state, and its own
-            # handler then reports the outcome.
+            # Decided on what the send returned, not on a state a provider
+            # notification may have set since the commit.
             sent_state, sent_message = tx.state, tx.state_message
         finally:
             # the outcome - or the draft of an interrupted call - must
