@@ -162,6 +162,21 @@ class TestPublicFundDonation(HttpCase):
         )
         self.website.my2_min_donation_amount = minimum
 
+    def test_visitor_is_offered_only_amounts_from_the_minimum(self):
+        self._small_suggestions()
+        page = self.url_open(f"/my2/gifts/{self.fund.id}").text
+        self.assertNotIn("-suggested-low", page)
+        self.assertNotIn("-suggested-medium", page)
+        self.assertRegex(page, r'-suggested-high"[^>]*data-amount="5.0"[^>]*checked')
+        self._add_fund(suggested_amount="high")
+        self.assertEqual(self._cart().order_line.price_unit, 5.0)
+        # No suggestion reaches the minimum: the own amount, filled with it.
+        self.website.my2_min_donation_amount = 10.0
+        page = self.url_open(f"/my2/gifts/{self.fund.id}").text
+        self.assertNotIn("-suggested-high", page)
+        self.assertRegex(page, r'-suggested-custom"[^>]*checked')
+        self.assertRegex(page, r'id="custom-amount"[^>]*value="10"')
+
     def test_visitor_below_the_minimum_is_told_why(self):
         self._small_suggestions()
         message = "The smallest donation to this fund is"
@@ -184,12 +199,16 @@ class TestPublicFundDonation(HttpCase):
                 [("product_id.product_tmpl_id", "=", self.fund.id)]
             )
         )
+        page = self.url_open(f"/my2/gifts/{self.fund.id}").text
+        self.assertIn("donation-refusal-message", page)
 
     def test_logged_in_donor_gives_any_suggested_amount(self):
         """The minimum keeps card testers off the public form: a donor with
         an account gives every amount the fund suggests."""
         self._small_suggestions()
         self._portal_user("small-giver@example.org")
+        page = self.url_open(f"/my2/gifts/{self.fund.id}").text
+        self.assertRegex(page, r'-suggested-low"[^>]*data-amount="1.0"[^>]*checked')
         self.assertFalse(
             self.make_jsonrpc_request(
                 "/my2/gifts/get-limits", {"product_id": self.fund.id}

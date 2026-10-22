@@ -16,6 +16,27 @@
 import publicWidget from "@web/legacy/js/public/public_widget";
 import {rpc} from "@web/core/network/rpc";
 
+/**
+ * Shows on the donation form under $root why a donation was refused: the
+ * message of a refusal the server explains (an amount below the fund's
+ * minimum...), or the generic error.
+ * @param {jQuery} $root
+ * @param {Object|String} reason An RPC error, or the message itself.
+ */
+export function showDonationRefusal($root, reason) {
+  let message = typeof reason === "string" ? reason : "";
+  const data = reason && reason.data;
+  if (data && /^odoo\.exceptions\.(UserError|ValidationError)$/.test(data.name)) {
+    message = data.message;
+  }
+  if (message) {
+    $root.find(".donation-refusal-message").text(message);
+    $root.find(".donation-refusal").removeAttr("hidden");
+  } else {
+    $root.find(".donation-request-error").removeAttr("hidden");
+  }
+}
+
 export const DonationForm = publicWidget.Widget.extend({
   selector: ".my2_donation_form",
 
@@ -50,6 +71,7 @@ export const DonationForm = publicWidget.Widget.extend({
    * @param {Event} ev The jQuery event object.
    */
   _onAmountChange: function (ev) {
+    this.$(".donation-refusal").attr("hidden", true);
     // If the user selects a preset (Low/Med/High), we just clear the custom input visual state.
     if (this.$(ev.currentTarget).val() !== "custom") {
       this.customAmountInput.val("");
@@ -143,15 +165,20 @@ export const DonationForm = publicWidget.Widget.extend({
         function (data) {
           this.$(".btn").prop("disabled", false);
           this.$(".donation-request-error").attr("hidden", true);
+          this.$(".donation-refusal").attr("hidden", true);
 
-          // Compute amount
-          const suggested_amount = this.$(".suggested-amount:checked").val();
+          // The amount, as a number: a suggestion carries its own.
+          const $suggestion = this.$(".suggested-amount:checked");
+          const suggested_amount = $suggestion.val();
           const custom_amount = this.$("[name='custom_amount']").val();
-          let amount = suggested_amount;
-          if (amount === "custom") {
-            amount = custom_amount;
-          }
+          const amount = Number(
+            suggested_amount === "custom" ? custom_amount : $suggestion.data("amount")
+          );
 
+          if (data.min_amount_message && amount < data.min_amount) {
+            showDonationRefusal(this.$el, data.min_amount_message);
+            return;
+          }
           if (
             (data.min_amount !== null && amount < data.min_amount) ||
             (data.max_amount !== null && amount > data.max_amount) ||
