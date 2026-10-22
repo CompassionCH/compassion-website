@@ -35,27 +35,44 @@ class PaymentTransaction(models.Model):
         returned by then. PayU refuses a charge by cancelling its order, and
         repeats its notifications: only the one that moves the charge to
         error counts. A notification that does not match the charge leaves
-        it pending, for staff. A charge PayU authorized and cancelled as
-        nobody captured it (automatic collection off) was no refusal of the
-        card: the last status PayU reported before this notification tells.
+        it pending, for staff.
+
+        A charge PayU authorized and cancelled as nobody captured it
+        (automatic collection off) was no refusal of the card, as the last
+        status PayU reported before this notification tells: staff are told
+        instead.
         """
         order = notification_data.get("order") or {}
-        refused = (
+        cancelled_charge = (
             self.provider_code == const.PROVIDER_CODE
             and self.operation == "offline"
             and self.state != "error"
             and order.get("status") in const.STATUS_MAPPING["canceled"]
-            and self.payu_gpo_status != "WAITING_FOR_CONFIRMATION"
+        )
+        never_captured = (
+            cancelled_charge and self.payu_gpo_status == "WAITING_FOR_CONFIRMATION"
         )
         res = super()._process_notification_data(notification_data)
-        if refused and self.state == "error":
+        if cancelled_charge and self.state == "error":
             # A concurrent update shows here, not in a dunning savepoint
             # that would take it for a failure of the dunning.
             self.env.flush_all()
-            for invoice in self.invoice_ids.filtered(
+            invoices = self.invoice_ids.filtered(
                 "line_ids.contract_id.group_id.payment_mode_id.payment_provider_id"
-            ):
-                self._my2_start_dunning(invoice)
+            )
+            if never_captured:
+                _logger.error(
+                    "PayU cancelled the monthly charge %s of %s: it was never"
+                    " captured, as automatic collection is off on the PayU"
+                    " point of sale. The card works: enable automatic"
+                    " collection, then charge the invoice again (Charge Saved"
+                    " Card).",
+                    self.reference,
+                    ", ".join(invoices.mapped("name")),
+                )
+            else:
+                for invoice in invoices:
+                    self._my2_start_dunning(invoice)
         return res
 
     def _my2_start_dunning(self, invoice):

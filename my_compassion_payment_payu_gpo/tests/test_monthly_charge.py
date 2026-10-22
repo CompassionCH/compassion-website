@@ -109,10 +109,13 @@ class TestMonthlyCharge(PayuDigitalCase):
         tx = self.invoice.transaction_ids
         self._notify(tx, "WAITING_FOR_CONFIRMATION")
         self.assertEqual(tx.state, "pending")
-        self._notify(tx, "CANCELED")
+        with self.assertLogs(LOGGER, "ERROR") as logs:
+            self._notify(tx, "CANCELED")
         self.assertEqual(tx.state, "error")
         self.assertIn("never captured", tx.state_message)
         self.assertFalse(self.handoffs)
+        # staff are told what to do
+        self.assertIn("automatic collection", "\n".join(logs.output))
 
     def _refuse_with_a_failing_dunning(self, start_dunning, **patches):
         """PayU refuses the pending charge, and the dunning fails."""
