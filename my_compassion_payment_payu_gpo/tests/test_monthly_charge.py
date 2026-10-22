@@ -1,6 +1,8 @@
 from contextlib import ExitStack
 from unittest.mock import patch
 
+from psycopg2.errors import SerializationFailure
+
 from odoo import Command
 from odoo.tests import tagged
 
@@ -139,6 +141,26 @@ class TestMonthlyCharge(PayuDigitalCase):
             self._notify(tx, "CANCELED")
         self.assertEqual(tx.state, "error")
         self.assertEqual(len(self.handoffs), 1)
+
+    def test_concurrent_update_in_the_dunning_is_retried(self):
+        # Odoo replays the whole notification on a concurrent update: it is
+        # no failure for staff, and nothing may swallow it.
+        self._run_charge_cron(lambda tx: tx._set_pending())
+        tx = self.invoice.transaction_ids
+
+        def conflict(contracts, invoice, reason):
+            raise SerializationFailure("could not serialize access")
+
+        with (
+            patch.object(
+                self.registry["recurring.contract"],
+                "_on_digital_charge_failed",
+                conflict,
+            ),
+            self._bank_refuses_charges(),
+            self.assertRaises(SerializationFailure),
+        ):
+            self._notify(tx, "CANCELED")
 
     def test_sponsor_payment_error_is_no_failed_charge(self):
         # The sponsor pays on the site and sees the outcome there.

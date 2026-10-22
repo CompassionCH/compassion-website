@@ -8,6 +8,7 @@
 import logging
 
 from odoo import models
+from odoo.service.model import PG_CONCURRENCY_EXCEPTIONS_TO_RETRY
 
 from odoo.addons.payment_payu_gpo import const
 
@@ -48,6 +49,9 @@ class PaymentTransaction(models.Model):
         )
         res = super()._process_notification_data(notification_data)
         if refused and self.state == "error":
+            # A concurrent update shows here, not in a dunning savepoint
+            # that would take it for a failure of the dunning.
+            self.env.flush_all()
             for invoice in self.invoice_ids.filtered(
                 "line_ids.contract_id.group_id.payment_mode_id.payment_provider_id"
             ):
@@ -58,13 +62,16 @@ class PaymentTransaction(models.Model):
         """Hand the refused charge of invoice to its contracts' dunning.
 
         A failure there must never undo the refusal: PayU would deliver the
-        notification again, into the same failure.
+        notification again, into the same failure. A concurrent update is no
+        failure: Odoo replays the whole notification.
         """
         try:
             with self.env.cr.savepoint():
                 invoice.line_ids.contract_id._on_digital_charge_failed(
                     invoice, self.state_message
                 )
+        except PG_CONCURRENCY_EXCEPTIONS_TO_RETRY:
+            raise
         except Exception:
             _logger.exception(
                 "Could not start the dunning of invoice %s after PayU refused"
