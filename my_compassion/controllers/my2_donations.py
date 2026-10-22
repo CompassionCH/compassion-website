@@ -198,8 +198,10 @@ class MyCompassionDonationsController(CustomerPortal):
             except (TypeError, ValueError) as e:
                 raise BadRequest() from e
 
+        # sudo: the donor may belong to another company, and the limits are
+        # converted to the currency of the website's company.
         limits = product.get_donation_limits(
-            request.website.company_id,
+            request.website.company_id.sudo(),
             request.env.user.partner_id,
             sponsorship_id,
             request.website.sale_get_order(),

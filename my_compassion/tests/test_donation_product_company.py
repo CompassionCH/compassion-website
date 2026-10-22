@@ -1,4 +1,6 @@
-from odoo import Command
+from unittest.mock import patch
+
+from odoo import Command, fields
 from odoo.tests import HttpCase, TransactionCase, tagged
 from odoo.tests.common import JsonRpcException
 
@@ -111,21 +113,89 @@ class TestDonationProductWebsiteCompany(HttpCase):
 
         cls.website_amounts = (37.0, 73.0, 137.0)
         cls.donor_amounts = (81.0, 203.0, 401.0)
-        cls.shared_fund = cls._fund(
+        cls.shared_fund = cls._product(
             "Fund Of Both Companies",
             (cls.website_company, cls.website_amounts),
             (cls.donor_company, cls.donor_amounts),
         )
-        cls.website_fund = cls._fund(
+        cls.website_fund = cls._product(
             "Fund Of The Website Company", (cls.website_company, cls.website_amounts)
         )
-        cls.donor_fund = cls._fund(
+        cls.donor_fund = cls._product(
             "Fund Of The Donor Company", (cls.donor_company, cls.donor_amounts)
         )
 
+        # A gift with giving limits, for the donor's sponsorship (in the
+        # donor's company, as their contracts are).
+        cls.gift = cls._product(
+            "Gift Of The Website Company",
+            (cls.website_company, cls.website_amounts),
+            donation_type="gift",
+        )
+        gift_type = cls.env["sponsorship.gift.type"].create(
+            {
+                "name": "Website Company Gift",
+                "code": "my2_website_company_gift",
+                "product_id": cls.gift.id,
+            }
+        )
+        cls.env["gift.threshold.settings"].create(
+            {
+                "gift_type_id": gift_type.id,
+                "min_amount": 10.0,
+                "max_amount": 200.0,
+                "gift_frequency": 2,
+                "yearly_threshold": True,
+                "currency_id": cls.website_company.currency_id.id,
+            }
+        )
+        partner = cls.donor.partner_id
+        partner.country_id = cls.env.ref("base.ch")
+        project = cls.env["compassion.project"].create(
+            {"fcp_id": "donor_company_fcp", "last_update_date": fields.Date.today()}
+        )
+        child = cls.env["compassion.child"].create(
+            {
+                "name": "Donor Company Child",
+                "global_id": "donor_company_child",
+                "local_id": "DC1234567",
+                "project_id": project.id,
+            }
+        )
+        group = cls.env["recurring.contract.group"].create(
+            {"partner_id": partner.id, "company_id": cls.donor_company.id}
+        )
+        line_product = cls.env["product.product"].create(
+            {"name": "Sponsorship Line", "type": "service"}
+        )
+        pricelist = cls.env["product.pricelist"].search(
+            [("company_id", "in", [False, cls.donor_company.id])], limit=1
+        )
+        # The hold of the child (a GMC exchange) is out of scope here.
+        with patch.object(
+            cls.registry["compassion.child"],
+            "child_sponsored",
+            lambda child, sponsor_id: None,
+        ):
+            cls.sponsorship = cls.env["recurring.contract"].create(
+                {
+                    "type": "S",
+                    "child_id": child.id,
+                    "partner_id": partner.id,
+                    "correspondent_id": partner.id,
+                    "group_id": group.id,
+                    "company_id": cls.donor_company.id,
+                    "pricelist_id": pricelist.id,
+                    # A partner's sponsorships are found through their lines.
+                    "contract_line_ids": [
+                        Command.create({"product_id": line_product.id, "amount": 42.0})
+                    ],
+                }
+            )
+
     @classmethod
-    def _fund(cls, name, *published):
-        """A shared fund, published by each company with its amounts."""
+    def _product(cls, name, *published, donation_type="fund", company=False):
+        """A donation product, published by each company with its amounts."""
         product = cls.env["product.template"].create(
             {
                 "name": name,
@@ -133,8 +203,8 @@ class TestDonationProductWebsiteCompany(HttpCase):
                 "type": "service",
                 "sale_ok": True,
                 "list_price": 1.0,
-                "company_id": False,
-                "my_compassion_donation_type": "fund",
+                "company_id": company and company.id,
+                "my_compassion_donation_type": donation_type,
             }
         )
         for company, (low, medium, high) in published:
@@ -207,3 +277,31 @@ class TestDonationProductWebsiteCompany(HttpCase):
             self.make_jsonrpc_request(
                 "/my2/gifts/get-limits", {"product_id": self.donor_fund.id}
             )
+
+    def test_a_gift_with_giving_limits(self):
+        page = self.url_open(f"/my2/gifts/{self.gift.id}")
+        self.assertEqual(page.status_code, 200)
+        self.assertRegex(page.text, rf'<option[^>]*value="{self.sponsorship.id}"')
+        limits = self.make_jsonrpc_request(
+            "/my2/gifts/get-limits",
+            {"product_id": self.gift.id, "sponsorship_id": self.sponsorship.id},
+        )
+        self.assertEqual(
+            limits, {"min_amount": 10.0, "max_amount": 200.0, "remaining_donations": 2}
+        )
+
+        self.make_jsonrpc_request(
+            "/my2/gifts/new",
+            {
+                "product_id": self.gift.id,
+                "suggested_amount": "medium",
+                "recipient": self.sponsorship.id,
+            },
+        )
+        line = (
+            self.env["sale.order"]
+            .search([("partner_id", "=", self.donor.partner_id.id)])
+            .order_line
+        )
+        self.assertEqual(line.gift_recipient_id, self.sponsorship)
+        self.assertEqual(line.price_unit, self.website_amounts[1])
