@@ -54,14 +54,18 @@ def _flow_n_steps(sponsorship):
     )
 
 
-def _product_display_price(default_code):
+def _product_display_price(default_code, website=None):
     """Monthly amount of a contract product, as rendered in the wizard copy.
     Same product lookup as the contract lines (default_code), scoped to the
     website's company: a company-specific product wins over a shared one.
+    The contract lines are priced by a pricelist, so is the copy: the
+    products are shared between companies and their list price is the one
+    of a single country.
     """
-    company = request.website.company_id
+    website = website or request.website
+    company = website.company_id
     products = (
-        request.env["product.template"]
+        website.env["product.template"]
         .sudo()
         .with_company(company)
         .search(
@@ -72,7 +76,15 @@ def _product_display_price(default_code):
         )
     )
     product = products.filtered(lambda p: p.company_id == company)[:1] or products[:1]
-    return f"{product.list_price:g}" if product else ""
+    if not product:
+        return ""
+    pricelist = website.pricelist_id
+    price = (
+        pricelist._get_product_price(product.product_variant_id, 1.0)
+        if pricelist
+        else product.list_price
+    )
+    return f"{price:g}"
 
 
 def _get_reservation_uuid():
@@ -436,6 +448,16 @@ class MyCompassionNewSponsorshipController(http.Controller):
             # The thank-you page is public, but the sponsorship details
             # are private. If this visitor is not the sponsor, hide them.
             raise NotFound()
+        if sponsorship._my2_failed_first_payment():
+            # The payment flow lands here whatever the result: back to the
+            # payment page, to pay with another card.
+            access_token = payment_utils.generate_access_token(
+                sponsorship.id, sponsorship.partner_id.id
+            )
+            return request.redirect(
+                f"/my2/new-sponsorship/payment?sponsorship_id={sponsorship.id}"
+                f"&access_token={access_token}&payment_failed=1"
+            )
         return request.render(
             "my_compassion.my2_new_sponsorship_thank_you_page",
             self._thank_you_values(
@@ -693,7 +715,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 ]
             )
         )
-        currency_name = request.website.company_id.currency_id.name
+        # the currency of the pricelist that prices the amounts below
+        currency_name = request.website.currency_id.name
 
         # Send the user back to the exact URL they came from after login,
         # preserving every query param (UTM, sponsorship_type, anything else).
@@ -791,6 +814,9 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
         sponsorship._schedule_digital_revert()
         rendering_values = self._get_sponsorship_payment_values(
             sponsorship, provider, access_token, invoice
+        )
+        rendering_values["payment_failed"] = bool(
+            kwargs.get("payment_failed") and sponsorship._my2_failed_first_payment()
         )
         return request.render(
             "my_compassion.my2_new_sponsorship_payment_page", rendering_values

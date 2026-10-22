@@ -12,4 +12,5 @@ from . import (
     test_multicompany,
     test_recurring_instrument,
     test_theme_apply,
+    test_wizard_prices,
 )

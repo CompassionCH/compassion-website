@@ -12,6 +12,7 @@ import io
 import logging
 from urllib.parse import urljoin
 
+from markupsafe import Markup
 from PIL import Image as PILImage
 
 from odoo import SUPERUSER_ID, _, api, fields, models
@@ -358,7 +359,7 @@ class EventRegistration(models.Model):
             )
 
     @api.model
-    def _read_group_stage_ids(self, stages, domain, order):
+    def _read_group_stage_ids(self, stages, domain):
         # retrieve event type from the context and write the domain
         # - ('id', 'in', stages.ids): add columns that should be present
         type_id = self._context.get("default_event_type_id")
@@ -373,10 +374,9 @@ class EventRegistration(models.Model):
             search_domain = ["|", ("id", "in", stages.ids)] + search_domain
 
         # perform search
-        stage_ids = stages._search(
-            search_domain, order=order, access_rights_uid=SUPERUSER_ID
+        return stages.browse(
+            stages.sudo().search(search_domain, order=stages._order).ids
         )
-        return stages.browse(stage_ids)
 
     @api.model
     def _default_stage(self):
@@ -393,6 +393,7 @@ class EventRegistration(models.Model):
                 )
             )
 
+    @api.depends("stage_id", "task_ids.done", "task_ids.stage_id")
     def _compute_is_stage_complete(self):
         for registration in self:
             incomplete_tasks = registration.task_ids.filtered(
@@ -542,8 +543,49 @@ class EventRegistration(models.Model):
                     vals["state"] = stage.registration_state
         super().write(vals)
         if "stage_id" in vals:
+            # Before the tasks: completing them can move the registrations on
+            # right away (e.g. an account that is already activated).
+            self._schedule_stage_mails()
             self._compute_tasks()
+            # A stage set by hand completes no task, the mails must still go.
+            self._run_mail_schedulers()
         return True
+
+    def _schedule_stage_mails(self):
+        """Plan the mails of the stage the registrations just reached, while
+        they are still in it."""
+        for registration in self:
+            schedulers = (
+                registration.event_id.sudo()
+                .event_mail_ids.filtered(
+                    lambda mail, reg=registration: mail.interval_type == "after_stage"
+                    and mail.stage_id == reg.stage_id
+                )
+                ._for_trip_type()
+            )
+            lines = schedulers.mail_registration_ids.filtered(
+                lambda line, reg=registration: line.registration_id == reg
+            )
+            lines |= lines.create(
+                [
+                    {"scheduler_id": scheduler.id, "registration_id": registration.id}
+                    for scheduler in schedulers - lines.scheduler_id
+                ]
+            )
+            # Compute the date now, the registration may leave the stage
+            # before it is read again.
+            lines.mapped("scheduled_date")
+
+    def _run_mail_schedulers(self):
+        # Always a job of its own, even when the stage moved while a
+        # communication was sent right away (which runs its jobs at once).
+        self.env["event.mail"].with_user(SUPERUSER_ID).with_context(
+            queue_job__no_delay=False
+        ).with_delay_sh(
+            "run",
+            channel="root.partner_communication",
+            identity_key="event.registration.mail_scheduler",
+        )
 
     def _update_mail_schedulers(self):
         if self.env.context.get("registration_incomplete"):
@@ -565,7 +607,7 @@ class EventRegistration(models.Model):
             if not registration.profile_name:
                 registration.profile_name = registration.partner_id.preferred_name
             # Set default fundraising objective if none was set
-            event = records.event_id
+            event = registration.event_id
             if (
                 not registration.amount_objective
                 and event.participants_amount_objective
@@ -592,7 +634,19 @@ class EventRegistration(models.Model):
         records = records.with_context(registration_incomplete=False)
         records.next_stage()
         records._update_mail_schedulers()
+        records._notify_new_registration()
         return records
+
+    def _notify_new_registration(self):
+        """Inform the event responsible and the followers of the event."""
+        for registration in self:
+            event = registration.event_id.sudo()
+            event.message_post(
+                body=Markup(_("New registration: %(name)s"))
+                % {"name": registration._get_html_link()},
+                subtype_xmlid="mail.mt_comment",
+                partner_ids=event.user_id.partner_id.ids,
+            )
 
     ##########################################################################
     #                             PUBLIC METHODS                             #
@@ -625,16 +679,20 @@ class EventRegistration(models.Model):
         @param filter_func: filter function to apply on the registrations
         @return: communication jobs
         """
-        communications = self.env["partner.communication.job"].create(
-            [
+        communications = self.env["partner.communication.job"]
+        for registration in self.filtered(filter_func):
+            # The texts are written for one registration: a pending job of the
+            # partner for another registration (e.g. a second trip) is not
+            # reused.
+            communications |= communications.with_context(
+                same_job_search=[("object_ids", "=", str(registration.id))]
+            ).create(
                 {
                     "config_id": config_id,
                     "partner_id": registration.partner_id.id,
                     "object_ids": [registration.id],
                 }
-                for registration in self.filtered(filter_func)
-            ]
-        )
+            )
         if force_send:
             communications.send()
         return communications
@@ -804,15 +862,23 @@ class EventRegistration(models.Model):
     def next_stage(self):
         """Transition to next registration stage"""
         stage_complete = self.filtered("is_stage_complete")
+        # The terminal stages shipped with this module (Confirmed, Attended,
+        # Cancelled) are shared by every template when they have no event type.
+        # Other stages without a type (e.g. created in the UI and not linked yet)
+        # are not steps of every journey and must not be picked.
+        shared_stages = [
+            self.env.ref(f"website_event_compassion.stage_all_{name}").id
+            for name in ("confirmed", "attended", "cancelled")
+        ]
         for registration in stage_complete:
-            # Stages without an event type are terminal ones shared by every
-            # template (Confirmed, Attended, Cancelled), so they stay reachable.
             candidates = self.env["event.registration.stage"].search(
                 [
                     ("sequence", ">", registration.stage_id.sequence),
                     "|",
                     ("event_type_ids", "in", registration.event_type_id.ids),
+                    "&",
                     ("event_type_ids", "=", False),
+                    ("id", "in", shared_stages),
                 ]
             )
             trip_type = registration.trip_type_id
@@ -830,11 +896,7 @@ class EventRegistration(models.Model):
                 registration.write({"stage_id": next_stage.id})
 
         # Send potential communications after stage transition
-        self.env["event.mail"].with_user(SUPERUSER_ID).with_delay_sh(
-            "run",
-            channel="root.partner_communication",
-            identity_key="event.registration.mail_scheduler",
-        )
+        self._run_mail_schedulers()
         return True
 
     def _track_subtype(self, init_values):
