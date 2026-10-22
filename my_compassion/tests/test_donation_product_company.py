@@ -180,39 +180,53 @@ class TestDonationProductPreMigration(TransactionCase):
                ALTER COLUMN my_compassion_donation_amount_high TYPE numeric USING NULL
             """
         )
-        for product, active, low in (
-            (shared, True, 20),
-            (own, True, 30),
-            (empty, False, None),
+        # Distinct amounts, a zero among them: a zero is a value, kept.
+        for product, values in (
+            (shared, (True, 20, 0, 80)),
+            (own, (True, 30, 60, 90)),
+            (empty, (False, None, None, None)),
         ):
             cr.execute(
                 """UPDATE product_template
                    SET activate_for_my_compassion = %s,
-                       my_compassion_donation_amount_low = %s
+                       my_compassion_donation_amount_low = %s,
+                       my_compassion_donation_amount_medium = %s,
+                       my_compassion_donation_amount_high = %s
                    WHERE id = %s""",
-                (active, low, product.id),
+                (*values, product.id),
             )
 
-        load_script(
+        def values():
+            cr.execute(
+                """SELECT activate_for_my_compassion,
+                          my_compassion_donation_amount_low,
+                          my_compassion_donation_amount_medium,
+                          my_compassion_donation_amount_high
+                   FROM product_template WHERE id IN %s ORDER BY id""",
+                [(shared.id, own.id, empty.id)],
+            )
+            return cr.fetchall()
+
+        migrate = load_script(
             "my_compassion/migrations/18.0.1.0.29/pre-migration.py",
             "my_compassion_pre_migration_18_0_1_0_29",
-        ).migrate(cr, "18.0.1.0.28")
+        ).migrate
+        migrate(cr, "18.0.1.0.28")
 
-        self.assertEqual(self._columns(), dict.fromkeys(self.COLUMNS, ("jsonb", None)))
-        cr.execute(
-            """SELECT activate_for_my_compassion, my_compassion_donation_amount_low,
-                      my_compassion_donation_amount_medium
-               FROM product_template WHERE id IN %s ORDER BY id""",
-            [(shared.id, own.id, empty.id)],
-        )
-        self.assertEqual(
-            cr.fetchall(),
-            [
-                ({str(main.id): True}, {str(main.id): 20}, None),
-                ({str(other.id): True}, {str(other.id): 30}, None),
-                (None, None, None),
-            ],
-        )
+        columns = dict.fromkeys(self.COLUMNS, ("jsonb", None))
+        self.assertEqual(self._columns(), columns)
+        m, o = str(main.id), str(other.id)
+        converted = [
+            ({m: True}, {m: 20}, {m: 0}, {m: 80}),
+            ({o: True}, {o: 30}, {o: 60}, {o: 90}),
+            (None, None, None, None),
+        ]
+        self.assertEqual(values(), converted)
+
+        # Run again: the jsonb columns are skipped, nothing changes.
+        migrate(cr, "18.0.1.0.28")
+        self.assertEqual(self._columns(), columns)
+        self.assertEqual(values(), converted)
 
 
 @tagged("post_install", "-at_install")
