@@ -1534,6 +1534,24 @@ class TestPublicFundDonation(HttpCase):
 
     # === Amounts and images ===
 
+    def test_pricelist_routes_never_change_the_cart(self):
+        """website_sale's pricelist routes (/shop/change_pricelist,
+        /shop/pricelist) would move the cart to another pricelist: the amounts
+        the donor chose would be read in its currency."""
+        self._add_fund(suggested_amount="custom", custom_amount="42")
+        cart = self._cart()
+        pricelist = cart.pricelist_id
+        currency = self.env.ref("base.EUR")
+        if currency == cart.currency_id:
+            currency = self.env.ref("base.USD")
+        currency.active = True
+        other = self.env["product.pricelist"].create(
+            {"name": "Another Currency", "currency_id": currency.id}
+        )
+        cart._cart_update_pricelist(pricelist_id=other.id)
+        self.assertEqual(cart.pricelist_id, pricelist)
+        self.assertEqual(cart.order_line.price_unit, 42.0)
+
     def test_chosen_amounts_are_never_reset(self):
         self._add_fund(suggested_amount="custom", custom_amount="42")
         cart = self._cart()

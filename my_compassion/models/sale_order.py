@@ -42,6 +42,14 @@ class SaleOrder(models.Model):
             )
         return super()._cart_update(*args, **kwargs)
 
+    def _cart_update_pricelist(self, pricelist_id=None):
+        """A MyCompassion cart keeps its pricelist: the donor chose its amounts
+        in its currency, and website_sale's pricelist routes would move it to
+        another one."""
+        if self.website_id.is_my_compassion:
+            return None
+        return super()._cart_update_pricelist(pricelist_id=pricelist_id)
+
     def _my2_payment_outcome(self, except_transaction=None):
         """What became of the payment of a donation order:
 
