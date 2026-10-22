@@ -14,11 +14,11 @@ from odoo.exceptions import AccessError, MissingError, ValidationError
 from odoo.http import request
 
 from odoo.addons.sale.controllers.portal import PaymentPortal as SalePaymentPortal
-from odoo.addons.website_sale.controllers.main import WebsiteSale
+from odoo.addons.website_sale.controllers.delivery import Delivery
 from odoo.addons.website_sale.controllers.payment import PaymentPortal
 
 
-class MyCompassionWebsiteSale(WebsiteSale):
+class MyCompassionWebsiteSale(Delivery):
     @http.route()
     def shop_payment_confirmation(self, **post):
         """On a MyCompassion portal website, send the donor to the branded
@@ -39,6 +39,34 @@ class MyCompassionWebsiteSale(WebsiteSale):
         if order_sudo.website_id.is_my_compassion:
             return request.redirect("/my2/gift-package")
         return super()._check_cart(order_sudo)
+
+    @http.route()
+    def cart(self, access_token=None, revive="", **post):
+        """The gift package is the cart page of a MyCompassion cart: website_sale's
+        one would offer an express payment form with the cart's access token."""
+        if request.website.sale_get_order().website_id.is_my_compassion:
+            return request.redirect("/my2/gift-package")
+        return super().cart(access_token=access_token, revive=revive, **post)
+
+    @http.route()
+    def process_express_checkout(self, billing_address, **kwargs):
+        """No express checkout for a MyCompassion cart: it sets the cart's
+        partners without the email step."""
+        self._my2_refuse_express_checkout()
+        return super().process_express_checkout(billing_address, **kwargs)
+
+    @http.route()
+    def express_checkout_process_delivery_address(self, partial_delivery_address):
+        """No express checkout for a MyCompassion cart: it creates the cart's
+        partner without the email step."""
+        self._my2_refuse_express_checkout()
+        return super().express_checkout_process_delivery_address(
+            partial_delivery_address
+        )
+
+    def _my2_refuse_express_checkout(self):
+        if request.website.sale_get_order().website_id.is_my_compassion:
+            raise ValidationError(_("Please pay your donation from your gift package."))
 
 
 # Payment attempts of a visitor's cart within an hour: card testers try stolen
@@ -87,6 +115,9 @@ class MyCompassionShopPayment(PaymentPortal, SalePaymentPortal):
           tab, a payment waiting in the bank app): both could be charged
           (sale.order._my2_lock_for_new_payment, which also serializes
           concurrent requests);
+        - for a visitor, only for the donor their session gave at the email
+          step: not before it, nor from another session holding the order's
+          access token;
         - for a visitor, never a saved card: the order's partner was created
           from an email anyone may type, and may later be someone's account -
           their cards are theirs. The gift package shows a visitor no saved
@@ -98,6 +129,8 @@ class MyCompassionShopPayment(PaymentPortal, SalePaymentPortal):
         order_sudo._my2_lock_for_new_payment()
         if not request.env.user._is_public():
             return
+        if request.session.get("my2_donor_partner_id") != order_sudo.partner_id.id:
+            raise ValidationError(_("Please give your email before paying."))
         if token_id:
             raise ValidationError(_("Please enter your card details."))
         recent = order_sudo.transaction_ids.filtered(

@@ -218,6 +218,65 @@ class TestPublicFundDonation(HttpCase):
             )
         self.assertEqual(cart.order_line.product_id, self.fund.product_variant_id)
 
+    def test_no_express_checkout_for_a_my_compassion_cart(self):
+        """website_sale's cart page holds an express payment form (with the
+        cart's access token), and its express routes set the cart's partners
+        without the email step."""
+        self._add_fund()
+        cart = self._cart()
+        address = {
+            "name": "Eve Mallory",
+            "email": "eve@example.org",
+            "street": "Rue du Test 1",
+            "city": "Lausanne",
+            "zip": "1000",
+            "country": "CH",
+        }
+        for route, params in (
+            ("/shop/express_checkout", {"billing_address": address}),
+            (
+                "/shop/express/shipping_address_change",
+                {"partial_delivery_address": address},
+            ),
+        ):
+            with self.assertRaises(JsonRpcException, msg=route):
+                self.make_jsonrpc_request(route, params)
+        self.assertEqual(cart.partner_id, self.website.partner_id)
+        self.assertEqual(cart.partner_invoice_id, self.website.partner_id)
+        page = self.url_open("/shop/cart", allow_redirects=False)
+        self.assertEqual(page.status_code, 303)
+        self.assertIn("/my2/gift-package", page.headers["Location"])
+
+    def test_visitor_pays_after_the_email_step_only(self):
+        """A payment is created for the donor of the visitor's own session:
+        not before the email step, nor from another session holding the
+        cart's access token."""
+        self._add_fund()
+        cart = self._cart()
+        with self.assertRaises(JsonRpcException):
+            self.make_jsonrpc_request(
+                f"/shop/payment/transaction/{cart.id}", self._payment_values(cart)
+            )
+        self._give_email()
+        own_opener = self.opener
+        self.opener = Opener(self.cr)
+        self.opener.cookies[TEST_CURSOR_COOKIE_NAME] = own_opener.cookies[
+            TEST_CURSOR_COOKIE_NAME
+        ]
+        try:
+            with self.assertRaises(JsonRpcException):
+                self.make_jsonrpc_request(
+                    f"/shop/payment/transaction/{cart.id}",
+                    self._payment_values(cart),
+                )
+        finally:
+            self.opener = own_opener
+        self.assertFalse(cart.transaction_ids)
+        self.make_jsonrpc_request(
+            f"/shop/payment/transaction/{cart.id}", self._payment_values(cart)
+        )
+        self.assertEqual(len(cart.transaction_ids), 1)
+
     def test_an_archived_fund_is_refused(self):
         self.fund.active = False
         page = self.url_open(f"/my2/gifts/{self.fund.id}", allow_redirects=False)
@@ -476,6 +535,9 @@ class TestPublicFundDonation(HttpCase):
             [("id", "!=", self.website.id), ("is_my_compassion", "=", False)], limit=1
         )
         other_website.domain = "http://other.example.org"
+        # requests files cookies under the Host header: the session goes along
+        # explicitly.
+        cookies = "; ".join(f"{c.name}={c.value}" for c in self.opener.cookies)
         with self.assertRaises(JsonRpcException):
             self.make_jsonrpc_request(
                 f"/shop/payment/transaction/{cart.id}",
@@ -485,7 +547,7 @@ class TestPublicFundDonation(HttpCase):
                     token_id=token.id,
                     provider_id=token.provider_id.id,
                 ),
-                headers={"Host": "other.example.org"},
+                headers={"Host": "other.example.org", "Cookie": cookies},
             )
         self.assertFalse(cart.transaction_ids)
 
