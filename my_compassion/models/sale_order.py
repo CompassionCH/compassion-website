@@ -1,5 +1,8 @@
+from psycopg2.errors import LockNotAvailable
+
 from odoo import _, models
 from odoo.exceptions import UserError, ValidationError
+from odoo.tools import SQL
 
 
 class SaleOrder(models.Model):
@@ -71,6 +74,38 @@ class SaleOrder(models.Model):
         if self.get_portal_last_transaction().state in ("cancel", "error"):
             return "failed"
         return ""
+
+    def _my2_lock_for_new_payment(self):
+        """Refuse a new payment of this order while an earlier one is paid or
+        may still succeed (_my2_payment_outcome): a second tab, or a payment
+        waiting in the bank app, would be charged as well.
+
+        Serialized on the order row, which is written (a no-op), not only
+        locked: Odoo runs at REPEATABLE READ, where a request that only
+        locks the row after a concurrent payment committed still reads its
+        snapshot from before that payment. Over a row that payment wrote,
+        the lock fails with a serialization error instead, and Odoo replays
+        the request against the committed payment. A payment of the order
+        still being created holds the row: refused at once, as website_sale
+        does.
+        """
+        self.ensure_one()
+        try:
+            self.env.cr.execute(
+                SQL(
+                    "SELECT 1 FROM sale_order WHERE id = %s FOR NO KEY UPDATE NOWAIT",
+                    self.id,
+                )
+            )
+        except LockNotAvailable:
+            raise UserError(_("Payment is already being processed.")) from None
+        self.env.cr.execute(
+            SQL("UPDATE sale_order SET write_date = write_date WHERE id = %s", self.id)
+        )
+        if self._my2_payment_outcome() == "paid":
+            raise UserError(
+                _("This donation is already paid, or its payment is under way.")
+            )
 
     def _check_cart_is_ready_to_be_paid(self):
         self._check_gift_limits()

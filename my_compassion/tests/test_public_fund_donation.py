@@ -4,14 +4,19 @@ import time
 from datetime import timedelta
 from unittest.mock import patch
 from urllib.parse import urlparse
+from uuid import uuid4
 
-from odoo import fields, http
+from psycopg2.errors import SerializationFailure
+
+from odoo import SUPERUSER_ID, api, fields, http
+from odoo.exceptions import UserError
 from odoo.tests import tagged
 from odoo.tests.common import (
     TEST_CURSOR_COOKIE_NAME,
     HttpCase,
     JsonRpcException,
     Opener,
+    TransactionCase,
 )
 from odoo.tools import config
 
@@ -1110,3 +1115,102 @@ class TestPublicFundDonation(HttpCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, png)
+
+
+@tagged("post_install", "-at_install")
+class TestConcurrentPayments(TransactionCase):
+    """Two requests paying one MyCompassion order at the same time - two
+    tabs, or a script - each in its own database transaction."""
+
+    def setUp(self):
+        super().setUp()
+        website = self.env.ref("my_compassion.my2_website")
+        with self.registry.cursor() as cr:
+            env = api.Environment(cr, SUPERUSER_ID, {})
+            self.order_id = (
+                env["sale.order"]
+                .create(
+                    {
+                        "partner_id": website.partner_id.id,
+                        "website_id": website.id,
+                        "company_id": website.company_id.id,
+                    }
+                )
+                .id
+            )
+            self.provider_id = (
+                env["payment.provider"]
+                .create(
+                    {
+                        "name": "Concurrent Payments Provider",
+                        "code": "none",
+                        "company_id": website.company_id.id,
+                    }
+                )
+                .id
+            )
+        self.addCleanup(self._remove_committed_records)
+        self.first, self.second = self.registry.cursor(), self.registry.cursor()
+        self.addCleanup(self.first.close)
+        self.addCleanup(self.second.close)
+
+    def _remove_committed_records(self):
+        with self.registry.cursor() as cr:
+            cr.execute(
+                "DELETE FROM payment_transaction WHERE id IN (SELECT transaction_id"
+                " FROM sale_order_transaction_rel WHERE sale_order_id = %s)",
+                [self.order_id],
+            )
+            cr.execute("DELETE FROM sale_order WHERE id = %s", [self.order_id])
+            cr.execute("DELETE FROM payment_provider WHERE id = %s", [self.provider_id])
+
+    def _pay(self, cr):
+        """What the payment routes do: the check, then the transaction - left
+        pending, as a payment the provider may still confirm."""
+        env = api.Environment(cr, SUPERUSER_ID, {})
+        order = env["sale.order"].browse(self.order_id)
+        order._my2_lock_for_new_payment()
+        return env["payment.transaction"].create(
+            {
+                "provider_id": self.provider_id,
+                "payment_method_id": env.ref("payment.payment_method_unknown").id,
+                "amount": 50.0,
+                "currency_id": order.currency_id.id,
+                "partner_id": order.partner_id.id,
+                "reference": f"my2-concurrent-{uuid4().hex}",
+                "sale_order_ids": [(6, 0, order.ids)],
+                "state": "pending",
+            }
+        )
+
+    def _transaction_count(self):
+        with self.registry.cursor() as cr:
+            cr.execute(
+                "SELECT count(*) FROM sale_order_transaction_rel"
+                " WHERE sale_order_id = %s",
+                [self.order_id],
+            )
+            return cr.fetchone()[0]
+
+    def test_a_payment_being_created_is_never_doubled(self):
+        self._pay(self.first)
+        with self.assertRaises(UserError):
+            self._pay(self.second)
+        self.second.rollback()
+        self.first.commit()
+        self.assertEqual(self._transaction_count(), 1)
+
+    def test_a_payment_committed_meanwhile_is_never_doubled(self):
+        """The second request started before the first one committed: at
+        REPEATABLE READ its snapshot does not hold the first payment."""
+        self.second.execute("SELECT 1")
+        self._pay(self.first)
+        self.first.commit()
+        with self.assertRaises(SerializationFailure):
+            self._pay(self.second)
+        # What Odoo does with a serialization failure: replay the request.
+        self.second.rollback()
+        with self.assertRaises(UserError):
+            self._pay(self.second)
+        self.second.rollback()
+        self.assertEqual(self._transaction_count(), 1)

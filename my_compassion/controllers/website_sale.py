@@ -10,7 +10,7 @@
 from datetime import timedelta
 
 from odoo import _, fields, http
-from odoo.exceptions import AccessError, MissingError, UserError, ValidationError
+from odoo.exceptions import AccessError, MissingError, ValidationError
 from odoo.http import request
 
 from odoo.addons.sale.controllers.portal import PaymentPortal as SalePaymentPortal
@@ -84,7 +84,9 @@ class MyCompassionShopPayment(PaymentPortal, SalePaymentPortal):
         """Before a new payment of a MyCompassion order:
 
         - none while an earlier one is paid or may still succeed (a second
-          tab, a payment waiting in the bank app): both could be charged;
+          tab, a payment waiting in the bank app): both could be charged
+          (sale.order._my2_lock_for_new_payment, which also serializes
+          concurrent requests);
         - for a visitor, never a saved card: the order's partner was created
           from an email anyone may type, and may later be someone's account -
           their cards are theirs. The gift package shows a visitor no saved
@@ -93,10 +95,7 @@ class MyCompassionShopPayment(PaymentPortal, SalePaymentPortal):
           a few per client IP on the website, all carts and sessions together
           (my2.payment.attempt.counter).
         """
-        if order_sudo._my2_payment_outcome() == "paid":
-            raise UserError(
-                _("This donation is already paid, or its payment is under way.")
-            )
+        order_sudo._my2_lock_for_new_payment()
         if not request.env.user._is_public():
             return
         if token_id:
