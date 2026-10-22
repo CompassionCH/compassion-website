@@ -10,9 +10,10 @@
 from datetime import timedelta
 
 from odoo import _, fields, http
-from odoo.exceptions import ValidationError
+from odoo.exceptions import AccessError, MissingError, ValidationError
 from odoo.http import request
 
+from odoo.addons.sale.controllers.portal import PaymentPortal as SalePaymentPortal
 from odoo.addons.website_sale.controllers.main import WebsiteSale
 from odoo.addons.website_sale.controllers.payment import PaymentPortal
 
@@ -45,26 +46,57 @@ class MyCompassionWebsiteSale(WebsiteSale):
 MAX_VISITOR_PAYMENT_ATTEMPTS = 5
 
 
-class MyCompassionShopPayment(PaymentPortal):
+class MyCompassionShopPayment(PaymentPortal, SalePaymentPortal):
+    """The payment routes of a MyCompassion order, decided on the order's
+    website: its access token works on any host, and a route outside /my2
+    resolves to the website of the domain."""
+
     @http.route()
     def shop_payment_transaction(self, order_id, access_token, **kwargs):
-        """For a visitor on a MyCompassion website:
-
-        - never a saved card: the cart's partner was created by an email
-          anyone may type, and may later be someone's account - their cards
-          are theirs. The gift package shows a visitor no saved card; this
-          refuses one sent all the same;
-        - a few payment attempts per cart and hour only.
-        """
-        if request.website.is_my_compassion and request.env.user._is_public():
-            if kwargs.get("token_id"):
-                raise ValidationError(_("Please enter your card details."))
-            order = request.env["sale.order"].sudo().browse(order_id).exists()
-            recent = order.transaction_ids.filtered(
-                lambda t: t.create_date > fields.Datetime.now() - timedelta(hours=1)
-            )
-            if len(recent) >= MAX_VISITOR_PAYMENT_ATTEMPTS:
-                raise ValidationError(
-                    _("Too many payment attempts. Please try again later.")
-                )
+        """The gift package's payment route (see _my2_check_new_payment)."""
+        order_sudo = self._my2_order(order_id, access_token)
+        if order_sudo.website_id.is_my_compassion:
+            self._my2_check_new_payment(order_sudo, **kwargs)
         return super().shop_payment_transaction(order_id, access_token, **kwargs)
+
+    @http.route()
+    def portal_order_transaction(self, order_id, access_token, **kwargs):
+        """sale's payment route, which takes any amount: the gift package
+        never uses it, so a visitor may not pay a MyCompassion order here."""
+        order_sudo = self._my2_order(order_id, access_token)
+        if order_sudo.website_id.is_my_compassion:
+            if request.env.user._is_public():
+                raise ValidationError(
+                    _("Please pay your donation from your gift package.")
+                )
+            self._my2_check_new_payment(order_sudo, **kwargs)
+        return super().portal_order_transaction(order_id, access_token, **kwargs)
+
+    def _my2_order(self, order_id, access_token):
+        """The order a payment route is called for, or an empty recordset
+        when the access check fails (the route itself then refuses it)."""
+        try:
+            return self._document_check_access("sale.order", order_id, access_token)
+        except (AccessError, MissingError):
+            return request.env["sale.order"].sudo()
+
+    def _my2_check_new_payment(self, order_sudo, token_id=None, **kwargs):
+        """Before a new payment of a MyCompassion order:
+
+        - for a visitor, never a saved card: the order's partner was created
+          from an email anyone may type, and may later be someone's account -
+          their cards are theirs. The gift package shows a visitor no saved
+          card; this refuses one sent all the same;
+        - for a visitor, a few payment attempts per order and hour only.
+        """
+        if not request.env.user._is_public():
+            return
+        if token_id:
+            raise ValidationError(_("Please enter your card details."))
+        recent = order_sudo.transaction_ids.filtered(
+            lambda t: t.create_date > fields.Datetime.now() - timedelta(hours=1)
+        )
+        if len(recent) >= MAX_VISITOR_PAYMENT_ATTEMPTS:
+            raise ValidationError(
+                _("Too many payment attempts. Please try again later.")
+            )

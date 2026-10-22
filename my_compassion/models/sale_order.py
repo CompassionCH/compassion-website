@@ -1,5 +1,5 @@
 from odoo import _, models
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 
 
 class SaleOrder(models.Model):
@@ -26,6 +26,15 @@ class SaleOrder(models.Model):
         return lines.filtered(
             lambda line: not line.order_id.website_id.is_my_compassion
         )
+
+    def _update_cart_line_values(self, order_line, update_values):
+        """website_sale's cart never changes the quantity of a line of a
+        MyCompassion cart: the line would be priced again at the product's
+        list price instead of the amount the donor chose, possibly below the
+        minimum of the fund. The gift package edits the amount instead."""
+        if self.website_id.is_my_compassion and "product_uom_qty" in update_values:
+            raise UserError(_("Please change your donation in your gift package."))
+        return super()._update_cart_line_values(order_line, update_values)
 
     def _check_cart_is_ready_to_be_paid(self):
         self._check_gift_limits()

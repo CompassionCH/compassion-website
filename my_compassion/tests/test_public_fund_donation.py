@@ -349,6 +349,101 @@ class TestPublicFundDonation(HttpCase):
             )
         self.assertFalse(cart.transaction_ids)
 
+    def _payment_values(self, cart, **values):
+        """What the payment form posts to create a transaction."""
+        provider = self.env["payment.provider"].create(
+            {
+                "name": "Visitor Form Provider",
+                "code": "none",
+                "company_id": self.website.company_id.id,
+            }
+        )
+        return {
+            "access_token": cart._portal_ensure_token(),
+            "provider_id": provider.id,
+            "payment_method_id": self.env.ref("payment.payment_method_unknown").id,
+            "token_id": None,
+            "amount": cart.amount_total,
+            "flow": "direct",
+            "tokenization_requested": False,
+            "landing_route": "/shop/payment/validate",
+            "is_validation": False,
+            **values,
+        }
+
+    def test_gift_package_pays_through_the_shop_routes(self):
+        self._add_fund()
+        self._give_email()
+        cart = self._cart()
+        self.make_jsonrpc_request(
+            f"/shop/payment/transaction/{cart.id}", self._payment_values(cart)
+        )
+        tx = cart.transaction_ids
+        self.assertEqual(len(tx), 1)
+        self.assertEqual(tx.amount, cart.amount_total)
+        tx._set_pending()
+        page = self.url_open("/shop/payment/validate")
+        self.assertIn("/my2/gifts/thankyou", page.url)
+        self.assertIn('action="/my2/gifts/thankyou/details"', page.text)
+
+    def test_portal_order_payment_is_refused_to_a_visitor(self):
+        """sale's own payment route takes any amount and a saved card of the
+        order's partner, and the gift package never uses it."""
+        self._add_fund()
+        self._give_email()
+        cart = self._cart()
+        token = self._saved_card(cart.partner_id)
+        for values in (
+            {"amount": 0.01},
+            {
+                "flow": "token",
+                "token_id": token.id,
+                "provider_id": token.provider_id.id,
+            },
+        ):
+            with self.assertRaises(JsonRpcException):
+                self.make_jsonrpc_request(
+                    f"/my/orders/{cart.id}/transaction",
+                    self._payment_values(cart, **values),
+                )
+        self.assertFalse(cart.transaction_ids)
+
+    def test_payment_checks_follow_the_order_not_the_host(self):
+        """The cart's access token works on any host, and the shop route of
+        another website of the domain resolves to that website."""
+        self._add_fund()
+        self._give_email()
+        cart = self._cart()
+        token = self._saved_card(cart.partner_id)
+        other_website = self.env["website"].search(
+            [("id", "!=", self.website.id), ("is_my_compassion", "=", False)], limit=1
+        )
+        other_website.domain = "http://other.example.org"
+        with self.assertRaises(JsonRpcException):
+            self.make_jsonrpc_request(
+                f"/shop/payment/transaction/{cart.id}",
+                self._payment_values(
+                    cart,
+                    flow="token",
+                    token_id=token.id,
+                    provider_id=token.provider_id.id,
+                ),
+                headers={"Host": "other.example.org"},
+            )
+        self.assertFalse(cart.transaction_ids)
+
+    def test_cart_quantity_never_reprices_a_donation(self):
+        """A new quantity from website_sale's cart would price the line at the
+        product's list price again (below the minimum for some funds)."""
+        self._add_fund(suggested_amount="custom", custom_amount="42")
+        line = self._cart().order_line
+        with self.assertRaises(JsonRpcException):
+            self.make_jsonrpc_request(
+                "/shop/cart/update_json",
+                {"product_id": line.product_id.id, "line_id": line.id, "set_qty": 2},
+            )
+        self.assertEqual((line.product_uom_qty, line.price_unit), (1.0, 42.0))
+
     def test_email_step_needs_a_human(self):
         self._add_fund()
         ir_http = type(self.env["ir.http"])
