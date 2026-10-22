@@ -109,6 +109,13 @@ class PaymentTransaction(models.Model):
             return ""
         return name
 
+    def _payu_gpo_check_card_submission(self):
+        """A MyCompassion order takes one card payment at a time: two of its
+        payment forms may each have made a draft before either card was
+        sent."""
+        super()._payu_gpo_check_card_submission()
+        self._my2_check_card_submission()
+
     def _my2_refusal_is_certain(self):
         """A payment PayU never confirmed may have been made: its error is
         no refusal."""
