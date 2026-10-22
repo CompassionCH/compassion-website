@@ -9,6 +9,7 @@ from odoo.tests import tagged
 from .common import PayuDigitalCase
 
 LOGGER = "odoo.addons.my_compassion_payment_payu_gpo.models.payment_transaction"
+CLIENT = "odoo.addons.payment_payu_gpo.payu_client.PayuClient"
 
 
 @tagged("post_install", "-at_install")
@@ -52,6 +53,31 @@ class TestMonthlyCharge(PayuDigitalCase):
         )
         # PayU repeats its notifications
         self._notify(tx, "CANCELED")
+        self.assertEqual(len(self.handoffs), 1)
+        # the next daily run does not charge the card again
+        self._run_charge_cron(lambda tx: tx._set_pending())
+        self.assertEqual(self.invoice.transaction_ids, tx)
+
+    def test_refusal_read_from_payu_starts_the_dunning_once(self):
+        # The status read (cron, status page) finds the order PayU cancelled,
+        # then PayU's notification of it arrives.
+        self._run_charge_cron(lambda tx: tx._set_pending())
+        tx = self.invoice.transaction_ids
+        tx.provider_reference = "PAYU-ORDER-READ"
+        cancelled = {
+            "orders": [
+                {
+                    "orderId": "PAYU-ORDER-READ",
+                    "extOrderId": tx.reference,
+                    "status": "CANCELED",
+                }
+            ]
+        }
+        with patch(f"{CLIENT}.get_order", return_value=cancelled):
+            tx._payu_gpo_refresh_from_api()
+        self.assertEqual(tx.state, "error")
+        self.assertEqual(len(self.handoffs), 1)
+        self._notify(tx, "CANCELED", orderId="PAYU-ORDER-READ")
         self.assertEqual(len(self.handoffs), 1)
         # the next daily run does not charge the card again
         self._run_charge_cron(lambda tx: tx._set_pending())
