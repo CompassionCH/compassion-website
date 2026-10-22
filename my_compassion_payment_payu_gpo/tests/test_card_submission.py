@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from unittest.mock import patch
 
 from odoo import Command
@@ -26,14 +27,6 @@ class TestCardSubmission(PayuDigitalCase):
 
     def setUp(self):
         super().setUp()
-        if not (
-            hasattr(PayuPaymentTransaction, "_payu_gpo_check_card_submission")
-            and hasattr(My2PaymentTransaction, "_my2_check_card_submission")
-        ):
-            self.skipTest(
-                "needs payment_payu_gpo's _payu_gpo_check_card_submission and"
-                " my_compassion's _my2_check_card_submission"
-            )
         self.website = self.env.ref("my_compassion.my2_website")
         self.provider = self.env.ref("payment_payu_gpo.payment_provider_payu_gpo").copy(
             {"company_id": self.website.company_id.id}
@@ -86,14 +79,15 @@ class TestCardSubmission(PayuDigitalCase):
                 "TOK_CARD",
             )
 
-    def test_one_card_reaches_payu_per_order(self):
-        first = self._draft("payu-bridge-first-form")
-        second = self._draft("payu-bridge-second-form")
+    @contextmanager
+    def _payu_takes_the_card_of(self, tx):
+        """PayU accepts the card of tx, and its payment is pending. Yields
+        the mock of the order creation."""
         with (
             patch(
                 f"{CLIENT}.create_order",
                 return_value={
-                    "orderId": "PAYU-FIRST",
+                    "orderId": "PAYU-ORDER",
                     "status": {"statusCode": "SUCCESS"},
                 },
             ) as create_order,
@@ -102,14 +96,28 @@ class TestCardSubmission(PayuDigitalCase):
                 return_value={
                     "orders": [
                         {
-                            "orderId": "PAYU-FIRST",
-                            "extOrderId": first.reference,
+                            "orderId": "PAYU-ORDER",
+                            "extOrderId": tx.reference,
                             "status": "PENDING",
                         }
                     ]
                 },
             ),
         ):
+            yield create_order
+
+    def test_one_card_reaches_payu_per_order(self):
+        if not (
+            hasattr(PayuPaymentTransaction, "_payu_gpo_check_card_submission")
+            and hasattr(My2PaymentTransaction, "_my2_check_card_submission")
+        ):
+            self.skipTest(
+                "needs payment_payu_gpo's _payu_gpo_check_card_submission and"
+                " my_compassion's _my2_check_card_submission"
+            )
+        first = self._draft("payu-bridge-first-form")
+        second = self._draft("payu-bridge-second-form")
+        with self._payu_takes_the_card_of(first) as create_order:
             first_answer = self._send_card(first)
             second_answer = self._send_card(second)
         self.assertEqual(create_order.call_count, 1)
@@ -120,3 +128,15 @@ class TestCardSubmission(PayuDigitalCase):
             "This donation is already paid, or its payment is under way.",
         )
         self.assertEqual(second.state, "cancel")
+
+    def test_card_reaches_payu_without_the_order_check(self):
+        """A my_compassion that does not check the card submission yet: the
+        card route sends the card as usual."""
+        if hasattr(My2PaymentTransaction, "_my2_check_card_submission"):
+            self.skipTest("my_compassion checks the card submission")
+        tx = self._draft("payu-bridge-only-form")
+        with self._payu_takes_the_card_of(tx) as create_order:
+            answer = self._send_card(tx)
+        self.assertEqual(create_order.call_count, 1)
+        self.assertNotIn("error", answer)
+        self.assertEqual(tx.state, "pending")
