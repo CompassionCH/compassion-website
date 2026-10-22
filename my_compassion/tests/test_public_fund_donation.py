@@ -1342,6 +1342,26 @@ class TestPublicFundDonation(HttpCase):
 
     # === What waits for the donor's name ===
 
+    def test_donor_of_an_uncertain_payment_is_kept(self):
+        """A refused payment whose refusal is not certain may still succeed."""
+        abandoned, _paid = self._abandoned_and_paid_donors()
+        self._pay("error")
+        with patch.object(
+            type(self.env["payment.transaction"]),
+            "_my2_refusal_is_certain",
+            return_value=False,
+        ):
+            self.env["res.partner"]._my2_cron_archive_abandoned_donors()
+        self.assertTrue(abandoned.active)
+
+    def test_donor_of_a_payment_at_the_provider_is_kept(self):
+        abandoned, _paid = self._abandoned_and_paid_donors()
+        self._pay("draft", provider_reference="AT-THE-PROVIDER")
+        self.env["res.partner"]._my2_cron_archive_abandoned_donors()
+        self.assertTrue(abandoned.active)
+
+    # === What waits for the donor's name ===
+
     def _letter_config(self):
         """A communication about invoices (as the thank-you letters and the
         donation receipts) that greets the donor by name."""

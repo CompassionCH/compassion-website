@@ -45,12 +45,10 @@ class SaleOrder(models.Model):
     def _my2_payment_outcome(self, except_transaction=None):
         """What became of the payment of a donation order:
 
-        - "paid": the order is confirmed, or one of its payments may still
-          succeed: pending (BLIK in the bank app, 3DS), authorized, a draft
-          the provider already has, or a cancelled or refused one whose
-          refusal is not certain (_my2_refusal_is_certain, e.g. a payment the
-          provider never confirmed nor refused) - the donor is thanked, and
-          never asked to pay a second time;
+        - "paid": the order is confirmed, or one of its payments went through
+          or may still (payment.transaction._my2_may_still_succeed, e.g. a
+          payment the provider never confirmed nor refused) - the donor is
+          thanked, and never asked to pay a second time;
         - "failed": its last payment was cancelled or refused for certain,
           and none may still succeed - the donor gets the cart back to pay
           again;
@@ -68,12 +66,7 @@ class SaleOrder(models.Model):
         transactions = self.transaction_ids
         if except_transaction:
             transactions -= except_transaction
-        may_succeed = transactions.filtered(
-            lambda t: t.state in ("pending", "authorized", "done")
-            or (t.state == "draft" and t.provider_reference)
-            or (t.state in ("cancel", "error") and not t._my2_refusal_is_certain())
-        )
-        if may_succeed:
+        if transactions._my2_may_still_succeed():
             return "paid"
         if self.get_portal_last_transaction().state in ("cancel", "error"):
             return "failed"

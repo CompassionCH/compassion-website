@@ -60,6 +60,17 @@ class PaymentTransaction(models.Model):
         self.ensure_one()
         return True
 
+    def _my2_may_still_succeed(self):
+        """The payments among self that went through or may still: pending
+        (BLIK in the bank app, 3DS), authorized, done, a draft the provider
+        already has, or a cancelled or refused one whose refusal is not
+        certain (_my2_refusal_is_certain)."""
+        return self.filtered(
+            lambda t: t.state in ("pending", "authorized", "done")
+            or (t.state == "draft" and t.provider_reference)
+            or (t.state in ("cancel", "error") and not t._my2_refusal_is_certain())
+        )
+
     def _my2_check_card_submission(self):
         """Before the card of this payment is sent to the provider: refuse
         it if another payment of its MyCompassion order may still succeed.

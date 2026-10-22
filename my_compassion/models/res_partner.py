@@ -120,7 +120,8 @@ class Partner(models.Model):
     def _my2_cron_archive_abandoned_donors(self, limit=500):
         """Archive the donors of abandoned visitor checkouts: still the
         placeholder name after ABANDONED_DONOR_DAYS, no account, and nothing
-        else - no contract, invoice, payment or confirmed order. Each email
+        else - no contract, invoice or confirmed order, and no payment that
+        went through or may still (_my2_used_donors). Each email
         step of a visitor creates one (an unverified email is never matched to
         an existing partner).
 
@@ -150,23 +151,22 @@ class Partner(models.Model):
         _logger.info("Archived %s abandoned visitor donors.", archived)
 
     def _my2_used_donors(self):
-        """The partners among self with a contract, an invoice, a payment that
-        went through or may still, or a confirmed order."""
+        """The partners among self with a contract, an invoice, a confirmed
+        order, or a payment that went through or may still
+        (payment.transaction._my2_may_still_succeed)."""
         used = self.browse()
         for model, fnames, extra in (
             ("recurring.contract", ("partner_id", "correspondent_id"), []),
             ("account.move", ("partner_id",), []),
-            (
-                "payment.transaction",
-                ("partner_id",),
-                [("state", "in", ("pending", "authorized", "done"))],
-            ),
             ("sale.order", ("partner_id",), [("state", "=", "sale")]),
         ):
             records = self.env[model].with_context(active_test=False)
             for fname in fnames:
                 used |= records.search([(fname, "in", self.ids), *extra]).mapped(fname)
-        return used
+        payments = self.env["payment.transaction"].search(
+            [("partner_id", "in", self.ids)]
+        )
+        return used | payments._my2_may_still_succeed().partner_id
 
     def _my2_on_placeholder_name_replaced(self):
         """Everything that had to wait for the sponsor's real name.
