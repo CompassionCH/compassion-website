@@ -7,13 +7,11 @@
 #
 ##############################################################################
 import base64
-import secrets
 from datetime import datetime
 from os import path, remove
 from urllib.parse import urlencode
 from zipfile import ZipFile
 
-from passlib.context import CryptContext
 from werkzeug.exceptions import NotFound
 
 from odoo import _
@@ -136,22 +134,17 @@ def _download_image(child_id, obj_id):
 
 class MyAccountController(CustomerPortal):
     @route(
-        "/my/login/<token>/<path:redirect_page>",
+        "/my/login/<partner_uuid>/<path:redirect_page>",
         type="http",
         auth="public",
-        methods=["GET", "POST"],
         website=True,
         sitemap=False,
     )
-    def magic_login(self, token=None, redirect_page=None, **kwargs):
-        """Log in with a single-use link from res.partner._get_magic_login_url.
-
-        GET only shows a button: mail scanners open links before the donor
-        does and would spend the token. The POST spends it. Any other link,
-        such as the partner uuid of the former magic links (T3569), lands on
-        the target page without logging in.
+    def magic_login(self, partner_uuid=None, redirect_page=None, **kwargs):
+        """Former one-click login links, built from the partner uuid that
+        public pages could leak (T3569). They no longer log in: the login page
+        asks for the password and explains how to set one.
         """
-        kwargs.pop("csrf_token", None)
         # Check if the requested page is already formatted for MyCompassion 2.0
         if redirect_page.startswith("my2/"):
             target = f"/{redirect_page}"
@@ -160,80 +153,10 @@ class MyAccountController(CustomerPortal):
             target = f"/my/{redirect_page}"
         if kwargs:
             target = f"{target}?{urlencode(kwargs)}"
-        redirect_page_request = request.redirect(target)
-
-        login_token = request.env["my2.login.token"]._find_valid(token)
-        if not login_token:
-            return redirect_page_request
-        if request.httprequest.method != "POST":
-            return request.render("my_compassion.my2_magic_login_confirm")
-        if not login_token._consume():
-            return redirect_page_request
-
-        partner = login_token.partner_id
-        # An archived account must not be replaced by a new one
-        user = (
-            request.env["res.users"]
-            .sudo()
-            .with_context(active_test=False)
-            .search([["partner_id", "=", partner.id]], limit=1)
-        )
-
-        if user and not (user.created_with_magic_link and user.active):
-            # user already have an account not created with the magic link
-            # this will ask him to log in then redirect him on the route asked
-            return redirect_page_request
-
-        if not user:
-            # don't have a res_user must be created
-            login = MyAccountController._create_magic_user_from_partner(partner)
-        else:
-            # already have a res_user created with a magic link
-            login = user.login
-
-        MyAccountController._reset_password_and_authenticate(login)
-
-        return redirect_page_request
-
-    @staticmethod
-    def _reset_password_and_authenticate(login):
-        # create a random password
-        password = secrets.token_urlsafe(16)
-
-        # reset password
-        crypt_context = CryptContext(
-            schemes=["pbkdf2_sha512", "plaintext"], deprecated=["plaintext"]
-        )
-        password_encrypted = crypt_context.encrypt(password)
-        request.env.cr.execute(
-            "UPDATE res_users SET password=%s WHERE login=%s;",
-            [password_encrypted, login],
-        )
-        request.env.cr.commit()
-
-        # authenticate
-        request.session.authenticate(
-            request.session.db,
-            {"login": login, "password": password, "type": "password"},
-        )
-        return True
-
-    @staticmethod
-    def _create_magic_user_from_partner(partner):
-        res_users = request.env["res.users"].sudo()
-
-        values = {
-            # ensure a login when the partner doesnt have an email
-            "login": partner.email or "magic_login_" + secrets.token_urlsafe(16),
-            "partner_id": partner.id,
-            "created_with_magic_link": True,
-        }
-
-        # The partner is passed in values, so no signup token is needed. Leftover
-        # v14 tokens are not signed and would fail v18 validation.
-        partner.signup_prepare()
-        login, _ = res_users.signup(values=values)
-        return login
+        login_url = f"/web/login?{urlencode({'redirect': target, 'magic_link': 1})}"
+        if request.lang.code != request.website.default_lang_id.code:
+            login_url = f"/{request.lang.url_code}{login_url}"
+        return request.redirect(login_url)
 
     ############################# REDIRECTS ################################
 

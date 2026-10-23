@@ -5,19 +5,34 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from odoo import models
+from odoo import fields, models
 from odoo.exceptions import AccessError
 
-# Published records of these models must not be served by website's shortcut
-# that hands any of their binary fields to anyone (T3569).
-SHORTCUT_DENIED_MODELS = ("correspondence", "event.registration", "res.partner")
+# Published records whose pictures are private too (T3569). Registration
+# photos have their own route, /event/registration/<id>/photo.
+SHORTCUT_DENIED_MODELS = (
+    "correspondence",
+    "event.registration",
+    "res.partner",
+    "res.users",
+)
 
 
 class IrBinary(models.AbstractModel):
     _inherit = "ir.binary"
 
     def _find_record_check_access(self, record, access_token, field):
-        if record._name in SHORTCUT_DENIED_MODELS:
+        # website serves any binary field of a published record to anyone. Keep
+        # that for pictures only: documents (passports, letter scans...) and the
+        # models above go through the normal access check (T3569).
+        if (
+            "website_published" in record._fields
+            and record.sudo().website_published
+            and (
+                record._name in SHORTCUT_DENIED_MODELS
+                or not isinstance(record._fields.get(field), fields.Image)
+            )
+        ):
             record.check_access("read")
             return record
         return super()._find_record_check_access(record, access_token, field)
