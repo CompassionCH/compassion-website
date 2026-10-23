@@ -20,7 +20,7 @@ class MyCompassionLegal(http.Controller):
         if legal_link:
             # local=False: an external URL, otherwise reduced to its path on
             # this website.
-            return request.redirect(legal_link, code=301, local=False)
+            return request.redirect(legal_link, code=302, local=False)
         # No URL for this website: its /legal page, if any (website_legal_page).
         page = request.env["ir.http"]._serve_page()
         if not page:
