@@ -327,17 +327,13 @@ class EventRegistration(models.Model):
         default_meta["default_opengraph"].update(
             {
                 "og:title": title,
-                "og:image": request.website.image_url(
-                    self, "profile_picture", size="1200x1200"
-                ),
+                "og:image": f"/event/registration/{self.id}/photo/1200x1200",
             }
         )
         default_meta["default_twitter"].update(
             {
                 "twitter:title": title,
-                "twitter:image": request.website.image_url(
-                    self, "profile_picture", size="300x300"
-                ),
+                "twitter:image": f"/event/registration/{self.id}/photo/300x300",
             }
         )
         default_meta.update(

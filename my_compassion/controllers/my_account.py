@@ -136,31 +136,22 @@ def _download_image(child_id, obj_id):
 
 class MyAccountController(CustomerPortal):
     @route(
-        "/my/login/<partner_uuid>/<path:redirect_page>",
+        "/my/login/<token>/<path:redirect_page>",
         type="http",
         auth="public",
+        methods=["GET", "POST"],
         website=True,
+        sitemap=False,
     )
-    def magic_login(self, partner_uuid=None, redirect_page=None, **kwargs):
+    def magic_login(self, token=None, redirect_page=None, **kwargs):
+        """Log in with a single-use link from res.partner._get_magic_login_url.
+
+        GET only shows a button: mail scanners open links before the donor
+        does and would spend the token. The POST spends it. Any other link,
+        such as the partner uuid of the former magic links (T3569), lands on
+        the target page without logging in.
         """
-        This route is used to log in a user with a magic link. The link is
-        composed of the partner's uuid and the page to redirect to after the
-        login. The partner is searched and if he exists, a user is created for
-        him if he doesn't have one already. Then, the user is logged in and
-        redirected to the page asked.
-        @param partner_uuid: <str> the uuid of the partner
-        @param redirect_page: <str> the page to redirect to after the login
-        @param kwargs: additional optional arguments
-        """
-        if not partner_uuid:
-            return None
-
-        res_partner = request.env["res.partner"].sudo()
-        res_users = request.env["res.users"].sudo()
-
-        partner = res_partner.search([["uuid", "=", partner_uuid]], limit=1)
-        partner = partner.sudo()
-
+        kwargs.pop("csrf_token", None)
         # Check if the requested page is already formatted for MyCompassion 2.0
         if redirect_page.startswith("my2/"):
             target = f"/{redirect_page}"
@@ -171,13 +162,24 @@ class MyAccountController(CustomerPortal):
             target = f"{target}?{urlencode(kwargs)}"
         redirect_page_request = request.redirect(target)
 
-        if not partner:
-            # partner does not exist
+        login_token = request.env["my2.login.token"]._find_valid(token)
+        if not login_token:
+            return redirect_page_request
+        if request.httprequest.method != "POST":
+            return request.render("my_compassion.my2_magic_login_confirm")
+        if not login_token._consume():
             return redirect_page_request
 
-        user = res_users.search([["partner_id", "=", partner.id]], limit=1)
+        partner = login_token.partner_id
+        # An archived account must not be replaced by a new one
+        user = (
+            request.env["res.users"]
+            .sudo()
+            .with_context(active_test=False)
+            .search([["partner_id", "=", partner.id]], limit=1)
+        )
 
-        if user and not user.created_with_magic_link:
+        if user and not (user.created_with_magic_link and user.active):
             # user already have an account not created with the magic link
             # this will ask him to log in then redirect him on the route asked
             return redirect_page_request
