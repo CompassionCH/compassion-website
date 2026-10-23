@@ -29,6 +29,7 @@ from . import (
     my2_website_route,
     compassion_child,
     contracts,
+    ir_binary,
     ir_http,
     account_payment_mode,
     payment_provider,

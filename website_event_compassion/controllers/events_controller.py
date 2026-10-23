@@ -9,6 +9,8 @@
 ##############################################################################
 from datetime import datetime
 
+from werkzeug.exceptions import NotFound
+
 from odoo import _, fields, http
 from odoo.http import Controller, request
 
@@ -32,7 +34,7 @@ class EventsController(Controller):
                 yield {"loc": loc}
 
     def sitemap_participants(env, rule, qs):
-        registrations = env["event.registration"]
+        registrations = env["event.registration"].sudo()
         today = fields.Date.to_string(datetime.today())
         dom = sitemap_qs2dom(qs, "/event", registrations._rec_name)
         dom += request.website.website_domain()
@@ -108,10 +110,18 @@ class EventsController(Controller):
     ###################################################
     # Methods for the participant page and the donation
     ###################################################
+    @staticmethod
+    def _get_registration(registration_slug):
+        """Visitors have no read access on registrations (T3569), so the URL
+        is not a model() converter, which reads the record as the visitor.
+        The pages only show the fields their templates print.
+        """
+        registration_id = request.env["ir.http"]._unslug(registration_slug)[1]
+        return request.env["event.registration"].sudo().browse(registration_id).exists()
+
     @http.route(
         [
-            "/event/<model('crm.event.compassion'):event>/<model("
-            "'event.registration'):registration>",
+            "/event/<model('crm.event.compassion'):event>/<string:registration>",
         ],
         auth="public",
         website=True,
@@ -120,9 +130,10 @@ class EventsController(Controller):
     def participant_details(self, event, registration, **kwargs):
         """
         :param event: the event record
-        :param reg_id: the registration record
+        :param registration: the registration slug
         :return:the rendered page
         """
+        registration = self._get_registration(registration)
         if not event.is_published or not registration.is_published:
             return request.redirect(EVENTS_URL)
         if not registration.can_access_from_current_website():
@@ -148,8 +159,36 @@ class EventsController(Controller):
         }
 
     @http.route(
-        "/event/<model('crm.event.compassion'):event>/<model("
-        "'event.registration'):registration>/donation",
+        [
+            "/event/registration/<int:registration_id>/photo",
+            "/event/registration/<int:registration_id>/photo/<int:width>x<int:height>",
+        ],
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def registration_photo(self, registration_id, width=0, height=0, **kwargs):
+        registration = (
+            request.env["event.registration"].sudo().browse(registration_id).exists()
+        )
+        if not registration.is_published:
+            raise NotFound()
+        return (
+            request.env["ir.binary"]
+            ._get_image_stream_from(
+                registration,
+                "profile_picture",
+                filename="profile_picture",
+                width=width,
+                height=height,
+            )
+            .get_response()
+        )
+
+    @http.route(
+        "/event/<model('crm.event.compassion'):event>/<string:registration>"
+        "/donation",
         type="http",
         auth="public",
         methods=["POST"],
@@ -162,12 +201,13 @@ class EventsController(Controller):
         Force the price of the order line to make sure it reflects the selected
         amount for donation.
         :param event: the event record
-        :param registration: the registration record
+        :param registration: the registration slug
         :param amount: the donation amount
         :param post: the post request
         :return: the rendered page
         """
-        if not event.is_published:
+        registration = self._get_registration(registration)
+        if not event.is_published or not registration.is_published:
             return request.redirect(EVENTS_URL)
         sale_order = request.website.sale_get_order(force_create=True).sudo()
         if sale_order.state != "draft":
