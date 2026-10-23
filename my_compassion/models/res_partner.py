@@ -215,17 +215,6 @@ class Partner(models.Model):
                 exc_info=True,
             )
 
-    def _get_magic_login_url(self, redirect_page="my2/dashboard", lang=None):
-        """One-click MyCompassion login link for an email to this partner.
-
-        Each call issues a new single-use token, valid for 30 days.
-        """
-        self.ensure_one()
-        token = self.env["my2.login.token"]._issue(self)
-        website = self.env.ref("my_compassion.my2_website")
-        lang_prefix = f"/{lang}" if lang else ""
-        return f"{website.get_base_url()}{lang_prefix}/my/login/{token}/{redirect_page}"
-
     def get_portal_sponsorships(self, states=None):
         """Portal sponsorships, with grace handling for child departures.
 
