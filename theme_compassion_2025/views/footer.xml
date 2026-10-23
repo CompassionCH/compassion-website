@@ -88,6 +88,30 @@
                                     <span t-esc="datetime.datetime.now().year" />
                                     <span t-esc="res_company.name" />
                                 </p>
+                <t
+                  t-set="company_partner"
+                  t-value="website.footer_company_ids and res_company.partner_id"
+                />
+                <p
+                  class="mb-0 mt-1"
+                  t-if="company_partner and (company_partner.vat or company_partner.company_registry)"
+                >
+                  <t t-set="is_pl" t-value="company_partner.country_id.code == 'PL'" />
+                  <span t-if="company_partner.vat">
+                    <t t-if="is_pl">NIP</t>
+                    <t t-else="" t-esc="company_partner.vat_label" />:
+                    <span t-esc="company_partner.vat" />
+                  </span>
+                  <span
+                    t-if="company_partner.vat and company_partner.company_registry"
+                    class="mx-2"
+                  >|</span>
+                  <span t-if="company_partner.company_registry">
+                    <t t-if="is_pl">REGON</t>
+                    <t t-else="">Company ID</t>:
+                    <span t-esc="company_partner.company_registry" />
+                  </span>
+                </p>
               </div>
               <div
                 class="col-12 d-flex flex-column flex-md-row justify-content-center align-items-center"
