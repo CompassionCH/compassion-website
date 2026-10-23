@@ -40,9 +40,6 @@ def _apply_my2_theme(env):
     )
 
     theme_post_init(env)
-    # Loading the theme re-enables the stock "call to action" footer (Odoo demo
-    # text): disable the stock footers again.
-    websites._configure_my_compassion_portal()
     for website in websites:
         _invalidate_website_bundles(env, website)
 
