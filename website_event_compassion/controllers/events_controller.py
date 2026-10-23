@@ -207,7 +207,7 @@ class EventsController(Controller):
         :return: the rendered page
         """
         registration = self._get_registration(registration)
-        if not event.is_published or not registration:
+        if not event.is_published or not registration.is_published:
             return request.redirect(EVENTS_URL)
         sale_order = request.website.sale_get_order(force_create=True).sudo()
         if sale_order.state != "draft":
