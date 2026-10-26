@@ -218,7 +218,12 @@
   >
     <xpath expr="t" position="replace">
       <t t-call="web.login_layout">
-        <form class="my2-signup-form" role="form" method="post" t-if="not message">
+        <form
+          class="my2-signup-form oe_signup_form"
+          role="form"
+          method="post"
+          t-if="not message"
+        >
           <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
           <input type="hidden" name="redirect" t-att-value="redirect" />
           <input type="hidden" name="token" t-att-value="token" />
@@ -294,7 +299,12 @@
                         Back to Login
                     </a>
         </div>
-        <form role="form" method="post" t-if="not message">
+        <form
+          class="oe_reset_password_form"
+          role="form"
+          method="post"
+          t-if="not message"
+        >
           <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
           <input type="hidden" name="redirect" t-att-value="redirect" />
           <input type="hidden" name="token" t-att-value="token" />
