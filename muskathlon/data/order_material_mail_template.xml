@@ -13,7 +13,7 @@
                 <br />
                 <br />
                 <a
-        t-attf-href="/web#id={{ object.partner_id.id }}&amp;model=res.partner&amp;view_type=form"
+        t-attf-href="/odoo/contacts/{{ object.partner_id.id }}"
         style="text-decoration:none;background-color:transparent;color:rgb(124, 123, 173);"
       >
         <t t-out="object.partner_id.name" />
