@@ -13,5 +13,6 @@ from . import (
     test_public_fund_donation,
     test_recurring_instrument,
     test_theme_apply,
+    test_unverified_signup,
     test_wizard_prices,
 )
