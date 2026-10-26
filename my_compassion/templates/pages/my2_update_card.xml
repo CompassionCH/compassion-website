@@ -6,7 +6,9 @@
     Card-replacement page for a digital-mode contract group. The link
     target of the payment-failure and card-expiry emails. Settles the
     group's due invoices with the new card, or verifies it when nothing
-    is due. The saved instrument then swaps to the new card.
+    is due. The saved instrument then swaps to the new card. With nothing
+    due and a provider that saves a card only with a payment, there is no
+    provider (empty providers_sudo): the page says so, without a form.
 
     Context:
     Rendered by /my2/update-card with the payment form values
@@ -25,16 +27,22 @@
               <t t-set="color" t-value="'core-blue'" />
               <t t-set="show_underline" t-value="True" />
               <t t-set="underline_color" t-value="'low-yellow'" />
-              <t t-set="description">Enter a new card below. It replaces the
+              <t
+                t-if="providers_sudo"
+                t-set="description"
+              >Enter a new card below. It replaces the
                 one used for your monthly sponsorship payments<t
                 t-if="current_card"
               >&#160;(currently&#160;&#8226;&#8226;&#8226;&#8226;&#160;<t
                 t-out="current_card.payment_details"
               />)</t>.</t>
+              <t t-else="" t-set="description">Nothing is due right now, and a
+                new card can only be saved with a payment. Your current card
+                stays in use for the next monthly payments.</t>
             </t>
           </div>
           <!-- AMOUNT SUMMARY -->
-          <div class="my-3 text-center">
+          <div t-if="providers_sudo" class="my-3 text-center">
             <t t-if="amount">
               <span class="body-large bold">
                 Outstanding payment:&#160;<t
@@ -53,10 +61,10 @@
             </t>
           </div>
           <!-- PAYMENT FORM -->
-          <div class="w-100 px-2 px-lg-0 mb-3">
+          <div t-if="providers_sudo" class="w-100 px-2 px-lg-0 mb-3">
             <t t-call="payment.form" />
           </div>
-          <div class="mb-4 text-center body-small text-low-black">
+          <div t-if="providers_sudo" class="mb-4 text-center body-small text-low-black">
             Your payment details are securely saved with our payment provider
             and charged each month for your sponsorship.
           </div>

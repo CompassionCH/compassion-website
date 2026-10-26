@@ -7,6 +7,7 @@
 #
 ##############################################################################
 from . import (
+    communication_job,
     compassion_child_pictures,
     compassion_project,
     contract_group,
@@ -24,9 +25,11 @@ from . import (
     my2_donation_impact_line,
     correspondence_prewritten_letter,
     my2_event_banner,
+    my2_payment_attempt_counter,
     my2_website_route,
     compassion_child,
     contracts,
+    ir_binary,
     ir_http,
     account_payment_mode,
     payment_provider,

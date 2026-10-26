@@ -995,6 +995,11 @@ msgid "Attachment not found"
 msgstr "Pièce jointe introuvable"
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_page
+msgid "BLIK"
+msgstr "BLIK"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_form_content
 msgid "Back"
 msgstr "Retour"
@@ -1428,11 +1433,11 @@ msgstr "Continuer"
 #. module: my_compassion
 #: model:ir.model.fields,help:my_compassion.field_payment_transaction__my2_card_update_group_id
 msgid ""
-"Contract group whose saved instrument this validation transaction replaces "
-"(the update-card page with nothing due)."
+"Contract group whose saved instrument this transaction replaces (the update-"
+"card page)."
 msgstr ""
-"Groupe de contrats dont cette transaction de validation remplace le moyen "
-"enregistré (page de mise à jour de carte sans rien à payer)."
+"Groupe de contrats dont cette transaction remplace le moyen enregistré "
+"(page de mise à jour de carte)."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_information_personal
@@ -1505,6 +1510,12 @@ msgstr "Créé par"
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard_step__create_date
 msgid "Created on"
 msgstr "Créé le"
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_product_product__my_compassion_currency_id
+#: model:ir.model.fields,help:my_compassion.field_product_template__my_compassion_currency_id
+msgid "Currency of the suggested amounts: the current company's one"
+msgstr "Devise des montants suggérés : celle de la société actuelle"
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_product_product__my_compassion_impact_before_ids
@@ -1640,6 +1651,7 @@ msgstr "Désactivé"
 #: model:ir.model.fields,field_description:my_compassion.field_my2_website_route__display_name
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__display_name
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard_step__display_name
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__display_name
 msgid "Display Name"
 msgstr "Nom affiché"
 
@@ -1754,6 +1766,7 @@ msgstr "Brouillon enregistré !"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_donor_form
 msgid "E-mail"
 msgstr "E-mail"
 
@@ -1947,6 +1960,7 @@ msgstr "Premier paiement aujourd'hui :"
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__firstname
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
 msgid "Firstname"
 msgstr "Prénom"
 
@@ -2223,6 +2237,7 @@ msgstr ""
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_donor_form
 msgid "I accept the privacy policy as described in the"
 msgstr "J'accepte les règles de confidentialité telles que décrites dans la"
 
@@ -2292,6 +2307,7 @@ msgstr "Je ne vais pas à l'école"
 #: model:ir.model.fields,field_description:my_compassion.field_my2_website_route__id
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__id
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard_step__id
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__id
 msgid "ID"
 msgstr "Identifiant"
 
@@ -2645,6 +2661,11 @@ msgid "Login cannot be empty."
 msgstr "Le login ne peut pas être vide."
 
 #. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_login_form
+msgid "Login links from our emails no longer work. Log in with your password, or choose \"Forgot password?\" to set one."
+msgstr "Les liens de connexion de nos e-mails ne fonctionnent plus. Connecte-toi avec ton mot de passe ou choisis « Mot de passe oublié ? » pour en définir un."
+
+#. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_product_product__my_compassion_donation_amount_low
 #: model:ir.model.fields,field_description:my_compassion.field_product_template__my_compassion_donation_amount_low
 msgid "Lowest Amount"
@@ -2754,6 +2775,12 @@ msgstr "Dons mensuels"
 #: model:ir.ui.menu,name:my_compassion.my_compassion_sponsorship_menu
 msgid "My Compassion"
 msgstr "MyCompassion"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_product_product__my_compassion_currency_id
+#: model:ir.model.fields,field_description:my_compassion.field_product_template__my_compassion_currency_id
+msgid "My Compassion Currency"
+msgstr "Devise MyCompassion"
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_product_product__my_compassion_description
@@ -3074,6 +3101,26 @@ msgstr "Non spécifié"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_update_card_page
+msgid ""
+"Nothing is due right now, and a\n"
+"                new card can only be saved with a payment. Your current card\n"
+"                stays in use for the next monthly payments."
+msgstr ""
+"Rien n'est dû pour le moment, et une\n"
+"                nouvelle carte ne peut être enregistrée qu'avec un paiement. Votre carte\n"
+"                actuelle reste utilisée pour les prochains paiements mensuels."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/my2_update_card.py:0
+msgid ""
+"Nothing is due right now, and a new card can only be saved with a payment."
+msgstr ""
+"Rien n'est dû pour le moment, et une nouvelle carte ne peut être enregistrée "
+"qu'avec un paiement."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_update_card_page
 msgid "Nothing is due today - your new card will only be verified."
 msgstr ""
 "Rien n'est dû aujourd'hui - votre nouvelle carte sera simplement vérifiée."
@@ -3327,6 +3374,8 @@ msgid "Please enter a new payment method."
 msgstr "Veuillez saisir un nouveau moyen de paiement."
 
 #. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/my2_donations.py:0
 #: model_terms:ir.ui.view,arch_db:my_compassion.DonationFormComponent
 msgid "Please enter a valid amount."
 msgstr "Merci d'entrer un montant valide."
@@ -3452,8 +3501,11 @@ msgstr "Produit"
 #: model:ir.model.fields,help:my_compassion.field_product_product__activate_for_my_compassion
 #: model:ir.model.fields,help:my_compassion.field_product_template__activate_for_my_compassion
 msgid ""
-"Publish the product as an available donation on the MyCompassion website"
-msgstr "Publier le produit comme un don disponible sur le site MyCompassion"
+"Publish the product as an available donation on the MyCompassion website of "
+"the current company"
+msgstr ""
+"Publier le produit comme un don disponible sur le site MyCompassion de la "
+"société actuelle"
 
 #. module: my_compassion
 #: model:ir.actions.server,name:my_compassion.child_publish_action
@@ -4034,6 +4086,7 @@ msgstr "Montants suggérés"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_user_details
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_user_settings_page
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
 msgid "Surname"
 msgstr "Nom de famille"
 
@@ -4245,18 +4298,6 @@ msgid ""
 msgstr ""
 "L’ancien mot de passe que vous avez saisi est incorrect ; votre mot de passe"
 " n’a pas été modifié."
-
-#. module: my_compassion
-#: model:ir.model.fields,help:my_compassion.field_res_partner__my2_name_placeholder
-#: model:ir.model.fields,help:my_compassion.field_res_users__my2_name_placeholder
-msgid ""
-"The partner was created by a fast checkout before its sponsor gave their "
-"name. Everything that greets the sponsor by name waits for "
-"_my2_replace_placeholder_name to clear this flag."
-msgstr ""
-"Le partenaire a été créé par un paiement rapide avant que le parrain ou la "
-"marraine n'indique son nom. Tout ce qui salue le parrain ou la marraine par "
-"son nom attend que _my2_replace_placeholder_name efface ce drapeau."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_update_card_done_page
@@ -4590,6 +4631,7 @@ msgstr "Utilisé pour distinguer les deux types."
 
 #. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_new_sponsorship_wizard__user_id
+#: model:ir.model.fields,field_description:my_compassion.field_correspondence_s2b_generator__user_id
 msgid "User"
 msgstr "Utilisateur"
 
@@ -4725,6 +4767,7 @@ msgstr "Date de tri web"
 #. module: my_compassion
 #: model:ir.model,name:my_compassion.model_website
 #: model:ir.model.fields,field_description:my_compassion.field_compassion_child__website_id
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__website_id
 msgid "Website"
 msgstr "Site Web"
 
@@ -4788,6 +4831,7 @@ msgstr "Qui vit à"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
 msgid "Who shall we thank?"
 msgstr "Qui devons-nous remercier ?"
 
@@ -5171,6 +5215,7 @@ msgstr "image portrait"
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_donor_form
 msgid "privacy notice"
 msgstr "politique de confidentialité"
 
@@ -5214,6 +5259,7 @@ msgstr "ans <i class=\"icon-user01 bg-low-yellow mx-1\"/>"
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_donor_form
 msgid "you@example.com"
 msgstr "you@example.com"
 
@@ -5226,3 +5272,382 @@ msgstr "· mensuel"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
 msgid "· you write and pray"
 msgstr "· vous écrivez et priez"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.GivingLimitsTableComponent
+msgid ""
+"*A child gift can be given twice a year.\n"
+"                <br/>\n"
+"                **Available in the child's final year of the program."
+msgstr ""
+"*Un cadeau d'anniversaire ou général peut être offert deux fois par an. "
+"<br/>**Disponible la dernière année de programme de l'enfant."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_payment_method
+msgid ""
+".- per month.\n"
+"                <br/>\n"
+"                <br/>\n"
+"                The extra amount helps to fund urgent needs not covered by the\n"
+"                sponsorship (e.g. natural disasters,\n"
+"                medical interventions, malaria prevention, etc.).\n"
+"                <br/>\n"
+"                <br/>\n"
+"                This fund is available for all children supported through Compassion."
+msgstr ""
+".- par mois. <br/><br/>Le montant supplémentaire contribue à financer des "
+"besoins urgents non couverts par le parrainage (par ex. catastrophes "
+"naturelles, interventions médicales, prévention du paludisme, etc.). "
+"<br/><br/>Ce fonds est disponible pour tous les enfants soutenus par "
+"Compassion."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_form_content
+msgid ".-/month?"
+msgstr ".- par mois ?"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_form_content
+msgid "Continue with"
+msgstr "Continuer avec"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid ""
+"Create a MyCompassion account to stay connected with %s.\n"
+"                                <br/>\n"
+"                                Through your personalized portal, you can easily write letters, view recent pictures,\n"
+"                                and manage your sponsorship details."
+msgstr ""
+"Créez un compte MyCompassion pour rester en contact avec %s.<br/>\n"
+"Grâce à votre portail personnalisé, vous pouvez facilement lui écrire des lettres, consulter des photos récentes et gérer votre parrainage."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
+msgid ""
+"I agree that Compassion may use my details to set up and\n"
+"                    manage this sponsorship, as described in the"
+msgstr ""
+"J'accepte que Compassion utilise mes données pour mettre en place et gérer "
+"ce parrainage, comme décrit dans la"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.GivingLimitsTableComponent
+msgid "Max"
+msgstr "Max."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.GivingLimitsTableComponent
+msgid "Min"
+msgstr "Min."
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_correspondence_s2b_generator__partner_id
+msgid "Partner-related data of the user"
+msgstr "Données de l'utilisateur liées au partenaire"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "Sign up"
+msgstr "S'inscrire"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_form_content
+msgid "Sponsor"
+msgstr "Parrainer"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_payment_method
+msgid "Sponsorship plus"
+msgstr "Parrainage plus"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_details_form
+msgid ""
+"We only need your name and phone number to finish setting up\n"
+"                your sponsorship."
+msgstr ""
+"Nous avons seulement besoin de votre nom et de votre numéro de téléphone "
+"pour finaliser votre parrainage."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_form_content
+msgid ""
+"Write&amp;Pray sponsorships are only available for people under the age of 25.\n"
+"                                Would you like to become a sponsor for"
+msgstr ""
+"Les parrainages Write&amp;Pray sont uniquement destinés aux personnes de "
+"moins de 25 ans. Souhaitez-vous devenir marraine/parrain de"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_payment_method
+msgid "Yes"
+msgstr "Oui"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.DonationFormComponent
+msgid "Something went wrong"
+msgstr "Une erreur s'est produite"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_payment_page
+msgid "One last step"
+msgstr "Une dernière étape"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+msgid "Included ·"
+msgstr "Inclus ·"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
+msgid "Write&amp;Pray ·"
+msgstr "Write&amp;Pray ·"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
+msgid "· monthly"
+msgstr "· mensuel"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
+msgid "· you write and pray"
+msgstr "· vous écrivez et priez"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_page
+msgid "Change"
+msgstr "Modifier"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_donor_form
+msgid "Continue to payment"
+msgstr "Continuer vers le paiement"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_donor_form
+msgid "For your donation receipt. Nothing else is needed right now."
+msgstr "Pour votre reçu de don. Rien d'autre n'est nécessaire pour l'instant."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
+msgid "Make another donation"
+msgstr "Faire un autre don"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
+msgid "Please fill in your first name and surname."
+msgstr "Veuillez indiquer votre prénom et votre nom."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_donor_form
+msgid "Please give a valid email and accept the privacy notice."
+msgstr ""
+"Veuillez indiquer une adresse e-mail valide et accepter la déclaration de "
+"confidentialité."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
+msgid "Save"
+msgstr "Enregistrer"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gifts_thank_you_page
+msgid "Your name goes on your donation receipt."
+msgstr "Votre nom figurera sur votre reçu de don."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_page
+msgid "Your receipt goes to"
+msgstr "Votre reçu sera envoyé à"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_page
+msgid ""
+"Your payment did not go through. Please try again, or use another card."
+msgstr ""
+"Votre paiement n'a pas abouti. Veuillez réessayer, ou utiliser une autre "
+"carte."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/website_sale.py:0
+msgid "Please enter your card details."
+msgstr "Veuillez saisir les données de votre carte."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/website_sale.py:0
+msgid "Too many payment attempts. Please try again later."
+msgstr "Trop de tentatives de paiement. Veuillez réessayer plus tard."
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_donor_form
+msgid "We could not verify your request. Please try again in a few minutes."
+msgstr ""
+"Nous n'avons pas pu vérifier votre demande. Veuillez réessayer dans quelques"
+" minutes."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/communication_job.py:0
+msgid ""
+"The donor has not given their name yet: this communication waits for it."
+msgstr ""
+"Le donateur n'a pas encore donné son nom : cette communication l'attend."
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__attempts
+msgid "Attempts"
+msgstr "Tentatives"
+
+#. module: my_compassion
+#: model:ir.model,name:my_compassion.model_partner_communication_job
+msgid "Communication Job"
+msgstr "Job de communication"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__ip_address
+msgid "IP Address"
+msgstr "Adresse IP"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_website__my2_min_donation_amount
+msgid "Minimum Donation to a Fund"
+msgstr "Don minimum à un fonds"
+
+#. module: my_compassion
+#: model:ir.model,name:my_compassion.model_my2_payment_attempt_counter
+msgid "MyCompassion visitor payment attempts per IP"
+msgstr "MyCompassion : tentatives de paiement des visiteurs par adresse IP"
+
+#. module: my_compassion
+#: model:ir.actions.server,name:my_compassion.cron_archive_abandoned_donors_ir_actions_server
+msgid "MyCompassion: archive abandoned visitor donors"
+msgstr ""
+"MyCompassion : archiver les donateurs des dons abandonnés de visiteurs"
+
+#. module: my_compassion
+#: model:ir.model.constraint,message:my_compassion.constraint_my2_payment_attempt_counter_website_ip_unique
+msgid "One counter per website and IP address."
+msgstr "Un seul compteur par site web et adresse IP."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/sale_order.py:0
+msgid "Payment is already being processed."
+msgstr "Le paiement est déjà en cours de traitement."
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_website__my2_max_payment_attempts_per_ip
+msgid ""
+"Payments visitors may start on this website from one IP address within the "
+"window below, all carts and sessions together; 0 for no limit. Card testers "
+"try stolen cards one after the other on public donation pages."
+msgstr ""
+"Nombre de paiements que les visiteurs peuvent lancer sur ce site depuis une "
+"même adresse IP dans la fenêtre ci-dessous, tous paniers et sessions "
+"confondus ; 0 pour aucune limite. Les testeurs de cartes essaient des cartes"
+" volées l'une après l'autre sur les pages de don publiques."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/sale_order.py:0
+msgid "Please add and change your donations in your gift package."
+msgstr "Veuillez ajouter et modifier vos dons dans votre panier cadeau."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/website_sale.py:0
+msgid "Please give your email before paying."
+msgstr "Veuillez indiquer votre adresse e-mail avant de payer."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/website_sale.py:0
+msgid "Please pay your donation from your gift package."
+msgstr "Veuillez payer votre don depuis votre panier cadeau."
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_website__my2_min_donation_amount
+msgid ""
+"Smallest amount, in the currency of the website's company, a visitor may "
+"give to a fund. A donor with an account may give every suggested amount, and"
+" a custom one from the smaller of this and the fund's lowest suggestion. "
+"Card testers try stolen cards with tiny payments on public donation pages."
+msgstr ""
+"Plus petit montant, dans la devise de la société du site, qu'un visiteur "
+"peut donner à un fonds. Un donateur avec un compte peut donner chaque "
+"montant suggéré, et un montant libre à partir du plus petit entre celui-ci "
+"et la plus petite suggestion du fonds. Les testeurs de cartes essaient des "
+"cartes volées avec de très petits paiements sur les pages de don publiques."
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_res_partner__my2_name_placeholder
+#: model:ir.model.fields,help:my_compassion.field_res_users__my2_name_placeholder
+msgid ""
+"The partner was created by a fast checkout or a visitor's donation before "
+"its donor or sponsor gave their name. Everything that greets them by name "
+"waits for a real name to clear this flag."
+msgstr ""
+"Le partenaire a été créé par un paiement rapide ou par le don d'un visiteur "
+"avant que le donateur, le parrain ou la marraine n'indique son nom. Tout ce "
+"qui le salue par son nom attend qu'un vrai nom efface ce drapeau."
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_website__my2_payment_attempts_window
+msgid "The window of the visitor payment attempts per IP address."
+msgstr ""
+"La fenêtre de temps sur laquelle sont comptées les tentatives de paiement "
+"des visiteurs par adresse IP."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/sale_order.py:0
+msgid ""
+"This donation is already paid, or its payment is still under way. Please "
+"wait for its outcome, or check with your bank, before paying again."
+msgstr ""
+"Ce don est déjà payé, ou son paiement est encore en cours. Veuillez attendre"
+" son résultat, ou vérifier auprès de votre banque, avant de payer à nouveau."
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_website__my2_payment_attempts_window
+msgid "Visitor Payment Attempts Window (minutes)"
+msgstr "Fenêtre des tentatives de paiement des visiteurs (minutes)"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_website__my2_max_payment_attempts_per_ip
+msgid "Visitor Payment Attempts per IP"
+msgstr "Tentatives de paiement des visiteurs par adresse IP"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_my2_payment_attempt_counter__window_start
+msgid "Window Start"
+msgstr "Début de la fenêtre"
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_res_partner__my2_email_unverified
+#: model:ir.model.fields,field_description:my_compassion.field_res_users__my2_email_unverified
+msgid "Email not verified"
+msgstr "E-mail non vérifié"
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_res_partner__my2_email_unverified
+#: model:ir.model.fields,help:my_compassion.field_res_users__my2_email_unverified
+msgid ""
+"The partner was created from an email a visitor typed (a donation without an"
+" account, a fast checkout), which nobody has verified. Signup never links an"
+" account to it; giving a name does not change that."
+msgstr ""
+"Le partenaire a été créé à partir d'une adresse e-mail saisie par un "
+"visiteur (un don sans compte, un paiement rapide), que personne n'a "
+"vérifiée. L'inscription ne lui lie jamais de compte ; indiquer un nom n'y "
+"change rien."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/controllers/my2_donations.py:0
+msgid "The smallest donation to this fund is %(amount)s."
+msgstr "Le plus petit don possible pour ce fonds est de %(amount)s."

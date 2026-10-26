@@ -42,7 +42,12 @@
     <record id="product_template_public_rule" model="ir.rule">
       <field name="name">MyCompassion: donation products access</field>
       <field name="model_id" ref="model_product_template" />
-      <field name="groups" eval="[(4, ref('base.group_portal'))]" />
+      <!-- Visitors too: the funds are public, and their images are read
+           with the visitor's rights (/web/image). -->
+      <field
+        name="groups"
+        eval="[(4, ref('base.group_portal')), (4, ref('base.group_public'))]"
+      />
       <field name="domain_force">[('activate_for_my_compassion', '=', True)]</field>
     </record>
     <record id="child_public" model="ir.rule">

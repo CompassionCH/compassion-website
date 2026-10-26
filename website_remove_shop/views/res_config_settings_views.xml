@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <record id="res_config_settings_view_form" model="ir.ui.view">
+    <field name="name">res.config.settings.view.form.website.remove.shop</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="website.res_config_settings_view_form" />
+    <field name="arch" type="xml">
+      <setting id="ecommerce_access" position="after">
+        <setting
+          id="shop_redirect_url"
+          string="Shop redirect"
+          help="Page where visitors of the shop listing (/shop) are sent. Leave empty to show a 404 page."
+        >
+          <field name="shop_redirect_url" placeholder="/donate" />
+        </setting>
+      </setting>
+    </field>
+  </record>
+</odoo>
