@@ -239,8 +239,8 @@ class NewSponsorshipWizard(models.TransientModel):
             self.current_step_idx = max(self.current_step_idx - 1, 0)
 
     def _get_new_partner_vals(self):
-        """Values used to match or create the partner of a public signup.
-        Country extensions add their own keys before the matching runs.
+        """Values of the partner created for a public signup.
+        Country extensions add their own keys.
         """
         self.ensure_one()
         vals = {
@@ -374,24 +374,20 @@ class NewSponsorshipWizard(models.TransientModel):
         company = self.company_id or self.env.company
         partner = self.user_id.partner_id
         if self.user_id._is_public():
-            # Look for existing partner, create one if not found
-            partner_vals = self._get_new_partner_vals()
-            if partner_vals.get("my2_name_placeholder"):
-                # A placeholder can never match a returning sponsor's real
-                # stored name, and feeding it to the fuzzy/ilike rules would
-                # risk matching an unrelated partner instead, so matching is
-                # skipped rather than run on a value that cannot inform it.
-                partner = self.env["res.partner"].create(
-                    {**partner_vals, "my2_email_unverified": True}
-                )
-            else:
-                partner = self.env["res.partner.match"].match_values_to_partner(
-                    partner_vals, match_update=False, match_create=False
-                )
-                if not partner:
-                    partner = self.env["res.partner"].create(
-                        {**partner_vals, "my2_email_unverified": True}
-                    )
+            # Always a new, provisional partner, never an existing one found
+            # by the name, email or postcode a visitor typed: nothing proves
+            # they are that donor. Matching one would attach the sponsorship
+            # to their collection group - and so to their saved card, which
+            # the charge cron uses for every invoice of the group - and let
+            # this browser, which owns the new signup, see their name and
+            # write their preferences. A returning donor sponsoring without
+            # logging in becomes a second contact, for staff to merge.
+            partner = self.env["res.partner"].create(
+                {**self._get_new_partner_vals(), "my2_email_unverified": True}
+            )
+            partner._my2_flag_possible_duplicate(
+                self.env["website"].get_current_website()
+            )
         else:
             if not partner.birthdate_date and self.birthdate:
                 partner.sudo().write({"birthdate_date": self.birthdate})

@@ -1,6 +1,8 @@
 import logging
 from datetime import timedelta
 
+from markupsafe import Markup
+
 from odoo import SUPERUSER_ID, _, fields, models
 from odoo.exceptions import UserError
 
@@ -91,6 +93,46 @@ class Partner(models.Model):
             updated |= partner
         updated._my2_on_placeholder_name_replaced()
         return updated
+
+    def _my2_flag_possible_duplicate(self, website):
+        """Tell the staff that this visitor-made partner may be a known donor.
+
+        A public signup always gets a new partner (see
+        new.sponsorship.wizard.finish_sponsorship), even when its email is
+        already the one of a donor. Nothing is said to the visitor and
+        nothing is merged: an email someone typed proves nothing, so a
+        person checks it. The note stays on the partner. The to-do goes to
+        the reviewer of the website, if it has one.
+        """
+        self.ensure_one()
+        if not self.email_normalized:
+            return
+        known = self.sudo().search(
+            [
+                ("email_normalized", "=", self.email_normalized),
+                ("id", "!=", self.id),
+                ("my2_email_unverified", "=", False),
+            ]
+        )
+        if not known:
+            return
+        reviewer = website.my2_duplicate_review_user_id
+        partner = self.sudo().with_context(lang=reviewer.lang or "en_US")
+        note = Markup(
+            partner.env._(
+                "A visitor sponsored with the email of %(partners)s. Nothing"
+                " proves it is the same person: check with them, then merge"
+                " the contacts if it is."
+            )
+        ) % {"partners": Markup(", ").join(p._get_html_link() for p in known)}
+        partner.message_post(body=note, subtype_xmlid="mail.mt_note")
+        if reviewer:
+            partner.activity_schedule(
+                "mail.mail_activity_data_todo",
+                summary=partner.env._("Possible duplicate contact"),
+                note=note,
+                user_id=reviewer.id,
+            )
 
     def write(self, vals):
         """A real name written over the placeholder another way than
