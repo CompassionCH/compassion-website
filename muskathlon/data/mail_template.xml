@@ -243,6 +243,8 @@
     <field name="send_mode_pref_field">global_communication_delivery_preference</field>
     <field name="email_template_id" ref="registration_confirmation_template" />
     <field name="model_id" ref="model_event_registration" />
+    <field name="send_from">dynamic</field>
+    <field name="sender_field_id" ref="event.field_event_registration__event_user_id" />
   </record>
 
   <!-- Sponsorship invitation -->
@@ -264,6 +266,8 @@
     <field name="send_mode_pref_field">global_communication_delivery_preference</field>
     <field name="email_template_id" ref="sponsorship_invitation_template" />
     <field name="model_id" ref="model_event_registration" />
+    <field name="send_from">dynamic</field>
+    <field name="sender_field_id" ref="event.field_event_registration__event_user_id" />
   </record>
 
   <!-- Passport and flight -->
@@ -285,6 +289,8 @@
     <field name="send_mode_pref_field">global_communication_delivery_preference</field>
     <field name="email_template_id" ref="passport_and_flight_template" />
     <field name="model_id" ref="model_event_registration" />
+    <field name="send_from">dynamic</field>
+    <field name="sender_field_id" ref="event.field_event_registration__event_user_id" />
   </record>
 
   <!-- Vaccinations -->
@@ -304,6 +310,8 @@
     <field name="send_mode_pref_field">global_communication_delivery_preference</field>
     <field name="email_template_id" ref="vaccinations_template" />
     <field name="model_id" ref="model_event_registration" />
+    <field name="send_from">dynamic</field>
+    <field name="sender_field_id" ref="event.field_event_registration__event_user_id" />
   </record>
 
   <!-- Medical reminder -->
@@ -325,6 +333,8 @@
     <field name="send_mode_pref_field">global_communication_delivery_preference</field>
     <field name="email_template_id" ref="medical_reminder_template" />
     <field name="model_id" ref="model_event_registration" />
+    <field name="send_from">dynamic</field>
+    <field name="sender_field_id" ref="event.field_event_registration__event_user_id" />
   </record>
 
   <!-- Visa reminder -->
@@ -344,6 +354,8 @@
     <field name="send_mode_pref_field">global_communication_delivery_preference</field>
     <field name="email_template_id" ref="visa_reminder_template" />
     <field name="model_id" ref="model_event_registration" />
+    <field name="send_from">dynamic</field>
+    <field name="sender_field_id" ref="event.field_event_registration__event_user_id" />
   </record>
 
   <!-- Child protection -->
@@ -365,5 +377,7 @@
     <field name="send_mode_pref_field">global_communication_delivery_preference</field>
     <field name="email_template_id" ref="child_protection_template" />
     <field name="model_id" ref="model_event_registration" />
+    <field name="send_from">dynamic</field>
+    <field name="sender_field_id" ref="event.field_event_registration__event_user_id" />
   </record>
 </odoo>
