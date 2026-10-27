@@ -1,7 +1,46 @@
+import json
+
+from werkzeug.exceptions import NotFound
+
+from odoo.exceptions import ValidationError
 from odoo.http import request, route
 from odoo.tools.misc import format_date
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
+from odoo.addons.website.controllers.form import WebsiteForm
+
+# The participant forms of /my/events (T3572). They post here instead of to
+# the generic /website/form, which would take any registration_id.
+OWNER_FORMS = {
+    "registration_edit": "event.registration.form",
+    "flight": "event.flight",
+}
+
+# Confidential documents of a participant, with the staff group that may
+# read them besides the participant.
+DOCUMENT_GROUPS = {
+    "passport": "event.group_event_user",
+    "criminal_record": "child_protection.group_criminal_record",
+}
+
+
+def _owned_registration(registration_id):
+    """The registration of the logged-in participant, or 404.
+
+    Checked before anything is done with elevated rights: the id comes from
+    the browser, and a registration of someone else must not tell itself
+    apart from one that does not exist.
+    """
+    try:
+        registration_id = int(registration_id)
+    except (TypeError, ValueError) as error:
+        raise NotFound() from error
+    registration = (
+        request.env["event.registration"].sudo().browse(registration_id).exists()
+    )
+    if not registration or registration.partner_id != request.env.user.partner_id:
+        raise NotFound()
+    return registration
 
 
 class MyEventsController(CustomerPortal):
@@ -129,12 +168,90 @@ class MyEventsController(CustomerPortal):
         donations.sort(key=lambda x: x["date"], reverse=True)
         return donations
 
-    @route("/my/events/tasks/<model('event.registration.task.rel'):task>")
+    @route(
+        "/my/events/tasks/<model('event.registration.task.rel'):task>",
+        auth="user",
+        website=True,
+    )
     def task_click(self, task, **kwargs):
+        if task.registration_id.partner_id != request.env.user.partner_id:
+            raise NotFound()
         if task.task_id.task_complete_on_click:
-            task.done = True
+            task.sudo().done = True
         if task.task_url:
             return request.redirect(task.task_url)
         else:
             slug = request.env["ir.http"]._slug
             return request.redirect(f"/my/events/{slug(task.registration_id)}/")
+
+    @route(
+        "/my/events/<int:registration_id>/document/<string:document>",
+        auth="user",
+        website=True,
+    )
+    def registration_document(self, registration_id, document, **kwargs):
+        """A confidential document of a participant: for the participant
+        and for the staff of its group, nobody else."""
+        group = DOCUMENT_GROUPS.get(document)
+        if not group:
+            raise NotFound()
+        registration = (
+            request.env["event.registration"].sudo().browse(registration_id).exists()
+        )
+        if not registration or not (
+            registration.partner_id == request.env.user.partner_id
+            or request.env.user.has_group(group)
+        ):
+            raise NotFound()
+        if not registration[document]:
+            raise NotFound()
+        filename = f"{document}_{registration.partner_id.name}"
+        return (
+            request.env["ir.binary"]
+            ._get_stream_from(registration, document, filename=filename)
+            .get_response(as_attachment=True)
+        )
+
+
+class MyEventsFormController(WebsiteForm):
+    @route(
+        "/my/events/form/<string:form>",
+        type="http",
+        auth="user",
+        methods=["POST"],
+        website=True,
+    )
+    def my_event_form(self, form, **kwargs):
+        """The participant forms of /my/events, for their own registration
+        only. Same answer as /website/form, which the form script expects."""
+        model_name = OWNER_FORMS.get(form)
+        if not model_name:
+            raise NotFound()
+        registration = _owned_registration(kwargs.get("registration_id"))
+        model = request.env["ir.model"].sudo()._get(model_name)
+        try:
+            values = self.extract_data(model, kwargs)["record"]
+        except ValidationError as e:
+            return json.dumps({"error_fields": e.args[0]})
+        values["registration_id"] = registration.id
+        if model_name == "event.flight":
+            record = self._save_flight(registration, values)
+        else:
+            record = request.env[model_name].sudo().create(values)
+        return json.dumps({"id": record.id})
+
+    def _save_flight(self, registration, values):
+        """A participant has one flight of each type: entering it again
+        corrects it."""
+        flight_types = dict(
+            request.env["event.flight"]._fields["flight_type"].selection
+        )
+        if values.get("flight_type") not in flight_types:
+            raise NotFound()
+        flight = registration.flight_ids.filtered(
+            lambda f: f.flight_type == values["flight_type"]
+        )
+        if flight:
+            flight.write(values)
+            return flight
+        return request.env["event.flight"].sudo().create(values)

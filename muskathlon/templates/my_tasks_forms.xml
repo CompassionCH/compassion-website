@@ -55,7 +55,7 @@
     >
       <div class="container">
         <form
-          action="/website/form/"
+          action="/my/events/form/"
           t-att-id="form_id"
           method="post"
           enctype="multipart/form-data"
@@ -64,6 +64,7 @@
           data-success-mode="redirect"
           t-attf-data-success-page="/my/events/#{slug(registration)}#{'' if other_flight else '/flight'}"
           data-model_name="event.flight"
+          data-force_action="flight"
         >
           <div class="s_website_form_rows row s_col_no_bgcolor">
             <div
@@ -247,7 +248,7 @@
       <div class="container">
         <form
           id="event_registration_form"
-          action="/website/form/"
+          action="/my/events/form/"
           method="post"
           enctype="multipart/form-data"
           class="o_mark_required"
@@ -255,6 +256,7 @@
           data-success-mode="redirect"
           t-attf-data-success-page="/my/events/#{slug(registration)}"
           data-model_name="event.registration.form"
+          data-force_action="registration_edit"
         >
           <div class="s_website_form_rows row s_col_no_bgcolor">
             <div
@@ -364,7 +366,7 @@
       <div class="container">
         <form
           id="event_registration_form"
-          action="/website/form/"
+          action="/my/events/form/"
           method="post"
           enctype="multipart/form-data"
           class="o_mark_required"
@@ -372,6 +374,7 @@
           data-success-mode="redirect"
           t-attf-data-success-page="/my/events/#{slug(registration)}"
           data-model_name="event.registration.form"
+          data-force_action="registration_edit"
         >
           <div class="s_website_form_rows row s_col_no_bgcolor">
             <div
