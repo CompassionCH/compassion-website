@@ -40,3 +40,8 @@ This module comes with changes in my_compassion, for every provider:
   payment mode's provider;
 - an off-session charge decides on what its own send returned, not on a
   state a provider notification set since.
+
+The fast checkout of a website whose company offers PayU asks the name on
+the card under the e-mail, before the payment page. The card form of that
+page then takes it, its own name field hidden. Other companies keep their
+fast checkout unchanged.
