@@ -36,7 +36,10 @@ class TestFastCheckoutDetails(HttpCase, DigitalSeamCase):
     def _make_pending_signup(self, email="fast-checkout-details@example.org"):
         """A confirmed signup still waiting for its sponsor's name."""
         contract = self._make_digital_contract()
-        contract.my2_signup = True
+        # what the wizard sets on a fast-checkout signup
+        contract.write(
+            {"my2_signup": True, "my2_details_awaited_partner": contract.partner_id.id}
+        )
         contract.partner_id.write(
             {
                 "lastname": self.env["res.partner"].MY2_PLACEHOLDER_NAME,

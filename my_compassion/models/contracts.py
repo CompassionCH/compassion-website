@@ -151,20 +151,21 @@ class RecurringContract(models.Model):
         That is while the partner carries the fast-checkout placeholder name,
         or, when _my2_details_mandatory says the form is a required step,
         until the sponsor submits it even though the payment provider
-        already supplied a name. Both only ever hold for the partner the
-        anonymous checkout created itself: never for a returning sponsor,
-        nor once staff merged that partner into another or changed the
-        payer.
+        already supplied a name.
+
+        Both only while the contract's partner is still the one the
+        anonymous checkout created (my2_details_awaited_partner): not once
+        staff changed the payer, nor once they merged that partner into an
+        existing sponsor, which also copies my2_name_placeholder onto the
+        sponsor (base.partner.merge keeps any truthy value). Submitting the
+        form clears the id, which ends the wait for good.
         """
         self.ensure_one()
-        if not self.my2_signup:
+        awaited = self.my2_details_awaited_partner
+        if not (self.my2_signup and awaited and self.partner_id.id == awaited):
             return False
-        if self.partner_id.my2_name_placeholder:
-            return True
         return bool(
-            self.my2_details_awaited_partner
-            and self.partner_id.id == self.my2_details_awaited_partner
-            and self._my2_details_mandatory()
+            self.partner_id.my2_name_placeholder or self._my2_details_mandatory()
         )
 
     def _my2_details_mandatory(self):

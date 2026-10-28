@@ -135,9 +135,8 @@ class TestCardholderNameCapture(DigitalSeamCase):
             self.assertFalse(self.signup.my2_details_awaited_partner)
 
     def test_mandatory_form_never_opens_on_another_partner(self):
-        """Staff merging the fast-checkout partner into an existing sponsor,
-        or setting another payer, puts a partner on the signup that this
-        checkout did not create: the form must not open on it."""
+        """Staff setting another payer puts a partner on the signup that
+        this checkout did not create: the form must not open on it."""
         existing = self.env["res.partner"].create(
             {"firstname": "Existing", "lastname": "Sponsor"}
         )
@@ -146,6 +145,21 @@ class TestCardholderNameCapture(DigitalSeamCase):
         with self._mandatory():
             self.assertFalse(self.signup._my2_details_pending())
             self.assertFalse(self.signup._my2_issue_details_token())
+
+    def test_form_never_opens_on_a_sponsor_merged_into(self):
+        """Merging the still-unnamed checkout partner into an existing
+        sponsor moves the signup to the sponsor and copies the placeholder
+        flag onto them (base.partner.merge keeps any truthy value). The
+        sponsor's own name and data must not be offered to the visitor."""
+        existing = self.env["res.partner"].create(
+            {"firstname": "Existing", "lastname": "Sponsor", "phone": "+41 79 000"}
+        )
+        # what base.partner.merge leaves behind
+        existing.my2_name_placeholder = True
+        self.signup.partner_id = existing
+        for mandatory in (False, True):
+            with self.subTest(mandatory=mandatory), self._mandatory(mandatory):
+                self.assertFalse(self.signup._my2_details_pending())
 
     def test_prefill_ignores_a_refused_attempt(self):
         """A refused attempt may have been made with someone else's card."""
