@@ -138,13 +138,12 @@ class PaymentTransaction(models.Model):
     def _my2_is_usable_cardholder_name(self, name):
         """Whether a provider-reported name may stand in for the sponsor's own.
 
-        Core hands the provider partner.name as the payer's name - Stripe
-        fills both the Payment Element's defaultValues and the Stripe Customer
-        with it - so a fast-checkout sponsor's own placeholder can come
-        straight back on the confirmed-payment notification. Taking it for a
-        name clears my2_name_placeholder, and that flag is what
-        _my2_details_pending keys on: the details form would stop rendering
-        and the sponsor would never be asked at all.
+        Core hands the provider the partner's name as the payer's (Stripe's
+        Payment Element defaultValues, the partner_name snapshot that create
+        fills with the placeholder), so a fast-checkout sponsor's own
+        placeholder can come straight back on the confirmed-payment
+        notification. Taking it for a name would clear my2_name_placeholder
+        and write "(pending)" as the sponsor's real name.
 
         Whitespace is not a name either: split_partner_name raises IndexError
         on a string that splits to nothing.
@@ -246,9 +245,10 @@ class PaymentTransaction(models.Model):
 
         Split with payment_utils.split_partner_name, the same helper the
         providers use in the other direction, so a compound name is treated
-        the same everywhere. The sponsor reviews and corrects it on the
-        details form, so an imperfect split is not a problem; overwriting a
-        real name would be, which _my2_replace_placeholder_name prevents.
+        the same everywhere. Where the details form is a required step
+        (recurring.contract._my2_details_mandatory) the sponsor still reviews
+        and corrects it there. Overwriting a real name would be wrong, which
+        _my2_replace_placeholder_name prevents.
         """
         for tx in self:
             if not tx._my2_is_usable_cardholder_name(tx.my2_cardholder_name):

@@ -56,6 +56,13 @@ class RecurringContract(models.Model):
         " MyCompassion signup wizard. Such sponsors are invited to create"
         " their portal account once the sponsorship is confirmed.",
     )
+    my2_details_awaited = fields.Boolean(
+        string="Details form awaited",
+        readonly=True,
+        copy=False,
+        help="Fast-checkout signup whose sponsor has not submitted the"
+        " post-payment details form yet. See _my2_details_pending.",
+    )
     my2_details_token = fields.Char(
         string="Details form token",
         readonly=True,
@@ -134,12 +141,33 @@ class RecurringContract(models.Model):
         return last_tx.state in ("cancel", "error")
 
     def _my2_details_pending(self):
-        """Whether this signup is still waiting for its sponsor's real name.
+        """Whether this signup still waits for its post-payment details form.
 
         The one state in which the details form may write to the partner.
+        That is while the partner carries the fast-checkout placeholder name,
+        or, when _my2_details_mandatory says the form is a required step,
+        until the sponsor submits it even though the payment provider
+        already supplied a name. Both only ever hold for a partner the
+        anonymous checkout created itself, never for a returning sponsor.
         """
         self.ensure_one()
-        return bool(self.my2_signup and self.partner_id.my2_name_placeholder)
+        if not self.my2_signup:
+            return False
+        if self.partner_id.my2_name_placeholder:
+            return True
+        return bool(self.my2_details_awaited and self._my2_details_mandatory())
+
+    def _my2_details_mandatory(self):
+        """Hook: whether the details form is a required step of the signup.
+
+        Off here: the form exists to ask the name the fast checkout skipped,
+        so it is done once a name is known, from the provider or the
+        sponsor, and it offers to be done later by email. A country that
+        needs more from its sponsors turns it on, so the form stays due
+        until submitted and has no "do this later".
+        """
+        self.ensure_one()
+        return False
 
     def _my2_issue_details_token(self, hours=None):
         """Mint the write credential of the post-payment details form.
@@ -152,7 +180,7 @@ class RecurringContract(models.Model):
 
         - never handed out on a bare record id: callers must have proved they
           are the session that paid, or be the authenticated sponsor;
-        - useless once the name is real (_my2_details_pending), so a
+        - useless once the details are in (_my2_details_pending), so a
           replayed link cannot overwrite what the sponsor typed;
         - a write credential only. It must never gate a read, or the form
           becomes a "type an email, pay, read the owner's details" endpoint;
@@ -292,7 +320,6 @@ class RecurringContract(models.Model):
             "zip": partner.zip or "",
             "city": partner.city or "",
             "country_id": partner.country_id.id,
-            **self._my2_details_extra_prefill(),
         }
         if vals["firstname"] or vals["lastname"]:
             return vals
@@ -320,7 +347,8 @@ class RecurringContract(models.Model):
         _my2_replace_placeholder_name, so a real name can never be
         overwritten here either.
 
-        The token is burnt on the way out: one save per link.
+        The signup stops awaiting its details and the token is burnt on the
+        way out: one save per link.
 
         :param values: firstname, lastname, phone and the optional address
             keys (street, zip, city, country_id). Anything falsy is left
@@ -339,6 +367,7 @@ class RecurringContract(models.Model):
         partner._my2_replace_placeholder_name(
             values.get("firstname"), values.get("lastname")
         )
+        self.sudo().my2_details_awaited = False
         self._my2_consume_details_token()
         return partner
 
@@ -353,11 +382,6 @@ class RecurringContract(models.Model):
 
         :param values: the cleaned submission, extra keys included.
         """
-        self.ensure_one()
-        return {}
-
-    def _my2_details_extra_prefill(self):
-        """Hook: what the country-specific fields start filled in with."""
         self.ensure_one()
         return {}
 

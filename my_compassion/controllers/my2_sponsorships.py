@@ -489,11 +489,11 @@ class MyCompassionNewSponsorshipController(http.Controller):
         """
         sponsorship = self._fetch_details_signup(sponsorship_id, details_token)
         values = self._details_form_values(post)
-        error = ""
+        errors = []
         if not (values["firstname"] and values["lastname"] and values["phone"]):
-            error = _("Please tell us your name and phone number.")
-        else:
-            error = self._details_extra_error(values, sponsorship)
+            errors.append(_("Please tell us your name and phone number."))
+        errors.append(self._details_extra_error(values, sponsorship))
+        error = " ".join(filter(None, errors))
         if error:
             return request.render(
                 "my_compassion.my2_new_sponsorship_thank_you_page",
@@ -526,11 +526,18 @@ class MyCompassionNewSponsorshipController(http.Controller):
         page.
 
         Gated by the same token as the form itself, so this cannot be turned
-        into "post a sponsorship id, mail that sponsor".
+        into "post a sponsorship id, mail that sponsor". Where the form is a
+        required step (recurring.contract._my2_details_mandatory) there is
+        no later: the sponsor is sent back to the form.
         return: A redirection to the thank-you page, telling them to look in
-        their mailbox.
+        their mailbox, or showing the form again.
         """
         sponsorship = self._fetch_details_signup(sponsorship_id, details_token)
+        if sponsorship._my2_details_mandatory():
+            return request.redirect(
+                f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
+                f"&details_token={details_token}"
+            )
         token = sponsorship._my2_send_details_reminder()
         return request.redirect(
             f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"

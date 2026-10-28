@@ -1,5 +1,6 @@
 import re
 from datetime import timedelta
+from unittest.mock import patch
 
 from odoo import fields
 from odoo.tests import tagged
@@ -16,11 +17,20 @@ class TestFastCheckoutDetails(HttpCase, DigitalSeamCase):
     """The post-payment details form: the fast checkout's other half.
 
     Its POST route is a write endpoint on a public URL, so most of what is
-    tested here is what it refuses.
+    tested here is what it refuses. It is the optional form, with its "do
+    this later", whatever a country module installed alongside makes of
+    _my2_details_mandatory.
     """
 
     def setUp(self):
         super().setUp()
+        self.startPatcher(
+            patch.object(
+                type(self.env["recurring.contract"]),
+                "_my2_details_mandatory",
+                return_value=False,
+            )
+        )
         self.signup = self._make_pending_signup()
 
     def _make_pending_signup(self, email="fast-checkout-details@example.org"):

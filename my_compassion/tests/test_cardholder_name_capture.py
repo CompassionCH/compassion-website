@@ -1,4 +1,4 @@
-import json
+from unittest.mock import patch
 
 from odoo.tests import tagged
 
@@ -9,167 +9,146 @@ from .common import DigitalSeamCase
 
 @tagged("post_install", "-at_install")
 class TestCardholderNameCapture(DigitalSeamCase):
-    """A provider-reported cardholder name counts only when it is a name.
+    """A provider-reported cardholder name counts only when it is a name,
+    and the details form outlives it only where it is a required step.
 
-    Core hands the provider partner.name as the billing-details default
-    (payment_stripe's _stripe_get_inline_form_values and
-    _stripe_create_customer both do), and for a fast-checkout sponsor that
-    value is the "(pending)" placeholder. The provider echoes it back on its
-    confirmed-payment notification, so the capture path is offered the
-    placeholder as the sponsor's own name.
+    Core hands the provider the partner's name as the payer's, and for a
+    fast-checkout sponsor that value is the "(pending)" placeholder, so the
+    provider can echo it back on its confirmed-payment notification.
     """
 
-    def _placeholder_partner(self):
+    def setUp(self):
+        super().setUp()
+        self.signup = self._make_digital_contract()
         partner_model = self.env["res.partner"]
-        return partner_model.create(
+        self.signup.partner_id.write(
             {
                 "lastname": partner_model.MY2_PLACEHOLDER_NAME,
                 "firstname": False,
                 "my2_name_placeholder": True,
                 "email": "cardholder-capture@example.org",
-                # recurring_contract.country_id is NOT NULL and comes from the
-                # partner, so a country-less sponsor cannot hold a contract.
-                "country_id": self.env.ref("base.se").id,
             }
         )
+        self.signup.write({"my2_signup": True, "my2_details_awaited": True})
+        self.partner = self.signup.partner_id
 
-    def _transaction_for(self, partner, cardholder_name):
-        contract = self._make_digital_contract()
-        provider = contract.payment_mode_id.payment_provider_id
+    def _transaction(self, cardholder_name):
+        provider = self.signup.payment_mode_id.payment_provider_id
         transaction = self.env["payment.transaction"].create(
             {
                 "provider_id": provider.id,
                 "payment_method_id": self.env["payment.method"].search([], limit=1).id,
-                "partner_id": partner.id,
+                "partner_id": self.partner.id,
                 "amount": 100,
-                "currency_id": contract.company_id.currency_id.id,
-                "reference": f"cardholder-capture-{partner.id}",
+                "currency_id": self.signup.company_id.currency_id.id,
+                "reference": f"cardholder-capture-{self.partner.id}",
                 "operation": "online_direct",
             }
         )
         transaction.my2_cardholder_name = cardholder_name
         return transaction
 
-    # === The leak ===
+    def _mandatory(self, mandatory=True):
+        return patch.object(
+            type(self.signup), "_my2_details_mandatory", return_value=mandatory
+        )
+
+    # === What counts as a name ===
 
     def test_placeholder_echo_never_becomes_the_name(self):
-        """The provider reporting our own placeholder back must not be taken
-        for the sponsor's name. Applying it clears my2_name_placeholder, and
-        that flag is what _my2_details_pending keys on - so the details form
-        would stop rendering and the sponsor would never be asked at all."""
-        partner = self._placeholder_partner()
+        """The provider reporting the placeholder back must not be taken for
+        the sponsor's name: it would clear my2_name_placeholder and with it
+        the details form, and "(pending)" would be their name."""
         placeholder = self.env["res.partner"].MY2_PLACEHOLDER_NAME
-        transaction = self._transaction_for(partner, placeholder)
 
-        transaction._my2_apply_cardholder_name()
+        self._transaction(placeholder)._my2_apply_cardholder_name()
 
-        self.assertTrue(
-            partner.my2_name_placeholder,
-            "the placeholder echo was taken for a real name",
-        )
-        self.assertNotEqual(partner.firstname, placeholder)
-        self.assertEqual(partner.name, placeholder)
+        self.assertTrue(self.partner.my2_name_placeholder)
+        self.assertTrue(self.signup._my2_details_pending())
 
-    def test_placeholder_echo_keeps_the_details_form_alive(self):
-        """The consequence the previous test exists to prevent."""
-        partner = self._placeholder_partner()
-        transaction = self._transaction_for(
-            partner, self.env["res.partner"].MY2_PLACEHOLDER_NAME
-        )
-        contract = self._make_digital_contract()
-        contract.write(
-            {
-                "partner_id": partner.id,
-                "correspondent_id": partner.id,
-                "my2_signup": True,
-            }
-        )
-
-        transaction._my2_apply_cardholder_name()
-
-        self.assertTrue(
-            contract._my2_details_pending(),
-            "the sponsor can no longer be asked for their name",
+    def test_placeholder_is_recognised_in_any_case(self):
+        self.assertFalse(
+            self.env["payment.transaction"]._my2_is_usable_cardholder_name(
+                f"  {self.env['res.partner'].MY2_PLACEHOLDER_NAME.upper()} "
+            )
         )
 
     def test_whitespace_only_name_is_not_a_name(self):
-        partner = self._placeholder_partner()
-        transaction = self._transaction_for(partner, "   ")
+        """split_partner_name raises IndexError on a string that splits to
+        nothing, so whitespace must never reach it."""
+        self._transaction("   ")._my2_apply_cardholder_name()
 
-        transaction._my2_apply_cardholder_name()
-
-        self.assertTrue(partner.my2_name_placeholder)
-
-    # === Still works for a real name ===
+        self.assertTrue(self.partner.my2_name_placeholder)
 
     def test_real_name_is_applied(self):
-        partner = self._placeholder_partner()
-        transaction = self._transaction_for(partner, "Anna Maria Svensson")
+        self._transaction("Anna Maria Svensson")._my2_apply_cardholder_name()
 
-        transaction._my2_apply_cardholder_name()
+        self.assertFalse(self.partner.my2_name_placeholder)
+        self.assertEqual(self.partner.firstname, "Anna Maria")
+        self.assertEqual(self.partner.lastname, "Svensson")
 
-        self.assertFalse(partner.my2_name_placeholder)
-        self.assertEqual(partner.firstname, "Anna Maria")
-        self.assertEqual(partner.lastname, "Svensson")
+    def test_prefill_ignores_the_placeholder_echo(self):
+        invoice = self.signup._ensure_first_invoice()
+        transaction = self._transaction(self.env["res.partner"].MY2_PLACEHOLDER_NAME)
+        transaction.invoice_ids = invoice
 
-    # === The root cause: what Stripe is offered in the first place ===
+        prefill = self.signup._my2_details_prefill()
 
-    def _stripe_billing_details_for(self, partner):
-        # Copy the stock record rather than create one: a bare create lacks
-        # the inline form view reference, and the provider refuses to exist
-        # in any state without its key pair.
-        provider = (
-            self.env.ref("payment.payment_provider_stripe")
-            .sudo()
-            .copy(
+        self.assertEqual((prefill["firstname"], prefill["lastname"]), ("", ""))
+
+    # === How long the details form stays due ===
+
+    def test_provider_name_ends_an_optional_form(self):
+        """Where the form only exists to ask the name, a name from the
+        provider is the end of it."""
+        with self._mandatory(False):
+            self._transaction("Anna Svensson")._my2_apply_cardholder_name()
+
+            self.assertFalse(self.signup._my2_details_pending())
+
+    def test_mandatory_form_outlives_the_provider_name(self):
+        with self._mandatory():
+            self._transaction("Anna Svensson")._my2_apply_cardholder_name()
+
+            self.assertTrue(self.signup._my2_details_pending())
+            self.assertTrue(self.signup._my2_issue_details_token())
+
+    def test_mandatory_form_ends_once_submitted(self):
+        with self._mandatory():
+            self._transaction("Anna Svensson")._my2_apply_cardholder_name()
+            self.signup._my2_issue_details_token()
+
+            self.signup._my2_apply_details(
                 {
-                    "state": "test",
-                    "stripe_publishable_key": "pk_test_dummy",
-                    "stripe_secret_key": "sk_test_dummy",
+                    "firstname": "Anna",
+                    "lastname": "Svensson",
+                    "phone": "+46 70 123 45 67",
                 }
             )
-        )
-        method = self.env.ref("payment.payment_method_card").sudo()
-        method.active = True
-        raw = provider._stripe_get_inline_form_values(
-            100.0,
-            self.env.company.currency_id,
-            partner.id,
-            False,
-            payment_method_sudo=method,
-        )
-        return json.loads(raw)["billing_details"]
 
-    def test_placeholder_is_not_sent_to_stripe(self):
-        """The fix at source: a placeholder must never reach the Payment
-        Element as the payer's name, or Stripe hands it straight back."""
-        partner = self._placeholder_partner()
+            self.assertFalse(self.signup._my2_details_pending())
+            self.assertFalse(self.signup.my2_details_awaited)
 
-        billing_details = self._stripe_billing_details_for(partner)
-
-        self.assertEqual(billing_details["name"], "")
-        # everything else still goes through - only the name is withheld
-        self.assertEqual(billing_details["email"], partner.email)
-
-    def test_real_name_is_still_sent_to_stripe(self):
-        partner = self.env["res.partner"].create(
+    def test_mandatory_form_never_opens_for_a_returning_sponsor(self):
+        """A signup by a sponsor who already had a name never awaited any
+        details, so the form must not open on their partner."""
+        self.partner.write(
             {
-                "firstname": "Anna",
-                "lastname": "Svensson",
-                "email": "anna@example.org",
+                "firstname": "Returning",
+                "lastname": "Sponsor",
+                "my2_name_placeholder": False,
             }
         )
+        self.signup.my2_details_awaited = False
+        with self._mandatory():
+            self.assertFalse(self.signup._my2_details_pending())
 
-        billing_details = self._stripe_billing_details_for(partner)
-
-        self.assertEqual(billing_details["name"], "Anna Svensson")
-
-    # === Requirement 3: core's split is the right one for Nordic names ===
+    # === Splitting the provider's single name string ===
 
     def test_split_partner_name_handles_nordic_names(self):
-        """Decision 8 of T3465: no custom parser. Core's splitter keeps every
-        given name with the firstname and treats the final token as the
-        surname, which is what Nordic naming needs."""
+        """Core's splitter keeps every given name with the firstname and
+        treats the final token as the surname, which is what Nordic naming
+        needs."""
         cases = [
             ("Anna Svensson", ("Anna", "Svensson")),
             ("Anna Maria Svensson", ("Anna Maria", "Svensson")),
@@ -179,6 +158,4 @@ class TestCardholderNameCapture(DigitalSeamCase):
         ]
         for full_name, expected in cases:
             with self.subTest(full_name=full_name):
-                self.assertEqual(
-                    payment_utils.split_partner_name(full_name), expected
-                )
+                self.assertEqual(payment_utils.split_partner_name(full_name), expected)
