@@ -7,12 +7,13 @@
 ##############################################################################
 """Post-migration to 18.0.1.0.8 of theme_compassion_2025.
 
-Seed the new translatable ``website.footer_address``/``footer_phone`` fields
-(T3410) for every website running this theme, with the real per-language
-office contact info confirmed on the live compassion.ch production site:
-French-speaking Switzerland is served from Yverdon-les-Bains, German- and
-Italian-speaking Switzerland share the Bern office (with a slightly
-different phone extension per language).
+Seed the translatable ``website.footer_address``/``footer_phone`` fields of
+the Swiss websites running this theme (company partner in Switzerland) with
+the per-language office contact info of compassion.ch: French-speaking
+Switzerland is served from Yverdon-les-Bains, German- and Italian-speaking
+Switzerland share the Bern office (with a slightly different phone extension
+per language). Only the languages active on the database are written, and
+websites of other countries are left untouched.
 """
 
 from odoo import SUPERUSER_ID, api
@@ -35,8 +36,16 @@ def migrate(cr, version):
     )
     if not theme:
         return
-    websites = env["website"].search([("theme_id", "=", theme.id)])
+    # res.company.country_id is a non-stored compute: search on the partner's.
+    websites = env["website"].search(
+        [
+            ("theme_id", "=", theme.id),
+            ("company_id.partner_id.country_id.code", "=", "CH"),
+        ]
+    )
+    # A write with an inactive language in context raises a UserError.
     for lang, address, phone in FOOTER_CONTACT_BY_LANG:
-        websites.with_context(lang=lang).write(
-            {"footer_address": address, "footer_phone": phone}
-        )
+        if env["res.lang"]._lang_get(lang):
+            websites.with_context(lang=lang).write(
+                {"footer_address": address, "footer_phone": phone}
+            )
