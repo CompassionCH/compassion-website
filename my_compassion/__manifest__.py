@@ -63,6 +63,7 @@
         "views/website_view.xml",
         "views/account_move_view.xml",
         "views/contract_origin_view.xml",
+        "views/communication_view.xml",
         "data/signup_email_confirmation.xml",
         "data/communication_config.xml",
         "data/my2_details_reminder_email.xml",
