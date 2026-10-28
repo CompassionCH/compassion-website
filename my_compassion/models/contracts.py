@@ -298,7 +298,7 @@ class RecurringContract(models.Model):
         cardholder_name = ""
         transactions = self.sudo().invoice_line_ids.move_id.transaction_ids
         for tx in transactions.sorted("id", reverse=True):
-            if tx.my2_cardholder_name:
+            if tx._my2_is_usable_cardholder_name(tx.my2_cardholder_name):
                 cardholder_name = tx.my2_cardholder_name
                 break
         if cardholder_name:

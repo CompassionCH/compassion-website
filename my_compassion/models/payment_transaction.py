@@ -131,9 +131,27 @@ class PaymentTransaction(models.Model):
                 exc_info=True,
             )
             name = ""
-        if name:
+        if self._my2_is_usable_cardholder_name(name):
             self.my2_cardholder_name = name
         return res
+
+    def _my2_is_usable_cardholder_name(self, name):
+        """Whether a provider-reported name may stand in for the sponsor's own.
+
+        Core hands the provider partner.name as the payer's name - Stripe
+        fills both the Payment Element's defaultValues and the Stripe Customer
+        with it - so a fast-checkout sponsor's own placeholder can come
+        straight back on the confirmed-payment notification. Taking it for a
+        name clears my2_name_placeholder, and that flag is what
+        _my2_details_pending keys on: the details form would stop rendering
+        and the sponsor would never be asked at all.
+
+        Whitespace is not a name either: split_partner_name raises IndexError
+        on a string that splits to nothing.
+        """
+        name = (name or "").strip()
+        placeholder = self.env["res.partner"].MY2_PLACEHOLDER_NAME
+        return bool(name) and name.casefold() != placeholder.casefold()
 
     def _my2_extract_cardholder_name(self, notification_data):
         """Full name of the payer as reported by the provider, or "".
@@ -233,7 +251,7 @@ class PaymentTransaction(models.Model):
         real name would be, which _my2_replace_placeholder_name prevents.
         """
         for tx in self:
-            if not tx.my2_cardholder_name:
+            if not tx._my2_is_usable_cardholder_name(tx.my2_cardholder_name):
                 continue
             partner = tx.partner_id.sudo()
             if not partner.my2_name_placeholder:
