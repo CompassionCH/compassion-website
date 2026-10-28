@@ -292,6 +292,7 @@ class RecurringContract(models.Model):
             "zip": partner.zip or "",
             "city": partner.city or "",
             "country_id": partner.country_id.id,
+            **self._my2_details_extra_prefill(),
         }
         if vals["firstname"] or vals["lastname"]:
             return vals
@@ -332,6 +333,7 @@ class RecurringContract(models.Model):
             for key in ("phone", "street", "zip", "city", "country_id")
             if values.get(key)
         }
+        contact_vals.update(self._my2_details_extra_partner_vals(values))
         if contact_vals:
             partner.write(contact_vals)
         partner._my2_replace_placeholder_name(
@@ -339,6 +341,25 @@ class RecurringContract(models.Model):
         )
         self._my2_consume_details_token()
         return partner
+
+    def _my2_details_extra_partner_vals(self, values):
+        """Hook: partner values for the country-specific details fields.
+
+        The third side of the extension point, with the
+        my2_new_sponsorship_details_extra_fields template slot and the
+        controller's _details_extra_form_values. Anything returned here is
+        written on the partner with the rest of the contact details, so a
+        country module never has to write to the partner itself.
+
+        :param values: the cleaned submission, extra keys included.
+        """
+        self.ensure_one()
+        return {}
+
+    def _my2_details_extra_prefill(self):
+        """Hook: what the country-specific fields start filled in with."""
+        self.ensure_one()
+        return {}
 
     def _my2_details_reminder_config(self):
         """Hook: config of the "finish your details later" email.

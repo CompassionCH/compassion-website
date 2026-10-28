@@ -489,13 +489,18 @@ class MyCompassionNewSponsorshipController(http.Controller):
         """
         sponsorship = self._fetch_details_signup(sponsorship_id, details_token)
         values = self._details_form_values(post)
+        error = ""
         if not (values["firstname"] and values["lastname"] and values["phone"]):
+            error = _("Please tell us your name and phone number.")
+        else:
+            error = self._details_extra_error(values, sponsorship)
+        if error:
             return request.render(
                 "my_compassion.my2_new_sponsorship_thank_you_page",
                 self._thank_you_values(
                     sponsorship,
                     details_token=details_token,
-                    details_error=_("Please tell us your name and phone number."),
+                    details_error=error,
                     submitted=values,
                 ),
             )
@@ -637,8 +642,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
             )
         return values
 
-    @staticmethod
-    def _details_form_values(post):
+    @classmethod
+    def _details_form_values(cls, post):
         """The details form's submission, cleaned up.
 
         Whitespace-only is empty (an empty required field is the client's
@@ -658,7 +663,33 @@ class MyCompassionNewSponsorshipController(http.Controller):
             "zip": text("zip"),
             "city": text("city"),
             "country_id": country.exists().id,
+            **cls._details_extra_form_values(post),
         }
+
+    @classmethod
+    def _details_extra_form_values(cls, post):
+        """Hook: the country-specific fields of the details form.
+
+        Paired with the my2_new_sponsorship_details_extra_fields template
+        slot and with _my2_details_extra_partner_vals, which is what
+        actually saves them. Empty here - see the template for why.
+        """
+        return {}
+
+    @classmethod
+    def _details_extra_error(cls, values, sponsorship):
+        """Hook: message to show above the form instead of saving, or "".
+
+        Runs on the submission of the extra fields, before anything is
+        written. Validating here rather than letting a model constraint
+        raise is deliberate: this route is public and runs after the money
+        has been taken, so a ValidationError would be a 500 on a page the
+        sponsor reached by paying.
+
+        A country module must only reject what it cannot store at all - the
+        extra fields are optional, so "left empty" is never an error.
+        """
+        return ""
 
     @staticmethod
     def _owns_signup(sponsorship):

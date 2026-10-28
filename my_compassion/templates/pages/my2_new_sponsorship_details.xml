@@ -102,6 +102,11 @@ Page: My Compassion 2 Post-Payment Sponsor Details
           required=""
         />
       </t>
+      <!-- Country-specific identity fields. Empty here: what a country needs
+           to identify its sponsors is its own law's business (the Nordic
+           entities ask for a national ID so they can report the gift to their
+           tax authority), and nothing shared can be assumed about it. -->
+      <t t-call="my_compassion.my2_new_sponsorship_details_extra_fields" />
       <!-- Optional address. A native disclosure, so the block folds away
            without any JavaScript of its own, and stays open when it already
            holds something. -->
@@ -204,6 +209,21 @@ Page: My Compassion 2 Post-Payment Sponsor Details
                 </button>
       </div>
     </form>
+  </template>
+  <!-- POST-PAYMENT SPONSOR DETAILS EXTRA FIELDS -->
+  <template
+    id="my2_new_sponsorship_details_extra_fields"
+    name="New Sponsorship Post-Payment Details Extra Fields"
+  >
+    <!-- Extension point for country modules, rendered between the phone
+         number and the optional address. Deliberately empty: a country adds
+         its own fields by inheriting this template, so the shared form never
+         has to know which countries exist.
+
+         A field added here is read back through
+         _details_extra_form_values and saved through
+         _my2_details_extra_partner_vals - the three go together. -->
+    <t />
   </template>
   <!-- POST-PAYMENT SPONSOR DETAILS EMAILED -->
   <template
