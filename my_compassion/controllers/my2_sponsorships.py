@@ -591,9 +591,13 @@ class MyCompassionNewSponsorshipController(http.Controller):
 
         The token decides: empty means there is no form to offer, either
         because the details are already in or because this visitor never
-        proved the signup is theirs.
+        proved the signup is theirs. A required form
+        (recurring.contract._my2_details_mandatory) is never put off by the
+        details_emailed flag, which is only a query parameter.
         """
         token = False
+        if details_emailed and sponsorship._my2_details_mandatory():
+            details_emailed = None
         if sponsorship._my2_details_pending() and not details_emailed:
             if details_token and sponsorship._my2_check_details_token(details_token):
                 # The emailed link carries its own proof. Handed straight

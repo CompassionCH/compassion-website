@@ -109,6 +109,8 @@ class TestFastCheckoutDetails(HttpCase, DigitalSeamCase):
                 "reference": "fast-checkout-details-prefill",
                 "operation": "online_direct",
                 "invoice_ids": [(6, 0, invoice.ids)],
+                # the notification carrying the name moved it on from draft
+                "state": "pending",
                 "my2_cardholder_name": "Jean Michel Dupont",
             }
         )

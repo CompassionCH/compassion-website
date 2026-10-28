@@ -56,12 +56,16 @@ class RecurringContract(models.Model):
         " MyCompassion signup wizard. Such sponsors are invited to create"
         " their portal account once the sponsorship is confirmed.",
     )
-    my2_details_awaited = fields.Boolean(
-        string="Details form awaited",
+    # A plain id rather than a Many2one: merging that partner into an
+    # existing one rewrites every Many2one pointing at it, and must not carry
+    # the wait over to a partner this checkout did not create.
+    my2_details_awaited_partner = fields.Integer(
+        string="Details form awaited from partner",
         readonly=True,
         copy=False,
-        help="Fast-checkout signup whose sponsor has not submitted the"
-        " post-payment details form yet. See _my2_details_pending.",
+        help="Id of the partner the fast checkout created for this signup,"
+        " until its sponsor submits the post-payment details form; 0 after."
+        " See _my2_details_pending.",
     )
     my2_details_token = fields.Char(
         string="Details form token",
@@ -147,15 +151,21 @@ class RecurringContract(models.Model):
         That is while the partner carries the fast-checkout placeholder name,
         or, when _my2_details_mandatory says the form is a required step,
         until the sponsor submits it even though the payment provider
-        already supplied a name. Both only ever hold for a partner the
-        anonymous checkout created itself, never for a returning sponsor.
+        already supplied a name. Both only ever hold for the partner the
+        anonymous checkout created itself: never for a returning sponsor,
+        nor once staff merged that partner into another or changed the
+        payer.
         """
         self.ensure_one()
         if not self.my2_signup:
             return False
         if self.partner_id.my2_name_placeholder:
             return True
-        return bool(self.my2_details_awaited and self._my2_details_mandatory())
+        return bool(
+            self.my2_details_awaited_partner
+            and self.partner_id.id == self.my2_details_awaited_partner
+            and self._my2_details_mandatory()
+        )
 
     def _my2_details_mandatory(self):
         """Hook: whether the details form is a required step of the signup.
@@ -323,16 +333,29 @@ class RecurringContract(models.Model):
         }
         if vals["firstname"] or vals["lastname"]:
             return vals
-        cardholder_name = ""
-        transactions = self.sudo().invoice_line_ids.move_id.transaction_ids
-        for tx in transactions.sorted("id", reverse=True):
-            if tx._my2_is_usable_cardholder_name(tx.my2_cardholder_name):
-                cardholder_name = tx.my2_cardholder_name
-                break
+        cardholder_name = self._my2_cardholder_name()
         if cardholder_name:
             firstname, lastname = payment_utils.split_partner_name(cardholder_name)
             vals.update({"firstname": firstname or "", "lastname": lastname or ""})
         return vals
+
+    def _my2_cardholder_name(self):
+        """The payer's name as the provider last reported it for this
+        signup's payments, or "" when no notification carried a usable one.
+
+        It is on the transaction from the moment the notification is
+        processed, before post-processing writes it on the partner. Only a
+        payment that went or is going through counts: a refused attempt may
+        have been made with someone else's card.
+        """
+        self.ensure_one()
+        transactions = self.sudo().invoice_line_ids.move_id.transaction_ids.filtered(
+            lambda tx: tx.state in ("pending", "authorized", "done")
+        )
+        for tx in transactions.sorted("id", reverse=True):
+            if tx._my2_is_usable_cardholder_name(tx.my2_cardholder_name):
+                return tx.my2_cardholder_name
+        return ""
 
     def _my2_apply_details(self, values):
         """Save what the sponsor typed on the post-payment details form.
@@ -367,7 +390,7 @@ class RecurringContract(models.Model):
         partner._my2_replace_placeholder_name(
             values.get("firstname"), values.get("lastname")
         )
-        self.sudo().my2_details_awaited = False
+        self.sudo().my2_details_awaited_partner = 0
         self._my2_consume_details_token()
         return partner
 

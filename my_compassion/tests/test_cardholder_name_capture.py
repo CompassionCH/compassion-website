@@ -29,7 +29,12 @@ class TestCardholderNameCapture(DigitalSeamCase):
                 "email": "cardholder-capture@example.org",
             }
         )
-        self.signup.write({"my2_signup": True, "my2_details_awaited": True})
+        self.signup.write(
+            {
+                "my2_signup": True,
+                "my2_details_awaited_partner": self.signup.partner_id.id,
+            }
+        )
         self.partner = self.signup.partner_id
 
     def _transaction(self, cardholder_name):
@@ -90,7 +95,7 @@ class TestCardholderNameCapture(DigitalSeamCase):
     def test_prefill_ignores_the_placeholder_echo(self):
         invoice = self.signup._ensure_first_invoice()
         transaction = self._transaction(self.env["res.partner"].MY2_PLACEHOLDER_NAME)
-        transaction.invoice_ids = invoice
+        transaction.write({"invoice_ids": [(6, 0, invoice.ids)], "state": "done"})
 
         prefill = self.signup._my2_details_prefill()
 
@@ -127,21 +132,28 @@ class TestCardholderNameCapture(DigitalSeamCase):
             )
 
             self.assertFalse(self.signup._my2_details_pending())
-            self.assertFalse(self.signup.my2_details_awaited)
+            self.assertFalse(self.signup.my2_details_awaited_partner)
 
-    def test_mandatory_form_never_opens_for_a_returning_sponsor(self):
-        """A signup by a sponsor who already had a name never awaited any
-        details, so the form must not open on their partner."""
-        self.partner.write(
-            {
-                "firstname": "Returning",
-                "lastname": "Sponsor",
-                "my2_name_placeholder": False,
-            }
+    def test_mandatory_form_never_opens_on_another_partner(self):
+        """Staff merging the fast-checkout partner into an existing sponsor,
+        or setting another payer, puts a partner on the signup that this
+        checkout did not create: the form must not open on it."""
+        existing = self.env["res.partner"].create(
+            {"firstname": "Existing", "lastname": "Sponsor"}
         )
-        self.signup.my2_details_awaited = False
+        self._transaction("Anna Svensson")._my2_apply_cardholder_name()
+        self.signup.partner_id = existing
         with self._mandatory():
             self.assertFalse(self.signup._my2_details_pending())
+            self.assertFalse(self.signup._my2_issue_details_token())
+
+    def test_prefill_ignores_a_refused_attempt(self):
+        """A refused attempt may have been made with someone else's card."""
+        invoice = self.signup._ensure_first_invoice()
+        refused = self._transaction("Someone Else")
+        refused.write({"invoice_ids": [(6, 0, invoice.ids)], "state": "error"})
+
+        self.assertEqual(self.signup._my2_cardholder_name(), "")
 
     # === Splitting the provider's single name string ===
 
