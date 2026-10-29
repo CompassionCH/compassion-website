@@ -1004,13 +1004,14 @@
             data-snippet="s_text_block"
           >
             <div class="container">
-              <h2 class="text-center">
-                                    <span class="fa fa-check-circle" />
-                                    Thank you for
-                                    <span t-if="not project">launching</span>
-                                    <span t-else="">joining</span>
-                                    a project !
-                                </h2>
+              <h2 class="text-center" t-if="not project">
+                <span class="fa fa-check-circle" />
+                Thank you for launching a project!
+              </h2>
+              <h2 class="text-center" t-else="">
+                <span class="fa fa-check-circle" />
+                Thank you for joining a project!
+              </h2>
               <p
                 class="text-center"
               >You will receive an email with all the necessary information.</p>

@@ -2,6 +2,8 @@ import werkzeug
 
 from odoo.http import Controller, request, route
 
+from odoo.addons.website_sale.controllers.main import WebsiteSale
+
 
 class DonationController(Controller):
     @route(
@@ -130,3 +132,29 @@ class DonationController(Controller):
             )
         else:
             return request.redirect("/projects")
+
+
+class WebsiteSaleCrowdfundingDonation(WebsiteSale):
+    @route(
+        ["/shop/confirmation"],
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def shop_payment_confirmation(self, **post):
+        """Show the TOGETHER thank-you page after a project donation.
+
+        The website redirect of /shop/confirmation never applies: website
+        redirects are only used for URLs that match no route.
+        """
+        sale_order_id = request.session.get("sale_last_order_id")
+        if sale_order_id:
+            order = request.env["sale.order"].sudo().browse(sale_order_id)
+            if order.exists() and order.order_line.mapped("participant_id"):
+                tx = order.get_portal_last_transaction()
+                if order.state in ("sale", "done") or (
+                    tx and tx.state in ("authorized", "done")
+                ):
+                    return request.redirect("/together/donation/confirmation")
+        return super().shop_payment_confirmation(**post)

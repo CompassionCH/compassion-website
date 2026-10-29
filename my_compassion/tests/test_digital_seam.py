@@ -187,6 +187,40 @@ class TestDigitalSeam(DigitalSeamCase):
         tx3._post_process()
         self.assertEqual(contract.group_id.payment_token_id, token2)
 
+    def test_late_token_lands_on_group(self):
+        """A token saved after post-processing still reaches the group."""
+        contract = self._make_digital_contract()
+        invoice = contract._ensure_first_invoice()
+        provider = contract.payment_mode_id.payment_provider_id
+        method = self.env["payment.method"].search([], limit=1)
+        tx = self.env["payment.transaction"].create(
+            {
+                "provider_id": provider.id,
+                "payment_method_id": method.id,
+                "partner_id": contract.partner_id.id,
+                "amount": invoice.amount_residual,
+                "currency_id": invoice.currency_id.id,
+                "reference": "digital-seam-late-token-tx",
+                "operation": "online_direct",
+                "tokenize": True,
+                "invoice_ids": [Command.set(invoice.ids)],
+            }
+        )
+        tx._set_done()
+        tx._post_process()
+        self.assertFalse(contract.group_id.payment_token_id)
+        token = self.env["payment.token"].create(
+            {
+                "provider_id": provider.id,
+                "payment_method_id": method.id,
+                "partner_id": contract.partner_id.id,
+                "provider_ref": "digital-seam-late-token",
+                "payment_details": "4242",
+            }
+        )
+        tx.token_id = token
+        self.assertEqual(contract.group_id.payment_token_id, token)
+
     def test_ensure_first_invoice_sync(self):
         contract = self._make_digital_contract()
         self.assertEqual(contract.state, "draft")
@@ -196,6 +230,39 @@ class TestDigitalSeam(DigitalSeamCase):
         self.assertEqual(contract.state, "waiting")
         # idempotent: a second call returns the same invoice
         self.assertEqual(contract._ensure_first_invoice(), inv1)
+
+    def test_failed_first_payment_reads_the_first_invoice(self):
+        """With several open invoices, only the attempts on the earliest one,
+        which the checkout charges, tell whether the payment failed."""
+        contract = self._make_digital_contract()
+        first = contract._ensure_first_invoice()
+        later = first.copy({"invoice_date": first.invoice_date + timedelta(days=31)})
+        later.action_post()
+        self.assertEqual(contract._ensure_first_invoice(), first)
+        provider = contract.payment_mode_id.payment_provider_id
+        method = self.env["payment.method"].search([], limit=1)
+
+        def attempt(invoice, reference):
+            return self.env["payment.transaction"].create(
+                {
+                    "provider_id": provider.id,
+                    "payment_method_id": method.id,
+                    "partner_id": contract.partner_id.id,
+                    "amount": invoice.amount_residual,
+                    "currency_id": invoice.currency_id.id,
+                    "reference": reference,
+                    "operation": "online_direct",
+                    "invoice_ids": [Command.set(invoice.ids)],
+                }
+            )
+
+        # a failed attempt on a later invoice does not send the sponsor back
+        attempt(later, "digital-seam-later-failed")._set_error("declined")
+        self.assertFalse(contract._my2_failed_first_payment())
+        # the first invoice's failure is not hidden by a newer pending attempt
+        attempt(first, "digital-seam-first-failed")._set_canceled()
+        attempt(later, "digital-seam-later-pending")._set_pending()
+        self.assertTrue(contract._my2_failed_first_payment())
 
     def test_digital_revert_noop_when_paid(self):
         contract = self._make_digital_contract()
@@ -399,6 +466,49 @@ class TestDigitalSeam(DigitalSeamCase):
         self.assertEqual(failed_invoice, invoice)
         self.assertEqual(reason, "Card expired")
         self.assertEqual(contract.state, "waiting")
+
+    def test_charge_decides_on_its_own_send(self):
+        # A provider notification commits a refusal right after the charge
+        # was sent: the charge decides on what its send returned, and leaves
+        # that refusal to the notification's handling.
+        _contract, invoice, _token = self._make_chargeable_invoice()
+        group_class = self.registry["recurring.contract.group"]
+        commit = group_class._charge_cursor_commit
+        commits = []
+
+        def commit_then_notification(group_self):
+            commit(group_self)
+            commits.append(True)
+            if len(commits) == 2:  # the commit that follows the send
+                charge = self.env["payment.transaction"].search(
+                    [("invoice_ids", "in", invoice.ids)]
+                )
+                self.env.cr.execute(
+                    "UPDATE payment_transaction SET state = 'error' WHERE id = %s",
+                    [charge.id],
+                )
+                self.env.invalidate_all()
+
+        handoffs = []
+        with (
+            patch.object(
+                group_class, "_charge_cursor_commit", commit_then_notification
+            ),
+            patch.object(
+                self.registry["payment.transaction"],
+                "_send_payment_request",
+                lambda tx_self: tx_self._set_pending(),
+            ),
+            patch.object(
+                self.registry["recurring.contract"],
+                "_on_digital_charge_failed",
+                lambda contracts, failed_invoice, reason: handoffs.append(reason),
+            ),
+        ):
+            tx = self.env["recurring.contract.group"]._charge_digital_invoice(invoice)
+        self.assertEqual(len(commits), 2)
+        self.assertEqual(tx.state, "error")
+        self.assertFalse(handoffs)
 
     def test_cron_one_failure_never_aborts_batch(self):
         contract_a, invoice_a, _ta = self._make_chargeable_invoice()

@@ -123,7 +123,9 @@ class ProjectsController(Controller):
         sitemap=False,
     )
     def project_creation(self, page=1, project_id=0, **kwargs):
-        project = request.env["crowdfunding.project"]
+        # Sudo from the start: crowdfunding.project delegates to utm.campaign
+        # (_inherits), which the public user has no read access to at all.
+        project = request.env["crowdfunding.project"].sudo()
         if project_id:
             project = project.browse(project_id)
             if not project.exists():
@@ -138,8 +140,12 @@ class ProjectsController(Controller):
                 project = (
                     request.env["cms.form.crowdfunding.project.step2"]
                     .browse(step2_id)
-                    .project_id
+                    .project_id.sudo()
                 )
+        if project and not project.is_visible_to_website_visitor():
+            if not project.can_access_from_current_website():
+                raise werkzeug.exceptions.NotFound()
+            return request.redirect("/projects")
         values = {
             "page": page,
             "funds": request.env["product.product"]

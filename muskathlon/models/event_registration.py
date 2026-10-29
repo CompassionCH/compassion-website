@@ -105,13 +105,14 @@ class MuskathlonRegistration(models.Model):
             delta = start_day - today
             registration.is_in_two_months = delta.days < 60
 
-    def _inverse_passport(self):
-        super()._inverse_passport()
-        task_passport = self.env.ref("muskathlon.task_passport")
-        for registration in self.filtered("passport"):
-            registration.task_ids.filtered(lambda t: t.task_id == task_passport).write(
-                {"done": True}
-            )
+    def write(self, vals):
+        res = super().write(vals)
+        if vals.get("passport"):
+            task = self.env.ref("muskathlon.task_passport")
+            self.mapped("task_ids").filtered(
+                lambda t, m_task=task: t.task_id == m_task
+            ).write({"done": True})
+        return res
 
     @api.onchange("event_id")
     def onchange_event_id(self):

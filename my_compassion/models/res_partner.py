@@ -1,8 +1,14 @@
 import logging
+from datetime import timedelta
 
-from odoo import fields, models
+from odoo import SUPERUSER_ID, _, fields, models
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
+
+# Days after which a donor left with the placeholder name and nothing else
+# (an abandoned email step) is archived.
+ABANDONED_DONOR_DAYS = 30
 
 
 class Partner(models.Model):
@@ -18,13 +24,24 @@ class Partner(models.Model):
         string="Name is a placeholder",
         readonly=True,
         copy=False,
-        help="The partner was created by a fast checkout before its sponsor"
-        " gave their name. Everything that greets the sponsor by name waits"
-        " for _my2_replace_placeholder_name to clear this flag.",
+        help="The partner was created by a fast checkout or a visitor's"
+        " donation before its donor or sponsor gave their name. Everything that"
+        " greets them by name waits for a real name to clear this flag.",
+    )
+
+    my2_email_unverified = fields.Boolean(
+        string="Email not verified",
+        readonly=True,
+        copy=False,
+        help="The partner was created from an email a visitor typed (a donation"
+        " without an account, a fast checkout), which nobody has verified. Signup"
+        " never links an account to it; giving a name does not change that.",
     )
 
     # True if partner has ever been a sponsor.
-    is_sponsor = fields.Boolean(compute="_compute_is_sponsor", compute_sudo=True)
+    is_sponsor = fields.Boolean(
+        compute="_compute_is_sponsor", search="_search_is_sponsor", compute_sudo=True
+    )
 
     # True if partner has been a sponsor but is not currently sponsoring a child.
     is_ex_sponsor = fields.Boolean(compute="_compute_is_ex_sponsor", compute_sudo=True)
@@ -48,10 +65,10 @@ class Partner(models.Model):
     def _my2_replace_placeholder_name(self, firstname, lastname):
         """Write a sponsor's real name over their fast-checkout placeholder.
 
-        The single entry point for "this name is real now": it is also what
-        releases whatever was held back while the name was a placeholder.
-        Called from the payment notification handler and from the
-        post-payment details form.
+        It also releases whatever was held back while the name was a
+        placeholder, as a real name written on the partner another way does
+        (see write). Called from the payment notification handler and from
+        the post-payment details form.
 
         A partner whose name is already real is never touched, so a late
         payment notification can never overwrite what the sponsor typed.
@@ -73,6 +90,82 @@ class Partner(models.Model):
         updated._my2_on_placeholder_name_replaced()
         return updated
 
+    def write(self, vals):
+        """A real name written over the placeholder another way than
+        _my2_replace_placeholder_name (e.g. staff typing it on the partner
+        after calling the donor) clears the flag too, and releases what
+        waited for it, once the whole write is done (the name's inverse
+        writes the first and last names one after the other)."""
+        if (
+            "my2_name_placeholder" in vals
+            or not {"name", "firstname", "lastname"} & vals.keys()
+            or self.env.context.get("my2_naming")
+        ):
+            return super().write(vals)
+        placeholders = self.filtered("my2_name_placeholder")
+        if not placeholders:
+            return super().write(vals)
+        res = super(Partner, self.with_context(my2_naming=True)).write(vals)
+        named = placeholders.filtered(
+            lambda p: (p.firstname or p.lastname)
+            and self.MY2_PLACEHOLDER_NAME not in (p.firstname, p.lastname)
+        )
+        if named:
+            named.write({"my2_name_placeholder": False})
+            named._my2_on_placeholder_name_replaced()
+        return res
+
+    def _my2_cron_archive_abandoned_donors(self, limit=500):
+        """Archive the donors of abandoned visitor checkouts: still the
+        placeholder name after ABANDONED_DONOR_DAYS, no account, and nothing
+        else - no contract, invoice or confirmed order, and no payment that
+        went through or may still (_my2_used_donors). Each email
+        step of a visitor creates one (an unverified email is never matched to
+        an existing partner).
+
+        Goes through all of them, limit at a time: the donors it keeps stay
+        placeholders, and must not fill the batch of every later run."""
+        domain = [
+            ("my2_name_placeholder", "=", True),
+            (
+                "create_date",
+                "<",
+                fields.Datetime.now() - timedelta(days=ABANDONED_DONOR_DAYS),
+            ),
+            ("user_ids", "=", False),
+        ]
+        archived = 0
+        last_id = 0
+        while True:
+            candidates = self.search(
+                [*domain, ("id", ">", last_id)], order="id", limit=limit
+            )
+            if not candidates:
+                break
+            last_id = candidates[-1].id
+            abandoned = candidates - candidates._my2_used_donors()
+            abandoned.write({"active": False})
+            archived += len(abandoned)
+        _logger.info("Archived %s abandoned visitor donors.", archived)
+
+    def _my2_used_donors(self):
+        """The partners among self with a contract, an invoice, a confirmed
+        order, or a payment that went through or may still
+        (payment.transaction._my2_may_still_succeed)."""
+        used = self.browse()
+        for model, fnames, extra in (
+            ("recurring.contract", ("partner_id", "correspondent_id"), []),
+            ("account.move", ("partner_id",), []),
+            ("sale.order", ("partner_id",), [("state", "=", "sale")]),
+        ):
+            records = self.env[model].with_context(active_test=False)
+            for fname in fnames:
+                used |= records.search([(fname, "in", self.ids), *extra]).mapped(fname)
+        payments = self.env["payment.transaction"].search(
+            [("partner_id", "in", self.ids)]
+        )
+        return used | payments._my2_may_still_succeed().partner_id
+
     def _my2_on_placeholder_name_replaced(self):
         """Everything that had to wait for the sponsor's real name.
 
@@ -80,15 +173,19 @@ class Partner(models.Model):
         best-effort: it runs inside payment notification handling, where an
         exception would roll back the recorded payment outcome and make the
         provider redeliver the notification into the same crash.
+
+        Runs as the superuser, not as the user whose request gave the name
+        (the public user for the thank-you and details forms): what it
+        creates and queues - invitations, letters - is created, rendered and
+        sent as the user of its environment.
         """
         if not self:
             return
+        self = self.with_user(SUPERUSER_ID)
         try:
             with self.env.cr.savepoint():
-                contracts = (
-                    self.env["recurring.contract"]
-                    .sudo()
-                    .search([("partner_id", "in", self.ids)])
+                contracts = self.env["recurring.contract"].search(
+                    [("partner_id", "in", self.ids)]
                 )
                 pending = contracts._my2_pending_portal_invitations()
                 pending._my2_send_portal_invitation()
@@ -96,6 +193,22 @@ class Partner(models.Model):
             _logger.error(
                 "Could not run the post-placeholder handling of partners %s;"
                 " their portal invitation may need to be sent by hand.",
+                self.ids,
+                exc_info=True,
+            )
+        try:
+            with self.env.cr.savepoint():
+                self.env["partner.communication.job"].search(
+                    [
+                        ("partner_id", "in", self.ids),
+                        ("state", "=", "pending"),
+                        ("config_id.my2_wait_for_name", "=", True),
+                    ]
+                )._my2_release_held()
+        except Exception:
+            _logger.error(
+                "Could not release the communications held for the name of"
+                " partners %s; they wait in the pending communications.",
                 self.ids,
                 exc_info=True,
             )
@@ -183,10 +296,35 @@ class Partner(models.Model):
         for partner in self:
             partner_contracts = contracts_by_partner.get(partner.id, [])
             partner.is_sponsor = any(
-                c.state in ["waiting", "active"]
+                c.state in ["waiting", "mandate", "active"]
                 or (c.state == "terminated" and not c.exit_communication_sent)
                 for c in partner_contracts
             )
+
+    def _search_is_sponsor(self, operator, value):
+        """Same rule as _compute_is_sponsor, evaluated on the contracts."""
+        if operator not in ("=", "!=") or not isinstance(value, bool):
+            raise UserError(
+                _("Operation not supported on is_sponsor: %(op)s %(value)s")
+                % {"op": operator, "value": value}
+            )
+        contracts = (
+            self.env["recurring.contract"]
+            .sudo()
+            .search(
+                [
+                    ("child_id", "!=", False),
+                    "|",
+                    ("state", "in", ["waiting", "mandate", "active"]),
+                    "&",
+                    ("state", "=", "terminated"),
+                    ("exit_communication_sent", "=", False),
+                ]
+            )
+        )
+        partner_ids = (contracts.partner_id | contracts.correspondent_id).ids
+        is_positive = (operator == "=") == value
+        return [("id", "in" if is_positive else "not in", partner_ids)]
 
     def _compute_is_ex_sponsor(self):
         """

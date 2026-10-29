@@ -111,6 +111,43 @@ class DigitalSeamCase(TransactionCase):
             vals.update({"type": "S", "child_id": child.id})
         return self.env["recurring.contract"].with_context(no_upsert=True).create(vals)
 
+    def _providers_the_group_cannot_charge_with(self, group):
+        """{reason: provider} for providers whose cards a group never takes:
+        another provider than its payment mode's, or one of another
+        company."""
+        other_company = self.env["res.company"].create(
+            {"name": "Digital Seam Other Company"}
+        )
+        return {
+            reason: self.env["payment.provider"].create(
+                {
+                    "name": f"Digital Seam {reason} provider",
+                    "code": "none",
+                    "company_id": company.id,
+                    "state": "test",
+                }
+            )
+            for reason, company in (
+                ("another", group.company_id),
+                ("foreign", other_company),
+            )
+        }
+
+    def _move_to_another_company(self, group):
+        """Put the group, without its card, in another company than its
+        payment mode and provider. The ORM refuses that: forced, so that only
+        the company tells a card the group cannot be charged with."""
+        group.payment_token_id = False
+        other_company = self.env["res.company"].create(
+            {"name": "Digital Seam Moved Company"}
+        )
+        self.env.flush_all()
+        self.env.cr.execute(
+            "UPDATE recurring_contract_group SET company_id = %s WHERE id = %s",
+            [other_company.id, group.id],
+        )
+        self.env.invalidate_all()
+
     def _make_chargeable_invoice(self, company=None):
         """An active-cycle situation for the charge cron: a digital contract
         with a posted, due, unpaid invoice and a saved token on its group.
@@ -122,7 +159,9 @@ class DigitalSeamCase(TransactionCase):
         invoice = contract._ensure_first_invoice()
         invoice.invoice_date_due = fields.Date.today() - timedelta(days=1)
         provider = contract.payment_mode_id.payment_provider_id
-        method = self.env["payment.method"].search([], limit=1)
+        # payment methods are inactive until a provider activates them: this
+        # one exists on every database
+        method = self.env.ref("payment.payment_method_unknown")
         token = self.env["payment.token"].create(
             {
                 "provider_id": provider.id,

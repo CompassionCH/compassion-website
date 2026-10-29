@@ -1,5 +1,22 @@
 <odoo>
   <template
+    id="my_events_menu"
+    name="My Events User Menu Link"
+    inherit_id="portal.user_dropdown"
+  >
+    <xpath expr="//div[@id='o_logout_divider']" position="before">
+      <a
+        t-if="user_id.partner_id.registration_ids.filtered(lambda r: r.state != 'cancel')"
+        href="/my/events"
+        role="menuitem"
+        class="dropdown-item ps-3"
+      >
+        <i class="fa fa-fw fa-calendar me-1 small text-primary text-primary-emphasis" />
+        My Events
+      </a>
+    </xpath>
+  </template>
+  <template
     id="portal_events"
     inherit_id="portal.portal_my_home"
     name="My Events"

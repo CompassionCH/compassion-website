@@ -1,11 +1,15 @@
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
+    # Per company: each office publishes its own funds and gifts (the products
+    # are shared between the companies).
     activate_for_my_compassion = fields.Boolean(
-        help="Publish the product as an available donation on the MyCompassion website"
+        company_dependent=True,
+        help="Publish the product as an available donation on the MyCompassion "
+        "website of the current company",
     )
 
     # General
@@ -100,29 +104,42 @@ class ProductTemplate(models.Model):
         help="Content of the testimony visible on the web page of the fund/gift",
     )
 
-    # Donation suggestions
-    my_compassion_donation_amount_low = fields.Monetary(
+    # Donation suggestions, per company in the currency of the company: a
+    # shared product's currency_id is always the main company's one. A company
+    # that sets none reads the company-less ir.default values
+    # (data/donation_amount_defaults.xml).
+    my_compassion_donation_amount_low = fields.Float(
         string="Lowest Amount",
-        currency_field="currency_id",
-        default=15.0,
+        company_dependent=True,
+        copy=True,
         help="Lowest price suggestion when making a donation",
     )
 
-    my_compassion_donation_amount_medium = fields.Monetary(
+    my_compassion_donation_amount_medium = fields.Float(
         string="Medium Amount",
-        currency_field="currency_id",
-        default=50.0,
+        company_dependent=True,
+        copy=True,
         help="Medium price suggestion when making a donation",
     )
 
-    my_compassion_donation_amount_high = fields.Monetary(
+    my_compassion_donation_amount_high = fields.Float(
         string="Highest Amount",
-        currency_field="currency_id",
-        default=100.0,
+        company_dependent=True,
+        copy=True,
         help="Highest price suggestion when making a donation",
     )
 
-    def get_donation_limits(self, company, partner, sponsorship_id=None):
+    my_compassion_currency_id = fields.Many2one(
+        "res.currency",
+        compute="_compute_my_compassion_currency_id",
+        help="Currency of the suggested amounts: the current company's one",
+    )
+
+    @api.depends_context("company")
+    def _compute_my_compassion_currency_id(self):
+        self.my_compassion_currency_id = self.env.company.currency_id
+
+    def get_donation_limits(self, company, partner, sponsorship_id=None, order=None):
         """
         Returns the donation limits for the product (optionally tied to a sponsorship)
         in the form:
@@ -131,6 +148,9 @@ class ProductTemplate(models.Model):
             "max_amount": int,               # If amount is limited
             "remaining_donations": int,      # If frequency is limited
         }
+        `order` is the donor's current cart. Only that cart may be counted: an
+        abandoned order stays in `draft` forever after a failed payment, so
+        counting every open order lets a failed payment eat the allowance (T3451).
         """
         limits = {}
         product_limits = (
@@ -176,18 +196,9 @@ class ProductTemplate(models.Model):
                 other_gifts_count = (
                     self.env["sponsorship.gift"].sudo().search_count(domain)
                 )
-                # Add gifts currently in the user's cart
-                sale_order = (
-                    self.env["sale.order"]
-                    .sudo()
-                    .search(
-                        [
-                            ("partner_id", "=", partner.id),
-                            ("state", "in", ["draft", "sent"]),
-                        ]
-                    )
-                )
-                order_lines = sale_order.order_line.filtered(
+                # Add gifts currently in the donor's cart
+                cart = order or self.env["sale.order"]
+                order_lines = cart.sudo().order_line.filtered(
                     lambda line: line.product_template_id.id == self.id
                     and (
                         (not sponsorship_id)

@@ -46,6 +46,11 @@
             />
             </div>
           </div>
+          <!-- PREVIOUS ATTEMPT FAILED -->
+          <div t-if="payment_failed" class="alert alert-danger w-100" role="alert">
+            Your payment did not go through. Please try again, or use another
+            card.
+          </div>
           <!-- PAYMENT FORM -->
           <div class="w-100 px-2 px-lg-0 mb-3">
             <t t-call="payment.form" />
