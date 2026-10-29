@@ -176,6 +176,12 @@ class RecurringContract(models.Model):
         sponsor, and it offers to be done later by email. A country that
         needs more from its sponsors turns it on, so the form stays due
         until submitted and has no "do this later".
+
+        Either way the form only reaches a partner the fast checkout created
+        with a placeholder name (my2_details_awaited_partner, see
+        _my2_details_pending). A sponsor who signs up logged in keeps their
+        own partner and never sees it, so whatever a country adds to the
+        form is not collected from them.
         """
         self.ensure_one()
         return False

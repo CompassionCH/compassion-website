@@ -693,12 +693,17 @@ class MyCompassionNewSponsorshipController(http.Controller):
 
         Runs on the submission of the extra fields, before anything is
         written. Validating here rather than letting a model constraint
-        raise is deliberate: this route is public and runs after the money
-        has been taken, so a ValidationError would be a 500 on a page the
-        sponsor reached by paying.
+        raise is deliberate: this route is public and runs once the
+        sponsorship is created, usually paid, so a ValidationError would be
+        a 500 on the page the sponsor reached by signing up.
 
-        A country module must only reject what it cannot store at all - the
-        extra fields are optional, so "left empty" is never an error.
+        Whether an extra field may be left empty is the country module's
+        call. Where the form is a required step
+        (recurring.contract._my2_details_mandatory) it has no "do this
+        later", so the sponsor only gets past this message by changing what
+        they typed. Requiring a field some sponsors cannot fill, such as a
+        national ID a foreign resident does not have, would leave them stuck
+        on the form after signing up.
         """
         return ""
 
