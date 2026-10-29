@@ -40,3 +40,12 @@ This module comes with changes in my_compassion, for every provider:
   payment mode's provider;
 - an off-session charge decides on what its own send returned, not on a
   state a provider notification set since.
+
+The fast checkout of a website whose company offers PayU (a published
+mode of a PayU provider that is not disabled) asks the name on the card
+under the e-mail, before the payment page. Only the PayU buttons require it:
+the other modes of the page (e.g. a standing order) take no card. The name
+is kept in the session by sponsorship, until its first payment is done, and
+prefills the card form of the payment page, where it can still be corrected
+(a typo, another card after a refused payment). Other companies keep their
+fast checkout unchanged.
