@@ -19,8 +19,11 @@ class ResPartner(models.Model):
         readonly=False,
     )
 
-    passport = fields.Binary(attachment=True)
-    passport_name = fields.Char(compute="_compute_passport_name")
+    # Confidential: the participant gets it through /my/events (T3572).
+    passport = fields.Binary(attachment=True, groups="event.group_event_user")
+    passport_name = fields.Char(
+        compute="_compute_passport_name", groups="event.group_event_user"
+    )
 
     def _compute_passport_name(self):
         for partner in self:

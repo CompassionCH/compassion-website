@@ -144,8 +144,12 @@ class EventRegistration(models.Model):
     )
     profile_name = fields.Char()
     ambassador_quote = fields.Text()
+    # Confidential, like on the partner: the related field must not open
+    # them to whoever reads registrations (T3572).
     criminal_record = fields.Binary(
-        related="partner_id.criminal_record", readonly=False
+        related="partner_id.criminal_record",
+        readonly=False,
+        groups="child_protection.group_criminal_record",
     )
     medical_survey_id = fields.Many2one(
         "survey.user_input", "Medical survey", compute="_compute_surveys"
@@ -174,7 +178,11 @@ class EventRegistration(models.Model):
         string="Emergency contact relation type",
     )
     birth_name = fields.Char()
-    passport = fields.Binary(related="partner_id.passport", readonly=False)
+    passport = fields.Binary(
+        related="partner_id.passport",
+        readonly=False,
+        groups="event.group_event_user",
+    )
     passport_number = fields.Char()
     passport_expiration_date = fields.Date()
     survey_count = fields.Integer(compute="_compute_survey_count")
@@ -613,6 +621,20 @@ class EventRegistration(models.Model):
         if self.env.context.get("registration_incomplete"):
             return True
         return super()._update_mail_schedulers()
+
+    @api.model
+    def website_form_input_filter(self, request, values):
+        """The public registration form registers the logged-in user, or a
+        visitor matched or created from what they typed. A partner_id or a
+        match_update sent by the browser would attach the registration to
+        someone else's partner and overwrite their data (T3572)."""
+        values.pop("match_update", None)
+        user = request.env.user
+        if user._is_public():
+            values.pop("partner_id", None)
+        else:
+            values["partner_id"] = user.partner_id.id
+        return values
 
     @api.model_create_multi
     def create(self, vals_list):
