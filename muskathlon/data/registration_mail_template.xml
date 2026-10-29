@@ -74,6 +74,14 @@
               <strong>Comments:</strong>
               <t t-esc="object.comments" />
             </li>
+            <t
+              t-set="picture_url"
+              t-value="object.sudo()._get_profile_picture_download_url()"
+            />
+            <li t-if="picture_url">
+              <strong>Profile picture:</strong>
+              <a t-att-href="picture_url">Download</a>
+            </li>
           </ul>
         </div>
       </field>

@@ -10,7 +10,7 @@ import base64
 import binascii
 import io
 import logging
-from urllib.parse import urljoin
+from urllib.parse import quote, urljoin
 
 from markupsafe import Markup
 from PIL import Image as PILImage
@@ -19,6 +19,7 @@ from odoo import SUPERUSER_ID, _, api, fields, models
 from odoo.exceptions import ValidationError
 from odoo.http import request
 from odoo.tools import index_exists
+from odoo.tools.image import IMAGE_MAX_RESOLUTION
 
 _logger = logging.getLogger(__name__)
 
@@ -141,6 +142,11 @@ class EventRegistration(models.Model):
         string="Profile picture",
         max_width=MAX_PROFILE_PICTURE_DIMENSION,
         max_height=MAX_PROFILE_PICTURE_DIMENSION,
+    )
+    # The picture as uploaded, before the cap above, for staff to download in
+    # full quality (T3630).
+    profile_picture_original = fields.Binary(
+        "Original profile picture", attachment=True, groups="base.group_user"
     )
     profile_name = fields.Char()
     ambassador_quote = fields.Text()
@@ -455,6 +461,21 @@ class EventRegistration(models.Model):
                 limit=1,
             )
 
+    def _get_profile_picture_download_url(self):
+        """Backend link to the profile picture as uploaded (T3630), for the
+        staff notifications. It goes through the login page, which asks to log
+        in only when needed: the download alone answers Not Found when logged
+        out."""
+        self.ensure_one()
+        if not self.profile_picture_original:
+            return False
+        base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
+        download = (
+            f"/web/content/event.registration/{self.id}"
+            "/profile_picture_original?download=true"
+        )
+        return f"{base_url}/web/login?redirect={quote(download, safe='')}"
+
     def _notify_get_action_link(self, link_type, **kwargs):
         # Avoids the notifications to point to website url
         base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
@@ -464,6 +485,39 @@ class EventRegistration(models.Model):
     ##########################################################################
     #                              ORM METHODS                               #
     ##########################################################################
+    @api.model
+    def _check_profile_picture_format(self, picture_b64):
+        """Reject files that are not images Odoo can read (e.g. HEIC photos
+        from phones) with a message naming the formats the upload fields
+        accept. Odoo's own image error is not shown by the website forms
+        (T3630)."""
+        try:
+            with PILImage.open(io.BytesIO(base64.b64decode(picture_b64))) as img:
+                width, height = img.size
+        except (binascii.Error, OSError, TypeError, ValueError) as error:
+            raise ValidationError(
+                _(
+                    "The picture you uploaded could not be read. Please upload"
+                    " it as a JPG or PNG file."
+                )
+            ) from error
+        if width * height > IMAGE_MAX_RESOLUTION:
+            raise ValidationError(
+                _(
+                    "The picture you uploaded is too large (%(width)s x"
+                    " %(height)s px). Please upload a smaller JPG or PNG file.",
+                    width=width,
+                    height=height,
+                )
+            )
+
+    def _store_profile_picture_original(self, picture_b64):
+        # Unlike the other stored images, kept at its uploaded size: skip the
+        # attachment auto-resize (base.image_autoresize_max_px).
+        self.sudo().with_context(image_no_postprocess=True).write(
+            {"profile_picture_original": picture_b64}
+        )
+
     @api.constrains("profile_picture")
     def _check_profile_picture_min_size(self):
         """Reject profile pictures that cannot be printed on fundraising
@@ -528,6 +582,8 @@ class EventRegistration(models.Model):
         ).copy(default)
 
     def write(self, vals):
+        if vals.get("profile_picture"):
+            self._check_profile_picture_format(vals["profile_picture"])
         if "stage_id" in vals:
             vals["stage_date"] = fields.Date.today()
             if "state" not in vals:
@@ -538,6 +594,8 @@ class EventRegistration(models.Model):
                 ):
                     vals["state"] = stage.registration_state
         super().write(vals)
+        if "profile_picture" in vals:
+            self._store_profile_picture_original(vals["profile_picture"])
         if "stage_id" in vals:
             # Before the tasks: completing them can move the registrations on
             # right away (e.g. an account that is already activated).
@@ -593,9 +651,14 @@ class EventRegistration(models.Model):
         # Registrations wait for an employee to confirm them.
         for vals in vals_list:
             vals.setdefault("state", "draft")
+            if vals.get("profile_picture"):
+                self._check_profile_picture_format(vals["profile_picture"])
         records = super(
             EventRegistration, self.with_context(registration_incomplete=True)
         ).create(vals_list)
+        for registration, vals in zip(records, vals_list, strict=True):
+            if vals.get("profile_picture"):
+                registration._store_profile_picture_original(vals["profile_picture"])
         for registration in records:
             # Copy image fields
             if registration.profile_picture:
@@ -637,9 +700,17 @@ class EventRegistration(models.Model):
         """Inform the event responsible and the followers of the event."""
         for registration in self:
             event = registration.event_id.sudo()
+            body = Markup(_("New registration: %(name)s")) % {
+                "name": registration._get_html_link()
+            }
+            picture_url = registration.sudo()._get_profile_picture_download_url()
+            if picture_url:
+                body += Markup("<br/><a href='%s'>%s</a>") % (
+                    picture_url,
+                    _("Download the profile picture"),
+                )
             event.message_post(
-                body=Markup(_("New registration: %(name)s"))
-                % {"name": registration._get_html_link()},
+                body=body,
                 subtype_xmlid="mail.mt_comment",
                 partner_ids=event.user_id.partner_id.ids,
             )
