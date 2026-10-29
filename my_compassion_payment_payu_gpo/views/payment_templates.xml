@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-  <!-- A name typed on the fast checkout fills the card form's own field,
-       hidden: payment_form.esm.js still reads it from there. -->
+  <!-- The name typed on the fast checkout prefills the card form's own
+       field, which stays editable: a typo, or another card after a refused
+       payment. -->
   <template id="inline_form" inherit_id="payment_payu_gpo.inline_form">
-    <xpath expr="//input[@name='o_payu_gpo_cardholder_name']/.." position="attributes">
-      <attribute
-        name="t-attf-class"
-      >mt-2 #{'d-none' if payu_gpo_cardholder_name else ''}</attribute>
-    </xpath>
     <xpath expr="//input[@name='o_payu_gpo_cardholder_name']" position="attributes">
       <attribute name="t-att-value">payu_gpo_cardholder_name</attribute>
     </xpath>

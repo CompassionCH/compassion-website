@@ -20,6 +20,11 @@
         "views/my2_new_sponsorship_wizard.xml",
         "views/payment_templates.xml",
     ],
+    "assets": {
+        "web.assets_frontend": [
+            "my_compassion_payment_payu_gpo/static/src/js/*.esm.js",
+        ],
+    },
     "installable": True,
     "auto_install": True,
 }
