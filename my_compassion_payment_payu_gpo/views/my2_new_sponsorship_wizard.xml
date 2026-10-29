@@ -24,9 +24,7 @@
           maxlength="100"
           t-att-value="wizard.cardholder_name"
         />
-        <div
-          class="mt-2 very-tiny-text text-mid-grey"
-        >Needed to pay with PayU.</div>
+        <div class="mt-2 very-tiny-text text-mid-grey">Needed to pay with PayU.</div>
       </t>
     </xpath>
   </template>
@@ -34,7 +32,10 @@
     id="my2_new_sponsorship_wizard_form_content"
     inherit_id="my_compassion.my2_new_sponsorship_wizard_form_content"
   >
-    <xpath expr="//div[@t-att-data-payment-mode='payment_mode.id']" position="attributes">
+    <xpath
+      expr="//div[@t-att-data-payment-mode='payment_mode.id']"
+      position="attributes"
+    >
       <attribute
         name="t-att-data-payu-gpo"
       >wizard._my2_is_payu_gpo_mode(payment_mode) and '1'</attribute>
