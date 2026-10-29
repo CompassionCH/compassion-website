@@ -146,7 +146,7 @@
                   </div>
                   <p class="child-info-text">
                     <span class="text-mid-green font-weight-bold">I love</span>
-                    <t t-out="compassion_child.get_list('hobby_ids.value')" />
+                    <t t-out="compassion_child.get_portal_hobbies_list().lower()" />
                   </p>
                 </div>
                 <t
@@ -272,7 +272,7 @@
                                         <t
                     t-out="', '.join(list(filter(None, [compassion_child.project_id.closest_city, compassion_child.project_id.country_id.name])))"
                   />
-                                        with
+                                        with<t t-esc="' '" />
                                         <t
                     t-if="compassion_child.household_id.father_living_with_child and compassion_child.household_id.mother_living_with_child"
                   >
@@ -322,7 +322,7 @@
                                     </p>
                   <p>
                     <t
-                      t-if="compassion_child.household_id.father_living_with_child and compassion_child.household_id.male_guardian_job_type != 'Not Employed'"
+                      t-if="compassion_child.household_id.father_living_with_child and compassion_child.household_id.male_guardian_job_type != 'Not Employed' and compassion_child.household_id.male_guardian_job"
                     >
                                             My father works as a
                                             <t
@@ -332,7 +332,7 @@
                                             <t t-out="'%s.' % value" />
                                         </t>
                     <t
-                      t-if="compassion_child.household_id.mother_living_with_child and compassion_child.household_id.female_guardian_job_type != 'Not Employed'"
+                      t-if="compassion_child.household_id.mother_living_with_child and compassion_child.household_id.female_guardian_job_type != 'Not Employed' and compassion_child.household_id.female_guardian_job"
                     >
                                             My mother works as a
                                             <t

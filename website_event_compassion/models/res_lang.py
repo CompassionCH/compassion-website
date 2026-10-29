@@ -15,5 +15,5 @@ class ResLang(models.Model):
     def format(self, percent, value, grouping=False):
         res = super().format(percent, value, grouping)
         if self.code == "fr_CH":
-            res = res.replace("'", "&nbsp;")
+            res = res.replace("'", " ")
         return res

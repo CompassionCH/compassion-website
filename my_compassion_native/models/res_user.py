@@ -22,6 +22,10 @@ class ResUsers(models.Model):
             return False
         return self.device_token_ids._send_push_notification(title, body, data)
 
+    def notify_mobile_app_report(self, title, body, data=None):
+        """Per-device outcome, for callers that have someone to answer to."""
+        return self.device_token_ids._send_push_notification_report(title, body, data)
+
     def action_open_push_notification_wizard(self):
         self.ensure_one()
         return {

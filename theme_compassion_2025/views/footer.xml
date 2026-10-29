@@ -14,46 +14,58 @@
         </section>
         <section class="pt24">
           <div class="container">
+            <!-- The footer address/phone can be overridden per language on the
+                     website (footer_address/footer_phone, both translatable); when
+                     unset for the current language they fall back to the
+                     company's own address/phone. -->
+            <t
+              t-set="displayed_footer_address"
+              t-value="website.footer_address or res_company.partner_id.contact_address"
+            />
+            <t
+              t-set="displayed_footer_phone"
+              t-value="website.footer_phone or res_company.phone"
+            />
             <div class="row justify-content-center">
               <div
                 class="col-12 d-flex flex-column flex-lg-row justify-content-center align-items-center"
               >
                 <div
-                  class="py-1 px-lg-4 d-flex flex-column flex-lg-row align-items-center align-items-lg-start justify-content-center"
+                  class="mb-3 mb-md-0 py-1 px-lg-4 d-flex flex-column flex-lg-row align-items-center justify-content-center"
                 >
-                  <div class="mb-1 mb-lg-0 me-lg-2" style="font-size: 1.2rem;">
+                  <div class="mb-2 mb-lg-0 me-lg-2" style="font-size: 1.2rem;">
                     <i class="icon-marker-pin01 bg-low-yellow text-primary" />
                   </div>
                   <a
                     class="text-pure-white text-center text-lg-start"
-                    t-if="res_company.partner_id.contact_address"
-                    t-att-href="'https://www.google.com/maps/search/' + res_company.partner_id.contact_address.replace(' ', '+')"
+                    t-if="displayed_footer_address"
+                    t-att-href="'https://www.google.com/maps/search/' + displayed_footer_address.replace(' ', '+')"
                     target="_blank"
                     rel="noopener noreferrer"
                     style="max-width: 300px;"
                   >
-                    <span t-esc="res_company.partner_id.contact_address" />
+                    <span t-esc="displayed_footer_address" />
                   </a>
                 </div>
                 <div
-                  class="py-1 px-lg-4 d-flex flex-column flex-lg-row align-items-center justify-content-center"
-                  t-if="res_company.phone"
+                  class="mb-3 mb-md-0 py-1 px-lg-4 d-flex flex-column flex-lg-row align-items-center justify-content-center"
+                  t-if="displayed_footer_phone"
                 >
-                  <div class="mb-1 mb-lg-0 me-lg-2" style="font-size: 1.2rem;">
+                  <div class="mb-2 mb-lg-0 me-lg-2" style="font-size: 1.2rem;">
                     <i class="icon-phone bg-low-yellow text-primary" />
                   </div>
                   <a
                     class="text-pure-white text-center text-lg-start"
-                    t-att-href="'tel:' + res_company.phone.replace('(0)', '').replace(' ', '').replace('(', '').replace(')', '')"
+                    t-att-href="'tel:' + displayed_footer_phone.replace('(0)', '').replace(' ', '').replace('(', '').replace(')', '')"
                   >
-                    <span t-esc="res_company.phone" />
+                    <span t-esc="displayed_footer_phone" />
                   </a>
                 </div>
                 <div
-                  class="py-1 px-lg-4 d-flex flex-column flex-lg-row align-items-center justify-content-center"
+                  class="mb-3 mb-md-0 py-1 px-lg-4 d-flex flex-column flex-lg-row align-items-center justify-content-center"
                   t-if="res_company.email"
                 >
-                  <div class="mb-1 mb-lg-0 me-lg-2" style="font-size: 1.2rem;">
+                  <div class="mb-2 mb-lg-0 me-lg-2" style="font-size: 1.2rem;">
                     <i class="icon-mail01 bg-low-yellow text-primary" />
                   </div>
                   <a
@@ -70,19 +82,43 @@
         <section class="pt16">
           <div class="container">
             <div class="row align-items-center">
-              <div class="col-12 text-center mb-2">
+              <div class="col-12 text-center mb-4">
                 <p class="mb-0">
                                     Copyright ©
                                     <span t-esc="datetime.datetime.now().year" />
                                     <span t-esc="res_company.name" />
                                 </p>
+                <t
+                  t-set="company_partner"
+                  t-value="website.footer_company_ids and res_company.partner_id"
+                />
+                <p
+                  class="mb-0 mt-1"
+                  t-if="company_partner and (company_partner.vat or company_partner.company_registry)"
+                >
+                  <t t-set="is_pl" t-value="company_partner.country_id.code == 'PL'" />
+                  <span t-if="company_partner.vat">
+                    <t t-if="is_pl">NIP</t>
+                    <t t-else="" t-esc="company_partner.vat_label" />:
+                    <span t-esc="company_partner.vat" />
+                  </span>
+                  <span
+                    t-if="company_partner.vat and company_partner.company_registry"
+                    class="mx-2"
+                  >|</span>
+                  <span t-if="company_partner.company_registry">
+                    <t t-if="is_pl">REGON</t>
+                    <t t-else="">Company ID</t>:
+                    <span t-esc="company_partner.company_registry" />
+                  </span>
+                </p>
               </div>
               <div
                 class="col-12 d-flex flex-column flex-md-row justify-content-center align-items-center"
               >
-                <div class="mb-2 mb-md-0" t-if="website.privacy_policy_url">
+                <div class="mb-4 mb-md-0" t-if="website.privacy_policy_url">
                   <a
-                    class="text-pure-white me-3"
+                    class="text-pure-white me-md-3"
                     t-att-href="website.privacy_policy_url"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -91,7 +127,7 @@
                                     </a>
                   <span class="d-none d-md-inline me-3">|</span>
                 </div>
-                <div class="d-flex ms-1 mt-1">
+                <div class="mb-4 mb-md-0">
                   <a
                     t-if="website.social_facebook"
                     t-att-href="website.social_facebook"
@@ -139,7 +175,7 @@
                 </div>
                 <div class="mb-2 mb-md-0">
                   <span class="d-none d-md-inline ms-3">|</span>
-                  <a class="text-pure-white ms-3" href="/contactus">Contact</a>
+                  <a class="text-pure-white ms-0 ms-md-3" href="/contactus">Contact</a>
                 </div>
               </div>
             </div>

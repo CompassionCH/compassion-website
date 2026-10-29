@@ -61,6 +61,21 @@ class Event(models.Model):
         store=True,
     )
 
+    @api.depends("registration_ids.state", "registration_ids.active")
+    def _compute_seats(self):
+        """Unconfirmed registrations from the website are counted in the
+        attendees, but they don't take a seat until they are confirmed."""
+        super()._compute_seats()
+        draft_count = dict(
+            self.env["event.registration"]._read_group(
+                [("event_id", "in", self.ids), ("state", "=", "draft")],
+                ["event_id"],
+                ["__count"],
+            )
+        )
+        for event in self:
+            event.seats_taken += draft_count.get(event._origin, 0)
+
     def _compute_registration_open(self):
         event_announced = self.env.ref("event.event_stage_announced")
         for event in self:
@@ -101,6 +116,14 @@ class Event(models.Model):
                 event.medical_survey_id = medical_survey
             if feedback_survey != event.feedback_survey_id:
                 event.feedback_survey_id = feedback_survey
+
+    def _registration_stages(self):
+        """Stages of this event's template, narrowed to its type of trip."""
+        self.ensure_one()
+        trip_type = self.compassion_event_id.trip_type_id
+        return self.event_type_id.stage_ids.filtered(
+            lambda stage: not stage.trip_type_ids or trip_type in stage.trip_type_ids
+        )
 
     def send_communication(
         self,

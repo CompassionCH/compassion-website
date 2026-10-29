@@ -8,7 +8,7 @@
 #
 ##############################################################################
 
-from odoo import fields, models
+from odoo import Command, _, fields, models
 
 
 class OpenEventToParticipant(models.TransientModel):
@@ -46,28 +46,45 @@ class OpenEventToParticipant(models.TransientModel):
         event = self.env["crm.event.compassion"].browse(
             self.env.context.get("active_id")
         )
-        odoo_event = self.env["event.event"].create(
-            {
-                "name": event.name,
-                "event_type_id": event.event_type_id.id,
-                "user_id": self.env.uid,
-                "date_begin": event.start_date,
-                "date_end": event.end_date,
-                "seats_max": self.seats_max,
-                "compassion_event_id": event.id,
-                "participants_amount_objective": self.participants_amount_objective,
-                "custom_amount_objective": self.custom_amount_objective,
-                "fundraising": self.fundraising,
-                "donation_product_id": self.donation_product_id.id,
-                "sponsorship_donation_value": self.sponsorship_donation_value,
-            }
-        )
-        odoo_event.event_ticket_ids[:1].write(
-            {
-                "price": self.registration_fee,
-                "product_id": self.product_id.id,
-            }
-        )
+        event_vals = {
+            "name": event.name,
+            "event_type_id": event.event_type_id.id,
+            "user_id": self.env.uid,
+            "date_begin": event.start_date,
+            "date_end": event.end_date,
+            "compassion_event_id": event.id,
+            "participants_amount_objective": self.participants_amount_objective,
+            "custom_amount_objective": self.custom_amount_objective,
+            "fundraising": self.fundraising,
+            "donation_product_id": self.donation_product_id.id,
+            "sponsorship_donation_value": self.sponsorship_donation_value,
+        }
+        if self.seats_max:
+            # Otherwise keep the limit defined on the registration template,
+            # as an event limited to zero seat is always fully booked.
+            event_vals["seats_max"] = self.seats_max
+        odoo_event = self.env["event.event"].create(event_vals)
+        ticket_vals = {
+            "price": self.registration_fee,
+            "product_id": self.product_id.id,
+        }
+        ticket = odoo_event.event_ticket_ids[:1]
+        if ticket:
+            ticket.write(ticket_vals)
+        elif self.registration_fee:
+            # The registration template may not define any ticket, in which
+            # case the fee entered here would simply be lost.
+            odoo_event.event_ticket_ids = [
+                Command.create(
+                    {
+                        "name": _("Registration"),
+                        "price": self.registration_fee,
+                        "product_id": self.env.ref(
+                            "event_product.product_product_event"
+                        ).id,
+                    }
+                )
+            ]
         event.odoo_event_id = odoo_event
         return {
             "name": "Event",

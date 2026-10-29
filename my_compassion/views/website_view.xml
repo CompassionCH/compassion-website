@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <record id="view_website_form_my_compassion" model="ir.ui.view">
+    <field name="name">website.form.my_compassion</field>
+    <field name="model">website</field>
+    <field name="inherit_id" ref="website.view_website_form" />
+    <field name="arch" type="xml">
+      <xpath expr="//notebook" position="inside">
+        <page string="Footer" name="page_footer">
+          <group>
+            <field name="privacy_policy_url" widget="url" />
+            <field name="footer_address" />
+            <field name="footer_phone" />
+            <field name="footer_company_ids" />
+          </group>
+        </page>
+      </xpath>
+    </field>
+  </record>
+</odoo>

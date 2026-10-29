@@ -30,5 +30,6 @@ from . import (
     my2_lang,
     my2_portal,
     my2_contact_us,
+    my2_legal,
     website_sale,
 )

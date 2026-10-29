@@ -24,8 +24,11 @@ Page: My Compassion 2 Gifts Page
         <!-- HELPER FLAGS -->
         <t t-set="is_gift" t-value="type == 'gift'" />
         <t t-set="is_fund" t-value="type == 'fund'" />
-        <!-- BANNER -->
-        <div class="container-content">
+        <!-- BANNER (the gifts it offers take an account) -->
+        <div
+          t-if="is_gift or not request.env.user._is_public()"
+          class="container-content"
+        >
           <t t-call="theme_compassion_2025.BannerComponent">
             <t t-if="is_gift">
               <t t-set="title">Give the Gift of compassion</t>

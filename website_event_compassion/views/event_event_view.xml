@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
+  <!-- Unconfirmed registrations from the website must be visible: no "Taken" filter -->
+  <record id="event.act_event_registration_from_event" model="ir.actions.act_window">
+    <field name="context">{
+            'default_event_id': active_id,
+            'name_with_seats_availability': True,
+        }</field>
+  </record>
   <record id="view_event_event_wordpress" model="ir.ui.view">
     <field name="name">event.event.website.compassion.form</field>
     <field name="model">event.event</field>
@@ -23,8 +30,8 @@
       </header>
       <button name="%(event.act_event_registration_from_event)d" position="attributes">
         <attribute name="context">
-                    {'default_event_type_id': event_type_id, 'search_default_expected': 1}
-                </attribute>
+            {'default_event_type_id': event_type_id}
+        </attribute>
       </button>
       <xpath expr="//div[@name='button_box']/button[2]" position="attributes">
         <attribute name="context">
@@ -57,18 +64,14 @@
         expr="//field[@name='event_mail_ids']//field[@name='template_ref']"
         position="attributes"
       >
-        <attribute name="required">notification_type == 'mail'</attribute>
-        <attribute name="invisible">notification_type != 'mail'</attribute>
+        <attribute name="column_invisible">true</attribute>
+        <attribute name="widget" />
       </xpath>
       <xpath
         expr="//field[@name='event_mail_ids']//field[@name='template_ref']"
         position="before"
       >
-        <field
-          name="communication_id"
-          required="notification_type == 'communication'"
-          invisible="notification_type != 'communication'"
-        />
+        <field name="communication_id" required="true" />
       </xpath>
       <xpath
         expr="//field[@name='event_mail_ids']//field[@name='interval_type']"

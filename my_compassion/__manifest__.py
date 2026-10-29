@@ -30,7 +30,7 @@
 # pylint: disable=C8101
 {
     "name": "MyCompassion - Sponsor portal website",
-    "version": "18.0.1.0.24",
+    "version": "18.0.1.0.31",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
@@ -41,6 +41,7 @@
         # My Compassion 2 data
         "data/account_payment_method.xml",
         "data/digital_charge_cron.xml",
+        "data/abandoned_donors_cron.xml",
         "data/my2_website.xml",
         "data/auto_letter_templates_updater_cron.xml",
         # My compassion 2 assets, needs to be placed before others
@@ -59,11 +60,14 @@
         "views/my2_header_menu.xml",
         "views/child_view.xml",
         "views/payment_mode_view.xml",
+        "views/website_view.xml",
         "views/account_move_view.xml",
         "views/contract_origin_view.xml",
+        "views/communication_view.xml",
         "data/signup_email_confirmation.xml",
         "data/communication_config.xml",
         "data/my2_details_reminder_email.xml",
+        "data/donation_amount_defaults.xml",
         # My Compassion 2 pages
         "templates/pages/my2_children.xml",
         "templates/pages/my2_child_timeline.xml",
@@ -123,8 +127,10 @@
         "website_legal_page",  # OCA/website
         "gift_compassion",
         "auth_signup",
+        "google_recaptcha",  # the email step of a visitor's donation
         "http_routing",
         "website",
+        "website_crm_request",  # the /contactus form posts a crm.claim
         "auth_signup_verify_email",  # OCA/server-auth
         "theme_compassion_2025",
         "utm",
@@ -158,11 +164,13 @@
             "my_compassion/static/src/css/user_settings.css",
             # ES module JS
             "my_compassion/static/src/js/toast_service.js",
+            "my_compassion/static/src/js/my2_auth_submit_guard.js",
             "my_compassion/static/src/js/show_password.js",
             "my_compassion/static/src/js/my2_donation_form.js",
             "my_compassion/static/src/js/my2_donation_details.js",
             "my_compassion/static/src/js/my2_add_a_gift.js",
             "my_compassion/static/src/js/my2_gift_package.js",
+            "my_compassion/static/src/js/my2_donor_captcha.esm.js",
             "my_compassion/static/src/js/my2_donations.js",
             "my_compassion/static/src/js/my2_sponsorships.js",
             "my_compassion/static/src/js/my2_new_sponsorship_wizard.js",
@@ -185,6 +193,7 @@
         ],
         "web.assets_tests": [
             "my_compassion/static/src/js/tours/donation_tour.js",
+            "my_compassion/static/tests/tours/contact_us.js",
         ],
     },
     "demo": [],

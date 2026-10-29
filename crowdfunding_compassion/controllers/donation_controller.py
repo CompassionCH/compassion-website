@@ -1,4 +1,8 @@
+import werkzeug
+
 from odoo.http import Controller, request, route
+
+from odoo.addons.website_sale.controllers.main import WebsiteSale
 
 
 class DonationController(Controller):
@@ -15,6 +19,11 @@ class DonationController(Controller):
     )
     def project_donation_page(self, project, page=1, participant=None, **kwargs):
         """To preselect a participant, pass its id as participant query parameter"""
+        # Sudo from the start: crowdfunding.project delegates to utm.campaign
+        # (_inherits), which the public user has no read access to at all.
+        project = project.sudo()
+        if not project.can_access_from_current_website():
+            raise werkzeug.exceptions.NotFound()
         if not project.website_published and not request.env.user.has_group(
             "website.group_website_designer"
         ):
@@ -48,7 +57,7 @@ class DonationController(Controller):
         return request.render(
             "crowdfunding_compassion.project_donation_page",
             {
-                "project": project.sudo(),
+                "project": project,
                 "selected_participant": participant,
                 "page": page,
                 "skip_type_selection": skip_type_selection,
@@ -123,3 +132,29 @@ class DonationController(Controller):
             )
         else:
             return request.redirect("/projects")
+
+
+class WebsiteSaleCrowdfundingDonation(WebsiteSale):
+    @route(
+        ["/shop/confirmation"],
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def shop_payment_confirmation(self, **post):
+        """Show the TOGETHER thank-you page after a project donation.
+
+        The website redirect of /shop/confirmation never applies: website
+        redirects are only used for URLs that match no route.
+        """
+        sale_order_id = request.session.get("sale_last_order_id")
+        if sale_order_id:
+            order = request.env["sale.order"].sudo().browse(sale_order_id)
+            if order.exists() and order.order_line.mapped("participant_id"):
+                tx = order.get_portal_last_transaction()
+                if order.state in ("sale", "done") or (
+                    tx and tx.state in ("authorized", "done")
+                ):
+                    return request.redirect("/together/donation/confirmation")
+        return super().shop_payment_confirmation(**post)

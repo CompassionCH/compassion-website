@@ -29,7 +29,7 @@
 {
     "name": "Compassion Events Website",
     "summary": "Public website pages for Compassion Events with registration",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.6.4",
     "development_status": "Production/Stable",
     "category": "Marketing/Events",
     "website": "https://github.com/CompassionCH/compassion-website",
@@ -50,6 +50,7 @@
         "data/base_automation.xml",
         "data/event_message_subtype.xml",
         "data/event_type.xml",
+        "data/trip_type.xml",
         "data/form_data.xml",
         "data/product_template.xml",
         "views/event_compassion_open_wizard.xml",
@@ -59,6 +60,7 @@
         "views/registration_stage_view.xml",
         "views/registration_task_view.xml",
         "views/event_type_view.xml",
+        "views/trip_type_view.xml",
         "views/event_registration_communication_wizard.xml",
         "templates/event_page.xml",
         "templates/events_list.xml",
@@ -73,6 +75,7 @@
     ],
     "assets": {
         "web.assets_frontend": [
+            "website_event_compassion/static/src/css/event_compassion_website.css",
             "website_event_compassion/static/src/js/registration_form_page.esm.js",
             "website_event_compassion/static/src/js/donation_form.esm.js",
         ],

@@ -105,6 +105,20 @@ class CrowdfundingParticipant(models.Model):
     def get_sponsorship_url(self, participant_id):
         return self.browse(participant_id).sudo().sponsorship_url
 
+    @api.depends("name")
+    def _compute_display_name(self):
+        """
+        `name` is delegated to utm.source (_inherits), which the public user
+        has no read access to at all - and Odoo deliberately does not let
+        _inherits bypass that (related_sudo=False on inherited fields). The
+        participant's name is meant to be public (it's rendered directly on
+        their own page), and some core mechanisms - e.g. the SEO-friendly URL
+        slug builder - read display_name before a controller ever gets a
+        chance to sudo() the record, so compute it with sudo here instead.
+        """
+        for participant in self:
+            participant.display_name = participant.sudo().name
+
     def _compute_thank_you_quote(self):
         html_file = file_open(
             "partner_compassion/static/src/html/thank_you_quote_template.html"
@@ -129,8 +143,8 @@ class CrowdfundingParticipant(models.Model):
             query = url_encode(
                 {
                     "utm_medium": "Crowdfunding",
-                    "utm_campaign": participant.project_id.name,
-                    "utm_source": participant.name,
+                    "utm_campaign": participant.project_id.sudo().name,
+                    "utm_source": participant.sudo().name,
                 }
             )
             parsed_csp_url = url_parse(

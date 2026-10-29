@@ -46,7 +46,12 @@ class ProjectController(HomepageController):
         # Get project with sudo, otherwise some parts will be blocked from public
         # access, for example res.partner or account.move.line. This is
         # simpler and less prone to error than defining custom access and
-        # security rules for each of them.
+        # security rules for each of them. Sudo from the very first access:
+        # crowdfunding.project delegates to utm.campaign (_inherits), which
+        # the public user has no read access to at all, so even the
+        # can_access_from_current_website()/website_published checks below
+        # would otherwise raise before ever reaching the existing sudo() call.
+        project = project.sudo()
         if not project.can_access_from_current_website():
             raise werkzeug.exceptions.NotFound()
         if not project.website_published and not request.env.user.has_group(
@@ -55,7 +60,7 @@ class ProjectController(HomepageController):
             return request.redirect("/projects")
         return request.render(
             "crowdfunding_compassion.presentation_page",
-            self._prepare_project_values(project.sudo(), page=page, **post),
+            self._prepare_project_values(project, page=page, **post),
         )
 
     @route(
@@ -66,18 +71,24 @@ class ProjectController(HomepageController):
         sitemap=sitemap_participant,
     )
     def participant(self, participant=None, **kwargs):
+        # Sudo from the start: crowdfunding.participant delegates to
+        # utm.source (_inherits), which the public user has no read access
+        # to at all.
+        participant = participant.sudo()
         project = participant.project_id.sudo()
+        if not project.can_access_from_current_website():
+            raise werkzeug.exceptions.NotFound()
         if not project.website_published and not request.env.user.has_group(
             "website.group_website_designer"
         ):
             return request.redirect("/projects")
         sponsorships, donations = self.get_sponsorships_and_donations(
-            participant.sudo().sponsorship_ids + participant.sudo().csp_sponsorship_ids,
-            participant.sudo().invoice_line_ids,
+            participant.sponsorship_ids + participant.csp_sponsorship_ids,
+            participant.invoice_line_ids,
         )
         values = {
-            "participant": participant.sudo(),
-            "main_object": participant.sudo(),
+            "participant": participant,
+            "main_object": participant,
             "project": project,
             "impact": self.get_impact(sponsorships, donations),
             "model": "participant",

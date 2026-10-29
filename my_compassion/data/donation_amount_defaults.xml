@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <!-- Suggested donation amounts of a company that sets none on a product -->
+  <data noupdate="1">
+    <function
+      model="ir.default"
+      name="set"
+      eval="('product.template', 'my_compassion_donation_amount_low', 15.0)"
+    />
+    <function
+      model="ir.default"
+      name="set"
+      eval="('product.template', 'my_compassion_donation_amount_medium', 50.0)"
+    />
+    <function
+      model="ir.default"
+      name="set"
+      eval="('product.template', 'my_compassion_donation_amount_high', 100.0)"
+    />
+  </data>
+</odoo>

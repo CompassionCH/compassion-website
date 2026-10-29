@@ -75,7 +75,11 @@ class MuskathlonRegistration(models.Model):
         """
         for vals in vals_list:
             event = self.env["event.event"].browse(vals.get("event_id"))
-            if event.compassion_event_id.is_muskathlon:
+            # Only the dedicated Muskathlon template needs this: two of its
+            # stages share sequence 0, so the first one has to be picked
+            # explicitly. A Muskathlon running on a shared trip template keeps
+            # that template's own pipeline.
+            if event.event_type_id == self.env.ref("muskathlon.event_type_muskathlon"):
                 vals["stage_id"] = self.env.ref("muskathlon.stage_unconfirmed").id
         registrations = super().create(vals_list)
         for registration in registrations.filtered("is_muskathlon"):
@@ -101,13 +105,14 @@ class MuskathlonRegistration(models.Model):
             delta = start_day - today
             registration.is_in_two_months = delta.days < 60
 
-    def _inverse_passport(self):
-        super()._inverse_passport()
-        task_passport = self.env.ref("muskathlon.task_passport")
-        for registration in self.filtered("passport"):
-            registration.task_ids.filtered(lambda t: t.task_id == task_passport).write(
-                {"done": True}
-            )
+    def write(self, vals):
+        res = super().write(vals)
+        if vals.get("passport"):
+            task = self.env.ref("muskathlon.task_passport")
+            self.mapped("task_ids").filtered(
+                lambda t, m_task=task: t.task_id == m_task
+            ).write({"done": True})
+        return res
 
     @api.onchange("event_id")
     def onchange_event_id(self):

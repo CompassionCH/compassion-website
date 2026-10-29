@@ -25,16 +25,15 @@
       </xpath>
       <field name="selection_domain" position="after">
         <field
-          name="user_id"
-          domain="[('partner_id.number_sponsorships', '>', 0)]"
+          name="partner_id"
+          domain="[('sponsored_child_ids', '!=', False)]"
           invisible="generation_mode != 'single'"
           required="generation_mode == 'single'"
           readonly="state != 'draft'"
         />
-        <field name="partner_id" invisible="1" />
         <field
           name="child_id"
-          domain="[('sponsor_id', '=', partner_id)]"
+          domain="partner_id and [('sponsor_id', '=', partner_id)] or [('sponsor_id', '!=', False)]"
           invisible="generation_mode != 'single'"
           required="generation_mode == 'single'"
           readonly="state != 'draft'"

@@ -32,23 +32,17 @@
         <div
           class="mt-3 tiny-text"
           name="donation_contact_phone"
-          t-if="request.website.company_id.phone"
+          t-if="res_company.phone"
         >
           <i class="me-1 icon-phone body-small" />
-          <a
-            t-attf-href="tel:#{request.website.company_id.phone}"
-            class="text-low-black"
-          >
-            <t t-out="request.website.company_id.phone" />
+          <a t-attf-href="tel:#{res_company.phone}" class="text-low-black">
+            <t t-out="res_company.phone" />
           </a>
         </div>
         <div class="mt-2 tiny-text">
           <i class="me-1 icon-mail01 body-small" />
-          <a
-            t-attf-href="mailto:#{request.website.company_id.email}"
-            class="text-low-black"
-          >
-            <t t-out="request.website.company_id.email" />
+          <a t-attf-href="mailto:#{res_company.email}" class="text-low-black">
+            <t t-out="res_company.email" />
           </a>
         </div>
       </div>
@@ -68,6 +62,24 @@
     <t t-set="default_frequency" t-value="default_frequency or 'one_time'" />
     <t t-set="default_suggested_amount" t-value="default_suggested_amount or 'low'" />
     <t t-set="base_name" t-value="base_name or 'donation'" />
+    <!-- No suggestion outside the amounts the donor may give (a fund's
+         minimum, a gift's limits); the default falls on the first one left,
+         or on their own amount, filled with the minimum. -->
+    <t t-set="min_amount" t-value="request.website._my2_amount_bounds(product)[0]" />
+    <t
+      t-set="suggestions"
+      t-value="request.website._my2_offered_suggestions(product)"
+    />
+    <t
+      t-if="default_suggested_amount != 'custom' and default_suggested_amount not in [key for key, amount in suggestions]"
+      t-set="default_suggested_amount"
+      t-value="suggestions[0][0] if suggestions else 'custom'"
+    />
+    <t
+      t-if="default_suggested_amount == 'custom' and not default_custom_amount"
+      t-set="default_custom_amount"
+      t-value="min_amount"
+    />
     <div
       t-attf-class="my2_donation_form donation-inputs-container w-100 d-flex flex-column #{top_class}"
     >
@@ -146,61 +158,32 @@
         class="amount-selection"
         t-att-hidden="product.my_compassion_donation_type == 'gift'"
       >
-        <t t-call="theme_compassion_2025.FormFieldComponent">
+        <t t-if="suggestions" t-call="theme_compassion_2025.FormFieldComponent">
           <t t-set="top_class" t-value="'mt-4 w-100'" />
           <t t-set="label">Suggested amounts</t>
-          <div class="mt-1 d-flex justify-content-between">
-            <div class="donation-suggested-amount flex-grow-1">
-              <input
-                t-attf-id="#{base_name}-suggested-low"
-                type="radio"
-                t-attf-name="#{base_name}_suggested_amount"
-                value="low"
-                t-att-checked="default_suggested_amount == 'low'"
-                class="suggested-amount"
-              />
-              <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-low">
-                <t t-set="price" t-value="product.my_compassion_donation_amount_low" />
-                <t t-out="product.currency_id.name" />
-                <t t-if="price % 1 == 0" t-out="int(price)" />
-                <t t-else="" t-out="'{0:.2f}'.format(price)" />
-              </label>
-            </div>
-            <div class="donation-suggested-amount mx-3 flex-grow-1">
-              <input
-                t-attf-id="#{base_name}-suggested-medium"
-                type="radio"
-                t-attf-name="#{base_name}_suggested_amount"
-                value="medium"
-                t-att-checked="default_suggested_amount == 'medium'"
-                class="suggested-amount"
-              />
-              <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-medium">
-                <t
-                  t-set="price"
-                  t-value="product.my_compassion_donation_amount_medium"
+          <div class="mt-1 d-flex justify-content-between gap-3">
+            <t t-foreach="suggestions" t-as="suggestion">
+              <div class="donation-suggested-amount flex-grow-1">
+                <input
+                  t-attf-id="#{base_name}-suggested-#{suggestion[0]}"
+                  type="radio"
+                  t-attf-name="#{base_name}_suggested_amount"
+                  t-att-value="suggestion[0]"
+                  t-att-data-amount="suggestion[1]"
+                  t-att-checked="default_suggested_amount == suggestion[0]"
+                  class="suggested-amount"
                 />
-                <t t-out="product.currency_id.name" />
-                <t t-if="price % 1 == 0" t-out="int(price)" />
-                <t t-else="" t-out="'{0:.2f}'.format(price)" />
-              </label>
-            </div>
-            <div class="donation-suggested-amount flex-grow-1">
-              <input
-                t-attf-id="#{base_name}-suggested-high"
-                type="radio"
-                t-attf-name="#{base_name}_suggested_amount"
-                value="high"
-                t-att-checked="default_suggested_amount == 'high'"
-                class="suggested-amount"
-              />
-              <label class="mb-0 w-100" t-attf-for="#{base_name}-suggested-high">
-                <t t-set="price" t-value="product.my_compassion_donation_amount_high" />
-                <t t-out="product.currency_id.name" />
-                <t t-if="price % 1 == 0" t-out="int(price)" />
-                <t t-else="" t-out="'{0:.2f}'.format(price)" />
-              </label>
-            </div>
+                <label
+                  class="mb-0 w-100"
+                  t-attf-for="#{base_name}-suggested-#{suggestion[0]}"
+                >
+                  <t t-set="price" t-value="suggestion[1]" />
+                  <t t-out="product.my_compassion_currency_id.name" />
+                  <t t-if="price % 1 == 0" t-out="int(price)" />
+                  <t t-else="" t-out="'{0:.2f}'.format(price)" />
+                </label>
+              </div>
+            </t>
           </div>
         </t>
         <t t-call="theme_compassion_2025.FormFieldComponent">
@@ -221,7 +204,7 @@
               id="custom-amount"
               type="text"
               name="custom_amount"
-              t-att-placeholder="placeholder_text + ' ' + product.currency_id.name"
+              t-att-placeholder="placeholder_text + ' ' + product.my_compassion_currency_id.name"
               class="form-control mt-2"
               t-att-value="'{:g}'.format(default_custom_amount) if default_custom_amount else ''"
             />
@@ -235,6 +218,9 @@
           >donation limits</span>
                     </div>
           <t t-call="my_compassion.DonationFormLimitsInfo" />
+        </div>
+        <div class="donation-refusal alert alert-warning mt-3" hidden="">
+          <span class="donation-refusal-message" />
         </div>
         <div
           class="btn-submit align-self-stretch my-2 d-flex flex-column align-items-stretch"

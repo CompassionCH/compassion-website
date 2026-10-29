@@ -10,7 +10,9 @@ import base64
 import binascii
 import io
 import logging
+from urllib.parse import urljoin
 
+from markupsafe import Markup
 from PIL import Image as PILImage
 
 from odoo import SUPERUSER_ID, _, api, fields, models
@@ -40,6 +42,9 @@ MAX_PROFILE_PICTURE_RATIO = 2
 
 # Set when the picture is not a user upload (duplicate of an existing record).
 SKIP_PROFILE_PICTURE_CHECK = "skip_profile_picture_check"
+# Set when a stage change must not confirm the registration: only an employee
+# confirms a registration.
+KEEP_UNCONFIRMED = "keep_registration_unconfirmed"
 
 
 class EventRegistration(models.Model):
@@ -84,8 +89,9 @@ class EventRegistration(models.Model):
         tracking=True,
         index=True,
         copy=False,
-        domain="['|', ('event_type_ids', '=', False),"
-        "      ('event_type_ids', '=', event_id.event_type_id)]",
+        domain="['&',"
+        "  '|', ('event_type_ids', '=', False), ('event_type_ids', '=', event_type_id),"
+        "  '|', ('trip_type_ids', '=', False), ('trip_type_ids', '=', trip_type_id)]",
         group_expand="_read_group_stage_ids",
         readonly=False,
     )
@@ -104,6 +110,15 @@ class EventRegistration(models.Model):
     compassion_event_id = fields.Many2one(
         "crm.event.compassion", related="event_id.compassion_event_id", readonly=True
     )
+    event_type_id = fields.Many2one(
+        "event.type", related="event_id.event_type_id", store=True, readonly=True
+    )
+    trip_type_id = fields.Many2one(
+        "event.trip.type",
+        related="event_id.compassion_event_id.trip_type_id",
+        store=True,
+        readonly=True,
+    )
     fundraising = fields.Boolean(related="event_id.fundraising")
     amount_objective = fields.Monetary("Raise objective")
     amount_raised = fields.Monetary(readonly=True, compute="_compute_amount_raised")
@@ -115,6 +130,7 @@ class EventRegistration(models.Model):
         compute="_compute_is_published", inverse="_inverse_is_published", store=True
     )
     host_url = fields.Char(compute="_compute_host_url")
+    portal_signup_url = fields.Char(compute="_compute_portal_signup_url")
     sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
     event_name = fields.Char(related="event_id.name", tracking=True)
     # Capped high, not at display size: the picture is printed on fundraising
@@ -243,6 +259,23 @@ class EventRegistration(models.Model):
         for registration in self:
             registration.host_url = registration.website_id.domain or host
 
+    def _compute_portal_signup_url(self):
+        # The partner's signup url lands on the main website, not the event's.
+        for registration in self:
+            partner = registration.partner_id.sudo()
+            path = partner.with_context(relative_url=True)._get_signup_url_for_action(
+                url="/my/events"
+            )[partner.id]
+            registration.portal_signup_url = urljoin(registration.host_url, path)
+
+    def _compute_registration_status(self):
+        # Paying the down payment (or a free ticket) must not confirm the
+        # registration: an employee confirms it.
+        unconfirmed = self.filtered(lambda r: r.state == "draft")
+        res = super()._compute_registration_status()
+        unconfirmed.filtered(lambda r: r.state == "open").state = "draft"
+        return res
+
     @api.depends("state")
     def _compute_is_published(self):
         for registration in self:
@@ -252,10 +285,15 @@ class EventRegistration(models.Model):
         # Allow setting is_published manually
         pass
 
-    def _create_payment_link(self, move, description):
+    def _create_payment_link(self, move):
+        if not move:
+            return False
+        if not request:
+            return move.get_base_url().rstrip("/") + move.get_portal_url()
         payment_link = (
-            request.env["payment.link.wizard"]
+            self.env["payment.link.wizard"]
             .sudo()
+            .with_context(active_model=move._name, active_id=move.id)
             .create(
                 {
                     "res_id": move.id,
@@ -264,39 +302,22 @@ class EventRegistration(models.Model):
                     "currency_id": move.currency_id.id,
                     "partner_id": move.partner_id.id,
                     "amount_max": move.amount_residual,
-                    "description": description,
                 }
             )
         )
-        return payment_link.link
+        return f"{payment_link.link}&return_url=/my/events/{self.id}"
 
     def _compute_down_payment_link(self):
         for registration in self:
-            if registration.down_payment_id:
-                move = registration.down_payment_id
-                description = (
-                    _("Down payment for %s") % registration.compassion_event_id.name
-                )
-                registration.down_payment_link = (
-                    self._create_payment_link(move, description)
-                    + f"&return_url=/my/events/{registration.id}"
-                )
-            else:
-                registration.down_payment_link = False
+            registration.down_payment_link = registration._create_payment_link(
+                registration.down_payment_id
+            )
 
     def _compute_payment_link(self):
         for registration in self:
-            if registration.trip_invoice_id:
-                move = registration.trip_invoice_id
-                description = (
-                    _("Payment for %s") % registration.compassion_event_id.name
-                )
-                registration.payment_link = (
-                    self._create_payment_link(move, description)
-                    + f"&return_url=/my/events/{registration.id}"
-                )
-            else:
-                registration.payment_link = False
+            registration.payment_link = registration._create_payment_link(
+                registration.trip_invoice_id
+            )
 
     def _default_website_meta(self):
         default_meta = super()._default_website_meta()
@@ -306,17 +327,13 @@ class EventRegistration(models.Model):
         default_meta["default_opengraph"].update(
             {
                 "og:title": title,
-                "og:image": request.website.image_url(
-                    self, "profile_picture", size="1200x1200"
-                ),
+                "og:image": f"/event/registration/{self.id}/photo/1200x1200",
             }
         )
         default_meta["default_twitter"].update(
             {
                 "twitter:title": title,
-                "twitter:image": request.website.image_url(
-                    self, "profile_picture", size="300x300"
-                ),
+                "twitter:image": f"/event/registration/{self.id}/photo/300x300",
             }
         )
         default_meta.update(
@@ -338,21 +355,24 @@ class EventRegistration(models.Model):
             )
 
     @api.model
-    def _read_group_stage_ids(self, stages, domain, order):
+    def _read_group_stage_ids(self, stages, domain):
         # retrieve event type from the context and write the domain
         # - ('id', 'in', stages.ids): add columns that should be present
         type_id = self._context.get("default_event_type_id")
+        trip_type_id = self._context.get("default_trip_type_id")
         search_domain = [
             ("event_type_ids", "=", type_id),
+            "|",
+            ("trip_type_ids", "=", False),
+            ("trip_type_ids", "=", trip_type_id),
         ]
         if stages:
             search_domain = ["|", ("id", "in", stages.ids)] + search_domain
 
         # perform search
-        stage_ids = stages._search(
-            search_domain, order=order, access_rights_uid=SUPERUSER_ID
+        return stages.browse(
+            stages.sudo().search(search_domain, order=stages._order).ids
         )
-        return stages.browse(stage_ids)
 
     @api.model
     def _default_stage(self):
@@ -369,6 +389,7 @@ class EventRegistration(models.Model):
                 )
             )
 
+    @api.depends("stage_id", "task_ids.done", "task_ids.stage_id")
     def _compute_is_stage_complete(self):
         for registration in self:
             incomplete_tasks = registration.task_ids.filtered(
@@ -511,16 +532,70 @@ class EventRegistration(models.Model):
             vals["stage_date"] = fields.Date.today()
             if "state" not in vals:
                 stage = self.env["event.registration.stage"].browse(vals["stage_id"])
-                if stage.registration_state:
+                if stage.registration_state and not (
+                    stage.registration_state == "open"
+                    and self.env.context.get(KEEP_UNCONFIRMED)
+                ):
                     vals["state"] = stage.registration_state
         super().write(vals)
         if "stage_id" in vals:
+            # Before the tasks: completing them can move the registrations on
+            # right away (e.g. an account that is already activated).
+            self._schedule_stage_mails()
             self._compute_tasks()
+            # A stage set by hand completes no task, the mails must still go.
+            self._run_mail_schedulers()
         return True
+
+    def _schedule_stage_mails(self):
+        """Plan the mails of the stage the registrations just reached, while
+        they are still in it."""
+        for registration in self:
+            schedulers = (
+                registration.event_id.sudo()
+                .event_mail_ids.filtered(
+                    lambda mail, reg=registration: mail.interval_type == "after_stage"
+                    and mail.stage_id == reg.stage_id
+                )
+                ._for_trip_type()
+            )
+            lines = schedulers.mail_registration_ids.filtered(
+                lambda line, reg=registration: line.registration_id == reg
+            )
+            lines |= lines.create(
+                [
+                    {"scheduler_id": scheduler.id, "registration_id": registration.id}
+                    for scheduler in schedulers - lines.scheduler_id
+                ]
+            )
+            # Compute the date now, the registration may leave the stage
+            # before it is read again.
+            lines.mapped("scheduled_date")
+
+    def _run_mail_schedulers(self):
+        # Always a job of its own, even when the stage moved while a
+        # communication was sent right away (which runs its jobs at once).
+        self.env["event.mail"].with_user(SUPERUSER_ID).with_context(
+            queue_job__no_delay=False
+        ).with_delay_sh(
+            "run",
+            channel="root.partner_communication",
+            identity_key="event.registration.mail_scheduler",
+        )
+
+    def _update_mail_schedulers(self):
+        if self.env.context.get("registration_incomplete"):
+            return True
+        return super()._update_mail_schedulers()
 
     @api.model_create_multi
     def create(self, vals_list):
-        records = super().create(vals_list)
+        # Registrations wait for an employee to confirm them.
+        for vals in vals_list:
+            vals.setdefault("state", "draft")
+        records = super(
+            EventRegistration, self.with_context(registration_incomplete=True)
+        ).create(vals_list)
         for registration in records:
             # Copy image fields
             if registration.profile_picture:
@@ -528,15 +603,17 @@ class EventRegistration(models.Model):
             if not registration.profile_name:
                 registration.profile_name = registration.partner_id.preferred_name
             # Set default fundraising objective if none was set
-            event = records.event_id
+            event = registration.event_id
             if (
                 not registration.amount_objective
                 and event.participants_amount_objective
             ):
                 registration.amount_objective = event.participants_amount_objective
             if not registration.stage_id:
-                event_stages = registration.event_id.event_type_id.stage_ids
-                registration.stage_id = event_stages[:1] or self._default_stage()
+                event_stages = registration.event_id._registration_stages()
+                registration.with_context(**{KEEP_UNCONFIRMED: True}).stage_id = (
+                    event_stages[:1] or self._default_stage()
+                )
             # Set donation receipt preference
             registration.partner_id.receive_ambassador_receipts = True
 
@@ -546,10 +623,26 @@ class EventRegistration(models.Model):
             {"subtype_ids": [(4, self.env.ref("mail.mt_note").id)]}
         )
 
+        records.create_down_payment()
+
         # Automatically compute tasks and change stage if tasks are good
         records._compute_tasks()
+        records = records.with_context(registration_incomplete=False)
         records.next_stage()
+        records._update_mail_schedulers()
+        records._notify_new_registration()
         return records
+
+    def _notify_new_registration(self):
+        """Inform the event responsible and the followers of the event."""
+        for registration in self:
+            event = registration.event_id.sudo()
+            event.message_post(
+                body=Markup(_("New registration: %(name)s"))
+                % {"name": registration._get_html_link()},
+                subtype_xmlid="mail.mt_comment",
+                partner_ids=event.user_id.partner_id.ids,
+            )
 
     ##########################################################################
     #                             PUBLIC METHODS                             #
@@ -582,19 +675,29 @@ class EventRegistration(models.Model):
         @param filter_func: filter function to apply on the registrations
         @return: communication jobs
         """
-        communications = self.env["partner.communication.job"].create(
-            [
+        communications = self.env["partner.communication.job"]
+        for registration in self.filtered(filter_func):
+            # The texts are written for one registration: a pending job of the
+            # partner for another registration (e.g. a second trip) is not
+            # reused.
+            communications |= communications.with_context(
+                same_job_search=[("object_ids", "=", str(registration.id))]
+            ).create(
                 {
                     "config_id": config_id,
                     "partner_id": registration.partner_id.id,
                     "object_ids": [registration.id],
                 }
-                for registration in self.filtered(filter_func)
-            ]
-        )
+            )
         if force_send:
             communications.send()
         return communications
+
+    def action_confirm(self):
+        res = super().action_confirm()
+        # Resume the pipeline that was waiting for the confirmation.
+        self.next_stage()
+        return res
 
     def action_set_done(self):
         super().action_set_done()
@@ -642,12 +745,12 @@ class EventRegistration(models.Model):
         }
 
     def create_down_payment(self):
-        down_payment_product = self.env.ref("event_sale.product_product_event")
+        down_payment_product = self.env.ref("event_product.product_product_event")
         for registration in self:
             ticket = registration.event_id.event_ticket_ids.filtered(
                 lambda t: t.product_id == down_payment_product
-            )
-            if ticket and not self.down_payment_id:
+            )[:1]
+            if ticket and not registration.sale_order_id:
                 order = self.env["sale.order"].create(
                     {
                         "partner_id": registration.partner_id.id,
@@ -661,23 +764,23 @@ class EventRegistration(models.Model):
                                     "price_unit": ticket.price,
                                     "product_uom_qty": 1,
                                     "registration_id": registration.id,
+                                    "event_id": registration.event_id.id,
+                                    "event_ticket_id": ticket.id,
                                 },
                             )
                         ],
                     }
                 )
-                order.order_line[0].event_id = registration.event_id.id
 
                 registration.write(
                     {
                         "sale_order_id": order.id,
                         "sale_order_line_id": order.order_line[0].id,
+                        "event_ticket_id": ticket.id,
                     }
                 )
 
                 order.action_confirm()
-
-                registration.write({"event_ticket_id": ticket.id})
         return True
 
     def create_trip_invoice(self):
@@ -755,25 +858,41 @@ class EventRegistration(models.Model):
     def next_stage(self):
         """Transition to next registration stage"""
         stage_complete = self.filtered("is_stage_complete")
+        # The terminal stages shipped with this module (Confirmed, Attended,
+        # Cancelled) are shared by every template when they have no event type.
+        # Other stages without a type (e.g. created in the UI and not linked yet)
+        # are not steps of every journey and must not be picked.
+        shared_stages = [
+            self.env.ref(f"website_event_compassion.stage_all_{name}").id
+            for name in ("confirmed", "attended", "cancelled")
+        ]
         for registration in stage_complete:
-            next_stage = self.env["event.registration.stage"].search(
+            candidates = self.env["event.registration.stage"].search(
                 [
                     ("sequence", ">", registration.stage_id.sequence),
                     "|",
-                    ("event_type_ids", "in", registration.stage_id.event_type_ids.ids),
+                    ("event_type_ids", "in", registration.event_type_id.ids),
+                    "&",
                     ("event_type_ids", "=", False),
-                ],
-                limit=1,
+                    ("id", "in", shared_stages),
+                ]
             )
+            trip_type = registration.trip_type_id
+            next_stage = candidates.filtered(
+                lambda stage, trip=trip_type: not stage.trip_type_ids
+                or trip in stage.trip_type_ids
+            )[:1]
+            if registration.state == "draft" and next_stage.registration_state in (
+                "open",
+                "done",
+            ):
+                # Only an employee confirms a registration.
+                continue
             if next_stage:
                 registration.write({"stage_id": next_stage.id})
 
         # Send potential communications after stage transition
-        self.env["event.mail"].with_user(SUPERUSER_ID).with_delay_sh(
-            "run",
-            channel="root.partner_communication",
-            identity_key="event.registration.mail_scheduler",
-        )
+        self._run_mail_schedulers()
         return True
 
     def _track_subtype(self, init_values):

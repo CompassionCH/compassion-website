@@ -3,7 +3,7 @@
     <t t-if="registration.profile_picture">
       <t
         t-set="profile_picture_url"
-        t-value="'/web/image/event.registration/' + str(registration.id) + '/profile_picture'"
+        t-value="'/event/registration/%s/photo' % registration.id"
       />
       <t t-set="ambassador_picture" t-value="profile_picture_url + '/1024x1024'" />
       <t t-set="image_url" t-value="profile_picture_url + '/300x300'" />
@@ -46,7 +46,7 @@
             <span>Support</span>
             <t t-esc="registration.profile_name" />
             <a
-              class="btn btn-primary ml-2"
+              class="btn btn-primary ms-2"
               t-attf-href="/my/events/#{slug(registration)}/edit"
               t-if="registration.partner_id == env.user.partner_id"
             >

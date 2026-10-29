@@ -45,12 +45,14 @@ class EventFlight(models.Model):
         # If the flight already exists, update its information automatically.
         res = self.env["event.flight"]
         for vals in vals_list:
-            existing_flight = self.search(
-                [
-                    ("registration_id", "=", vals["registration_id"]),
-                    ("flight_type", "=", vals["flight_type"]),
-                ]
-            )
+            existing_flight = self.browse()
+            if vals.get("registration_id") and vals.get("flight_type"):
+                existing_flight = self.search(
+                    [
+                        ("registration_id", "=", vals["registration_id"]),
+                        ("flight_type", "=", vals["flight_type"]),
+                    ]
+                )
             if existing_flight:
                 existing_flight.write(vals)
                 res += existing_flight

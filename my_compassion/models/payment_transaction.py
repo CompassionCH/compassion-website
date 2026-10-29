@@ -15,8 +15,8 @@ class PaymentTransaction(models.Model):
         "recurring.contract.group",
         string="Card Update Group",
         readonly=True,
-        help="Contract group whose saved instrument this validation"
-        " transaction replaces (the update-card page with nothing due).",
+        help="Contract group whose saved instrument this transaction replaces"
+        " (the update-card page).",
     )
     my2_cardholder_name = fields.Char(
         string="Cardholder Name",
@@ -39,6 +39,51 @@ class PaymentTransaction(models.Model):
         if nameless:
             nameless.partner_name = self.env["res.partner"].MY2_PLACEHOLDER_NAME
         return txs
+
+    def write(self, vals):
+        res = super().write(vals)
+        if vals.get("token_id"):
+            # A token saved after post-processing (e.g. fetched from the
+            # provider once 3DS completed) must still reach the group.
+            post_processed = self.filtered(
+                lambda t: t.state == "done" and t.is_post_processed
+            )
+            for tx in post_processed:
+                tx._my2_save_token_on_groups()
+        return res
+
+    def _my2_refusal_is_certain(self):
+        """Whether this cancelled or refused payment is known to have failed,
+        so that the donor may pay again (sale.order._my2_payment_outcome).
+        A provider that gives up waiting for an outcome it never learnt, and
+        records the payment as refused, overrides this for such payments."""
+        self.ensure_one()
+        return True
+
+    def _my2_may_still_succeed(self):
+        """The payments among self that went through or may still: pending
+        (BLIK in the bank app, 3DS), authorized, done, a draft the provider
+        already has, or a cancelled or refused one whose refusal is not
+        certain (_my2_refusal_is_certain)."""
+        return self.filtered(
+            lambda t: t.state in ("pending", "authorized", "done")
+            or (t.state == "draft" and t.provider_reference)
+            or (t.state in ("cancel", "error") and not t._my2_refusal_is_certain())
+        )
+
+    def _my2_check_card_submission(self):
+        """Before the card of this payment is sent to the provider: refuse
+        it if another payment of its MyCompassion order may still succeed.
+
+        Two payment forms of one order can each create a draft before
+        either card is sent, and the check at creation
+        (sale.order._my2_lock_for_new_payment) sees no draft the provider
+        has yet. The same order lock serializes the card submissions.
+        """
+        self.ensure_one()
+        orders = self.sudo().sale_order_ids.filtered("website_id.is_my_compassion")
+        for order in orders:
+            order._my2_lock_for_new_payment(except_transaction=self)
 
     def _my2_cancel_stale_checkout_tx(self):
         """Cleanup for shopper checkouts that never finished.
@@ -233,33 +278,7 @@ class PaymentTransaction(models.Model):
                     tx.reference,
                     digital_invoices.mapped("name"),
                 )
-            if tx.token_id:
-                # A group with no saved card takes the one that just paid.
-                # Replacing an existing card is only allowed from the
-                # update-card page, which authenticates the sponsor first.
-                groups = (
-                    digital_invoices.line_ids.contract_id.group_id
-                    | tx.my2_card_update_group_id
-                ).filtered(
-                    lambda g, tx=tx: g.payment_mode_id.payment_provider_id
-                    and g.payment_token_id != tx.token_id
-                    and (not g.payment_token_id or g == tx.my2_card_update_group_id)
-                )
-                try:
-                    groups.payment_token_id = tx.token_id
-                except (ValidationError, UserError):
-                    # A token incompatible with the group must never wedge the
-                    # post-processing poll or cron into an eternal retry. The
-                    # partner constraint raises one error, the company the
-                    # other.
-                    _logger.error(
-                        "Could not save token %s on groups %s (tx %s);"
-                        " monthly charges keep using the previous card.",
-                        tx.token_id.id,
-                        groups.ids,
-                        tx.reference,
-                        exc_info=True,
-                    )
+            tx._my2_save_token_on_groups(digital_invoices)
             for invoice in digital_invoices.filtered(
                 lambda m: m.payment_state in ("paid", "in_payment")
             ):
@@ -275,4 +294,68 @@ class PaymentTransaction(models.Model):
                         tx.reference,
                         exc_info=True,
                     )
+        # The status page polls post-processing in sudo, but its request saves
+        # what is left as the payer - a visitor for a public donation - who may
+        # not read what post-processing changed (e.g. the amounts of the lines
+        # of a quotation turned into a sent one): save it while we still may.
+        self.env.flush_all()
         return res
+
+    def _my2_save_token_on_groups(self, digital_invoices=None):
+        """Make the transaction's token the card of its contract groups.
+
+        See _my2_groups_taking_the_token for the groups.
+        """
+        self.ensure_one()
+        if not self.token_id:
+            return
+        groups = self._my2_groups_taking_the_token(digital_invoices).filtered(
+            lambda g: g.payment_token_id != self.token_id
+        )
+        if not groups:
+            return
+        try:
+            # Odoo caches the new value before the constraints run: only a
+            # savepoint undoes a refused assignment.
+            with self.env.cr.savepoint():
+                groups.payment_token_id = self.token_id
+        except (ValidationError, UserError):
+            # A token incompatible with the group must never wedge the
+            # post-processing poll or cron into an eternal retry. The
+            # partner constraint raises one error, the company the other.
+            _logger.error(
+                "Could not save token %s on groups %s (tx %s);"
+                " monthly charges keep using the previous card.",
+                self.token_id.id,
+                groups.ids,
+                self.reference,
+                exc_info=True,
+            )
+
+    def _my2_groups_taking_the_token(self, digital_invoices=None):
+        """The contract groups whose monthly charges this transaction's card
+        pays once it is saved. It is known before the card is saved, so a
+        provider can register a card for monthly charges as such.
+
+        A group with no saved card takes the one that pays its invoices.
+        Replacing an existing card is only allowed from the update-card page,
+        which authenticates the sponsor first. Either way the card must be
+        one the group can be charged with: of its sponsor, in its company,
+        at its payment mode's provider. A group may change sponsor while a
+        payment is in flight.
+        """
+        self.ensure_one()
+        if digital_invoices is None:
+            digital_invoices = self.invoice_ids.filtered(
+                "line_ids.contract_id.group_id.payment_mode_id.payment_provider_id"
+            )
+        return (
+            digital_invoices.line_ids.contract_id.group_id
+            | self.my2_card_update_group_id
+        ).filtered(
+            lambda g: g.payment_mode_id.payment_provider_id == self.provider_id
+            and g.company_id == self.company_id
+            and g.partner_id.commercial_partner_id
+            == self.partner_id.commercial_partner_id
+            and (not g.payment_token_id or g == self.my2_card_update_group_id)
+        )

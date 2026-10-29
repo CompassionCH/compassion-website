@@ -90,6 +90,12 @@
             <p class="mt-3 mb-0 alert alert-success" t-if="message" role="status">
               <t t-out="message" />
             </p>
+            <!-- Former one-click login links (T3569) -->
+            <p
+              class="mt-3 mb-0 alert alert-info"
+              t-if="request.params.get('magic_link')"
+              role="status"
+            >Login links from our emails no longer work. Log in with your password, or choose "Forgot password?" to set one.</p>
             <!-- Log in -->
             <div class="mt-3 d-flex flex-column align-items-stretch">
               <t t-call="theme_compassion_2025.ThemedButtonComponent">
@@ -212,7 +218,12 @@
   >
     <xpath expr="t" position="replace">
       <t t-call="web.login_layout">
-        <form class="my2-signup-form" role="form" method="post" t-if="not message">
+        <form
+          class="my2-signup-form oe_signup_form"
+          role="form"
+          method="post"
+          t-if="not message"
+        >
           <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
           <input type="hidden" name="redirect" t-att-value="redirect" />
           <input type="hidden" name="token" t-att-value="token" />
@@ -288,7 +299,12 @@
                         Back to Login
                     </a>
         </div>
-        <form role="form" method="post" t-if="not message">
+        <form
+          class="oe_reset_password_form"
+          role="form"
+          method="post"
+          t-if="not message"
+        >
           <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
           <input type="hidden" name="redirect" t-att-value="redirect" />
           <input type="hidden" name="token" t-att-value="token" />

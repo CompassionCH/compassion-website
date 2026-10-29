@@ -1,6 +1,7 @@
 /** @odoo-module **/
 
 import {rpc} from "@web/core/network/rpc";
+import {session} from "@web/session";
 import {toast} from "@my_compassion/js/toast_service";
 import {whenReady} from "@odoo/owl";
 
@@ -70,29 +71,10 @@ whenReady(() => {
   const path = window.location.pathname.toLowerCase();
   if (!path.includes("login") && !path.includes("signup")) {
     document.body.classList.add("capacitor-native-app");
-    initPushNotifications();
+    // Logged out, register_device (auth="user") raises the
+    // "session expired" modal that reloads the page (T3481).
+    if (!session.is_public) {
+      initPushNotifications();
+    }
   }
-});
-
-// On the login page in the native app, strip any "session expired" modal the
-// WebView surfaces so it cannot trap the user behind a dead dialog.
-whenReady(() => {
-  if (!window.Capacitor || window.Capacitor.getPlatform() === "web") {
-    return;
-  }
-  if (!window.location.pathname.includes("login")) {
-    return;
-  }
-
-  const observer = new MutationObserver(function () {
-    document.querySelectorAll(".modal").forEach(function (modal) {
-      if (modal.textContent.toLowerCase().includes("session expired")) {
-        modal.remove();
-        document.body.classList.remove("modal-open");
-        document.querySelectorAll(".modal-backdrop").forEach((b) => b.remove());
-      }
-    });
-  });
-
-  observer.observe(document.body, {childList: true, subtree: true});
 });

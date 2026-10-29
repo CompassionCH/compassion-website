@@ -12,13 +12,17 @@ import logging
 import math
 from collections import defaultdict
 from datetime import datetime, timedelta
+from urllib.parse import quote
 
 from werkzeug.exceptions import BadRequest, NotFound
 
 from odoo import fields, http
+from odoo.exceptions import UserError, ValidationError
 from odoo.http import request
+from odoo.tools import email_normalize, format_amount
 from odoo.tools.translate import _
 
+from odoo.addons.payment import utils as payment_utils
 from odoo.addons.payment.controllers.post_processing import PaymentPostProcessing
 from odoo.addons.portal.controllers.portal import CustomerPortal
 from odoo.addons.sale.controllers import portal as sale_portal
@@ -27,21 +31,32 @@ from .website_utils import safe_int
 
 _logger = logging.getLogger(__name__)
 
+# Donors a visitor's session may create within an hour (see the email step).
+MAX_DONORS_PER_SESSION = 5
+
 
 class MyCompassionDonationsController(CustomerPortal):
     @http.route(
-        '/my2/gifts/<model("product.template"):product>',
+        "/my2/gifts/<int:product_id>",
         type="http",
-        auth="user",
+        auth="public",
         website=True,
         sitemap=False,
     )
-    def my2_render_donation_details_page(self, product, **kwargs):
+    def my2_render_donation_details_page(self, product_id, **kwargs):
         """
         Renders a donation details page for a specific donation (product).
+        A visitor may open a fund, not a gift (see _get_donation_product).
         return: An HTTP response containing a rendered template with the donation
         details page.
         """
+        product = self._get_donation_product(product_id)
+        if not product:
+            if request.env.user._is_public():
+                return request.redirect(
+                    "/web/login?redirect=" + quote(f"/my2/gifts/{product_id}")
+                )
+            raise NotFound()
         sponsorships = self._get_gift_eligible_sponsorships(request.env.user.partner_id)
         donation_limits = request.env["gift.threshold.settings"].sudo().search([])
 
@@ -60,9 +75,28 @@ class MyCompassionDonationsController(CustomerPortal):
         )
 
     @http.route(
+        "/my2/gifts/<string:slug>-<int:product_id>",
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def my2_redirect_slugged_donation_page(self, slug, product_id, **kwargs):
+        """Links with the product's slug (/my2/gifts/<name>-<id>) lead to the
+        details page, with their language and query string, whoever follows
+        them: the details page decides who may see it."""
+        if not request.website._my2_donation_products([("id", "=", product_id)]):
+            raise NotFound()
+        return request.redirect_query(
+            request.env["ir.http"]._url_for(f"/my2/gifts/{product_id}"),
+            request.httprequest.args,
+            code=301,
+        )
+
+    @http.route(
         "/my2/gifts/new",
         type="json",
-        auth="user",
+        auth="public",
         website=True,
         methods=["POST"],
     )
@@ -76,12 +110,9 @@ class MyCompassionDonationsController(CustomerPortal):
             product_template_id = int(post.get("product_id"))
         except (ValueError, TypeError) as e:
             raise BadRequest() from e
-        product_template = (
-            request.env["product.template"].sudo().browse(product_template_id)
-        )
-
-        # Make sure the product is available
-        if not product_template.activate_for_my_compassion:
+        # Make sure the product is available (to this visitor)
+        product_template = self._get_donation_product(product_template_id)
+        if not product_template:
             raise NotFound()
         # Extract order line for the current product
         current_order_line_fields = self._extract_donation_order_line_fields(
@@ -140,7 +171,7 @@ class MyCompassionDonationsController(CustomerPortal):
     @http.route(
         "/my2/gifts/edit",
         type="json",
-        auth="user",
+        auth="public",
         website=True,
         methods=["POST"],
     )
@@ -171,7 +202,7 @@ class MyCompassionDonationsController(CustomerPortal):
     @http.route(
         "/my2/gifts/get-limits",
         type="json",
-        auth="user",
+        auth="public",
         website=True,
         methods=["POST"],
     )
@@ -189,7 +220,7 @@ class MyCompassionDonationsController(CustomerPortal):
             product_id = int(product_id)
         except (TypeError, ValueError) as e:
             raise BadRequest() from e
-        product = request.env["product.template"].search([("id", "=", product_id)])
+        product = self._get_donation_product(product_id)
         if not product:
             raise BadRequest()
         if sponsorship_id is not None:
@@ -198,15 +229,33 @@ class MyCompassionDonationsController(CustomerPortal):
             except (TypeError, ValueError) as e:
                 raise BadRequest() from e
 
+        # sudo: the donor may belong to another company, and the limits are
+        # converted to the currency of the website's company.
         limits = product.get_donation_limits(
-            request.website.company_id, request.env.user.partner_id, sponsorship_id
+            request.website.company_id.sudo(),
+            request.env.user.partner_id,
+            sponsorship_id,
+            request.website.sale_get_order(),
         )
+        minimum = request.website._my2_fund_minimum(product)
+        if minimum and minimum > (limits.get("min_amount") or 0):
+            limits["min_amount"] = minimum
+            limits["min_amount_message"] = self._my2_minimum_message(product, minimum)
         return limits
+
+    @staticmethod
+    def _my2_minimum_message(product, minimum):
+        return _(
+            "The smallest donation to this fund is %(amount)s.",
+            amount=format_amount(
+                request.env, minimum, product.my_compassion_currency_id
+            ),
+        )
 
     @http.route(
         "/my2/gift-package",
         type="http",
-        auth="user",
+        auth="public",
         website=True,
         sitemap=False,
     )
@@ -219,7 +268,8 @@ class MyCompassionDonationsController(CustomerPortal):
         # Get the current sales order and register it as last order
         # (usually done in a confirmation step that we don't have)
         order = request.website.sale_get_order()
-        request.session["sale_last_order_id"] = order.id
+        if order:
+            request.session["sale_last_order_id"] = order.id
 
         # Fetch gift thresholds
         limits = request.env["gift.threshold.settings"].sudo().search([])
@@ -229,7 +279,8 @@ class MyCompassionDonationsController(CustomerPortal):
         # on a MyCompassion website that route is overridden to redirect to the
         # branded /my2/gifts/thankyou page.
         payment_form_values = {}
-        if order and order.order_line:
+        donor_values = self._get_donor_step_values(order, **kwargs)
+        if order and order.order_line and not donor_values.get("donor_needed"):
             payment_form_values = {
                 **sale_portal.CustomerPortal._get_payment_values(
                     self, order.sudo(), website_id=request.website.id
@@ -238,20 +289,151 @@ class MyCompassionDonationsController(CustomerPortal):
                 "landing_route": "/shop/payment/validate",
                 "sale_order_id": order.id,
             }
+            if request.env.user._is_public():
+                # The cart's partner comes from an email anyone may type: its
+                # saved cards are never offered to a visitor, nor is saving
+                # theirs (a saved card or a request to save one sent all the
+                # same is refused or ignored, see MyCompassionShopPayment).
+                payment_form_values["tokens_sudo"] = request.env["payment.token"].sudo()
+                payment_form_values["show_tokenize_input_mapping"] = dict.fromkeys(
+                    payment_form_values["show_tokenize_input_mapping"], False
+                )
 
         return request.render(
             "my_compassion.my2_gift_package_page",
             {
                 "order": order,
                 "limits": limits,
+                "payment_failed": bool(kwargs.get("payment_failed")),
+                **donor_values,
                 **payment_form_values,
             },
         )
 
     @http.route(
+        "/my2/gift-package/donor",
+        type="http",
+        auth="public",
+        website=True,
+        methods=["POST"],
+        sitemap=False,
+    )
+    def my2_gift_package_donor(self, email=None, privacy_consent=None, **post):
+        """Who gives, for a visitor: their email and privacy consent only, as
+        the sponsorship fast checkout asks. The donor is created with the
+        same placeholder name; the real one comes from the payment (the name
+        on the card) or from the form of the thank-you page.
+
+        No partner exists before this step, so a cart filled by a robot
+        creates none. The donor created here may change their email while
+        nobody else can own it (_my2_donor_is_visitor_only); otherwise a new
+        donor is created: the email of a partner that became someone's
+        account (signup links an account to a partner of the same email) is
+        never rewritten from a visitor's session.
+        """
+        if not request.env.user._is_public():
+            return request.redirect("/my2/gift-package")
+        order = request.website.sale_get_order()
+        if not order or not order.order_line:
+            return request.redirect("/my2/gift-package")
+        normalized = email_normalize(email or "")
+        if not normalized or not privacy_consent:
+            return request.redirect("/my2/gift-package?donor_error=1")
+        if not self._my2_donor_step_allowed():
+            return request.redirect("/my2/gift-package?donor_error=verify")
+
+        order = order.sudo()
+        # A double click must not make two donors: the second request waits,
+        # then is replayed and finds the donor of the first one.
+        request.env.cr.execute(
+            "SELECT 1 FROM sale_order WHERE id = %s FOR NO KEY UPDATE", [order.id]
+        )
+        partner = self._get_session_donor(order)
+        if partner and partner.email == normalized:
+            pass
+        elif partner and self._my2_donor_is_visitor_only(partner, order):
+            partner.email = normalized
+        else:
+            partner = self._my2_reusable_donor(order, normalized)
+            if not partner:
+                company = request.website.company_id
+                partner = (
+                    request.env["res.partner"]
+                    .sudo()
+                    .create(
+                        {
+                            "lastname": request.env["res.partner"].MY2_PLACEHOLDER_NAME,
+                            "firstname": False,
+                            "my2_name_placeholder": True,
+                            "my2_email_unverified": True,
+                            "email": normalized,
+                            "lang": request.lang.code,
+                            "country_id": company.country_id.id,
+                            "legal_agreement_date": fields.Datetime.now(),
+                        }
+                    )
+                )
+                request.session["my2_donors_created"] = [
+                    *self._my2_recent_donors_created(),
+                    fields.Datetime.now().timestamp(),
+                ]
+            # The pricelist is written back with the partner: changing the
+            # partner would recompute it, and with it the amounts the donor
+            # chose.
+            order.write(
+                {
+                    "partner_id": partner.id,
+                    "partner_invoice_id": partner.id,
+                    "partner_shipping_id": partner.id,
+                    "pricelist_id": order.pricelist_id.id,
+                }
+            )
+            request.session["my2_donor_partner_id"] = partner.id
+        return request.redirect("/my2/gift-package")
+
+    def _my2_reusable_donor(self, order, email):
+        """A donor this session already made, with the same email, that is
+        still nobody's account: the donor of an earlier donation of the
+        session, or the cart's own donor (a replayed double click). Never a
+        partner found by its email alone: an unverified email must not attach
+        a donation to someone else."""
+        Partner = request.env["res.partner"].sudo()
+        candidates = Partner.browse(
+            [
+                request.session.get("my2_donor_partner_id"),
+                order.partner_id.id
+                if order.partner_id != request.website.partner_id
+                else None,
+            ]
+        )
+        for partner in candidates.exists():
+            if (
+                partner.email == email
+                and not partner.with_context(active_test=False).user_ids
+            ):
+                return partner
+        return Partner
+
+    def _my2_donor_step_allowed(self):
+        """A human, and not too many donors from this session: the email step
+        is the gate of public payments, which card testers would automate.
+        The reCAPTCHA check passes while no reCAPTCHA key is configured."""
+        if len(self._my2_recent_donors_created()) >= MAX_DONORS_PER_SESSION:
+            return False
+        try:
+            return request.env["ir.http"]._verify_request_recaptcha_token("my2_donor")
+        except (UserError, ValidationError):
+            return False
+
+    @staticmethod
+    def _my2_recent_donors_created():
+        since = fields.Datetime.now().timestamp() - 3600
+        return [t for t in request.session.get("my2_donors_created", []) if t > since]
+
+    @http.route(
         "/my2/gift-package/render-edit-form",
         type="json",
-        auth="user",
+        auth="public",
         website=True,
         methods=["POST"],
     )
@@ -296,7 +478,7 @@ class MyCompassionDonationsController(CustomerPortal):
     @http.route(
         "/my2/gift-package/delete-item",
         type="json",
-        auth="user",
+        auth="public",
         website=True,
         methods=["POST"],
     )
@@ -337,7 +519,7 @@ class MyCompassionDonationsController(CustomerPortal):
     @http.route(
         "/my2/gift-package/add",
         type="http",
-        auth="user",
+        auth="public",
         website=True,
         sitemap=False,
     )
@@ -347,14 +529,9 @@ class MyCompassionDonationsController(CustomerPortal):
         return: An HTTP response containing a rendered template with the add a
         gift page.
         """
-        order = request.website.sale_get_order(force_create=True)
-        products = request.env["product.template"].search(
-            [
-                ("activate_for_my_compassion", "=", True),
-                "|",
-                ("my_compassion_donation_type", "=", "gift"),
-                ("my_compassion_donation_type", "=", "fund"),
-            ]
+        donation_types = ["fund"] if request.env.user._is_public() else ["gift", "fund"]
+        products = request.website._my2_donation_products(
+            [("my_compassion_donation_type", "in", donation_types)]
         )
 
         sponsorships = self._get_gift_eligible_sponsorships(request.env.user.partner_id)
@@ -366,7 +543,6 @@ class MyCompassionDonationsController(CustomerPortal):
                 "products": products,
                 "sponsorships": sponsorships,
                 "limits": limits,
-                "currency_name": order.pricelist_id.currency_id.name,
             },
         )
 
@@ -378,16 +554,67 @@ class MyCompassionDonationsController(CustomerPortal):
         sitemap=False,
     )
     def my2_gifts_thank_you_page(self, **kwargs):
-        sale_order_id = request.session.get("sale_last_order_id")
-        if sale_order_id:
-            sale_order = request.env["sale.order"].sudo().browse(sale_order_id)
-            return request.render(
-                "my_compassion.my2_gifts_thank_you_page",
-                {
-                    "sale_order": sale_order,
-                },
-            )
+        sale_order = (
+            request.env["sale.order"]
+            .sudo()
+            .browse(request.session.get("sale_last_order_id"))
+            .exists()
+        )
+        if sale_order.website_id == request.website:
+            outcome = sale_order._my2_payment_outcome()
+            if outcome == "paid":
+                return request.render(
+                    "my_compassion.my2_gifts_thank_you_page",
+                    {
+                        "sale_order": sale_order,
+                        **self._get_donor_details_values(sale_order, **kwargs),
+                    },
+                )
+            # website_sale sends a cancelled or refused payment here too, and
+            # empties the cart first (sale_reset): give the cart back and let
+            # the donor try again instead of thanking them.
+            if sale_order.state in ("draft", "sent"):
+                if sale_order.state == "sent":
+                    # website_sale only takes a draft quotation as a cart.
+                    sale_order.action_draft()
+                request.session["sale_order_id"] = sale_order.id
+                request.session["website_sale_cart_quantity"] = sale_order.cart_quantity
+            if outcome == "failed":
+                return request.redirect("/my2/gift-package?payment_failed=1")
+            return request.redirect("/my2/gift-package")
+        if request.env.user._is_public():
+            return request.redirect("/my2/gifts")
         return request.redirect("/my2/dashboard")
+
+    @http.route(
+        "/my2/gifts/thankyou/details",
+        type="http",
+        auth="public",
+        website=True,
+        methods=["POST"],
+        sitemap=False,
+    )
+    def my2_gifts_thank_you_details(self, firstname=None, lastname=None, **post):
+        """The name of a visitor whose payment did not tell it.
+
+        Only the session that paid may write it, and only over the
+        placeholder: a real name, typed here or reported by the payment, is
+        never overwritten (_my2_replace_placeholder_name).
+        """
+        sale_order = (
+            request.env["sale.order"]
+            .sudo()
+            .browse(request.session.get("sale_last_order_id"))
+            .exists()
+        )
+        partner = self._get_session_donor(sale_order).filtered("my2_name_placeholder")
+        firstname, lastname = (firstname or "").strip(), (lastname or "").strip()
+        if not partner:
+            return request.redirect("/my2/gifts/thankyou")
+        if not firstname or not lastname:
+            return request.redirect("/my2/gifts/thankyou?details_error=1")
+        partner._my2_replace_placeholder_name(firstname, lastname)
+        return request.redirect("/my2/gifts/thankyou")
 
     @http.route(
         "/my2/payment/status",
@@ -416,6 +643,17 @@ class MyCompassionDonationsController(CustomerPortal):
         ):
             return {"state": False}
 
+        seconds_ago = int((fields.Datetime.now() - tx.create_date).total_seconds())
+        if not tx.provider_reference:
+            # PostFinance refused to create the payment, so there is nothing to
+            # poll: tell the app instead of spinning forever (T3472).
+            return {
+                "state": "error",
+                "seconds_ago": seconds_ago,
+                "processing": False,
+                "reference": tx.reference,
+            }
+
         # Only chase a payment that can still move, and only a recent one.
         recent = tx.create_date > fields.Datetime.subtract(
             fields.Datetime.now(), hours=2
@@ -434,11 +672,106 @@ class MyCompassionDonationsController(CustomerPortal):
 
         return {
             "state": tx.state,
-            "seconds_ago": int(
-                (fields.Datetime.now() - tx.create_date).total_seconds()
-            ),
+            "seconds_ago": seconds_ago,
             "processing": tx.state in ("draft", "pending"),
             "reference": tx.reference,
+        }
+
+    def _get_donation_product(self, product_id):
+        """The donation product a visitor or user may give to, or an empty
+        recordset.
+
+        The gate, read in sudo (a visitor has no access to products):
+        published on MyCompassion by the website's company and active
+        (website._my2_donation_products), sold (with a variant to put in the
+        cart), and a fund for a visitor - a gift goes to a sponsored child,
+        which takes an account.
+        """
+        try:
+            product_id = int(product_id)
+        except (TypeError, ValueError):
+            return request.env["product.template"]
+        product = request.website._my2_donation_products([("id", "=", product_id)])
+        if not (product.sale_ok and product.product_variant_id):
+            return request.env["product.template"]
+        if (
+            request.env.user._is_public()
+            and product.my_compassion_donation_type != "fund"
+        ):
+            return request.env["product.template"]
+        return product
+
+    def _get_session_donor(self, order):
+        """The donor this visitor's session created for order, or an empty
+        recordset: the only partner a visitor may write to.
+
+        Still theirs once named (the name may be typed while the payment is
+        pending): a refused payment then gives the cart back to the same
+        donor, never to a second one. Only the name requires the placeholder.
+        """
+        partner = request.env["res.partner"].sudo()
+        donor_id = request.session.get("my2_donor_partner_id")
+        if not order or not donor_id or order.partner_id.id != donor_id:
+            return partner
+        return partner.browse(donor_id).exists()
+
+    @staticmethod
+    def _my2_donor_is_visitor_only(partner, order):
+        """Whether the donor of a visitor's cart is still theirs alone: no
+        account, still the placeholder name, and nothing but this cart - no
+        other order, invoice, saved card or payment."""
+        if partner.user_ids or not partner.my2_name_placeholder:
+            return False
+        env = partner.env
+        others = (
+            ("sale.order", [("id", "!=", order.id)]),
+            ("account.move", []),
+            ("payment.token", []),
+            (
+                "payment.transaction",
+                [("state", "in", ("pending", "authorized", "done"))],
+            ),
+        )
+        return not any(
+            env[model]
+            .with_context(active_test=False)
+            .search_count([("partner_id", "=", partner.id), *domain], limit=1)
+            for model, domain in others
+        )
+
+    def _get_donor_step_values(self, order, **kwargs):
+        """What the gift package page shows a visitor before the payment
+        form: the email step while the cart is still the public user's, and
+        the email the receipt goes to once given (with a way to change it)."""
+        if not request.env.user._is_public() or not order:
+            return {}
+        donor = self._get_session_donor(order.sudo())
+        change = kwargs.get("change_donor") and donor
+        return {
+            "donor_needed": bool(order.order_line) and (not donor or change),
+            "donor_email": donor.email if donor else "",
+            "donor_error": kwargs.get("donor_error"),
+        }
+
+    def _get_donor_details_values(self, sale_order, **kwargs):
+        """The name form of the thank-you page, for the visitor whose payment
+        did not tell their name (BLIK, PostFinance...)."""
+        donor = self._get_session_donor(sale_order)
+        if not donor.my2_name_placeholder:
+            return {}
+        cardholder = (
+            (
+                sale_order.transaction_ids.filtered(lambda t: t.state == "done")[:1]
+            ).my2_cardholder_name
+            or ""
+        )
+        firstname, lastname = (
+            payment_utils.split_partner_name(cardholder) if cardholder else ("", "")
+        )
+        return {
+            "donor_details_needed": True,
+            "donor_details_prefill": {"firstname": firstname, "lastname": lastname},
+            "donor_details_error": bool(kwargs.get("details_error")),
         }
 
     def _get_gift_eligible_sponsorships(self, partner):
@@ -454,29 +787,32 @@ class MyCompassionDonationsController(CustomerPortal):
 
     def _extract_donation_order_line_fields(self, product_template, post):
         # Compute quantity
-        price = 0
+        # An amount is refused with a message the form shows the donor.
         amount_type = post.get("suggested_amount")
         if amount_type == "custom":
             try:
                 price = float(post.get("custom_amount"))
-            except (ValueError, TypeError) as e:
-                raise BadRequest() from e
-            # Make sure price is strictly positive
-            if price <= 0:
-                raise BadRequest()
+            except (ValueError, TypeError):
+                price = 0.0
         else:
             amounts = {
                 "low": product_template.my_compassion_donation_amount_low,
                 "medium": product_template.my_compassion_donation_amount_medium,
                 "high": product_template.my_compassion_donation_amount_high,
             }
-            price = amounts.get(amount_type)
+            price = amounts.get(amount_type) or 0.0
+        if not price > 0:
+            raise UserError(_("Please enter a valid amount."))
+        minimum = request.website._my2_fund_minimum(product_template)
+        if price < minimum:
+            raise UserError(self._my2_minimum_message(product_template, minimum))
 
-            if price is None or price <= 0:
-                raise BadRequest()
-
-        # Get frequency and force one_time for gifts
-        if product_template.my_compassion_donation_type == "gift":
+        # Get frequency and force one_time for gifts, and for visitors: a
+        # monthly donation needs a payment instrument kept for an account.
+        if (
+            product_template.my_compassion_donation_type == "gift"
+            or request.env.user._is_public()
+        ):
             frequency = "one_time"
         else:
             frequency = post.get("frequency")

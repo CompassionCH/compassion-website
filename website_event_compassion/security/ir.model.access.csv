@@ -1,7 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_crm_event_website,Public events for website,model_crm_event_compassion,,1,0,0,0
-access_crm_event_registration,Public event participants for website,model_event_registration,,1,0,0,0
-access_res_partner,Public event participant partner for website,model_res_partner,,1,0,0,0
+access_event_registration_employee,Read event participants for employees,model_event_registration,base.group_user,1,0,0,0
+access_event_registration_portal,Read own event registrations,model_event_registration,base.group_portal,1,0,0,0
 access_crm_event_stage,Read access registration stages,model_event_registration_stage,base.group_portal,1,0,0,0
 access_admin_crm_event_stage,Full access registration stages,model_event_registration_stage,event.group_event_manager,1,1,1,1
 access_crm_event_task,Public read access to registration tasks,model_event_registration_task,,1,0,0,0
@@ -14,3 +14,5 @@ access_crm_event_registration_form,Edit event participants for website,model_eve
 access_crm_event_flight_portal,Event flights,model_event_flight,base.group_portal,1,1,1,0
 access_crm_event_flight_users,Event flights,model_event_flight,event.group_event_user,1,1,1,1
 access_event_public,Public access to event,model_event_event,,1,0,0,0
+access_crm_event_trip_type,Read access trip types,model_event_trip_type,base.group_user,1,0,0,0
+access_admin_crm_event_trip_type,Full access trip types,model_event_trip_type,event.group_event_manager,1,1,1,1

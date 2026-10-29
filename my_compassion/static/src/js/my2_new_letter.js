@@ -310,7 +310,7 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
       // No cleanup needed here, the page will redirect and clear everything.
       window.location.href = `/my2/children/letters/${childId}?new_letter_generator_id=${result.generator_id}`;
     } else if (mode === "save_draft") {
-      toast.success(result.message || "Draft saved!");
+      toast.success(result.message || _t("Draft saved!"));
     }
   },
   _autoSaveDraft: async function () {

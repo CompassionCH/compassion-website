@@ -33,10 +33,10 @@
       <span
         t-attf-class="btn__icon text-#{icon_left_color} language-selector__icon language-selector__icon_left"
       >
-        <i t-att-class="icon_left" />
+        <i t-att-class="icon_left" style="font-size: 0.8em;" />
       </span>
     </t>
-    <span t-if="label" t-att-id="label_id">
+    <span t-if="label" t-att-id="label_id" style="margin-top: 5px;">
       <t t-esc="label" />
     </span>
     <t t-if="icon_right">

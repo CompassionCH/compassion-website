@@ -16,8 +16,7 @@ class EventTypeMail(models.Model):
 
     notification_type = fields.Selection(
         selection_add=[("communication", "Communication rule")],
-        ondelete={"communication": "set default"},
-        default="communication",
+        ondelete={"communication": "set null"},
     )
     communication_id = fields.Many2one(
         "partner.communication.config",
@@ -30,11 +29,49 @@ class EventTypeMail(models.Model):
         ondelete={"after_stage": "set default"},
     )
     stage_id = fields.Many2one("event.registration.stage", "Stage", readonly=False)
+    trip_type_ids = fields.Many2many(
+        "event.trip.type",
+        "event_type_mail_to_trip_type_rel",
+        string="Trip types",
+        help="Trip types this rule applies to. Leave empty to use it for all of them.",
+    )
+    # Communication rules have no mail template to point at.
+    template_ref = fields.Reference(required=False)
+
+    @api.depends("communication_id")
+    def _compute_notification_type(self):
+        super()._compute_notification_type()
+        self.filtered("communication_id").notification_type = "communication"
 
     @api.onchange("notification_type", "communication_id")
     def onchange_communication_rule(self):
         if self.notification_type == "communication" and self.communication_id:
             self.template_ref = self.communication_id.email_template_id
+
+    def _prepare_event_mail_values(self):
+        """Values used to copy a scheduler from an event type to an event.
+
+        The original method always formats the mail template reference, which
+        communication rules don't have, and it ignores the fields we added on
+        the schedulers.
+        """
+        self.ensure_one()
+        if self.template_ref:
+            values = super()._prepare_event_mail_values()
+        else:
+            values = {
+                "interval_nbr": self.interval_nbr,
+                "interval_unit": self.interval_unit,
+                "interval_type": self.interval_type,
+            }
+        values.update(
+            {
+                "communication_id": self.communication_id.id,
+                "stage_id": self.stage_id.id,
+                "trip_type_ids": [(6, 0, self.trip_type_ids.ids)],
+            }
+        )
+        return values
 
 
 class EventMail(models.Model):
@@ -51,17 +88,29 @@ class EventMail(models.Model):
     )
     notification_type = fields.Selection(
         selection_add=[("communication", "Communication rule")],
-        ondelete={"communication": "set default"},
-        default="communication",
+        ondelete={"communication": "set null"},
     )
     interval_type = fields.Selection(
         selection_add=[("after_stage", "After stage")],
         ondelete={"after_stage": "set default"},
     )
     stage_id = fields.Many2one("event.registration.stage", "Stage", readonly=False)
+    trip_type_ids = fields.Many2many(
+        "event.trip.type",
+        "event_mail_to_trip_type_rel",
+        string="Trip types",
+        help="Trip types this rule applies to. Leave empty to use it for all of them.",
+    )
 
     event_type_id = fields.Many2one("event.type", readonly=False)
     event_id = fields.Many2one(required=False, readonly=False)
+    # Communication rules have no mail template to point at.
+    template_ref = fields.Reference(required=False)
+
+    @api.depends("communication_id")
+    def _compute_notification_type(self):
+        super()._compute_notification_type()
+        self.filtered("communication_id").notification_type = "communication"
 
     @api.depends(
         "event_id.date_begin",
@@ -82,15 +131,71 @@ class EventMail(models.Model):
         if self.notification_type == "communication" and self.communication_id:
             self.template_ref = self.communication_id.email_template_id
 
+    def _prepare_event_mail_values(self):
+        """Values used to copy a scheduler from an event type to an event.
+
+        The original method always formats the mail template reference, which
+        communication rules don't have, and it ignores the fields we added on
+        the schedulers.
+        """
+        self.ensure_one()
+        if self.template_ref:
+            values = super()._prepare_event_mail_values()
+        else:
+            values = {
+                "interval_nbr": self.interval_nbr,
+                "interval_unit": self.interval_unit,
+                "interval_type": self.interval_type,
+            }
+        values.update(
+            {
+                "communication_id": self.communication_id.id,
+                "stage_id": self.stage_id.id,
+                "trip_type_ids": [(6, 0, self.trip_type_ids.ids)],
+            }
+        )
+        return values
+
+    def write(self, vals):
+        """Communications sent per registration are never done: the cron skips
+        the done schedulers, so the registrations reaching the stage later
+        would never get their communication."""
+        if vals.get("mail_done"):
+            per_registration = self.filtered(
+                lambda mail: mail.communication_id
+                and mail.interval_type in ("after_stage", "after_sub")
+            )
+            if per_registration:
+                others = self - per_registration
+                if others:
+                    super(EventMail, others).write(vals)
+                vals = {key: val for key, val in vals.items() if key != "mail_done"}
+                if vals:
+                    super(EventMail, per_registration).write(vals)
+                return True
+        return super().write(vals)
+
+    def _for_trip_type(self):
+        """Drop the schedulers that don't apply to their event's type of trip."""
+        return self.filtered(
+            lambda mail: not mail.trip_type_ids
+            or mail.event_id.compassion_event_id.trip_type_id in mail.trip_type_ids
+        )
+
     def execute(self):
         """
         Replace execute method to use after_stage interval_type and
         partner communication jobs instead of mail_templates
         :return: True
         """
-        for mail in self:
+        for mail in self._for_trip_type():
             now = fields.Datetime.now()
-            if mail.interval_type == "after_stage":
+            # Communications after subscription go to each new registration,
+            # not once to the whole event.
+            if mail.interval_type == "after_stage" or (
+                mail.interval_type == "after_sub"
+                and mail.notification_type == "communication"
+            ):
                 # update registration lines
                 lines = [
                     (0, 0, {"registration_id": registration.id})
@@ -115,9 +220,12 @@ class EventMail(models.Model):
                         or mail.event_id.date_end > now
                     )
                 ):
-                    mail.event_id.send_communication(mail.communication_id.id)
+                    # Done first: sending can run the schedulers again.
                     mail.write({"mail_done": True})
-        return super().execute()
+                    mail.event_id.send_communication(mail.communication_id.id)
+        # Core only handles mail templates and would fail on our rules
+        others = self.filtered(lambda m: m.notification_type != "communication")
+        return super(EventMail, others).execute()
 
 
 class EventMailRegistration(models.Model):
@@ -134,6 +242,7 @@ class EventMailRegistration(models.Model):
         Add computation of scheduled date if interval type is after stage
         :return:
         """
+        now = fields.Datetime.now()
         for mail in self:
             if mail.scheduler_id.interval_type == "after_stage":
                 registration = mail.registration_id
@@ -143,6 +252,10 @@ class EventMailRegistration(models.Model):
                     mail.scheduled_date = date_open + _INTERVALS[
                         scheduler.interval_unit
                     ](scheduler.interval_nbr)
+                elif mail.scheduled_date and mail.scheduled_date <= now:
+                    # It was due while the registration was in the stage (e.g.
+                    # a stage left as soon as reached): it is still sent.
+                    mail.scheduled_date = mail.scheduled_date
                 else:
                     mail.scheduled_date = False
             else:
@@ -157,8 +270,10 @@ class EventMailRegistration(models.Model):
             and reg_mail.scheduler_id.notification_type == "communication"
         )
         for reg_mail in todo:
+            # Sent first: sending can move the registration to another stage,
+            # which runs the schedulers again.
+            reg_mail.mail_sent = True
             reg_mail.registration_id.send_communication(
                 reg_mail.scheduler_id.communication_id.id
             )
-        todo.write({"mail_sent": True})
         return super().execute()

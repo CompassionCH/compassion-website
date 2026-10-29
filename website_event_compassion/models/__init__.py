@@ -17,6 +17,7 @@ from . import (
     event_registration_stage,
     event_registration_task,
     event_type,
+    trip_type,
     recurring_contract,
     res_partner,
     sale_order_line,
