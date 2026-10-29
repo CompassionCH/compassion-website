@@ -1,5 +1,6 @@
 import re
 from datetime import timedelta
+from unittest.mock import patch
 
 from odoo import fields
 from odoo.tests import tagged
@@ -16,17 +17,29 @@ class TestFastCheckoutDetails(HttpCase, DigitalSeamCase):
     """The post-payment details form: the fast checkout's other half.
 
     Its POST route is a write endpoint on a public URL, so most of what is
-    tested here is what it refuses.
+    tested here is what it refuses. It is the optional form, with its "do
+    this later", whatever a country module installed alongside makes of
+    _my2_details_mandatory.
     """
 
     def setUp(self):
         super().setUp()
+        self.startPatcher(
+            patch.object(
+                type(self.env["recurring.contract"]),
+                "_my2_details_mandatory",
+                return_value=False,
+            )
+        )
         self.signup = self._make_pending_signup()
 
     def _make_pending_signup(self, email="fast-checkout-details@example.org"):
         """A confirmed signup still waiting for its sponsor's name."""
         contract = self._make_digital_contract()
-        contract.my2_signup = True
+        # what the wizard sets on a fast-checkout signup
+        contract.write(
+            {"my2_signup": True, "my2_details_awaited_partner": contract.partner_id.id}
+        )
         contract.partner_id.write(
             {
                 "lastname": self.env["res.partner"].MY2_PLACEHOLDER_NAME,
@@ -99,6 +112,8 @@ class TestFastCheckoutDetails(HttpCase, DigitalSeamCase):
                 "reference": "fast-checkout-details-prefill",
                 "operation": "online_direct",
                 "invoice_ids": [(6, 0, invoice.ids)],
+                # the notification carrying the name moved it on from draft
+                "state": "pending",
                 "my2_cardholder_name": "Jean Michel Dupont",
             }
         )
