@@ -10,6 +10,7 @@ import base64
 import binascii
 import io
 import logging
+import mimetypes
 from urllib.parse import quote, urljoin
 
 from markupsafe import Markup
@@ -20,6 +21,7 @@ from odoo.exceptions import ValidationError
 from odoo.http import request
 from odoo.tools import index_exists
 from odoo.tools.image import IMAGE_MAX_RESOLUTION
+from odoo.tools.mimetypes import guess_mimetype
 
 _logger = logging.getLogger(__name__)
 
@@ -148,6 +150,8 @@ class EventRegistration(models.Model):
     profile_picture_original = fields.Binary(
         "Original profile picture", attachment=True, groups="base.group_user"
     )
+    # Download name of the original: the participant's name.
+    profile_picture_original_filename = fields.Char(groups="base.group_user")
     profile_name = fields.Char()
     ambassador_quote = fields.Text()
     criminal_record = fields.Binary(
@@ -471,8 +475,8 @@ class EventRegistration(models.Model):
             return False
         base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
         download = (
-            f"/web/content/event.registration/{self.id}"
-            "/profile_picture_original?download=true"
+            f"/web/content/event.registration/{self.id}/profile_picture_original"
+            "?download=true&filename_field=profile_picture_original_filename"
         )
         return f"{base_url}/web/login?redirect={quote(download, safe='')}"
 
@@ -514,9 +518,19 @@ class EventRegistration(models.Model):
     def _store_profile_picture_original(self, picture_b64):
         # Unlike the other stored images, kept at its uploaded size: skip the
         # attachment auto-resize (base.image_autoresize_max_px).
-        self.sudo().with_context(image_no_postprocess=True).write(
-            {"profile_picture_original": picture_b64}
-        )
+        extension = ""
+        if picture_b64:
+            mimetype = guess_mimetype(base64.b64decode(picture_b64))
+            extension = mimetypes.guess_extension(mimetype) or ""
+        for registration in self.sudo().with_context(image_no_postprocess=True):
+            name = (registration.partner_id.name or registration.name or "").strip()
+            registration.write(
+                {
+                    "profile_picture_original": picture_b64,
+                    "profile_picture_original_filename": picture_b64
+                    and f"{name.replace('/', '-')}{extension}",
+                }
+            )
 
     @api.constrains("profile_picture")
     def _check_profile_picture_min_size(self):

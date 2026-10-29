@@ -18,7 +18,7 @@ class TestProfilePictureOriginal(RegistrationCase):
     """The uploaded profile picture is kept as it is for the staff (T3630)."""
 
     def test_original_kept_beside_the_capped_picture(self):
-        for image_format in ("JPEG", "PNG"):
+        for image_format, extension in (("JPEG", "jpg"), ("PNG", "png")):
             with self.subTest(image_format=image_format):
                 registration = self.register(
                     profile_picture=picture(4000, 3000, image_format)
@@ -27,6 +27,10 @@ class TestProfilePictureOriginal(RegistrationCase):
                 self.assertEqual(size(registration.profile_picture), (1920, 1440))
                 self.assertEqual(
                     size(registration.profile_picture_original), (4000, 3000)
+                )
+                self.assertEqual(
+                    registration.profile_picture_original_filename,
+                    f"T3630 participant.{extension}",
                 )
                 registration.unlink()
 

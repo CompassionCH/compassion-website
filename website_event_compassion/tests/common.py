@@ -28,6 +28,7 @@ def size(picture_b64):
 DOWNLOAD_LINK = (
     "/web/login?redirect=%2Fweb%2Fcontent%2Fevent.registration%2F{id}"
     "%2Fprofile_picture_original%3Fdownload%3Dtrue"
+    "%26filename_field%3Dprofile_picture_original_filename"
 )
 
 
