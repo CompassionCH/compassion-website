@@ -19,6 +19,13 @@ class DonationController(Controller):
     )
     def project_donation_page(self, project, page=1, participant=None, **kwargs):
         """To preselect a participant, pass its id as participant query parameter"""
+        # Scanners send text in these parameters, which is not worth an error 500
+        try:
+            page = int(page)
+            if isinstance(participant, str):
+                participant = int(participant)
+        except ValueError:
+            raise werkzeug.exceptions.BadRequest() from None
         # Sudo from the start: crowdfunding.project delegates to utm.campaign
         # (_inherits), which the public user has no read access to at all.
         project = project.sudo()
@@ -31,18 +38,18 @@ class DonationController(Controller):
         skip_type_selection = (
             not project.number_sponsorships_goal and not project.number_csp_goal
         )
-        if int(page) == 1 and len(project.participant_ids) == 1:
+        if page == 1 and len(project.participant_ids) == 1:
             page = 2
             participant = project.participant_ids
-        elif int(page) == 1:
+        elif page == 1:
             participant = project.participant_ids[:1]
-        if int(page) == 2:
+        if page == 2:
             if not participant:
                 page = 1
                 participant = project.participant_ids[:1]
-            if isinstance(participant, str):
+            if isinstance(participant, int):
                 participant = request.env["crowdfunding.participant"].browse(
-                    int(participant)
+                    participant
                 )
             if skip_type_selection:
                 # Skip directly to donation page
