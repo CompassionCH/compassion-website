@@ -10,13 +10,14 @@
 {
     "name": "MyCompassion - PayU GPO",
     "summary": "Sponsorship cards paid with PayU are saved as recurring cards",
-    "version": "18.0.1.1.0",
+    "version": "18.0.1.2.0",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
     "website": "https://github.com/CompassionCH/compassion-website",
     "depends": ["my_compassion", "payment_payu_gpo"],
     "data": [
+        "views/my2_gift_package.xml",
         "views/my2_new_sponsorship_wizard.xml",
         "views/payment_templates.xml",
     ],

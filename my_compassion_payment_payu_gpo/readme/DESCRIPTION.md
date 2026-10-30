@@ -49,3 +49,9 @@ is kept in the session by sponsorship, until its first payment is done, and
 prefills the card form of the payment page, where it can still be corrected
 (a typo, another card after a refused payment). Other companies keep their
 fast checkout unchanged.
+
+The email step of a visitor's donation (gift basket) asks the name on the
+card the same way, when the website's company offers PayU: required when
+PayU is its only provider, optional next to another one. The name is kept
+in the session by order, until the order is paid, and prefills the card
+form of the payment, where it can still be corrected.

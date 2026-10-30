@@ -10,6 +10,8 @@ from odoo.exceptions import ValidationError
 
 from odoo.addons.payment_payu_gpo import const
 
+from ..utils import normalize_cardholder_name
+
 
 class NewSponsorshipWizard(models.TransientModel):
     _inherit = "new.sponsorship.wizard"
@@ -44,10 +46,7 @@ class NewSponsorshipWizard(models.TransientModel):
 
     def update(self, post):
         if "cardholder_name" in post:
-            # Same normalization as the name typed on PayU's card form.
-            self.cardholder_name = " ".join(str(post["cardholder_name"] or "").split())[
-                :100
-            ]
+            self.cardholder_name = normalize_cardholder_name(post["cardholder_name"])
         return super().update(post)
 
     def finish_sponsorship(self):
