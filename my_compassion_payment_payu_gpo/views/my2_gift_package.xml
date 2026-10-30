@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <!-- The name on the card is asked with the e-mail of a donation, before
+       the payment form, which then comes prefilled with it. Required only
+       when PayU is the website's only provider (see
+       website._my2_donation_cardholder_name_asked). -->
+  <template
+    id="my2_gift_package_donor_form"
+    inherit_id="my_compassion.my2_gift_package_donor_form"
+  >
+    <xpath expr="//div[@t-elif='donor_error']" position="before">
+      <div
+        t-elif="donor_error == 'cardholder'"
+        class="mb-3 p-3 rounded-lg bg-low-eggshell text-mid-orange body-small"
+        role="alert"
+      >Please enter the name on the card.</div>
+    </xpath>
+    <xpath expr="//input[@id='donor_email']/.." position="after">
+      <t
+        t-if="donor_cardholder_name_asked"
+        t-call="theme_compassion_2025.FormFieldComponent"
+      >
+        <t t-set="top_class" t-value="'my-3'" />
+        <t t-set="label">Name on card</t>
+        <t t-set="input_id" t-value="'donor_cardholder_name'" />
+        <input
+          id="donor_cardholder_name"
+          type="text"
+          name="cardholder_name"
+          class="form-control"
+          autocomplete="cc-name"
+          maxlength="100"
+          t-att-value="donor_cardholder_name"
+          t-att-required="donor_cardholder_name_asked == 'required' and 'required'"
+        />
+        <div class="mt-2 very-tiny-text text-mid-grey">Needed to pay with PayU.</div>
+      </t>
+    </xpath>
+  </template>
+</odoo>
