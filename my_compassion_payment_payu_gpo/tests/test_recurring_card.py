@@ -124,9 +124,21 @@ class TestRecurringCard(PayuDigitalCase):
         )
         tx = self._transaction(contract, "payu-bridge-names")
         self.assertEqual(tx._payu_gpo_buyer_names(), ("", ""))
-        # The name on the card, once typed, is sent.
-        tx.payu_gpo_cardholder_name = "Anna Nowak"
-        self.assertEqual(tx._payu_gpo_buyer_names(), ("Anna", "Nowak"))
+        # The names on the card, once typed, are sent as typed.
+        tx.write(
+            {
+                "payu_gpo_cardholder_name": "Jan Kowalski Nowak",
+                "payu_gpo_cardholder_firstname": "Jan",
+                "payu_gpo_cardholder_lastname": "Kowalski Nowak",
+            }
+        )
+        self.assertEqual(tx._payu_gpo_buyer_names(), ("Jan", "Kowalski Nowak"))
+        # and replace the placeholder as typed, once paid.
+        tx._my2_apply_cardholder_name()
+        self.assertEqual(
+            (partner.firstname, partner.lastname), ("Jan", "Kowalski Nowak")
+        )
+        self.assertFalse(partner.my2_name_placeholder)
 
     def test_cardholder_name(self):
         contract = self._make_digital_contract()

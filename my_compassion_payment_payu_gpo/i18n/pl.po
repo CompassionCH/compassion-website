@@ -15,25 +15,36 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #. module: my_compassion_payment_payu_gpo
-#: model:ir.model.fields,field_description:my_compassion_payment_payu_gpo.field_new_sponsorship_wizard__cardholder_name
-msgid "Cardholder Name"
-msgstr "Imię i nazwisko posiadacza karty"
+#: model_terms:ir.ui.view,arch_db:my_compassion_payment_payu_gpo.my2_new_sponsorship_wizard_fast_checkout
+#: model_terms:ir.ui.view,arch_db:my_compassion_payment_payu_gpo.my2_gift_package_donor_form
+msgid "As on the card: needed to pay with PayU."
+msgstr "Jak na karcie: wymagane przy płatności przez PayU."
+
+#. module: my_compassion_payment_payu_gpo
+#: model:ir.model.fields,field_description:my_compassion_payment_payu_gpo.field_new_sponsorship_wizard__cardholder_firstname
+msgid "Cardholder Firstname"
+msgstr "Imię posiadacza karty"
+
+#. module: my_compassion_payment_payu_gpo
+#: model:ir.model.fields,field_description:my_compassion_payment_payu_gpo.field_new_sponsorship_wizard__cardholder_lastname
+msgid "Cardholder Lastname"
+msgstr "Nazwisko posiadacza karty"
 
 #. module: my_compassion_payment_payu_gpo
 #: model_terms:ir.ui.view,arch_db:my_compassion_payment_payu_gpo.my2_new_sponsorship_wizard_fast_checkout
 #: model_terms:ir.ui.view,arch_db:my_compassion_payment_payu_gpo.my2_gift_package_donor_form
-msgid "Name on card"
-msgstr "Imię i nazwisko na karcie"
+msgid "First name"
+msgstr "Imię"
+
+#. module: my_compassion_payment_payu_gpo
+#: model_terms:ir.ui.view,arch_db:my_compassion_payment_payu_gpo.my2_new_sponsorship_wizard_fast_checkout
+#: model_terms:ir.ui.view,arch_db:my_compassion_payment_payu_gpo.my2_gift_package_donor_form
+msgid "Last name"
+msgstr "Nazwisko"
 
 #. module: my_compassion_payment_payu_gpo
 #. odoo-python
 #: code:addons/my_compassion_payment_payu_gpo/models/new_sponsorship_wizard.py:0
 #: model_terms:ir.ui.view,arch_db:my_compassion_payment_payu_gpo.my2_gift_package_donor_form
-msgid "Please enter the name on the card."
+msgid "Please enter the first and last name on the card."
 msgstr "Wpisz imię i nazwisko widniejące na karcie."
-
-#. module: my_compassion_payment_payu_gpo
-#: model_terms:ir.ui.view,arch_db:my_compassion_payment_payu_gpo.my2_new_sponsorship_wizard_fast_checkout
-#: model_terms:ir.ui.view,arch_db:my_compassion_payment_payu_gpo.my2_gift_package_donor_form
-msgid "Needed to pay with PayU."
-msgstr "Wymagane przy płatności przez PayU."
