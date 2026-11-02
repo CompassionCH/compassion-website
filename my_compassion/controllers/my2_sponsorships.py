@@ -489,13 +489,18 @@ class MyCompassionNewSponsorshipController(http.Controller):
         """
         sponsorship = self._fetch_details_signup(sponsorship_id, details_token)
         values = self._details_form_values(post)
+        errors = []
         if not (values["firstname"] and values["lastname"] and values["phone"]):
+            errors.append(_("Please tell us your name and phone number."))
+        errors.append(self._details_extra_error(values, sponsorship))
+        error = " ".join(filter(None, errors))
+        if error:
             return request.render(
                 "my_compassion.my2_new_sponsorship_thank_you_page",
                 self._thank_you_values(
                     sponsorship,
                     details_token=details_token,
-                    details_error=_("Please tell us your name and phone number."),
+                    details_error=error,
                     submitted=values,
                 ),
             )
@@ -521,11 +526,18 @@ class MyCompassionNewSponsorshipController(http.Controller):
         page.
 
         Gated by the same token as the form itself, so this cannot be turned
-        into "post a sponsorship id, mail that sponsor".
+        into "post a sponsorship id, mail that sponsor". Where the form is a
+        required step (recurring.contract._my2_details_mandatory) there is
+        no later: the sponsor is sent back to the form.
         return: A redirection to the thank-you page, telling them to look in
-        their mailbox.
+        their mailbox, or showing the form again.
         """
         sponsorship = self._fetch_details_signup(sponsorship_id, details_token)
+        if sponsorship._my2_details_mandatory():
+            return request.redirect(
+                f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
+                f"&details_token={details_token}"
+            )
         token = sponsorship._my2_send_details_reminder()
         return request.redirect(
             f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
@@ -579,9 +591,13 @@ class MyCompassionNewSponsorshipController(http.Controller):
 
         The token decides: empty means there is no form to offer, either
         because the details are already in or because this visitor never
-        proved the signup is theirs.
+        proved the signup is theirs. A required form
+        (recurring.contract._my2_details_mandatory) is never put off by the
+        details_emailed flag, which is only a query parameter.
         """
         token = False
+        if details_emailed and sponsorship._my2_details_mandatory():
+            details_emailed = None
         if sponsorship._my2_details_pending() and not details_emailed:
             if details_token and sponsorship._my2_check_details_token(details_token):
                 # The emailed link carries its own proof. Handed straight
@@ -637,8 +653,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
             )
         return values
 
-    @staticmethod
-    def _details_form_values(post):
+    @classmethod
+    def _details_form_values(cls, post):
         """The details form's submission, cleaned up.
 
         Whitespace-only is empty (an empty required field is the client's
@@ -658,7 +674,38 @@ class MyCompassionNewSponsorshipController(http.Controller):
             "zip": text("zip"),
             "city": text("city"),
             "country_id": country.exists().id,
+            **cls._details_extra_form_values(post),
         }
+
+    @classmethod
+    def _details_extra_form_values(cls, post):
+        """Hook: the country-specific fields of the details form.
+
+        Paired with the my2_new_sponsorship_details_extra_fields template
+        slot and with _my2_details_extra_partner_vals, which is what
+        actually saves them. Empty here - see the template for why.
+        """
+        return {}
+
+    @classmethod
+    def _details_extra_error(cls, values, sponsorship):
+        """Hook: message to show above the form instead of saving, or "".
+
+        Runs on the submission of the extra fields, before anything is
+        written. Validating here rather than letting a model constraint
+        raise is deliberate: this route is public and runs once the
+        sponsorship is created, usually paid, so a ValidationError would be
+        a 500 on the page the sponsor reached by signing up.
+
+        Whether an extra field may be left empty is the country module's
+        call. Where the form is a required step
+        (recurring.contract._my2_details_mandatory) it has no "do this
+        later", so the sponsor only gets past this message by changing what
+        they typed. Requiring a field some sponsors cannot fill, such as a
+        national ID a foreign resident does not have, would leave them stuck
+        on the form after signing up.
+        """
+        return ""
 
     @staticmethod
     def _owns_signup(sponsorship):
