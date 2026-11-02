@@ -307,7 +307,15 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
     iframe.onload = () => {
       const doc = iframe.contentDocument;
       doc.body.style.width = `${A4_WIDTH_PX}px`;
-      doc.body.style.zoom = doc.documentElement.clientWidth / A4_WIDTH_PX;
+      // The modal can still be hidden (zero width): fit again once it is shown.
+      const fit = () => {
+        const width = doc.documentElement.clientWidth;
+        if (width) {
+          doc.body.style.zoom = width / A4_WIDTH_PX;
+        }
+      };
+      fit();
+      doc.defaultView.addEventListener("resize", fit);
     };
     Modal.getOrCreateInstance(document.getElementById("previewModal")).show();
     iframe.srcdoc = previewHtml || "";
