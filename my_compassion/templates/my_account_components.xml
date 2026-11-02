@@ -49,7 +49,13 @@
              personal-info and user-settings privacy-policy checkboxes -->
     <template id="acceptance_full">
       <span class="acceptance_full">
+        <t t-if="website.terms_url">I accept the
+          <a href="/legal/terms">terms and conditions</a>
+          and the
+          <a href="/legal">privacy policy</a>
+          of this website.</t>
         <a
+          t-else=""
           href="/legal"
         >I accept the legal terms, the privacy policy &amp; conditions of this website.</a>
       </span>

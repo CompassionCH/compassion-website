@@ -176,12 +176,22 @@ Page: My Compassion 2 New Sponsorship Wizard Page
           required=""
         />
         <label class="ms-2 mb-0 tiny-text text-mid-grey" for="privacy_consent">
-                    I accept the privacy policy as described in the
+          <t t-if="website.terms_url">I accept the
                     <a
-          href="/legal"
-          class="tiny-text bold text-core-blue"
-        >privacy notice</a>.
-                </label>
+            href="/legal/terms"
+            class="tiny-text bold text-core-blue"
+          >terms and conditions</a>
+                    and the
+                    <a
+            href="/legal"
+            class="tiny-text bold text-core-blue"
+          >privacy policy</a>.</t>
+          <t t-else="">I accept the privacy policy as described in the
+                    <a
+            href="/legal"
+            class="tiny-text bold text-core-blue"
+          >privacy notice</a>.</t>
+        </label>
       </div>
     </t>
     <!-- The payment-mode buttons that end this page are rendered by
@@ -700,12 +710,22 @@ Page: My Compassion 2 New Sponsorship Wizard Page
           required=""
         />
         <label class="ms-2 mb-0 tiny-text text-mid-grey" for="privacy_consent">
-                    I accept the privacy policy as described in the
+          <t t-if="website.terms_url">I accept the
                     <a
-          href="/legal"
-          class="tiny-text bold text-core-blue"
-        >privacy notice</a>.
-                </label>
+            href="/legal/terms"
+            class="tiny-text bold text-core-blue"
+          >terms and conditions</a>
+                    and the
+                    <a
+            href="/legal"
+            class="tiny-text bold text-core-blue"
+          >privacy policy</a>.</t>
+          <t t-else="">I accept the privacy policy as described in the
+                    <a
+            href="/legal"
+            class="tiny-text bold text-core-blue"
+          >privacy notice</a>.</t>
+        </label>
       </div>
     </t>
     <!-- Ends with the generic Continue button, rendered by

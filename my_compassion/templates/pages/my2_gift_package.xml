@@ -190,12 +190,22 @@
             required=""
           />
           <label class="ms-2 mb-0 tiny-text text-mid-grey" for="donor_privacy_consent">
-                    I accept the privacy policy as described in the
+            <t t-if="website.terms_url">I accept the
                     <a
-            href="/legal"
-            class="tiny-text bold text-core-blue"
-          >privacy notice</a>.
-                </label>
+              href="/legal/terms"
+              class="tiny-text bold text-core-blue"
+            >terms and conditions</a>
+                    and the
+                    <a
+              href="/legal"
+              class="tiny-text bold text-core-blue"
+            >privacy policy</a>.</t>
+            <t t-else="">I accept the privacy policy as described in the
+                    <a
+              href="/legal"
+              class="tiny-text bold text-core-blue"
+            >privacy notice</a>.</t>
+          </label>
         </div>
       </t>
       <div class="d-flex flex-column align-items-stretch">
@@ -342,9 +352,14 @@
                                         Secure checkout
                                     </div>
                   <div class="mt-1 tiny-text text-mid-grey text-center">
-                                        Learn more in our
-                                        <a href="/legal">Privacy Policy</a>
-                                    </div>
+                    <t t-if="website.terms_url">
+                      <a href="/legal/terms">Terms and Conditions</a>
+                      <span class="mx-1">|</span>
+                      <a href="/legal">Privacy Policy</a>
+                    </t>
+                    <t t-else="">Learn more in our
+                                        <a href="/legal">Privacy Policy</a></t>
+                  </div>
                 </div>
               </div>
             </div>

@@ -10,6 +10,7 @@ from . import (
     test_fast_checkout_details,
     test_fast_checkout_page,
     test_fast_checkout_routes,
+    test_legal_routes,
     test_multicompany,
     test_public_fund_donation,
     test_recurring_instrument,
