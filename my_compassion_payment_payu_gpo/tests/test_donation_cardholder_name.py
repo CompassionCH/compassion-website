@@ -116,6 +116,21 @@ class TestDonationCardholderName(HttpCase):
         self.assertIn('value="Anna"', firstname)
         self.assertIn('value="Maria Nowak"', lastname)
 
+    def test_name_message_next_to_a_terms_url(self):
+        """A website with terms and conditions apart still tells that the
+        name on the card is missing, not that the e-mail or the consent is."""
+        if "terms_url" not in self.website._fields:
+            self.skipTest("theme_compassion_2025 without terms_url")
+        self.website.terms_url = "/regulamin"
+        self._payu_only()
+        self._add_fund()
+        response = self._give_email(names=("Anna", "  "))
+        self.assertIn("donor_error=cardholder", response.url)
+        self.assertIn(
+            "Please enter the first and last name on the card.", response.text
+        )
+        self.assertNotIn("accept the conditions below", response.text)
+
     def test_optional_next_to_another_provider(self):
         self._payu_only()
         self.env["payment.provider"].create(

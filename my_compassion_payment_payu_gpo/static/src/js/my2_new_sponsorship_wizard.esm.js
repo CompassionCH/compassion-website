@@ -14,6 +14,9 @@ NewSponsorshipWizard.include({
     this.$(
       'input[name="cardholder_firstname"], input[name="cardholder_lastname"]'
     ).each((i, input) => {
+      // The page is submitted by script, without the browser's checks:
+      // spaces are no name, the widget's own check then sees it empty.
+      input.value = input.value.trim();
       const field = $(input).closest(".form-field-component").data("widget");
       if (field) {
         field.isRequired = isRequired;

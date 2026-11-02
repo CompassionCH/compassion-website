@@ -154,12 +154,6 @@ class TestCardholderName(PayuDigitalCase):
         self.assertEqual(wizard.cardholder_firstname, "Anna Maria")
         self.assertEqual(wizard.cardholder_lastname, "Nowak")
 
-    def test_blank_names_are_refused_by_the_browser(self):
-        html = self._render(self._wizard())
-        for field in ("cardholder_firstname", "cardholder_lastname"):
-            tag = re.search(rf'<input[^>]*name="{field}"[^>]*>', html).group(0)
-            self.assertIn('pattern=".*\\S.*"', tag)
-
     def test_typed_names_are_normalized(self):
         wizard = self._wizard()
         wizard.update(
