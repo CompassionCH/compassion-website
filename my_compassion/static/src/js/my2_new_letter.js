@@ -22,6 +22,9 @@ import {toast} from "@my_compassion/js/toast_service";
 import {letterAttachments} from "@my_compassion/js/my2_letter_attachments";
 import {ProgressBar} from "@theme_compassion_2025/js/components/ProgressBar";
 
+// Page width of the letter PDF (A4 at 96 DPI)
+const A4_WIDTH_PX = 794;
+
 publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
   selector: "#new_letter_form",
 
@@ -298,8 +301,16 @@ publicWidget.registry.NewLetterForm = publicWidget.Widget.extend({
    * Render the synchronous HTML preview in the preview modal.
    */
   _showPreview: function (previewHtml) {
-    document.getElementById("previewImage").srcdoc = previewHtml || "";
+    const iframe = document.getElementById("previewImage");
+    // The text is split for the A4 width of the PDF: lay the letter out at
+    // that width and zoom it to the modal, or the text overflows the boxes.
+    iframe.onload = () => {
+      const doc = iframe.contentDocument;
+      doc.body.style.width = `${A4_WIDTH_PX}px`;
+      doc.body.style.zoom = doc.documentElement.clientWidth / A4_WIDTH_PX;
+    };
     Modal.getOrCreateInstance(document.getElementById("previewModal")).show();
+    iframe.srcdoc = previewHtml || "";
   },
 
   /**
