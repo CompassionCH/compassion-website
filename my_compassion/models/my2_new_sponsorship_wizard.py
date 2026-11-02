@@ -429,6 +429,11 @@ class NewSponsorshipWizard(models.TransientModel):
             # Durable marker so only wizard signups ever get the portal
             # invitation email. Staff-created or imported contracts never do.
             "my2_signup": True,
+            # Only a partner this checkout created with a placeholder name
+            # is ever offered the post-payment details form.
+            "my2_details_awaited_partner": (
+                partner.id if partner.my2_name_placeholder else 0
+            ),
         }
         # The contract is created in draft. Bank-collected sponsorships stay
         # draft until staff validate them by hand. Digital sponsorships are

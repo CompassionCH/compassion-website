@@ -8,12 +8,13 @@ Page: My Compassion 2 Post-Payment Sponsor Details
     placeholder name until this form is filled in. It is rendered inside the
     thank-you page (my2_new_sponsorship_thank_you_page), in place of the
     account-creation call to action, and only while the signup still waits
-    for a name.
+    for its details (recurring.contract._my2_details_pending).
 
     Used in routes:
     - /my2/new-sponsorship/thank-you (rendering)
     - /my2/new-sponsorship/complete-details (submission)
-    - /my2/new-sponsorship/details-later (the "we will email you" escape hatch)
+    - /my2/new-sponsorship/details-later (the "we will email you" escape
+      hatch, offered unless _my2_details_mandatory)
 
     Injected data:
     - sponsorship ('recurring.contract' record): The new signup.
@@ -24,7 +25,8 @@ Page: My Compassion 2 Post-Payment Sponsor Details
       start the fields with. Every one of them stays editable: a provider's
       name is a suggestion, never the answer.
     - details_error (string): Message to show above the form after a
-      submission came back with a required field empty.
+      submission came back with a required field empty, or with a value a
+      country-specific field cannot store.
     - countries (array of 'res.country' records): The list of countries to
       choose from, for the optional address.
 -->
@@ -87,6 +89,12 @@ Page: My Compassion 2 Post-Payment Sponsor Details
           required=""
         />
       </t>
+      <!-- Country-specific identity fields, between the name and the phone
+           number. Empty here: what a country needs to identify its sponsors
+           is its own law's business (the Nordic entities ask for a national
+           ID so they can report the gift to their tax authority), and
+           nothing shared can be assumed about it. -->
+      <t t-call="my_compassion.my2_new_sponsorship_details_extra_fields" />
       <!-- Phone: never reported by any provider, so always asked. -->
       <t t-call="theme_compassion_2025.FormFieldComponent">
         <t t-set="top_class" t-value="'my-3'" />
@@ -192,8 +200,11 @@ Page: My Compassion 2 Post-Payment Sponsor Details
       <!-- The escape hatch posts the same form to another route, so it needs
            neither its own form (they cannot be nested) nor any JavaScript.
            formnovalidate: the fields it skips are exactly the ones it is
-           there to skip. -->
-      <div class="mb-3 d-flex justify-content-center">
+           there to skip. Absent where the form is a required step. -->
+      <div
+        t-if="not sponsorship._my2_details_mandatory()"
+        class="mb-3 d-flex justify-content-center"
+      >
         <button
           type="submit"
           class="back-button text-low-black body-small bold"
@@ -204,6 +215,21 @@ Page: My Compassion 2 Post-Payment Sponsor Details
                 </button>
       </div>
     </form>
+  </template>
+  <!-- POST-PAYMENT SPONSOR DETAILS EXTRA FIELDS -->
+  <template
+    id="my2_new_sponsorship_details_extra_fields"
+    name="New Sponsorship Post-Payment Details Extra Fields"
+  >
+    <!-- Extension point for country modules, rendered between the name and
+         the phone number. Deliberately empty: a country adds
+         its own fields by inheriting this template, so the shared form never
+         has to know which countries exist.
+
+         A field added here is read back through
+         _details_extra_form_values and saved through
+         _my2_details_extra_partner_vals - the three go together. -->
+    <t />
   </template>
   <!-- POST-PAYMENT SPONSOR DETAILS EMAILED -->
   <template
