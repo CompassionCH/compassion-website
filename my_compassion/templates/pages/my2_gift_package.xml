@@ -155,6 +155,11 @@
         role="alert"
       >We could not verify your request. Please try again in a few minutes.</div>
       <div
+        t-elif="donor_error and website.terms_url"
+        class="mb-3 p-3 rounded-lg bg-low-eggshell text-mid-orange body-small"
+        role="alert"
+      >Please give a valid email and accept the conditions below.</div>
+      <div
         t-elif="donor_error"
         class="mb-3 p-3 rounded-lg bg-low-eggshell text-mid-orange body-small"
         role="alert"
@@ -193,11 +198,15 @@
             <t t-if="website.terms_url">I accept the
                     <a
               href="/legal/terms"
+              target="_blank"
+              rel="noopener"
               class="tiny-text bold text-core-blue"
             >terms and conditions</a>
                     and the
                     <a
               href="/legal"
+              target="_blank"
+              rel="noopener"
               class="tiny-text bold text-core-blue"
             >privacy policy</a>.</t>
             <t t-else="">I accept the privacy policy as described in the

@@ -50,9 +50,9 @@
     <template id="acceptance_full">
       <span class="acceptance_full">
         <t t-if="website.terms_url">I accept the
-          <a href="/legal/terms">terms and conditions</a>
+          <a href="/legal/terms" target="_blank" rel="noopener">terms and conditions</a>
           and the
-          <a href="/legal">privacy policy</a>
+          <a href="/legal" target="_blank" rel="noopener">privacy policy</a>
           of this website.</t>
         <a
           t-else=""

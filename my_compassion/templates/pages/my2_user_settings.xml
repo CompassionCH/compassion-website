@@ -643,7 +643,14 @@ Injected data:
                       <div class="me-2">
                         <t t-out="partner.get_date('legal_agreement_date', 'short')" />
                       </div>
-                      <a href="/legal" target="_blank">(view agreement)</a>
+                      <t t-if="website.terms_url">(<a
+                        href="/legal/terms"
+                        target="_blank"
+                      >Terms and Conditions</a>, <a
+                        href="/legal"
+                        target="_blank"
+                      >Privacy Policy</a>)</t>
+                      <a t-else="" href="/legal" target="_blank">(view agreement)</a>
                     </div>
                   </t>
                   <t t-else="" enctype="application/x-www-form-urlencoded">
