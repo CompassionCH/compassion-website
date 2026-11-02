@@ -8,6 +8,7 @@
 from odoo import _, fields, models
 from odoo.exceptions import ValidationError
 
+from odoo.addons.payment import utils as payment_utils
 from odoo.addons.payment_payu_gpo import const
 
 from ..utils import normalize_cardholder_name
@@ -51,6 +52,12 @@ class NewSponsorshipWizard(models.TransientModel):
         for field in ("cardholder_firstname", "cardholder_lastname"):
             if field in post:
                 self[field] = normalize_cardholder_name(post[field])
+        # A page opened before the names were asked apart posts the full name.
+        legacy = normalize_cardholder_name(post.get("cardholder_name"))
+        if legacy and "cardholder_firstname" not in post:
+            self.cardholder_firstname, self.cardholder_lastname = (
+                payment_utils.split_partner_name(legacy)
+            )
         return super().update(post)
 
     def finish_sponsorship(self):

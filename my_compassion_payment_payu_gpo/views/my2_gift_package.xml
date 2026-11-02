@@ -28,6 +28,7 @@
             class="form-control"
             autocomplete="cc-given-name"
             maxlength="100"
+            pattern=".*\S.*"
             t-att-value="donor_cardholder_firstname"
             t-att-required="donor_cardholder_name_asked == 'required' and 'required'"
           />
@@ -43,6 +44,7 @@
             class="form-control"
             autocomplete="cc-family-name"
             maxlength="100"
+            pattern=".*\S.*"
             t-att-value="donor_cardholder_lastname"
             t-att-required="donor_cardholder_name_asked == 'required' and 'required'"
           />

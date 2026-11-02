@@ -64,9 +64,17 @@ class DonationsController(MyCompassionDonationsController):
     def _get_donor_step_values(self, order, **kwargs):
         """The names on the card of the email step, and the same names to
         prefill the card form of the payment, where they can still be
-        corrected."""
+        corrected. A signed-in donor's card form comes prefilled with their
+        own names, like a sponsor's."""
         values = super()._get_donor_step_values(order, **kwargs)
-        if values:
+        if order and not values:
+            partner = request.env.user.partner_id.sudo()
+            if not partner.my2_name_placeholder:
+                values = {
+                    "payu_gpo_cardholder_firstname": partner.firstname or "",
+                    "payu_gpo_cardholder_lastname": partner.lastname or "",
+                }
+        elif values:
             firstname, lastname = _session_donation_cardholder_names().get(
                 str(order.id), ["", ""]
             )

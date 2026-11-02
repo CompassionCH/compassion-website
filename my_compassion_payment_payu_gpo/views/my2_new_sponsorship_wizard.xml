@@ -21,6 +21,7 @@
             class="form-control"
             autocomplete="cc-given-name"
             maxlength="100"
+            pattern=".*\S.*"
             t-att-value="wizard.cardholder_firstname"
           />
         </t>
@@ -35,6 +36,7 @@
             class="form-control"
             autocomplete="cc-family-name"
             maxlength="100"
+            pattern=".*\S.*"
             t-att-value="wizard.cardholder_lastname"
           />
           <div

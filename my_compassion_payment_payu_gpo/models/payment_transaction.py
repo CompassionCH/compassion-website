@@ -101,13 +101,15 @@ class PaymentTransaction(models.Model):
     def _payu_gpo_buyer_names(self):
         """A payer known by email only (fast checkout, visitor donation) has
         the placeholder name, which PayU would show on its payment page: no
-        name is sent, and PayU asks it. The name on the card, once typed, is
-        sent as usual."""
-        if (
-            not self.payu_gpo_cardholder_name
-            and self.partner_id.sudo().my2_name_placeholder
-        ):
-            return "", ""
+        name is sent, and PayU asks it. The names on the card, once typed,
+        are sent as usual. Without them (monthly charges, BLIK), the payer's
+        own first and last name are sent, not their full name split again."""
+        partner = self.partner_id.sudo()
+        if not self.payu_gpo_cardholder_name:
+            if partner.my2_name_placeholder:
+                return "", ""
+            if partner.firstname or partner.lastname:
+                return partner.firstname or "", partner.lastname or ""
         return super()._payu_gpo_buyer_names()
 
     def _my2_apply_cardholder_name(self):

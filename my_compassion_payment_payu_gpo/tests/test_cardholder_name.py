@@ -1,7 +1,7 @@
 import re
 from unittest.mock import patch
 
-from odoo import Command
+from odoo import Command, fields
 from odoo.exceptions import ValidationError
 from odoo.tests import tagged
 
@@ -31,11 +31,18 @@ class TestCardholderName(PayuDigitalCase):
     def setUp(self):
         super().setUp()
         self.website = self.env.ref("my_compassion.my2_website")
-        child_model = self.env["compassion.child"]
-        self.child = child_model.search(
-            [("state", "in", child_model._available_states())], limit=1
+        project = self.env["compassion.project"].create(
+            {"fcp_id": "cardholder_fcp", "last_update_date": fields.Date.today()}
         )
-        self.assertTrue(self.child, "the database needs an available child")
+        self.child = self.env["compassion.child"].create(
+            {
+                "name": "Cardholder Child",
+                "global_id": "cardholder_child",
+                "local_id": "CH1234567",
+                "project_id": project.id,
+                "state": self.env["compassion.child"]._available_states()[0],
+            }
+        )
         self.website_company = self.env["res.company"].create({"name": "Cardholder Co"})
         self.provider = self.env["payment.provider"].create(
             {
@@ -140,6 +147,18 @@ class TestCardholderName(PayuDigitalCase):
 
     def test_not_asked_by_write_and_pray(self):
         self.assertFalse(self._wizard("write_and_pray")._my2_asks_cardholder_name())
+
+    def test_full_name_of_a_page_opened_before_is_split(self):
+        wizard = self._wizard()
+        wizard.update({"cardholder_name": " Anna Maria  Nowak "})
+        self.assertEqual(wizard.cardholder_firstname, "Anna Maria")
+        self.assertEqual(wizard.cardholder_lastname, "Nowak")
+
+    def test_blank_names_are_refused_by_the_browser(self):
+        html = self._render(self._wizard())
+        for field in ("cardholder_firstname", "cardholder_lastname"):
+            tag = re.search(rf'<input[^>]*name="{field}"[^>]*>', html).group(0)
+            self.assertIn('pattern=".*\\S.*"', tag)
 
     def test_typed_names_are_normalized(self):
         wizard = self._wizard()
