@@ -154,16 +154,18 @@
         class="mb-3 p-3 rounded-lg bg-low-eggshell text-mid-orange body-small"
         role="alert"
       >We could not verify your request. Please try again in a few minutes.</div>
-      <div
-        t-elif="donor_error and website.terms_url"
-        class="mb-3 p-3 rounded-lg bg-low-eggshell text-mid-orange body-small"
-        role="alert"
-      >Please give a valid email and accept the conditions below.</div>
+      <!-- A single t-elif="donor_error": modules insert their own alerts
+           before it (e.g. the name on the card of the PayU module). -->
       <div
         t-elif="donor_error"
         class="mb-3 p-3 rounded-lg bg-low-eggshell text-mid-orange body-small"
         role="alert"
-      >Please give a valid email and accept the privacy notice.</div>
+      >
+        <t
+          t-if="website.terms_url"
+        >Please give a valid email and accept the conditions below.</t>
+        <t t-else="">Please give a valid email and accept the privacy notice.</t>
+      </div>
       <!-- Email -->
       <t t-call="theme_compassion_2025.FormFieldComponent">
         <t t-set="top_class" t-value="'my-3'" />
@@ -362,9 +364,13 @@
                                     </div>
                   <div class="mt-1 tiny-text text-mid-grey text-center">
                     <t t-if="website.terms_url">
-                      <a href="/legal/terms">Terms and Conditions</a>
+                      <a
+                        href="/legal/terms"
+                        target="_blank"
+                        rel="noopener"
+                      >Terms and Conditions</a>
                       <span class="mx-1">|</span>
-                      <a href="/legal">Privacy Policy</a>
+                      <a href="/legal" target="_blank" rel="noopener">Privacy Policy</a>
                     </t>
                     <t t-else="">Learn more in our
                                         <a href="/legal">Privacy Policy</a></t>

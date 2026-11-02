@@ -646,9 +646,11 @@ Injected data:
                       <t t-if="website.terms_url">(<a
                         href="/legal/terms"
                         target="_blank"
+                        rel="noopener"
                       >Terms and Conditions</a>, <a
                         href="/legal"
                         target="_blank"
+                        rel="noopener"
                       >Privacy Policy</a>)</t>
                       <a t-else="" href="/legal" target="_blank">(view agreement)</a>
                     </div>
