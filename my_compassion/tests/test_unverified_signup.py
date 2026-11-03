@@ -190,6 +190,8 @@ class TestPossibleDuplicateFlag(UnverifiedSignupCase):
                     "name": "Duplicates Reviewer",
                     "login": "duplicates-reviewer",
                     "email": "reviewer@example.org",
+                    # the note is written in the reviewer's language
+                    "lang": "en_US",
                     "groups_id": [Command.set(self.env.ref("base.group_user").ids)],
                 }
             )
