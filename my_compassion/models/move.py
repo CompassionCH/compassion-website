@@ -153,6 +153,65 @@ class AccountMove(models.Model):
             description = self.get_list("invoice_line_ids.product_id.name")
         return description
 
+    def _get_my2_history_groups(self):
+        """Split the invoice into the donations it pays for.
+
+        One invoice can pay several unrelated donations at once (a gift
+        package with a gift and a fund, one bank transfer for both). The
+        history lists each of them with its own amount, instead of the
+        invoice total under the label of only one of them.
+        The fund part of a sponsorship stays with its sponsorship, gifts are
+        listed per child.
+        @return: list of dicts with the kind of donation (sponsorship, gift,
+                 fund, other), its invoice lines and its amount
+        """
+        self.ensure_one()
+        categ_obj = self.env["product.category"]
+        sponsorship_cat = self.env.ref(
+            "sponsorship_compassion.product_category_sponsorship", categ_obj
+        )
+        gift_cat = self.env.ref(
+            "sponsorship_compassion.product_category_gift", categ_obj
+        )
+        fund_cat = self.env.ref(
+            "sponsorship_compassion.product_category_fund", categ_obj
+        )
+        lines = self.invoice_line_ids.filtered(
+            lambda line: line.display_type == "product"
+        )
+        sponsored_contracts = lines.filtered(
+            lambda line: line.product_id.categ_id == sponsorship_cat
+        ).contract_id
+
+        groups = {}
+        for line in lines:
+            categ = line.product_id.categ_id
+            if categ == sponsorship_cat or (
+                categ != gift_cat and line.contract_id in sponsored_contracts
+            ):
+                key = ("sponsorship", False)
+            elif categ == gift_cat:
+                key = ("gift", (line.product_id.id, line.contract_id.id))
+            elif categ == fund_cat:
+                key = ("fund", line.product_id.id)
+            else:
+                key = ("other", line.product_id.id)
+            groups[key] = groups.get(key, self.env["account.move.line"]) | line
+
+        kind_order = ["sponsorship", "gift", "fund", "other"]
+        return [
+            {
+                "kind": kind,
+                "lines": group_lines,
+                "amount": self.currency_id.round(
+                    sum(group_lines.mapped("price_total"))
+                ),
+            }
+            for (kind, _detail), group_lines in sorted(
+                groups.items(), key=lambda item: kind_order.index(item[0][0])
+            )
+        ]
+
 
 class AccountInvoiceLine(models.Model):
     _name = "account.move.line"

@@ -1,4 +1,5 @@
 from datetime import timedelta
+from unittest.mock import patch
 
 from odoo import fields
 from odoo.tests import tagged
@@ -234,7 +235,10 @@ class TestFastCheckoutPlumbing(DigitalSeamCase):
 
     def test_details_token_lifecycle(self):
         contract = self._make_digital_contract()
-        contract.my2_signup = True
+        # what the wizard sets on a fast-checkout signup
+        contract.write(
+            {"my2_signup": True, "my2_details_awaited_partner": contract.partner_id.id}
+        )
         contract.partner_id.write(
             {
                 "lastname": self.env["res.partner"].MY2_PLACEHOLDER_NAME,
@@ -262,7 +266,9 @@ class TestFastCheckoutPlumbing(DigitalSeamCase):
 
     def test_details_token_refused_once_the_name_is_real(self):
         contract = self._make_digital_contract()
-        contract.my2_signup = True
+        contract.write(
+            {"my2_signup": True, "my2_details_awaited_partner": contract.partner_id.id}
+        )
         contract.partner_id.write(
             {
                 "lastname": self.env["res.partner"].MY2_PLACEHOLDER_NAME,
@@ -270,11 +276,15 @@ class TestFastCheckoutPlumbing(DigitalSeamCase):
                 "my2_name_placeholder": True,
             }
         )
-        token = contract._my2_issue_details_token()
-        contract.partner_id._my2_replace_placeholder_name("Real", "Sponsor")
-        self.assertFalse(contract._my2_check_details_token(token))
-        # and nothing is minted for a signup that wants no details
-        self.assertFalse(contract._my2_issue_details_token())
+        # the optional form, whatever a country module installed alongside
+        # makes of _my2_details_mandatory
+        with patch.object(type(contract), "_my2_details_mandatory", return_value=False):
+            token = contract._my2_issue_details_token()
+            self.assertTrue(token)
+            contract.partner_id._my2_replace_placeholder_name("Real", "Sponsor")
+            self.assertFalse(contract._my2_check_details_token(token))
+            # and nothing is minted for a signup that wants no details
+            self.assertFalse(contract._my2_issue_details_token())
 
     # === Portal invitation sequencing ===
 

@@ -6,6 +6,7 @@ from unittest.mock import patch
 from urllib.parse import urlparse
 from uuid import uuid4
 
+from lxml import etree
 from psycopg2.errors import SerializationFailure
 
 from odoo import SUPERUSER_ID, api, fields, http
@@ -20,6 +21,7 @@ from odoo.tests.common import (
     TransactionCase,
 )
 from odoo.tools import config
+from odoo.tools.safe_eval import safe_eval
 
 from odoo.addons.payment.controllers.post_processing import PaymentPostProcessing
 
@@ -1773,6 +1775,89 @@ class TestPublicFundDonation(HttpCase):
         self.assertFalse(donor.my2_name_placeholder)
         self.assertIn("Nowak", job.body_html)
         self.assertEqual(job.state, "done")
+
+    def _partner_letter(self, config, donor, **values):
+        """A communication about the donor themselves, e.g. a tax receipt."""
+        return self.env["partner.communication.job"].create(
+            {
+                "config_id": config.id,
+                "partner_id": donor.id,
+                "object_ids": str(donor.id),
+                "send_mode": "digital",
+                **values,
+            }
+        )
+
+    def test_a_rule_waits_for_the_name_when_asked(self):
+        """The rules on invoices wait for the name by default, the others
+        only when asked (e.g. the yearly tax receipt, on the partner)."""
+        self.assertTrue(self._letter_config().my2_wait_for_name)
+        config = self._letter_config(model="res.partner")
+        self.assertFalse(config.my2_wait_for_name)
+        self._add_fund()
+        self._give_email()
+        donor = self._cart().partner_id.with_context(queue_job__no_delay=True)
+        not_held = self._partner_letter(config, donor)
+        not_held.send()
+        self.assertEqual(not_held.state, "done")
+        config.my2_wait_for_name = True
+        held = self._partner_letter(config, donor, auto_send=True)
+        held.send()
+        self.assertEqual(held.state, "pending")
+        donor._my2_replace_placeholder_name("Anna", "Nowak")
+        self.assertIn("Nowak", held.body_html)
+        self.assertEqual(held.state, "done")
+
+    def test_held_attachments_are_made_again_with_the_name(self):
+        """The attachments made with the placeholder name (the tax receipt's
+        PDF) are made again once the name is given, although the records of
+        the communication did not change."""
+
+        def name_attachment(job):
+            data = base64.b64encode(job.partner_id.name.encode())
+            return {"receipt.pdf": ["", data]}
+
+        job_class = type(self.env["partner.communication.job"])
+        with patch.object(
+            job_class, "_test_my2_name_attachment", name_attachment, create=True
+        ):
+            config = self._letter_config(model="res.partner")
+            config.write(
+                {
+                    "my2_wait_for_name": True,
+                    "attachments_function": "_test_my2_name_attachment",
+                }
+            )
+            self._add_fund()
+            self._give_email()
+            donor = self._cart().partner_id
+            job = self._partner_letter(config, donor)
+            self.assertEqual(
+                job.attachment_ids.data.decode(), donor.MY2_PLACEHOLDER_NAME
+            )
+            donor._my2_replace_placeholder_name("Anna", "Nowak")
+        self.assertEqual(len(job.attachment_ids), 1)
+        self.assertIn("Nowak", job.attachment_ids.data.decode())
+        self.assertEqual(job.state, "pending", "sent by staff, as before")
+
+    def test_staff_see_what_waits_for_the_name(self):
+        """The communications still held, e.g. the tax receipts at the end of
+        the year: the filter of the communications lists them."""
+        config = self._letter_config()
+        self._add_fund()
+        self._give_email()
+        donor = self._cart().partner_id
+        held = self._letter(config, donor)
+        named = donor.copy({"my2_name_placeholder": False, "name": "Anna Nowak"})
+        not_held = self._letter(config, named)
+        view = self.env.ref("my_compassion.communication_job_search_waiting_for_name")
+        waiting = etree.fromstring(view.arch_db).xpath(
+            "//filter[@name='my2_waiting_for_name']"
+        )[0]
+        found = self.env["partner.communication.job"].search(
+            [*safe_eval(waiting.get("domain")), ("id", "in", (held | not_held).ids)]
+        )
+        self.assertEqual(found, held)
 
     # === Amounts and images ===
 

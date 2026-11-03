@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <record id="communication_config_form_wait_for_name" model="ir.ui.view">
+    <field name="name">communication.config.form.my2.wait.for.name</field>
+    <field name="model">partner.communication.config</field>
+    <field name="inherit_id" ref="partner_communication.communication_config_form" />
+    <field name="arch" type="xml">
+      <field name="forbid_merging" position="after">
+        <field name="my2_wait_for_name" />
+      </field>
+    </field>
+  </record>
+
+  <!-- The communications held for a donor known by email only, e.g. the tax
+       receipts still waiting at the end of the year. -->
+  <record id="communication_job_search_waiting_for_name" model="ir.ui.view">
+    <field name="name">communication.job.search.my2.waiting.for.name</field>
+    <field name="model">partner.communication.job</field>
+    <field name="inherit_id" ref="partner_communication.communication_job_search" />
+    <field name="arch" type="xml">
+      <filter name="pending" position="after">
+        <filter
+          string="Waiting for the donor's name"
+          name="my2_waiting_for_name"
+          domain="[('state', '=', 'pending'), ('config_id.my2_wait_for_name', '=', True), ('partner_id.my2_name_placeholder', '=', True)]"
+        />
+      </filter>
+    </field>
+  </record>
+</odoo>

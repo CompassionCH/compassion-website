@@ -1,4 +1,5 @@
 from . import (
+    test_cardholder_name_capture,
     test_child_timeline,
     test_contact_us,
     test_digital_fixit,

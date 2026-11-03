@@ -6,8 +6,6 @@ from markupsafe import Markup
 from odoo import SUPERUSER_ID, _, fields, models
 from odoo.exceptions import UserError
 
-from .communication_job import NAMED_COMMUNICATION_MODELS
-
 _logger = logging.getLogger(__name__)
 
 # Days after which a donor left with the placeholder name and nothing else
@@ -287,7 +285,7 @@ class Partner(models.Model):
                     [
                         ("partner_id", "in", self.ids),
                         ("state", "=", "pending"),
-                        ("model", "in", NAMED_COMMUNICATION_MODELS),
+                        ("config_id.my2_wait_for_name", "=", True),
                     ]
                 )._my2_release_held()
         except Exception:
