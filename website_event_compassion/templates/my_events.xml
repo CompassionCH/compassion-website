@@ -310,9 +310,13 @@
       data-name="Form"
     >
       <div class="container">
+        <!-- The website form posts to action + force_action. The slash
+             goes with force_action: in another language than the default
+             one, the action gets a /fr_CH-like prefix and loses its
+             trailing slash. -->
         <form
           id="event_registration_form"
-          action="/my/events/form/"
+          action="/my/events/form"
           method="post"
           enctype="multipart/form-data"
           class="o_mark_required"
@@ -320,7 +324,7 @@
           data-success-mode="redirect"
           t-attf-data-success-page="/my/events/#{slug(registration)}"
           data-model_name="event.registration.form"
-          data-force_action="registration_edit"
+          data-force_action="/registration_edit"
         >
           <div class="s_website_form_rows row s_col_no_bgcolor">
             <div
