@@ -2944,6 +2944,7 @@ msgstr "My2 Website-Route"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.product_template_form_view
+#: model_terms:ir.ui.view,arch_db:my_compassion.view_website_form_my_compassion
 msgid "MyCompassion"
 msgstr "MyCompassion"
 
@@ -5674,3 +5675,37 @@ msgstr ""
 #: code:addons/my_compassion/controllers/my2_donations.py:0
 msgid "The smallest donation to this fund is %(amount)s."
 msgstr "Die kleinste Spende für diesen Fonds beträgt %(amount)s."
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_website__my2_duplicate_review_user_id
+msgid "Possible Duplicates Reviewer"
+msgstr "Prüfer möglicher Duplikate"
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_website__my2_duplicate_review_user_id
+msgid "Gets a to-do when a visitor's sponsorship, made with the email of a known donor, is confirmed. The visitor always gets a new contact, never the donor's: this person checks whether it is the same donor. The first website of the company with a reviewer is used. When none has one, only a note is left on the new contact."
+msgstr "Erhält eine Aufgabe, wenn die Patenschaft eines Besuchers, abgeschlossen mit der E-Mail eines bekannten Spenders, bestätigt wird. Der Besucher erhält immer einen neuen Kontakt, nie den des Spenders: Diese Person prüft, ob es derselbe Spender ist. Es wird die erste Website der Firma mit einem Prüfer verwendet. Hat keine einen, wird nur eine Notiz beim neuen Kontakt hinterlassen."
+
+#. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_res_partner__my2_duplicate_flagged
+#: model:ir.model.fields,field_description:my_compassion.field_res_users__my2_duplicate_flagged
+msgid "Flagged as a possible duplicate"
+msgstr "Als mögliches Duplikat gemeldet"
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_res_partner__my2_duplicate_flagged
+#: model:ir.model.fields,help:my_compassion.field_res_users__my2_duplicate_flagged
+msgid "The staff were told that a visitor used the email of a known donor for this partner. They are told once."
+msgstr "Die Mitarbeitenden wurden informiert, dass ein Besucher für diesen Partner die E-Mail eines bekannten Spenders verwendet hat. Sie werden nur einmal informiert."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/res_partner.py:0
+msgid "A visitor sponsored with the email of %(partners)s. Nothing proves it is the same person. Check with them. If it is, move this contact's sponsorship onto them, into their existing collection group, then archive this contact."
+msgstr "Ein Besucher hat mit der E-Mail von %(partners)s eine Patenschaft abgeschlossen. Nichts beweist, dass es dieselbe Person ist. Klären Sie es mit ihnen ab. Wenn ja, verschieben Sie die Patenschaft dieses Kontakts zu ihnen, in ihre bestehende Zahlungsgruppe, und archivieren Sie dann diesen Kontakt."
+
+#. module: my_compassion
+#. odoo-python
+#: code:addons/my_compassion/models/res_partner.py:0
+msgid "Possible duplicate contact"
+msgstr "Mögliches Duplikat eines Kontakts"
