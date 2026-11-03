@@ -36,6 +36,15 @@ OWN_SIGNUPS_SESSION_KEY = "my2_own_sponsorship_ids"
 OWN_SIGNUPS_SESSION_LIMIT = 10
 
 
+def own_signup_session_entry(sponsorship):
+    """What the session keeps of a signup it owns: the contract and its
+    partner. The partner is part of it because staff may move the contract
+    onto a known donor (a visitor who used their email), and from then on
+    this browser must have no say on that donor.
+    """
+    return [sponsorship.id, sponsorship.partner_id.id]
+
+
 def _flow_n_steps(sponsorship):
     """Step count of the wizard flow that created this sponsorship.
 
@@ -409,7 +418,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 },
             )
         sponsorship = wizard.finish_sponsorship()
-        self._add_sponsorship_to_session(sponsorship.id)
+        self._add_sponsorship_to_session(sponsorship)
 
         # Digital modes pay the first month live before the thank-you.
         if sponsorship.payment_mode_id.payment_provider_id:
@@ -500,7 +509,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 ),
             )
         sponsorship._my2_apply_details(values)
-        self._add_sponsorship_to_session(sponsorship.id)
+        self._add_sponsorship_to_session(sponsorship)
         return request.redirect(
             f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
         )
@@ -670,7 +679,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
         sponsorship_id in the URL proves nothing on its own - ids are
         sequential and every route touching this signup is public.
         """
-        owns_signup = sponsorship.id in (
+        owns_signup = own_signup_session_entry(sponsorship) in (
             request.session.get(OWN_SIGNUPS_SESSION_KEY) or []
         )
         return owns_signup or MyCompassionSponsorshipPayment._is_sponsorship_user(
@@ -761,10 +770,10 @@ class MyCompassionNewSponsorshipController(http.Controller):
         return html_content
 
     @staticmethod
-    def _add_sponsorship_to_session(sponsorship_id):
+    def _add_sponsorship_to_session(sponsorship):
         """Adds the sponsorship to the session's list of owned signups."""
         own_signups = list(request.session.get(OWN_SIGNUPS_SESSION_KEY) or [])
-        own_signups.append(sponsorship_id)
+        own_signups.append(own_signup_session_entry(sponsorship))
         request.session[OWN_SIGNUPS_SESSION_KEY] = own_signups[
             -OWN_SIGNUPS_SESSION_LIMIT:
         ]
@@ -871,8 +880,8 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
         )
         if kwargs.get("flow") == "token" and not self._is_sponsorship_user(sponsorship):
             # saved instruments are only offered/chargeable to the logged-in
-            # sponsor: the public wizard matches partners by email, which
-            # must never give access to someone else's stored card
+            # sponsor: a visitor's partner is always a new one today, but a
+            # stored card stays behind a login whatever the checkout does
             raise ValidationError(
                 _("Please log in to pay with a saved payment method.")
             )
@@ -943,9 +952,9 @@ class MyCompassionSponsorshipPayment(payment_portal.PaymentPortal):
                 force_tokenization=True,
             )
         )
-        # saved instruments only for the authenticated sponsor: the public
-        # wizard matches partners by email, which must never expose someone
-        # else's stored cards
+        # saved instruments only for the authenticated sponsor: a visitor's
+        # partner is always a new one today, but stored cards stay behind a
+        # login whatever the checkout does
         tokens_sudo = request.env["payment.token"].sudo()
         if cls._is_sponsorship_user(sponsorship):
             tokens_sudo = tokens_sudo._get_available_tokens(

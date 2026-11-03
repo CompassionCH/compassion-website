@@ -32,6 +32,7 @@ from . import (
     ir_binary,
     ir_http,
     account_payment_mode,
+    base_partner_merge,
     payment_provider,
     payment_transaction,
     recurring_contract_origin,
