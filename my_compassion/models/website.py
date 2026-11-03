@@ -68,10 +68,11 @@ class Website(models.Model):
         "res.users",
         "Possible Duplicates Reviewer",
         domain=[("share", "=", False)],
-        help="Gets a to-do when a visitor sponsors with the email of a known"
-        " donor. The visitor always gets a new contact, never the donor's:"
-        " this person checks whether to merge them. When empty, only a note"
-        " is left on the new contact.",
+        help="Gets a to-do when a visitor's sponsorship, made with the email of"
+        " a known donor, is confirmed. The visitor always gets a new contact,"
+        " never the donor's: this person checks whether it is the same donor."
+        " The first website of the company with a reviewer is used. When none"
+        " has one, only a note is left on the new contact.",
     )
 
     def sale_get_order(self, force_create=False):

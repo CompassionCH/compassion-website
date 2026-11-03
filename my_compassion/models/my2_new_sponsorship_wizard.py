@@ -381,12 +381,10 @@ class NewSponsorshipWizard(models.TransientModel):
             # the charge cron uses for every invoice of the group - and let
             # this browser, which owns the new signup, see their name and
             # write their preferences. A returning donor sponsoring without
-            # logging in becomes a second contact, for staff to merge.
+            # logging in becomes a second contact; the staff are told once
+            # the signup is confirmed (res.partner._my2_flag_possible_duplicate).
             partner = self.env["res.partner"].create(
                 {**self._get_new_partner_vals(), "my2_email_unverified": True}
-            )
-            partner._my2_flag_possible_duplicate(
-                self.env["website"].get_current_website()
             )
         else:
             if not partner.birthdate_date and self.birthdate:
