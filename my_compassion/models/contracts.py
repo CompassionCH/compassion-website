@@ -658,7 +658,7 @@ class RecurringContract(models.Model):
             lambda c: c.my2_signup
             and c.group_id.payment_mode_id.payment_provider_id
             and not c.partner_id.my2_name_placeholder
-        )._my2_send_portal_invitation()
+        )._my2_on_signup_confirmed()
         return res
 
     def contract_waiting(self):
@@ -670,8 +670,16 @@ class RecurringContract(models.Model):
             lambda c: c.my2_signup
             and not c.group_id.payment_mode_id.payment_provider_id
             and not c.partner_id.my2_name_placeholder
-        )._my2_send_portal_invitation()
+        )._my2_on_signup_confirmed()
         return res
+
+    def _my2_on_signup_confirmed(self):
+        """What waits for a signup to be confirmed, with the sponsor's real
+        name: their portal invitation, and the staff check of a visitor who
+        used the email of a known donor."""
+        self._my2_send_portal_invitation()
+        for contract in self:
+            contract.partner_id._my2_flag_possible_duplicate(contract.company_id)
 
     def _my2_pending_portal_invitations(self):
         """Confirmed signups whose invitation was held back for a name.

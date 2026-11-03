@@ -3,7 +3,10 @@ from unittest.mock import patch
 from odoo import Command
 from odoo.tests import HttpCase, tagged
 
-from ..controllers.my2_sponsorships import OWN_SIGNUPS_SESSION_KEY
+from ..controllers.my2_sponsorships import (
+    OWN_SIGNUPS_SESSION_KEY,
+    own_signup_session_entry,
+)
 from .common import DigitalSeamCase
 
 DONOR_EMAIL = "known-donor@example.org"
@@ -87,7 +90,13 @@ class TestUnverifiedSignup(UnverifiedSignupCase):
     IDENTITIES = {
         "email only": {},
         "name": {"firstname": "Known", "lastname": "Donor"},
-        "name and postcode": {"firstname": "Known", "lastname": "Donor", "zip": "1400"},
+        # without the donor's email: name and postcode alone used to match
+        "name and postcode": {
+            "email": "someone-else@example.org",
+            "firstname": "Known",
+            "lastname": "Donor",
+            "zip": "1400",
+        },
     }
 
     def test_a_visitor_never_gets_the_known_donor(self):
@@ -136,47 +145,142 @@ class TestUnverifiedSignup(UnverifiedSignupCase):
         )
 
     def test_a_logged_in_donor_keeps_their_group(self):
-        user = self.env["res.users"].create(
-            {
-                "login": "known-donor-login",
-                "partner_id": self.donor.id,
-                "groups_id": [Command.set(self.env.ref("base.group_portal").ids)],
-            }
+        user = (
+            self.env["res.users"]
+            .with_context(no_reset_password=True)
+            .create(
+                {
+                    "login": "known-donor-login",
+                    "partner_id": self.donor.id,
+                    "groups_id": [Command.set(self.env.ref("base.group_portal").ids)],
+                }
+            )
         )
         sponsorship = self._sign_up(user=user)
         self.assertEqual(sponsorship.partner_id, self.donor)
         self.assertEqual(sponsorship.group_id, self.donor_group)
 
-    def test_the_staff_is_told_about_a_possible_duplicate(self):
-        website = self.env["website"].get_current_website()
-        website.my2_duplicate_review_user_id = self.env.user
-        partner = self._sign_up(firstname="Known", lastname="Donor").partner_id
-        activity = self.env["mail.activity"].search(
+    def test_a_merge_keeps_the_donors_own_flags(self):
+        visitor = self._sign_up().partner_id
+        self.assertTrue(visitor.my2_email_unverified)
+        self.assertTrue(visitor.my2_name_placeholder)
+        self.env["base.partner.merge.automatic.wizard"]._merge(
+            (visitor | self.donor).ids, self.donor
+        )
+        self.assertFalse(visitor.exists())
+        self.assertFalse(self.donor.my2_email_unverified)
+        self.assertFalse(self.donor.my2_name_placeholder)
+
+
+NOTE = "A visitor sponsored with the email of"
+
+
+@tagged("post_install", "-at_install")
+class TestPossibleDuplicateFlag(UnverifiedSignupCase):
+    """The staff are told about a visitor who used a known donor's email,
+    once the signup is confirmed and the sponsor has a real name."""
+
+    def setUp(self):
+        super().setUp()
+        self.reviewer = (
+            self.env["res.users"]
+            .with_context(no_reset_password=True)
+            .create(
+                {
+                    "name": "Duplicates Reviewer",
+                    "login": "duplicates-reviewer",
+                    "email": "reviewer@example.org",
+                    "groups_id": [Command.set(self.env.ref("base.group_user").ids)],
+                }
+            )
+        )
+        self.website = self.env["website"].create(
+            {
+                "name": "Duplicates Test Website",
+                "company_id": self.donor_group.company_id.id,
+                "my2_duplicate_review_user_id": self.reviewer.id,
+            }
+        )
+
+    def _activities(self, partner):
+        return self.env["mail.activity"].search(
             [("res_model", "=", "res.partner"), ("res_id", "=", partner.id)]
         )
-        self.assertEqual(activity.user_id, self.env.user)
+
+    def _notes(self, partner):
+        return partner.message_ids.filtered(lambda m: NOTE in (m.body or ""))
+
+    def _confirm(self, sponsorship):
+        """The first payment activates the signup. GMC is out of scope."""
+        sponsorship._ensure_first_invoice()
+        with patch.object(
+            self.registry["gmc.message"],
+            "_perform_outgoing_action",
+            lambda message_self: None,
+        ):
+            sponsorship.contract_active()
+        self.assertEqual(sponsorship.state, "active")
+
+    def test_the_reviewer_is_told_once_the_signup_is_confirmed(self):
+        sponsorship = self._sign_up(firstname="Known", lastname="Donor")
+        partner = sponsorship.partner_id
+        # an abandoned checkout asks nothing of the staff
+        self.assertFalse(self._notes(partner))
+        self.assertFalse(self._activities(partner))
+        self._confirm(sponsorship)
+        activity = self._activities(partner)
+        self.assertEqual(activity.user_id, self.reviewer)
+        note = self._notes(partner)
+        self.assertEqual(len(note), 1)
+        # written by the system, not by the website's public user
+        self.assertNotEqual(note.author_id, self.env.ref("base.public_partner"))
         # both name the known donor with a link to their record
-        for body in (activity.note, partner.message_ids[0].body):
+        for body in (activity.note, note.body):
             self.assertIn(f'data-oe-id="{self.donor.id}"', str(body).replace("'", '"'))
+        # and only once
+        partner._my2_flag_possible_duplicate(sponsorship.company_id)
+        self.assertEqual(len(self._notes(partner)), 1)
+        self.assertEqual(len(self._activities(partner)), 1)
+
+    def test_a_fast_checkout_is_flagged_under_its_real_name(self):
+        sponsorship = self._sign_up()
+        partner = sponsorship.partner_id
+        self.assertTrue(partner.my2_name_placeholder)
+        self._confirm(sponsorship)
+        self.assertFalse(self._activities(partner))
+        partner._my2_replace_placeholder_name("Known", "Donor")
+        activity = self._activities(partner)
+        self.assertEqual(activity.user_id, self.reviewer)
+        self.assertNotIn(partner.MY2_PLACEHOLDER_NAME, activity.res_name)
 
     def test_without_a_reviewer_the_note_is_still_left(self):
-        website = self.env["website"].get_current_website()
-        website.my2_duplicate_review_user_id = False
-        partner = self._sign_up().partner_id
-        self.assertFalse(
-            self.env["mail.activity"].search(
-                [("res_model", "=", "res.partner"), ("res_id", "=", partner.id)]
-            )
-        )
-        self.assertIn("A visitor sponsored with the email", partner.message_ids[0].body)
+        self.website.my2_duplicate_review_user_id = False
+        sponsorship = self._sign_up(firstname="Known", lastname="Donor")
+        self._confirm(sponsorship)
+        self.assertFalse(self._activities(sponsorship.partner_id))
+        self.assertTrue(self._notes(sponsorship.partner_id))
 
     def test_a_new_email_is_not_flagged(self):
-        partner = self._sign_up(email="brand-new-sponsor@example.org").partner_id
-        self.assertFalse(
-            partner.message_ids.filtered(
-                lambda m: "A visitor sponsored with the email" in (m.body or "")
-            )
+        sponsorship = self._sign_up(
+            email="brand-new-sponsor@example.org", firstname="New", lastname="One"
         )
+        self._confirm(sponsorship)
+        self.assertFalse(self._notes(sponsorship.partner_id))
+
+    def test_a_failing_flag_never_breaks_the_confirmation(self):
+        sponsorship = self._sign_up(firstname="Known", lastname="Donor")
+
+        def broken(partner_self, company):
+            raise ValueError("the reviewer's email could not be rendered")
+
+        with (
+            patch.object(
+                self.registry["res.partner"], "_my2_post_possible_duplicate", broken
+            ),
+            self.assertLogs("odoo.addons.my_compassion.models.res_partner", "ERROR"),
+        ):
+            self._confirm(sponsorship)
+        self.assertFalse(sponsorship.partner_id.my2_duplicate_flagged)
 
 
 @tagged("post_install", "-at_install")
@@ -186,7 +290,11 @@ class TestUnverifiedSignupSession(HttpCase, UnverifiedSignupCase):
     def test_the_session_opens_only_its_own_signup(self):
         sponsorship = self._sign_up(firstname="Known", lastname="Donor")
         self.authenticate(
-            None, None, session_extra={OWN_SIGNUPS_SESSION_KEY: [sponsorship.id]}
+            None,
+            None,
+            session_extra={
+                OWN_SIGNUPS_SESSION_KEY: [own_signup_session_entry(sponsorship)]
+            },
         )
         own = self.url_open(
             f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
@@ -196,3 +304,9 @@ class TestUnverifiedSignupSession(HttpCase, UnverifiedSignupCase):
             "/my2/new-sponsorship/thank-you" f"?sponsorship_id={self.donor_contract.id}"
         )
         self.assertEqual(donors.status_code, 404)
+        # staff move the signup onto the donor: this browser loses it
+        sponsorship.partner_id = self.donor
+        moved = self.url_open(
+            f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
+        )
+        self.assertEqual(moved.status_code, 404)
