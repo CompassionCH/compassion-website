@@ -24,8 +24,12 @@ def migrate(cr, version):
     )
     row = cr.fetchone()
     if not row or parse_version(row[0] or "0") < parse_version("18.0.1.1.0"):
+        # The modules upgraded before this one in the same run are already
+        # committed, those after it are left as they were: the same upgrade
+        # has to run again, not only these two modules.
         raise RuntimeError(
-            "Upgrade payment_payu_gpo 18.0.1.1.0"
-            " (CompassionCH/compassion-accounting#298) together with this module:"
-            " -u payment_payu_gpo,my_compassion_payment_payu_gpo"
+            "payment_payu_gpo 18.0.1.1.0 (CompassionCH/compassion-accounting#298)"
+            " must be upgraded together with my_compassion_payment_payu_gpo: add"
+            " payment_payu_gpo to the modules to upgrade and run the same upgrade"
+            " again, e.g. -u payment_payu_gpo,theme_compassion_2025,my_compassion"
         )

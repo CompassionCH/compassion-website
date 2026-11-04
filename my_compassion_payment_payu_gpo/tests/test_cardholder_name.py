@@ -170,6 +170,14 @@ class TestCardholderName(PayuDigitalCase):
             with self.assertRaisesRegex(ValidationError, "last name on the card"):
                 wizard.finish_sponsorship()
 
+    def test_payu_refused_with_blank_names(self):
+        """Names made of spaces count as no name: the fast checkout trims
+        them in the browser, and the server refuses what is left."""
+        wizard = self._wizard(payment_method=self.payu_mode.id)
+        wizard.update({"cardholder_firstname": "   ", "cardholder_lastname": "Nowak"})
+        with self.assertRaisesRegex(ValidationError, "last name on the card"):
+            wizard.finish_sponsorship()
+
     def test_standing_order_finishes_without_the_name(self):
         contract = self._make_digital_contract()
         wizard = self._wizard(payment_method=self.standing_order_mode.id)
