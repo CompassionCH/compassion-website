@@ -8,7 +8,9 @@ class RegistrationTaskRel(models.Model):
         super()._compute_task_url()
         task_musk_medic = self.env.ref("muskathlon.task_medical")
         task_charter = self.env.ref("muskathlon.task_sign_child_protection")
-        task_flight = self.env.ref("muskathlon.task_flight_details")
+        task_flight = self.env.ref("muskathlon.task_flight_details") + self.env.ref(
+            "muskathlon.task_return_flight"
+        )
         task_passport = self.env.ref("muskathlon.task_passport")
         task_criminal = self.env.ref("muskathlon.task_criminal")
         slug = self.env["ir.http"]._slug
@@ -26,7 +28,7 @@ class RegistrationTaskRel(models.Model):
                     f"/partner/child-protection-charter?redirect="
                     f"/my/events/{slug(task.registration_id)}"
                 )
-            elif task.task_id == task_flight:
+            elif task.task_id in task_flight:
                 task.task_url = f"/my/events/{slug(task.registration_id)}/flight"
             elif task.task_id == task_passport:
                 task.task_url = f"/my/events/{slug(task.registration_id)}/passport"

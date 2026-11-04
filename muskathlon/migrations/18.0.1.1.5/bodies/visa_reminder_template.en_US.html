@@ -1,0 +1,18 @@
+<div>
+  <t t-set="partner" t-value="object.partner_id" />
+  <t t-set="registration" t-value="object.get_objects()" />
+  <t t-set="event" t-value="registration.compassion_event_id" />
+  <t t-set="country" t-value="event.country_id" />
+</div>
+<p><t t-out="partner.informal_salutation" />,</p>
+<p>Only a few weeks left before you leave for <t t-out="country.name"></t>!</p>
+<p>
+  Please check whether you need a visa to enter the country with your nationality and,
+  if so, apply for it in time.
+</p>
+<p>
+  To enter the country, your passport must be valid for at least six months on the date
+  of entry and you must hold a return or onward ticket.
+</p>
+<p>We look forward to seeing you!</p>
+<p>Nathalie, 4M Switzerland</p>

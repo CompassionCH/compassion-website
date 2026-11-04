@@ -1,0 +1,18 @@
+<div>
+  <t t-set="partner" t-value="object.partner_id" />
+  <t t-set="registration" t-value="object.get_objects()" />
+  <t t-set="event" t-value="registration.compassion_event_id" />
+  <t t-set="country" t-value="event.country_id" />
+</div>
+<p><t t-out="partner.informal_salutation" />,</p>
+<p>
+  Have you had your vaccinations checked? Please take some time to do it in the coming
+  days.
+</p>
+<p>
+  Are you sufficiently insured? Your health/accident insurance can tell you about your
+  coverage and benefits abroad. If needed, take out an additional insurance. Travel,
+  cancellation and health insurance abroad are the responsibility of each participant.
+</p>
+<p>May God keep you healthy and bless you!</p>
+<p>Nathalie, 4M Switzerland</p>

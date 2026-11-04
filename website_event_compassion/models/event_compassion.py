@@ -151,16 +151,6 @@ class EventCompassion(models.Model):
             "res_id": self.odoo_event_id.id,
         }
 
-    @api.model
-    def past_event_action(self):
-        """Switch partners to "attended" after the event ended"""
-        for event in self:
-            if event.registrations_ended:
-                participants = self.env["event.registration"].search(
-                    [("event_id", "=", event.odoo_event_id.id)]
-                )
-                participants.past_event_action()
-
     def write(self, vals):
         if vals.get("picture_1"):
             vals["cover_properties"] = json.dumps(

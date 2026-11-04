@@ -1,0 +1,60 @@
+<div>
+  <t t-set="partner" t-value="object.partner_id" />
+  <t t-set="registration" t-value="object.get_objects()" />
+  <t t-set="event" t-value="registration.compassion_event_id" />
+  <t t-set="country" t-value="event.country_id" />
+</div>
+<p><t t-out="partner.informal_salutation" />,</p>
+<!-- Sent when the account is activated (Confirmed): the activation button of the old text is removed. -->
+<p>
+  Bienvenue au <t t-out="event.name"></t> du
+  <t t-out="event.get_date('start_date', 'dd')"></t> au
+  <t t-out="event.get_date('end_date', 'date_full')"></t> - ton engagement sportif
+  contre l’extrême pauvreté ! Ton compte est activé et ton inscription est confirmée.
+</p>
+<p>
+  Le Muskathlon est organisé par 4M Switzerland, en collaboration avec l’ONG Compassion.
+  Cette dernière te propose une opportunité unique de participer au combat contre la
+  pauvreté infantile et ses conséquences, tout en relevant un défi sportif
+  <t t-out="country.in_preposition"></t> <t t-out="country.name"></t>.
+</p>
+<p>
+  Ensemble, nous ferons la différence et nous verrons que l'espoir est plus fort que la
+  pauvreté !
+</p>
+<p>
+  Ton inscription marque le début d’une grande aventure. Compassion veut te soutenir du
+  mieux possible et te transmettre toutes les informations nécessaires à la réussite de
+  ton Muskathlon. Au fil des mois, nous t’enverrons régulièrement des informations sur
+  ce que tu dois faire, quand, comment, etc. Les étapes à compléter apparaissent au fur
+  et à mesure sur ta page de participant.
+</p>
+<p>
+  Dans les prochains jours, tu recevras un courrier de notre part, avec la facture pour
+  les frais de voyage, divers flyers et ton t-shirt d’entraînement.
+</p>
+<p>Voici tes données d’accès:</p>
+<ul>
+  <li>Nom d’utilisateur: <t t-out="partner.user_ids[:1].login or ''"></t></li>
+  <li>
+    Lien d’accès:
+    <a t-attf-href="{{registration.host_url}}/my/events/{{registration.id}}"
+      >ma page de participant</a
+    >
+  </li>
+</ul>
+<p>Si tu as des questions, n’hésite pas à nous contacter.</p>
+<p>
+  Pour des questions concernant l’organisation et le voyage: Nathalie Schranz,
+  n.schranz@4m-switzerland.ch, 079 507 92 40
+</p>
+<p>
+  Pour des questions concernant Compassion et les parrainages: Colin Ward,
+  cward@compassion.ch, 077 261 36 76
+</p>
+<p>Cordialement,</p>
+<p>
+  Nathalie, 4M Switzerland
+  <br />
+  Colin, Compassion
+</p>

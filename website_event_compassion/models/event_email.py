@@ -252,9 +252,11 @@ class EventMailRegistration(models.Model):
                     mail.scheduled_date = date_open + _INTERVALS[
                         scheduler.interval_unit
                     ](scheduler.interval_nbr)
-                elif mail.scheduled_date and mail.scheduled_date <= now:
-                    # It was due while the registration was in the stage (e.g.
-                    # a stage left as soon as reached): it is still sent.
+                elif mail.scheduled_date:
+                    # Planned while the registration was in the stage: it is
+                    # still sent after it left it (e.g. a stage left as soon
+                    # as reached, or the invitation to sponsor 15 days after
+                    # the confirmation of a Muskathlete already in Flights).
                     mail.scheduled_date = mail.scheduled_date
                 else:
                     mail.scheduled_date = False

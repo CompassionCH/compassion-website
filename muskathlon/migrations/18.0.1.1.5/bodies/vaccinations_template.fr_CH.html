@@ -1,0 +1,19 @@
+<div>
+  <t t-set="partner" t-value="object.partner_id" />
+  <t t-set="registration" t-value="object.get_objects()" />
+  <t t-set="event" t-value="registration.compassion_event_id" />
+  <t t-set="country" t-value="event.country_id" />
+</div>
+<p><t t-out="partner.informal_salutation" />,</p>
+<p>
+  Est-ce que tu as contrôlé tes vaccins ? Nous te conseillons de prendre du temps pour
+  le faire dans les jours à venir.
+</p>
+<p>
+  Est-ce que tu es suffisamment assuré(e) ? Tu peux t’informer auprès de ton assurance
+  maladie/accident à propos de ta couverture et des services à l’étranger. Si besoin,
+  prends une assurance supplémentaire. Tout ce qui concerne les assurances de voyage,
+  annulation, maladie, à l’étranger est de la responsabilité du participant.
+</p>
+<p>Que Dieu garde ta santé et te bénisse !</p>
+<p>Nathalie, 4M Switzerland</p>

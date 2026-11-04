@@ -6,6 +6,11 @@
     <field name="sequence">20</field>
     <field name="registration_state">open</field>
   </record>
+  <record id="stage_all_staff" model="event.registration.stage">
+    <field name="name">Staff</field>
+    <field name="sequence">28</field>
+    <field name="manual_only" eval="True" />
+  </record>
   <record id="stage_all_attended" model="event.registration.stage">
     <field name="name">Attended</field>
     <field name="sequence">30</field>

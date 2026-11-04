@@ -1,15 +1,33 @@
 <odoo noupdate="1">
-  <!-- Specific stages for Muskathlon -->
+  <!-- Specific stages for Muskathlon, around the shared stages of
+       website_event_compassion (Staff 28, Attended 30, Cancelled 40) -->
   <record id="stage_unconfirmed" model="event.registration.stage">
     <field name="name">Unconfirmed</field>
-    <field name="sequence">0</field>
+    <field name="sequence">10</field>
     <field name="fold" eval="False" />
     <field name="registration_state">draft</field>
   </record>
   <record id="stage_fill_profile" model="event.registration.stage">
-    <field name="name">In Preparation</field>
-    <field name="sequence">2</field>
+    <field name="name">Confirmed</field>
+    <field name="sequence">20</field>
     <field name="duration">30</field>
     <field name="registration_state">open</field>
+  </record>
+  <record id="stage_flights" model="event.registration.stage">
+    <field name="name">Flights</field>
+    <field name="sequence">21</field>
+    <field name="manual_only" eval="True" />
+  </record>
+  <record id="stage_documents" model="event.registration.stage">
+    <field name="name">Fill documents</field>
+    <field name="sequence">22</field>
+  </record>
+  <record id="stage_criminal_record" model="event.registration.stage">
+    <field name="name">Criminal record</field>
+    <field name="sequence">25</field>
+  </record>
+  <record id="stage_ready" model="event.registration.stage">
+    <field name="name">Ready to fly</field>
+    <field name="sequence">26</field>
   </record>
 </odoo>
