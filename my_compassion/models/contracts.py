@@ -56,6 +56,17 @@ class RecurringContract(models.Model):
         " MyCompassion signup wizard. Such sponsors are invited to create"
         " their portal account once the sponsorship is confirmed.",
     )
+    # A plain id rather than a Many2one: merging that partner into an
+    # existing one rewrites every Many2one pointing at it, and must not carry
+    # the wait over to a partner this checkout did not create.
+    my2_details_awaited_partner = fields.Integer(
+        string="Details form awaited from partner",
+        readonly=True,
+        copy=False,
+        help="Id of the partner the fast checkout created for this signup,"
+        " until its sponsor submits the post-payment details form; 0 after."
+        " See _my2_details_pending.",
+    )
     my2_details_token = fields.Char(
         string="Details form token",
         readonly=True,
@@ -134,12 +145,46 @@ class RecurringContract(models.Model):
         return last_tx.state in ("cancel", "error")
 
     def _my2_details_pending(self):
-        """Whether this signup is still waiting for its sponsor's real name.
+        """Whether this signup still waits for its post-payment details form.
 
         The one state in which the details form may write to the partner.
+        That is while the partner carries the fast-checkout placeholder name,
+        or, when _my2_details_mandatory says the form is a required step,
+        until the sponsor submits it even though the payment provider
+        already supplied a name.
+
+        Both only while the contract's partner is still the one the
+        anonymous checkout created (my2_details_awaited_partner): not once
+        staff changed the payer, nor once they merged that partner into an
+        existing sponsor, which also copies my2_name_placeholder onto the
+        sponsor (base.partner.merge keeps any truthy value). Submitting the
+        form clears the id, which ends the wait for good.
         """
         self.ensure_one()
-        return bool(self.my2_signup and self.partner_id.my2_name_placeholder)
+        awaited = self.my2_details_awaited_partner
+        if not (self.my2_signup and awaited and self.partner_id.id == awaited):
+            return False
+        return bool(
+            self.partner_id.my2_name_placeholder or self._my2_details_mandatory()
+        )
+
+    def _my2_details_mandatory(self):
+        """Hook: whether the details form is a required step of the signup.
+
+        Off here: the form exists to ask the name the fast checkout skipped,
+        so it is done once a name is known, from the provider or the
+        sponsor, and it offers to be done later by email. A country that
+        needs more from its sponsors turns it on, so the form stays due
+        until submitted and has no "do this later".
+
+        Either way the form only reaches a partner the fast checkout created
+        with a placeholder name (my2_details_awaited_partner, see
+        _my2_details_pending). A sponsor who signs up logged in keeps their
+        own partner and never sees it, so whatever a country adds to the
+        form is not collected from them.
+        """
+        self.ensure_one()
+        return False
 
     def _my2_issue_details_token(self, hours=None):
         """Mint the write credential of the post-payment details form.
@@ -152,7 +197,7 @@ class RecurringContract(models.Model):
 
         - never handed out on a bare record id: callers must have proved they
           are the session that paid, or be the authenticated sponsor;
-        - useless once the name is real (_my2_details_pending), so a
+        - useless once the details are in (_my2_details_pending), so a
           replayed link cannot overwrite what the sponsor typed;
         - a write credential only. It must never gate a read, or the form
           becomes a "type an email, pay, read the owner's details" endpoint;
@@ -295,16 +340,29 @@ class RecurringContract(models.Model):
         }
         if vals["firstname"] or vals["lastname"]:
             return vals
-        cardholder_name = ""
-        transactions = self.sudo().invoice_line_ids.move_id.transaction_ids
-        for tx in transactions.sorted("id", reverse=True):
-            if tx.my2_cardholder_name:
-                cardholder_name = tx.my2_cardholder_name
-                break
+        cardholder_name = self._my2_cardholder_name()
         if cardholder_name:
             firstname, lastname = payment_utils.split_partner_name(cardholder_name)
             vals.update({"firstname": firstname or "", "lastname": lastname or ""})
         return vals
+
+    def _my2_cardholder_name(self):
+        """The payer's name as the provider last reported it for this
+        signup's payments, or "" when no notification carried a usable one.
+
+        It is on the transaction from the moment the notification is
+        processed, before post-processing writes it on the partner. Only a
+        payment that went or is going through counts: a refused attempt may
+        have been made with someone else's card.
+        """
+        self.ensure_one()
+        transactions = self.sudo().invoice_line_ids.move_id.transaction_ids.filtered(
+            lambda tx: tx.state in ("pending", "authorized", "done")
+        )
+        for tx in transactions.sorted("id", reverse=True):
+            if tx._my2_is_usable_cardholder_name(tx.my2_cardholder_name):
+                return tx.my2_cardholder_name
+        return ""
 
     def _my2_apply_details(self, values):
         """Save what the sponsor typed on the post-payment details form.
@@ -319,7 +377,8 @@ class RecurringContract(models.Model):
         _my2_replace_placeholder_name, so a real name can never be
         overwritten here either.
 
-        The token is burnt on the way out: one save per link.
+        The signup stops awaiting its details and the token is burnt on the
+        way out: one save per link.
 
         :param values: firstname, lastname, phone and the optional address
             keys (street, zip, city, country_id). Anything falsy is left
@@ -332,13 +391,29 @@ class RecurringContract(models.Model):
             for key in ("phone", "street", "zip", "city", "country_id")
             if values.get(key)
         }
+        contact_vals.update(self._my2_details_extra_partner_vals(values))
         if contact_vals:
             partner.write(contact_vals)
         partner._my2_replace_placeholder_name(
             values.get("firstname"), values.get("lastname")
         )
+        self.sudo().my2_details_awaited_partner = 0
         self._my2_consume_details_token()
         return partner
+
+    def _my2_details_extra_partner_vals(self, values):
+        """Hook: partner values for the country-specific details fields.
+
+        The third side of the extension point, with the
+        my2_new_sponsorship_details_extra_fields template slot and the
+        controller's _details_extra_form_values. Anything returned here is
+        written on the partner with the rest of the contact details, so a
+        country module never has to write to the partner itself.
+
+        :param values: the cleaned submission, extra keys included.
+        """
+        self.ensure_one()
+        return {}
 
     def _my2_details_reminder_config(self):
         """Hook: config of the "finish your details later" email.
