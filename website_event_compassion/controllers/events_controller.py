@@ -18,6 +18,8 @@ from odoo.addons.website.models.ir_http import sitemap_qs2dom
 from odoo.addons.website_sale.controllers.main import WebsiteSale
 
 EVENTS_URL = "/events"
+# Largest public participant picture, in pixels (T3630).
+PUBLIC_PHOTO_MAX_SIZE = 1920
 
 
 class EventsController(Controller):
@@ -174,6 +176,11 @@ class EventsController(Controller):
         )
         if not registration.is_published:
             raise NotFound()
+        if not width and not height:
+            # The picture is stored as uploaded for the staff (T3630): the
+            # public never gets more than this size. Resizing also removes
+            # the photo's metadata (GPS position...).
+            width = height = PUBLIC_PHOTO_MAX_SIZE
         return (
             request.env["ir.binary"]
             ._get_image_stream_from(

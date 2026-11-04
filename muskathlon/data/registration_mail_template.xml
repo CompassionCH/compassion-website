@@ -74,6 +74,10 @@
               <strong>Comments:</strong>
               <t t-esc="object.comments" />
             </li>
+            <li t-if="picture_url">
+              <strong>Profile picture:</strong>
+              <a t-att-href="picture_url">Download</a>
+            </li>
           </ul>
         </div>
       </field>
