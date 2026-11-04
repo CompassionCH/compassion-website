@@ -19,6 +19,13 @@ class Website(models.Model):
         help="Target of the Policies link in the website footer, for the "
         "current language.",
     )
+    terms_url = fields.Char(
+        "Terms and Conditions URL",
+        translate=True,
+        help="Target of the Terms and Conditions link in the website footer, "
+        "for the current language. When set, the footer links the privacy "
+        "policy and the terms and conditions apart.",
+    )
     footer_address = fields.Char(
         "Footer Address",
         translate=True,

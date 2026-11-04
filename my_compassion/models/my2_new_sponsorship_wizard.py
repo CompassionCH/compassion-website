@@ -350,6 +350,13 @@ class NewSponsorshipWizard(models.TransientModel):
             # The consent tick is the only thing the fast-checkout step asks
             # besides the email. The step marks it required, but a checkbox is
             # trivially omitted from a posted form.
+            if self.env["website"].get_current_website().terms_url:
+                raise ValidationError(
+                    _(
+                        "Please accept the terms and conditions and the privacy"
+                        " policy before continuing."
+                    )
+                )
             raise ValidationError(
                 _("Please accept the privacy notice before continuing.")
             )

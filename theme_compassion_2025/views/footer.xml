@@ -116,6 +116,15 @@
               <div
                 class="col-12 d-flex flex-column flex-md-row justify-content-center align-items-center"
               >
+                <div class="mb-4 mb-md-0" t-if="website.terms_url">
+                  <a
+                    class="text-pure-white me-md-3"
+                    t-att-href="website.terms_url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >Terms and Conditions</a>
+                  <span class="d-none d-md-inline me-3">|</span>
+                </div>
                 <div class="mb-4 mb-md-0" t-if="website.privacy_policy_url">
                   <a
                     class="text-pure-white me-md-3"
@@ -123,8 +132,11 @@
                     target="_blank"
                     rel="noopener noreferrer"
                   >
+                    <t t-if="website.terms_url">Privacy Policy</t>
+                    <t t-else="">
                                         Policies
-                                    </a>
+                                    </t>
+                  </a>
                   <span class="d-none d-md-inline me-3">|</span>
                 </div>
                 <div class="mb-4 mb-md-0">
