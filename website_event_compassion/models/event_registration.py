@@ -21,7 +21,6 @@ from odoo.exceptions import ValidationError
 from odoo.http import request
 from odoo.tools import index_exists
 from odoo.tools.image import IMAGE_MAX_RESOLUTION
-from odoo.tools.mimetypes import guess_mimetype
 
 _logger = logging.getLogger(__name__)
 
@@ -31,16 +30,8 @@ _logger = logging.getLogger(__name__)
 MIN_PROFILE_PICTURE_LONG_SIDE = 1200
 MIN_PROFILE_PICTURE_SHORT_SIDE = 800
 
-# Cap on the stored picture, to keep the filestore reasonable. It matches
-# base.image_autoresize_max_px (1920x1920 by default), which ir.attachment
-# applies to every stored image on top of this one: capping lower here would
-# waste resolution, capping higher would make the constraint validate a picture
-# larger than the one actually kept.
-# INVARIANT: MAX_DIMENSION / MAX_RATIO >= MIN_SHORT_SIDE. Resizing preserves the
-# ratio, so a capped picture has a short side of MAX_DIMENSION / ratio:
-# rejecting ratios above MAX_RATIO is what keeps a capped picture above the
-# printable minimum. It must hold for whichever of the two caps is lower.
-MAX_PROFILE_PICTURE_DIMENSION = 1920
+# Pictures more elongated than this cannot be laid out on fundraising
+# material: the person must be cropped closer.
 MAX_PROFILE_PICTURE_RATIO = 2
 
 # Set when the picture is not a user upload (duplicate of an existing record).
@@ -136,22 +127,10 @@ class EventRegistration(models.Model):
     portal_signup_url = fields.Char(compute="_compute_portal_signup_url")
     sponsorship_url = fields.Char(compute="_compute_sponsorship_url")
     event_name = fields.Char(related="event_id.name", tracking=True)
-    # Capped high, not at display size: the picture is printed on fundraising
-    # material. Web pages request a smaller version through /web/image/. The cap
-    # also makes the constraint read the very picture that ends up stored.
-    profile_picture = fields.Image(
-        readonly=False,
-        string="Profile picture",
-        max_width=MAX_PROFILE_PICTURE_DIMENSION,
-        max_height=MAX_PROFILE_PICTURE_DIMENSION,
-    )
-    # The picture as uploaded, before the cap above, for staff to download in
-    # full quality (T3630).
-    profile_picture_original = fields.Binary(
-        "Original profile picture", attachment=True, groups="base.group_user"
-    )
-    # Download name of the original: the participant's name.
-    profile_picture_original_filename = fields.Char(groups="base.group_user")
+    # Stored as uploaded, not resized: the staff download it in full quality
+    # to print it on fundraising material (T3630). Web pages request a smaller
+    # version through /web/image/ or /event/registration/<id>/photo/.
+    profile_picture = fields.Image(readonly=False, string="Profile picture")
     profile_name = fields.Char()
     ambassador_quote = fields.Text()
     criminal_record = fields.Binary(
@@ -466,18 +445,32 @@ class EventRegistration(models.Model):
             )
 
     def _get_profile_picture_download_url(self):
-        """Backend link to the profile picture as uploaded (T3630), for the
-        staff notifications. It goes through the login page, which asks to log
-        in only when needed: the download alone answers Not Found when logged
-        out."""
+        """Backend link to download the profile picture as uploaded (T3630),
+        for the staff notifications, named after the participant. It goes
+        through the login page, which asks to log in only when needed: the
+        download alone answers Not Found when logged out."""
         self.ensure_one()
-        if not self.profile_picture_original:
-            return False
-        base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
-        download = (
-            f"/web/content/event.registration/{self.id}/profile_picture_original"
-            "?download=true&filename_field=profile_picture_original_filename"
+        picture = (
+            self.env["ir.attachment"]
+            .sudo()
+            .search(
+                [
+                    ("res_model", "=", self._name),
+                    ("res_field", "=", "profile_picture"),
+                    ("res_id", "=", self.id),
+                ],
+                limit=1,
+            )
         )
+        if not picture:
+            return False
+        name = (self.partner_id.name or self.name or "").strip().replace("/", "-")
+        extension = mimetypes.guess_extension(picture.mimetype or "") or ""
+        download = (
+            f"/web/content/event.registration/{self.id}/profile_picture"
+            f"?download=true&filename={quote(name + extension)}"
+        )
+        base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
         return f"{base_url}/web/login?redirect={quote(download, safe='')}"
 
     def _notify_get_action_link(self, link_type, **kwargs):
@@ -495,9 +488,19 @@ class EventRegistration(models.Model):
         from phones) with a message naming the formats the upload fields
         accept. Odoo's own image error is not shown by the website forms
         (T3630)."""
+        if self.env.context.get(SKIP_PROFILE_PICTURE_CHECK):
+            return
         try:
             with PILImage.open(io.BytesIO(base64.b64decode(picture_b64))) as img:
                 width, height = img.size
+        except PILImage.DecompressionBombError as error:
+            # Pillow refuses to open pictures of hundreds of megapixels.
+            raise ValidationError(
+                _(
+                    "The picture you uploaded is too large. Please upload a"
+                    " smaller JPG or PNG file."
+                )
+            ) from error
         except (binascii.Error, OSError, TypeError, ValueError) as error:
             raise ValidationError(
                 _(
@@ -515,33 +518,13 @@ class EventRegistration(models.Model):
                 )
             )
 
-    def _store_profile_picture_original(self, picture_b64):
-        # Unlike the other stored images, kept at its uploaded size: skip the
-        # attachment auto-resize (base.image_autoresize_max_px).
-        extension = ""
-        if picture_b64:
-            mimetype = guess_mimetype(base64.b64decode(picture_b64))
-            extension = mimetypes.guess_extension(mimetype) or ""
-        for registration in self.sudo().with_context(image_no_postprocess=True):
-            name = (registration.partner_id.name or registration.name or "").strip()
-            registration.write(
-                {
-                    "profile_picture_original": picture_b64,
-                    "profile_picture_original_filename": picture_b64
-                    and f"{name.replace('/', '-')}{extension}",
-                }
-            )
-
     @api.constrains("profile_picture")
     def _check_profile_picture_min_size(self):
         """Reject profile pictures that cannot be printed on fundraising
         material, being either too small or too elongated.
 
-        The ratio is checked first: rejecting elongated pictures is what keeps
-        the cap from storing a short side below the printable minimum (see the
-        invariant on MAX_PROFILE_PICTURE_DIMENSION). ``bin_size`` is disabled
-        because it would otherwise yield the file size instead of the image
-        content.
+        ``bin_size`` is disabled because it would otherwise yield the file
+        size instead of the image content.
         """
         if self.env.context.get(SKIP_PROFILE_PICTURE_CHECK):
             return
@@ -598,6 +581,9 @@ class EventRegistration(models.Model):
     def write(self, vals):
         if vals.get("profile_picture"):
             self._check_profile_picture_format(vals["profile_picture"])
+            # Kept as uploaded: skip the attachment auto-resize
+            # (base.image_autoresize_max_px).
+            self = self.with_context(image_no_postprocess=True)
         if "stage_id" in vals:
             vals["stage_date"] = fields.Date.today()
             if "state" not in vals:
@@ -608,8 +594,6 @@ class EventRegistration(models.Model):
                 ):
                     vals["state"] = stage.registration_state
         super().write(vals)
-        if "profile_picture" in vals:
-            self._store_profile_picture_original(vals["profile_picture"])
         if "stage_id" in vals:
             # Before the tasks: completing them can move the registrations on
             # right away (e.g. an account that is already activated).
@@ -667,12 +651,11 @@ class EventRegistration(models.Model):
             vals.setdefault("state", "draft")
             if vals.get("profile_picture"):
                 self._check_profile_picture_format(vals["profile_picture"])
+                # Kept as uploaded, see write()
+                self = self.with_context(image_no_postprocess=True)
         records = super(
             EventRegistration, self.with_context(registration_incomplete=True)
         ).create(vals_list)
-        for registration, vals in zip(records, vals_list, strict=True):
-            if vals.get("profile_picture"):
-                registration._store_profile_picture_original(vals["profile_picture"])
         for registration in records:
             # Copy image fields
             if registration.profile_picture:

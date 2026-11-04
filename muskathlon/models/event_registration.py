@@ -149,10 +149,11 @@ class MuskathlonRegistration(models.Model):
         subtype_id = self.env.ref("website_event_compassion.mt_registration_create").id
 
         for registration in self:
+            picture_url = registration.sudo()._get_profile_picture_download_url()
             registration.message_post_with_source(
                 "muskathlon.muskathlon_registration_notification_view",
                 subject=_("%s - New Muskathlon registration") % registration.name,
-                render_values={"object": registration},
+                render_values={"object": registration, "picture_url": picture_url},
                 message_type="comment",
                 subtype_id=subtype_id,
             )

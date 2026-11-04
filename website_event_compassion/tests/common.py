@@ -7,6 +7,7 @@
 ##############################################################################
 import base64
 import io
+from urllib.parse import quote
 
 from PIL import Image
 
@@ -25,11 +26,13 @@ def size(picture_b64):
         return img.size
 
 
-DOWNLOAD_LINK = (
-    "/web/login?redirect=%2Fweb%2Fcontent%2Fevent.registration%2F{id}"
-    "%2Fprofile_picture_original%3Fdownload%3Dtrue"
-    "%26filename_field%3Dprofile_picture_original_filename"
-)
+def download_link(registration, filename):
+    """The link of the staff notifications to the uploaded picture."""
+    download = (
+        f"/web/content/event.registration/{registration.id}/profile_picture"
+        f"?download=true&filename={quote(filename)}"
+    )
+    return f"/web/login?redirect={quote(download, safe='')}"
 
 
 class RegistrationCase(TransactionCase):

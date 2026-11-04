@@ -8,8 +8,8 @@
 from odoo.tests import tagged
 
 from odoo.addons.website_event_compassion.tests.common import (
-    DOWNLOAD_LINK,
     RegistrationCase,
+    download_link,
     picture,
 )
 
@@ -24,17 +24,15 @@ class TestRegistrationNotification(RegistrationCase):
             lambda m: "Muskathlon" in (m.subject or "")
         )[:1]
 
-    def test_notification_links_the_original(self):
+    def test_notification_links_the_picture(self):
         registration = self.register(profile_picture=picture(4000, 3000))
 
         self.assertIn(
-            DOWNLOAD_LINK.format(id=registration.id),
+            download_link(registration, "T3630 participant.jpg"),
             self.notification(registration).body,
         )
 
     def test_notification_without_picture(self):
         registration = self.register()
 
-        self.assertNotIn(
-            "profile_picture_original", self.notification(registration).body
-        )
+        self.assertNotIn("/web/content/", self.notification(registration).body)
