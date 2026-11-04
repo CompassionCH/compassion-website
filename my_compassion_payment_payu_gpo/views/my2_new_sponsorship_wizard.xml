@@ -1,30 +1,46 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-  <!-- The name on the card is asked with the e-mail, before the payment
-       page. It is required only by the PayU buttons (see
-       my2_new_sponsorship_wizard.esm.js): the other modes take no card. -->
+  <!-- The first and last name on the card are asked with the e-mail,
+       before the payment page. They are required only by the PayU buttons
+       (see my2_new_sponsorship_wizard.esm.js): the other modes take no
+       card. -->
   <template
     id="my2_new_sponsorship_wizard_fast_checkout"
     inherit_id="my_compassion.my2_new_sponsorship_wizard_fast_checkout"
   >
     <xpath expr="//input[@id='email']/.." position="after">
-      <t
-        t-if="wizard._my2_asks_cardholder_name()"
-        t-call="theme_compassion_2025.FormFieldComponent"
-      >
-        <t t-set="top_class" t-value="'my-3'" />
-        <t t-set="label">Name on card</t>
-        <t t-set="input_id" t-value="'cardholder_name'" />
-        <input
-          id="cardholder_name"
-          type="text"
-          name="cardholder_name"
-          class="form-control"
-          autocomplete="cc-name"
-          maxlength="100"
-          t-att-value="wizard.cardholder_name"
-        />
-        <div class="mt-2 very-tiny-text text-mid-grey">Needed to pay with PayU.</div>
+      <t t-if="wizard._my2_asks_cardholder_name()">
+        <t t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="top_class" t-value="'my-3'" />
+          <t t-set="label">First name</t>
+          <t t-set="input_id" t-value="'cardholder_firstname'" />
+          <input
+            id="cardholder_firstname"
+            type="text"
+            name="cardholder_firstname"
+            class="form-control"
+            autocomplete="cc-given-name"
+            maxlength="100"
+            t-att-value="wizard.cardholder_firstname"
+          />
+        </t>
+        <t t-call="theme_compassion_2025.FormFieldComponent">
+          <t t-set="top_class" t-value="'my-3'" />
+          <t t-set="label">Last name</t>
+          <t t-set="input_id" t-value="'cardholder_lastname'" />
+          <input
+            id="cardholder_lastname"
+            type="text"
+            name="cardholder_lastname"
+            class="form-control"
+            autocomplete="cc-family-name"
+            maxlength="100"
+            t-att-value="wizard.cardholder_lastname"
+          />
+          <div
+            class="mt-2 very-tiny-text text-mid-grey"
+          >As on the card: needed to pay with PayU.</div>
+        </t>
       </t>
     </xpath>
   </template>

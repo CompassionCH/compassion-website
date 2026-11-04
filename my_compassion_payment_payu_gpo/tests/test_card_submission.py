@@ -22,16 +22,21 @@ class TestCardSubmission(PayuDigitalCase):
     def setUp(self):
         super().setUp()
         self.website = self.env.ref("my_compassion.my2_website")
-        self.provider = self.env.ref("payment_payu_gpo.payment_provider_payu_gpo").copy(
-            {"company_id": self.website.company_id.id}
-        )
-        self.provider.write(
+        # Created, not copied: a copy reads the provider's image, which a
+        # database without its filestore lacks.
+        self.provider = self.env["payment.provider"].create(
             {
+                "name": "Card Submission PayU",
+                "code": "payu_gpo",
+                "company_id": self.website.company_id.id,
                 "state": "test",
                 "payu_gpo_pos_id": "300746",
                 "payu_gpo_client_id": "300746",
                 "payu_gpo_client_secret": "test-client-secret",
                 "payu_gpo_second_key": "test-second-key",
+                "payment_method_ids": [
+                    Command.link(self.env.ref("payment.payment_method_card").id)
+                ],
             }
         )
         product = self.env["product.product"].create(
@@ -77,6 +82,8 @@ class TestCardSubmission(PayuDigitalCase):
                 tx.reference,
                 payment_utils.generate_access_token(tx.reference),
                 "TOK_CARD",
+                cardholder_firstname="Anna",
+                cardholder_lastname="Nowak",
             )
 
     @contextmanager
