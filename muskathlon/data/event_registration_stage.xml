@@ -25,6 +25,8 @@
   <record id="stage_criminal_record" model="event.registration.stage">
     <field name="name">Criminal record</field>
     <field name="sequence">25</field>
+    <!-- The person responsible asks for it, once the documents are filled -->
+    <field name="manual_only" eval="True" />
   </record>
   <record id="stage_ready" model="event.registration.stage">
     <field name="name">Ready to fly</field>
