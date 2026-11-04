@@ -37,8 +37,12 @@
           <tr t-foreach="flights" t-as="flight">
             <td t-out="flight.flying_company" />
             <td t-out="flight.flight_number" />
-            <td><span t-field="flight.departure" /></td>
-            <td><span t-field="flight.arrival" /></td>
+            <td>
+              <span t-field="flight.departure" />
+            </td>
+            <td>
+              <span t-field="flight.arrival" />
+            </td>
             <td class="text-end">
               <form t-attf-action="/my/events/flight/#{flight.id}/remove" method="post">
                 <input
