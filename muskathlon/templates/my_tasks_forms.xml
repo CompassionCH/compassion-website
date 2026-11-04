@@ -9,44 +9,64 @@
       <t t-call="muskathlon.criminal_form" t-if="edit_mode=='criminal'" />
     </xpath>
   </template>
+  <!-- One page for the outbound flights and one for the return flights
+       (flight_type): a journey with connections has several flights of each
+       type, given one after the other. -->
   <template id="flight_form">
     <t
-      t-set="outbound_flight"
-      t-value="registration.flight_ids.filtered(lambda r: r.flight_type == 'outbound')"
+      t-set="flights"
+      t-value="registration.flight_ids.filtered(lambda f: f.flight_type == flight_type)"
     />
-    <t
-      t-set="return_flight"
-      t-value="registration.flight_ids.filtered(lambda r: r.flight_type == 'return')"
-    />
-    <h3>Outbound flight</h3>
-    <t t-call="muskathlon.flight_details">
-      <t t-set="flight_type" t-value="'outbound'" />
-      <t t-set="flight" t-value="outbound_flight" />
-      <t t-set="other_flight" t-value="return_flight" />
-    </t>
-    <h3>Return flight</h3>
-    <t t-call="muskathlon.flight_details">
-      <t t-set="flight_type" t-value="'return'" />
-      <t t-set="flight" t-value="return_flight" />
-      <t t-set="other_flight" t-value="outbound_flight" />
-    </t>
+    <h3 t-if="flight_type == 'return'">Return flight</h3>
+    <h3 t-else="">Outbound flight</h3>
+    <p>
+      If your journey has connections, add each flight one after the other.
+    </p>
+    <div t-if="flights" class="table-responsive">
+      <table class="table table-sm align-middle">
+        <thead>
+          <tr>
+            <th>Flying company</th>
+            <th>Flight number</th>
+            <th>Departure</th>
+            <th>Arrival</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          <tr t-foreach="flights" t-as="flight">
+            <td t-out="flight.flying_company" />
+            <td t-out="flight.flight_number" />
+            <td><span t-field="flight.departure" /></td>
+            <td><span t-field="flight.arrival" /></td>
+            <td class="text-end">
+              <form t-attf-action="/my/events/flight/#{flight.id}/remove" method="post">
+                <input
+                  type="hidden"
+                  name="csrf_token"
+                  t-att-value="request.csrf_token()"
+                />
+                <button type="submit" class="btn btn-link text-danger p-0">
+                  <i class="fa fa-trash-o" /> Remove
+                </button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h4 t-if="flights">Add a connection flight</h4>
+    <h4 t-else="">Add a flight</h4>
+    <t t-call="muskathlon.flight_details" />
+    <a
+      t-attf-href="/my/events/#{slug(registration)}"
+      class="btn btn-secondary"
+    >Back to my registration</a>
   </template>
-  <!-- One flight: both are on the same page, their ids are named after the
-       flight type. Back to this page until the other flight is given too. -->
+  <!-- The form adding one flight of flight_type. Back to the same page
+       afterwards, for the next connection. -->
   <template id="flight_details">
     <t t-set="form_id" t-value="'%s_flight_form' % flight_type" />
-    <span
-      class="hidden"
-      t-att-data-for="form_id"
-      t-att-data-values="{
-                'registration_id': registration.id,
-                'flight_type': flight_type,
-                'flying_company': flight.flying_company,
-                'flight_number': flight.flight_number,
-                'departure': flight.get_date('departure', 'yyyy-MM-dd HH:mm:ss'),
-                'arrival': flight.get_date('arrival', 'yyyy-MM-dd HH:mm:ss'),
-                }"
-    />
     <section
       class="s_website_form pt16 pb16 o_colored_level"
       data-vcss="001"
@@ -66,7 +86,7 @@
           class="o_mark_required"
           data-mark="*"
           data-success-mode="redirect"
-          t-attf-data-success-page="/my/events/#{slug(registration)}#{'' if other_flight else '/flight'}"
+          t-attf-data-success-page="/my/events/#{slug(registration)}/flight/#{flight_type}"
           data-model_name="event.flight"
           data-force_action="/flight"
         >
@@ -226,7 +246,7 @@
                 role="button"
                 class="btn btn-primary btn-lg s_website_form_send o_default_snippet_text"
               >
-                                Submit
+                                Add this flight
                             </a>
               <span id="s_website_form_result" />
             </div>

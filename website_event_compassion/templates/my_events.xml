@@ -177,7 +177,7 @@
                 <a
                   type="button"
                   t-attf-class="btn btn-#{'secondary' if task.done else 'primary'}"
-                  t-attf-href="../tasks/#{slug(task)}"
+                  t-attf-href="/my/events/tasks/#{slug(task)}"
                   t-att-target="'_blank' if task.task_id.open_new_tab else '_self'"
                 >
                   <t t-esc="task.name" />
@@ -189,7 +189,10 @@
         </div>
         <h3 class="mt-4" t-if="event.fundraising">
           <span class="me-2">Fundraising</span>
-          <a class="btn btn-primary mx-auto" href="fundraising">
+          <a
+            class="btn btn-primary mx-auto"
+            t-attf-href="/my/events/#{slug(registration)}/fundraising"
+          >
             <i class="fa fa-handshake-o" />
             <span>Fundraising tools</span>
           </a>
@@ -235,7 +238,7 @@
       <span>My profile</span>
       <a
         class="btn btn-primary mx-auto"
-        href="profile"
+        t-attf-href="/my/events/#{slug(registration)}/profile"
         t-if="registration.compassion_event_id.website_published"
       >
         <i class="fa fa-pencil" />

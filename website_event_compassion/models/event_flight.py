@@ -16,6 +16,8 @@ class EventFlight(models.Model):
     _inherit = "translatable.model"
     _description = "Event participant flight"
     _rec_name = "flight_number"
+    # A journey may have connections: a participant gives several flights of
+    # each type, shown in the order of their departure.
     _order = "departure asc"
 
     registration_id = fields.Many2one(
@@ -31,11 +33,3 @@ class EventFlight(models.Model):
     flight_number = fields.Char(required=True, index=True)
     departure = fields.Datetime(required=True)
     arrival = fields.Datetime(required=True)
-
-    _sql_constraints = [
-        (
-            "flight_unique",
-            "unique (registration_id, flight_type)",
-            "A participant can have only one flight of each type.",
-        )
-    ]

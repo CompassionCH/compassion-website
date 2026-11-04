@@ -13,6 +13,7 @@ class RegistrationTaskRel(models.Model):
         )
         task_passport = self.env.ref("muskathlon.task_passport")
         task_criminal = self.env.ref("muskathlon.task_criminal")
+        task_return_flight = self.env.ref("muskathlon.task_return_flight")
         slug = self.env["ir.http"]._slug
         for task in self:
             if task.task_id == task_musk_medic:
@@ -29,7 +30,13 @@ class RegistrationTaskRel(models.Model):
                     f"/my/events/{slug(task.registration_id)}"
                 )
             elif task.task_id in task_flight:
-                task.task_url = f"/my/events/{slug(task.registration_id)}/flight"
+                # The outbound and the return flights have their own page.
+                flight_type = (
+                    "return" if task.task_id == task_return_flight else "outbound"
+                )
+                task.task_url = (
+                    f"/my/events/{slug(task.registration_id)}/flight/{flight_type}"
+                )
             elif task.task_id == task_passport:
                 task.task_url = f"/my/events/{slug(task.registration_id)}/passport"
             elif task.task_id == task_criminal:

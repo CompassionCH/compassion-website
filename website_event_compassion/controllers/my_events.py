@@ -43,6 +43,10 @@ def _owned_registration(registration_id):
     return registration
 
 
+def _flight_types():
+    return dict(request.env["event.flight"]._fields["flight_type"].selection)
+
+
 class MyEventsController(CustomerPortal):
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
@@ -91,22 +95,62 @@ class MyEventsController(CustomerPortal):
         auth="user",
         website=True,
     )
-    def my_registration(self, registration, edit_mode=False, **kwargs):
+    def my_registration(
+        self, registration, edit_mode=False, flight_type="outbound", **kwargs
+    ):
         if (
             request.env.user.partner_id.id == registration.partner_id.id
             or request.env.user.has_group("base.group_system")
         ):
+            # /flight alone (older links) is the outbound flight page.
+            if flight_type not in _flight_types():
+                flight_type = "outbound"
             values = self._prepare_portal_layout_values()
             values.update(
                 {
                     "registration": registration,
                     "donations": self.get_donations(registration),
                     "edit_mode": edit_mode,
+                    "flight_type": flight_type,
                 }
             )
             return request.render("website_event_compassion.my_event_details", values)
         else:
             return request.redirect("/my/events")
+
+    @route(
+        "/my/events/<model('event.registration'):registration>/flight/"
+        "<string:flight_type>",
+        auth="user",
+        website=True,
+    )
+    def my_registration_flights(self, registration, flight_type, **kwargs):
+        """The outbound and the return flights have their own page, where the
+        participant adds the connection flights one after the other."""
+        if flight_type not in _flight_types():
+            raise NotFound()
+        return self.my_registration(
+            registration, edit_mode="flight", flight_type=flight_type
+        )
+
+    @route(
+        "/my/events/flight/<int:flight_id>/remove",
+        type="http",
+        auth="user",
+        methods=["POST"],
+        website=True,
+    )
+    def remove_flight(self, flight_id, **kwargs):
+        """A participant removes a flight given by mistake, of their own
+        registration only."""
+        flight = request.env["event.flight"].sudo().browse(flight_id).exists()
+        if not flight:
+            raise NotFound()
+        registration = _owned_registration(flight.registration_id.id)
+        flight_type = flight.flight_type
+        flight.unlink()
+        slug = request.env["ir.http"]._slug
+        return request.redirect(f"/my/events/{slug(registration)}/flight/{flight_type}")
 
     def get_donations(self, registration):
         partner = registration.partner_id
@@ -241,17 +285,8 @@ class MyEventsFormController(WebsiteForm):
         return json.dumps({"id": record.id})
 
     def _save_flight(self, registration, values):
-        """A participant has one flight of each type: entering it again
-        corrects it."""
-        flight_types = dict(
-            request.env["event.flight"]._fields["flight_type"].selection
-        )
-        if values.get("flight_type") not in flight_types:
+        """Each flight sent is one more flight of the journey: the
+        connections are given one after the other."""
+        if values.get("flight_type") not in _flight_types():
             raise NotFound()
-        flight = registration.flight_ids.filtered(
-            lambda f: f.flight_type == values["flight_type"]
-        )
-        if flight:
-            flight.write(values)
-            return flight
         return request.env["event.flight"].sudo().create(values)
