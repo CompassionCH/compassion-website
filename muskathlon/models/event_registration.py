@@ -139,10 +139,20 @@ class MuskathlonRegistration(models.Model):
                 }
             }
 
+    def _notify_new_registration(self):
+        # The Muskathlon registrations have their own e-mail with all the
+        # details (notify_muskathlon_registration): no second, one-line
+        # "New registration" note on the event for the same people (T3647).
+        return super(
+            MuskathlonRegistration, self.filtered(lambda r: not r.is_muskathlon)
+        )._notify_new_registration()
+
     def notify_muskathlon_registration(self):
         """Notify user for registration"""
-        partners = self.mapped("user_id.partner_id") | self.event_id.mapped(
-            "message_partner_ids"
+        partners = (
+            self.mapped("user_id.partner_id")
+            | self.event_id.mapped("user_id.partner_id")
+            | self.event_id.mapped("message_partner_ids")
         )
         self.message_subscribe(partners.ids)
 
