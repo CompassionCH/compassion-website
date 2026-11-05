@@ -159,6 +159,70 @@ class TestSignupConsent(HttpCase):
     def test_passwordless_submissions(self):
         self._check_submissions(password=False)
 
+    def test_passwordless_cannot_choose_consent_date(self):
+        login = "forged-date-consent@example.org"
+        before = fields.Datetime.now()
+        page = self._post(
+            {
+                **self._values(login, password=False),
+                "privacy_policy": "accepted",
+                "legal_agreement_date": "2001-01-01 00:00:00",
+            }
+        )
+        self.assertEqual(page.status_code, 200)
+        user = self._user(login)
+        self.assertEqual(len(user), 1)
+        self.assertGreaterEqual(user.partner_id.legal_agreement_date, before)
+        self.assertLessEqual(user.partner_id.legal_agreement_date, datetime.now())
+
+    def test_passwordless_invitation_cannot_overwrite_consent(self):
+        partner, token = self._invitation(date=CONSENT_DATE)
+        page = self._post(
+            {
+                **self._values(partner.email, password=False),
+                "legal_agreement_date": "2001-01-01 00:00:00",
+            },
+            token=token,
+        )
+        self.assertEqual(page.status_code, 200)
+        user = self._user(partner.email)
+        self.assertEqual(user.partner_id, partner)
+        self.assertEqual(partner.legal_agreement_date, CONSENT_DATE)
+
+    def test_passwordless_ignores_extra_partner_fields(self):
+        login = "extra-fields-consent@example.org"
+        page = self._post(
+            {
+                **self._values(login, password=False),
+                "privacy_policy": "accepted",
+                "street": "Client supplied street",
+                "email": "client-chosen-email@example.org",
+            }
+        )
+        self.assertEqual(page.status_code, 200)
+        user = self._user(login)
+        self.assertEqual(len(user), 1)
+        self.assertFalse(user.partner_id.street)
+        self.assertEqual(user.partner_id.email, login)
+
+    def test_passwordless_keeps_recaptcha_verification(self):
+        login = "captcha-consent@example.org"
+        with patch.object(
+            self.registry["ir.http"],
+            "_verify_recaptcha_token",
+            return_value="is_human",
+        ) as verify:
+            page = self._post(
+                {
+                    **self._values(login, password=False),
+                    "privacy_policy": "accepted",
+                    "recaptcha_token_response": "signup-captcha-token",
+                }
+            )
+        self.assertEqual(page.status_code, 200)
+        verify.assert_called_once_with("127.0.0.1", "signup-captcha-token", "signup")
+        self.assertEqual(len(self._user(login)), 1)
+
     def test_passwordless_get_does_not_create_user(self):
         values = self._values("get-consent@example.org", password=False)
         page = self.url_open(

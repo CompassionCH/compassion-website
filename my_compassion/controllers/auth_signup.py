@@ -71,7 +71,22 @@ class RegistrationController(SignupVerifyEmail):
             return request.render("auth_signup.signup", qcontext)
         try:
             with self._signup_consent_context(qcontext):
-                return super().passwordless_signup()
+                # Upstream passes request.params directly to signup. Only expose
+                # identity fields and the inputs consumed by routing and CAPTCHA.
+                original_params = request.params
+                request.params = {
+                    key: qcontext[key]
+                    for key in ("login", "name", "token", "redirect")
+                    if key in qcontext
+                }
+                if "recaptcha_token_response" in original_params:
+                    request.params["recaptcha_token_response"] = original_params[
+                        "recaptcha_token_response"
+                    ]
+                try:
+                    return super().passwordless_signup()
+                finally:
+                    request.params = original_params
         except UserError as error:
             qcontext["error"] = error.args[0]
             return request.render("auth_signup.signup", qcontext)
