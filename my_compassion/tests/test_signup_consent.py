@@ -7,7 +7,8 @@ from lxml import html
 from odoo import fields
 from odoo.tests import HttpCase, TransactionCase, tagged
 
-CONSENT_ERROR = "Please accept the terms and conditions and the privacy policy."
+CONSENT_ERROR = "Please accept the legal terms and the privacy policy."
+TERMS_CONSENT_ERROR = "Please accept the terms and conditions and the privacy policy."
 CONSENT_DATE = datetime(2025, 2, 3, 10, 11, 12)
 
 
@@ -28,7 +29,7 @@ class TestSignupConsent(HttpCase):
             }
         )
         cls.websites = cls.main_website | cls.my2_website | cls.second_portal
-        cls.websites.write({"auth_signup_uninvited": "b2c"})
+        cls.websites.write({"auth_signup_uninvited": "b2c", "terms_url": False})
         cls.env["ir.config_parameter"].sudo().set_param(
             "auth_signup.reset_password", True
         )
@@ -158,6 +159,21 @@ class TestSignupConsent(HttpCase):
 
     def test_passwordless_submissions(self):
         self._check_submissions(password=False)
+
+    def test_consent_error_matches_legal_label(self):
+        for terms_url, expected, other in (
+            (False, CONSENT_ERROR, TERMS_CONSENT_ERROR),
+            ("https://example.org/terms", TERMS_CONSENT_ERROR, CONSENT_ERROR),
+        ):
+            self.main_website.terms_url = terms_url
+            for password in (False, True):
+                with self.subTest(terms_url=terms_url, password=password):
+                    login = f"consent-label-{bool(terms_url)}-{password}@example.org"
+                    page = self._post(self._values(login, password=password))
+                    self._assert_checkbox(page)
+                    self.assertIn(expected, page.text)
+                    self.assertNotIn(other, page.text)
+                    self.assertFalse(self._user(login))
 
     def test_passwordless_cannot_choose_consent_date(self):
         login = "forged-date-consent@example.org"

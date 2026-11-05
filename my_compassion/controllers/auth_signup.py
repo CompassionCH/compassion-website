@@ -44,9 +44,12 @@ class RegistrationController(SignupVerifyEmail):
         """Validate consent and scope its server timestamp to this signup call."""
         required = self._signup_consent_required(qcontext.get("token"))
         if required and request.params.get("privacy_policy") != "accepted":
-            raise UserError(
+            message = (
                 _("Please accept the terms and conditions and the privacy policy.")
+                if request.website.terms_url
+                else _("Please accept the legal terms and the privacy policy.")
             )
+            raise UserError(message)
         original_context = request.env.context
         key = "my_compassion_signup_consent_at"
         request.update_context(**{key: fields.Datetime.now() if required else False})
