@@ -8,7 +8,7 @@
 #
 ##############################################################################
 
-from odoo import api, fields, models
+from odoo import fields, models
 
 
 class EventFlight(models.Model):
@@ -39,23 +39,3 @@ class EventFlight(models.Model):
             "A participant can have only one flight of each type.",
         )
     ]
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        # If the flight already exists, update its information automatically.
-        res = self.env["event.flight"]
-        for vals in vals_list:
-            existing_flight = self.browse()
-            if vals.get("registration_id") and vals.get("flight_type"):
-                existing_flight = self.search(
-                    [
-                        ("registration_id", "=", vals["registration_id"]),
-                        ("flight_type", "=", vals["flight_type"]),
-                    ]
-                )
-            if existing_flight:
-                existing_flight.write(vals)
-                res += existing_flight
-            else:
-                res += super().create(vals)
-        return res

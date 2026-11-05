@@ -42,7 +42,9 @@
   </function>
   <record id="model_event_registration_form" model="ir.model">
     <field name="website_form_key">event_registration_edit</field>
-    <field name="website_form_access">True</field>
+    <!-- Not through the generic /website/form: it would take any
+         registration_id. See controllers/my_events.py (T3572). -->
+    <field name="website_form_access">False</field>
     <field name="website_form_label">Edit ambassador profile</field>
   </record>
   <function model="ir.model.fields" name="formbuilder_whitelist">
@@ -53,7 +55,9 @@
   </function>
   <record id="model_event_flight" model="ir.model">
     <field name="website_form_key">event_flight</field>
-    <field name="website_form_access">True</field>
+    <!-- Not through the generic /website/form: it would take any
+         registration_id. See controllers/my_events.py (T3572). -->
+    <field name="website_form_access">False</field>
     <field name="website_form_label">Event flight</field>
   </record>
   <function model="ir.model.fields" name="formbuilder_whitelist">
