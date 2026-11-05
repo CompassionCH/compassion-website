@@ -7,8 +7,9 @@ monthly contributions: it is registered at PayU as a recurring card
 (`recurring: FIRST`, then `STANDARD`). Other saved cards stay cards on file.
 
 A payer known by email only (fast checkout, visitor donation) has a
-placeholder name: no name is sent to PayU for them, and the name typed on
-the card (or PayU's buyer) replaces the placeholder once the payment is done.
+placeholder name: no name is sent to PayU for them, and the first and last
+name typed on the card (or PayU's buyer) replace the placeholder once the
+payment is done.
 
 A monthly charge PayU refuses (it cancels the order of the charge) reaches
 the contracts' dunning (`_on_digital_charge_failed`) once, when its
@@ -42,16 +43,18 @@ This module comes with changes in my_compassion, for every provider:
   state a provider notification set since.
 
 The fast checkout of a website whose company offers PayU (a published
-mode of a PayU provider that is not disabled) asks the name on the card
-under the e-mail, before the payment page. Only the PayU buttons require it:
-the other modes of the page (e.g. a standing order) take no card. The name
-is kept in the session by sponsorship, until its first payment is done, and
-prefills the card form of the payment page, where it can still be corrected
-(a typo, another card after a refused payment). Other companies keep their
-fast checkout unchanged.
+mode of a PayU provider that is not disabled) asks the first and last name
+on the card under the e-mail, before the payment page. Only the PayU buttons
+require them: the other modes of the page (e.g. a standing order) take no
+card. The names are kept in the session by sponsorship, until its first
+payment is done, and prefill the card form of the payment page, where they
+can still be corrected (a typo, another card after a refused payment).
+Without them (the full sponsorship form), the card form is prefilled with the
+sponsor's first and last name. Other companies keep their fast checkout
+unchanged.
 
-The email step of a visitor's donation (gift basket) asks the name on the
-card the same way, when the website's company offers PayU: required when
-PayU is its only provider, optional next to another one. The name is kept
-in the session by order, until the order is paid, and prefills the card
-form of the payment, where it can still be corrected.
+The email step of a visitor's donation (gift basket) asks the first and
+last name on the card the same way, when the website's company offers PayU:
+required when PayU is its only provider, optional next to another one. The
+names are kept in the session by order, until the order is paid, and
+prefill the card form of the payment, where they can still be corrected.

@@ -124,9 +124,52 @@ class TestRecurringCard(PayuDigitalCase):
         )
         tx = self._transaction(contract, "payu-bridge-names")
         self.assertEqual(tx._payu_gpo_buyer_names(), ("", ""))
-        # The name on the card, once typed, is sent.
-        tx.payu_gpo_cardholder_name = "Anna Nowak"
-        self.assertEqual(tx._payu_gpo_buyer_names(), ("Anna", "Nowak"))
+        # The names on the card, once typed, are sent as typed.
+        tx.write(
+            {
+                "payu_gpo_cardholder_name": "Jan Kowalski Nowak",
+                "payu_gpo_cardholder_firstname": "Jan",
+                "payu_gpo_cardholder_lastname": "Kowalski Nowak",
+            }
+        )
+        self.assertEqual(tx._payu_gpo_buyer_names(), ("Jan", "Kowalski Nowak"))
+        # and replace the placeholder as typed, once paid.
+        tx._my2_apply_cardholder_name()
+        self.assertEqual(
+            (partner.firstname, partner.lastname), ("Jan", "Kowalski Nowak")
+        )
+        self.assertFalse(partner.my2_name_placeholder)
+
+    def test_buyer_names_of_a_named_payer(self):
+        """Without names typed (monthly charge, BLIK), PayU gets the payer's
+        own first and last name, not the full name split at the last space."""
+        contract = self._make_digital_contract()
+        contract.partner_id.write(
+            {
+                "firstname": "Maria",
+                "lastname": "de la Cruz",
+                "my2_name_placeholder": False,
+            }
+        )
+        tx = self._transaction(contract, "payu-bridge-partner-names")
+        self.assertEqual(tx._payu_gpo_buyer_names(), ("Maria", "de la Cruz"))
+
+    def test_a_real_name_is_never_replaced_by_the_card(self):
+        """A donor paying with a relative's card keeps their own name."""
+        contract = self._make_digital_contract()
+        partner = contract.partner_id
+        partner.write(
+            {"firstname": "Jan", "lastname": "Testowy", "my2_name_placeholder": False}
+        )
+        tx = self._transaction(
+            contract,
+            "payu-bridge-other-card",
+            payu_gpo_cardholder_name="Anna Inna-Osoba",
+            payu_gpo_cardholder_firstname="Anna",
+            payu_gpo_cardholder_lastname="Inna-Osoba",
+        )
+        tx._my2_apply_cardholder_name()
+        self.assertEqual((partner.firstname, partner.lastname), ("Jan", "Testowy"))
 
     def test_cardholder_name(self):
         contract = self._make_digital_contract()
