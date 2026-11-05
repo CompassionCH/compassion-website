@@ -11,6 +11,9 @@ import json
 from odoo import http
 from odoo.http import request
 
+# Short links redirect to other sites, so they must open in the browser (T3660).
+SHORT_LINK_COMPONENTS = [{"/": "/r/*", "exclude": True}, {"/": "*"}]
+
 
 class UniversalLinks(http.Controller):
     # Apple App Site Association (iOS)
@@ -27,7 +30,7 @@ class UniversalLinks(http.Controller):
         data = {
             "applinks": {
                 "apps": [],
-                "details": [{"appID": ios_app_id, "paths": ["*"]}],
+                "details": [{"appID": ios_app_id, "paths": ["NOT /r/*", "*"]}],
             }
         }
         # Apple strictly requires the content type to be application/json
@@ -50,6 +53,12 @@ class UniversalLinks(http.Controller):
         data = [
             {
                 "relation": ["delegate_permission/common.handle_all_urls"],
+                # Android 15+ only; older versions still open short links in the app.
+                "relation_extensions": {
+                    "delegate_permission/common.handle_all_urls": {
+                        "dynamic_app_link_components": SHORT_LINK_COMPONENTS
+                    }
+                },
                 "target": {
                     "namespace": "android_app",
                     "package_name": package_name,
