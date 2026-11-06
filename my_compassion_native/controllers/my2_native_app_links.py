@@ -30,7 +30,15 @@ class UniversalLinks(http.Controller):
         data = {
             "applinks": {
                 "apps": [],
-                "details": [{"appID": ios_app_id, "paths": ["NOT /r/*", "*"]}],
+                "details": [
+                    {
+                        # iOS 13+ reads only appIDs/components; older iOS reads paths.
+                        "appIDs": [ios_app_id],
+                        "components": SHORT_LINK_COMPONENTS,
+                        "appID": ios_app_id,
+                        "paths": ["NOT /r/*", "*"],
+                    }
+                ],
             }
         }
         # Apple strictly requires the content type to be application/json
