@@ -76,9 +76,13 @@ class ResUsers(models.Model):
                 user.login,
                 selected_partner.name,
             )
-            # v18 derives the signup token and URL from signup_type, so only
-            # that has to follow the partner.
+            # Keep the invitation state and recorded consent on the linked partner.
             selected_partner.signup_type = old_partner.signup_type
+            if (
+                old_partner.legal_agreement_date
+                and not selected_partner.legal_agreement_date
+            ):
+                selected_partner.legal_agreement_date = old_partner.legal_agreement_date
             old_partner.unlink()
             _logger.info("Partner deleted.")
 
@@ -103,21 +107,34 @@ class ResUsers(models.Model):
         # This is not a valid user field but is used for legal agreements
         values.pop("privacy_policy", None)
 
+        consent_at = self.env.context.get("my_compassion_signup_consent_at")
+        partner = self.env["res.partner"]
+        if token and consent_at:
+            partner = partner.sudo()._signup_retrieve_partner(
+                token, check_validity=True, raise_exception=True
+            )
+
         # Call the superclass's signup method
         login, password = super().signup(values, token)
+
+        user = self.search(
+            self._get_login_domain(login), order=self._get_login_order(), limit=1
+        )
+        if consent_at:
+            partner = partner or user.partner_id
+            if partner and not partner.legal_agreement_date:
+                partner.legal_agreement_date = consent_at
 
         if not token:
             email = values.get("email") or values.get("login")
 
-            # Retrieve the newly created user
-            user = self.search([("login", "=", login)], limit=1)
             if not user:
                 _logger.error(
                     "Signup failed: No user found with login '%s' after signup.", login
                 )
                 return login, password  # Or handle as appropriate
 
-            # Ensure changes are flushed and committed before scheduling the job
+            # Flush the partner and its consent before queuing the replacement.
             self.env.flush_all()
 
             # Queue the task to find or replace the partner
