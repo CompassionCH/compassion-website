@@ -1152,8 +1152,8 @@ msgstr "FUNDRAISINGIDEEN UND -HINWEISE"
 
 #. module: muskathlon
 #: model:event.registration.task,name:muskathlon.task_flight_details
-msgid "Give flight details"
-msgstr "Flugdetails angeben"
+msgid "Give outbound flight"
+msgstr "Hinflug angeben"
 
 #. module: muskathlon
 #: model:survey.question.answer,value:muskathlon.muskathlon_hiv
@@ -1859,7 +1859,6 @@ msgstr "Stattgehabter Schlaganfall"
 
 #. module: muskathlon
 #: model_terms:ir.ui.view,arch_db:muskathlon.criminal_form
-#: model_terms:ir.ui.view,arch_db:muskathlon.flight_details
 #: model_terms:ir.ui.view,arch_db:muskathlon.muskathlon_order_generic_form
 #: model_terms:ir.ui.view,arch_db:muskathlon.passport_form
 msgid "Submit"
@@ -2241,3 +2240,62 @@ msgstr ""
 #: model:mail.template,subject:muskathlon.sponsorship_invitation_template
 msgid "{{object.get_objects().event_id.name}} - your sponsored child"
 msgstr ""
+
+#. module: muskathlon
+#: model:event.registration.task,name:muskathlon.task_return_flight
+msgid "Give return flight"
+msgstr "Rückflug angeben"
+
+#. module: muskathlon
+#: model_terms:ir.ui.view,arch_db:muskathlon.flight_details
+#: model_terms:ir.ui.view,arch_db:muskathlon.flight_form
+msgid "Flying company"
+msgstr "Fluggesellschaft"
+
+#. module: muskathlon
+#: model_terms:ir.ui.view,arch_db:muskathlon.flight_details
+#: model_terms:ir.ui.view,arch_db:muskathlon.flight_form
+msgid "Flight number"
+msgstr "Flugnummer"
+
+#. module: muskathlon
+#: model_terms:ir.ui.view,arch_db:muskathlon.flight_details
+#: model_terms:ir.ui.view,arch_db:muskathlon.flight_form
+msgid "Departure"
+msgstr "Abflug"
+
+#. module: muskathlon
+#: model_terms:ir.ui.view,arch_db:muskathlon.flight_details
+#: model_terms:ir.ui.view,arch_db:muskathlon.flight_form
+msgid "Arrival"
+msgstr "Ankunft"
+
+#. module: muskathlon
+#: model_terms:ir.ui.view,arch_db:muskathlon.flight_form
+msgid "If your journey has connections, add each flight one after the other."
+msgstr "Wenn deine Reise Umsteigeverbindungen hat, füge jeden Flug nacheinander hinzu."
+
+#. module: muskathlon
+#: model_terms:ir.ui.view,arch_db:muskathlon.flight_form
+msgid "<i class=\"fa fa-trash-o\"/> Remove"
+msgstr "<i class=\"fa fa-trash-o\"/> Entfernen"
+
+#. module: muskathlon
+#: model_terms:ir.ui.view,arch_db:muskathlon.flight_form
+msgid "Add a connection flight"
+msgstr "Anschlussflug hinzufügen"
+
+#. module: muskathlon
+#: model_terms:ir.ui.view,arch_db:muskathlon.flight_form
+msgid "Add a flight"
+msgstr "Flug hinzufügen"
+
+#. module: muskathlon
+#: model_terms:ir.ui.view,arch_db:muskathlon.flight_details
+msgid "Add this flight"
+msgstr "Diesen Flug hinzufügen"
+
+#. module: muskathlon
+#: model_terms:ir.ui.view,arch_db:muskathlon.flight_form
+msgid "Back to my registration"
+msgstr "Zurück zu meiner Anmeldung"

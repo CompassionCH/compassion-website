@@ -8,31 +8,38 @@
   <record id="task_passport" model="event.registration.task">
     <field name="name">Upload Passport Scan</field>
     <field name="sequence">2</field>
-    <field name="stage_id" ref="stage_fill_profile" />
+    <field name="stage_id" ref="stage_documents" />
     <field name="website_published" eval="True" />
   </record>
   <record id="task_criminal" model="event.registration.task">
     <field name="name">Upload Criminal Record</field>
     <field name="sequence">6</field>
-    <field name="stage_id" ref="stage_fill_profile" />
+    <field name="stage_id" ref="stage_criminal_record" />
     <field name="website_published" eval="True" />
   </record>
+  <!-- The outbound flight -->
   <record id="task_flight_details" model="event.registration.task">
-    <field name="name">Give flight details</field>
+    <field name="name">Give outbound flight</field>
     <field name="sequence">3</field>
-    <field name="stage_id" ref="stage_fill_profile" />
+    <field name="stage_id" ref="stage_flights" />
+    <field name="website_published" eval="True" />
+  </record>
+  <record id="task_return_flight" model="event.registration.task">
+    <field name="name">Give return flight</field>
+    <field name="sequence">3</field>
+    <field name="stage_id" ref="stage_flights" />
     <field name="website_published" eval="True" />
   </record>
   <record id="task_medical" model="event.registration.task">
     <field name="name">Fill medical survey</field>
     <field name="sequence">4</field>
-    <field name="stage_id" ref="stage_fill_profile" />
+    <field name="stage_id" ref="stage_documents" />
     <field name="website_published" eval="True" />
   </record>
   <record id="task_sign_child_protection" model="event.registration.task">
     <field name="name">Sign child protection agreement</field>
     <field name="sequence">5</field>
-    <field name="stage_id" ref="stage_fill_profile" />
+    <field name="stage_id" ref="stage_documents" />
     <field name="website_published" eval="True" />
     <field name="default_task_url">/partner/child-protection-charter</field>
   </record>

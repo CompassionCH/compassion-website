@@ -1,0 +1,22 @@
+<div>
+  <t t-set="partner" t-value="object.partner_id" />
+  <t t-set="registration" t-value="object.get_objects()" />
+  <t t-set="event" t-value="registration.compassion_event_id" />
+  <t t-set="country" t-value="event.country_id" />
+</div>
+<p><t t-out="partner.informal_salutation" />,</p>
+<p>
+  Mancano solo poche settimane alla tua partenza <t t-out="country.in_preposition"></t>
+  <t t-out="country.name"></t>!
+</p>
+<p>
+  Verifica se con la tua cittadinanza ti serve un visto per entrare nel Paese e, se
+  necessario, richiedilo per tempo.
+</p>
+<p>
+  Per entrare nel Paese, il passaporto deve avere una validità residua di almeno sei
+  mesi dalla data d'ingresso e bisogna essere in possesso di un biglietto di ritorno o
+  di proseguimento del viaggio.
+</p>
+<p>Ti aspettiamo con gioia!</p>
+<p>Nathalie, 4M Switzerland</p>

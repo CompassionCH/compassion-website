@@ -177,7 +177,7 @@
                 <a
                   type="button"
                   t-attf-class="btn btn-#{'secondary' if task.done else 'primary'}"
-                  t-attf-href="../tasks/#{slug(task)}"
+                  t-attf-href="/my/events/tasks/#{slug(task)}"
                   t-att-target="'_blank' if task.task_id.open_new_tab else '_self'"
                 >
                   <t t-esc="task.name" />
@@ -189,7 +189,10 @@
         </div>
         <h3 class="mt-4" t-if="event.fundraising">
           <span class="me-2">Fundraising</span>
-          <a class="btn btn-primary mx-auto" href="fundraising">
+          <a
+            class="btn btn-primary mx-auto"
+            t-attf-href="/my/events/#{slug(registration)}/fundraising"
+          >
             <i class="fa fa-handshake-o" />
             <span>Fundraising tools</span>
           </a>
@@ -235,7 +238,7 @@
       <span>My profile</span>
       <a
         class="btn btn-primary mx-auto"
-        href="profile"
+        t-attf-href="/my/events/#{slug(registration)}/profile"
         t-if="registration.compassion_event_id.website_published"
       >
         <i class="fa fa-pencil" />
@@ -310,9 +313,13 @@
       data-name="Form"
     >
       <div class="container">
+        <!-- The website form posts to action + force_action. The slash
+             goes with force_action: in another language than the default
+             one, the action gets a /fr_CH-like prefix and loses its
+             trailing slash. -->
         <form
           id="event_registration_form"
-          action="/website/form/"
+          action="/my/events/form"
           method="post"
           enctype="multipart/form-data"
           class="o_mark_required"
@@ -320,6 +327,7 @@
           data-success-mode="redirect"
           t-attf-data-success-page="/my/events/#{slug(registration)}"
           data-model_name="event.registration.form"
+          data-force_action="/registration_edit"
         >
           <div class="s_website_form_rows row s_col_no_bgcolor">
             <div
@@ -493,5 +501,26 @@
         </form>
       </div>
     </section>
+  </template>
+  <!-- Bring the participant back to the event page after the medical survey -->
+  <template id="survey_done_back_to_event" inherit_id="survey.survey_fill_form_done">
+    <xpath
+      expr="//div[hasclass('o_survey_finished')]/div[hasclass('row')]"
+      position="after"
+    >
+      <t
+        t-set="registrations"
+        t-value="answer.partner_id and request.env['event.registration'].sudo().search([('partner_id', '=', answer.partner_id.id), ('event_id.medical_survey_id', '=', answer.survey_id.id), ('state', '!=', 'cancel')])"
+      />
+      <!-- Trips can share their survey: the answer doesn't tell which one
+           it was filled for, My events lists them all. -->
+      <div class="mt-4" t-if="registrations">
+        <a
+          role="button"
+          class="btn btn-primary btn-lg"
+          t-attf-href="/my/events#{'/' + request.env['ir.http']._slug(registrations) if len(registrations) == 1 else ''}"
+        >Continue</a>
+      </div>
+    </xpath>
   </template>
 </odoo>

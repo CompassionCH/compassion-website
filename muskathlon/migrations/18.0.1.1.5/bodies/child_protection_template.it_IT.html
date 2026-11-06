@@ -1,0 +1,61 @@
+<div>
+  <t t-set="partner" t-value="object.partner_id" />
+  <t t-set="registration" t-value="object.get_objects()" />
+  <t t-set="event" t-value="registration.compassion_event_id" />
+  <t t-set="country" t-value="event.country_id" />
+</div>
+<p><t t-out="partner.informal_salutation" />,</p>
+<p>
+  Noi di Compassion crediamo che i bambini abbiano il diritto di essere riconosciuti,
+  amati e protetti: è una questione fondamentale. Poiché i bambini che vivono in
+  condizioni di estrema povertà sono particolarmente vulnerabili, Compassion ha
+  elaborato delle linee guida chiare per garantire loro sicurezza e protezione.
+</p>
+<p>
+  Chiunque entri in contatto diretto con i bambini deve quindi presentare un
+  <b>estratto aggiornato del proprio casellario giudiziale</b>. È l'ultimo documento che
+  ci manca:
+</p>
+<div style="margin: 40px auto; text-align: center">
+  <a
+    t-attf-href="{{registration.host_url}}/my/events/{{registration.id}}/criminal"
+    style="
+      text-decoration: none;
+      padding: 12px 18px;
+      font-size: 12px;
+      line-height: 18px;
+      color: #ffffff;
+      display: inline-block;
+      margin-bottom: 0px;
+      font-weight: 400;
+      text-align: center;
+      vertical-align: middle;
+      cursor: pointer;
+      white-space: nowrap;
+      background-image: none;
+      background-color: #0054a6;
+      border: 1px solid #0054a6;
+      border-radius: 3px;
+    "
+    >Invia il mio estratto del casellario</a
+  >
+</div>
+<p t-if="not partner.date_agreed_child_protection_charter">
+  Ti chiediamo anche di leggere e firmare la
+  <a
+    t-attf-href="{{registration.host_url}}/partner/{{partner.uuid}}/child-protection-charter?redirect=/my/events/{{registration.id}}"
+    >dichiarazione sulla protezione dell'infanzia</a
+  >.
+</p>
+<p>
+  Puoi trovare ulteriori informazioni dettagliate qui:
+  <a href="https://compassion.ch/it/protezione-dellinfanzia/"
+    >compassion.ch/it/protezione-dellinfanzia</a
+  >
+</p>
+<p>Se hai domande sulla protezione dell'infanzia, non esitare a contattarmi.</p>
+<p>
+  Cari saluti,
+  <br />
+  Colin, Compassion
+</p>
