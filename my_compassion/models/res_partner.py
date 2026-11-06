@@ -1,6 +1,8 @@
 import logging
 from datetime import timedelta
 
+from markupsafe import Markup
+
 from odoo import SUPERUSER_ID, _, fields, models
 from odoo.exceptions import UserError
 
@@ -36,6 +38,14 @@ class Partner(models.Model):
         help="The partner was created from an email a visitor typed (a donation"
         " without an account, a fast checkout), which nobody has verified. Signup"
         " never links an account to it; giving a name does not change that.",
+    )
+
+    my2_duplicate_flagged = fields.Boolean(
+        string="Flagged as a possible duplicate",
+        readonly=True,
+        copy=False,
+        help="The staff were told that a visitor used the email of a known"
+        " donor for this partner. They are told once.",
     )
 
     # True if partner has ever been a sponsor.
@@ -89,6 +99,79 @@ class Partner(models.Model):
             updated |= partner
         updated._my2_on_placeholder_name_replaced()
         return updated
+
+    def _my2_flag_possible_duplicate(self, company):
+        """Tell the staff that this visitor-made partner may be a known donor.
+
+        A public signup always gets a new partner (see
+        new.sponsorship.wizard.finish_sponsorship), even when its email is
+        already the one of a donor. Nothing is said to the visitor and
+        nothing is merged: an email someone typed proves nothing, so a
+        person checks it. The note stays on the partner. The to-do goes to
+        the reviewer of a website of the company, if one has a reviewer.
+
+        Called once the signup is confirmed and the sponsor has a real name
+        (recurring.contract._my2_on_signup_confirmed), so an abandoned
+        checkout asks nothing of the staff. It runs inside payment
+        notification handling and contract validation, like the portal
+        invitation, so it must never break them; and as the superuser, so
+        the note is not written by the website's public user.
+        """
+        self.ensure_one()
+        if (
+            not self.my2_email_unverified
+            or self.my2_duplicate_flagged
+            or not self.email_normalized
+        ):
+            return
+        partner = self.with_user(SUPERUSER_ID)
+        try:
+            with partner.env.cr.savepoint():
+                partner._my2_post_possible_duplicate(company)
+        except Exception:
+            _logger.error(
+                "Could not flag partner %s as a possible duplicate.",
+                self.id,
+                exc_info=True,
+            )
+
+    def _my2_post_possible_duplicate(self, company):
+        known = self.search(
+            [
+                ("email_normalized", "=", self.email_normalized),
+                ("id", "!=", self.id),
+                ("my2_email_unverified", "=", False),
+            ]
+        )
+        if not known:
+            return
+        websites = self.env["website"].search([("company_id", "=", company.id)])
+        reviewer = websites.my2_duplicate_review_user_id[:1]
+        website = websites.filtered(
+            lambda w: w.my2_duplicate_review_user_id == reviewer
+            if reviewer
+            else w.is_my_compassion
+        )[:1]
+        partner = self.with_context(
+            lang=reviewer.lang or website.default_lang_id.code or "en_US"
+        )
+        note = Markup(
+            partner.env._(
+                "A visitor sponsored with the email of %(partners)s. Nothing"
+                " proves it is the same person. Check with them. If it is, move"
+                " this contact's sponsorship onto them, into their existing"
+                " collection group, then archive this contact."
+            )
+        ) % {"partners": Markup(", ").join(p._get_html_link() for p in known)}
+        partner.message_post(body=note, subtype_xmlid="mail.mt_note")
+        if reviewer:
+            partner.activity_schedule(
+                "mail.mail_activity_data_todo",
+                summary=partner.env._("Possible duplicate contact"),
+                note=note,
+                user_id=reviewer.id,
+            )
+        self.my2_duplicate_flagged = True
 
     def write(self, vals):
         """A real name written over the placeholder another way than
@@ -188,7 +271,7 @@ class Partner(models.Model):
                     [("partner_id", "in", self.ids)]
                 )
                 pending = contracts._my2_pending_portal_invitations()
-                pending._my2_send_portal_invitation()
+                pending._my2_on_signup_confirmed()
         except Exception:
             _logger.error(
                 "Could not run the post-placeholder handling of partners %s;"

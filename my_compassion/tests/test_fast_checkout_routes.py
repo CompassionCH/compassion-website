@@ -323,8 +323,8 @@ class TestFastCheckoutRoutes(HttpCase, DigitalSeamCase):
             )
 
     def test_transaction_route_refuses_a_saved_card_to_the_public(self):
-        """A public visitor is matched by email, which must never hand them
-        someone else's stored instrument."""
+        """Stored instruments stay behind a login: a visitor's partner is
+        always a new one today, and the guard holds even if that changes."""
         location, signup = self._pay_first_page()
         token = ACCESS_TOKEN_RE.search(location).group(1)
         with self.assertRaises(JsonRpcException):
