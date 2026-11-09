@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
   <!-- The first and last name on the card are asked with the e-mail,
-       before the payment page. They are required only by the PayU buttons
-       (see my2_new_sponsorship_wizard.esm.js): the other modes take no
-       card. -->
+       before the payment page. They are required only when a PayU payment
+       mode is the checked one (see my2_new_sponsorship_wizard.esm.js): the
+       other modes take no card. The PayU radios carry data-payu-gpo for
+       that check. -->
   <template
     id="my2_new_sponsorship_wizard_fast_checkout"
     inherit_id="my_compassion.my2_new_sponsorship_wizard_fast_checkout"
@@ -43,13 +44,8 @@
         </t>
       </t>
     </xpath>
-  </template>
-  <template
-    id="my2_new_sponsorship_wizard_form_content"
-    inherit_id="my_compassion.my2_new_sponsorship_wizard_form_content"
-  >
     <xpath
-      expr="//div[@t-att-data-payment-mode='payment_mode.id']"
+      expr="//input[@t-att-data-payment-mode='payment_mode.id']"
       position="attributes"
     >
       <attribute
