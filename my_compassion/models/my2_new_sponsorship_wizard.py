@@ -350,6 +350,13 @@ class NewSponsorshipWizard(models.TransientModel):
             # The consent tick is the only thing the fast-checkout step asks
             # besides the email. The step marks it required, but a checkbox is
             # trivially omitted from a posted form.
+            if self.env["website"].get_current_website().terms_url:
+                raise ValidationError(
+                    _(
+                        "Please accept the terms and conditions and the privacy"
+                        " policy before continuing."
+                    )
+                )
             raise ValidationError(
                 _("Please accept the privacy notice before continuing.")
             )
@@ -429,6 +436,11 @@ class NewSponsorshipWizard(models.TransientModel):
             # Durable marker so only wizard signups ever get the portal
             # invitation email. Staff-created or imported contracts never do.
             "my2_signup": True,
+            # Only a partner this checkout created with a placeholder name
+            # is ever offered the post-payment details form.
+            "my2_details_awaited_partner": (
+                partner.id if partner.my2_name_placeholder else 0
+            ),
         }
         # The contract is created in draft. Bank-collected sponsorships stay
         # draft until staff validate them by hand. Digital sponsorships are

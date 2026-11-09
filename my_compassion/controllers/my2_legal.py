@@ -26,3 +26,13 @@ class MyCompassionLegal(http.Controller):
         if not page:
             raise NotFound()
         return page
+
+    @http.route("/legal/terms", type="http", auth="public", website=True, sitemap=False)
+    def legal_terms_redirect(self):
+        """Terms and conditions of the website (Terms and Conditions URL, per
+        language), linked apart from the privacy notice when set. A website
+        without them keeps its single legal page."""
+        terms_link = request.website.terms_url
+        if not terms_link:
+            return request.redirect("/legal")
+        return request.redirect(terms_link, code=302, local=False)

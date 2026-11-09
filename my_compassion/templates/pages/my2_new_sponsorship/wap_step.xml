@@ -247,11 +247,25 @@
               required=""
             />
             <label class="ms-2 mb-0 tiny-text text-mid-grey" for="privacy_consent">
-                        I accept the privacy policy as described in the
+                      <t t-if="website.terms_url">I accept the
                         <a
-              href="/legal"
-              class="tiny-text bold text-core-blue"
-            >privacy notice</a>.
+                          href="/legal/terms"
+                          target="_blank"
+                          rel="noopener"
+                          class="tiny-text bold text-core-blue"
+                        >terms and conditions</a>
+                        and the
+                        <a
+                          href="/legal"
+                          target="_blank"
+                          rel="noopener"
+                          class="tiny-text bold text-core-blue"
+                        >privacy policy</a>.</t>
+                      <t t-else="">I accept the privacy policy as described in the
+                        <a
+                          href="/legal"
+                          class="tiny-text bold text-core-blue"
+                        >privacy notice</a>.</t>
                     </label>
           </div>
         </t>

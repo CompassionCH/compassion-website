@@ -7,11 +7,11 @@
 ##############################################################################
 """Post-migration to 18.0.1.0.9 of theme_compassion_2025.
 
-Seed the newly-translatable ``website.privacy_policy_url`` field with the
-real per-language policy page confirmed on the live compassion.ch production
-site, for every website running this theme. The field already held the
-French URL as a plain (untranslated) value; this adds the German and Italian
-equivalents alongside it.
+Seed the translatable ``website.privacy_policy_url`` field of the Swiss
+websites running this theme (company partner in Switzerland) with the
+per-language policy page of compassion.ch, in French, German and Italian.
+Only the languages active on the database are written, and websites of other
+countries are left untouched.
 """
 
 from odoo import SUPERUSER_ID, api
@@ -34,6 +34,14 @@ def migrate(cr, version):
     )
     if not theme:
         return
-    websites = env["website"].search([("theme_id", "=", theme.id)])
+    # res.company.country_id is a non-stored compute: search on the partner's.
+    websites = env["website"].search(
+        [
+            ("theme_id", "=", theme.id),
+            ("company_id.partner_id.country_id.code", "=", "CH"),
+        ]
+    )
+    # A write with an inactive language in context raises a UserError.
     for lang, url in PRIVACY_URL_BY_LANG:
-        websites.with_context(lang=lang).write({"privacy_policy_url": url})
+        if env["res.lang"]._lang_get(lang):
+            websites.with_context(lang=lang).write({"privacy_policy_url": url})

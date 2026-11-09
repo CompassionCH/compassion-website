@@ -130,7 +130,16 @@ If you would like to go a step further and show that you share our commitment to
           <t t-if="partner.legal_agreement_date">
             <span>Signing date:</span>
             <t t-out="partner.get_date('legal_agreement_date', 'short')" />
-            <a href="/legal" target="_blank">(view agreement)</a>
+            <t t-if="website.terms_url">(<a
+              href="/legal/terms"
+              target="_blank"
+              rel="noopener"
+            >Terms and Conditions</a>, <a
+              href="/legal"
+              target="_blank"
+              rel="noopener"
+            >Privacy Policy</a>)</t>
+            <a t-else="" href="/legal" target="_blank">(view agreement)</a>
           </t>
           <form t-else="" enctype="application/x-www-form-urlencoded">
             <div class="form-check">
