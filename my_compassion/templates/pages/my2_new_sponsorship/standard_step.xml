@@ -135,26 +135,26 @@
               required=""
             />
             <label class="ms-2 mb-0 very-tiny-text text-mid-grey" for="privacy_consent">
-                      <t t-if="website.terms_url">I accept the
+              <t t-if="website.terms_url">I accept the
                         <a
-                          href="/legal/terms"
-                          target="_blank"
-                          rel="noopener"
-                          class="very-tiny-text bold text-core-blue"
-                        >terms and conditions</a>
+                href="/legal/terms"
+                target="_blank"
+                rel="noopener"
+                class="very-tiny-text bold text-core-blue"
+              >terms and conditions</a>
                         and the
                         <a
-                          href="/legal"
-                          target="_blank"
-                          rel="noopener"
-                          class="very-tiny-text bold text-core-blue"
-                        >privacy policy</a>.</t>
-                      <t t-else="">I accept the privacy policy as described in the
+                href="/legal"
+                target="_blank"
+                rel="noopener"
+                class="very-tiny-text bold text-core-blue"
+              >privacy policy</a>.</t>
+              <t t-else="">I accept the privacy policy as described in the
                         <a
-                          href="/legal"
-                          class="very-tiny-text bold text-core-blue"
-                        >privacy notice</a>.</t>
-                    </label>
+                href="/legal"
+                class="very-tiny-text bold text-core-blue"
+              >privacy notice</a>.</t>
+            </label>
           </div>
         </t>
         <!-- Payment mode: rendered as radios here, in the left column;
