@@ -1225,6 +1225,12 @@ msgid "Child"
 msgstr "Bambino"
 
 #. module: my_compassion
+#: model:ir.model.fields,field_description:my_compassion.field_res_config_settings__my2_child_list_order
+#: model:ir.model.fields,field_description:my_compassion.field_website__my2_child_list_order
+msgid "Child List Order"
+msgstr "Ordine dell'elenco dei bambini"
+
+#. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.child_protection_charter_confirmation_page_override
 msgid "Child Protection Charter"
 msgstr "Carta di tutela dei minori"
@@ -2693,6 +2699,11 @@ msgid "Login links from our emails no longer work. Log in with your password, or
 msgstr "I link di accesso delle nostre e-mail non funzionano più. Accedi con la tua password oppure scegli «Password dimenticata?» per impostarne una."
 
 #. module: my_compassion
+#: model:ir.model.fields.selection,name:my_compassion.selection__website__my2_child_list_order__waiting
+msgid "Longest waiting first"
+msgstr "Prima chi aspetta da più tempo"
+
+#. module: my_compassion
 #: model:ir.model.fields,field_description:my_compassion.field_product_product__my_compassion_donation_amount_low
 #: model:ir.model.fields,field_description:my_compassion.field_product_template__my_compassion_donation_amount_low
 msgid "Lowest Amount"
@@ -2771,6 +2782,11 @@ msgstr "Importo consigliato medio"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_contactus_page
 msgid "Message"
 msgstr "Messaggio"
+
+#. module: my_compassion
+#: model:ir.model.fields.selection,name:my_compassion.selection__website__my2_child_list_order__mix_countries
+msgid "Mix countries"
+msgstr "Mescola i paesi"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my_information_personal
@@ -3216,6 +3232,26 @@ msgstr "O inserisci il tuo importo"
 #: model_terms:ir.ui.view,arch_db:my_compassion.product_template_form_view
 msgid "Order Lines"
 msgstr "Voci d'ordine"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.res_config_settings_view_form_my_compassion
+msgid "Order of the children waiting for a sponsor on the MyCompassion list."
+msgstr ""
+"Ordine dei bambini in attesa di un sostenitore nell'elenco MyCompassion."
+
+#. module: my_compassion
+#: model:ir.model.fields,help:my_compassion.field_res_config_settings__my2_child_list_order
+#: model:ir.model.fields,help:my_compassion.field_website__my2_child_list_order
+msgid ""
+"Order of the children waiting for a sponsor on the MyCompassion list. "
+"Longest waiting first: the children who have been waiting the longest come "
+"first. Mix countries: the longest-waiting child of each country first, then "
+"the second of each country, and so on."
+msgstr ""
+"Ordine dei bambini in attesa di un sostenitore nell'elenco MyCompassion. "
+"Prima chi aspetta da più tempo: i bambini che aspettano da più tempo vengono"
+" per primi. Mescola i paesi: prima il bambino di ogni paese che aspetta da "
+"più tempo, poi il secondo di ogni paese, e così via."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_update_card_page

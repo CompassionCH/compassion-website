@@ -64,6 +64,24 @@ class Website(models.Model):
         default=60,
         help="The window of the visitor payment attempts per IP address.",
     )
+    # Each value names a strategy of compassion.child: the list is ordered by
+    # its method _my2_children_order_<value> (see _my2_available_children).
+    # A module adds a strategy with selection_add (and
+    # ondelete={"<value>": "set default"}, the field being required) plus
+    # that one method.
+    my2_child_list_order = fields.Selection(
+        [
+            ("waiting", "Longest waiting first"),
+            ("mix_countries", "Mix countries"),
+        ],
+        string="Child List Order",
+        required=True,
+        default="waiting",
+        help="Order of the children waiting for a sponsor on the MyCompassion"
+        " list. Longest waiting first: the children who have been waiting the"
+        " longest come first. Mix countries: the longest-waiting child of each"
+        " country first, then the second of each country, and so on.",
+    )
 
     def sale_get_order(self, force_create=False):
         """Each cart stays on its website. The websites of a domain share the

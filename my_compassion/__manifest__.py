@@ -30,7 +30,7 @@
 # pylint: disable=C8101
 {
     "name": "MyCompassion - Sponsor portal website",
-    "version": "18.0.1.0.33",
+    "version": "18.0.1.0.34",
     "category": "Website",
     "author": "Compassion CH",
     "license": "AGPL-3",
@@ -61,6 +61,7 @@
         "views/child_view.xml",
         "views/payment_mode_view.xml",
         "views/website_view.xml",
+        "views/res_config_settings_view.xml",
         "views/account_move_view.xml",
         "views/contract_origin_view.xml",
         "views/communication_view.xml",

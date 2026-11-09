@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <!-- Per-website MyCompassion settings -->
+  <record id="res_config_settings_view_form_my_compassion" model="ir.ui.view">
+    <field name="name">res.config.settings.view.form.my_compassion</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="website.res_config_settings_view_form" />
+    <field name="arch" type="xml">
+      <block id="website_info_settings" position="inside">
+        <setting
+          id="my2_child_list_order_setting"
+          string="Child list order"
+          help="Order of the children waiting for a sponsor on the MyCompassion list."
+        >
+          <field name="my2_child_list_order" />
+        </setting>
+      </block>
+    </field>
+  </record>
+</odoo>
