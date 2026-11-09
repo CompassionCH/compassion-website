@@ -391,8 +391,19 @@
      horizontally centered on the page, its own midpoint already lines up
      with the viewport's, so a plain 50% stop lands exactly on the gap
      between the two (equal-width) columns with no calc() needed. */
+  /* The background below is a positioned layer at z-index 0, so it paints
+     above the page's own backgrounds (a boxed layout gives <main> a white
+     one); the row's children are positioned too, without a z-index, so they
+     paint above it in tree order. Neither the row nor its children become a
+     stacking context: the Sponsorship Plus modal inside still stacks with
+     the page (above the site header). */
   .ns-flex-columns.ns-split-blue-right,
   .ns-flex-columns.ns-split-blue-left {
+    position: relative;
+  }
+
+  .ns-flex-columns.ns-split-blue-right > *,
+  .ns-flex-columns.ns-split-blue-left > * {
     position: relative;
   }
 
@@ -405,7 +416,7 @@
     left: 50%;
     width: 100vw;
     transform: translateX(-50%);
-    z-index: -1;
+    z-index: 0;
   }
 
   .ns-flex-columns.ns-split-blue-right::before {
