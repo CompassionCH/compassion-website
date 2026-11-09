@@ -75,13 +75,15 @@
           class="ns-total-row mt-3 pt-3 border-top d-none d-lg-flex justify-content-between align-items-center"
         >
           <span class="text-dark-blue body-small bold">Total</span>
-          <span
+          <!-- The script rewrites only the inner span (the amount), so the
+               translated "/mo." after it stays as rendered. -->
+          <span class="text-low-blue body-large bold"><span
             id="ns-total-amount"
-            class="text-low-blue body-large bold"
             t-att-data-base-amount="float(sponsorship_amount or 0)"
             t-att-data-plus-amount="float(sponsorship_plus_extra or 0)"
             t-att-data-currency-name="currency_name"
-          ><t t-out="currency_name" />&#160;<t t-out="ns_total_formatted" />/mo.</span>
+            t-out="currency_name + '&#160;' + ns_total_formatted"
+          />/mo.</span>
         </div>
       </div>
       <div class="ns-aside-item gap-4">
@@ -156,13 +158,12 @@
           </div>
         </t>
         <!-- Payment mode: rendered as radios here, in the left column;
-             selecting one only picks it, the generic Continue button
-             (my2_new_sponsorship_wizard_form_content) still does the actual
-             submit. The my_compassion_switzerland eBill extension keeps
-             that button's data-payment-mode/data-payment-code synced to the
-             checked radio (see the "change .payment-method-radio" handler
-             in my2_new_sponsorship_wizard.js) so its own validation-code
-             setup still runs before an eBill submit goes through. -->
+             selecting one only picks it, this step's Continue button below
+             does the actual submit. The wizard script copies the checked
+             radio's data-payment-mode/data-payment-code onto that button
+             (paymentModeDataKeys in my2_new_sponsorship_wizard.js), for the
+             click handlers that read them off the clicked button, such as
+             the my_compassion_switzerland eBill setup. -->
         <div t-if="payment_mode_buttons" class="my-3 mt-4">
           <div
             class="mb-2 text-dark-blue body-small bold"
@@ -205,6 +206,12 @@
               </span>
             </label>
           </t>
+          <!-- Shown by the wizard's form validation while no mode is
+               checked: the radios have no default on purpose. -->
+          <div
+            class="ns-payment-mode-error d-none mt-2 tiny-text text-mid-orange"
+            role="alert"
+          >Please choose a payment method before continuing.</div>
         </div>
         <!-- This step's own Continue button, in the left column instead of
              the parent chrome's shared one (my2_new_sponsorship_wizard_form_content):
