@@ -293,11 +293,12 @@ class NewSponsorshipWizard(models.TransientModel):
         )
 
     def _step_offers_payment_modes(self):
-        """Whether the current step is submitted by one button per payment
-        mode instead of by the generic Continue/Finish button.
+        """Whether the current step offers its payment modes as radios, with
+        its own Continue button, instead of the generic Continue/Finish
+        button.
 
         Asked apart from _get_payment_mode_buttons so the page can tell the
-        two reasons for having no button to show apart. A step that keeps the
+        two reasons for having no mode to show apart. A step that keeps the
         generic button offers no modes: the Write&Pray page, since a
         Write&Pray sponsorship is deliberately created without a payment mode
         regardless of what it says about a monthly amount (see
@@ -316,8 +317,8 @@ class NewSponsorshipWizard(models.TransientModel):
         return self.current_step == self.env.ref(FAST_CHECKOUT_STEP)
 
     def _get_payment_mode_buttons(self):
-        """The payment modes the current step submits itself with, one button
-        each: pressing one picks the mode and ends the flow in one action.
+        """The payment modes the current step offers, one radio each: the
+        step's Continue button submits the checked one.
 
         Empty both for the steps that keep the generic Continue/Finish button
         and for a fast-checkout page whose company has published no mode -

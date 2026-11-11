@@ -771,13 +771,13 @@ class MyCompassionNewSponsorshipController(http.Controller):
             f"/web/login?{urlencode({'redirect': request.httprequest.full_path})}"
         )
 
-        # The step's own submit radios, when it has any: one per payment
-        # mode, in the fast-checkout step's own left column (see
-        # standard_step.xml), in place of the generic Continue/Finish button.
+        # The payment modes the step offers, one radio each, in the
+        # fast-checkout step's form column (see standard_step.xml). The
+        # step's own Continue button below them submits the checked mode.
         payment_mode_buttons = wizard._get_payment_mode_buttons()
-        # Whether those radios are this step's submit at all, which is what
-        # says if the generic button may stand in when the list above is
-        # empty.
+        # Whether this step offers payment modes at all. Such a step renders
+        # its own Continue instead of the generic button, so with an empty
+        # list above it renders no submit.
         step_offers_payment_modes = wizard._step_offers_payment_modes()
 
         # Render step template first

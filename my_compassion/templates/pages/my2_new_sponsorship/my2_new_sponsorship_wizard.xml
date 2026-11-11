@@ -37,14 +37,14 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     - countries (array of 'res.country' records): The list of countries to choose from.
     - payment_methods (array of 'account.payment.mode' records): The list of payment methods to choose from.
     - payment_mode_buttons (array of 'account.payment.mode' records): The
-      modes the current step submits itself with (see
+      modes the current step offers (see
       new.sponsorship.wizard._get_payment_mode_buttons), rendered as radios
-      in standard_step.xml's left column - selecting one only picks it, the
-      generic Continue button below still does the actual submit. Empty for
+      in standard_step.xml's form column - selecting one only picks it, the
+      step's own Continue button below them does the submit. Empty for
       the steps that keep the generic Continue/Finish button as their only
       way to submit.
-    - step_offers_payment_modes (boolean): Whether those radios are the
-      current step's submit (see
+    - step_offers_payment_modes (boolean): Whether the current step offers
+      those radios with its own Continue (see
       new.sponsorship.wizard._step_offers_payment_modes). False for the steps
       that keep the generic button as their only way to submit; True with an
       empty payment_mode_buttons means the company has published no mode,
