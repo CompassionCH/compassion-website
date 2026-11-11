@@ -279,10 +279,12 @@
 }
 
 /* Desktop (Bootstrap's lg breakpoint, like the templates' d-lg-* classes):
-   form + child-summary sidebar side by side instead of stacked. */
+   form + child-summary sidebar side by side instead of stacked. Only a page
+   that holds such a two-column row is widened for it; the single-column
+   steps and thank-you branches keep their narrow width. */
 @media (min-width: 992px) {
-  .new-sponsorship-container,
-  .new-sponsorship-thank-you-container {
+  .new-sponsorship-container:has(.ns-flex-columns),
+  .new-sponsorship-thank-you-container:has(.ns-flex-columns) {
     max-width: min(1100px, 100% - 48px);
   }
 
