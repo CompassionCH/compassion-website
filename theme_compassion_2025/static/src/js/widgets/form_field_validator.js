@@ -126,8 +126,14 @@ publicWidget.registry.themeCompassionFormFieldValidator = publicWidget.Widget.ex
    * on the mousedown of the visitor's next click, moving the page up under
    * the pointer: that click was lost, or landed on another element such as
    * another payment-mode radio. A new error is still only shown on blur.
+   * Only the wrapper's first input is validated here (see _getError): the
+   * other inputs of a multi-input wrapper, like a custom donation amount
+   * behind its radio, keep the error their own form gave them.
    */
-  _onInput: function () {
+  _onInput: function (ev) {
+    if (ev.currentTarget !== this.$input[0]) {
+      return;
+    }
     if (this.$input.hasClass("is-invalid") && !this._getError()) {
       this.clearError();
     }
