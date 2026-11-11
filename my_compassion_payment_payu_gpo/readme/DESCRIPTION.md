@@ -44,9 +44,9 @@ This module comes with changes in my_compassion, for every provider:
 
 The fast checkout of a website whose company offers PayU (a published
 mode of a PayU provider that is not disabled) asks the first and last name
-on the card under the e-mail, before the payment page. Only the PayU buttons
-require them: the other modes of the page (e.g. a standing order) take no
-card. The names are kept in the session by sponsorship, until its first
+on the card under the e-mail, before the payment page. They are required
+only when a PayU mode is the one chosen: the other modes of the page (e.g. a
+standing order) take no card. The names are kept in the session by sponsorship, until its first
 payment is done, and prefill the card form of the payment page, where they
 can still be corrected (a typo, another card after a refused payment).
 Without them (the full sponsorship form), the card form is prefilled with the
