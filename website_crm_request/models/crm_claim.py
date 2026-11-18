@@ -9,6 +9,8 @@ class CrmClaim(models.Model):
         """Attach the request to the contact that wrote it, creating one when
         no contact holds the address.
         """
+        # Forms run as OdooBot, which would otherwise become the responsible
+        values.setdefault("user_id", False)
         email = email_normalize(values.get("email_from") or "")
         if not email:
             return values
