@@ -22,12 +22,12 @@ uses `pl_PL`.
 
 When a task changes code here, open the shared rule subjects it needs. If the toolkit
 plugins are available, use their skills `code-rules:rules` and `odoo-rules:rules`;
-otherwise fetch the released rules into a temporary folder:
-`(d="$(mktemp -d)" && for t in code-rules--v1.0.0 odoo-rules--v1.0.0; do git -c advice.detachedHead=false clone -q --depth 1 --branch "$t" https://github.com/CompassionCH/compassion-agent-toolkit.git "$d/$t" || exit; done && echo "$d")`.
-There, each index is `<plugin>--v1.0.0/plugins/<plugin>/skills/rules/SKILL.md`. If the
-sandbox blocks the network, ask the user to run the command, or read the indexes online:
-[code-rules](https://github.com/CompassionCH/compassion-agent-toolkit/blob/code-rules--v1.0.0/plugins/code-rules/skills/rules/SKILL.md)
-[odoo-rules](https://github.com/CompassionCH/compassion-agent-toolkit/blob/odoo-rules--v1.0.0/plugins/odoo-rules/skills/rules/SKILL.md)
+otherwise fetch the published rules into a temporary folder:
+`(d="$(mktemp -d)" && git clone -q --depth 1 --branch main https://github.com/CompassionCH/compassion-agent-toolkit.git "$d" && echo "$d")`.
+There, each index is `plugins/<plugin>/skills/rules/SKILL.md`. If the sandbox blocks the
+network, ask the user to run the command, or read the indexes online:
+[code-rules](https://github.com/CompassionCH/compassion-agent-toolkit/blob/main/plugins/code-rules/skills/rules/SKILL.md)
+[odoo-rules](https://github.com/CompassionCH/compassion-agent-toolkit/blob/main/plugins/odoo-rules/skills/rules/SKILL.md)
 
 Read the relevant [architecture decision](docs/adr/) before changing the pattern it
 describes. For portal checkout submissions, reuse `sale.order._my2_lock_for_new_payment`
@@ -42,7 +42,7 @@ and checks for untracked generated files. Run the affected Odoo tests separately
 
 Then run the rules review in `review.md`, linked from the code-rules index. Use the
 `code-rules:rules-reviewer` subagent when the plugin is available; otherwise give a
-fresh read-only session the released reviewer prompt at
-`code-rules--v1.0.0/plugins/code-rules/agents/rules-reviewer.md`. Only if neither is
+fresh read-only session the published reviewer prompt at
+`plugins/code-rules/agents/rules-reviewer.md` in that folder. Only if neither is
 possible, say in the PR description that no rules review ran. Record findings, coverage
 gaps and their disposition there.
