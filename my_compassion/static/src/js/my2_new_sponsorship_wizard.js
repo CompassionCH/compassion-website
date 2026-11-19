@@ -10,6 +10,7 @@
  * ------------------------------------------------------------------------------- */
 
 import publicWidget from "@web/legacy/js/public/public_widget";
+import {_t} from "@web/core/l10n/translation";
 import {rpc} from "@web/core/network/rpc";
 
 export const NewSponsorshipWizard = publicWidget.Widget.extend({
@@ -196,7 +197,7 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     }
 
     if (!contributing) {
-      $price.text("No payment");
+      $price.text(_t("No payment"));
       return;
     }
 
@@ -206,7 +207,7 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     }
     amount = parseFloat(amount);
     if (!amount) {
-      $price.text("No payment");
+      $price.text(_t("No payment"));
       return;
     }
     $price.text(`${$price.data("currencyName")} ${amount}.-`);
