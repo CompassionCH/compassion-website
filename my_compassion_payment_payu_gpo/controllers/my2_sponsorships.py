@@ -13,7 +13,6 @@ from odoo.addons.my_compassion.controllers.my2_sponsorships import (
     MyCompassionNewSponsorshipController,
     MyCompassionSponsorshipPayment,
 )
-from odoo.addons.my_compassion.controllers.website_utils import safe_int
 
 from ..utils import session_cardholder_names
 
@@ -30,17 +29,14 @@ def _session_cardholder_names():
 class NewSponsorshipController(MyCompassionNewSponsorshipController):
     @http.route()
     def sponsorship_wizard_submit(self, **post):
+        # Every refusal of the base route raises, so this only runs for the
+        # session that owns the wizard; asked again rather than trusted.
         response = super().sponsorship_wizard_submit(**post)
-        wizard = (
-            request.env["new.sponsorship.wizard"]
-            .sudo()
-            .browse(safe_int(post.get("wizard_id")))
-            .exists()
-        )
+        wizard = self._get_owned_wizard(post.get("wizard_id"))
         typed = [wizard.cardholder_firstname or "", wizard.cardholder_lastname or ""]
-        if any(typed) and wizard.payu_gpo_sponsorship_id:
+        if any(typed) and wizard.sponsorship_id:
             names = _session_cardholder_names()
-            names[str(wizard.payu_gpo_sponsorship_id.id)] = typed
+            names[str(wizard.sponsorship_id.id)] = typed
             # Kept as few as the session's own signups.
             request.session[CARDHOLDER_NAMES_SESSION_KEY] = dict(
                 list(names.items())[-OWN_SIGNUPS_SESSION_LIMIT:]

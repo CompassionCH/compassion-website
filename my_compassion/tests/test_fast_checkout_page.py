@@ -28,8 +28,7 @@ class TestFastCheckoutOnePage(DigitalSeamCase):
 
     def setUp(self):
         super().setUp()
-        self.child = self.env["compassion.child"].search([], limit=1)
-        self.assertTrue(self.child, "the database needs a child")
+        self.child = self._available_child()
         self.website_company = self.env["res.company"].create({"name": "One Page Co"})
         provider = self.env["payment.provider"].create(
             {
@@ -235,7 +234,7 @@ class TestFastCheckoutOnePage(DigitalSeamCase):
             "child_sponsored",
             lambda child_self, sponsor_id: None,
         ):
-            sponsorship = wizard.finish_sponsorship()
+            sponsorship = self._answer_every_step(wizard).finish_sponsorship()
         self.assertEqual(sponsorship.type, "SWP")
         self.assertEqual(sponsorship.child_id, self.child)
         self.assertTrue(sponsorship.my2_signup)
@@ -303,7 +302,8 @@ class TestFastCheckoutOnePage(DigitalSeamCase):
             privacy_consent=True,
             country=self.env.ref("base.se").id,
         )
-        with self.assertRaises(ValidationError):
+        self._answer_every_step(wizard)
+        with self.assertRaisesRegex(ValidationError, "choose a payment method"):
             wizard.finish_sponsorship()
         self.assertFalse(
             self.env["res.partner"].search(

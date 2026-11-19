@@ -1,7 +1,10 @@
 import re
 import unittest
+from contextlib import contextmanager
 from unittest.mock import patch
 
+from odoo import Command, fields
+from odoo.exceptions import AccessError, ValidationError
 from odoo.tests import tagged
 from odoo.tests.common import (
     TEST_CURSOR_COOKIE_NAME,
@@ -10,6 +13,7 @@ from odoo.tests.common import (
     Opener,
 )
 
+from ..controllers.my2_sponsorships import WIZARD_TOKENS_SESSION_KEY
 from .common import DigitalSeamCase
 
 CSRF_RE = re.compile(r'name="csrf_token"\s+value="([^"]+)"')
@@ -127,8 +131,7 @@ class TestFastCheckoutRoutes(HttpCase, DigitalSeamCase):
     def _start_checkout(self, sponsorship_type="standard"):
         """GET the wizard page and return (csrf_token, wizard_id)."""
         page = self.url_open(
-            f"/my2/new-sponsorship/{self.child.id}"
-            f"?sponsorship_type={sponsorship_type}"
+            f"/my2/new-sponsorship/{self.child.id}?sponsorship_type={sponsorship_type}"
         )
         self.assertEqual(page.status_code, 200)
         csrf = CSRF_RE.search(page.text)
@@ -176,6 +179,82 @@ class TestFastCheckoutRoutes(HttpCase, DigitalSeamCase):
         )
         self.assertTrue(signup, "the submit route should have created the signup")
         return location, signup
+
+    @contextmanager
+    def _in_another_browser(self):
+        """Every request in the block comes from a second browser, with a
+        session of its own: another visitor, as far as the server can tell.
+        """
+        own_opener = self.opener
+        self.opener = Opener(self.cr)
+        self.opener.cookies[TEST_CURSOR_COOKIE_NAME] = own_opener.cookies[
+            TEST_CURSOR_COOKIE_NAME
+        ]
+        try:
+            yield
+        finally:
+            self.opener = own_opener
+
+    def _another_child(self):
+        """A second available child, for a visitor who needs a checkout of
+        their own (its page is where their csrf token comes from)."""
+        child = self.env["compassion.child"].search(
+            [("id", "!=", self.child.id)], limit=1
+        )
+        self.assertTrue(child, "the database needs a second child")
+        child.write(
+            {
+                "state": self.env["compassion.child"]._available_states()[0],
+                "website_reservation_date": False,
+                "website_reservation_id": False,
+            }
+        )
+        return child
+
+    def _start_checkout_of(self, child):
+        own_child = self.child
+        self.child = child
+        try:
+            return self._start_checkout()
+        finally:
+            self.child = own_child
+
+    def _answer(self, wizard_id, email, **post):
+        """The one page of the standard checkout, answered."""
+        return self._step(
+            wizard_id,
+            email=email,
+            privacy_consent="true",
+            payment_method=str(self.digital_mode.id),
+            action="next",
+            **post,
+        )
+
+    def _signups_of(self, email):
+        return self.env["recurring.contract"].search_count(
+            [("partner_id.email", "=", email)]
+        )
+
+    def _portal_user(self, login):
+        return (
+            self.env["res.users"]
+            .with_context(no_reset_password=True)
+            .create(
+                {
+                    "name": login,
+                    "login": login,
+                    "password": login,
+                    "email": f"{login}@example.org",
+                    "groups_id": [Command.set([self.env.ref("base.group_portal").id])],
+                }
+            )
+        )
+
+    def _assert_untouched(self, wizard, email):
+        """The wizard is as its owner left it, and finished nothing."""
+        wizard.invalidate_recordset()
+        self.assertEqual(wizard.email, email)
+        self.assertFalse(wizard.sponsorship_id)
 
     def _open_in_a_fresh_session(self, url):
         """GET url as a visitor who has no session with this server yet.
@@ -262,7 +341,7 @@ class TestFastCheckoutRoutes(HttpCase, DigitalSeamCase):
 
     def test_submit_refuses_an_unknown_wizard(self):
         _html, csrf, _wizard_id = self._start_checkout()
-        self.assertEqual(self._submit(csrf, 0).status_code, 400)
+        self.assertEqual(self._submit(csrf, 0).status_code, 404)
 
     def test_submit_refuses_a_checkout_without_consent(self):
         """The tick is required in the page, and a posted form is not a page."""
@@ -436,3 +515,186 @@ class TestFastCheckoutRoutes(HttpCase, DigitalSeamCase):
         page = self.url_open(f"{location}&payment_failed=1")
         self.assertEqual(page.status_code, 200)
         self.assertNotIn("Your payment did not go through", page.text)
+
+    # === Wizards belong to the browser session that started them ===
+
+    def test_another_visitor_cannot_use_the_wizard(self):
+        """Wizard ids are sequential and sent in the page, and every
+        anonymous visitor is the same public user: the id alone must not let
+        another visitor read, change or finish someone else's checkout."""
+        _html, _csrf, wizard_id = self._start_checkout()
+        self._step(wizard_id, email="owner@example.org")
+        wizard = self.env["new.sponsorship.wizard"].browse(wizard_id)
+        self.assertTrue(wizard.session_token)
+        with self._in_another_browser():
+            # their own checkout, for a valid csrf token of their session
+            _html, other_csrf, _other_id = self._start_checkout_of(
+                self._another_child()
+            )
+            # reading the page back is a step without an action
+            with self.assertRaises(JsonRpcException):
+                self._step(wizard_id)
+            with self.assertRaises(JsonRpcException):
+                self._answer(wizard_id, "intruder@example.org")
+            self.assertEqual(self._submit(other_csrf, wizard_id).status_code, 404)
+        self._assert_untouched(wizard, "owner@example.org")
+        self.assertEqual(wizard.current_step_idx, 0)
+        self.assertFalse(self._signups_of("intruder@example.org"))
+        # the owner still goes through
+        self.assertEqual(self._answer(wizard_id, "owner@example.org"), {"finish": True})
+
+    def test_another_user_cannot_use_the_wizard(self):
+        """Same separation between two logged-in sponsors, and the token
+        alone is not enough either: it must come with the user who started
+        the wizard."""
+        anna = self._portal_user("wizard-owner-anna")
+        jan = self._portal_user("wizard-owner-jan")
+        self.authenticate(anna.login, anna.login)
+        _html, _csrf, wizard_id = self._start_checkout()
+        wizard = self.env["new.sponsorship.wizard"].browse(wizard_id)
+        self.assertEqual(wizard.user_id, anna)
+        self._step(wizard_id, email="anna@example.org")
+        # Jan's own session, even holding Anna's token
+        self.authenticate(
+            jan.login,
+            jan.login,
+            session_extra={
+                WIZARD_TOKENS_SESSION_KEY: {str(wizard_id): wizard.session_token}
+            },
+        )
+        _html, jan_csrf, _jan_id = self._start_checkout_of(self._another_child())
+        with self.assertRaises(JsonRpcException):
+            self._step(wizard_id)
+        with self.assertRaises(JsonRpcException):
+            self._step(wizard_id, email="jan@example.org", action="next")
+        self.assertEqual(self._submit(jan_csrf, wizard_id).status_code, 404)
+        self._assert_untouched(wizard, "anna@example.org")
+        self.assertEqual(wizard.current_step_idx, 0)
+
+    def test_a_session_without_the_token_is_refused(self):
+        """A session that expired, or never had the token, starts over: it
+        is refused before anything is read or written."""
+        _html, _csrf, wizard_id = self._start_checkout()
+        self._step(wizard_id, email="expired@example.org")
+        wizard = self.env["new.sponsorship.wizard"].browse(wizard_id)
+        for tokens in ({}, {str(wizard_id): "not-the-token"}):
+            with self.subTest(tokens=tokens):
+                self.authenticate(
+                    None, None, session_extra={WIZARD_TOKENS_SESSION_KEY: tokens}
+                )
+                with self.assertRaises(JsonRpcException):
+                    self._answer(wizard_id, "someone-else@example.org")
+                self._assert_untouched(wizard, "expired@example.org")
+                self.assertEqual(wizard.current_step_idx, 0)
+
+    def test_a_wizard_not_at_its_last_step_cannot_finish(self):
+        _html, csrf, wizard_id = self._start_checkout()
+        email = "route-walk-early@example.org"
+        # every answer given, but the page was never submitted forward
+        self._step(
+            wizard_id,
+            email=email,
+            privacy_consent="true",
+            payment_method=str(self.digital_mode.id),
+        )
+        self.assertEqual(self._submit(csrf, wizard_id).status_code, 400)
+        self.assertFalse(self._signups_of(email))
+        # and it is the last-step check that refused it, not another one
+        wizard = self.env["new.sponsorship.wizard"].browse(wizard_id)
+        self.assertFalse(wizard.is_done)
+        with self.assertRaisesRegex(ValidationError, "complete every step"):
+            wizard.finish_sponsorship()
+        self.assertFalse(self._signups_of(email))
+
+    def test_a_child_reserved_by_another_session_cannot_finish(self):
+        """The reservation lasts a few minutes: a checkout left open longer
+        must not finish on a child another visitor reserved since."""
+        _html, csrf, wizard_id = self._start_checkout()
+        email = "route-walk-late@example.org"
+        self.assertEqual(self._answer(wizard_id, email), {"finish": True})
+        self.child.write(
+            {
+                "website_reservation_date": fields.Datetime.now(),
+                "website_reservation_id": "another-session",
+            }
+        )
+        response = self._submit(csrf, wizard_id)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Good news!", response.text)
+        self.assertFalse(self._signups_of(email))
+        # the model refuses it too, whoever calls it
+        wizard = self.env["new.sponsorship.wizard"].browse(wizard_id)
+        with self.assertRaisesRegex(ValidationError, "no longer available"):
+            wizard.finish_sponsorship()
+
+    def test_submitting_twice_creates_one_signup(self):
+        """A double click: the second submit lands where the first did,
+        without creating a second contract."""
+        _html, csrf, wizard_id = self._start_checkout()
+        email = "route-walk-twice@example.org"
+        self.assertEqual(self._answer(wizard_id, email), {"finish": True})
+        first = self._submit(csrf, wizard_id)
+        second = self._submit(csrf, wizard_id)
+        self.assertEqual(first.status_code, 303)
+        self.assertEqual(second.status_code, 303)
+        self.assertEqual(second.headers["Location"], first.headers["Location"])
+        self.assertEqual(self._signups_of(email), 1)
+        wizard = self.env["new.sponsorship.wizard"].browse(wizard_id)
+        self.assertTrue(wizard.sponsorship_id)
+        # a used wizard has no step left, and never finishes again
+        with self.assertRaises(JsonRpcException):
+            self._step(wizard_id)
+        with self.assertRaisesRegex(ValidationError, "already sent"):
+            wizard.finish_sponsorship()
+        self.assertEqual(self._signups_of(email), 1)
+
+    def test_submit_without_online_payment_lands_on_the_thank_you(self):
+        bank_mode = self.env["account.payment.mode"].create(
+            {
+                "name": "Route Walk Standing Order",
+                "company_id": self.web_company.id,
+                "bank_account_link": "variable",
+                "payment_method_id": self.pay_method.id,
+                "payment_order_ok": False,
+                "is_published": True,
+            }
+        )
+        _html, csrf, wizard_id = self._start_checkout()
+        email = "route-walk-bank@example.org"
+        self.assertEqual(
+            self._step(
+                wizard_id,
+                email=email,
+                privacy_consent="true",
+                payment_method=str(bank_mode.id),
+                action="next",
+            ),
+            {"finish": True},
+        )
+        response = self._submit(csrf, wizard_id)
+        self.assertEqual(response.status_code, 303)
+        self.assertIn("/my2/new-sponsorship/thank-you", response.headers["Location"])
+        self.assertEqual(self._signups_of(email), 1)
+
+    def test_a_wizard_pointed_at_another_signup_opens_nothing(self):
+        """The redirect of a second submit hands out the payment page's
+        access token: a wizard whose sponsorship was set to someone else's
+        contract must not turn into a way of getting that token."""
+        _location, victim = self._pay_first_page()
+        invoices_before = victim.invoice_line_ids.move_id
+        # a fresh session, which never went through the victim's checkout
+        self.authenticate(None, None)
+        _html, csrf, wizard_id = self._start_checkout_of(self._another_child())
+        wizard = self.env["new.sponsorship.wizard"].browse(wizard_id)
+        # the field is closed to RPC: only admins (and sudo) may write it
+        portal = self._portal_user("wizard-ownership-rpc")
+        with self.assertRaises(AccessError):
+            wizard.with_user(portal).write({"sponsorship_id": victim.id})
+        # had it been written anyway, the submit would still open nothing
+        wizard.sponsorship_id = victim
+        response = self._submit(csrf, wizard_id)
+        self.assertEqual(response.status_code, 404)
+        self.assertNotIn("access_token", response.headers.get("Location", ""))
+        self.assertNotIn("access_token", response.text)
+        victim.invalidate_recordset()
+        self.assertEqual(victim.invoice_line_ids.move_id, invoices_before)

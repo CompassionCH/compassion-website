@@ -89,6 +89,29 @@ class NewSponsorshipWizard(models.TransientModel):
         "res.users",
         required=True,
     )
+    session_token = fields.Char(
+        copy=False,
+        groups="base.group_system",
+        help="Random secret handed to the browser session that started the"
+        " wizard. The public routes only serve the wizard to a session holding"
+        " it: wizard ids are sequential and every anonymous visitor is the"
+        " same public user. Admins only: the controllers read it with sudo.",
+    )
+    reservation_uuid = fields.Char(
+        copy=False,
+        groups="base.group_system",
+        help="Reservation key of the session that started the wizard, the one"
+        " the child was reserved for. Checked again when the wizard finishes,"
+        " in case the reservation lapsed and another visitor took the child.",
+    )
+    sponsorship_id = fields.Many2one(
+        "recurring.contract",
+        copy=False,
+        readonly=True,
+        groups="base.group_system",
+        help="The sponsorship this wizard created. Set once: a wizard that"
+        " has one is used and never finishes again.",
+    )
     company_id = fields.Many2one(
         "res.company",
         help="Company of the website the wizard was started on; scopes the "
@@ -343,8 +366,40 @@ class NewSponsorshipWizard(models.TransientModel):
             raise ValidationError(_("The selected payment method is not available."))
         return mode
 
+    def _my2_child_still_available(self):
+        """Whether the child can still be sponsored through this wizard: in
+        an available state, and not reserved by another session since the
+        wizard started (a reservation only lasts a few minutes)."""
+        self.ensure_one()
+        child = self.child_id.sudo()
+        return child.state in child._available_states() and bool(
+            child.is_available_for_web_sponsorship(self.reservation_uuid)
+        )
+
+    def _my2_lock_for_finish(self):
+        """Lock the wizard row until the end of the transaction, so that two
+        overlapping finishes of the same wizard cannot both pass the "not used
+        yet" check: the second one waits here, then fails to serialize and is
+        retried by Odoo, and its retry sees the wizard as used."""
+        self.ensure_one()
+        self.env.cr.execute(
+            "SELECT id FROM new_sponsorship_wizard WHERE id = %s FOR UPDATE",
+            [self.id],
+        )
+        self.invalidate_recordset(["sponsorship_id"])
+
     def finish_sponsorship(self):
         self.ensure_one()
+
+        self._my2_lock_for_finish()
+        if self.sponsorship_id:
+            raise ValidationError(_("This sponsorship request was already sent."))
+        if not self.is_done:
+            # The routes only finish a wizard whose last step was answered;
+            # anything else is a tampered or replayed post.
+            raise ValidationError(_("Please complete every step before continuing."))
+        if not self._my2_child_still_available():
+            raise ValidationError(_("This child is no longer available."))
 
         if self.details_deferred and not self.privacy_consent:
             # The consent tick is the only thing the fast-checkout step asks
@@ -468,7 +523,8 @@ class NewSponsorshipWizard(models.TransientModel):
             )
         sponsorship.contract_line_ids = contract_lines
 
-        # Return the new sponsorship
+        # The wizard is used from now on: it never finishes again.
+        self.sponsorship_id = sponsorship
         return sponsorship
 
     @api.model
