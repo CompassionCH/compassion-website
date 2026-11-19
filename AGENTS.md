@@ -42,7 +42,8 @@ and checks for untracked generated files. Run the affected Odoo tests separately
 
 Then run the rules review in `review.md`, linked from the code-rules index. Use the
 `code-rules:rules-reviewer` subagent when the plugin is available; otherwise give a
-fresh read-only session the published reviewer prompt at
-`plugins/code-rules/agents/rules-reviewer.md` in that folder. Only if neither is
-possible, say in the PR description that no rules review ran. Record findings, coverage
-gaps and their disposition there.
+fresh read-only session the published reviewer prompt,
+`plugins/code-rules/agents/rules-reviewer.md` in that folder
+([online](https://github.com/CompassionCH/compassion-agent-toolkit/blob/main/plugins/code-rules/agents/rules-reviewer.md)).
+Only if neither is possible, say in the PR description that no rules review ran. Record
+findings, coverage gaps and their disposition there.
