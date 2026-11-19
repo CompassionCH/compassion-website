@@ -10,6 +10,7 @@ import json
 
 from odoo import api, fields, models
 from odoo.http import request
+from odoo.tools.translate import html_translate
 
 
 class EventCompassion(models.Model):
@@ -23,12 +24,14 @@ class EventCompassion(models.Model):
     ]
 
     name = fields.Char(translate=True)
-    website_description = fields.Html(translate=True, sanitize=False)
-    website_intro = fields.Html(translate=True, sanitize=False)
+    website_description = fields.Html(translate=html_translate, sanitize=False)
+    website_intro = fields.Html(translate=html_translate, sanitize=False)
     website_id = fields.Many2one("website", default=1)
     picture_1 = fields.Image("Banner image", attachment=True)
     website_image = fields.Char(compute="_compute_website_image")
-    website_side_info = fields.Html(string="Side info", translate=True, sanitize=False)
+    website_side_info = fields.Html(
+        string="Side info", translate=html_translate, sanitize=False
+    )
     is_trip = fields.Boolean(related="event_type_id.is_trip")
     trip_type_id = fields.Many2one("event.trip.type", "Type of Trip", readonly=False)
     # Per-trip texts pulled into the event communication rules, so that the same
