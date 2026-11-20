@@ -54,6 +54,13 @@ website:
     data-change notifications (defaults to the website company's email).
   - ``sponsor_child_url``: target of the "start a sponsorship" link
     shown to users without sponsorships (defaults to ``/my2/children``).
+  - ``my2_duplicate_review_user_id`` (MyCompassion tab): who gets a
+    to-do when a visitor who sponsored without logging in used the email
+    of a known donor. The visitor always gets a new contact, never the
+    donor's. Once the sponsorship is confirmed, a note on that contact
+    links the donor, and the to-do asks the reviewer to check whether it
+    is the same person. The first website of the company with a reviewer
+    is used; without one, only the note is left.
 
 - **Payment providers**: the donation checkout embeds the standard Odoo
   ``payment.form``; enable and publish the country's
