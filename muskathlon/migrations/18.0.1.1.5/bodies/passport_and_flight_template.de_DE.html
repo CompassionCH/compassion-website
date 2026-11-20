@@ -1,0 +1,27 @@
+<div>
+  <t t-set="partner" t-value="object.partner_id" />
+  <t t-set="registration" t-value="object.get_objects()" />
+  <t t-set="event" t-value="registration.compassion_event_id" />
+  <t t-set="country" t-value="event.country_id" />
+</div>
+<p><t t-out="partner.informal_salutation" />,</p>
+<p>
+  Um deine Ankunft zu organisieren, brauchen wir
+  <b>deine Flugdaten für Hin- und Rückflug</b>. Bitte trage sie
+  <a t-attf-href="{{registration.host_url}}/my/events/{{registration.id}}/flight"
+    >hier</a
+  >
+  ein.
+</p>
+<p>
+  Wenn du am vorgesehenen Datum mit der Gruppe anreist, steht dir ein Shuttle vom
+  Flughafen zum Hotel zur Verfügung. Falls deine Ankunfts-/Abreisezeit ausserhalb des
+  angebotenen Shuttle-Busses liegt, melde dich bitte bei mir unter:
+  <a href="mailto:n.schranz@4m-switzerland.ch">n.schranz@4m-switzerland.ch</a>
+</p>
+<p>
+  Sobald deine Flüge erfasst sind, findest du auf deiner Teilnehmerseite die nächsten
+  Dokumente (Pass, medizinischer Fragebogen, Kinderschutz).
+</p>
+<p>Bald geht die Reise los – viel Spass bei den letzten Vorbereitungen!</p>
+<p>Nathalie, 4M Switzerland</p>

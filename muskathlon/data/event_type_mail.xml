@@ -13,7 +13,8 @@
     <field name="notification_type">communication</field>
     <field name="communication_id" ref="sponsorship_invitation_config" />
     <field name="template_ref" ref="sponsorship_invitation_template" />
-    <field name="interval_type">after_sub</field>
+    <field name="interval_type">after_stage</field>
+    <field name="stage_id" ref="stage_fill_profile" />
     <field name="interval_unit">days</field>
     <field name="interval_nbr">15</field>
   </record>
@@ -22,9 +23,9 @@
     <field name="notification_type">communication</field>
     <field name="communication_id" ref="passport_and_flight_config" />
     <field name="template_ref" ref="passport_and_flight_template" />
-    <field name="interval_type">before_event</field>
-    <field name="interval_unit">days</field>
-    <field name="interval_nbr">180</field>
+    <field name="interval_type">after_stage</field>
+    <field name="stage_id" ref="stage_flights" />
+    <field name="interval_unit">now</field>
   </record>
   <record id="event_mail_vaccinations" model="event.type.mail">
     <field name="event_type_id" ref="event_type_muskathlon" />
@@ -40,9 +41,9 @@
     <field name="notification_type">communication</field>
     <field name="communication_id" ref="medical_reminder_config" />
     <field name="template_ref" ref="medical_reminder_template" />
-    <field name="interval_type">before_event</field>
-    <field name="interval_unit">days</field>
-    <field name="interval_nbr">60</field>
+    <field name="interval_type">after_stage</field>
+    <field name="stage_id" ref="stage_documents" />
+    <field name="interval_unit">now</field>
   </record>
   <record id="event_mail_visa" model="event.type.mail">
     <field name="event_type_id" ref="event_type_muskathlon" />
@@ -58,8 +59,8 @@
     <field name="notification_type">communication</field>
     <field name="communication_id" ref="child_protection_config" />
     <field name="template_ref" ref="child_protection_template" />
-    <field name="interval_type">before_event</field>
-    <field name="interval_unit">days</field>
-    <field name="interval_nbr">30</field>
+    <field name="interval_type">after_stage</field>
+    <field name="stage_id" ref="stage_criminal_record" />
+    <field name="interval_unit">now</field>
   </record>
 </odoo>

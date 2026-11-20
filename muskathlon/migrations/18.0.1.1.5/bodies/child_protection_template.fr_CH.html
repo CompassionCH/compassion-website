@@ -1,0 +1,65 @@
+<div>
+  <t t-set="partner" t-value="object.partner_id" />
+  <t t-set="registration" t-value="object.get_objects()" />
+  <t t-set="event" t-value="registration.compassion_event_id" />
+  <t t-set="country" t-value="event.country_id" />
+</div>
+<p><t t-out="partner.informal_salutation" />,</p>
+<p>
+  A Compassion, nous croyons que les enfants méritent d’être reconnus, aimés et
+  protégés. C’est pour nous quelque chose de primordial. Les enfants vivant dans
+  l'extrême pauvreté étant parmi les plus vulnérables, Compassion a élaboré des
+  directives claires. Celles-ci visent à garantir la sécurité et la protection de chaque
+  enfant que nous soutenons.
+</p>
+<p>
+  Toute personne qui entre en contact direct avec les enfants doit donc soumettre un
+  <b>extrait actuel de son casier judiciaire</b>. C'est le dernier document qu'il nous
+  manque:
+</p>
+<div style="margin: 40px auto; text-align: center">
+  <a
+    t-attf-href="{{registration.host_url}}/my/events/{{registration.id}}/criminal"
+    style="
+      text-decoration: none;
+      padding: 12px 18px;
+      font-size: 12px;
+      line-height: 18px;
+      color: #ffffff;
+      display: inline-block;
+      margin-bottom: 0px;
+      font-weight: 400;
+      text-align: center;
+      vertical-align: middle;
+      cursor: pointer;
+      white-space: nowrap;
+      background-image: none;
+      background-color: #0054a6;
+      border: 1px solid #0054a6;
+      border-radius: 3px;
+    "
+    >Envoyer mon extrait de casier judiciaire</a
+  >
+</div>
+<p t-if="not partner.date_agreed_child_protection_charter">
+  Merci aussi de lire et signer la
+  <a
+    t-attf-href="{{registration.host_url}}/partner/{{partner.uuid}}/child-protection-charter?redirect=/my/events/{{registration.id}}"
+    >déclaration de protection de l'enfance</a
+  >.
+</p>
+<p>
+  Tu peux obtenir plus d'informations détaillées ici:
+  <a href="https://compassion.ch/protection-enfants/"
+    >compassion.ch/protection-enfants/</a
+  >
+</p>
+<p>
+  Si tu as des questions sur la protection de l'enfance, tu peux volontiers me
+  contacter.
+</p>
+<p>
+  Cordialement,
+  <br />
+  Colin, Compassion
+</p>

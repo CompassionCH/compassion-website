@@ -1,0 +1,51 @@
+<div>
+  <t t-set="partner" t-value="object.partner_id" />
+  <t t-set="registration" t-value="object.get_objects()" />
+  <t t-set="event" t-value="registration.compassion_event_id" />
+  <t t-set="country" t-value="event.country_id" />
+</div>
+<p><t t-out="partner.informal_salutation" />,</p>
+<p>
+  Merci pour tes informations de vol ! Il est maintenant temps de compléter tes
+  documents sur ta page de participant:
+</p>
+<ul>
+  <li>
+    le <b>formulaire médical</b>: la sécurité et la santé de tous les participants nous
+    tiennent vraiment à cœur. Afin d'être préparés en cas de situations d'urgence lors
+    des entraînements et le jour du Muskathlon, nous te demandons de le remplir. Tes
+    informations seront traitées de manière confidentielle et seront entièrement
+    détruites après la semaine du Muskathlon !
+  </li>
+  <li>
+    une <b>photo de ton passeport</b> (la page principale avec ta photo), pour faciliter
+    l’enregistrement du groupe dans les hôtels
+  </li>
+  <li>la <b>déclaration de protection de l'enfance</b>, à lire et signer</li>
+</ul>
+<div style="margin: 40px auto; text-align: center">
+  <a
+    t-attf-href="{{registration.host_url}}/my/events/{{registration.id}}"
+    style="
+      text-decoration: none;
+      padding: 12px 18px;
+      font-size: 12px;
+      line-height: 18px;
+      color: #ffffff;
+      display: inline-block;
+      margin-bottom: 0px;
+      font-weight: 400;
+      text-align: center;
+      vertical-align: middle;
+      cursor: pointer;
+      white-space: nowrap;
+      background-image: none;
+      background-color: #0054a6;
+      border: 1px solid #0054a6;
+      border-radius: 3px;
+    "
+    >Compléter mes documents</a
+  >
+</div>
+<p>Cordialement,</p>
+<p>Nathalie, 4M Switzerland</p>
