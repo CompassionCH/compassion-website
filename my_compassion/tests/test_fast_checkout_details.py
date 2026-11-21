@@ -91,7 +91,7 @@ class TestFastCheckoutDetails(HttpCase, DigitalSeamCase):
         token = self.signup._my2_issue_details_token()
         html, _csrf = self._open_form(token=token)
         self.assertIn("/my2/new-sponsorship/complete-details", html)
-        self.assertIn("Who shall we thank?", html)
+        self.assertIn("Your contact information", html)
         # the escape hatch is on the same form
         self.assertIn("/my2/new-sponsorship/details-later", html)
         # once the name is real the page falls back to its normal content

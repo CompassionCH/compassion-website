@@ -345,7 +345,7 @@ class TestFastCheckoutRoutes(HttpCase, DigitalSeamCase):
         )
         self.assertEqual(page.status_code, 200)
         self.assertIn("/my2/new-sponsorship/complete-details", page.text)
-        self.assertIn("Who shall we thank?", page.text)
+        self.assertIn("Your contact information", page.text)
 
     def test_thank_you_offers_no_form_to_a_stranger(self):
         """The gate of the whole details flow: a bare sponsorship id proves
@@ -427,7 +427,7 @@ class TestFastCheckoutRoutes(HttpCase, DigitalSeamCase):
             allow_redirects=False,
         )
         self.assertEqual(page.status_code, 200)
-        self.assertIn("Who shall we thank?", page.text)
+        self.assertIn("Your contact information", page.text)
 
     def test_payment_page_shows_no_failure_without_one(self):
         """payment_failed in the URL alone does not show the message."""

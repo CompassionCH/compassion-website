@@ -21,7 +21,16 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     "change .suggested-amount": "_onAmountChange",
     "input input[name=custom_amount]": "_onCustomAmountInput",
     "change #birthdate": "_onBirthDateChange",
+    "change .payment-method-radio": "_onPaymentModeRadioChange",
+    "change input[name=sponsorship_plus]": "_onSponsorshipPlusChange",
   },
+
+  /**
+   * The data-* keys of the checked payment-mode radio that the step's
+   * Continue button mirrors (see _onPaymentModeRadioChange). Modules that
+   * read more keys off the clicked button add them here.
+   */
+  paymentModeDataKeys: ["payment-mode", "payment-code"],
 
   /**
    * @override
@@ -117,6 +126,14 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
       }
     });
 
+    // The fast checkout's payment-mode radios have no default: one must be
+    // picked before the step is submitted.
+    const $paymentModes = this.$(".payment-method-radio");
+    if ($paymentModes.length && !$paymentModes.filter(":checked").length) {
+      this.$(".ns-payment-mode-error").removeClass("d-none");
+      isValid = false;
+    }
+
     return isValid;
   },
 
@@ -210,6 +227,56 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
       return;
     }
     $price.text(`${$price.data("currencyName")} ${amount}.-`);
+  },
+
+  /**
+   * The fast checkout renders one radio per payment mode in the step's own
+   * left column, with a single Continue button doing the actual submit.
+   * That button carries no payment mode of its own, so the checked radio's
+   * paymentModeDataKeys are copied onto it here - as attributes and as
+   * jQuery data, since jQuery caches a .data() read and would otherwise keep
+   * returning the mode of an earlier click. This is what lets a click
+   * handler such as the my_compassion_switzerland eBill one keep reading
+   * the mode off the clicked button without knowing radios are involved.
+   * A key the checked radio does not carry is removed from the button.
+   * @param {Event} ev
+   */
+  _onPaymentModeRadioChange: function (ev) {
+    const $radio = $(ev.currentTarget);
+    const $button = this.$(".btn-next");
+    for (const key of this.paymentModeDataKeys) {
+      if ($radio.attr(`data-${key}`) === undefined) {
+        $button.removeAttr(`data-${key}`).removeData(key);
+      } else {
+        $button.attr(`data-${key}`, $radio.attr(`data-${key}`));
+        $button.data(key, $radio.data(key));
+      }
+    }
+    this.$(".ns-payment-mode-error").addClass("d-none");
+  },
+
+  /**
+   * Keeps the fast checkout's right-column "Total" live as Sponsorship Plus
+   * is chosen, off the total element's own data-base-amount/data-plus-amount
+   * (server-rendered once, from the same amounts the donation card and the
+   * Sponsorship Plus choice already show) rather than round-tripping a step
+   * call. The choice is any input named sponsorship_plus: the base
+   * checkbox, or radios a country module puts in its place, where the value
+   * "0" means without Plus. Nothing checked shows the base amount. Only the
+   * amount is rewritten: the translated "/mo." after it is the template's.
+   */
+  _onSponsorshipPlusChange: function () {
+    const $total = this.$("#ns-total-amount");
+    if (!$total.length) {
+      return;
+    }
+    const base = parseFloat($total.data("baseAmount")) || 0;
+    const plus = parseFloat($total.data("plusAmount")) || 0;
+    const $choice = this.$("input[name=sponsorship_plus]:checked");
+    const withPlus = $choice.length > 0 && $choice.val() !== "0";
+    const total = base + (withPlus ? plus : 0);
+    const formatted = total % 1 === 0 ? `${total}.-` : total.toFixed(2);
+    $total.text(`${$total.data("currencyName")}\u00a0${formatted}`);
   },
 
   /**

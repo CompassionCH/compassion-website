@@ -1,3 +1,4 @@
+import re
 from unittest.mock import patch
 
 from dateutil.relativedelta import relativedelta
@@ -254,19 +255,24 @@ class TestFastCheckoutOnePage(DigitalSeamCase):
 
     # === The rendered page ===
 
-    def test_page_holds_the_email_the_consent_and_a_button_per_mode(self):
+    def test_page_holds_the_email_the_consent_and_a_radio_per_mode(self):
         html = self._render(self._wizard())
         self.assertIn('name="email"', html)
         self.assertIn('name="privacy_consent"', html)
         # sponsorship+ stays opt-in, and moved onto this page with the rest
         self.assertIn('name="sponsorship_plus"', html)
         for mode in (self.digital_mode, self.bank_mode):
-            self.assertIn(f'data-payment-mode="{mode.id}"', html)
+            radio = re.search(rf'<input[^>]*data-payment-mode="{mode.id}"[^>]*>', html)
+            self.assertTrue(radio, mode.name)
+            self.assertIn('type="radio"', radio.group())
+            self.assertIn('name="payment_method"', radio.group())
             self.assertIn(mode.name, html)
         self.assertNotIn(f'data-payment-mode="{self.unpublished_mode.id}"', html)
-        # no dropdown and no generic submit next to the buttons
+        # no dropdown; one Continue button submits the checked mode, and a
+        # message waits for the case where none is checked
         self.assertNotIn('id="payment_method"', html)
-        self.assertNotIn('id="finish_button"', html)
+        self.assertEqual(html.count('id="finish_button"'), 1)
+        self.assertIn("ns-payment-mode-error", html)
 
     def test_write_and_pray_page_keeps_the_plain_continue_button(self):
         html = self._render(self._wizard(sponsorship_type="write_and_pray"))
