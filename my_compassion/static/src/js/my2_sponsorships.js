@@ -220,8 +220,11 @@ export const Sponsorships = publicWidget.Widget.extend({
     } else {
       this.$("#total-children-found-message").show();
       this.$("#randomly-chosen-child-message").hide();
-      // Update the total results count
+      // Update the total results count, with "child" for a single one
       this.$("#total-results").text(this.totalResults);
+      const single = this.totalResults === 1;
+      this.$("#child-found-singular").toggle(single);
+      this.$("#children-found-plural").toggle(!single);
     }
   },
 
