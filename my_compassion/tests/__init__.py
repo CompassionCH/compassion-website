@@ -12,6 +12,7 @@ from . import (
     test_fast_checkout_routes,
     test_legal_routes,
     test_multicompany,
+    test_my2_website_views,
     test_public_fund_donation,
     test_recurring_instrument,
     test_theme_apply,
