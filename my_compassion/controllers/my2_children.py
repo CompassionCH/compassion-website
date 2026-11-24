@@ -21,7 +21,7 @@ from .website_utils import safe_int
 class MyCompassionChildrenController(http.Controller):
     def _get_formatted_birthday(self, child):
         """
-        Formats the child's birthday based on the current language context.
+        Formats the child's full birthdate based on the current language context.
         Handles specific rules for EN (US/UK), FR, IT, DE and nordic languages.
         """
         if not child.birthdate:
@@ -30,6 +30,7 @@ class MyCompassionChildrenController(http.Controller):
         lang_code = request.env.lang
         birthdate = child.birthdate
         day = birthdate.day
+        year = birthdate.year
 
         # Get localized month name
         month = babel.dates.format_date(birthdate, format="MMMM", locale=lang_code)
@@ -39,14 +40,14 @@ class MyCompassionChildrenController(http.Controller):
         # German, Norwegian, Danish, Finnish: Dot after day (e.g., 24. Januar)
         # Note: Swedish is excluded here as it typically uses a space (24 januari)
         if lang_prefix in {"de", "no", "nb", "nn", "da", "fi"}:
-            return f"{day}. {month}"
+            return f"{day}. {month} {year}"
 
         # Swedish, French, Italian: Space after day (e.g., 24 januari)
         elif lang_prefix in {"fr", "it", "sv"}:
             # French specific: 1st is "1er"
             if lang_prefix == "fr" and day == 1:
-                return f"1er {month}"
-            return f"{day} {month}"
+                return f"1er {month} {year}"
+            return f"{day} {month} {year}"
 
         # English Logic
         elif lang_prefix == "en":
@@ -59,14 +60,14 @@ class MyCompassionChildrenController(http.Controller):
 
             # US Format: Month Day+Suffix
             if lang_code == "en_US":
-                return f"{month} {day}{suffix}"
+                return f"{month} {day}{suffix}, {year}"
 
             # UK/Other English: Day+Suffix Month
-            return f"{day}{suffix} {month}"
+            return f"{day}{suffix} {month} {year}"
 
         # Fallback for other languages (Standard Day Month)
         else:
-            return f"{day} {month}"
+            return f"{day} {month} {year}"
 
     def _check_sponsored_child_access(self, child):
         """
