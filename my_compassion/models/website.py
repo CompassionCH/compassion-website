@@ -64,6 +64,16 @@ class Website(models.Model):
         default=60,
         help="The window of the visitor payment attempts per IP address.",
     )
+    my2_duplicate_review_user_id = fields.Many2one(
+        "res.users",
+        "Possible Duplicates Reviewer",
+        domain=[("share", "=", False)],
+        help="Gets a to-do when a visitor's sponsorship, made with the email of"
+        " a known donor, is confirmed. The visitor always gets a new contact,"
+        " never the donor's: this person checks whether it is the same donor."
+        " The first website of the company with a reviewer is used. When none"
+        " has one, only a note is left on the new contact.",
+    )
 
     def sale_get_order(self, force_create=False):
         """Each cart stays on its website. The websites of a domain share the
