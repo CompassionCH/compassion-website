@@ -553,10 +553,8 @@ Page: My Compassion 2 New Sponsorship Wizard Page
         />
         <t t-set="image_fallback_pictogram" t-value="'pictogram-child-sponsorship'" />
         <t t-set="price" t-value="float(wizard.wap_contribution_amount or 0)" />
-        <t
-          t-set="price_label"
-          t-value="not wizard.wap_contribution_amount and 'No payment'"
-        />
+        <t t-if="not wizard.wap_contribution_amount" t-set="price_label">No payment</t>
+        <t t-else="" t-set="price_label" t-value="False" />
         <t t-set="price_id" t-value="'wap-child-price'" />
         <t t-set="currency_name" t-value="currency_name" />
         <t t-set="bg_color" t-value="'light-blue'" />
@@ -929,11 +927,9 @@ Page: My Compassion 2 New Sponsorship Wizard Page
         <!-- The fast-checkout page's step title ("Your email") is generic
              DB data shared with nothing else; the page itself is centered
              on one child, so it gets a title naming them instead. -->
-        <t
-          t-if="step_offers_payment_modes"
-          t-set="title_content"
-          t-value="'Sponsor ' + (wizard.child_id.preferred_name or '')"
-        />
+        <t t-if="step_offers_payment_modes" t-set="title_content">Sponsor <t
+          t-out="wizard.child_id.preferred_name"
+        /></t>
         <t t-else="" t-set="title_content" t-value="wizard.current_step.title" />
         <t t-set="color" t-value="'core-blue'" />
         <t t-set="show_underline" t-value="True" />
