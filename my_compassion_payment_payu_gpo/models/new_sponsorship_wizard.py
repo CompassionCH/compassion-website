@@ -25,11 +25,6 @@ class NewSponsorshipWizard(models.TransientModel):
     cardholder_lastname = fields.Char(
         help="Last name on the card, asked with the first name."
     )
-    payu_gpo_sponsorship_id = fields.Many2one(
-        "recurring.contract",
-        help="The sponsorship the wizard finished, to key the names on the"
-        " card by on their way to the payment page.",
-    )
 
     def _my2_is_payu_gpo_mode(self, mode):
         return (
@@ -74,6 +69,4 @@ class NewSponsorshipWizard(models.TransientModel):
             raise ValidationError(
                 _("Please enter the first and last name on the card.")
             )
-        sponsorship = super().finish_sponsorship()
-        self.payu_gpo_sponsorship_id = sponsorship
-        return sponsorship
+        return super().finish_sponsorship()

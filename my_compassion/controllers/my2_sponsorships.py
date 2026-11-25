@@ -6,7 +6,9 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
+import hmac
 import random
+import secrets
 import uuid
 from urllib.parse import urlencode
 
@@ -34,6 +36,13 @@ GLOBAL_FETCH_LIMIT = 3
 # is a cookie-sized store, and nobody returns to an old thank-you page.
 OWN_SIGNUPS_SESSION_KEY = "my2_own_sponsorship_ids"
 OWN_SIGNUPS_SESSION_LIMIT = 10
+
+# The wizards this browser session started, as {wizard id: token}. The token
+# is the proof that a post naming a wizard comes from the session that
+# started it: the id travels in the page and is sequential, and every
+# anonymous visitor is the same public user. Kept as few as the own signups,
+# for the same reason.
+WIZARD_TOKENS_SESSION_KEY = "my2_sponsorship_wizard_tokens"
 
 
 def _flow_n_steps(sponsorship):
@@ -321,18 +330,27 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 },
             )
 
-        # Create new wizard
-        wizard = request.env["new.sponsorship.wizard"].create(
-            {
-                "child_id": child.id,
-                "user_id": request.env.user.id,
-                "sponsorship_type": sponsorship_type,
-                "company_id": request.website.company_id.id,
-                "birthdate": request.env.user.birthdate_date
-                if not request.env.user._is_public()
-                else False,
-            }
+        # Create new wizard, owned by this browser session
+        session_token = secrets.token_urlsafe(32)
+        # sudo: the ownership fields are readable and writable by admins only
+        wizard = (
+            request.env["new.sponsorship.wizard"]
+            .sudo()
+            .create(
+                {
+                    "child_id": child.id,
+                    "user_id": request.env.user.id,
+                    "sponsorship_type": sponsorship_type,
+                    "company_id": request.website.company_id.id,
+                    "birthdate": request.env.user.birthdate_date
+                    if not request.env.user._is_public()
+                    else False,
+                    "session_token": session_token,
+                    "reservation_uuid": reservation_uuid,
+                }
+            )
         )
+        self._add_wizard_to_session(wizard.id, session_token)
 
         return request.render(
             "my_compassion.my2_new_sponsorship_wizard_page",
@@ -356,11 +374,10 @@ class MyCompassionNewSponsorshipController(http.Controller):
         my_compassion.my2_new_sponsorship_wizard_form_content template.
         return: An JSON response containing the rendered template html.
         """
-        # Fetch the wizard record from the database
-        wizard_id = safe_int(post.get("wizard_id"))
-        wizard = request.env["new.sponsorship.wizard"].sudo().browse(wizard_id).exists()
-        if not wizard:
-            raise BadRequest()
+        wizard = self._get_owned_wizard(post.get("wizard_id"))
+        if wizard.sponsorship_id:
+            # Already finished: nothing left to step through.
+            raise NotFound()
 
         # Update the record
         wizard.update(post)
@@ -383,11 +400,15 @@ class MyCompassionNewSponsorshipController(http.Controller):
         then redirect to the thank-you page.
         return: A redirection to the thank-you page.
         """
-        # Fetch the wizard record from the database
-        wizard_id = safe_int(post.get("wizard_id"))
-        wizard = request.env["new.sponsorship.wizard"].sudo().browse(wizard_id).exists()
-        if not wizard:
-            raise BadRequest()
+        wizard = self._get_owned_wizard(post.get("wizard_id"))
+        if wizard.sponsorship_id:
+            # The owner submitted twice (a double click, or a second tab):
+            # same page as the first submit, nothing created. Only for a
+            # signup this visitor owns: the redirect hands out the payment
+            # page's access token, so the wizard alone must not be the proof.
+            if not self._owns_signup(wizard.sponsorship_id):
+                raise NotFound()
+            return self._redirect_after_signup(wizard.sponsorship_id)
 
         # Cancel if person is too old for Write&Pray. The birthdate is asked
         # by the Write&Pray step itself, so a submission without one is a
@@ -400,7 +421,7 @@ class MyCompassionNewSponsorshipController(http.Controller):
             raise BadRequest()
 
         # Make sure child is still available and finalize sponsorship creation
-        if wizard.child_id.state not in wizard.child_id._available_states():
+        if not wizard._my2_child_still_available():
             return request.render(
                 "my_compassion.child_unavailable_page",
                 {
@@ -410,7 +431,12 @@ class MyCompassionNewSponsorshipController(http.Controller):
             )
         sponsorship = wizard.finish_sponsorship()
         self._add_sponsorship_to_session(sponsorship.id)
+        return self._redirect_after_signup(sponsorship)
 
+    @staticmethod
+    def _redirect_after_signup(sponsorship):
+        """Where a finished wizard sends its sponsor: the payment page, or
+        straight to the thank-you page when nothing is paid online."""
         # Digital modes pay the first month live before the thank-you.
         if sponsorship.payment_mode_id.payment_provider_id:
             access_token = payment_utils.generate_access_token(
@@ -806,6 +832,43 @@ class MyCompassionNewSponsorshipController(http.Controller):
         )
 
         return html_content
+
+    @staticmethod
+    def _add_wizard_to_session(wizard_id, session_token):
+        """Hands the wizard's token to this browser session."""
+        tokens = dict(request.session.get(WIZARD_TOKENS_SESSION_KEY) or {})
+        tokens.pop(str(wizard_id), None)
+        tokens[str(wizard_id)] = session_token
+        request.session[WIZARD_TOKENS_SESSION_KEY] = dict(
+            list(tokens.items())[-OWN_SIGNUPS_SESSION_LIMIT:]
+        )
+
+    @staticmethod
+    def _get_owned_wizard(wizard_id):
+        """The sudoed wizard a post names, if this visitor started it, or 404.
+
+        Checked before anything reads or writes the wizard. Two proofs, both
+        required: the token this browser session was given when the wizard
+        started, and the same user - which also keeps a logged-in sponsor's
+        wizard away from a session that logged out or into another account.
+        404 whatever the reason, so a guessed id tells nothing apart from a
+        wrong one. A session that has expired since the wizard started has
+        lost its token too: its visitor starts again from the child.
+        """
+        wizard_id = safe_int(wizard_id)
+        tokens = request.session.get(WIZARD_TOKENS_SESSION_KEY) or {}
+        token = tokens.get(str(wizard_id)) if wizard_id else None
+        if not token or not isinstance(token, str):
+            raise NotFound()
+        wizard = request.env["new.sponsorship.wizard"].sudo().browse(wizard_id).exists()
+        if (
+            not wizard
+            or not wizard.session_token
+            or not hmac.compare_digest(token, wizard.session_token)
+            or wizard.user_id != request.env.user
+        ):
+            raise NotFound()
+        return wizard
 
     @staticmethod
     def _add_sponsorship_to_session(sponsorship_id):

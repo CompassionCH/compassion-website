@@ -1,5 +1,8 @@
 import re
+import secrets
 from unittest.mock import patch
+
+from werkzeug.exceptions import NotFound
 
 from odoo import Command, fields
 from odoo.exceptions import ValidationError
@@ -84,8 +87,24 @@ class TestCardholderName(PayuDigitalCase):
                 "company_id": self.website_company.id,
                 "email": "anna@example.com",
                 "privacy_consent": True,
+                "session_token": secrets.token_urlsafe(32),
                 **values,
             }
+        )
+
+    def _public_request(self):
+        """A request of an anonymous visitor, the user the wizards above
+        belong to: the routes serve a wizard to its own user only."""
+        return MockRequest(
+            self.env(user=self.env.ref("base.public_user")), website=self.website
+        )
+
+    @staticmethod
+    def _own(wizard):
+        """Hand the wizard's token to the mocked session, as starting it on
+        the wizard page does."""
+        MyCompassionNewSponsorshipController._add_wizard_to_session(
+            wizard.id, wizard.session_token
         )
 
     def _render(self, wizard):
@@ -97,11 +116,21 @@ class TestCardholderName(PayuDigitalCase):
     def _patch_finish(self, sponsorship):
         """my_compassion's own finish, which creates the partner and the
         contract, replaced by an existing contract."""
+
+        def finish(wizard):
+            wizard.sponsorship_id = sponsorship
+            return sponsorship
+
         return patch.object(
-            NewSponsorshipWizard, "finish_sponsorship", return_value=sponsorship
+            NewSponsorshipWizard,
+            "finish_sponsorship",
+            autospec=True,
+            side_effect=finish,
         )
 
-    def _submit(self, request, wizard, sponsorship):
+    def _submit(self, request, wizard, sponsorship, own=True):
+        if own:
+            self._own(wizard)
         with self._patch_finish(sponsorship):
             # The override's own route() is only merged with my_compassion's
             # when the routing map is built: call what it wraps.
@@ -183,7 +212,6 @@ class TestCardholderName(PayuDigitalCase):
         wizard = self._wizard(payment_method=self.standing_order_mode.id)
         with self._patch_finish(contract):
             self.assertEqual(wizard.finish_sponsorship(), contract)
-        self.assertEqual(wizard.payu_gpo_sponsorship_id, contract)
 
     # === From the submit to the payment page ===
 
@@ -191,7 +219,7 @@ class TestCardholderName(PayuDigitalCase):
         anna_contract, anna_invoice, _token = self._make_payu_chargeable_invoice()
         jan_contract = self._make_digital_contract()
         provider = anna_contract.payment_mode_id.payment_provider_id
-        with MockRequest(self.env, website=self.website) as request:
+        with self._public_request() as request:
             for contract, firstname in (
                 (anna_contract, "Anna"),
                 (jan_contract, "Jan"),
@@ -245,9 +273,43 @@ class TestCardholderName(PayuDigitalCase):
 
     def test_no_name_kept_without_one(self):
         contract = self._make_digital_contract()
-        with MockRequest(self.env, website=self.website) as request:
+        with self._public_request() as request:
             wizard = self._wizard(payment_method=self.standing_order_mode.id)
             self.assertFalse(self._submit(request, wizard, contract))
+
+    # === Another session ===
+
+    def test_another_session_cannot_read_or_change_the_names(self):
+        """The names on the card travel with the wizard: a session that did
+        not start it can neither read them back nor overwrite them."""
+        wizard = self._wizard(payment_method=self.payu_mode.id)
+        wizard.update({"cardholder_firstname": "Anna", "cardholder_lastname": "Nowak"})
+        step = MyCompassionNewSponsorshipController.wizard_step.original_endpoint
+        with self._public_request():
+            for post in (
+                {},
+                {"cardholder_firstname": "Jan", "cardholder_lastname": "Kowalski"},
+            ):
+                with self.assertRaises(NotFound):
+                    step(
+                        MyCompassionNewSponsorshipController(),
+                        wizard_id=str(wizard.id),
+                        **post,
+                    )
+        self.assertEqual(wizard.cardholder_firstname, "Anna")
+        self.assertEqual(wizard.cardholder_lastname, "Nowak")
+
+    def test_a_refused_submit_keeps_no_name(self):
+        """Refused before the override reads the wizard: nothing of the
+        wizard reaches the caller's session."""
+        contract = self._make_digital_contract()
+        wizard = self._wizard(payment_method=self.payu_mode.id)
+        wizard.update({"cardholder_firstname": "Anna", "cardholder_lastname": "Nowak"})
+        with self._public_request() as request:
+            with self.assertRaises(NotFound):
+                self._submit(request, wizard, contract, own=False)
+            self.assertFalse(request.session.get(CARDHOLDER_NAMES_SESSION_KEY))
+        self.assertFalse(wizard.sponsorship_id)
 
     def test_card_form_prefilled_and_visible(self):
         html = str(

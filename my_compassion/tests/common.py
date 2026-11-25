@@ -28,6 +28,29 @@ class DigitalSeamCase(TransactionCase):
             }
         )
 
+    def _available_child(self):
+        """Any child, made available and unreserved: a wizard only finishes
+        on such a child (see new.sponsorship.wizard._my2_child_still_available),
+        and which states the instance's own children sit in is not what the
+        callers test."""
+        child = self.env["compassion.child"].search([], limit=1)
+        self.assertTrue(child, "the database needs a child")
+        child.write(
+            {
+                "state": child._available_states()[0],
+                "website_reservation_date": False,
+                "website_reservation_id": False,
+            }
+        )
+        return child
+
+    @staticmethod
+    def _answer_every_step(wizard):
+        """Put the wizard past its last step, as the step route leaves it
+        once the sponsor answered them all: only then may it finish."""
+        wizard.current_step_idx = wizard.n_steps
+        return wizard
+
     def _make_digital_contract(self, child=None, company=None):
         """A contract on a provider-backed mode, in a company with a working
         sale accounting setup, with a plain product line. Child-less (no

@@ -61,8 +61,7 @@ class TestMultiCompany(DigitalSeamCase):
             }
         )
         mode.is_published = True
-        child = self.env["compassion.child"].search([], limit=1)
-        self.assertTrue(child, "the database needs a child")
+        child = self._available_child()
         wizard = self.env["new.sponsorship.wizard"].create(
             {
                 "sponsorship_type": "standard",
@@ -109,7 +108,7 @@ class TestMultiCompany(DigitalSeamCase):
                 fake_lines,
             ),
         ):
-            sponsorship = wizard.finish_sponsorship()
+            sponsorship = self._answer_every_step(wizard).finish_sponsorship()
         self.assertEqual(sponsorship.company_id, website_company)
         self.assertEqual(sponsorship.group_id.company_id, website_company)
         self.assertEqual(sponsorship.group_id.payment_mode_id, mode)
@@ -132,8 +131,7 @@ class TestMultiCompany(DigitalSeamCase):
             }
         )
         self.assertFalse(user._is_public())
-        child = self.env["compassion.child"].search([], limit=1)
-        self.assertTrue(child, "the database needs a child")
+        child = self._available_child()
         wizard = self.env["new.sponsorship.wizard"].create(
             {
                 "sponsorship_type": "standard",
@@ -166,7 +164,7 @@ class TestMultiCompany(DigitalSeamCase):
                 fake_lines,
             ),
         ):
-            return wizard.finish_sponsorship()
+            return self._answer_every_step(wizard).finish_sponsorship()
 
     def test_finish_logged_in_partner_without_country_uses_company(self):
         # A logged-in sponsor with no country on file must not crash the
