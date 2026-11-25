@@ -315,3 +315,56 @@ class Website(models.Model):
                         website.id,
                         view.key,
                     )
+        self._copy_my2_website_views()
+
+    def _copy_my2_website_views(self):
+        """Give every MyCompassion website the views of this module bound to
+        the MyCompassion website (login, signup and its consent, password
+        reset and change, contact us, child protection charter).
+
+        Each copy keeps the view's key, so a module update refreshes it like
+        a copy-on-write view, as long as it was not edited in the website
+        builder. The views of other modules bound to that website (e.g. a
+        country's) stay its own.
+        """
+        my2_website = self.env.ref(
+            "my_compassion.my2_website", raise_if_not_found=False
+        )
+        if not my2_website:
+            return
+        view_obj = self.env["ir.ui.view"].sudo().with_context(active_test=False)
+        # The module's own views, not the website's copy-on-write ones.
+        bound_views = view_obj.search(
+            [
+                ("website_id", "=", my2_website.id),
+                ("key", "=like", "my_compassion.%"),
+            ],
+            order="id",
+        ).filtered(lambda v: v.xml_id == v.key)
+        for website in self - my2_website:
+            copied = set(
+                view_obj.search(
+                    [
+                        ("key", "in", bound_views.mapped("key")),
+                        ("website_id", "=", website.id),
+                    ]
+                ).mapped("key")
+            )
+            for view in bound_views.filtered(lambda v, c=copied: v.key not in c):
+                # Under the website's own version of the parent, if it has one.
+                parent = view_obj.search(
+                    [
+                        ("key", "=", view.inherit_id.key),
+                        ("website_id", "in", (False, website.id)),
+                    ],
+                    order="website_id",
+                    limit=1,
+                )
+                view.with_context(no_cow=True).copy(
+                    {
+                        "key": view.key,
+                        "website_id": website.id,
+                        "inherit_id": parent.id or view.inherit_id.id,
+                    }
+                )
+                _logger.info("Portal website %s: copied view %s", website.id, view.key)
