@@ -6,7 +6,8 @@
  * loading, and communication with the server via API calls to process the
  * sponsorship application.
  *
- * Used in /templates/pages/my2_new_sponsorship_wizard.xml
+ * Used in /templates/pages/my2_new_sponsorship/my2_new_sponsorship_wizard.xml
+ * and the step templates next to it.
  * ------------------------------------------------------------------------------- */
 
 import publicWidget from "@web/legacy/js/public/public_widget";
@@ -21,7 +22,16 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     "change .suggested-amount": "_onAmountChange",
     "input input[name=custom_amount]": "_onCustomAmountInput",
     "change #birthdate": "_onBirthDateChange",
+    "change .payment-method-radio": "_onPaymentModeRadioChange",
+    "change input[name=sponsorship_plus]": "_onSponsorshipPlusChange",
   },
+
+  /**
+   * The data-* keys of the checked payment-mode radio that the step's
+   * Continue button mirrors (see _onPaymentModeRadioChange). Modules that
+   * read more keys off the clicked button add them here.
+   */
+  paymentModeDataKeys: ["payment-mode", "payment-code"],
 
   /**
    * @override
@@ -30,6 +40,55 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     this._super.apply(this, arguments);
 
     this._updateUI();
+    this._syncWithControls();
+
+    // A finished step leaves its controls frozen while the page navigates
+    // away. Back from the next page can show this page again from the
+    // browser's cache as it was left, so it is handed back to the sponsor.
+    this._onPageShow = (ev) => {
+      if (ev.persisted) {
+        this._stepInFlight = false;
+        this._setStepControlsDisabled(false);
+      }
+    };
+    window.addEventListener("pageshow", this._onPageShow);
+  },
+
+  /**
+   * @override
+   */
+  destroy: function () {
+    if (this._onPageShow) {
+      window.removeEventListener("pageshow", this._onPageShow);
+    }
+    this._super.apply(this, arguments);
+  },
+
+  /**
+   * Brings what the script derives from the step's controls in line with
+   * their actual state: the payment mode mirrored on Continue and the live
+   * total. Both are otherwise only updated on a change event, which a
+   * control the browser restored, or checked before the script started,
+   * never fired. Run on start and after each step swap.
+   * @private
+   */
+  _syncWithControls: function () {
+    this._mirrorCheckedPaymentMode();
+    this._onSponsorshipPlusChange();
+  },
+
+  /**
+   * Copies the checked payment-mode radio, if any, onto Continue. Also run
+   * when Continue is clicked, before anything reads the mode off it: a
+   * radio can be checked without a change event at any time (by a script,
+   * or by the browser restoring the form). Overrides of _onStepClick that
+   * read the mode before calling _super call it first as well.
+   */
+  _mirrorCheckedPaymentMode: function () {
+    const $checked = this.$(".payment-method-radio:checked");
+    if ($checked.length) {
+      this._mirrorPaymentMode($checked.first());
+    }
   },
 
   /**
@@ -38,6 +97,12 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
    */
   _onStepClick: function (ev) {
     ev.preventDefault();
+    // One step request at a time: the click area of Continue is wider than
+    // the button, so it can be clicked again while its buttons are disabled.
+    if (this._stepInFlight) {
+      return;
+    }
+    this._mirrorCheckedPaymentMode();
 
     const action = $(ev.currentTarget).data("action"); // 'next', 'previous'
     const sponsorship_type = $(ev.currentTarget).data("sponsorship-type"); // 'standard', 'write_and_pray'
@@ -54,22 +119,24 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
       }
     }
 
-    // Prevent double clicks
-    this.$(".btn").prop("disabled", true);
-
     // Serialize form and add action
     const formData = this.$el.serializeArray();
     formData.push({name: "action", value: action});
     formData.push({name: "sponsorship_type", value: sponsorship_type});
 
-    // The fast-checkout page offers one button per payment mode instead of a
-    // dropdown: the mode of the button that was pressed is the choice. Sent
-    // the same way as the action above, so a mode button goes through the
-    // one step call every other button already uses.
+    // On the fast checkout, Continue carries the checked radio's payment mode
+    // (see _mirrorPaymentMode). Sent the same way as the action above, so the
+    // choice goes through the one step call every other button already uses.
     const payment_mode = $(ev.currentTarget).data("payment-mode");
     if (payment_mode) {
       formData.push({name: "payment_method", value: payment_mode});
     }
+
+    // Prevent double clicks, and freeze the payment choice the request
+    // carries until the next step is shown (the finishing submit only sends
+    // the wizard id, so the frozen radios do not need to be posted).
+    this._stepInFlight = true;
+    this._setStepControlsDisabled(true);
 
     // Use RPC to call the controller method
     rpc("/my2/new-sponsorship/step", this._serializeForm(formData))
@@ -88,18 +155,29 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
           if (data.finish) {
             this.$el.submit();
           } else {
-            // Re-enable buttons
-            this.$(".btn").prop("disabled", false);
+            this._stepInFlight = false;
+            this._setStepControlsDisabled(false);
             this._updateUI();
+            this._syncWithControls();
           }
         }.bind(this)
       )
       .catch(
         function () {
-          // Re-enable buttons also in case of error
-          this.$(".btn").prop("disabled", false);
+          // Give the step back to the sponsor in case of error
+          this._stepInFlight = false;
+          this._setStepControlsDisabled(false);
         }.bind(this)
       );
+  },
+
+  /**
+   * Disables or re-enables the step's buttons and payment-mode radios.
+   * @param {Boolean} disabled
+   * @private
+   */
+  _setStepControlsDisabled: function (disabled) {
+    this.$(".btn, .payment-method-radio").prop("disabled", disabled);
   },
 
   /**
@@ -116,6 +194,15 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
         isValid = false;
       }
     });
+
+    // The fast checkout's payment-mode radios have no default: one must be
+    // picked before the step is submitted.
+    const $paymentModes = this.$(".payment-method-radio");
+    if ($paymentModes.length && !$paymentModes.filter(":checked").length) {
+      this.$(".ns-payment-mode-error").removeClass("d-none");
+      $paymentModes.attr("aria-describedby", "ns-payment-mode-error");
+      isValid = false;
+    }
 
     return isValid;
   },
@@ -194,9 +281,12 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     if (!$price.length) {
       return; // Not the Write&Pray fast-checkout step.
     }
+    // Translated by the template, which renders the label once.
+    const noPaymentLabel =
+      $price.closest("[data-no-payment-label]").attr("data-no-payment-label") || "";
 
     if (!contributing) {
-      $price.text("No payment");
+      $price.text(noPaymentLabel);
       return;
     }
 
@@ -206,10 +296,70 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     }
     amount = parseFloat(amount);
     if (!amount) {
-      $price.text("No payment");
+      $price.text(noPaymentLabel);
       return;
     }
     $price.text(`${$price.data("currencyName")} ${amount}.-`);
+  },
+
+  /**
+   * The fast checkout renders one radio per payment mode in the step's own
+   * left column, with a single Continue button doing the actual submit.
+   * That button carries no payment mode of its own, so the checked radio's
+   * paymentModeDataKeys are copied onto it here - as attributes and as
+   * jQuery data, since jQuery caches a .data() read and would otherwise keep
+   * returning the mode of an earlier click. This is what lets a click
+   * handler such as the my_compassion_switzerland eBill one keep reading
+   * the mode off the clicked button without knowing radios are involved.
+   * A key the checked radio does not carry is removed from the button.
+   * @param {Event} ev
+   */
+  _onPaymentModeRadioChange: function (ev) {
+    this._mirrorPaymentMode($(ev.currentTarget));
+    this.$(".ns-payment-mode-error").addClass("d-none");
+    this.$(".payment-method-radio").removeAttr("aria-describedby");
+  },
+
+  /**
+   * Copies the paymentModeDataKeys of a payment-mode radio onto the step's
+   * Continue button (see _onPaymentModeRadioChange).
+   * @param {jQuery} $radio
+   * @private
+   */
+  _mirrorPaymentMode: function ($radio) {
+    const $button = this.$(".btn-next");
+    for (const key of this.paymentModeDataKeys) {
+      if ($radio.attr(`data-${key}`) === undefined) {
+        $button.removeAttr(`data-${key}`).removeData(key);
+      } else {
+        $button.attr(`data-${key}`, $radio.attr(`data-${key}`));
+        $button.data(key, $radio.data(key));
+      }
+    }
+  },
+
+  /**
+   * Keeps the fast checkout's right-column "Total" live as Sponsorship Plus
+   * is chosen, off the total element's own data-base-amount/data-plus-amount
+   * (server-rendered once, from the same amounts the donation card and the
+   * Sponsorship Plus choice already show) rather than round-tripping a step
+   * call. The choice is any input named sponsorship_plus: the base
+   * checkbox, or radios a country module puts in its place, where the value
+   * "0" means without Plus. Nothing checked shows the base amount. Only the
+   * amount is rewritten: the translated "/mo." after it is the template's.
+   */
+  _onSponsorshipPlusChange: function () {
+    const $total = this.$("#ns-total-amount");
+    if (!$total.length) {
+      return;
+    }
+    const base = parseFloat($total.data("baseAmount")) || 0;
+    const plus = parseFloat($total.data("plusAmount")) || 0;
+    const $choice = this.$("input[name=sponsorship_plus]:checked");
+    const withPlus = $choice.length > 0 && $choice.val() !== "0";
+    const total = base + (withPlus ? plus : 0);
+    const formatted = total % 1 === 0 ? `${total}.-` : total.toFixed(2);
+    $total.text(`${$total.data("currencyName")}\u00a0${formatted}`);
   },
 
   /**

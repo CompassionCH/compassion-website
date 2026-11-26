@@ -72,6 +72,7 @@ publicWidget.registry.themeCompassionFormFieldValidator = publicWidget.Widget.ex
   selector: ".form-field-component",
   events: {
     "blur input": "_onBlur",
+    "input input": "_onInput",
     "change select": "_onBlur",
   },
 
@@ -120,28 +121,56 @@ publicWidget.registry.themeCompassionFormFieldValidator = publicWidget.Widget.ex
   },
 
   /**
+   * While an error is shown, clears it as soon as the edited value (or the
+   * ticked checkbox) is valid. Left to the blur, the hint would only go away
+   * on the mousedown of the visitor's next click, moving the page up under
+   * the pointer: that click was lost, or landed on another element such as
+   * another payment-mode radio. A new error is still only shown on blur.
+   * Only the wrapper's first input is validated here (see _getError): the
+   * other inputs of a multi-input wrapper, like a custom donation amount
+   * behind its radio, keep the error their own form gave them.
+   */
+  _onInput: function (ev) {
+    if (ev.currentTarget !== this.$input[0]) {
+      return;
+    }
+    if (this.$input.hasClass("is-invalid") && !this._getError()) {
+      this.clearError();
+    }
+  },
+
+  /**
+   * The error message the field's current value deserves, or null.
+   * @returns {String|null}
+   */
+  _getError: function () {
+    const value = this.$input.val();
+    const isCheckbox = this.$input.is('[type="checkbox"]');
+    const isEmpty = isCheckbox ? !this.$input.prop("checked") : !value;
+
+    if (this.isRequired && isEmpty) {
+      return this.errorMessages.required;
+    }
+    if (this.validationType && value && this.config.regex) {
+      if (!this.config.regex.test(value)) {
+        return this.errorMessages.format;
+      }
+    }
+    return null;
+  },
+
+  /**
    * Runs validation for this field. May also be called externally by a
    * parent form at submission time.
    * @returns {Boolean} true when the field value passes all applicable rules.
    */
   validate: function () {
     this.clearError();
-    const value = this.$input.val();
-    const isCheckbox = this.$input.is('[type="checkbox"]');
-    const isEmpty = isCheckbox ? !this.$input.prop("checked") : !value;
-
-    if (this.isRequired && isEmpty) {
-      this.showError(this.errorMessages.required);
+    const error = this._getError();
+    if (error) {
+      this.showError(error);
       return false;
     }
-
-    if (this.validationType && value && this.config.regex) {
-      if (!this.config.regex.test(value)) {
-        this.showError(this.errorMessages.format);
-        return false;
-      }
-    }
-
     return true;
   },
 

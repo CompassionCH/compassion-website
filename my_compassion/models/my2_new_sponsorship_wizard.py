@@ -1,16 +1,16 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
-# The single page of the fast checkout: e-mail, consent and one button per
-# payment mode. It is all a public visitor answers before paying - the mode
-# button they press both picks the mode and ends the flow. Everything else
-# about them is collected afterwards.
+# The single page of the fast checkout: e-mail, consent and one radio per
+# payment mode, then Continue. It is all a public visitor answers before
+# paying - Continue with a mode checked ends the flow. Everything else about
+# them is collected afterwards.
 FAST_CHECKOUT_STEP = "my_compassion.new_sponsorship_wizard_step_fast_checkout"
 
 # Write&Pray's own single page: date of birth (the eligibility gate),
-# e-mail, the free-godparent-vs-contributing choice and, only once
+# e-mail, the free-sponsorship-vs-contributing choice and, only once
 # contributing is picked, the suggested amounts. Unlike the standard fast
-# checkout it never ends in a payment-mode button - a Write&Pray sponsorship
+# checkout it never asks for a payment mode - a Write&Pray sponsorship
 # is deliberately created without one either way (see finish_sponsorship) -
 # so it keeps the generic Continue button. Kept as its own step rather than
 # folded into FAST_CHECKOUT_STEP: the two ask genuinely different questions
@@ -40,7 +40,7 @@ class NewSponsorshipWizard(models.TransientModel):
     STEPS_CONFIGS = {
         "standard": {
             # One page: the fast-checkout step carries the payment-mode
-            # buttons itself, so there is no second step to select one on.
+            # radios itself, so there is no second step to select one on.
             "public": [
                 FAST_CHECKOUT_STEP,
             ],
@@ -51,7 +51,7 @@ class NewSponsorshipWizard(models.TransientModel):
         "write_and_pray": {
             # One page, the same shape as the standard flow: WAP_FAST_CHECKOUT_STEP
             # carries the age gate, email, the free-vs-contributing choice and
-            # (when contributing) the payment-mode buttons itself.
+            # (when contributing) the suggested amounts itself.
             "public": [
                 WAP_FAST_CHECKOUT_STEP,
             ],
@@ -226,7 +226,7 @@ class NewSponsorshipWizard(models.TransientModel):
         # sponsorship instead) changes the step list under the index, and the
         # new flow is not necessarily as long as the one left behind. An index
         # past its end reads as "done" and would finish the wizard without
-        # ever showing the step still to answer - the payment-mode buttons of
+        # ever showing the step still to answer - the payment-mode choice of
         # the one-page standard checkout, in exactly that case.
         if self.n_steps and self.current_step_idx >= self.n_steps:
             self.current_step_idx = self.n_steps - 1
@@ -274,7 +274,7 @@ class NewSponsorshipWizard(models.TransientModel):
     def _get_offered_payment_modes(self):
         """The payment modes the checkout offers, for the website's company.
 
-        One lookup behind both the buttons of the fast-checkout page and the
+        One lookup behind both the radios of the fast-checkout page and the
         dropdown of the logged-in step, so a mode can never be offered by one
         and unknown to the other. It is a display list, never a decision:
         whatever comes back is re-validated in _get_validated_payment_mode.
@@ -293,11 +293,12 @@ class NewSponsorshipWizard(models.TransientModel):
         )
 
     def _step_offers_payment_modes(self):
-        """Whether the current step is submitted by one button per payment
-        mode instead of by the generic Continue/Finish button.
+        """Whether the current step offers its payment modes as radios, with
+        its own Continue button, instead of the generic Continue/Finish
+        button.
 
         Asked apart from _get_payment_mode_buttons so the page can tell the
-        two reasons for having no button to show apart. A step that keeps the
+        two reasons for having no mode to show apart. A step that keeps the
         generic button offers no modes: the Write&Pray page, since a
         Write&Pray sponsorship is deliberately created without a payment mode
         regardless of what it says about a monthly amount (see
@@ -316,8 +317,8 @@ class NewSponsorshipWizard(models.TransientModel):
         return self.current_step == self.env.ref(FAST_CHECKOUT_STEP)
 
     def _get_payment_mode_buttons(self):
-        """The payment modes the current step submits itself with, one button
-        each: pressing one picks the mode and ends the flow in one action.
+        """The payment modes the current step offers, one radio each: the
+        step's Continue button submits the checked one.
 
         Empty both for the steps that keep the generic Continue/Finish button
         and for a fast-checkout page whose company has published no mode -
@@ -366,8 +367,8 @@ class NewSponsorshipWizard(models.TransientModel):
             and self.sponsorship_type != "write_and_pray"
             and not self.payment_method
         ):
-            # The fast-checkout page is submitted by its payment-mode buttons,
-            # so a post arriving here without a mode either came from a page
+            # The fast-checkout page is submitted with a payment-mode radio
+            # checked, so a post arriving here without a mode came from a page
             # that offered none - the company has published none, see
             # _step_offers_payment_modes - or dropped the field. Refused here,
             # before the partner exists, so that a sponsorship nothing would

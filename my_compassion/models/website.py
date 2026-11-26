@@ -183,6 +183,13 @@ class Website(models.Model):
             )
         )
 
+    def _my2_uses_compassion_theme(self):
+        """Whether the website uses theme_compassion_2025, whose components the
+        branded error pages call: they only exist on such websites. Read as
+        superuser, since the visitor may not read modules."""
+        self.ensure_one()
+        return self.sudo().theme_id.name == "theme_compassion_2025"
+
     def _my2_donation_products(self, domain=None, order=None):
         """The donation products (funds and gifts) the website's company
         publishes, in sudo.

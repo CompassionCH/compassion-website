@@ -3,6 +3,7 @@ from datetime import timedelta
 from unittest.mock import patch
 
 from odoo import fields
+from odoo.exceptions import UserError
 from odoo.tests import tagged
 from odoo.tests.common import HttpCase
 
@@ -10,6 +11,8 @@ from .common import DigitalSeamCase
 
 CSRF_RE = re.compile(r'name="csrf_token"\s+value="([^"]+)"')
 TOKEN_IN_LINK_RE = re.compile(r"details_token=([A-Za-z0-9_-]+)")
+# What a country module's partner check says when it refuses a phone number.
+PHONE_REFUSAL = "Phone number is not valid."
 
 
 @tagged("post_install", "-at_install")
@@ -91,7 +94,7 @@ class TestFastCheckoutDetails(HttpCase, DigitalSeamCase):
         token = self.signup._my2_issue_details_token()
         html, _csrf = self._open_form(token=token)
         self.assertIn("/my2/new-sponsorship/complete-details", html)
-        self.assertIn("Who shall we thank?", html)
+        self.assertIn("Your contact information", html)
         # the escape hatch is on the same form
         self.assertIn("/my2/new-sponsorship/details-later", html)
         # once the name is real the page falls back to its normal content
@@ -187,6 +190,29 @@ class TestFastCheckoutDetails(HttpCase, DigitalSeamCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("/my2/new-sponsorship/complete-details", response.text)
         # what was typed comes back, the placeholder stays, the token lives on
+        self.assertIn('value="Jeanne"', response.text)
+        self.assertTrue(self.signup.partner_id.my2_name_placeholder)
+        self.assertTrue(self.signup._my2_check_details_token(token))
+
+    def test_refused_value_keeps_the_form_with_its_message(self):
+        """A value the partner refuses on write (a country module's phone
+        check raises a UserError) brings the form back with that message,
+        instead of an error page, and saves nothing."""
+        token = self.signup._my2_issue_details_token()
+        _html, csrf = self._open_form(token=token)
+        partner_model = type(self.env["res.partner"])
+        original_write = partner_model.write
+
+        def refusing_write(records, vals):
+            if "phone" in vals:
+                raise UserError(PHONE_REFUSAL)
+            return original_write(records, vals)
+
+        with patch.object(partner_model, "write", refusing_write):
+            response = self._post_details(csrf, token=token, phone="123")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("/my2/new-sponsorship/complete-details", response.text)
+        self.assertIn(PHONE_REFUSAL, response.text)
         self.assertIn('value="Jeanne"', response.text)
         self.assertTrue(self.signup.partner_id.my2_name_placeholder)
         self.assertTrue(self.signup._my2_check_details_token(token))
