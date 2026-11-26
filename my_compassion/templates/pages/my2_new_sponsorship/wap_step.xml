@@ -33,8 +33,10 @@
              via price_label to show "No payment" for the free-godparent
              branch instead of a formatted amount, and price_id so the JS
              can still live-update it as an amount is picked (see
-             _updateWAPPrice). -->
-        <div class="mb-3">
+             _updateWAPPrice). The JS reads the translated label off
+             data-no-payment-label. -->
+        <t t-set="no_payment_label">No payment</t>
+        <div class="mb-3" t-att-data-no-payment-label="no_payment_label">
           <t t-call="my_compassion.DonationItemComponent">
             <t t-set="name">Write&amp;Pray&#160;·&#160;<t
               t-out="wizard.child_id.preferred_name"
@@ -53,7 +55,7 @@
             <t t-set="price" t-value="float(wizard.wap_contribution_amount or 0)" />
             <t
               t-set="price_label"
-              t-value="not wizard.wap_contribution_amount and 'No payment'"
+              t-value="not wizard.wap_contribution_amount and no_payment_label"
             />
             <t t-set="price_id" t-value="'wap-child-price'" />
             <t t-set="currency_name" t-value="currency_name" />

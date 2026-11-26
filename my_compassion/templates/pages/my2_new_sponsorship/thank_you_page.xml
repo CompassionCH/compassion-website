@@ -116,9 +116,9 @@
                   />
                   <t t-set="price" t-value="sponsorship.total_amount" />
                   <t
+                    t-if="not sponsorship.total_amount"
                     t-set="price_label"
-                    t-value="not sponsorship.total_amount and 'No payment'"
-                  />
+                  >No payment</t>
                   <t t-set="price_id" t-value="'thank-you-letter-card-price'" />
                   <t t-set="currency_name" t-value="sponsorship.currency_id.name" />
                   <t t-set="bg_color" t-value="'pure-white'" />

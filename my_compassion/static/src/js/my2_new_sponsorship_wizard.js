@@ -269,9 +269,13 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     if (!$price.length) {
       return; // Not the Write&Pray fast-checkout step.
     }
+    // Translated by the template, which renders the label once.
+    const noPaymentLabel =
+      $price.closest("[data-no-payment-label]").attr("data-no-payment-label") ||
+      "";
 
     if (!contributing) {
-      $price.text("No payment");
+      $price.text(noPaymentLabel);
       return;
     }
 
@@ -281,7 +285,7 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     }
     amount = parseFloat(amount);
     if (!amount) {
-      $price.text("No payment");
+      $price.text(noPaymentLabel);
       return;
     }
     $price.text(`${$price.data("currencyName")} ${amount}.-`);

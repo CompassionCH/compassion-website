@@ -94,11 +94,9 @@ Page: My Compassion 2 New Sponsorship Wizard Page
          desktop layout. -->
     <div t-attf-class="mx-5 mt-4 #{'d-lg-none' if wizard.details_deferred else ''}">
       <t t-call="theme_compassion_2025.TitleComponent">
-        <t
-          t-if="step_offers_payment_modes"
-          t-set="title_content"
-          t-value="'Sponsor ' + (wizard.child_id.preferred_name or '')"
-        />
+        <t t-if="step_offers_payment_modes" t-set="title_content">Sponsor&#160;<t
+            t-out="wizard.child_id.preferred_name"
+          /></t>
         <t t-else="" t-set="title_content" t-value="wizard.current_step.title" />
         <t t-set="color" t-value="'core-blue'" />
         <t t-set="show_underline" t-value="True" />

@@ -923,12 +923,12 @@ msgid "All"
 msgstr "Alla"
 
 #. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_all_set
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_all_set_title
 msgid "All set"
 msgstr "Allt klart"
 
 #. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_all_set
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_all_set_title
 msgid "All set,"
 msgstr "Klart,"
 
@@ -2287,7 +2287,7 @@ msgstr "Hur vill du betala?"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
 msgid "I accept the"
-msgstr ""
+msgstr "Jag godkänner"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.acceptance_full
@@ -3177,6 +3177,8 @@ msgstr "Inga alternativ tillgängliga."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_all_set
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
 msgid "No payment"
 msgstr "Ingen betalning"
 
@@ -3494,7 +3496,7 @@ msgstr "Godkänn integritetspolicyn innan du fortsätter."
 msgid ""
 "Please accept the terms and conditions and the privacy policy before "
 "continuing."
-msgstr ""
+msgstr "Godkänn villkoren och integritetspolicyn innan du fortsätter."
 
 #. module: my_compassion
 #. odoo-python
@@ -4117,6 +4119,11 @@ msgstr "Talade språk"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_communication_details
 msgid "Spoken languages"
 msgstr "Talade språk"
+
+#. module: my_compassion
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_form_content
+msgid "Sponsor"
+msgstr "Bli fadder till"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_sponsorships_page
@@ -5313,7 +5320,7 @@ msgid "Your details"
 msgstr "Dina uppgifter"
 
 #. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_all_set
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_all_set_title
 msgid ""
 "Your details are saved. We've sent a sign-in link by email so you can set up"
 " a password and access your account."
@@ -5322,7 +5329,7 @@ msgstr ""
 "att du kan skapa ett lösenord och komma åt ditt konto."
 
 #. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_all_set
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_all_set_title
 msgid "Your details are saved. We've sent a sign-in link to"
 msgstr "Dina uppgifter är sparade. Vi har skickat en inloggningslänk till"
 
@@ -5391,12 +5398,14 @@ msgid ""
 "Your payment did not go through. Please try again, or use another\n"
 "            card."
 msgstr ""
+"Din betalning gick inte igenom. Försök igen eller använd ett annat kort."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_page
 msgid ""
 "Your payment did not go through. Please try again, or use another card."
 msgstr ""
+"Din betalning gick inte igenom. Försök igen eller använd ett annat kort."
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_gift_package_page
@@ -5404,7 +5413,7 @@ msgid "Your receipt goes to"
 msgstr ""
 
 #. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_description
 msgid ""
 "You’ll receive an email with everything you need to start the Write&amp;Pray"
 " soon."
@@ -5413,7 +5422,7 @@ msgstr ""
 "Write&amp;Pray."
 
 #. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_page
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_thank_you_description
 msgid ""
 "You’ll receive an email with everything you need to start the sponsorship "
 "soon."
@@ -5474,7 +5483,7 @@ msgstr "och mina favoritämnen är"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
 msgid "and the"
-msgstr ""
+msgstr "och"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
@@ -5560,7 +5569,7 @@ msgstr "integritetspolicyn"
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
 msgid "privacy policy"
-msgstr ""
+msgstr "integritetspolicyn"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_child_timeline_page
@@ -5568,7 +5577,7 @@ msgid "sisters"
 msgstr "systrar"
 
 #. module: my_compassion
-#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_all_set
+#: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_all_set_title
 msgid "so you can set up a password and access your account."
 msgstr "så att du kan skapa ett lösenord och komma åt ditt konto."
 
@@ -5578,7 +5587,7 @@ msgstr "så att du kan skapa ett lösenord och komma åt ditt konto."
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_fast_checkout
 #: model_terms:ir.ui.view,arch_db:my_compassion.my2_new_sponsorship_wizard_wap_fast_checkout
 msgid "terms and conditions"
-msgstr ""
+msgstr "villkoren"
 
 #. module: my_compassion
 #: model_terms:ir.ui.view,arch_db:my_compassion.sponsor_a_child
