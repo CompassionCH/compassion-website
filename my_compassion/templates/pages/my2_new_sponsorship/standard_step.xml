@@ -193,6 +193,7 @@
                 type="radio"
                 name="payment_method"
                 class="payment-method-radio flex-shrink-0"
+                autocomplete="off"
                 t-att-id="'payment_method_' + str(payment_mode.id)"
                 t-att-value="payment_mode.id"
                 t-att-data-payment-mode="payment_mode.id"

@@ -39,6 +39,23 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     this._super.apply(this, arguments);
 
     this._updateUI();
+    this._syncWithControls();
+  },
+
+  /**
+   * Brings what the script derives from the step's controls in line with
+   * their actual state: the payment mode mirrored on Continue and the live
+   * total. Both are otherwise only updated on a change event, which a
+   * control the browser restored, or checked before the script started,
+   * never fired. Run on start and after each step swap.
+   * @private
+   */
+  _syncWithControls: function () {
+    const $checked = this.$(".payment-method-radio:checked");
+    if ($checked.length) {
+      this._mirrorPaymentMode($checked.first());
+    }
+    this._onSponsorshipPlusChange();
   },
 
   /**
@@ -100,6 +117,7 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
             // Re-enable buttons
             this.$(".btn").prop("disabled", false);
             this._updateUI();
+            this._syncWithControls();
           }
         }.bind(this)
       )
@@ -242,7 +260,17 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
    * @param {Event} ev
    */
   _onPaymentModeRadioChange: function (ev) {
-    const $radio = $(ev.currentTarget);
+    this._mirrorPaymentMode($(ev.currentTarget));
+    this.$(".ns-payment-mode-error").addClass("d-none");
+  },
+
+  /**
+   * Copies the paymentModeDataKeys of a payment-mode radio onto the step's
+   * Continue button (see _onPaymentModeRadioChange).
+   * @param {jQuery} $radio
+   * @private
+   */
+  _mirrorPaymentMode: function ($radio) {
     const $button = this.$(".btn-next");
     for (const key of this.paymentModeDataKeys) {
       if ($radio.attr(`data-${key}`) === undefined) {
@@ -252,7 +280,6 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
         $button.data(key, $radio.data(key));
       }
     }
-    this.$(".ns-payment-mode-error").addClass("d-none");
   },
 
   /**
