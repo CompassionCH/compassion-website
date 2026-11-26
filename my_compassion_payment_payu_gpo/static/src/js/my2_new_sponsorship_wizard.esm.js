@@ -18,6 +18,8 @@ NewSponsorshipWizard.include({
    * @override
    */
   _onStepClick(ev) {
+    // The mode is read off Continue below, before _super would sync it.
+    this._mirrorCheckedPaymentMode();
     const isRequired = Boolean($(ev.currentTarget).data("payu-gpo"));
     this.$(
       'input[name="cardholder_firstname"], input[name="cardholder_lastname"]'

@@ -73,11 +73,22 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
    * @private
    */
   _syncWithControls: function () {
+    this._mirrorCheckedPaymentMode();
+    this._onSponsorshipPlusChange();
+  },
+
+  /**
+   * Copies the checked payment-mode radio, if any, onto Continue. Also run
+   * when Continue is clicked, before anything reads the mode off it: a
+   * radio can be checked without a change event at any time (by a script,
+   * or by the browser restoring the form). Overrides of _onStepClick that
+   * read the mode before calling _super call it first as well.
+   */
+  _mirrorCheckedPaymentMode: function () {
     const $checked = this.$(".payment-method-radio:checked");
     if ($checked.length) {
       this._mirrorPaymentMode($checked.first());
     }
-    this._onSponsorshipPlusChange();
   },
 
   /**
@@ -91,6 +102,7 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     if (this._stepInFlight) {
       return;
     }
+    this._mirrorCheckedPaymentMode();
 
     const action = $(ev.currentTarget).data("action"); // 'next', 'previous'
     const sponsorship_type = $(ev.currentTarget).data("sponsorship-type"); // 'standard', 'write_and_pray'
@@ -271,8 +283,7 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     }
     // Translated by the template, which renders the label once.
     const noPaymentLabel =
-      $price.closest("[data-no-payment-label]").attr("data-no-payment-label") ||
-      "";
+      $price.closest("[data-no-payment-label]").attr("data-no-payment-label") || "";
 
     if (!contributing) {
       $price.text(noPaymentLabel);
