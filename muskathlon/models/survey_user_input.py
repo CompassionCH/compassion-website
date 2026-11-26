@@ -33,7 +33,7 @@ class SurveyUserInput(models.Model):
                         (
                             "stage_id",
                             "=",
-                            self.env.ref("muskathlon.stage_fill_profile").id,
+                            self.env.ref("muskathlon.stage_documents").id,
                         ),
                     ]
                 )

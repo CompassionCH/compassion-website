@@ -1,0 +1,22 @@
+<div>
+  <t t-set="partner" t-value="object.partner_id" />
+  <t t-set="registration" t-value="object.get_objects()" />
+  <t t-set="event" t-value="registration.compassion_event_id" />
+  <t t-set="country" t-value="event.country_id" />
+</div>
+<p><t t-out="partner.informal_salutation" />,</p>
+<p>
+  Plus que quelques semaines avant ton départ <t t-out="country.in_preposition"></t>
+  <t t-out="country.name"></t> !
+</p>
+<p>
+  Vérifie si tu as besoin d'un visa pour entrer dans le pays avec ta nationalité et, si
+  c'est le cas, demande-le à temps.
+</p>
+<p>
+  Pour entrer dans le pays, ton passeport doit être valable au moins six mois au moment
+  de l'entrée et tu dois être en possession d'un billet de retour ou de continuation du
+  voyage.
+</p>
+<p>Nous nous réjouissons de te voir !</p>
+<p>Nathalie, 4M Switzerland</p>

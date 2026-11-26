@@ -41,6 +41,11 @@ class EventStage(models.Model):
         help="This stage is folded in the kanban view when there are no "
         "records in that stage to display.",
     )
+    manual_only = fields.Boolean(
+        "Set by hand only",
+        help="Registrations never move to this stage automatically when the "
+        "tasks of their stage are done, only when someone puts them in it.",
+    )
     registration_state = fields.Selection(
         [
             ("draft", "Unconfirmed"),
