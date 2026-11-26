@@ -177,14 +177,10 @@ class MyCompassionSponsorshipsController(http.Controller):
             except ChildNotFound:
                 # Error is already logged, the frontend will just show no results
                 pass
-        # Query matching children
+        # Query matching children, in the order the website's setting names
         domain = self._get_filtered_domain(post)
-        total_results = child_obj.search_count(domain)
-        children = child_obj.search(
-            domain,
-            limit=limit,
-            offset=offset,
-            order="unsponsored_since asc, create_date asc, completion_date asc",
+        children, total_results = child_obj._my2_available_children(
+            domain, limit, offset, request.website
         )
 
         html_content = request.env["ir.qweb"]._render(

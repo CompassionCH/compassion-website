@@ -10,7 +10,7 @@ from odoo.tests.common import (
     Opener,
 )
 
-from .common import DigitalSeamCase
+from .common import DigitalSeamCase, OptionalPlanMixin
 
 CSRF_RE = re.compile(r'name="csrf_token"\s+value="([^"]+)"')
 WIZARD_ID_RE = re.compile(r'name="wizard_id"\s+value="(\d+)"')
@@ -18,7 +18,7 @@ ACCESS_TOKEN_RE = re.compile(r"access_token=([0-9a-f]+)")
 
 
 @tagged("post_install", "-at_install")
-class TestFastCheckoutRoutes(HttpCase, DigitalSeamCase):
+class TestFastCheckoutRoutes(OptionalPlanMixin, HttpCase, DigitalSeamCase):
     """The /my2/new-sponsorship/* surface, walked over HTTP.
 
     The rest of the fast-checkout suite drives the wizard model and renders
@@ -345,7 +345,7 @@ class TestFastCheckoutRoutes(HttpCase, DigitalSeamCase):
         )
         self.assertEqual(page.status_code, 200)
         self.assertIn("/my2/new-sponsorship/complete-details", page.text)
-        self.assertIn("Your contact information", page.text)
+        self.assertIn('name="details_token"', page.text)
 
     def test_thank_you_offers_no_form_to_a_stranger(self):
         """The gate of the whole details flow: a bare sponsorship id proves
@@ -427,7 +427,9 @@ class TestFastCheckoutRoutes(HttpCase, DigitalSeamCase):
             allow_redirects=False,
         )
         self.assertEqual(page.status_code, 200)
-        self.assertIn("Your contact information", page.text)
+        # the details form, whatever heading a country module gives it
+        self.assertIn("/my2/new-sponsorship/complete-details", page.text)
+        self.assertIn('name="details_token"', page.text)
 
     def test_payment_page_shows_no_failure_without_one(self):
         """payment_failed in the URL alone does not show the message."""

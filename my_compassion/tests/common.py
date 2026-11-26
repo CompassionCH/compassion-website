@@ -5,6 +5,24 @@ from odoo import Command, fields
 from odoo.tests import TransactionCase
 
 
+class OptionalPlanMixin:
+    """For tests of the base checkout, whose Sponsorship Plus is an optional
+    checkbox: a country module that makes the sponsor choose a plan
+    (new.sponsorship.wizard._my2_plan_required) is switched off for them.
+    List it before the test case class."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.startClassPatcher(
+            patch.object(
+                type(cls.env["new.sponsorship.wizard"]),
+                "_my2_plan_required",
+                return_value=False,
+            )
+        )
+
+
 class DigitalSeamCase(TransactionCase):
     """Shared fixtures for the digital-payment seam.
 

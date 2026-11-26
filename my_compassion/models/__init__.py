@@ -37,5 +37,6 @@ from . import (
     payment_transaction,
     recurring_contract_origin,
     res_partner_match,
+    res_config_settings,
     website,
 )

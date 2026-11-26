@@ -407,6 +407,16 @@ wins over a shared one.</li>
 data-change notifications (defaults to the website company’s email).</li>
 <li><tt class="docutils literal">sponsor_child_url</tt>: target of the “start a sponsorship” link
 shown to users without sponsorships (defaults to <tt class="docutils literal">/my2/children</tt>).</li>
+<li><tt class="docutils literal">my2_child_list_order</tt> (“Child List Order”, in Website →
+Settings): the order of the children waiting for a sponsor on
+<tt class="docutils literal">/my2/sponsorships</tt>. <tt class="docutils literal">waiting</tt> (the default) shows the
+longest-waiting children first; <tt class="docutils literal">mix_countries</tt> takes the
+longest-waiting child of each country, then the second of each
+country, and so on. Each value is ordered by the
+<tt class="docutils literal">compassion.child</tt> method <tt class="docutils literal">_my2_children_order_&lt;value&gt;</tt>: a
+module adds an order with a <tt class="docutils literal">selection_add</tt> on the field (with
+<tt class="docutils literal"><span class="pre">ondelete={&quot;&lt;value&gt;&quot;:</span> &quot;set default&quot;}</tt>) and that one method, which
+returns one page of children in a total, stable order.</li>
 </ul>
 </li>
 <li><strong>Payment providers</strong>: the donation checkout embeds the standard Odoo

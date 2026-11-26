@@ -344,6 +344,19 @@ class NewSponsorshipWizard(models.TransientModel):
             raise ValidationError(_("The selected payment method is not available."))
         return mode
 
+    def _my2_plan_required(self):
+        """Hook: whether the sponsor must choose a plan before finishing.
+
+        Off here: Sponsorship Plus is an optional add-on, a checkbox the
+        sponsor may leave unticked. A country that sells the sponsorship and
+        the sponsorship with Plus as two plans, one of which must be picked,
+        turns it on and supplies the plan choice and its check.
+
+        Tests of this module drive the optional checkbox, so they switch it
+        off whatever a country module installed alongside makes of it.
+        """
+        return False
+
     def finish_sponsorship(self):
         self.ensure_one()
 

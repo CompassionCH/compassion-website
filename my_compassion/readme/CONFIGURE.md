@@ -16,6 +16,15 @@ instance runs one MyCompassion website per country, each flagged with the
     notifications (defaults to the website company's email).
   - `sponsor_child_url`: target of the "start a sponsorship" link shown to
     users without sponsorships (defaults to `/my2/children`).
+  - `my2_child_list_order` ("Child List Order", in Website → Settings): the
+    order of the children waiting for a sponsor on `/my2/sponsorships`.
+    `waiting` (the default) shows the longest-waiting children first;
+    `mix_countries` takes the longest-waiting child of each country, then the
+    second of each country, and so on. Each value is ordered by the
+    `compassion.child` method `_my2_children_order_<value>`: a module adds an
+    order with a `selection_add` on the field (with
+    `ondelete={"<value>": "set default"}`) and that one method, which returns
+    one page of children in a total, stable order.
 - **Payment providers**: the donation checkout embeds the standard Odoo
   `payment.form`; enable and publish the country's `payment.provider` records.
   The checkout brand row (`checkout_payment_brands` anchor in the gift package

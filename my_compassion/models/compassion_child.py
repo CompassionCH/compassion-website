@@ -13,11 +13,19 @@ from dateutil.relativedelta import relativedelta
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+from odoo.tools import SQL
 
 from odoo.addons.child_compassion.models.compassion_hold import HoldType
 from odoo.addons.sponsorship_compassion.models.contracts import SPONSORSHIP_TYPE_LIST
 
 _logger = logging.getLogger(__name__)
+
+# The children who have waited the longest for a sponsor come first. The id
+# ends the order so that children with equal dates keep their place between
+# two page requests.
+MY2_WAITING_ORDER = (
+    "unsponsored_since asc, create_date asc, completion_date asc, id asc"
+)
 
 
 class ChildNotFound(UserError):
@@ -328,6 +336,83 @@ class CompassionChild(models.Model):
                 _("No child found for the given search parameters.")
             ) from error
         return child_ids
+
+    @api.model
+    def _my2_available_children(self, domain, limit, offset, website):
+        """One page of the children waiting for a sponsor on the MyCompassion
+        list, and how many children the whole list holds.
+
+        The page is ordered by the strategy the website's
+        my2_child_list_order names: the method
+        _my2_children_order_<value>(domain, limit, offset), which returns
+        the records of the page in their order. Every strategy must give a
+        total, deterministic order, so that consecutive pages neither repeat
+        nor skip a child. A module adds a strategy with a selection_add on
+        website.my2_child_list_order and that one method.
+
+        :param domain: the children of the list
+        :param website: the website whose list it is
+        :return: (children of the page, total number of children)
+        """
+        website.ensure_one()
+        strategy = getattr(self, f"_my2_children_order_{website.my2_child_list_order}")
+        return strategy(domain, limit, offset), self.search_count(domain)
+
+    @api.model
+    def _my2_children_order_waiting(self, domain, limit, offset):
+        """The children who have waited the longest for a sponsor first."""
+        return self.search(domain, limit=limit, offset=offset, order=MY2_WAITING_ORDER)
+
+    @api.model
+    def _my2_children_order_mix_countries(self, domain, limit, offset):
+        """The children of all countries mixed, round by round: the
+        longest-waiting child of each country, then the second of each
+        country, and so on. Within a round, the children follow the waiting
+        order.
+
+        The country is the one of the child's field office, so that the
+        field offices of a same country (Indonesia has two) share their
+        rounds. Children without a country form one group of their own.
+        The rounds are numbered by a window function over the ORM's own
+        search query, which keeps the domain, active and record rule
+        semantics of search().
+        """
+        query = self._search(domain)
+        if query.is_empty():
+            return self.browse()
+        alias = self._table
+        field_office = self.env["compassion.field.office"]
+        fo_alias = query.make_alias(alias, "field_office_id")
+        query.add_join(
+            "LEFT JOIN",
+            fo_alias,
+            field_office._table,
+            SQL(
+                "%s = %s",
+                self._field_to_sql(alias, "field_office_id", query),
+                SQL.identifier(fo_alias, "id"),
+            ),
+        )
+        country = field_office._field_to_sql(fo_alias, "country_id", query)
+        waiting = self._order_to_sql(MY2_WAITING_ORDER, query)
+        ranked = query.select(
+            SQL("%s AS id", SQL.identifier(alias, "id")),
+            SQL(
+                "ROW_NUMBER() OVER (PARTITION BY %s ORDER BY %s) AS country_round",
+                country,
+                waiting,
+            ),
+            SQL("ROW_NUMBER() OVER (ORDER BY %s) AS waiting_rank", waiting),
+        )
+        page = SQL(
+            "SELECT ranked.id FROM (%s) AS ranked"
+            " ORDER BY ranked.country_round, ranked.waiting_rank"
+            " LIMIT %s OFFSET %s",
+            ranked,
+            limit,
+            offset,
+        )
+        return self.browse([row[0] for row in self.env.execute_query(page)])
 
     def child_released(self, state="R"):
         # Unpublish the child if it's released
