@@ -40,6 +40,27 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
 
     this._updateUI();
     this._syncWithControls();
+
+    // A finished step leaves its controls frozen while the page navigates
+    // away. Back from the next page can show this page again from the
+    // browser's cache as it was left, so it is handed back to the sponsor.
+    this._onPageShow = (ev) => {
+      if (ev.persisted) {
+        this._stepInFlight = false;
+        this._setStepControlsDisabled(false);
+      }
+    };
+    window.addEventListener("pageshow", this._onPageShow);
+  },
+
+  /**
+   * @override
+   */
+  destroy: function () {
+    if (this._onPageShow) {
+      window.removeEventListener("pageshow", this._onPageShow);
+    }
+    this._super.apply(this, arguments);
   },
 
   /**
@@ -64,6 +85,11 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
    */
   _onStepClick: function (ev) {
     ev.preventDefault();
+    // One step request at a time: the click area of Continue is wider than
+    // the button, so it can be clicked again while its buttons are disabled.
+    if (this._stepInFlight) {
+      return;
+    }
 
     const action = $(ev.currentTarget).data("action"); // 'next', 'previous'
     const sponsorship_type = $(ev.currentTarget).data("sponsorship-type"); // 'standard', 'write_and_pray'
@@ -80,9 +106,6 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
       }
     }
 
-    // Prevent double clicks
-    this.$(".btn").prop("disabled", true);
-
     // Serialize form and add action
     const formData = this.$el.serializeArray();
     formData.push({name: "action", value: action});
@@ -96,6 +119,12 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     if (payment_mode) {
       formData.push({name: "payment_method", value: payment_mode});
     }
+
+    // Prevent double clicks, and freeze the payment choice the request
+    // carries until the next step is shown (the finishing submit only sends
+    // the wizard id, so the frozen radios do not need to be posted).
+    this._stepInFlight = true;
+    this._setStepControlsDisabled(true);
 
     // Use RPC to call the controller method
     rpc("/my2/new-sponsorship/step", this._serializeForm(formData))
@@ -114,8 +143,8 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
           if (data.finish) {
             this.$el.submit();
           } else {
-            // Re-enable buttons
-            this.$(".btn").prop("disabled", false);
+            this._stepInFlight = false;
+            this._setStepControlsDisabled(false);
             this._updateUI();
             this._syncWithControls();
           }
@@ -123,10 +152,20 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
       )
       .catch(
         function () {
-          // Re-enable buttons also in case of error
-          this.$(".btn").prop("disabled", false);
+          // Give the step back to the sponsor in case of error
+          this._stepInFlight = false;
+          this._setStepControlsDisabled(false);
         }.bind(this)
       );
+  },
+
+  /**
+   * Disables or re-enables the step's buttons and payment-mode radios.
+   * @param {Boolean} disabled
+   * @private
+   */
+  _setStepControlsDisabled: function (disabled) {
+    this.$(".btn, .payment-method-radio").prop("disabled", disabled);
   },
 
   /**
