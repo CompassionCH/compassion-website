@@ -13,6 +13,7 @@ from . import (
     test_legal_routes,
     test_multicompany,
     test_public_fund_donation,
+    test_reapply_translations,
     test_recurring_instrument,
     test_theme_apply,
     test_wizard_prices,
