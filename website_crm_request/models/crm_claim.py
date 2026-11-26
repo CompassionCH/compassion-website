@@ -11,6 +11,10 @@ class CrmClaim(models.Model):
         """
         # Forms run as OdooBot, which would otherwise become the responsible
         values.setdefault("user_id", False)
+        # Let the form pre-assign the request to a team member
+        assign_to = request.params.get("assign_to")
+        if assign_to:
+            values["user_id"] = int(assign_to)
         email = email_normalize(values.get("email_from") or "")
         if not email:
             return values
