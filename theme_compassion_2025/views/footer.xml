@@ -86,7 +86,9 @@
                 <p class="mb-0">
                                     Copyright ©
                                     <span t-esc="datetime.datetime.now().year" />
-                                    <span t-esc="res_company.name" />
+                                    <span
+                  t-esc="website.footer_company_name or res_company.name"
+                />
                                 </p>
                 <t
                   t-set="company_partner"
