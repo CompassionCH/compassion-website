@@ -211,13 +211,13 @@ class CrowdfundingProject(models.Model):
                     )
                 )
 
-    @api.depends("name")
     def _deadline_passed(self):
         """True once the project's deadline is over: the page then shows the
         project as closed."""
         self.ensure_one()
         return self.deadline < fields.Date.today()
 
+    @api.depends("name")
     def _compute_display_name(self):
         """
         `name` is delegated to utm.campaign (_inherits), which the public
