@@ -6,7 +6,8 @@
  * loading, and communication with the server via API calls to process the
  * sponsorship application.
  *
- * Used in /templates/pages/my2_new_sponsorship_wizard.xml
+ * Used in /templates/pages/my2_new_sponsorship/my2_new_sponsorship_wizard.xml
+ * and the step templates next to it.
  * ------------------------------------------------------------------------------- */
 
 import publicWidget from "@web/legacy/js/public/public_widget";
@@ -111,10 +112,9 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     formData.push({name: "action", value: action});
     formData.push({name: "sponsorship_type", value: sponsorship_type});
 
-    // The fast-checkout page offers one button per payment mode instead of a
-    // dropdown: the mode of the button that was pressed is the choice. Sent
-    // the same way as the action above, so a mode button goes through the
-    // one step call every other button already uses.
+    // On the fast checkout, Continue carries the checked radio's payment mode
+    // (see _mirrorPaymentMode). Sent the same way as the action above, so the
+    // choice goes through the one step call every other button already uses.
     const payment_mode = $(ev.currentTarget).data("payment-mode");
     if (payment_mode) {
       formData.push({name: "payment_method", value: payment_mode});
@@ -188,6 +188,7 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
     const $paymentModes = this.$(".payment-method-radio");
     if ($paymentModes.length && !$paymentModes.filter(":checked").length) {
       this.$(".ns-payment-mode-error").removeClass("d-none");
+      $paymentModes.attr("aria-describedby", "ns-payment-mode-error");
       isValid = false;
     }
 
@@ -301,6 +302,7 @@ export const NewSponsorshipWizard = publicWidget.Widget.extend({
   _onPaymentModeRadioChange: function (ev) {
     this._mirrorPaymentMode($(ev.currentTarget));
     this.$(".ns-payment-mode-error").addClass("d-none");
+    this.$(".payment-method-radio").removeAttr("aria-describedby");
   },
 
   /**

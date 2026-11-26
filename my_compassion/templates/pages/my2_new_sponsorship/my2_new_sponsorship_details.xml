@@ -48,7 +48,7 @@ Page: My Compassion 2 Post-Payment Sponsor Details
            and anchor on both (a div.h4 heading, the first two elements after
            the hidden inputs), so keep their element types and order. -->
       <div
-        class="h4 mt-5 text-dark-blue text-center text-lg-start"
+        class="h4 text-dark-blue text-center text-lg-start"
       >Your contact information</div>
       <div class="mb-3 text-center text-lg-start tiny-text text-mid-grey"><t
         t-out="sponsorship.child_id.preferred_name"
@@ -193,10 +193,6 @@ Page: My Compassion 2 Post-Payment Sponsor Details
         </t>
       </details>
       <!-- BUTTONS -->
-      <!-- The escape hatch posts the same form to another route, so it needs
-           neither its own form (they cannot be nested) nor any JavaScript.
-           formnovalidate: the fields it skips are exactly the ones it is
-           there to skip. -->
       <div
         class="my-3 d-flex flex-column flex-lg-row justify-content-center justify-content-lg-start align-items-center gap-3"
       >

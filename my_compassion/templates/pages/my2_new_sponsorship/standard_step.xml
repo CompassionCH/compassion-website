@@ -9,7 +9,7 @@
   >
     <div
       t-if="request.params.get('wap_ineligible')"
-      class="mb-3 p-3 rounded-lg bg-high-eggshell tiny-text ns-full-width"
+      class="mb-3 p-3 rounded-lg bg-high-eggshell tiny-text"
     >
       Write&amp;Pray is for people under 25, so here's the regular sponsorship instead.
     </div>
@@ -164,10 +164,10 @@
              (paymentModeDataKeys in my2_new_sponsorship_wizard.js), for the
              click handlers that read them off the clicked button, such as
              the my_compassion_switzerland eBill setup. -->
-        <div t-if="payment_mode_buttons" class="my-3 mt-4">
-          <div
+        <fieldset t-if="payment_mode_buttons" class="my-3 mt-4">
+          <legend
             class="mb-2 text-dark-blue body-small bold"
-          >How would you like to pay?</div>
+          >How would you like to pay?</legend>
           <t t-foreach="payment_mode_buttons" t-as="payment_mode">
             <t
               t-if="payment_mode_first and payment_mode_last"
@@ -208,12 +208,14 @@
             </label>
           </t>
           <!-- Shown by the wizard's form validation while no mode is
-               checked: the radios have no default on purpose. -->
+               checked: the radios have no default on purpose. The script
+               points the radios' aria-describedby at it while it shows. -->
           <div
+            id="ns-payment-mode-error"
             class="ns-payment-mode-error d-none mt-2 tiny-text text-mid-orange"
             role="alert"
           >Please choose a payment method before continuing.</div>
-        </div>
+        </fieldset>
         <!-- This step's own Continue button, in the left column instead of
              the parent chrome's shared one (my2_new_sponsorship_wizard_form_content):
              keeps it out of the space below the two columns, so the right

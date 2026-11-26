@@ -4,6 +4,37 @@
      branch of thank_you_page.xml: what a public sponsor sees once their name
      is known (see that file's t-elif chain). -->
 <odoo>
+  <!-- NEW SPONSORSHIP ALL SET TITLE -->
+  <!-- Title and description of "All set", rendered in two places of the
+       page (above the columns on mobile, in the left column on desktop).
+       Called with the page's context. -->
+  <template id="my2_new_sponsorship_all_set_title" name="New Sponsorship All Set Title">
+    <t t-call="theme_compassion_2025.TitleComponent">
+      <!-- sponsor_identity_visible: a bare sponsorship_id proves
+           nothing (see MyCompassionNewSponsorshipController
+           ._owns_signup), so this page names the sponsor only to
+           the browser that just paid or the authenticated
+           sponsor - never to a visitor who merely guessed or
+           enumerated the id. -->
+      <t t-if="sponsor_identity_visible" t-set="title_content">All set,&#160;<t
+        t-out="sponsorship.partner_id.firstname"
+      /></t>
+      <t t-else="" t-set="title_content">All set</t>
+      <t t-set="color" t-value="'dark-blue'" />
+      <t t-set="show_underline" t-value="False" />
+      <t t-set="description_color" t-value="'mid-grey'" />
+      <t
+        t-if="sponsor_identity_visible"
+        t-set="description"
+      >Your details are saved. We've sent a sign-in link to&#160;<t
+        t-out="sponsorship.partner_id.email"
+      />&#160;so you can set up a password and access your account.</t>
+      <t
+        t-else=""
+        t-set="description"
+      >Your details are saved. We've sent a sign-in link by email so you can set up a password and access your account.</t>
+    </t>
+  </template>
   <!-- NEW SPONSORSHIP ALL SET -->
   <template id="my2_new_sponsorship_all_set" name="New Sponsorship All Set">
     <!-- "All set" summary: the portal invitation (sign-in link) was
@@ -21,31 +52,7 @@
          instead (see below), same convention as the details-token
          branch in thank_you_page.xml. -->
     <div class="mb-lg-4 d-lg-none">
-      <t t-call="theme_compassion_2025.TitleComponent">
-        <!-- sponsor_identity_visible: a bare sponsorship_id proves
-             nothing (see MyCompassionNewSponsorshipController
-             ._owns_signup), so this page names the sponsor only to
-             the browser that just paid or the authenticated
-             sponsor - never to a visitor who merely guessed or
-             enumerated the id. -->
-        <t t-if="sponsor_identity_visible" t-set="title_content">All set,&#160;<t
-          t-out="sponsorship.partner_id.firstname"
-        /></t>
-        <t t-else="" t-set="title_content">All set</t>
-        <t t-set="color" t-value="'dark-blue'" />
-        <t t-set="show_underline" t-value="False" />
-        <t t-set="description_color" t-value="'mid-grey'" />
-        <t
-          t-if="sponsor_identity_visible"
-          t-set="description"
-        >Your details are saved. We've sent a sign-in link to&#160;<t
-          t-out="sponsorship.partner_id.email"
-        />&#160;so you can set up a password and access your account.</t>
-        <t
-          t-else=""
-          t-set="description"
-        >Your details are saved. We've sent a sign-in link by email so you can set up a password and access your account.</t>
-      </t>
+      <t t-call="my_compassion.my2_new_sponsorship_all_set_title" />
     </div>
     <div class="ns-flex-columns ns-split-blue-right ns-all-set-columns w-100">
       <div class="ns-aside-item">
@@ -129,25 +136,7 @@
       </div>
       <div class="ns-highlight-panel">
         <div class="d-none d-lg-block ns-left-title">
-          <t t-call="theme_compassion_2025.TitleComponent">
-            <t t-if="sponsor_identity_visible" t-set="title_content">All set,&#160;<t
-              t-out="sponsorship.partner_id.firstname"
-            /></t>
-            <t t-else="" t-set="title_content">All set</t>
-            <t t-set="color" t-value="'dark-blue'" />
-            <t t-set="show_underline" t-value="False" />
-            <t t-set="description_color" t-value="'mid-grey'" />
-            <t
-              t-if="sponsor_identity_visible"
-              t-set="description"
-            >Your details are saved. We've sent a sign-in link to&#160;<t
-              t-out="sponsorship.partner_id.email"
-            />&#160;so you can set up a password and access your account.</t>
-            <t
-              t-else=""
-              t-set="description"
-            >Your details are saved. We've sent a sign-in link by email so you can set up a password and access your account.</t>
-          </t>
+          <t t-call="my_compassion.my2_new_sponsorship_all_set_title" />
         </div>
         <!-- Anchored on by my_compassion_switzerland's volunteering
          opt-in (new_sponsorship_wizard_volunteering) via

@@ -9,8 +9,8 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     not all of them, the folder also holds the rest of the new-sponsorship
     journey that isn't a wizard step (payment, post-payment details,
     thank-you). Public visitors run the fast checkout - one page holding the
-    email, the consent and one button per payment mode - and give their name
-    after paying; the user-details and communication steps
+    email, the consent, one radio per payment mode and a Continue button - and
+    give their name after paying; the user-details and communication steps
     (logged_in_steps.xml) are kept for the flows and country extensions that
     still collect everything up front.
 
@@ -70,8 +70,8 @@ Page: My Compassion 2 New Sponsorship Wizard Page
     data-payment-code-driven _onStepClick override: my2_new_sponsorship_wizard.js's
     "change .payment-method-radio" handler keeps the generic Continue
     button's own data-payment-mode/data-payment-code synced to whichever
-    radio is checked, so a click on it is indistinguishable, to that
-    override, from a dedicated per-mode button.
+    radio is checked, so that override reads the chosen mode off the
+    Continue button it was clicked on.
 -->
 <odoo>
   <!-- NEW SPONSORSHIP WIZARD FORM CONTENT -->

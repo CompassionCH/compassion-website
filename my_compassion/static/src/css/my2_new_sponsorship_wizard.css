@@ -1,6 +1,7 @@
 /*
-   This stylesheets concerns the whole new sponsorship form wizard
-   /templates/pages/my2_new_sponsorship_wizard.xml
+   This stylesheet concerns the whole new sponsorship form wizard
+   /templates/pages/my2_new_sponsorship/ (my2_new_sponsorship_wizard.xml and
+   the step files next to it)
 */
 
 .step-progress-container {
@@ -125,8 +126,7 @@
 /* Server-rendered bg-pure-white (also !important) is meant for desktop -
    below the lg breakpoint the card goes back to light-blue. Double class
    for specificity: a plain !important tie against another !important rule
-   falls back to bundle load order, which the .btn-ebill.btn-ebill rule
-   above already found isn't reliably this file. */
+   falls back to bundle load order, which is not reliably this file. */
 @media (max-width: 991.98px) {
   .ns-letter-card.ns-letter-card {
     background-color: var(--light-blue) !important;
@@ -136,27 +136,6 @@
 /* A greyer border than Bootstrap's default form-control one. */
 #email {
   border-color: var(--mid-grey);
-}
-
-/* The payment-mode buttons stand in for the page's one submit action, so
-   unlike other wizard buttons they should fill the form width rather than
-   stay capped at the generic 300px button size. */
-.payment-mode-buttons button {
-  max-width: none;
-  width: 100%;
-  font-family: "NeighbourSans DemiBold", sans-serif;
-}
-
-/* eBill's and Postfinance Direct Debit's own brand colors, not part of the
-   theme palette. Need 2-class specificity, not just !important: the theme's
-   bg-core-blue utility is also !important, and ties go to whichever loaded
-   later in the compiled bundle - not reliably this file. */
-.btn-ebill.btn-ebill {
-  background-color: #1fbbdc !important;
-}
-
-.btn-postfinance-dd.btn-postfinance-dd {
-  background-color: #ffcc00 !important;
 }
 
 .back-button {
@@ -288,26 +267,6 @@
     max-width: min(1100px, 100% - 48px);
   }
 
-  .ns-columns {
-    display: grid !important;
-    grid-template-columns: 1.15fr 0.85fr;
-    column-gap: 2.5rem;
-    align-items: start;
-  }
-
-  .ns-columns > * {
-    grid-column: 1;
-  }
-
-  .ns-columns > .ns-aside-item {
-    grid-column: 2;
-    max-width: 420px;
-  }
-
-  .ns-columns > .ns-full-width {
-    grid-column: 1 / -1;
-  }
-
   .ns-left-title .title-component {
     text-align: left !important;
   }
@@ -320,8 +279,8 @@
   }
 }
 
-/* Desktop: same side-by-side job as .ns-columns above, but flexbox-based,
-   for steps that lay their two divs out with plain flex utilities. */
+/* Desktop: the two columns of a step or thank-you branch side by side
+   instead of stacked. */
 @media (min-width: 992px) {
   .ns-flex-columns {
     display: flex !important;
