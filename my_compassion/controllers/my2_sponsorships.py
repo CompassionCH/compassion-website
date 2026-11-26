@@ -14,7 +14,7 @@ from dateutil.relativedelta import relativedelta
 from werkzeug.exceptions import BadRequest, NotFound
 
 from odoo import Command, fields, http
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 from odoo.http import request
 from odoo.tools.translate import _
 
@@ -131,7 +131,7 @@ class MyCompassionSponsorshipsController(http.Controller):
         Renders the write and pray variant of the sponsorships page.
 
         Write&Pray is Switzerland-only: the free, no-financial-support
-        godparent role it offers is not a product the other countries sell.
+        sponsorship role it offers is not a product the other countries sell.
 
         return: An HTTP response containing a rendered template with the
         sponsorships landing page.
@@ -481,7 +481,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
         posted here is trusted, the required fields included.
         return: A redirection to the thank-you page, which now has no form
         left to show, or the form again with an error when a required field
-        came back empty.
+        came back empty or the partner refused a value (e.g. a country
+        module's phone number check).
         """
         sponsorship = self._fetch_details_signup(sponsorship_id, details_token)
         values = self._details_form_values(post)
@@ -490,6 +491,14 @@ class MyCompassionNewSponsorshipController(http.Controller):
             errors.append(_("Please tell us your name and phone number."))
         errors.append(self._details_extra_error(values, sponsorship))
         error = " ".join(filter(None, errors))
+        if not error:
+            try:
+                # Nothing is kept from a refused write: the form comes back
+                # with the partner's message and what was typed.
+                with request.env.cr.savepoint():
+                    sponsorship._my2_apply_details(values)
+            except (UserError, ValidationError) as refusal:
+                error = refusal.args[0] if refusal.args else str(refusal)
         if error:
             return request.render(
                 "my_compassion.my2_new_sponsorship_thank_you_page",
@@ -500,7 +509,6 @@ class MyCompassionNewSponsorshipController(http.Controller):
                     submitted=values,
                 ),
             )
-        sponsorship._my2_apply_details(values)
         self._add_sponsorship_to_session(sponsorship.id)
         return request.redirect(
             f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
@@ -767,6 +775,15 @@ class MyCompassionNewSponsorshipController(http.Controller):
             f"/web/login?{urlencode({'redirect': request.httprequest.full_path})}"
         )
 
+        # The payment modes the step offers, one radio each, in the
+        # fast-checkout step's form column (see standard_step.xml). The
+        # step's own Continue button below them submits the checked mode.
+        payment_mode_buttons = wizard._get_payment_mode_buttons()
+        # Whether this step offers payment modes at all. Such a step renders
+        # its own Continue instead of the generic button, so with an empty
+        # list above it renders no submit.
+        step_offers_payment_modes = wizard._step_offers_payment_modes()
+
         # Render step template first
         inner_step_html = request.env["ir.qweb"]._render(
             wizard.current_step.template.id,
@@ -781,6 +798,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 "sponsorship_amount": _product_display_price("sponsorship"),
                 "sponsorship_plus_extra": _product_display_price("fund_gen"),
                 "login_url_redirect": login_url_redirect,
+                "payment_mode_buttons": payment_mode_buttons,
+                "step_offers_payment_modes": step_offers_payment_modes,
             },
         )
 
@@ -791,13 +810,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
                 "wizard": wizard,
                 "inner_step_html": inner_step_html,
                 "currency_name": currency_name,
-                # The step's own submit buttons, when it has any: one per
-                # payment mode, in place of the generic Continue/Finish one.
-                "payment_mode_buttons": wizard._get_payment_mode_buttons(),
-                # Whether those buttons are this step's submit at all, which
-                # is what says if the generic button may stand in when the
-                # list above is empty.
-                "step_offers_payment_modes": wizard._step_offers_payment_modes(),
+                "payment_mode_buttons": payment_mode_buttons,
+                "step_offers_payment_modes": step_offers_payment_modes,
             },
         )
 

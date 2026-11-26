@@ -3,13 +3,23 @@
 import {NewSponsorshipWizard} from "@my_compassion/js/my2_new_sponsorship_wizard";
 
 NewSponsorshipWizard.include({
+  // The PayU radios' data-payu-gpo is mirrored on the Continue button with
+  // the payment mode, so the click below reads it there.
+  paymentModeDataKeys: [
+    ...NewSponsorshipWizard.prototype.paymentModeDataKeys,
+    "payu-gpo",
+  ],
+
   /**
-   * The names on the card are required only by the PayU buttons: the other
-   * payment modes of the page (e.g. a standing order) take no card.
+   * The names on the card are required only when a PayU payment mode is the
+   * checked one: the other payment modes of the page (e.g. a standing
+   * order) take no card.
    *
    * @override
    */
   _onStepClick(ev) {
+    // The mode is read off Continue below, before _super would sync it.
+    this._mirrorCheckedPaymentMode();
     const isRequired = Boolean($(ev.currentTarget).data("payu-gpo"));
     this.$(
       'input[name="cardholder_firstname"], input[name="cardholder_lastname"]'

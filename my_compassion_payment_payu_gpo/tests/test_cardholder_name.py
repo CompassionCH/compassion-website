@@ -25,8 +25,8 @@ from .common import PayuDigitalCase
 @tagged("post_install", "-at_install")
 class TestCardholderName(PayuDigitalCase):
     """The fast checkout of a company offering PayU asks the first and last
-    name on the card under the e-mail, required by the PayU buttons only, and
-    the card form of the payment page comes prefilled with them."""
+    name on the card under the e-mail, required only when a PayU mode is
+    chosen, and the card form of the payment page comes prefilled with them."""
 
     def setUp(self):
         super().setUp()
@@ -123,14 +123,14 @@ class TestCardholderName(PayuDigitalCase):
             html.index('name="cardholder_lastname"'),
         )
 
-    def test_required_by_the_payu_button_only(self):
+    def test_required_by_the_payu_mode_only(self):
         html = self._render(self._wizard())
-        buttons = re.findall(r"<div[^>]*data-payment-mode=[^>]*>", html)
-        self.assertEqual(len(buttons), 2)
-        for button in buttons:
+        radios = re.findall(r"<input[^>]*data-payment-mode=[^>]*>", html)
+        self.assertEqual(len(radios), 2)
+        for radio in radios:
             self.assertEqual(
-                'data-payu-gpo="1"' in button,
-                f'data-payment-mode="{self.payu_mode.id}"' in button,
+                'data-payu-gpo="1"' in radio,
+                f'data-payment-mode="{self.payu_mode.id}"' in radio,
             )
 
     def test_not_asked_without_payu(self):

@@ -17,7 +17,10 @@
                         -
                         <t t-out="error_name" />
                     </h2>
-          <p class="lead">An unexpected error occurred.</p>
+          <p t-if="error_message" class="lead">
+            <t t-out="error_message" />
+          </p>
+          <p t-else="" class="lead">An unexpected error occurred.</p>
           <p class="lead">
                         Don't panic. If you think this is our mistake, please send us a message on this page.
                     </p>
@@ -47,15 +50,42 @@
       </div>
     </div>
   </template>
+  <!-- The branded error pages call theme_compassion_2025 components, which
+       only exist on the websites using that theme: every other website (and,
+       for the 400, the debug and edit modes, which show the traceback) keeps
+       the core page. -->
   <template id="custom_404" inherit_id="http_routing.404" name="Custom 404 Page">
+    <xpath expr="//div[@id='wrap']" position="before">
+      <t
+        t-set="my2_branded_error"
+        t-value="website and website._my2_uses_compassion_theme()"
+      />
+    </xpath>
     <xpath expr="//div[@id='wrap']" position="attributes">
-      <attribute name="t-if">False</attribute>
+      <attribute name="t-if">not my2_branded_error</attribute>
     </xpath>
     <xpath expr="//div[@id='wrap']" position="after">
-      <t t-call="my_compassion.http_error_custom">
+      <t t-if="my2_branded_error" t-call="my_compassion.http_error_custom">
         <t t-set="error_code" t-value="'404'" />
         <t t-set="error_name">Page Not Found</t>
         <t t-set="error_message">We couldn't find the page you were looking for!</t>
+      </t>
+    </xpath>
+  </template>
+  <template id="custom_400" inherit_id="http_routing.400" name="Custom 400 Page">
+    <xpath expr="//div[@id='wrap']" position="before">
+      <t
+        t-set="my2_branded_error"
+        t-value="not (editable or debug) and website and website._my2_uses_compassion_theme()"
+      />
+    </xpath>
+    <xpath expr="//div[@id='wrap']" position="attributes">
+      <attribute name="t-if">not my2_branded_error</attribute>
+    </xpath>
+    <xpath expr="//div[@id='wrap']" position="after">
+      <t t-if="my2_branded_error" t-call="my_compassion.http_error_custom">
+        <t t-set="error_code" t-value="'400'" />
+        <t t-set="error_name">Something Went Wrong</t>
       </t>
     </xpath>
   </template>
