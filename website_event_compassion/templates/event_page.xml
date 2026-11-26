@@ -8,11 +8,12 @@
       data-name="Cover"
       style=""
     >
-      <div class="container s_allow_columns my-4">
-        <h1 style="text-align: center;" class="text-white">
-          <font style="font-size: 62px; font-weight: bold;">
-            <span t-field="main_object.name" />
-          </font>
+      <div class="container s_allow_columns my-4 px-4 px-lg-5">
+        <h1
+          class="text-white text-center fw-bold"
+          style="font-size: clamp(36px, 6vw, 62px); line-height: 1.15; hyphens: auto;"
+        >
+          <span t-field="main_object.name" />
         </h1>
         <h4 class="text-white text-center">
           <t t-esc="start_date" />

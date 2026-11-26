@@ -39,6 +39,12 @@ class Website(models.Model):
         "language. Falls back to the company's phone when not set for a "
         "language.",
     )
+    footer_company_name = fields.Char(
+        "Footer Company Name",
+        translate=True,
+        help="Company name in the footer copyright line for the current "
+        "language. Falls back to the company's name when not set.",
+    )
     footer_company_ids = fields.Boolean(
         "Show Company IDs in Footer",
         help="Show the tax and registration numbers of the company (NIP and "
