@@ -154,3 +154,8 @@ class Event(models.Model):
             return self.feedback_survey_id.action_result_survey()
         else:
             raise UserError(_("There is no feedback survey to print"))
+
+    def _registration_income_account(self, product):
+        """The income account used for the registration fee's invoice line."""
+        return product.sudo().property_account_income_id
+

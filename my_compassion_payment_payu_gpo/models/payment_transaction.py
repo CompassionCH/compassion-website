@@ -165,3 +165,11 @@ class PaymentTransaction(models.Model):
         """A payment PayU never confirmed may have been made: its error is
         no refusal."""
         return not self.payu_gpo_unconfirmed and super()._my2_refusal_is_certain()
+
+    def _payu_gpo_last_card_transaction(self, partner):
+        """The partner's last successful PayU card payment, to offer the same
+        card again on the next donation form."""
+        return self.sudo().search(
+            [("partner_id", "=", partner.id), ("state", "=", "done")], limit=1
+        )
+
