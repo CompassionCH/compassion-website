@@ -10,7 +10,7 @@ from odoo.tests.common import (
     Opener,
 )
 
-from .common import DigitalSeamCase
+from .common import DigitalSeamCase, OptionalPlanMixin
 
 CSRF_RE = re.compile(r'name="csrf_token"\s+value="([^"]+)"')
 WIZARD_ID_RE = re.compile(r'name="wizard_id"\s+value="(\d+)"')
@@ -18,7 +18,7 @@ ACCESS_TOKEN_RE = re.compile(r"access_token=([0-9a-f]+)")
 
 
 @tagged("post_install", "-at_install")
-class TestFastCheckoutRoutes(HttpCase, DigitalSeamCase):
+class TestFastCheckoutRoutes(OptionalPlanMixin, HttpCase, DigitalSeamCase):
     """The /my2/new-sponsorship/* surface, walked over HTTP.
 
     The rest of the fast-checkout suite drives the wizard model and renders

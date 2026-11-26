@@ -10,14 +10,14 @@ from odoo.addons.website.tools import MockRequest
 
 from ..controllers.my2_sponsorships import MyCompassionNewSponsorshipController
 from ..models.my2_new_sponsorship_wizard import FAST_CHECKOUT_STEP
-from .common import DigitalSeamCase
+from .common import DigitalSeamCase, OptionalPlanMixin
 
 PAYMENT_STEP = "my_compassion.new_sponsorship_wizard_step_payment_methods"
 WAP_STEP = "my_compassion.new_sponsorship_wizard_step_wap_options"
 
 
 @tagged("post_install", "-at_install")
-class TestFastCheckoutOnePage(DigitalSeamCase):
+class TestFastCheckoutOnePage(OptionalPlanMixin, DigitalSeamCase):
     """The one page of the public checkout: e-mail, consent and one button per
     payment mode, which is also what submits it.
 

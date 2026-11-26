@@ -6,11 +6,11 @@ from odoo.tests import tagged
 from odoo.tools.misc import hmac as hmac_tool
 
 from ..models.contract_group import UPDATE_CARD_TOKEN_SCOPE
-from .common import DigitalSeamCase
+from .common import DigitalSeamCase, OptionalPlanMixin
 
 
 @tagged("post_install", "-at_install")
-class TestMultiCompany(DigitalSeamCase):
+class TestMultiCompany(OptionalPlanMixin, DigitalSeamCase):
     """Multi-company hardening of the digital payment seam.
 
     Each country company runs its own website. A signup, a saved token, an
