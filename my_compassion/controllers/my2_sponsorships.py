@@ -14,7 +14,7 @@ from dateutil.relativedelta import relativedelta
 from werkzeug.exceptions import BadRequest, NotFound
 
 from odoo import Command, fields, http
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 from odoo.http import request
 from odoo.tools.translate import _
 
@@ -485,7 +485,8 @@ class MyCompassionNewSponsorshipController(http.Controller):
         posted here is trusted, the required fields included.
         return: A redirection to the thank-you page, which now has no form
         left to show, or the form again with an error when a required field
-        came back empty.
+        came back empty or the partner refused a value (e.g. a country
+        module's phone number check).
         """
         sponsorship = self._fetch_details_signup(sponsorship_id, details_token)
         values = self._details_form_values(post)
@@ -494,6 +495,14 @@ class MyCompassionNewSponsorshipController(http.Controller):
             errors.append(_("Please tell us your name and phone number."))
         errors.append(self._details_extra_error(values, sponsorship))
         error = " ".join(filter(None, errors))
+        if not error:
+            try:
+                # Nothing is kept from a refused write: the form comes back
+                # with the partner's message and what was typed.
+                with request.env.cr.savepoint():
+                    sponsorship._my2_apply_details(values)
+            except (UserError, ValidationError) as refusal:
+                error = refusal.args[0] if refusal.args else str(refusal)
         if error:
             return request.render(
                 "my_compassion.my2_new_sponsorship_thank_you_page",
@@ -504,7 +513,6 @@ class MyCompassionNewSponsorshipController(http.Controller):
                     submitted=values,
                 ),
             )
-        sponsorship._my2_apply_details(values)
         self._add_sponsorship_to_session(sponsorship.id)
         return request.redirect(
             f"/my2/new-sponsorship/thank-you?sponsorship_id={sponsorship.id}"
