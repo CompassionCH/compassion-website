@@ -275,6 +275,24 @@ class MyAccountController(CustomerPortal):
 
     @route(
         [
+            "/child/<string:child_identifier>/sponsor/confirmation",
+            "/child/<string:child_identifier>/confirmation",
+        ],
+        type="http",
+        auth="user",
+        website=True,
+        sitemap=False,
+    )
+    def redirect_old_sponsorship_confirmation(self, child_identifier, **kw):
+        """
+        Confirmation page of MyCompassion 1.0, still linked from e-mails
+        sent before MyCompassion 2.0. The sponsor logs in and lands on
+        their children.
+        """
+        return request.redirect("/my2/children")
+
+    @route(
+        [
             "/children",
             "/children/page/<int:page>",
             "/children/<string:random>",
