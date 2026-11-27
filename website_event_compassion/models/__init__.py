@@ -9,6 +9,7 @@
 ##############################################################################
 
 from . import (
+    account_move_line,
     event_compassion,
     event_email,
     event_event,

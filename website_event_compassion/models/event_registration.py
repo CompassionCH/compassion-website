@@ -220,21 +220,16 @@ class EventRegistration(models.Model):
         for registration in self:
             partner = registration.partner_id
             compassion_event = registration.compassion_event_id
-            invoice_lines = (
-                self.env["account.move.line"]
-                .sudo()
-                .with_context(lang="en_US")
-                .search(
-                    [
-                        ("user_id", "=", partner.id),
-                        ("payment_state", "=", "paid"),
-                        ("event_id", "=", compassion_event.id),
-                        ("contract_id", "=", False),
-                        # ("account_id.account_type", "like", "income"),
-                    ]
-                )
+            move_line_obj = self.env["account.move.line"].sudo()
+            donation_lines = move_line_obj.with_context(lang="en_US").search(
+                [
+                    ("user_id", "=", partner.id),
+                    ("event_id", "=", compassion_event.id),
+                    ("contract_id", "=", False),
+                ]
+                + move_line_obj._received_donation_domain()
             )
-            amount_raised = sum(invoice_lines.mapped("price_subtotal"))
+            amount_raised = donation_lines.get_donation_amount()
             s_value = registration.event_id.sponsorship_donation_value
             if s_value:
                 nb_sponsorships = (
