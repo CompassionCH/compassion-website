@@ -73,24 +73,21 @@ class MyEventsController(CustomerPortal):
         partner = registration.partner_id
         event = registration.compassion_event_id
         donations = []
-        donation_move_lines = (
-            request.env["account.move.line"]
-            .sudo()
-            .search(
-                [
-                    ("user_id", "=", partner.id),
-                    ("payment_state", "=", "paid"),
-                    ("event_id", "=", event.id),
-                    ("move_id.invoice_category", "=", "fund"),
-                ]
-            )
+        move_line_obj = request.env["account.move.line"].sudo()
+        donation_move_lines = move_line_obj.search(
+            [
+                ("user_id", "=", partner.id),
+                ("event_id", "=", event.id),
+                ("move_id.invoice_category", "=", "fund"),
+            ]
+            + move_line_obj._received_donation_domain()
         )
         for move_line in donation_move_lines:
             donations.append(
                 {
                     "date_str": format_date(request.env, move_line.date),
                     "date": move_line.date,
-                    "amount": str(move_line.price_total),
+                    "amount": str(move_line.get_donation_amount()),
                     "currency": move_line.currency_id.symbol,
                     "donor firstname": move_line.partner_id.preferred_name or "",
                     "donor lastname": move_line.partner_id.lastname
